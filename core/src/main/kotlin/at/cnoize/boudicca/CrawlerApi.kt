@@ -22,8 +22,7 @@ import javax.ws.rs.core.Application
             url = "https://github.com/Yolgie"
         ),
         license = License(
-            name = "GNU General Public License v3.0",
-            url = "www.gnu.org/licenses/gpl-3.0.html"
+            name = "GNU General Public License v3.0"
         )
     )
 )

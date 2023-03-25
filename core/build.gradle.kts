@@ -2,6 +2,7 @@ plugins {
     kotlin("jvm") version "1.7.22"
     kotlin("plugin.allopen") version "1.7.22"
     id("io.quarkus")
+    id("org.openapi.generator") version "6.3.0"
 }
 
 repositories {
@@ -45,4 +46,19 @@ allOpen {
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions.jvmTarget = JavaVersion.VERSION_17.toString()
     kotlinOptions.javaParameters = true
+}
+
+openApiGenerate {
+    generatorName.set("kotlin")
+    inputSpec.set("$buildDir/openapi/openapi.yaml")
+    outputDir.set("$rootDir/../api")
+    apiPackage.set("at.cnoize.boudicca.api")
+    invokerPackage.set("at.cnoize.boudicca.invoker")
+    modelPackage.set("at.cnoize.boudicca.model")
+    id.set("api")
+    groupId.set(group.toString())
+    version.set(project.version.toString())
+}
+tasks.named("openApiGenerate"){
+    dependsOn(tasks.named("assemble"))
 }

@@ -11,7 +11,9 @@
           <list />
         </option>
         <option name="taskNames">
-          <list />
+          <list>
+            <option value="quarkusDev" />
+          </list>
         </option>
         <option name="vmOptions" value="" />
       </ExternalSystemSettings>

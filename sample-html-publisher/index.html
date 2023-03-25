@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Boudicca</title>
+<script src="main.js"></script>
+<style>
+th, td {
+  padding: 2px 4px;
+}
+</style>
+</head>
+<body>
+<h1>Boudicca</h1>
+<h2>Search</h2>
+Search: <input type="text" id="text" placeholder="search..." />
+From: <input type="date" id="date-from" />
+To: <input type="date" id="date-to" />
+<button id="submit">Search</button>
+<h2>Events</h2>
+<table>
+	<thead><tr><th>Name</th><th>Start Date</th><th>Labels</th></tr></thead>
+	<tbody id="eventlist"></tbody>
+</table>
+</body>
+</html>

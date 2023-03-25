@@ -49,7 +49,7 @@ import at.cnoize.boudicca.invoker.JSON;
 /**
  * Event
  */
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2023-03-25T18:04:03.160399400+01:00[Europe/Vienna]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2023-03-25T18:50:13.552780900+01:00[Europe/Vienna]")
 public class Event {
   public static final String SERIALIZED_NAME_NAME = "name";
   @SerializedName(SERIALIZED_NAME_NAME)

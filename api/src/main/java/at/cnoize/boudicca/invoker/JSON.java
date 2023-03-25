@@ -94,6 +94,7 @@ public class JSON {
         gsonBuilder.registerTypeAdapter(LocalDate.class, localDateTypeAdapter);
         gsonBuilder.registerTypeAdapter(byte[].class, byteArrayAdapter);
         gsonBuilder.registerTypeAdapterFactory(new at.cnoize.boudicca.model.Event.CustomTypeAdapterFactory());
+        gsonBuilder.registerTypeAdapterFactory(new at.cnoize.boudicca.model.SearchDTO.CustomTypeAdapterFactory());
         gson = gsonBuilder.create();
     }
 

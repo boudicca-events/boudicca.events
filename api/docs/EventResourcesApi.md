@@ -6,6 +6,7 @@ All URIs are relative to *http://localhost:8081*
 |------------- | ------------- | -------------|
 | [**eventGet**](EventResourcesApi.md#eventGet) | **GET** /event |  |
 | [**eventPost**](EventResourcesApi.md#eventPost) | **POST** /event |  |
+| [**eventSearchPost**](EventResourcesApi.md#eventSearchPost) | **POST** /event/search |  |
 
 
 <a name="eventGet"></a>
@@ -122,4 +123,64 @@ No authorization required
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 | **201** | Created |  -  |
+
+<a name="eventSearchPost"></a>
+# **eventSearchPost**
+> Set&lt;Event&gt; eventSearchPost(searchDTO)
+
+
+
+### Example
+```java
+// Import classes:
+import at.cnoize.boudicca.invoker.ApiClient;
+import at.cnoize.boudicca.invoker.ApiException;
+import at.cnoize.boudicca.invoker.Configuration;
+import at.cnoize.boudicca.invoker.models.*;
+import at.cnoize.boudicca.api.EventResourcesApi;
+
+public class Example {
+  public static void main(String[] args) {
+    ApiClient defaultClient = Configuration.getDefaultApiClient();
+    defaultClient.setBasePath("http://localhost:8081");
+
+    EventResourcesApi apiInstance = new EventResourcesApi(defaultClient);
+    SearchDTO searchDTO = new SearchDTO(); // SearchDTO | 
+    try {
+      Set<Event> result = apiInstance.eventSearchPost(searchDTO);
+      System.out.println(result);
+    } catch (ApiException e) {
+      System.err.println("Exception when calling EventResourcesApi#eventSearchPost");
+      System.err.println("Status code: " + e.getCode());
+      System.err.println("Reason: " + e.getResponseBody());
+      System.err.println("Response headers: " + e.getResponseHeaders());
+      e.printStackTrace();
+    }
+  }
+}
+```
+
+### Parameters
+
+| Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **searchDTO** | [**SearchDTO**](SearchDTO.md)|  | [optional] |
+
+### Return type
+
+[**Set&lt;Event&gt;**](Event.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+| **200** | OK |  -  |
 

@@ -1,6 +1,5 @@
 package at.cnoize.boudicca
 
-import java.time.Instant
 import java.util.*
 import javax.ws.rs.Consumes
 import javax.ws.rs.GET
@@ -14,22 +13,22 @@ import javax.ws.rs.core.MediaType
 @Consumes(MediaType.APPLICATION_JSON)
 public class EventResources {
 
-    private val events = mutableSetOf<Event>()
 
+    private val eventService = EventService()
     @GET
     fun list(): Set<Event> {
-        return events
+        return eventService.list()
     }
 
     @POST
     fun add(event: Event) {
-        events.add(event)
+        eventService.add(event)
     }
 
-    init {
-        events.add(Event(name = "TestEvent", startDate = Instant.now()))
-        events.add(Event(name = "TestEvent2", startDate = Instant.now()))
-        events.add(Event(name = "TestEvent3", startDate = Instant.now()))
-        events.add(Event(name = "TestEvent4", startDate = Instant.now(), data = mapOf("key" to "value", "test" to "testvalue")))
+    @Path("search")
+    @POST
+    fun search(searchDTO: SearchDTO): Set<Event> {
+        return eventService.search(searchDTO)
     }
+
 }

@@ -44,6 +44,27 @@ paths:
       - Event Resources
       x-content-type: application/json
       x-accepts: application/json
+  /event/search:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchDTO'
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Event'
+                type: array
+                uniqueItems: true
+          description: OK
+      tags:
+      - Event Resources
+      x-content-type: application/json
+      x-accepts: application/json
 components:
   schemas:
     Event:
@@ -72,4 +93,24 @@ components:
       example: 2022-03-10T16:15:50Z
       format: date-time
       type: string
+    SearchDTO:
+      example:
+        fromDate: fromDate
+        toDate: toDate
+        name: name
+      properties:
+        name:
+          nullable: true
+          type: string
+        fromDate:
+          allOf:
+          - $ref: '#/components/schemas/Instant'
+          nullable: true
+          type: string
+        toDate:
+          allOf:
+          - $ref: '#/components/schemas/Instant'
+          nullable: true
+          type: string
+      type: object
 

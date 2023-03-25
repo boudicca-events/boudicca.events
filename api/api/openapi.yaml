@@ -1,0 +1,75 @@
+openapi: 3.0.3
+info:
+  contact:
+    name: Matthias 'Yolgie' Holzinger
+    url: https://github.com/Yolgie
+  license:
+    name: GNU General Public License v3.0
+  title: Swagger with Quarkus
+  version: 0.0.1
+servers:
+- description: Auto generated value
+  url: http://localhost:8081
+- description: Auto generated value
+  url: http://0.0.0.0:8081
+tags:
+- description: Provide event data to the system.
+  name: Crawler API
+paths:
+  /event:
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Event'
+                type: array
+                uniqueItems: true
+          description: OK
+      tags:
+      - Event Resources
+      x-accepts: application/json
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Event'
+      responses:
+        "201":
+          description: Created
+      tags:
+      - Event Resources
+      x-content-type: application/json
+      x-accepts: application/json
+components:
+  schemas:
+    Event:
+      example:
+        data:
+          key: data
+        name: name
+        startDate: 2022-03-10T16:15:50Z
+      properties:
+        name:
+          type: string
+        startDate:
+          example: 2022-03-10T16:15:50Z
+          format: date-time
+          type: string
+        data:
+          additionalProperties:
+            type: string
+          type: object
+      required:
+      - data
+      - name
+      - startDate
+      type: object
+    Instant:
+      example: 2022-03-10T16:15:50Z
+      format: date-time
+      type: string
+

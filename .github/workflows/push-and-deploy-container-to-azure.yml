@@ -1,5 +1,8 @@
 on: [push]
 name: Linux_Container_Workflow
+defaults:
+    run:
+        working-directory: core
 
 jobs:
     build-and-deploy:

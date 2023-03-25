@@ -1,5 +1,5 @@
-import at.cnoize.boudicca.api.EventResourcesApi
-import at.cnoize.boudicca.model.Event
+import at.cnoize.boudicca.api.Event
+import at.cnoize.boudicca.api.EventApi
 import io.quarkus.scheduler.Scheduled
 import it.skrape.core.htmlDocument
 import it.skrape.fetcher.HttpFetcher
@@ -91,11 +91,10 @@ class RssFetcher {
         }
         println("parsed ${events.size} events")
 
-        val api = EventResourcesApi()
+        val api = EventApi()
         events.forEach {
             println(it)
-            // TODO: fix api here
-            //api.eventPost(it)
+            api.add(it)
         }
     }
 
@@ -111,19 +110,18 @@ class RssFetcher {
                 val title = it.summary.value
                 println(it.startDate.value)
 
-                val event = Event()
-                event.name = title
-                if (it.isDaylongEvent()) {
+                val eventName = title
+                val eventStartDate = if (it.isDaylongEvent()) {
                     val dateTime = LocalDate.parse(it.startDate.value, daylongEventFormatter)
                     val zonedDateTime = ZonedDateTime.of(dateTime.atTime(0,0), ZoneId.of("UTC"))
-                    event.startDate = zonedDateTime.toOffsetDateTime()
+                    zonedDateTime.toOffsetDateTime()
                 } else {
                     val dateTime = LocalDateTime.parse(it.startDate.value, formatter)
                     val zonedDateTime = ZonedDateTime.of(dateTime, ZoneId.of("UTC"))
-                    event.startDate = zonedDateTime.toOffsetDateTime()
+                    zonedDateTime.toOffsetDateTime()
                 }
 
-                event
+                Event(eventName, eventStartDate)
             }
         }
     }

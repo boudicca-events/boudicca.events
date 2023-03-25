@@ -19,8 +19,12 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("io.quarkus:quarkus-arc")
     implementation("io.quarkus:quarkus-scheduler")
-    implementation("com.rometools:rome:2.1.0")
     implementation("io.quarkus:quarkus-resteasy-reactive")
+    implementation("io.quarkus:quarkus-resteasy-reactive-jackson")
+    implementation("org.apache.camel.quarkus:camel-quarkus-support-jackson-dataformat-xml:2.13.1")
+    implementation("io.quarkus:quarkus-rest-client-reactive-jackson")
+//    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.14.2")
+//    implementation("com.fasterxml.jackson.core:jackson-databind:2.14.2")
     testImplementation("io.quarkus:quarkus-junit5")
     testImplementation("io.rest-assured:rest-assured")
 }

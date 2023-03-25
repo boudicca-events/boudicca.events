@@ -23,7 +23,6 @@ class EventService {
     }
 
     fun search(searchDTO: SearchDTO): Set<Event> {
-        println(searchDTO)
         return events.stream()
                 .filter { e -> searchDTO.fromDate == null || !e.startDate.isBefore(searchDTO.fromDate) }
                 .filter { e -> searchDTO.toDate == null || !e.startDate.isAfter(searchDTO.toDate) }

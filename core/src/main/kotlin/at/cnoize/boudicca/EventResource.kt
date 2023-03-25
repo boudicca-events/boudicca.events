@@ -1,5 +1,6 @@
 package at.cnoize.boudicca
 
+import java.time.Instant
 import java.util.*
 import javax.ws.rs.Consumes
 import javax.ws.rs.GET
@@ -26,6 +27,9 @@ public class EventResources {
     }
 
     init {
-        events.add(Event(name = "TestEvent", startDate = Date()))
+        events.add(Event(name = "TestEvent", startDate = Instant.now()))
+        events.add(Event(name = "TestEvent2", startDate = Instant.now()))
+        events.add(Event(name = "TestEvent3", startDate = Instant.now()))
+        events.add(Event(name = "TestEvent4", startDate = Instant.now(), data = mapOf("key" to "value", "test" to "testvalue")))
     }
 }

@@ -49,7 +49,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 }
 
 openApiGenerate {
-    generatorName.set("kotlin")
+    generatorName.set("java")
     inputSpec.set("$buildDir/openapi/openapi.yaml")
     outputDir.set("$rootDir/../api")
     apiPackage.set("at.cnoize.boudicca.api")
@@ -59,6 +59,7 @@ openApiGenerate {
     groupId.set(group.toString())
     version.set(project.version.toString())
 }
+
 tasks.named("openApiGenerate"){
     dependsOn(tasks.named("assemble"))
 }

@@ -11,6 +11,7 @@ class EventService {
     }
 
     fun add(event: Event) {
+        events.removeIf { eventInDb -> eventInDb.name == event.name }
         events.add(event)
     }
 

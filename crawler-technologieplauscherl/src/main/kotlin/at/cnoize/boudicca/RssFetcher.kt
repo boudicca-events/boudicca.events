@@ -45,7 +45,9 @@ class RssFetcher {
 
                 Event(nameString, zonedDateTime.toOffsetDateTime(),
                         mapOf(
-                                locationTag to locationString
+                                locationTag to locationString,
+                                "label" to listOf("TechCommunity", "Afterwork", "Socializing", "Networking").toString(),
+                                "url" to entry.link
                         )
                 )
             }

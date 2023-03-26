@@ -93,10 +93,10 @@ class JkuEventFetcher {
         }
     }
 
-    fun parseEventFromIcs(url: URL): List<Event> {
+    fun parseEventFromIcs(icsUrl: URL): List<Event> {
         val formatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss'Z'")
         val daylongEventFormatter = DateTimeFormatter.ofPattern("yyyyMMdd")
-        url.openStream().use {
+        icsUrl.openStream().use {
             val builder = CalendarBuilder()
             val calendar: Calendar = builder.build(it)
             val components = calendar.components.filterIsInstance<VEvent>()
@@ -116,7 +116,14 @@ class JkuEventFetcher {
                     zonedDateTime.toOffsetDateTime()
                 }
 
-                Event(eventName, eventStartDate)
+                Event(eventName,
+                    eventStartDate,
+                    mapOf(
+                        "location" to it.location.value,
+                        "url.ics" to icsUrl.toString(),
+                        "label" to listOf("JKU", "Universität", "Studieren").toString(),
+                        "jku.uid" to it.uid.value
+                    ))
             }
         }
     }

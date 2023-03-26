@@ -92,14 +92,16 @@ class EventService {
             Event(
                 name = "Linz hACkT",
                 startDate = Instant.parse("2023-03-24"),
-                data = mapOf("label" to "hackaton")
+                data = mapOf("tags" to listOf("TechCommunity","hackaton").toString())
             )
         )
         events.add(
             Event(
                 name = "Cloudflight Coding Contest",
                 startDate = Instant.parse("2023-03-31"),
-                data = mapOf("start.location.nam" to "JKU Linz")
+                data = mapOf("start.location.nam" to "JKU Linz",
+                    "tags" to listOf("education", "techcommunity").toString()
+                )
             )
         )
     }

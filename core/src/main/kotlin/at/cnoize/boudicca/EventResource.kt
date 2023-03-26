@@ -1,5 +1,8 @@
 package at.cnoize.boudicca
 
+import at.cnoize.boudicca.api.ComplexSearchDto
+import at.cnoize.boudicca.api.Event
+import at.cnoize.boudicca.api.SearchDTO
 import java.util.*
 import javax.ws.rs.Consumes
 import javax.ws.rs.GET
@@ -34,7 +37,7 @@ class EventResource {
 
     @Path("searchBy")
     @POST
-    fun searchBy(complexSearchDto: ComplexSearchDto    ): Set<Event> {
+    fun searchBy(complexSearchDto: ComplexSearchDto): Set<Event> {
         return eventService.searchBy(complexSearchDto)
     }
 }

@@ -22,6 +22,7 @@ dependencies {
     implementation("io.quarkus:quarkus-resteasy-reactive-jackson")
     implementation("io.quarkus:quarkus-smallrye-openapi")
     implementation("io.quarkus:quarkus-container-image-docker")
+    implementation("at.cnoize.boudicca:api:1.0-SNAPSHOT")
     testImplementation("io.quarkus:quarkus-junit5")
     testImplementation("io.rest-assured:rest-assured")
 }

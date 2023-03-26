@@ -10,8 +10,8 @@ data class ComplexSearchDto(
     val allKeyOrValueContains: Set<String>? = setOf(),
     val anyKeyOrValueExactMatch: Set<String>? = setOf(),
     val allKeyOrValueExactMatch: Set<String>? = setOf(),
-    val anyValueForKeyContains: Set<Pair<String, String>>? = setOf(),
-    val allValueForKeyContains: Set<Pair<String, String>>? = setOf(),
-    val anyValueForKeyExactMatch: Set<Pair<String, String>>? = setOf(),
-    val allValueForKeyExactMatch: Set<Pair<String, String>>? = setOf(),
+    val anyValueForKeyContains: Set<List<String>>? = setOf(),
+    val allValueForKeyContains: Set<List<String>>? = setOf(),
+    val anyValueForKeyExactMatch: Set<List<String>>? = setOf(),
+    val allValueForKeyExactMatch: Set<List<String>>? = setOf(),
 )

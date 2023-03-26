@@ -6,8 +6,8 @@ import java.time.OffsetDateTime
 
 @Serializable
 data class SearchDTO(
-        val name: String?,
-        @Serializable(KOffsetDateTimeSerializer::class) val fromDate: OffsetDateTime?,
-        @Serializable(KOffsetDateTimeSerializer::class) val toDate: OffsetDateTime?,
+    val name: String?,
+    @Serializable(KOffsetDateTimeSerializer::class) val fromDate: OffsetDateTime?,
+    @Serializable(KOffsetDateTimeSerializer::class) val toDate: OffsetDateTime?,
 )
 

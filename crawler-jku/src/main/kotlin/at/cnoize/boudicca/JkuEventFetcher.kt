@@ -119,7 +119,7 @@ class JkuEventFetcher {
                 Event(eventName,
                     eventStartDate,
                     mapOf(
-                        "location" to it.location.value,
+                        "start.location.name" to it.location.value,
                         "url.ics" to icsUrl.toString(),
                         "label" to listOf("JKU", "Universität", "Studieren").toString(),
                         "jku.uid" to it.uid.value

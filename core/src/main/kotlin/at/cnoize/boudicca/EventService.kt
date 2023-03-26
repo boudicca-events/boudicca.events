@@ -85,14 +85,18 @@ class EventService {
     }
 
     init {
-        events.add(Event(name = "TestEvent", startDate = Instant.now()))
-        events.add(Event(name = "TestEvent2", startDate = Instant.now()))
-        events.add(Event(name = "TestEvent3", startDate = Instant.now()))
         events.add(
             Event(
-                name = "TestEvent4",
-                startDate = Instant.now(),
-                data = mapOf("key" to "value", "test" to "testvalue")
+                name = "Linz hACkT",
+                startDate = Instant.parse("2023-03-24"),
+                data = mapOf("label" to "hackaton")
+            )
+        )
+        events.add(
+            Event(
+                name = "Cloudflight Coding Contest",
+                startDate = Instant.parse("2023-03-31"),
+                data = mapOf("start.location.nam" to "JKU Linz")
             )
         )
     }

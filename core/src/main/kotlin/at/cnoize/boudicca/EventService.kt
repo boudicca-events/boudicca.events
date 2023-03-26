@@ -19,7 +19,10 @@ class EventService {
         return events
             .filter { e -> searchDTO.fromDate == null || !e.startDate.isBefore(searchDTO.fromDate) }
             .filter { e -> searchDTO.toDate == null || !e.startDate.isAfter(searchDTO.toDate) }
-            .filter { e -> searchDTO.name == null || e.name.contains(searchDTO.name!!) }
+            .filter { e -> searchDTO.name == null || e.name.lowercase().contains(searchDTO.name!!.lowercase())
+                    || (e.data != null && e.data.keys.any { it.lowercase().contains(searchDTO.name!!.lowercase()) })
+                    || (e.data != null && e.data.values.any { it.lowercase().contains(searchDTO.name!!.lowercase()) })
+            }
             .toSet()
     }
 

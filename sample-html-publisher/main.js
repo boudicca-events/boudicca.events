@@ -1,6 +1,14 @@
 
 window.onload = function() {
 	byId("submit").addEventListener("click", search);
+	
+	byId("text").addEventListener("keypress", function(event) {
+		if (event.key === "Enter") {
+			event.preventDefault();
+			search();
+		}
+	}); 
+	
 };
 
 httpGet("http://localhost:8081/event", showEvents);

@@ -1,3 +1,4 @@
+
 import at.cnoize.boudicca.api.Event
 import at.cnoize.boudicca.api.EventApi
 import io.quarkus.scheduler.Scheduled
@@ -11,7 +12,6 @@ import it.skrape.selects.html5.div
 import net.fortuna.ical4j.data.CalendarBuilder
 import net.fortuna.ical4j.model.Calendar
 import net.fortuna.ical4j.model.component.VEvent
-import org.eclipse.microprofile.config.inject.ConfigProperty
 import java.net.URL
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -19,17 +19,12 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import javax.enterprise.context.ApplicationScoped
-import javax.inject.Inject
 
 
 @ApplicationScoped
-class RssFetcher {
+class JkuEventFetcher {
 
-    @Inject
-    @ConfigProperty(name = "rss.url")
-    lateinit var rssUrl: String
-
-    @Scheduled(every = "30s")
+    @Scheduled(every = "5m")
     fun scrapeJkuEvents() {
         val eventUrls = mutableSetOf<String>()
         val icsUrls = mutableSetOf<String>()

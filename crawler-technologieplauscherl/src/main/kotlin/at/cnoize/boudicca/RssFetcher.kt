@@ -17,9 +17,9 @@ class RssFetcher {
 
     @Inject
     @ConfigProperty(name = "rss.url")
-    lateinit var rssUrl: String
+    private lateinit var rssUrl: String
 
-    @Scheduled(every = "30s")
+    @Scheduled(every = "5m")
     fun fetchRss() {
         try {
             val url = URL(rssUrl)

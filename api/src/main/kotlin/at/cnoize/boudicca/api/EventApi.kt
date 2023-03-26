@@ -21,6 +21,10 @@ class EventApi(private val baseUrl: String = "http://localhost:8081/") {
         return convertToEvents(http.httpPost("$eventUrl/search", Json.encodeToString(searchDTO)))
     }
 
+    fun searchBy(complexSearchDto: ComplexSearchDto): Set<Event> {
+        return convertToEvents(http.httpPost("$eventUrl/searchBy", Json.encodeToString(complexSearchDto)))
+    }
+
     private fun convertToEvents(response: String?): Set<Event> {
         if (response == null) {
             return emptySet()
@@ -29,9 +33,9 @@ class EventApi(private val baseUrl: String = "http://localhost:8081/") {
     }
 
     private fun calcEventUrl(): String {
-        var eventUrl = baseUrl;
+        var eventUrl = baseUrl
         if (!baseUrl.endsWith("/")) {
-            eventUrl += "/";
+            eventUrl += "/"
         }
         return eventUrl + "event/"
     }

@@ -11,10 +11,11 @@ import javax.ws.rs.core.MediaType
 @Path("/event")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class EventResources {
+class EventResource {
 
 
     private val eventService = EventService()
+
     @GET
     fun list(): Set<Event> {
         return eventService.list()
@@ -31,4 +32,9 @@ public class EventResources {
         return eventService.search(searchDTO)
     }
 
+    @Path("searchBy")
+    @POST
+    fun searchBy(complexSearchDto: ComplexSearchDto    ): Set<Event> {
+        return eventService.searchBy(complexSearchDto)
+    }
 }

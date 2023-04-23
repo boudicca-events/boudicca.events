@@ -1,6 +1,5 @@
 include("api-model")
 include("ingestion-api")
-include("crawler-demo")
 include("crawler-jku")
 include("crawler-technologieplauscherl")
 include("query-api")

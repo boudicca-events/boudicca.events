@@ -16,6 +16,7 @@ val quarkusPlatformVersion: String by project
 dependencies {
     api(project(":query-api"))
     api(project(":ingestion-api"))
+    api(project(":api-model"))
     implementation(enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}"))
     implementation("io.quarkus:quarkus-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-stdlib")

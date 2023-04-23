@@ -43,9 +43,9 @@ class CalendarService {
 
     fun createEvent(
         title: String,
-        startDateTime: ZonedDateTime,
+        startDateTime: OffsetDateTime,
         location: String?,
-        endDateTime: ZonedDateTime?,
+        endDateTime: OffsetDateTime?,
         sequence: Int,
     ): VEvent {
         // create the event
@@ -81,7 +81,7 @@ class CalendarService {
             eventApi.list()
         } else {
             val key = "tags"
-            val searchPairs = labels.map { listOf(key, it) }.toSet()
+            val searchPairs = labels.map { Pair(key, it) }.toSet()
 
             eventApi.searchBy(ComplexSearchDto(anyValueForKeyContains = searchPairs))
         }

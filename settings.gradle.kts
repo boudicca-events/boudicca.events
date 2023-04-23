@@ -1,11 +1,12 @@
-include("core")
-include("crawler-api")
+include("api-model")
+include("ingestion-api")
 include("crawler-demo")
 include("crawler-jku")
 include("crawler-technologieplauscherl")
-include("publisher-api")
+include("query-api")
 include("publisher-ical")
 include("publisher-html")
+include("core")
 
 pluginManagement {
     val quarkusPluginVersion: String by settings

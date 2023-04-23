@@ -1,8 +1,8 @@
 package at.cnoize.boudicca
 
-import at.cnoize.boudicca.api.ComplexSearchDto
-import at.cnoize.boudicca.api.Event
-import at.cnoize.boudicca.api.SearchDTO
+import at.cnoize.boudicca.model.ComplexSearchDto
+import at.cnoize.boudicca.model.Event
+import at.cnoize.boudicca.model.SearchDTO
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -48,51 +48,51 @@ class EventService {
         if (!searchDto.anyKeyOrValueContains.isNullOrEmpty())
             filters.add { event ->
                 searchDto.anyKeyOrValueContains!!.any {
-                    event.data?.keys?.any { key -> key.contains(it) } ?: false ||
-                            event.data?.values?.any { value -> value.contains(it) } ?: false
+                    event.data?.keys?.any { key -> key.contains(it.lowercase()) } ?: false ||
+                            event.data?.values?.any { value -> value.contains(it.lowercase()) } ?: false
                 }
             }
         if (!searchDto.allKeyOrValueContains.isNullOrEmpty())
             filters.add { event ->
                 searchDto.allKeyOrValueContains!!.all {
-                    event.data?.keys?.any { key -> key.contains(it) } ?: false ||
-                            event.data?.values?.any { value -> value.contains(it) } ?: false
+                    event.data?.keys?.any { key -> key.contains(it.lowercase()) } ?: false ||
+                            event.data?.values?.any { value -> value.contains(it.lowercase()) } ?: false
                 }
             }
         if (!searchDto.anyKeyOrValueExactMatch.isNullOrEmpty())
             filters.add { event ->
                 searchDto.anyKeyOrValueExactMatch!!.any {
-                    event.data?.containsKey(it) ?: false || event.data?.containsValue(it) ?: false
+                    event.data?.containsKey(it.lowercase()) ?: false || event.data?.containsValue(it.lowercase()) ?: false
                 }
             }
         if (!searchDto.allKeyOrValueExactMatch.isNullOrEmpty())
             filters.add { event ->
                 searchDto.allKeyOrValueExactMatch!!.all {
-                    event.data?.containsKey(it) ?: false || event.data?.containsValue(it) ?: false
+                    event.data?.containsKey(it.lowercase()) ?: false || event.data?.containsValue(it.lowercase()) ?: false
                 }
             }
         if (!searchDto.anyValueForKeyContains.isNullOrEmpty())
             filters.add { event ->
                 searchDto.anyValueForKeyContains!!.any { (key, value) ->
-                    event.data?.get(key)?.contains(value) ?: false
+                    event.data?.get(key)?.lowercase()?.contains(value) ?: false
                 }
             }
         if (!searchDto.allValueForKeyContains.isNullOrEmpty())
             filters.add { event ->
                 searchDto.allValueForKeyContains!!.all { (key, value) ->
-                    event.data?.get(key)?.contains(value) ?: false
+                    event.data?.get(key)?.lowercase()?.contains(value) ?: false
                 }
             }
         if (!searchDto.anyValueForKeyExactMatch.isNullOrEmpty())
             filters.add { event ->
                 searchDto.anyValueForKeyExactMatch!!.any { (key, value) ->
-                    event.data?.get(key)?.equals(value) ?: false
+                    event.data?.get(key)?.lowercase()?.equals(value) ?: false
                 }
             }
         if (!searchDto.allValueForKeyExactMatch.isNullOrEmpty())
             filters.add { event ->
                 searchDto.allValueForKeyExactMatch!!.all { (key, value) ->
-                    event.data?.get(key)?.equals(value) ?: false
+                    event.data?.get(key)?.lowercase()?.equals(value) ?: false
                 }
             }
 
@@ -106,7 +106,7 @@ class EventService {
             Event(
                 name = "Linz hACkT",
                 startDate = ZonedDateTime.of(LocalDateTime.parse("2023-03-24 15:00", formatter), zone),
-                data = mapOf("tags" to listOf("TechCommunity", "hackaton").toString())
+                data = mapOf("tags" to listOf("techcommunity", "hackaton").toString())
             )
         )
         events.add(
@@ -114,7 +114,7 @@ class EventService {
                 name = "Cloudflight Coding Contest",
                 startDate = ZonedDateTime.of(LocalDateTime.parse("2023-03-31 14:00", formatter), zone),
                 data = mapOf("start.location.nam" to "JKU Linz",
-                    "tags" to listOf("education", "TechCommunity").toString()
+                    "tags" to listOf("education", "techcommunity").toString()
                 )
             )
         )

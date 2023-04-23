@@ -7,19 +7,19 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+import javax.enterprise.context.ApplicationScoped
 
+@ApplicationScoped
 class EventService {
 
     private val events = mutableSetOf<Event>()
 
     fun list(): Set<Event> {
-        println(events)
         return events
     }
 
     fun add(event: Event) {
         events.removeIf { eventInDb -> eventInDb.name == event.name }
-        println("added event ${event}")
         events.add(event)
     }
 

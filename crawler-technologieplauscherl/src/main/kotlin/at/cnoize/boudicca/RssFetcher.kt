@@ -1,9 +1,11 @@
-import at.cnoize.boudicca.api.Event
-import at.cnoize.boudicca.api.EventApi
+import at.cnoize.boudicca.model.Event
+import at.cnoize.boudicca.crawlerapi.IngestionApi
 import com.rometools.rome.io.SyndFeedInput
 import com.rometools.rome.io.XmlReader
 import io.quarkus.scheduler.Scheduled
 import org.eclipse.microprofile.config.inject.ConfigProperty
+import org.eclipse.microprofile.rest.client.inject.RegisterRestClient
+import org.eclipse.microprofile.rest.client.inject.RestClient
 import java.net.URL
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -11,6 +13,12 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import javax.enterprise.context.ApplicationScoped
 import javax.inject.Inject
+import javax.ws.rs.Path
+
+@RegisterRestClient(configKey = "ingestion-api")
+@ApplicationScoped
+@Path("/ingest")
+interface RssIngestionApi: IngestionApi
 
 @ApplicationScoped
 class RssFetcher {
@@ -18,6 +26,10 @@ class RssFetcher {
     @Inject
     @ConfigProperty(name = "rss.url")
     private lateinit var rssUrl: String
+
+    @Inject
+    @RestClient
+    lateinit var ingestionApi: RssIngestionApi
 
     @Scheduled(every = "5m")
     fun fetchRss() {
@@ -43,7 +55,7 @@ class RssFetcher {
 
                 val locationTag = "start.location.name"
 
-                Event(nameString, zonedDateTime.toOffsetDateTime(),
+                Event(nameString, zonedDateTime,
                         mapOf(
                                 locationTag to locationString,
                                 "tags" to listOf("TechCommunity", "Afterwork", "Socializing", "Networking").toString(),
@@ -52,10 +64,9 @@ class RssFetcher {
                 )
             }
 
-            val api = EventApi()
             events.forEach {
                 println(it)
-                api.add(it)
+                ingestionApi.add(it)
             }
 
         } catch (e: Exception) {

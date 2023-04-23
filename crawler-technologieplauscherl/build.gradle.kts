@@ -19,10 +19,10 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
     implementation("io.quarkus:quarkus-arc")
     implementation("io.quarkus:quarkus-scheduler")
-    implementation("org.jboss.resteasy:resteasy-jaxrs:3.15.6.Final")
+    implementation("io.quarkus:quarkus-rest-client")
+    implementation("io.quarkus:quarkus-rest-client-jackson")
     implementation("com.rometools:rome:2.1.0")
-    implementation("io.quarkus:quarkus-resteasy-reactive")
-    implementation("at.cnoize.boudicca:api:1.0-SNAPSHOT")
+    implementation(project(":ingestion-api"))
     testImplementation("io.quarkus:quarkus-junit5")
     testImplementation("io.rest-assured:rest-assured")
 }

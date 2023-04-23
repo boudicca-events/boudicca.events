@@ -23,6 +23,7 @@ dependencies {
     implementation("io.quarkus:quarkus-rest-client-jackson")
     implementation("com.rometools:rome:2.1.0")
     implementation(project(":ingestion-api"))
+    implementation("io.quarkus:quarkus-container-image-docker")
     testImplementation("io.quarkus:quarkus-junit5")
     testImplementation("io.rest-assured:rest-assured")
 }

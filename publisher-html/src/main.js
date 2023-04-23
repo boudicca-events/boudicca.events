@@ -1,3 +1,8 @@
+const REPLACE_ME_TOKEN = "##REPLACE"+"ME##";
+
+const DEFAULT_URL = "##REPLACEME##";
+
+const BASE_URL = DEFAULT_URL === REPLACE_ME_TOKEN ? "http://localhost:8081" : DEFAULT_URL;
 
 window.onload = function() {
 	byId("submit").addEventListener("click", search);
@@ -11,9 +16,7 @@ window.onload = function() {
 	
 };
 
-httpGet("http://localhost:8081/events", showEvents);
-
-
+httpGet(BASE_URL+"/events", showEvents);
 
 
 
@@ -23,7 +26,7 @@ function search() {
 	searchDTO.fromDate = readDateFromInput("date-from");
 	searchDTO.toDate = readDateFromInput("date-to");
 	
-	httpPost("http://localhost:8081/event/search", searchDTO, showEvents);
+	httpPost(BASE_URL+"/events/search", searchDTO, showEvents);
 }
 
 function readDateFromInput(id){

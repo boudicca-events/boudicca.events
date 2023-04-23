@@ -24,11 +24,11 @@ dependencies {
     implementation("io.quarkus:quarkus-rest-client")
     implementation("io.quarkus:quarkus-rest-client-jackson")
     implementation("io.quarkus:quarkus-smallrye-openapi")
-    implementation("io.quarkus:quarkus-container-image-docker")
     implementation("it.skrape:skrapeit:1.1.5")
     implementation("it.skrape:skrapeit-http-fetcher:1.1.5")
     implementation("org.mnode.ical4j:ical4j:3.2.10")
     implementation(project(":query-api"))
+    implementation("io.quarkus:quarkus-container-image-docker")
     testImplementation("io.quarkus:quarkus-junit5")
     testImplementation("io.rest-assured:rest-assured")
 }

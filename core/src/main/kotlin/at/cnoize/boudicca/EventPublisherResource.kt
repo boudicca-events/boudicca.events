@@ -9,6 +9,7 @@ import javax.ws.rs.GET
 import javax.ws.rs.POST
 import javax.ws.rs.Path
 
+@Path("/events")
 class EventPublisherResource : PublisherApi {
 
     @Inject

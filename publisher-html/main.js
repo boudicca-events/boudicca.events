@@ -11,7 +11,7 @@ window.onload = function() {
 	
 };
 
-httpGet("http://localhost:8081/event", showEvents);
+httpGet("http://localhost:8081/events", showEvents);
 
 
 

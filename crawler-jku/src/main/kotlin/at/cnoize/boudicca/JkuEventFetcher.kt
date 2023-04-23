@@ -1,6 +1,5 @@
-
-import at.cnoize.boudicca.api.Event
-import at.cnoize.boudicca.api.EventApi
+import at.cnoize.boudicca.crawlerapi.IngestionApi
+import at.cnoize.boudicca.model.Event
 import io.quarkus.scheduler.Scheduled
 import it.skrape.core.htmlDocument
 import it.skrape.fetcher.HttpFetcher
@@ -12,6 +11,8 @@ import it.skrape.selects.html5.div
 import net.fortuna.ical4j.data.CalendarBuilder
 import net.fortuna.ical4j.model.Calendar
 import net.fortuna.ical4j.model.component.VEvent
+import org.eclipse.microprofile.rest.client.inject.RegisterRestClient
+import org.eclipse.microprofile.rest.client.inject.RestClient
 import java.net.URL
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -19,10 +20,20 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import javax.enterprise.context.ApplicationScoped
+import javax.inject.Inject
+import javax.ws.rs.Path
 
+@RegisterRestClient(configKey = "ingestion-api")
+@ApplicationScoped
+@Path("/ingest")
+interface JkuIngestionApi: IngestionApi
 
 @ApplicationScoped
 class JkuEventFetcher {
+
+    @Inject
+    @RestClient
+    lateinit var ingestionApi: JkuIngestionApi
 
     @Scheduled(every = "5m")
     fun scrapeJkuEvents() {
@@ -78,7 +89,6 @@ class JkuEventFetcher {
         val events = mutableListOf<Event>()
 
         icsUrls.forEach {
-
             val fullUrl = "${baseUrl}${it}"
             println(fullUrl)
             val url = URL(fullUrl)
@@ -86,10 +96,9 @@ class JkuEventFetcher {
         }
         println("parsed ${events.size} events")
 
-        val api = EventApi()
         events.forEach {
             println(it)
-            api.add(it)
+            ingestionApi.add(it)
         }
     }
 
@@ -117,7 +126,7 @@ class JkuEventFetcher {
                 }
 
                 Event(eventName,
-                    eventStartDate,
+                    eventStartDate.toZonedDateTime(),
                     mapOf(
                         "start.location.name" to it.location.value,
                         "url.ics" to icsUrl.toString(),

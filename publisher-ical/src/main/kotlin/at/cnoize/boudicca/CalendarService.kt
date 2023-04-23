@@ -1,19 +1,27 @@
 package at.cnoize.boudicca
 
-import at.cnoize.boudicca.api.ComplexSearchDto
-import at.cnoize.boudicca.api.Event
-import at.cnoize.boudicca.api.EventApi
+import at.cnoize.boudicca.model.ComplexSearchDto
+import at.cnoize.boudicca.model.Event
+import at.cnoize.boudicca.publisherapi.PublisherApi
 import net.fortuna.ical4j.model.Calendar
 import net.fortuna.ical4j.model.DateTime
-import net.fortuna.ical4j.model.TimeZoneRegistryFactory
 import net.fortuna.ical4j.model.component.VEvent
 import net.fortuna.ical4j.model.property.*
+import org.eclipse.microprofile.rest.client.inject.RegisterRestClient
+import org.eclipse.microprofile.rest.client.inject.RestClient
 import java.io.File
-import java.time.OffsetDateTime
-import java.time.ZoneId
 import java.time.ZonedDateTime
+import javax.enterprise.context.ApplicationScoped
+import javax.inject.Inject
+import javax.ws.rs.Path
 
-class CalendarService {
+@RegisterRestClient(configKey = "ingestion-api")
+@ApplicationScoped
+@Path("/events")
+interface CalendarApi : PublisherApi
+
+@ApplicationScoped
+class CalendarService @Inject constructor(@RestClient private val calendarApi: CalendarApi) {
 
     fun createCalendar(events: Set<Event>): File {
         // create the calendar
@@ -25,11 +33,11 @@ class CalendarService {
         events.forEach { event ->
             val location = event.data?.get("start.location.name")
             val calendarEvent = createEvent(
-                event.name,
-                event.startDate,
-                location,
-                null,
-                0
+                    event.name,
+                    event.startDate,
+                    location,
+                    null,
+                    0
             )
 
             calendar.components.add(calendarEvent)
@@ -42,25 +50,25 @@ class CalendarService {
     }
 
     fun createEvent(
-        title: String,
-        startDateTime: ZonedDateTime,
-        location: String?,
-        endDateTime: ZonedDateTime?,
-        sequence: Int,
+            title: String,
+            startDateTime: ZonedDateTime,
+            location: String?,
+            endDateTime: ZonedDateTime?,
+            sequence: Int,
     ): VEvent {
         // create the event
         val event = if (endDateTime == null) {
             VEvent(
-                DateTime(startDateTime.toInstant().toEpochMilli()),
-                title
+                    DateTime(startDateTime.toInstant().toEpochMilli()),
+                    title
             ).also {
                 it.properties.add(Uid("event-${startDateTime}"))
             }
         } else {
             VEvent(
-                DateTime(startDateTime.toInstant().toEpochMilli()),
-                DateTime(endDateTime.toInstant().toEpochMilli()),
-                title
+                    DateTime(startDateTime.toInstant().toEpochMilli()),
+                    DateTime(endDateTime.toInstant().toEpochMilli()),
+                    title
             ).also {
                 it.properties.add(Uid("event-${startDateTime}-${endDateTime}"))
             }
@@ -76,14 +84,13 @@ class CalendarService {
     }
 
     fun getEvents(labels: List<String>?): File {
-        val eventApi = EventApi()
         val events = if (labels == null) {
-            eventApi.list()
+            calendarApi.list()
         } else {
             val key = "tags"
             val searchPairs = labels.map { listOf(key, it) }.toSet()
 
-            eventApi.searchBy(ComplexSearchDto(anyValueForKeyContains = searchPairs))
+            calendarApi.searchBy(ComplexSearchDto(anyValueForKeyContains = searchPairs))
         }
 
         return createCalendar(events)

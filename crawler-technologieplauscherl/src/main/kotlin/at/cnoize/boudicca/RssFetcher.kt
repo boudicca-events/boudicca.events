@@ -31,7 +31,7 @@ class RssFetcher {
     @RestClient
     lateinit var ingestionApi: RssIngestionApi
 
-    @Scheduled(every = "5m")
+    @Scheduled(every = "24h")
     fun fetchRss() {
         try {
             val url = URL(rssUrl)

@@ -35,7 +35,7 @@ class JkuEventFetcher {
     @RestClient
     lateinit var ingestionApi: JkuIngestionApi
 
-    @Scheduled(every = "5m")
+    @Scheduled(every = "24h")
     fun scrapeJkuEvents() {
         val eventUrls = mutableSetOf<String>()
         val icsUrls = mutableSetOf<String>()

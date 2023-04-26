@@ -9,10 +9,10 @@ import org.springframework.web.servlet.ModelAndView
 @RequestMapping("/")
 class StartPageController {
 
-    @GetMapping("*")
+    @GetMapping("/")
     fun getIndex(): ModelAndView {
         val data: MutableMap<String, Any> = HashMap()
-        data["title"] = "My Page Title"
+        data["title"] = "Boudicca"
 
         return ModelAndView("index", data)
     }

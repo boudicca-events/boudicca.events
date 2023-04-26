@@ -2,21 +2,20 @@ package events.boudicca.publisherhtml.controller
 
 import com.github.jknack.handlebars.Handlebars
 import com.github.jknack.handlebars.Template
-import com.github.jknack.handlebars.Context
 import com.github.jknack.handlebars.io.ClassPathTemplateLoader
 import org.springframework.stereotype.Controller
-import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.servlet.ModelAndView
 
 @Controller
 @RequestMapping("/")
 class StartPageController {
 
-    private val handlebars = Handlebars(ClassPathTemplateLoader("/templates"))
+    private val handlebars = Handlebars(ClassPathTemplateLoader("/templates/"))
 
     @GetMapping("*")
-    fun getIndex(model: Model): Model {
+    fun getIndex(): ModelAndView {
         // Define the data to be used in the template
         val data: MutableMap<String, Any> = HashMap()
         data["title"] = "My Page Title"
@@ -25,11 +24,11 @@ class StartPageController {
         val template: Template = handlebars.compile("index")
         val html: String = template.apply(data)
 
-        // Add the HTML to the model
-        model.addAttribute("html", html)
+        // Create a ModelAndView object with the view name and the data to be displayed
+        val mav = ModelAndView("index")
+        mav.addObject("html", html)
 
-        // Return the name of the template to be rendered
-        return model
+        return mav
     }
 }
 

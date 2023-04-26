@@ -6,7 +6,6 @@ import it.skrape.fetcher.HttpFetcher
 import it.skrape.fetcher.response
 import it.skrape.fetcher.skrape
 import it.skrape.selects.html5.div
-import org.eclipse.microprofile.rest.client.inject.RegisterRestClient
 import org.eclipse.microprofile.rest.client.inject.RestClient
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -14,19 +13,13 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import javax.enterprise.context.ApplicationScoped
 import javax.inject.Inject
-import javax.ws.rs.Path
-
-@RegisterRestClient(configKey = "ingestion-api")
-@ApplicationScoped
-@Path("/ingest")
-interface PosthofIngestionApi : IngestionApi
 
 @ApplicationScoped
 class PosthofFetcher {
 
     @Inject
     @RestClient
-    lateinit var ingestionApi: PosthofIngestionApi
+    lateinit var ingestionApi: IngestionApi
 
     @Scheduled(every = "24h")
     fun fetchPosthof() {

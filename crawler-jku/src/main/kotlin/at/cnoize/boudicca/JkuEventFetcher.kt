@@ -11,7 +11,6 @@ import it.skrape.selects.html5.div
 import net.fortuna.ical4j.data.CalendarBuilder
 import net.fortuna.ical4j.model.Calendar
 import net.fortuna.ical4j.model.component.VEvent
-import org.eclipse.microprofile.rest.client.inject.RegisterRestClient
 import org.eclipse.microprofile.rest.client.inject.RestClient
 import java.net.URL
 import java.time.LocalDate
@@ -21,19 +20,13 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import javax.enterprise.context.ApplicationScoped
 import javax.inject.Inject
-import javax.ws.rs.Path
-
-@RegisterRestClient(configKey = "ingestion-api")
-@ApplicationScoped
-@Path("/ingest")
-interface JkuIngestionApi: IngestionApi
 
 @ApplicationScoped
 class JkuEventFetcher {
 
     @Inject
     @RestClient
-    lateinit var ingestionApi: JkuIngestionApi
+    lateinit var ingestionApi: IngestionApi
 
     @Scheduled(every = "24h")
     fun scrapeJkuEvents() {

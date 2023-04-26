@@ -4,7 +4,6 @@ import com.rometools.rome.io.SyndFeedInput
 import com.rometools.rome.io.XmlReader
 import io.quarkus.scheduler.Scheduled
 import org.eclipse.microprofile.config.inject.ConfigProperty
-import org.eclipse.microprofile.rest.client.inject.RegisterRestClient
 import org.eclipse.microprofile.rest.client.inject.RestClient
 import java.net.URL
 import java.time.LocalDateTime
@@ -13,12 +12,6 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import javax.enterprise.context.ApplicationScoped
 import javax.inject.Inject
-import javax.ws.rs.Path
-
-@RegisterRestClient(configKey = "ingestion-api")
-@ApplicationScoped
-@Path("/ingest")
-interface RssIngestionApi: IngestionApi
 
 @ApplicationScoped
 class RssFetcher {
@@ -29,7 +22,7 @@ class RssFetcher {
 
     @Inject
     @RestClient
-    lateinit var ingestionApi: RssIngestionApi
+    lateinit var ingestionApi: IngestionApi
 
     @Scheduled(every = "24h")
     fun fetchRss() {

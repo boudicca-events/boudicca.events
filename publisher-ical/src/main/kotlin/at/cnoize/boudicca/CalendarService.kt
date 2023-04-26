@@ -7,21 +7,14 @@ import net.fortuna.ical4j.model.Calendar
 import net.fortuna.ical4j.model.DateTime
 import net.fortuna.ical4j.model.component.VEvent
 import net.fortuna.ical4j.model.property.*
-import org.eclipse.microprofile.rest.client.inject.RegisterRestClient
 import org.eclipse.microprofile.rest.client.inject.RestClient
 import java.io.File
 import java.time.ZonedDateTime
 import javax.enterprise.context.ApplicationScoped
 import javax.inject.Inject
-import javax.ws.rs.Path
-
-@RegisterRestClient(configKey = "ingestion-api")
-@ApplicationScoped
-@Path("/events")
-interface CalendarApi : PublisherApi
 
 @ApplicationScoped
-class CalendarService @Inject constructor(@RestClient private val calendarApi: CalendarApi) {
+class CalendarService @Inject constructor(@RestClient private val publisherApi: PublisherApi) {
 
     fun createCalendar(events: Set<Event>): File {
         // create the calendar
@@ -85,12 +78,12 @@ class CalendarService @Inject constructor(@RestClient private val calendarApi: C
 
     fun getEvents(labels: List<String>?): File {
         val events = if (labels == null) {
-            calendarApi.list()
+            publisherApi.list()
         } else {
             val key = "tags"
             val searchPairs = labels.map { listOf(key, it) }.toSet()
 
-            calendarApi.searchBy(ComplexSearchDto(anyValueForKeyContains = searchPairs))
+            publisherApi.searchBy(ComplexSearchDto(anyValueForKeyContains = searchPairs))
         }
 
         return createCalendar(events)

@@ -30,7 +30,7 @@ dependencies {
     testImplementation("io.rest-assured:rest-assured")
 }
 
-group = "at.cnoize.boudicca"
+group = "events.boudicca"
 version = "1.0-SNAPSHOT"
 
 java {

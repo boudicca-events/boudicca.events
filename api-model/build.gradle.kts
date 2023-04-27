@@ -15,7 +15,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
 }
 
-group = "at.cnoize.boudicca"
+group = "events.boudicca"
 version = "1.0-SNAPSHOT"
 
 java {

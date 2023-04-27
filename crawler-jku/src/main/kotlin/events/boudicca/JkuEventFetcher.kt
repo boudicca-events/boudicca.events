@@ -1,5 +1,6 @@
-import events.boudicca.crawlerapi.IngestionApi
-import events.boudicca.model.Event
+import events.boudicca.openapi.ApiClient
+import events.boudicca.openapi.api.EventIngestionResourceApi
+import events.boudicca.openapi.model.Event
 import io.quarkus.scheduler.Scheduled
 import it.skrape.core.htmlDocument
 import it.skrape.fetcher.HttpFetcher
@@ -24,10 +25,6 @@ import javax.inject.Inject
 @ApplicationScoped
 class JkuEventFetcher {
 
-    @Inject
-    @RestClient
-    lateinit var ingestionApi: IngestionApi
-
     @Scheduled(every = "24h")
     fun scrapeJkuEvents() {
         val eventUrls = mutableSetOf<String>()
@@ -40,8 +37,8 @@ class JkuEventFetcher {
             response {
                 htmlDocument {
                     div {
-                        withClass="news_list_item"
-                        findAll{
+                        withClass = "news_list_item"
+                        findAll {
                             a {
                                 findAll {
                                     forEach {
@@ -89,9 +86,12 @@ class JkuEventFetcher {
         }
         println("parsed ${events.size} events")
 
+        val apiClient = ApiClient()
+        apiClient.updateBaseUri(System.getenv().getOrDefault("BASE_URL", "http://localhost:8081"))
+        val eventIngestionResourceApi = EventIngestionResourceApi(apiClient)
         events.forEach {
             println(it)
-            ingestionApi.add(it)
+            eventIngestionResourceApi.ingestAddPost(it)
         }
     }
 
@@ -110,7 +110,7 @@ class JkuEventFetcher {
                 val eventName = title
                 val eventStartDate = if (it.isDaylongEvent()) {
                     val dateTime = LocalDate.parse(it.startDate.value, daylongEventFormatter)
-                    val zonedDateTime = ZonedDateTime.of(dateTime.atTime(0,0), ZoneId.of("UTC"))
+                    val zonedDateTime = ZonedDateTime.of(dateTime.atTime(0, 0), ZoneId.of("UTC"))
                     zonedDateTime.toOffsetDateTime()
                 } else {
                     val dateTime = LocalDateTime.parse(it.startDate.value, formatter)
@@ -118,14 +118,16 @@ class JkuEventFetcher {
                     zonedDateTime.toOffsetDateTime()
                 }
 
-                Event(eventName,
-                    eventStartDate.toZonedDateTime(),
-                    mapOf(
-                        "start.location.name" to it.location.value,
-                        "url.ics" to icsUrl.toString(),
-                        "tags" to listOf("JKU", "Universität", "Studieren").toString(),
-                        "jku.uid" to it.uid.value
-                    ))
+                Event()
+                    .name(eventName)
+                    .startDate(eventStartDate)
+                    .data(
+                        mapOf(
+                            "start.location.name" to it.location.value,
+                            "url.ics" to icsUrl.toString(),
+                            "tags" to listOf("JKU", "Universität", "Studieren").toString(),
+                            "jku.uid" to it.uid.value
+                        ))
             }
         }
     }

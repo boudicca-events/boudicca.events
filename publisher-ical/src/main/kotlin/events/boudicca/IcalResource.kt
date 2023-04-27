@@ -1,6 +1,4 @@
 import events.boudicca.CalendarService
-import events.boudicca.model.ComplexSearchDto
-import events.boudicca.model.SearchDTO
 import org.jboss.resteasy.annotations.Query
 import javax.inject.Inject
 import javax.ws.rs.*
@@ -21,17 +19,5 @@ class IcalResource @Inject constructor(private val calendarService: CalendarServ
         response.header("Content-Disposition", "attachment;filename=$calendarFile")
         return response.build()
 
-    }
-
-    @Path("search")
-    @POST
-    fun search(searchDTO: SearchDTO) {
-        //return calendarService.search(searchDTO)
-    }
-
-    @Path("searchBy")
-    @POST
-    fun searchBy(complexSearchDto: ComplexSearchDto) {
-        //return calendarService.searchBy(complexSearchDto)
     }
 }

@@ -14,9 +14,6 @@ val quarkusPlatformArtifactId: String by project
 val quarkusPlatformVersion: String by project
 
 dependencies {
-    api(project(":publisher-api"))
-    api(project(":ingestion-api"))
-    api(project(":api-model"))
     implementation(enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}"))
     implementation("io.quarkus:quarkus-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
@@ -25,6 +22,7 @@ dependencies {
     implementation("io.quarkus:quarkus-resteasy-reactive-jackson")
     implementation("io.quarkus:quarkus-smallrye-openapi")
     implementation("io.quarkus:quarkus-container-image-docker")
+    implementation("io.quarkus:quarkus-smallrye-openapi")
     testImplementation("io.quarkus:quarkus-junit5")
     testImplementation("io.rest-assured:rest-assured")
 }
@@ -50,4 +48,23 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions.jvmTarget = JavaVersion.VERSION_17.toString()
     kotlinOptions.javaParameters = true
 }
+
+
+val openapi by configurations.creating {
+    isCanBeConsumed = true
+    isCanBeResolved = false
+}
+
+val openapiFile = file("$buildDir/openapi/openapi.yaml")
+val openapiGenerateTask = tasks.named("quarkusBuild")
+openapiGenerateTask.configure {
+    outputs.file(openapiFile)
+}
+
+artifacts {
+    add("openapi",openapiFile ) {
+        builtBy(openapiGenerateTask)
+    }
+}
+
 

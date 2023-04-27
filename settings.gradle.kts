@@ -1,4 +1,4 @@
-include("api-model")
+include("openapi")
 include("ingestion-api")
 include("crawler-jku")
 include("crawler-technologieplauscherl")

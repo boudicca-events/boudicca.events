@@ -1,20 +1,19 @@
 package events.boudicca
 
-import events.boudicca.model.ComplexSearchDto
-import events.boudicca.model.Event
-import events.boudicca.publisherapi.PublisherApi
+import events.boudicca.openapi.ApiClient
+import events.boudicca.openapi.api.EventPublisherResourceApi
+import events.boudicca.openapi.model.ComplexSearchDto
+import events.boudicca.openapi.model.Event
 import net.fortuna.ical4j.model.Calendar
 import net.fortuna.ical4j.model.DateTime
 import net.fortuna.ical4j.model.component.VEvent
 import net.fortuna.ical4j.model.property.*
-import org.eclipse.microprofile.rest.client.inject.RestClient
 import java.io.File
-import java.time.ZonedDateTime
+import java.time.OffsetDateTime
 import javax.enterprise.context.ApplicationScoped
-import javax.inject.Inject
 
 @ApplicationScoped
-class CalendarService @Inject constructor(@RestClient private val publisherApi: PublisherApi) {
+class CalendarService {
 
     fun createCalendar(events: Set<Event>): File {
         // create the calendar
@@ -44,9 +43,9 @@ class CalendarService @Inject constructor(@RestClient private val publisherApi: 
 
     fun createEvent(
             title: String,
-            startDateTime: ZonedDateTime,
+            startDateTime: OffsetDateTime,
             location: String?,
-            endDateTime: ZonedDateTime?,
+            endDateTime: OffsetDateTime?,
             sequence: Int,
     ): VEvent {
         // create the event
@@ -77,13 +76,18 @@ class CalendarService @Inject constructor(@RestClient private val publisherApi: 
     }
 
     fun getEvents(labels: List<String>?): File {
+
+        val apiClient = ApiClient()
+        apiClient.updateBaseUri(System.getenv().getOrDefault("BASE_URL", "http://localhost:8081"))
+        val eventPublisherResourceApi = EventPublisherResourceApi(apiClient)
+
         val events = if (labels == null) {
-            publisherApi.list()
+            eventPublisherResourceApi.eventsGet()
         } else {
             val key = "tags"
             val searchPairs = labels.map { listOf(key, it) }.toSet()
 
-            publisherApi.searchBy(ComplexSearchDto(anyValueForKeyContains = searchPairs))
+            eventPublisherResourceApi.eventsSearchByPost(ComplexSearchDto().anyValueForKeyContains(searchPairs))
         }
 
         return createCalendar(events)

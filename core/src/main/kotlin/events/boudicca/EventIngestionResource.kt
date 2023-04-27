@@ -1,17 +1,21 @@
 package events.boudicca
 
-import events.boudicca.crawlerapi.IngestionApi
 import events.boudicca.model.Event
+import javax.enterprise.context.ApplicationScoped
 import javax.inject.Inject
+import javax.ws.rs.POST
 import javax.ws.rs.Path
 
+@ApplicationScoped
 @Path("/ingest")
-class EventIngestionResource : IngestionApi {
+class EventIngestionResource {
 
     @Inject
     private lateinit var eventService: EventService
 
-    override fun add(event: Event) {
+    @POST
+    @Path("/add")
+    fun add(event: Event) {
         eventService.add(event)
     }
 

@@ -1,10 +1,10 @@
-import events.boudicca.model.Event
-import events.boudicca.crawlerapi.IngestionApi
 import com.rometools.rome.io.SyndFeedInput
 import com.rometools.rome.io.XmlReader
+import events.boudicca.openapi.ApiClient
+import events.boudicca.openapi.api.EventIngestionResourceApi
+import events.boudicca.openapi.model.Event
 import io.quarkus.scheduler.Scheduled
 import org.eclipse.microprofile.config.inject.ConfigProperty
-import org.eclipse.microprofile.rest.client.inject.RestClient
 import java.net.URL
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -19,10 +19,6 @@ class RssFetcher {
     @Inject
     @ConfigProperty(name = "rss.url")
     private lateinit var rssUrl: String
-
-    @Inject
-    @RestClient
-    lateinit var ingestionApi: IngestionApi
 
     @Scheduled(every = "24h")
     fun fetchRss() {
@@ -48,18 +44,25 @@ class RssFetcher {
 
                 val locationTag = "start.location.name"
 
-                Event(nameString, zonedDateTime,
+                Event()
+                    .name(nameString)
+                    .startDate(zonedDateTime.toOffsetDateTime())
+                    .data(
                         mapOf(
-                                locationTag to locationString,
-                                "tags" to listOf("TechCommunity", "Afterwork", "Socializing", "Networking").toString(),
-                                "url" to entry.link
+                            locationTag to locationString,
+                            "tags" to listOf("TechCommunity", "Afterwork", "Socializing", "Networking").toString(),
+                            "url" to entry.link
                         )
-                )
+                    )
             }
 
+
+            val apiClient = ApiClient()
+            apiClient.updateBaseUri(System.getenv().getOrDefault("BASE_URL", "http://localhost:8081"))
+            val eventIngestionResourceApi = EventIngestionResourceApi(apiClient)
             events.forEach {
                 println(it)
-                ingestionApi.add(it)
+                eventIngestionResourceApi.ingestAddPost(it)
             }
 
         } catch (e: Exception) {

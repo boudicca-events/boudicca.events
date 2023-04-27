@@ -1,12 +1,22 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>{{title}}</title>
-    <link rel="stylesheet" href="css/main.css" />
-    <script src="js/main.js"></script>
-</head>
-<body>
-    <div>Boudicca</div>
-    <img src="img/updatesocial_logo.svg" />
-</body>
+    <head>
+        <title>{{title}}</title>
+        <script src="js/main.js"></script>
+        
+        <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+        <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+        {{> css/fonts}}
+        {{> css/styles}}
+        {{> css/layout}}
+    </head>
+
+    <body>
+        <div class="content">
+            {{> layout/header}}
+            {{> layout/main}}
+            {{> layout/footer}}
+        </div>
+    </body>
 </html>

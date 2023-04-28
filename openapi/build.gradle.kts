@@ -35,6 +35,7 @@ dependencies {
 }
 
 tasks.withType<org.openapitools.generator.gradle.plugin.tasks.GenerateTask> {
+    inputs.files(openapi)
     inputSpec.set(openapi.files.first().path)
     generatorName.set("java")
     library.set("native")
@@ -42,7 +43,6 @@ tasks.withType<org.openapitools.generator.gradle.plugin.tasks.GenerateTask> {
     invokerPackage.set("events.boudicca.openapi")
     apiPackage.set("events.boudicca.openapi.api")
     modelPackage.set("events.boudicca.openapi.model")
-
 }
 
 sourceSets {

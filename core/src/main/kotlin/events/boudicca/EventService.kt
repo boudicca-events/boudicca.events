@@ -115,7 +115,7 @@ class EventService {
             Event(
                 name = "Cloudflight Coding Contest",
                 startDate = ZonedDateTime.of(LocalDateTime.parse("2023-03-31 14:00", formatter), zone),
-                data = mapOf("start.location.nam" to "JKU Linz",
+                data = mapOf("start.location.name" to "JKU Linz",
                     "tags" to listOf("education", "techcommunity").toString()
                 )
             )

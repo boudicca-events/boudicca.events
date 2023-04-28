@@ -45,27 +45,7 @@
 </style>
 
 <div class="events-grid">
-    {{> events/event}}
-    {{> events/event}}
-    {{> events/event}}
-    {{> events/event}}
-    {{> events/event}}
-    {{> events/event}}
-    {{> events/event}}
-    {{> events/event}}  
-    {{> events/event}}
-    {{> events/event}}
-    {{> events/event}}
-    {{> events/event}}
-    {{> events/event}}
-    {{> events/event}}
-    {{> events/event}}
-    {{> events/event}}
-    {{> events/event}}
-    {{> events/event}}
-    {{> events/event}}
-    {{> events/event}}
-    {{> events/event}}
-    {{> events/event}}
-    {{> events/event}}
+    {{#each events as |event|}}
+        {{> events/event event}}
+    {{/each}}
 </div>

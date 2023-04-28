@@ -15,9 +15,8 @@ class StartPageController @Autowired constructor(private val eventService: Event
     fun getIndex(): ModelAndView {
         val data: MutableMap<String, Any> = HashMap()
         data["title"] = "Boudicca"
-
+        data["events"] = eventService.getAllEvents()
         println(eventService.getAllEvents()) //TODO do something with me
-
         return ModelAndView("index", data)
     }
 }

@@ -1,0 +1,65 @@
+<style>
+    .events-grid {
+        gap: 18px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%),1fr));
+    }
+
+    .event {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .event-title {
+        font-size: 1.2em;
+        margin-bottom: 6px;
+    }
+
+    .event-image {
+        height: 250px;
+        background-color: #CDDC39;
+        object-fit: scale-down;
+    }
+
+    .event-description {
+       padding: 4px 8px;
+       font-size: 0.85em;
+    }
+    
+    .event-details {
+        display: grid;
+        grid-template-columns: max-content 1fr;
+        align-items: center;
+        gap: 6px;
+
+        :first-child {
+            font-size: 1.25em;
+        }
+    }
+</style>
+
+<div class="events-grid">
+    {{> events/event}}
+    {{> events/event}}
+    {{> events/event}}
+    {{> events/event}}
+    {{> events/event}}
+    {{> events/event}}
+    {{> events/event}}
+    {{> events/event}}  
+    {{> events/event}}
+    {{> events/event}}
+    {{> events/event}}
+    {{> events/event}}
+    {{> events/event}}
+    {{> events/event}}
+    {{> events/event}}
+    {{> events/event}}
+    {{> events/event}}
+    {{> events/event}}
+    {{> events/event}}
+    {{> events/event}}
+    {{> events/event}}
+    {{> events/event}}
+    {{> events/event}}
+</div>

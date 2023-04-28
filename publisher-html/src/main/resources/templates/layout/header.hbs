@@ -6,6 +6,14 @@
         margin-bottom: 12px;
     }
 
+    @media only screen and (max-width: 700px) {
+        .header {
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 24px;
+        }
+    }
+
     .boudicca-icon {
         font-size: 56px;
     }
@@ -19,6 +27,29 @@
     .header-right {
         display: flex;
         align-items: center;
+        gap: 14px;     
+    }
+
+    .search-input {
+        border-radius: 4px;
+        padding: 4px;
+        min-width: 250px;
+        appearance: none;
+        height: 26px;
+    }
+
+    .search-input:focus-visible {
+        outline: 2px solid;
+        outline-offset: 1px;
+    }
+
+    .header-search-filter {
+        display: flex;
+        gap: 8px;
+
+         > * {
+            font-size: 2em;
+        }
     }
 </style>
 <header class="header">
@@ -28,8 +59,10 @@
     </div>
 
     <div class="header-right">
-        <input type="text" />
-        <input type="date" />
-        <input type="date" />
+        <input type="text" class="search-input" />
+        <div class="header-search-filter">
+            <ion-icon name="settings"></ion-icon>
+            <ion-icon name="calendar"></ion-icon>
+        </div>
     </div>
 </header>

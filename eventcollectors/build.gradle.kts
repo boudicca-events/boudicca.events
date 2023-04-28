@@ -29,5 +29,19 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 }
 
 task<Exec>("imageBuild") {
-    commandLine("docker", "build", "-t", "boudicca-eventcollectors", ".-f", "src/main/docker/Dockerfile", ".")
+    dependsOn(tasks.withType<Jar>())
+    commandLine("docker", "build", "-t", "boudicca-eventcollectors", "-f", "src/main/docker/Dockerfile", ".")
+}
+
+tasks.withType<Jar> {
+    archiveFileName.set("boudicca-eventcollectors.jar")
+
+    manifest {
+        attributes["Main-Class"] = "events.boudicca.eventcollector.BoudiccaEventCollectorsKt"
+    }
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    inputs.files(configurations.runtimeClasspath)
+    from(configurations.runtimeClasspath.get().files.map { if (it.isDirectory()) it else zipTree(it) })
 }

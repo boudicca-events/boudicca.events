@@ -1,3 +1,5 @@
+package events.boudicca.eventcollector
+
 import com.rometools.rome.io.SyndFeedInput
 import com.rometools.rome.io.XmlReader
 import events.boudicca.api.eventcollector.Event

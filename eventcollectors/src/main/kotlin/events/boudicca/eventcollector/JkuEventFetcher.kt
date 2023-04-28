@@ -1,3 +1,5 @@
+package events.boudicca.eventcollector
+
 import events.boudicca.api.eventcollector.Event
 import events.boudicca.api.eventcollector.EventCollector
 import it.skrape.core.htmlDocument

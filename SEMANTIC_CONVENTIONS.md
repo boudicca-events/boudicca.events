@@ -1,0 +1,51 @@
+# Semantic Conventions
+
+This document explains which properties Boudicca understands, what their meaning is, and what format the values should be
+in. Events can have other properties which will be searchable as text, but will not get special treatment from
+Boudicca.
+
+### General encodings
+
+For Boudicca each event is a collection of key-value pairs, for some of those we have defined a special meaning.
+Normally when you talk with Boudicca you do that via our REST-API, where each event is encoded into a JSON-object. The
+whole JSON-document should be encoded in UTF-8.
+
+### Data types
+
+We use certain data types for the properties we expect.
+
+* `text`: just a simple text/string
+* `date`: [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) Timestamp as text, for example: `2009-06-30T18:30:00+02:00`
+* `url`: A URL as text
+* `coordinates`: ???? TBD
+* `list<?>`: A list of elements, the `?` describes the type of the elements in the list
+
+### General Properties
+
+**Events have only two required properties: `name` and `startDate`**
+
+| Key         | Meaning                               | Format     |
+|-------------|---------------------------------------|------------|
+| name        | The name of the event                 | text       |
+| startDate   | Time of start for the event           | date       |
+| endDate     | Time of end for the event             | date       |
+| url         | A link to the website for this event  | url        |
+| description | Text describing this event            | text       |
+| tags        | A list of tags. TODO how to describe? | list<text> |
+
+### Location Properties
+
+| Key                  | Meaning                                       | Format      |
+|----------------------|-----------------------------------------------|-------------|
+| location.name        | The name of the location the event is held in | text        |
+| location.url         | A link to the website of the location         | url         |
+| location.coordinates | Map-coordinates for the location              | coordinates |
+
+### Accessibility Properties
+
+???? TBD
+
+### Internal Properties
+
+The property name prefix `internal.*` is reserved by Boudicca for internal properties needed and will be silently
+discarded if sent by an EventCollector.

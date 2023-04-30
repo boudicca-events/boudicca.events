@@ -14,10 +14,6 @@
         }
     }
 
-    .boudicca-icon {
-        font-size: 56px;
-    }
-
     .header-left {
         display: flex;
         align-items: center;
@@ -45,24 +41,34 @@
 
     .header-search-filter {
         display: flex;
-        gap: 8px;
 
-         > * {
-            font-size: 2em;
+        > button {
+            display: flex;
         }
     }
 </style>
 <header class="header">
     <div class="header-left">
-        <ion-icon class="boudicca-icon" name="color-filter-outline"></ion-icon>
+        <svg aria-hidden="true" height="56px" width="56px" viewBox="0 0 512 512" >
+            <use xlink:href="#colorfilter"></use>  
+        </svg>
         <h1>BOUDICCA</h1>
     </div>
 
     <div class="header-right">
         <input type="text" class="search-input" />
         <div class="header-search-filter">
-            <ion-icon name="settings"></ion-icon>
-            <ion-icon name="calendar"></ion-icon>
+            <button aria-label="Datumssuche">
+                <svg height="38px" width="38px" viewBox="0 0 512 512" >
+                    <use xlink:href="#settings"></use>  
+                </svg>
+            </button>
+
+             <button aria-label="Datumssuche">
+                <svg height="38px" width="38px" viewBox="0 0 512 512" >
+                    <use xlink:href="#calendar"></use>  
+                </svg>
+            </button>
         </div>
     </div>
 </header>

@@ -15,8 +15,7 @@ class TechnologiePlauscherlFetcher : EventCollector {
         return "technologieplauscherl"
     }
 
-
-    override fun collectEvents(): List<events.boudicca.api.eventcollector.Event> {
+    override fun collectEvents(): List<Event> {
         val url = URL("https://technologieplauscherl.at/feed")
         val input = SyndFeedInput()
         val feed = input.build(XmlReader(url))
@@ -32,21 +31,18 @@ class TechnologiePlauscherlFetcher : EventCollector {
             val dateTime = LocalDateTime.parse(dateString, formatter)
             val zonedDateTime = ZonedDateTime.of(dateTime, ZoneId.of("UTC"))
 
-            val locationTag = "start.location.name"
-
+            //TODO filter for only events in the future?
             Event(
                 nameString, zonedDateTime.toOffsetDateTime(),
                 mapOf(
-                    locationTag to locationString,
+                    "location.name" to locationString,
                     "tags" to listOf("TechCommunity", "Afterwork", "Socializing", "Networking").toString(),
-                    "url" to entry.link
+                    "url" to entry.link,
+                    "type" to "techmeetup", //TODO not sure if this works well
+                    "description" to entry.description.value,
+                    "registration" to "free"
                 )
             )
-        }
-
-
-        events.forEach {
-            println(it)
         }
 
         return events

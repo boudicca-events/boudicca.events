@@ -42,7 +42,7 @@ class EventCollectorScheduler {
                 }
             }
 
-            println("all event collectors ran, sleeping for ${interval.toMillis()}ms")
+            println("all event collectors ran, sleeping for $interval")
             Thread.sleep(interval.toMillis())
         }
     }
@@ -52,6 +52,7 @@ class EventCollectorScheduler {
         for (event in events) {
             ingestionApi.ingestAddPost(mapToApiEvent(event))
         }
+        println("collected ${events.size} events for event collector ${eventCollector.getName()}")
     }
 
     private fun mapToApiEvent(event: Event): events.boudicca.openapi.model.Event {

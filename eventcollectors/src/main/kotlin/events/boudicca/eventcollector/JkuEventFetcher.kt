@@ -24,7 +24,7 @@ class JkuEventFetcher : EventCollector {
         return "jku"
     }
 
-    override fun collectEvents(): List<events.boudicca.api.eventcollector.Event> {
+    override fun collectEvents(): List<Event> {
         val eventUrls = mutableSetOf<String>()
         val icsUrls = mutableSetOf<String>()
         val baseUrl = "https://www.jku.at"
@@ -46,9 +46,7 @@ class JkuEventFetcher : EventCollector {
                             }
                         }
                     }
-                    // parsed Doc is available here
                 }
-
             }
         }
 
@@ -78,14 +76,8 @@ class JkuEventFetcher : EventCollector {
 
         icsUrls.forEach {
             val fullUrl = "${baseUrl}${it}"
-            println(fullUrl)
             val url = URL(fullUrl)
             events.addAll(parseEventFromIcs(url))
-        }
-        println("parsed ${events.size} events")
-
-        events.forEach {
-            println(it)
         }
 
         return events
@@ -117,7 +109,7 @@ class JkuEventFetcher : EventCollector {
                 Event(
                     eventName, eventStartDate,
                     mapOf(
-                        "start.location.name" to it.location.value,
+                        "location.name" to it.location.value,
                         "url.ics" to icsUrl.toString(),
                         "tags" to listOf("JKU", "Universität", "Studieren").toString(),
                         "jku.uid" to it.uid.value
@@ -131,9 +123,4 @@ class JkuEventFetcher : EventCollector {
         return this.startDate.toString().indexOf("VALUE=DATE") != -1
     }
 
-    fun List<DocElement>.printAll() {
-        this.forEach {
-            println(it.text)
-        }
-    }
 }

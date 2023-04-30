@@ -1,6 +1,7 @@
 # Semantic Conventions
 
-This document explains which properties Boudicca understands, what their meaning is, and what format the values should be
+This document explains which properties Boudicca understands, what their meaning is, and what format the values should
+be
 in. Events can have other properties which will be searchable as text, but will not get special treatment from
 Boudicca.
 
@@ -19,19 +20,28 @@ We use certain data types for the properties we expect.
 * `url`: A URL as text
 * `coordinates`: ???? TBD
 * `list<?>`: A list of elements, the `?` describes the type of the elements in the list
+* `enum<?>`: Has to be one of the specified distinct values
 
 ### General Properties
 
 **Events have only two required properties: `name` and `startDate`**
 
-| Key         | Meaning                               | Format     |
-|-------------|---------------------------------------|------------|
-| name        | The name of the event                 | text       |
-| startDate   | Time of start for the event           | date       |
-| endDate     | Time of end for the event             | date       |
-| url         | A link to the website for this event  | url        |
-| description | Text describing this event            | text       |
-| tags        | A list of tags. TODO how to describe? | list<text> |
+| Key          | Meaning                                                                                              | Format                               |
+|--------------|------------------------------------------------------------------------------------------------------|--------------------------------------|
+| name         | The name of the event                                                                                | text                                 |
+| startDate    | Time of start for the event                                                                          | date                                 |
+| endDate      | Time of end for the event                                                                            | date                                 |
+| url          | A link to the website for this event                                                                 | url                                  |
+| type         | The type of event, for example `concert`, `????` more examples please                                | text ??? maybe enum would be better? |
+| description  | Text describing this event                                                                           | text                                 |
+| tags         | A list of tags. TODO how to describe?                                                                | list\<text>                          |
+| registration | If this is a free event, a event which requires registration or a event which requires a paid ticket | enum\<registration>                  |
+
+#### Registration enum values
+
+* `free`: a free event which neither requires registration nor a ticket 
+* `registration`: an event which requires a free registration 
+* `ticket`: a paid event which requires a ticket 
 
 ### Location Properties
 
@@ -40,10 +50,18 @@ We use certain data types for the properties we expect.
 | location.name        | The name of the location the event is held in | text        |
 | location.url         | A link to the website of the location         | url         |
 | location.coordinates | Map-coordinates for the location              | coordinates |
+| location.city        | The city of the event                         | text        |
 
 ### Accessibility Properties
 
 ???? TBD
+
+### Concert(/Music?) Properties
+
+| Key              | Meaning                                        | Format     |
+|------------------|------------------------------------------------|------------|
+| concert.genre    | Genre of the concert                           | text       |
+| concert.bandlist | List of all bands playing (main act + support) | list<text> |
 
 ### Internal Properties
 

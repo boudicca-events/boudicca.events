@@ -56,22 +56,24 @@
     </div>
 
     <div class="header-right">
-        <label>
-            Suche:
-            <input type="text" class="search-input" />
-        </label>
-        <div class="header-search-filter">
-            <button aria-label="Datumssuche">
-                <svg height="38px" width="38px" title="Zahnrad Logo" viewBox="0 0 512 512" >
-                    <use xlink:href="#settings"></use>  
-                </svg>
-            </button>
+        <form id="searchForm">
+            <label>
+                Suche:
+                <input name="name" type="text" class="search-input" />
+            </label>
+            <div class="header-search-filter">
+                <button aria-label="Datumssuche">
+                    <svg height="38px" width="38px" title="Zahnrad Logo" viewBox="0 0 512 512" >
+                        <use xlink:href="#settings"></use>
+                    </svg>
+                </button>
 
-             <button aria-label="Datumssuche">
-                <svg height="38px" width="38px" title="Kalender Logo" viewBox="0 0 512 512" >
-                    <use xlink:href="#calendar"></use>  
-                </svg>
-            </button>
-        </div>
+                 <button aria-label="Datumssuche">
+                    <svg height="38px" width="38px" title="Kalender Logo" viewBox="0 0 512 512" >
+                        <use xlink:href="#calendar"></use>
+                    </svg>
+                </button>
+            </div>
+        </form>
     </div>
 </header>

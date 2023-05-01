@@ -23,7 +23,6 @@
     .header-right {
         display: flex;
         align-items: center;
-        gap: 14px;     
     }
 
     .search-input {
@@ -46,6 +45,13 @@
             display: flex;
         }
     }
+
+    .searchForm {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+    
 </style>
 <header class="header">
     <div class="header-left">
@@ -56,7 +62,7 @@
     </div>
 
     <div class="header-right">
-        <form id="searchForm">
+         <form id="searchForm">
             <label>
                 Suche:
                 <input name="name" type="text" class="search-input" />

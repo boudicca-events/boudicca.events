@@ -1,13 +1,14 @@
 package events.boudicca.publisherhtml.restcontroller
 
-import events.boudicca.openapi.model.Event
+import events.boudicca.api.Event
 import events.boudicca.openapi.model.SearchDTO
 import events.boudicca.publisherhtml.service.EventService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import java.time.OffsetDateTime
+import java.time.LocalDate
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 @RestController
@@ -20,8 +21,14 @@ class SearchRestController @Autowired constructor(private val eventService: Even
                @RequestParam("fromDate") fromDate: String,
                @RequestParam("toDate") toDate: String): ResponseEntity<Set<Event>> {
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-        val fromDateParsed = OffsetDateTime.parse(fromDate + "T00:00:00Z", formatter)
-        val toDateParsed = OffsetDateTime.parse(toDate + "T00:00:00Z", formatter)
+
+        // TODO: useragent dependend timezone
+        val fromDateParsed = LocalDate.parse(fromDate, formatter)
+                .atTime(0 ,0,0)
+                .atZone(ZoneId.systemDefault()).toOffsetDateTime();
+        val toDateParsed = LocalDate.parse(toDate, formatter)
+                .atTime(0 ,0,0)
+                .atZone(ZoneId.systemDefault()).toOffsetDateTime();
 
         val events = eventService.search(SearchDTO()
                 .name(name)

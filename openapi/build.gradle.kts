@@ -32,6 +32,7 @@ dependencies {
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jackson_version")
     implementation("org.openapitools:jackson-databind-nullable:0.2.1")
     implementation("jakarta.annotation:jakarta.annotation-api:$jakarta_annotation_version")
+    api(project(":semantic-conventions"))
 }
 
 tasks.withType<org.openapitools.generator.gradle.plugin.tasks.GenerateTask> {

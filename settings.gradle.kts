@@ -5,6 +5,7 @@ include("publisher-api")
 include("publisher-ical")
 include("publisher-html")
 include("core")
+include("semantic-conventions")
 
 pluginManagement {
     val quarkusPluginVersion: String by settings

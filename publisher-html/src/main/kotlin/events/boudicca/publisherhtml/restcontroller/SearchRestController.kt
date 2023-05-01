@@ -9,9 +9,10 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/search")
+@RequestMapping("/api")
 class SearchRestController @Autowired constructor(private val eventService: EventService) {
-    @GetMapping()
+
+    @GetMapping("/search")
     @ResponseBody
     fun search(@RequestParam("name") name: String): ResponseEntity<Set<Event>> {
         val events = eventService.search(SearchDTO().name(name))

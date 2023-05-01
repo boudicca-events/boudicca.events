@@ -1,10 +1,22 @@
 document.addEventListener("DOMContentLoaded", () => {
   const searchForm = document.getElementById("searchForm");
 
-  const onSearch = (e) => {
+  const goTo = (url) => {
+    if ("undefined" !== typeof history.pushState) {
+      history.pushState({}, "", url);
+    } else {
+      window.location.assign(url);
+    }
+  };
+
+  const onSearch = async (e) => {
     e.preventDefault();
-    const asString = new URLSearchParams(new FormData(e.target)).toString();
-    fetch(`/search?${asString}`);
+    const paramsAsString = new URLSearchParams(
+      new FormData(e.target)
+    ).toString();
+    const apiUrl = `/api/search?${paramsAsString}`;
+    await fetch(apiUrl);
+    goTo(`/search?${paramsAsString}`);
   };
 
   searchForm.addEventListener("submit", onSearch);

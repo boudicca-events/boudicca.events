@@ -1,14 +1,21 @@
 <div class="event">
-    <img class="event-image" src="/img/image_placeholder.svg"/>
+    <svg class="event-image" title="Event Bild" viewBox="0 0 512 512" >
+        <use xlink:href="#image"></use>  
+    </svg>
+
     <div class="event-description">
         <p class="event-title">{{event.name}}</p>
         <div class="event-details-wrapper">
             <div class="event-details">
-                <ion-icon name="time-outline"></ion-icon>
+                <svg height="28px" width="28px" title="Datum Logo" viewBox="0 0 512 512" >
+                    <use xlink:href="#time"></use>  
+                </svg>
                 <p>{{event.startDate}}</p>
             </div>
                 <div class="event-details">
-                <ion-icon name="location-outline"></ion-icon>
+                    <svg height="28px" width="28px" title="Ort Logo" viewBox="0 0 512 512" >
+                    <use xlink:href="#location"></use>  
+                </svg>
                 <p>todo</p>
             </div>
         </div>

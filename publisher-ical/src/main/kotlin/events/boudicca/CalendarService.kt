@@ -23,7 +23,7 @@ class CalendarService {
         calendar.properties.add(Version.VERSION_2_0)
 
         events.forEach { event ->
-            val location = event.data?.get("start.location.name")
+            val location = event.location?.name
             val calendarEvent = createEvent(
                     event.name,
                     event.startDate,

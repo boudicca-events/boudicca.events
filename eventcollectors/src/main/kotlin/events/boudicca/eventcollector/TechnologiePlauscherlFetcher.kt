@@ -2,8 +2,10 @@ package events.boudicca.eventcollector
 
 import com.rometools.rome.io.SyndFeedInput
 import com.rometools.rome.io.XmlReader
-import events.boudicca.api.eventcollector.Event
 import events.boudicca.api.eventcollector.EventCollector
+import events.boudicca.openapi.model.Event
+import events.boudicca.openapi.model.EventLocation
+import events.boudicca.openapi.model.RegistrationEnum
 import java.net.URL
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -32,17 +34,18 @@ class TechnologiePlauscherlFetcher : EventCollector {
             val zonedDateTime = ZonedDateTime.of(dateTime, ZoneId.of("UTC"))
 
             //TODO filter for only events in the future?
-            Event(
-                nameString, zonedDateTime.toOffsetDateTime(),
-                mapOf(
-                    "location.name" to locationString,
-                    "tags" to listOf("TechCommunity", "Afterwork", "Socializing", "Networking").toString(),
-                    "url" to entry.link,
-                    "type" to "techmeetup", //TODO not sure if this works well
-                    "description" to entry.description.value,
-                    "registration" to "free"
-                )
-            )
+            Event().apply {
+                name = nameString
+                startDate = zonedDateTime.toOffsetDateTime()
+                location = EventLocation().apply {
+                    name = locationString
+                }
+                tags = listOf("TechCommunity", "Afterwork", "Socializing", "Networking")
+                this.url = entry.link
+                type = "techmeetup" //TODO not sure if this works well
+                description = entry.description.value
+                registration = RegistrationEnum.FREE
+            }
         }
 
         return events

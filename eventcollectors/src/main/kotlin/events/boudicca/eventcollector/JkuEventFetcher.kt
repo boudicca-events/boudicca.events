@@ -1,12 +1,12 @@
 package events.boudicca.eventcollector
 
-import events.boudicca.api.eventcollector.Event
 import events.boudicca.api.eventcollector.EventCollector
+import events.boudicca.openapi.model.Event
+import events.boudicca.openapi.model.EventLocation
 import it.skrape.core.htmlDocument
 import it.skrape.fetcher.HttpFetcher
 import it.skrape.fetcher.response
 import it.skrape.fetcher.skrape
-import it.skrape.selects.DocElement
 import it.skrape.selects.html5.a
 import it.skrape.selects.html5.div
 import net.fortuna.ical4j.data.CalendarBuilder
@@ -93,8 +93,6 @@ class JkuEventFetcher : EventCollector {
 
             return components.map {
                 val title = it.summary.value
-                println(it.startDate.value)
-
                 val eventName = title
                 val eventStartDate = if (it.isDaylongEvent()) {
                     val dateTime = LocalDate.parse(it.startDate.value, daylongEventFormatter)
@@ -106,15 +104,18 @@ class JkuEventFetcher : EventCollector {
                     zonedDateTime.toOffsetDateTime()
                 }
 
-                Event(
-                    eventName, eventStartDate,
-                    mapOf(
-                        "location.name" to it.location.value,
+                Event().apply {
+                    name = eventName
+                    startDate = eventStartDate
+                    location = EventLocation().apply {
+                        name = it.location.value
+                    }
+                    tags = listOf("JKU", "Universität", "Studieren")
+                    additionalData = mapOf(
                         "url.ics" to icsUrl.toString(),
-                        "tags" to listOf("JKU", "Universität", "Studieren").toString(),
                         "jku.uid" to it.uid.value
                     )
-                )
+                }
             }
         }
     }

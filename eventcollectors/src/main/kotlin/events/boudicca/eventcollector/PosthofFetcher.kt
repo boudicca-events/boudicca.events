@@ -1,7 +1,10 @@
 package events.boudicca.eventcollector
 
-import events.boudicca.api.eventcollector.Event
 import events.boudicca.api.eventcollector.EventCollector
+import events.boudicca.openapi.model.Event
+import events.boudicca.openapi.model.EventConcert
+import events.boudicca.openapi.model.EventLocation
+import events.boudicca.openapi.model.RegistrationEnum
 import it.skrape.core.htmlDocument
 import it.skrape.fetcher.HttpFetcher
 import it.skrape.fetcher.response
@@ -74,62 +77,61 @@ class PosthofFetcher : EventCollector {
     }
 
     private fun parseEvent(doc: DocElement): Event? {
-        var name: String? = null
-        var startDate: ZonedDateTime? = null
-        val data = mutableMapOf<String, String>()
+        val event = Event().apply {
+            location = EventLocation()
+        }
 
         doc.apply {
             selection("div.h3>a") {
                 findFirst {
-                    name = text
-                    data["url"] = "https://www.posthof.at/" + attribute("href")
+                    event.name = text
+                    event.url = "https://www.posthof.at/" + attribute("href")
                 }
             }
             selection("div.news-list-subtitle") {
                 findFirst {
-                    name += " - $text"
+                    event.name += " - $text"
                 }
             }
             selection("span.news-list-category") {
                 findFirst {
-                    mapType(data, text)
+                    mapType(event, text)
                 }
             }
             selection("span.news-list-date") {
                 findFirst {
-                    startDate = LocalDateTime.parse(
+                    event.startDate = LocalDateTime.parse(
                         text.substring(4),
                         DateTimeFormatter.ofPattern("dd.MM.uuuu // kk:mm")
-                    ).atZone(ZoneId.of("CET"))
+                    ).atZone(ZoneId.of("CET")).toOffsetDateTime()
                 }
             }
             selection("div.news_text>p") {
                 findFirst {
-                    data["description"] = text
+                    event.description = text
                 }
             }
         }
 
-        data["registration"] = "ticket" //are there free events in posthof?
-        data["location.name"] = "posthof"
-        data["location.url"] = "https://www.posthof.at"
-        data["location.city"] = "Linz"
-        if (name != null && startDate != null) {
-            return Event(name!!, startDate!!.toOffsetDateTime(), data)
+        event.registration = RegistrationEnum.TICKET //are there free events in posthof?
+        event.location!!.apply {
+            name = "posthof"
+            url = "https://www.posthof.at"
+            city = "Linz"
         }
-        return null
+        return event
     }
 
-    private fun mapType(data: MutableMap<String, String>, type: String) {
+    private fun mapType(event: Event, type: String) {
         val lowerType = type.lowercase()
         for (knownMusicType in KNOWN_MUSIC_TYPES) {
             if (lowerType.indexOf(knownMusicType) != -1) {
-                data["type"] = "concert"
-                data["concert.genre"] = type
+                event.type = "concert"
+                event.concert = EventConcert().apply { genre = type }
                 return
             }
         }
-        data["type"] = type
+        event.type = type
     }
 
     private val KNOWN_MUSIC_TYPES: Set<String> = setOf(

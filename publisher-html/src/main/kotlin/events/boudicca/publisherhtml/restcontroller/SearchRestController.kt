@@ -1,6 +1,6 @@
 package events.boudicca.publisherhtml.restcontroller
 
-import events.boudicca.api.Event
+import events.boudicca.openapi.model.Event
 import events.boudicca.openapi.model.SearchDTO
 import events.boudicca.publisherhtml.service.EventService
 import org.springframework.beans.factory.annotation.Autowired

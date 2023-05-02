@@ -50,16 +50,9 @@ class EventCollectorScheduler {
     private fun collect(eventCollector: EventCollector, ingestionApi: EventIngestionResourceApi) {
         val events = eventCollector.collectEvents()
         for (event in events) {
-            ingestionApi.ingestAddPost(mapToApiEvent(event))
+            ingestionApi.ingestAddPost(event)
         }
         println("collected ${events.size} events for event collector ${eventCollector.getName()}")
-    }
-
-    private fun mapToApiEvent(event: Event): events.boudicca.openapi.model.Event {
-        return events.boudicca.openapi.model.Event()
-            .name(event.name)
-            .startDate(event.startDate)
-            .data(event.additionalData)
     }
 
     private fun autoDetectUrl(): String {

@@ -23,7 +23,6 @@
     .header-right {
         display: flex;
         align-items: center;
-        gap: 14px;     
     }
 
     .search-input {
@@ -46,6 +45,19 @@
             display: flex;
         }
     }
+
+    #searchForm {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+     .date-input {
+        border-radius: 4px;
+        appearance: none;
+        height: 34px;
+    }
+    
 </style>
 <header class="header">
     <div class="header-left">
@@ -56,22 +68,23 @@
     </div>
 
     <div class="header-right">
-        <label>
-            Suche:
-            <input type="text" class="search-input" />
-        </label>
-        <div class="header-search-filter">
-            <button aria-label="Datumssuche">
-                <svg height="38px" width="38px" title="Zahnrad Logo" viewBox="0 0 512 512" >
-                    <use xlink:href="#settings"></use>  
-                </svg>
-            </button>
+         <form id="searchForm">
+            <label for="name" class="visible-hidden">Textsuche</label>
+            <input id="name" name="name" type="text" class="search-input" />
+           
+            <div class="header-search-filter">
+                 <button aria-label="Datumssuche">
+                    <svg height="38px" width="38px" title="Kalender Logo" viewBox="0 0 512 512" >
+                        <use xlink:href="#calendar"></use>
+                    </svg>
+                </button>
 
-             <button aria-label="Datumssuche">
-                <svg height="38px" width="38px" title="Kalender Logo" viewBox="0 0 512 512" >
-                    <use xlink:href="#calendar"></use>  
-                </svg>
-            </button>
-        </div>
+                <label for="fromDate" class="visible-hidden">Startdatum</label>
+                <input id="fromDate" name="fromDate" type="date" class="date-input" />
+
+                <label for="toDate" class="visible-hidden">Enddatuzm</label>
+                <input id="toDate" name="toDate" type="date" class="date-input" />
+            </div>
+        </form>
     </div>
 </header>

@@ -51,7 +51,7 @@ public class EventMapper {
 
         event.setAdditionalData(openApiEvent.getData()); //TODO filter known keys
 
-        event.setEndDate(OffsetDateTime.parse(openApiEvent.getData().get(SemanticKeys.ENDDATE), DateTimeFormatter.ISO_DATE));
+        // event.setEndDate(OffsetDateTime.parse(openApiEvent.getData().get(SemanticKeys.ENDDATE), DateTimeFormatter.ISO_DATE));
         event.setUrl(openApiEvent.getData().get(SemanticKeys.URL));
         event.setType(openApiEvent.getData().get(SemanticKeys.TYPE));
         event.setDescription(openApiEvent.getData().get(SemanticKeys.DESCRIPTION));

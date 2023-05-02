@@ -32,21 +32,24 @@ class StartPageController @Autowired constructor(private val eventService: Event
 
     @GetMapping("/search")
     @ResponseBody
-    fun search(@RequestParam("name") name: String,
-               @RequestParam("fromDate") fromDate: String,
-               @RequestParam("toDate") toDate: String): ModelAndView {
+    fun search(@RequestParam("name", required = false) name: String?,
+               @RequestParam("fromDate", required = false) fromDate: String?,
+               @RequestParam("toDate", required = false) toDate: String?): ModelAndView {
         val data: MutableMap<String, Any> = HashMap()
         data["title"] = PAGE_TITLE
 
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
-        // TODO: useragent dependend timezone
-        val fromDateParsed = LocalDate.parse(fromDate, formatter)
-                .atTime(0 ,0,0)
-                .atZone(ZoneId.systemDefault()).toOffsetDateTime();
-        val toDateParsed = LocalDate.parse(toDate, formatter)
-                .atTime(0 ,0,0)
-                .atZone(ZoneId.systemDefault()).toOffsetDateTime();
+        val fromDateParsed = if (!fromDate.isNullOrBlank()) {
+            LocalDate.parse(fromDate, formatter).atTime(0, 0, 0).atZone(ZoneId.systemDefault()).toOffsetDateTime()
+        } else {
+            null
+        }
+        val toDateParsed = if (!toDate.isNullOrBlank()) {
+            LocalDate.parse(toDate, formatter).atTime(0, 0, 0).atZone(ZoneId.systemDefault()).toOffsetDateTime()
+        } else {
+            null
+        }
         data["events"] = eventService.search(SearchDTO().name(name).fromDate(fromDateParsed).toDate(toDateParsed))
         return ModelAndView("index", data)
     }

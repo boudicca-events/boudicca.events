@@ -55,7 +55,7 @@ public class EventMapper {
         event.setUrl(openApiEvent.getData().get(SemanticKeys.URL));
         event.setType(openApiEvent.getData().get(SemanticKeys.TYPE));
         event.setDescription(openApiEvent.getData().get(SemanticKeys.DESCRIPTION));
-        event.setRegistration(openApiEvent.getData().get(SemanticKeys.DESCRIPTION) != null ? RegistrationEnum.valueOf(openApiEvent.getData().get(SemanticKeys.DESCRIPTION)) : null);
+        event.setRegistration(openApiEvent.getData().get(SemanticKeys.REGISTRATION) != null ? RegistrationEnum.valueOf(openApiEvent.getData().get(SemanticKeys.REGISTRATION).toUpperCase()) : null);
 //        openApiData.put(SemanticKeys.TAGS, event.getTags()); TODO
         event.getLocation().setName(openApiEvent.getData().get(SemanticKeys.LOCATION_NAME));
         event.getLocation().setUrl(openApiEvent.getData().get(SemanticKeys.LOCATION_URL));

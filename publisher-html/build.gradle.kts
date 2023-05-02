@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
 	id("org.springframework.boot") version "3.0.6"
@@ -40,4 +41,13 @@ tasks.withType<Test> {
 
 jakartaeeMigration {
 	migrate()
+}
+
+tasks.withType<Jar> {
+	archiveFileName.set("boudicca-html.jar")
+}
+
+task<Exec>("imageBuild") {
+	dependsOn(tasks.withType<BootJar>())
+	commandLine("docker", "build", "-t", "boudicca-html", "-f", "src/main/docker/Dockerfile", ".")
 }

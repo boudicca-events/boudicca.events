@@ -13,7 +13,7 @@ class EventService {
 
     init {
         val apiClient = ApiClient()
-        apiClient.updateBaseUri("https://api.boudicca.events") //TODO make configurable
+        apiClient.updateBaseUri(autoDetectUrl())
         publisherApi = EventPublisherResourceApi(apiClient)
     }
 
@@ -23,5 +23,17 @@ class EventService {
 
     fun search(searchDTO: SearchDTO): Set<Event> {
         return publisherApi.eventsSearchPost(searchDTO).map{EventMapper.toEvent(it)}.toSet()
+    }
+
+    private fun autoDetectUrl(): String {
+        var url = System.getenv("BOUDICCA_URL")
+        if (url != null && url.isNotBlank()) {
+            return url
+        }
+        url = System.getProperty("boudiccaUrl")
+        if (url != null && url.isNotBlank()) {
+            return url
+        }
+        return "http://localhost:8081"
     }
 }

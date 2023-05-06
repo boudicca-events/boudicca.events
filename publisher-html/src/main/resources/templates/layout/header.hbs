@@ -40,7 +40,7 @@
         height: 26px;
     }
 
-    .search-input:focus-visible {
+    input:focus-visible, button:focus-visible {
         outline: 2px solid;
         outline-offset: 1px;
     }
@@ -68,12 +68,18 @@
     }
 
     .header-search {
-        display: flex;
+        position: relative;
     }
 
     #searchButton {
         display: flex;
         align-items: center;
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        margin-right: 6px;
+        border-radius: 4px;
     }
 
     .searchform-top {
@@ -117,7 +123,7 @@
                         <input id="name" name="name" type="text" class="search-input" />
                     </div>
                     <button id="searchButton" aria-describedby="Events finden" type="submit">
-                        <svg height="28px" width="28px" title="Suche Logo" viewBox="0 0 512 512" >
+                        <svg height="24px" width="24px" title="Suche Logo" viewBox="0 0 512 512" >
                             <use xlink:href="#search"></use>  
                         </svg>
                     </button>

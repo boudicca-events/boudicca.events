@@ -5,9 +5,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const createEventDomElement = (event) => {
     // TODO: re use handlebars template
     const domElement = `<div class="event">
-            <svg class="event-image" title="Event Bild" viewBox="0 0 512 512" >
-                <use xlink:href="#image"></use>  
-            </svg>
+            <div class="event-image">
+                <svg title="Event Bild" viewBox="0 0 512 512" height="100px" >
+                    <use xlink:href="#image"></use>  
+                </svg>
+            </div>
 
             <div class="event-description">
                 <p class="event-title">${event.name}</p>

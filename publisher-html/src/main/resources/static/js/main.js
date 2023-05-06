@@ -10,7 +10,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     <use xlink:href="#image"></use>  
                 </svg>
 
-                <a class="anchor-to-eventpage" href="${event.url}" target="_blank" aria-describedby="Zur Eventseite von ${event.name}. (neues Fenster wird geöffnet)">
+                <a class="anchor-to-eventpage" href="${
+                  event.url
+                }" target="_blank" aria-describedby="Zur Eventseite von ${
+      event.name
+    }. (neues Fenster wird geöffnet)">
                   Zur Eventseite
                 </a>
             </div>
@@ -30,7 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             <svg height="28px" width="28px" title="Ort Logo" viewBox="0 0 512 512" >
                             <use xlink:href="#location"></use>  
                         </svg>
-                        <p>todo</p>
+                        <p>${event.location.name}${event.location.city ? `, ${event.location.city}` : ""}</p>
                       </div>
                 </div>
             </div>

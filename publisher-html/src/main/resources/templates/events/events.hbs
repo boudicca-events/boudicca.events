@@ -13,6 +13,13 @@
     .event-title {
         font-size: 1.2em;
         margin-bottom: 6px;
+
+        /** https://stackoverflow.com/questions/3922739/limit-text-length-to-n-lines-using-css */
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
     }
 
     .event-image {

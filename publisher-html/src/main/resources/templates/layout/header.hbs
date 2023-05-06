@@ -12,7 +12,14 @@
             align-items: flex-start;
             margin-bottom: 24px;
         }
+
+        #searchForm {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
     }
+
 
     .header-left {
         display: flex;
@@ -28,12 +35,12 @@
     .search-input {
         border-radius: 4px;
         padding: 4px;
-        min-width: 250px;
+        min-width: 350px;
         appearance: none;
         height: 26px;
     }
 
-    .search-input:focus-visible {
+    input:focus-visible, button:focus-visible {
         outline: 2px solid;
         outline-offset: 1px;
     }
@@ -48,43 +55,95 @@
 
     #searchForm {
         display: flex;
-        align-items: center;
-        gap: 14px;
+        flex-direction: column;
+        width: 100%;
     }
 
-     .date-input {
-        border-radius: 4px;
+    .date-input {
+        border-radius: 24px;
         appearance: none;
-        height: 34px;
+        height: 28px;
+        padding: 0 12px;
+        width: 105px;
+    }
+
+    .header-search {
+        position: relative;
+    }
+
+    #searchButton {
+        display: flex;
+        align-items: center;
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        margin-right: 6px;
+        border-radius: 4px;
+    }
+
+    .searchform-top {
+        display: flex;
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .filter-label {
+        font-size: 12px;
+        padding-left: 8px;
+        margin-bottom: 2px;
+        font-weight: bold;
+    }
+
+    .filter-input-wrapper {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .header-date-search {
+        display: flex;
+        gap: 8px;
     }
     
 </style>
 <header class="header">
-    <div class="header-left">
-        <svg title="Boudicca Logo" height="56px" width="56px" viewBox="0 0 512 512" >
-            <use xlink:href="#colorfilter"></use>  
-        </svg>
-        <h1>BOUDICCA</h1>
-    </div>
-
-    <div class="header-right">
-         <form id="searchForm">
-            <label for="name" class="visible-hidden">Textsuche</label>
-            <input id="name" name="name" type="text" class="search-input" />
-           
-            <div class="header-search-filter">
-                 <button aria-label="Datumssuche">
-                    <svg height="38px" width="38px" title="Kalender Logo" viewBox="0 0 512 512" >
-                        <use xlink:href="#calendar"></use>
-                    </svg>
-                </button>
-
-                <label for="fromDate" class="visible-hidden">Startdatum</label>
-                <input id="fromDate" name="fromDate" type="date" class="date-input" />
-
-                <label for="toDate" class="visible-hidden">Enddatuzm</label>
-                <input id="toDate" name="toDate" type="date" class="date-input" />
+    <form id="searchForm">
+        <div class="searchform-top">
+            <div class="header-left">
+                <svg title="Boudicca Logo" height="56px" width="56px" viewBox="0 0 512 512" >
+                    <use xlink:href="#colorfilter"></use>  
+                </svg>
+                <h1>BOUDICCA</h1>
             </div>
-        </form>
-    </div>
+
+            <div class="header-right">
+                <div class="header-search">
+                    <div>
+                        <label for="name" class="visible-hidden">Textsuche</label>
+                        <input id="name" name="name" type="text" class="search-input" />
+                    </div>
+                    <button id="searchButton" aria-describedby="Events finden" type="submit">
+                        <svg height="24px" width="24px" title="Suche Logo" viewBox="0 0 512 512" >
+                            <use xlink:href="#search"></use>  
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+
+         <div class="header-search-filter">
+            <div class="header-date-search">
+                <div class="filter-input-wrapper">
+                    <label for="fromDate" class="filter-label">Von</label>
+                    <input id="fromDate" name="fromDate" type="date" class="date-input" />
+                </div>
+               
+                 <div class="filter-input-wrapper">
+                    <label for="toDate" class="filter-label">Bis</label>
+                    <input id="toDate" name="toDate" type="date" class="date-input" />
+                </div>
+            </div>
+        </div>
+    </form>
 </header>

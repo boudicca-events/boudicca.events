@@ -9,10 +9,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 <svg title="Event Bild" viewBox="0 0 512 512" height="100px" >
                     <use xlink:href="#image"></use>  
                 </svg>
+
+                <a class="anchor-to-eventpage" href="${event.url}" target="_blank" aria-describedby="Zur Eventseite von ${event.name}. (neues Fenster wird geöffnet)">
+                  Zur Eventseite
+                </a>
             </div>
 
             <div class="event-description">
-                <p class="event-title">${event.name}</p>
+              <p class="event-title">
+                  ${event.name}
+              </p>
                 <div class="event-details-wrapper">
                     <div class="event-details">
                         <svg height="28px" width="28px" title="Datum Logo" viewBox="0 0 512 512" >

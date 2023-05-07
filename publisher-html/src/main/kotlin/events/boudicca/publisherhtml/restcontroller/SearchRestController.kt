@@ -1,6 +1,6 @@
 package events.boudicca.publisherhtml.restcontroller
 
-import events.boudicca.api.Event
+import events.boudicca.openapi.model.Event
 import events.boudicca.openapi.model.SearchDTO
 import events.boudicca.publisherhtml.service.EventService
 import org.springframework.beans.factory.annotation.Autowired
@@ -17,7 +17,7 @@ class SearchRestController @Autowired constructor(private val eventService: Even
 
     @GetMapping("/search")
     @ResponseBody
-    fun search(@RequestParam("name", required = false) name: String?, @RequestParam("fromDate", required = false) fromDate: String?, @RequestParam("toDate", required = false) toDate: String?): ResponseEntity<Set<Event>> {
+    fun search(@RequestParam("name", required = false) name: String?, @RequestParam("fromDate", required = false) fromDate: String?, @RequestParam("toDate", required = false) toDate: String?): ResponseEntity<Set<Map<String, String?>>> {
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
         val fromDateParsed = if (!fromDate.isNullOrBlank()) {

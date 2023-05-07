@@ -41,7 +41,8 @@ class EventService {
                 "startDate" to formatDate(event.startDate),
                 "locationName" to (event.data?.get(SemanticKeys.LOCATION_NAME) ?: "unbekannt"),
                 "city" to event.data?.get(SemanticKeys.LOCATION_CITY),
-                "type" to mapType(event.data?.get(SemanticKeys.TYPE))
+                "type" to mapType(event.data?.get(SemanticKeys.TYPE)),
+                "pictureUrl" to (event.data?.get("pictureUrl") ?: ""),
         )
     }
 

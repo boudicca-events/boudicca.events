@@ -9,6 +9,7 @@ import it.skrape.fetcher.response
 import it.skrape.fetcher.skrape
 import it.skrape.selects.Doc
 import it.skrape.selects.DocElement
+import it.skrape.selects.ElementNotFoundException
 import java.time.*
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -102,6 +103,15 @@ class ZuckerfabrikFetcher : EventCollector {
                         }
                     }
                     data[SemanticKeys.DESCRIPTION] = (2 until this.size).map { this.get(it) }.joinToString("\n")
+                }
+            }
+            selection("div#storycontent img") {
+                try {
+                    findFirst {
+                        data["pictureUrl"] = attribute("src")
+                    }
+                } catch (ignored: ElementNotFoundException) {
+                    //some have no pic but i don't know how to safe select that...
                 }
             }
         }

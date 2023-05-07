@@ -109,6 +109,11 @@ class PosthofFetcher : EventCollector {
                     data[SemanticKeys.DESCRIPTION] = text
                 }
             }
+            selection("img") {
+                findFirst {
+                    data["pictureUrl"] = "https://www.posthof.at/" + attribute("src")
+                }
+            }
         }
 
         data[SemanticKeys.REGISTRATION] = "ticket" //are there free events in posthof?

@@ -5,18 +5,20 @@ document.addEventListener("DOMContentLoaded", () => {
   const createEventDomElement = (event) => {
     // TODO: re use handlebars template
     const domElement = `<div class="event">
-            <div class="event-image">
+            <div class="event-image${
+              event.type ? ` event-image-${event.type}` : ""
+            }">
                 <svg title="Event Bild" viewBox="0 0 512 512" height="100px" >
-                    <use xlink:href="#image"></use>  
+                    <use xlink:href="#${event.type ?? "image"}"></use>  
                 </svg>
 
-                <a class="anchor-to-eventpage" href="${
+                ${
                   event.url
-                }" target="_blank" aria-describedby="Zur Eventseite von ${
-      event.name
-    }. (neues Fenster wird geöffnet)">
-                  Zur Eventseite
-                </a>
+                    ? `<a class="anchor-to-eventpage" href="${event.url}" target="_blank" aria-describedby="Zur Eventseite von ${event.name}. (neues Fenster wird geöffnet)">
+                    Zur Eventseite
+                  </a>`
+                    : ""
+                }
             </div>
 
             <div class="event-description">
@@ -38,6 +40,17 @@ document.addEventListener("DOMContentLoaded", () => {
       event.city ? `, ${event.city}` : ""
     }</p>
                       </div>
+
+                      ${
+                        event.description
+                          ? ` <div class="event-details-description">
+                      <details>
+                          <summary>Mehr zum Event lesen</summary>
+                          <p>${event.description} </p>
+                      </details>
+                  </div>`
+                          : ""
+                      } 
                 </div>
             </div>
           </div>`;

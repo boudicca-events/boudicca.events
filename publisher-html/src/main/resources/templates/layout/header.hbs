@@ -73,13 +73,21 @@
 
     #searchButton {
         display: flex;
+        background-color: var(--color-yellowish);
+        height: 100%;
         align-items: center;
         position: absolute;
         right: 0;
         top: 50%;
         transform: translateY(-50%);
-        margin-right: 6px;
-        border-radius: 4px;
+        border-top-right-radius: 4px;
+        border-bottom-right-radius: 4px;
+        cursor: pointer;
+        border: 2px solid black;
+    }
+
+    #searchButton:focus-visible {
+        outline: auto;
     }
 
     .searchform-top {

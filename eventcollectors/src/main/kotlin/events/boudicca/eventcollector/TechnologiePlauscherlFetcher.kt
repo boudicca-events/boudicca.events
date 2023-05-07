@@ -2,6 +2,7 @@ package events.boudicca.eventcollector
 
 import com.rometools.rome.io.SyndFeedInput
 import com.rometools.rome.io.XmlReader
+import events.boudicca.SemanticKeys
 import events.boudicca.api.eventcollector.Event
 import events.boudicca.api.eventcollector.EventCollector
 import java.net.URL
@@ -35,12 +36,13 @@ class TechnologiePlauscherlFetcher : EventCollector {
             Event(
                 nameString, zonedDateTime.toOffsetDateTime(),
                 mapOf(
-                    "location.name" to locationString,
-                    "tags" to listOf("TechCommunity", "Afterwork", "Socializing", "Networking").toString(),
-                    "url" to entry.link,
-                    "type" to "techmeetup", //TODO not sure if this works well
-                    "description" to entry.description.value,
-                    "registration" to "free"
+
+                    SemanticKeys.LOCATION_NAME to locationString,
+                    SemanticKeys.TAGS to listOf("TechCommunity", "Afterwork", "Socializing", "Networking").toString(),
+                    SemanticKeys.URL to entry.link,
+                    SemanticKeys.TYPE to "techmeetup", //TODO not sure if this works well
+                    SemanticKeys.DESCRIPTION to entry.description.value,
+                    SemanticKeys.REGISTRATION to "free"
                 )
             )
         }

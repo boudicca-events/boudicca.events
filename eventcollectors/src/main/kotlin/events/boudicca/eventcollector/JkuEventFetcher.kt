@@ -1,5 +1,6 @@
 package events.boudicca.eventcollector
 
+import events.boudicca.SemanticKeys
 import events.boudicca.api.eventcollector.Event
 import events.boudicca.api.eventcollector.EventCollector
 import it.skrape.core.htmlDocument
@@ -107,9 +108,9 @@ class JkuEventFetcher : EventCollector {
                 Event(
                     eventName, eventStartDate,
                     mapOf(
-                        "location.name" to it.location.value,
+                        SemanticKeys.LOCATION_NAME to it.location.value,
+                        SemanticKeys.TAGS to listOf("JKU", "Universität", "Studieren").toString(),
                         "url.ics" to icsUrl.toString(),
-                        "tags" to listOf("JKU", "Universität", "Studieren").toString(),
                         "jku.uid" to it.uid.value
                     )
                 )

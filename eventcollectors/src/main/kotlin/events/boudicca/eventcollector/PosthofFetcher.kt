@@ -1,5 +1,6 @@
 package events.boudicca.eventcollector
 
+import events.boudicca.SemanticKeys
 import events.boudicca.api.eventcollector.Event
 import events.boudicca.api.eventcollector.EventCollector
 import it.skrape.core.htmlDocument
@@ -82,7 +83,7 @@ class PosthofFetcher : EventCollector {
             selection("div.h3>a") {
                 findFirst {
                     name = text
-                    data["url"] = "https://www.posthof.at/" + attribute("href")
+                    data[SemanticKeys.URL] = "https://www.posthof.at/" + attribute("href")
                 }
             }
             selection("div.news-list-subtitle") {
@@ -105,15 +106,15 @@ class PosthofFetcher : EventCollector {
             }
             selection("div.news_text>p") {
                 findFirst {
-                    data["description"] = text
+                    data[SemanticKeys.DESCRIPTION] = text
                 }
             }
         }
 
-        data["registration"] = "ticket" //are there free events in posthof?
-        data["location.name"] = "posthof"
-        data["location.url"] = "https://www.posthof.at"
-        data["location.city"] = "Linz"
+        data[SemanticKeys.REGISTRATION] = "ticket" //are there free events in posthof?
+        data[SemanticKeys.LOCATION_NAME] = "posthof"
+        data[SemanticKeys.LOCATION_URL] = "https://www.posthof.at"
+        data[SemanticKeys.LOCATION_CITY] = "Linz"
         if (name != null && startDate != null) {
             return Event(name!!, startDate!!.toOffsetDateTime(), data)
         }
@@ -124,12 +125,12 @@ class PosthofFetcher : EventCollector {
         val lowerType = type.lowercase()
         for (knownMusicType in KNOWN_MUSIC_TYPES) {
             if (lowerType.indexOf(knownMusicType) != -1) {
-                data["type"] = "concert"
-                data["concert.genre"] = type
+                data[SemanticKeys.TYPE] = "concert"
+                data[SemanticKeys.CONCERT_GENRE] = type
                 return
             }
         }
-        data["type"] = type
+        data[SemanticKeys.TYPE] = type
     }
 
     private val KNOWN_MUSIC_TYPES: Set<String> = setOf(

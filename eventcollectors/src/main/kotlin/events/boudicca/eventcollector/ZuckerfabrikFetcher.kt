@@ -106,9 +106,10 @@ class ZuckerfabrikFetcher : EventCollector {
             }
         }
 
-        data["location.name"] = "Zuckerfabrik"
-        data["location.url"] = "https://www.zuckerfabrik.at"
-        data["location.city"] = "Enns"
+        data[SemanticKeys.LOCATION_NAME] = "Zuckerfabrik"
+        data[SemanticKeys.LOCATION_URL] = "https://www.zuckerfabrik.at"
+        data[SemanticKeys.LOCATION_CITY] = "Enns"
+
         if (name != null && startDate != null) {
             return Event(name!!, startDate!!, data)
         }

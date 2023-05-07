@@ -38,6 +38,17 @@ document.addEventListener("DOMContentLoaded", () => {
       event.city ? `, ${event.city}` : ""
     }</p>
                       </div>
+
+                      ${
+                        event.description
+                          ? ` <div class="event-details-description">
+                      <details>
+                          <summary>Mehr zum Event lesen</summary>
+                          <p>${event.description} </p>
+                      </details>
+                  </div>`
+                          : ""
+                      } 
                 </div>
             </div>
           </div>`;

@@ -21,12 +21,21 @@
                     </svg>
                     <p>{{event.startDate}}</p>
                 </div>
-                    <div class="event-details">
-                        <svg height="28px" width="28px" title="Ort Logo" viewBox="0 0 512 512" >
+                <div class="event-details">
+                    <svg height="28px" width="28px" title="Ort Logo" viewBox="0 0 512 512" >
                         <use xlink:href="#location"></use>  
                     </svg>
                     <p>{{event.locationName}}{{#if event.city}}, {{event.city}} {{/if}} </p>
                 </div>
+
+                {{#if event.description}}
+                    <div class="event-details-description">
+                        <details>
+                            <summary>Mehr zum Event lesen</summary>
+                            <p>{{event.description}} </p>
+                        </details>
+                    </div>
+                {{/if}}
             </div>
         </div>
 </div>

@@ -1,12 +1,14 @@
 <div class="event">
    
-        <div class="event-image">
+        <div class="event-image {{#if event.type}}event-image-{{event.type}}{{/if}}">
             <svg title="Event Bild" viewBox="0 0 512 512" height="100px" >
-                <use xlink:href="#image"></use>  
+                <use xlink:href="#{{#if event.type}}{{event.type}}{{else}}image{{/if}}"></use>  
             </svg>
-            <a class="anchor-to-eventpage" href="{{event.url}}" target="_blank" aria-describedby="Zur Eventseite von {{event.name}} (neues Fenster wird geöffnet)">
-                Zur Eventseite
-            </a>
+            {{#if event.url}}
+                <a class="anchor-to-eventpage" href="{{event.url}}" target="_blank" aria-describedby="Zur Eventseite von {{event.name}} (neues Fenster wird geöffnet)">
+                    Zur Eventseite
+                </a>
+            {{/if}}
         </div>
         
         <div class="event-description">

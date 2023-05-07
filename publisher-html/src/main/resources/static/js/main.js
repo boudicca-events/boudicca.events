@@ -34,7 +34,9 @@ document.addEventListener("DOMContentLoaded", () => {
                             <svg height="28px" width="28px" title="Ort Logo" viewBox="0 0 512 512" >
                             <use xlink:href="#location"></use>  
                         </svg>
-                        <p>${event.location.name}${event.location.city ? `, ${event.location.city}` : ""}</p>
+                        <p>${event.locationName}${
+      event.city ? `, ${event.city}` : ""
+    }</p>
                       </div>
                 </div>
             </div>

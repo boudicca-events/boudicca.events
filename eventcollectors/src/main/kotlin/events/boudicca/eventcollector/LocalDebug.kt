@@ -5,6 +5,7 @@ import events.boudicca.api.eventcollector.EventCollectorDebugger
 fun main() {
     EventCollectorDebugger()
 //        .debug(TechnologiePlauscherlFetcher())
-        .debug(JkuEventFetcher())
+//        .debug(JkuEventFetcher())
 //        .debug(PosthofFetcher())
+        .debug(ZuckerfabrikFetcher())
 }

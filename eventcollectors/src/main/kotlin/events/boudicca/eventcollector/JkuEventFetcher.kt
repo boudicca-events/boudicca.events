@@ -93,8 +93,6 @@ class JkuEventFetcher : EventCollector {
 
             return components.map {
                 val title = it.summary.value
-                println(it.startDate.value)
-
                 val eventName = title
                 val eventStartDate = if (it.isDaylongEvent()) {
                     val dateTime = LocalDate.parse(it.startDate.value, daylongEventFormatter)

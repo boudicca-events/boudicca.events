@@ -7,5 +7,6 @@ fun main() {
         .addEventCollector(PosthofFetcher())
         .addEventCollector(JkuEventFetcher())
         .addEventCollector(TechnologiePlauscherlFetcher())
+        .addEventCollector(ZuckerfabrikFetcher())
         .run()
 }

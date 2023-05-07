@@ -10,7 +10,7 @@ repositories {
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
-    implementation(project(":openapi"))
+    api(project(":openapi"))
 }
 
 java {

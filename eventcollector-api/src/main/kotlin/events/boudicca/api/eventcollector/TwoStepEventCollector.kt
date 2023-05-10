@@ -10,7 +10,7 @@ abstract class TwoStepEventCollector<T>(private val name: String) : EventCollect
         try {
             allEvents = getAllUnparsedEvents()
         } catch (e: Exception) {
-            println("collector ${getName()} throw exception while getting all unparsed events")
+            System.err.println("collector ${getName()} throw exception while getting all unparsed events")
             e.printStackTrace()
             return emptyList()
         }
@@ -21,10 +21,10 @@ abstract class TwoStepEventCollector<T>(private val name: String) : EventCollect
                 try {
                     event = parseEvent(it)
                     if (event == null) {
-                        println("collector ${getName()} returned null while parsing event: $it")
+                        System.err.println("collector ${getName()} returned null while parsing event: $it")
                     }
                 } catch (e: Exception) {
-                    println("collector ${getName()} throw exception while parsing event: $it")
+                    System.err.println("collector ${getName()} throw exception while parsing event: $it")
                     e.printStackTrace()
                 }
                 event

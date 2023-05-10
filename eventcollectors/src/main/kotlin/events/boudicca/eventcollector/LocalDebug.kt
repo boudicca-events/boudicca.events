@@ -7,5 +7,6 @@ fun main() {
 //        .debug(TechnologiePlauscherlFetcher())
 //        .debug(JkuEventFetcher())
 //        .debug(PosthofFetcher())
-        .debug(ZuckerfabrikFetcher())
+//        .debug(ZuckerfabrikFetcher())
+        .debug(PlanetTTCollector())
 }

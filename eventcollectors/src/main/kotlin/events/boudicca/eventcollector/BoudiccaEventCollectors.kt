@@ -8,5 +8,6 @@ fun main() {
         .addEventCollector(JkuEventFetcher())
         .addEventCollector(TechnologiePlauscherlFetcher())
         .addEventCollector(ZuckerfabrikFetcher())
+        .addEventCollector(PlanetTTCollector())
         .run()
 }

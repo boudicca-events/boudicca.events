@@ -27,13 +27,13 @@ document.addEventListener("DOMContentLoaded", () => {
               </p>
                 <div class="event-details-wrapper">
                     <div class="event-details">
-                        <svg height="28px" width="28px" title="Datum Logo" viewBox="0 0 512 512" >
+                        <svg height="24px" width="24px" title="Datum Logo" viewBox="0 0 512 512" >
                             <use xlink:href="#time"></use>  
                         </svg>
                         <p>${event.startDate}</p>
                     </div>
                         <div class="event-details">
-                            <svg height="28px" width="28px" title="Ort Logo" viewBox="0 0 512 512" >
+                            <svg height="24px" width="24px" title="Ort Logo" viewBox="0 0 512 512" >
                             <use xlink:href="#location"></use>  
                         </svg>
                         <p>${event.locationName}${

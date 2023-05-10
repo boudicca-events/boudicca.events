@@ -2,7 +2,7 @@ package events.boudicca.eventcollector
 
 import events.boudicca.SemanticKeys
 import events.boudicca.api.eventcollector.Event
-import events.boudicca.api.eventcollector.EventCollector
+import events.boudicca.api.eventcollector.TwoStepEventCollector
 import it.skrape.core.htmlDocument
 import it.skrape.fetcher.HttpFetcher
 import it.skrape.fetcher.response
@@ -15,13 +15,10 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
-class PosthofFetcher : EventCollector {
-    override fun getName(): String {
-        return "posthof"
-    }
+class PosthofFetcher : TwoStepEventCollector<DocElement>("posthof") {
 
-    override fun collectEvents(): List<Event> {
-        val events = mutableListOf<Event>()
+    override fun getAllUnparsedEvents(): List<DocElement> {
+        val events = mutableListOf<DocElement>()
         val baseUrl = "https://www.posthof.at/programm/alles/"
         val otherUrls = mutableSetOf<String>()
         skrape(HttpFetcher) {
@@ -60,26 +57,23 @@ class PosthofFetcher : EventCollector {
         return events
     }
 
-    private fun Doc.parseEventList(events: MutableList<Event>) {
+    private fun Doc.parseEventList(events: MutableList<DocElement>) {
         div {
             withClass = "event-list-item"
             findAll {
                 forEach {
-                    val event = parseEvent(it)
-                    if (event != null) {
-                        events.add(event)
-                    }
+                    events.add(it)
                 }
             }
         }
     }
 
-    private fun parseEvent(doc: DocElement): Event? {
+    override fun parseEvent(event: DocElement): Event? {
         var name: String? = null
         var startDate: ZonedDateTime? = null
         val data = mutableMapOf<String, String>()
 
-        doc.apply {
+        event.apply {
             selection("div.h3>a") {
                 findFirst {
                     name = text
@@ -117,7 +111,7 @@ class PosthofFetcher : EventCollector {
         }
 
         data[SemanticKeys.REGISTRATION] = "ticket" //are there free events in posthof?
-        data[SemanticKeys.LOCATION_NAME] = "posthof"
+        data[SemanticKeys.LOCATION_NAME] = "Posthof"
         data[SemanticKeys.LOCATION_URL] = "https://www.posthof.at"
         data[SemanticKeys.LOCATION_CITY] = "Linz"
         if (name != null && startDate != null) {

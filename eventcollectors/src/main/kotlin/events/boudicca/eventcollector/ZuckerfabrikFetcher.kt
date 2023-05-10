@@ -3,6 +3,7 @@ package events.boudicca.eventcollector
 import events.boudicca.SemanticKeys
 import events.boudicca.api.eventcollector.Event
 import events.boudicca.api.eventcollector.EventCollector
+import events.boudicca.api.eventcollector.TwoStepEventCollector
 import it.skrape.core.htmlDocument
 import it.skrape.fetcher.HttpFetcher
 import it.skrape.fetcher.response
@@ -14,13 +15,10 @@ import java.time.*
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-class ZuckerfabrikFetcher : EventCollector {
-    override fun getName(): String {
-        return "zuckerfabrik"
-    }
+class ZuckerfabrikFetcher : TwoStepEventCollector<Pair<String, Doc>>("zuckerfabrik") {
 
-    override fun collectEvents(): List<Event> {
-        val events = mutableListOf<Event>()
+    override fun getAllUnparsedEvents(): List<Pair<String, Doc>> {
+        val events = mutableListOf<Pair<String, Doc>>()
         val baseUrl = "https://www.zuckerfabrik.at/termine-tickets/"
         val eventUrls = mutableSetOf<String>()
         skrape(HttpFetcher) {
@@ -47,10 +45,7 @@ class ZuckerfabrikFetcher : EventCollector {
                 }
                 response {
                     htmlDocument {
-                        val event = parseEvent(it, this)
-                        if (event != null) {
-                            events.add(event)
-                        }
+                        events.add(Pair(it, this))
                     }
                 }
             }
@@ -59,7 +54,8 @@ class ZuckerfabrikFetcher : EventCollector {
         return events
     }
 
-    private fun parseEvent(url: String, doc: Doc): Event? {
+    override fun parseEvent(event: Pair<String, Doc>): Event? {
+        val (url, doc) = event
         var name: String? = null
         var startDate: OffsetDateTime? = null
         val data = mutableMapOf<String, String>()
@@ -102,7 +98,7 @@ class ZuckerfabrikFetcher : EventCollector {
                                 date.atTime(startTime).atZone(ZoneId.of("CET")).toOffsetDateTime().toString()
                         }
                     }
-                    data[SemanticKeys.DESCRIPTION] = (2 until this.size).map { this.get(it) }.joinToString("\n")
+                    data[SemanticKeys.DESCRIPTION] = (2 until this.size).map { this.get(it).text }.joinToString("\n")
                 }
             }
             selection("div#storycontent img") {

@@ -1,6 +1,7 @@
 package events.boudicca.eventcollector
 
 import events.boudicca.api.eventcollector.EventCollectorDebugger
+import events.boudicca.eventcollector.collectors.BrucknerhausCollector
 import events.boudicca.eventcollector.collectors.PlanetTTCollector
 
 fun main() {
@@ -9,5 +10,6 @@ fun main() {
 //        .debug(JkuEventFetcher())
 //        .debug(PosthofFetcher())
 //        .debug(ZuckerfabrikFetcher())
-        .debug(PlanetTTCollector())
+//        .debug(PlanetTTCollector())
+        .debug(BrucknerhausCollector())
 }

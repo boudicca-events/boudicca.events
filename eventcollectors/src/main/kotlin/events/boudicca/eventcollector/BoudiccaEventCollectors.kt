@@ -10,5 +10,6 @@ fun main() {
         .addEventCollector(TechnologiePlauscherlFetcher())
         .addEventCollector(ZuckerfabrikFetcher())
         .addEventCollector(PlanetTTCollector())
+        .addEventCollector(BrucknerhausCollector())
         .run()
 }

@@ -1,11 +1,8 @@
 package events.boudicca.publisherhtml.controller
 
-import events.boudicca.openapi.model.Event
 import events.boudicca.openapi.model.SearchDTO
 import events.boudicca.publisherhtml.service.EventService
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -32,9 +29,11 @@ class StartPageController @Autowired constructor(private val eventService: Event
 
     @GetMapping("/search")
     @ResponseBody
-    fun search(@RequestParam("name", required = false) name: String?,
-               @RequestParam("fromDate", required = false) fromDate: String?,
-               @RequestParam("toDate", required = false) toDate: String?): ModelAndView {
+    fun search(
+        @RequestParam("name", required = false) name: String?,
+        @RequestParam("fromDate", required = false) fromDate: String?,
+        @RequestParam("toDate", required = false) toDate: String?
+    ): ModelAndView {
         val data: MutableMap<String, Any> = HashMap()
         data["title"] = PAGE_TITLE
 

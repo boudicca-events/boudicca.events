@@ -32,9 +32,7 @@ class EventService {
             .filter { e ->
                 val data = e.data
                 searchDTO.name == null || e.name.lowercase().contains(searchDTO.name!!.lowercase())
-                        || (data != null && data.keys.any { it.lowercase().contains(searchDTO.name!!.lowercase()) })
-                        || (data != null && data.values.any {
-                    it.lowercase().contains(searchDTO.name!!.lowercase())
+                        || (data != null && data.values.any {it.lowercase().contains(searchDTO.name!!.lowercase())
                 })
             }
             .toSet()

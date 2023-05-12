@@ -1,6 +1,7 @@
 package events.boudicca.eventcollector
 
 import events.boudicca.api.eventcollector.EventCollectorDebugger
+import events.boudicca.eventcollector.collectors.PlanetTTCollector
 
 fun main() {
     EventCollectorDebugger()

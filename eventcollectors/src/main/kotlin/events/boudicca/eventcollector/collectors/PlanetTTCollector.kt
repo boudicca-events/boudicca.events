@@ -1,4 +1,4 @@
-package events.boudicca.eventcollector
+package events.boudicca.eventcollector.collectors
 
 import events.boudicca.SemanticKeys
 import events.boudicca.api.eventcollector.Event

@@ -1,15 +1,13 @@
-package events.boudicca.eventcollector
+package events.boudicca.eventcollector.collectors
 
 import events.boudicca.SemanticKeys
 import events.boudicca.api.eventcollector.Event
-import events.boudicca.api.eventcollector.EventCollector
 import events.boudicca.api.eventcollector.TwoStepEventCollector
 import it.skrape.core.htmlDocument
 import it.skrape.fetcher.HttpFetcher
 import it.skrape.fetcher.response
 import it.skrape.fetcher.skrape
 import it.skrape.selects.Doc
-import it.skrape.selects.DocElement
 import it.skrape.selects.ElementNotFoundException
 import java.time.*
 import java.time.format.DateTimeFormatter

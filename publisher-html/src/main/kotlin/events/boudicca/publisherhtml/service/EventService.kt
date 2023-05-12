@@ -14,8 +14,10 @@ class EventService {
     private val publisherApi: EventPublisherResourceApi
     private val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy 'um' HH:mm 'Uhr'")
 
-    private val miscArtTypes = arrayOf("kabarett", "theater", "wissenskabarett", "provinzkrimi",
-            "comedy", "figurentheater", "film", "visual comedy", "tanz", "performance");
+    private val miscArtTypes = arrayOf(
+        "kabarett", "theater", "wissenskabarett", "provinzkrimi",
+        "comedy", "figurentheater", "film", "visual comedy", "tanz", "performance"
+    );
     private val musicTypes = arrayOf("concert", "alternative", "singer/songwriter", "party", "songwriter/alternative");
     private val techTypes = arrayOf("techmeetup");
 
@@ -25,24 +27,40 @@ class EventService {
         publisherApi = EventPublisherResourceApi(apiClient)
     }
 
-    fun getAllEvents(): Set<Map<String, String?>> {
-        return publisherApi.eventsGet().map { map(it) }.toSet()
+    fun getAllEvents(): List<Map<String, String?>> {
+        return mapEvents(publisherApi.eventsGet(), 0)
     }
 
-    fun search(searchDTO: SearchDTO): Set<Map<String, String?>> {
-        return publisherApi.eventsSearchPost(searchDTO).map { map(it) }.toSet()
+    fun getAllEvents(offset: Int): List<Map<String, String?>> {
+        return mapEvents(publisherApi.eventsGet(), offset)
     }
 
-    fun map(event: Event): Map<String, String?> {
+    fun search(searchDTO: SearchDTO): List<Map<String, String?>> {
+        return mapEvents(publisherApi.eventsSearchPost(searchDTO), 0)
+    }
+
+    fun search(searchDTO: SearchDTO, offset: Int): List<Map<String, String?>> {
+        return mapEvents(publisherApi.eventsSearchPost(searchDTO), offset)
+    }
+
+    private fun mapEvents(events: Set<Event>, offset: Int): List<Map<String, String?>> {
+        return events.toList()
+            .filter { it.startDate.isAfter(OffsetDateTime.now().minusDays(1)) }
+            .sortedBy { it.startDate }
+            .drop(offset).take(30)
+            .map { mapEvent(it) }
+    }
+
+    private fun mapEvent(event: Event): Map<String, String?> {
         return mapOf(
-                "name" to event.name,
-                "description" to event.data?.get(SemanticKeys.DESCRIPTION),
-                "url" to event.data?.get(SemanticKeys.URL),
-                "startDate" to formatDate(event.startDate),
-                "locationName" to (event.data?.get(SemanticKeys.LOCATION_NAME) ?: "unbekannt"),
-                "city" to event.data?.get(SemanticKeys.LOCATION_CITY),
-                "type" to mapType(event.data?.get(SemanticKeys.TYPE)),
-                "pictureUrl" to (event.data?.get("pictureUrl") ?: ""),
+            "name" to event.name,
+            "description" to event.data?.get(SemanticKeys.DESCRIPTION),
+            "url" to event.data?.get(SemanticKeys.URL),
+            "startDate" to formatDate(event.startDate),
+            "locationName" to (event.data?.get(SemanticKeys.LOCATION_NAME) ?: "unbekannt"),
+            "city" to event.data?.get(SemanticKeys.LOCATION_CITY),
+            "type" to mapType(event.data?.get(SemanticKeys.TYPE)),
+            "pictureUrl" to (event.data?.get("pictureUrl") ?: ""),
         )
     }
 

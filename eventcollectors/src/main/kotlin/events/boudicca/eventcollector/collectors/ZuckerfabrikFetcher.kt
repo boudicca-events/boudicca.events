@@ -102,7 +102,7 @@ class ZuckerfabrikFetcher : TwoStepEventCollector<Pair<String, Doc>>("zuckerfabr
             selection("div#storycontent img") {
                 try {
                     findFirst {
-                        data["pictureUrl"] = attribute("src")
+                        data[SemanticKeys.PICTUREURL] = attribute("src")
                     }
                 } catch (ignored: ElementNotFoundException) {
                     //some have no pic but i don't know how to safe select that...

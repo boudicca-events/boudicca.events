@@ -63,7 +63,7 @@ class PlanetTTCollector : TwoStepEventCollector<DocElement>("planettt") {
             }
             selection("div.eventkasten>div:nth-child(2)>img") {
                 findFirst {
-                    data["pictureUrl"] = "http://planet.tt/" + attribute("src")
+                    data[SemanticKeys.PICTUREURL] = "http://planet.tt/" + attribute("src")
                 }
             }
             selection("div.eventkasten>div.completeInfo") {

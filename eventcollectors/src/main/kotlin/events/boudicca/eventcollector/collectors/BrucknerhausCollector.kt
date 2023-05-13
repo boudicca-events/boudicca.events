@@ -86,7 +86,7 @@ class BrucknerhausCollector : TwoStepEventCollector<DocElement>("brucknerhaus") 
             }
             selection("div.event__image img") {
                 findFirst {
-                    data["pictureUrl"] = attribute("src")
+                    data[SemanticKeys.PICTUREURL] = attribute("src")
                 }
             }
             try {

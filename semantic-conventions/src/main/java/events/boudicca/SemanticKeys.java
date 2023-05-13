@@ -10,6 +10,7 @@ public class SemanticKeys {
     public static final String DESCRIPTION = "description";
     public static final String TAGS = "tags";
     public static final String REGISTRATION = "registration";
+    public static final String PICTUREURL = "pictureUrl";
 
     // location properties
     public static final String LOCATION_NAME = "location.name";

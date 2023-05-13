@@ -36,12 +36,13 @@ We use certain data types for the properties we expect.
 | description  | Text describing this event                                                                           | text                                 |
 | tags         | A list of tags. TODO how to describe?                                                                | list\<text>                          |
 | registration | If this is a free event, a event which requires registration or a event which requires a paid ticket | enum\<registration>                  |
+| pictureUrl   | Url to a picture to be shown                                                                         | url                                  |
 
 #### Registration enum values
 
-* `free`: a free event which neither requires registration nor a ticket 
-* `registration`: an event which requires a free registration 
-* `ticket`: a paid event which requires a ticket 
+* `free`: a free event which neither requires registration nor a ticket
+* `registration`: an event which requires a free registration
+* `ticket`: a paid event which requires a ticket
 
 ### Location Properties
 

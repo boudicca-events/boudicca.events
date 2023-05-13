@@ -11,6 +11,7 @@ dependencies {
     implementation(project(":eventcollector-api"))
     implementation("it.skrape:skrapeit:1.1.5")
     implementation("it.skrape:skrapeit-http-fetcher:1.1.5")
+    implementation("org.jsoup:jsoup:1.16.1")
     implementation("org.mnode.ical4j:ical4j:3.2.10")
     implementation("com.rometools:rome:2.1.0")
 }

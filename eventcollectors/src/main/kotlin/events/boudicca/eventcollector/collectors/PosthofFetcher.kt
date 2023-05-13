@@ -3,121 +3,59 @@ package events.boudicca.eventcollector.collectors
 import events.boudicca.SemanticKeys
 import events.boudicca.api.eventcollector.Event
 import events.boudicca.api.eventcollector.TwoStepEventCollector
-import it.skrape.core.htmlDocument
-import it.skrape.fetcher.HttpFetcher
-import it.skrape.fetcher.response
-import it.skrape.fetcher.skrape
-import it.skrape.selects.Doc
-import it.skrape.selects.DocElement
-import it.skrape.selects.html5.div
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
+import org.jsoup.nodes.Element
 import java.time.LocalDateTime
 import java.time.ZoneId
-import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
-class PosthofFetcher : TwoStepEventCollector<DocElement>("posthof") {
+class PosthofFetcher : TwoStepEventCollector<Element>("posthof") {
 
-    override fun getAllUnparsedEvents(): List<DocElement> {
-        val events = mutableListOf<DocElement>()
-        val baseUrl = "https://www.posthof.at/programm/alles/"
-        val otherUrls = mutableSetOf<String>()
-        skrape(HttpFetcher) {
-            request {
-                url = baseUrl
+    override fun getAllUnparsedEvents(): List<Element> {
+        val events = mutableListOf<Element>()
+
+        val document = Jsoup.connect("https://www.posthof.at/programm/alles/").get()
+        val otherUrls = document.select("div.news-list-browse table a")
+            .toList()
+            .filter {
+                it.text() != "1"
             }
-            response {
-                htmlDocument {
-                    selection("div.news-list-browse table a") {
-                        findAll {
-                            forEach {
-                                if (it.text != "1") {
-                                    otherUrls.add(it.attribute("href"))
-                                }
-                            }
-                        }
-                    }
-                    parseEventList(events)
-                }
-            }
-        }
+            .map { it.attr("href") }
+        parseEventList(document, events)
 
         otherUrls.forEach {
-            skrape(HttpFetcher) {
-                request {
-                    url = "https://posthof.at/$it"
-                }
-                response {
-                    htmlDocument {
-                        parseEventList(events)
-                    }
-                }
-            }
+            parseEventList(Jsoup.connect("https://posthof.at/$it").get(), events)
         }
 
         return events
     }
 
-    private fun Doc.parseEventList(events: MutableList<DocElement>) {
-        div {
-            withClass = "event-list-item"
-            findAll {
-                forEach {
-                    events.add(it)
-                }
-            }
-        }
+    private fun parseEventList(document: Document, events: MutableList<Element>) {
+        events.addAll(document.select("div.event-list-item"))
     }
 
-    override fun parseEvent(event: DocElement): Event? {
-        var name: String? = null
-        var startDate: ZonedDateTime? = null
+    override fun parseEvent(event: Element): Event? {
         val data = mutableMapOf<String, String>()
 
-        event.apply {
-            selection("div.h3>a") {
-                findFirst {
-                    name = text
-                    data[SemanticKeys.URL] = "https://www.posthof.at/" + attribute("href")
-                }
-            }
-            selection("div.news-list-subtitle") {
-                findFirst {
-                    name += " - $text"
-                }
-            }
-            selection("span.news-list-category") {
-                findFirst {
-                    mapType(data, text)
-                }
-            }
-            selection("span.news-list-date") {
-                findFirst {
-                    startDate = LocalDateTime.parse(
-                        text.substring(4),
-                        DateTimeFormatter.ofPattern("dd.MM.uuuu // kk:mm")
-                    ).atZone(ZoneId.of("CET"))
-                }
-            }
-            selection("div.news_text>p") {
-                findFirst {
-                    data[SemanticKeys.DESCRIPTION] = text
-                }
-            }
-            selection("img") {
-                findFirst {
-                    data["pictureUrl"] = "https://www.posthof.at/" + attribute("src")
-                }
-            }
-        }
+        var name = event.select("div.h3>a").text()
+        name += " - ${event.select("div.news-list-subtitle").text()}"
+        val startDate = LocalDateTime.parse(
+            event.select("span.news-list-date").text().substring(4),
+            DateTimeFormatter.ofPattern("dd.MM.uuuu // kk:mm")
+        ).atZone(ZoneId.of("CET"))
+
+        mapType(data, event.select("span.news-list-category").text())
+        data[SemanticKeys.URL] = "https://www.posthof.at/" + event.select("div.h3>a").attr("href")
+        data[SemanticKeys.DESCRIPTION] = event.select("div.news_text>p").text()
+        data[SemanticKeys.PICTUREURL] = "https://www.posthof.at/" + event.select("img").attr("src")
 
         data[SemanticKeys.REGISTRATION] = "ticket" //are there free events in posthof?
         data[SemanticKeys.LOCATION_NAME] = "Posthof"
         data[SemanticKeys.LOCATION_URL] = "https://www.posthof.at"
         data[SemanticKeys.LOCATION_CITY] = "Linz"
-        if (name != null && startDate != null) {
-            return Event(name!!, startDate!!.toOffsetDateTime(), data)
-        }
-        return null
+
+        return Event(name, startDate.toOffsetDateTime(), data)
     }
 
     private fun mapType(data: MutableMap<String, String>, type: String) {

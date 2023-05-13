@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Local Setup (without collectors)" type="CompoundRunConfigurationType">
+    <toRun name="boudicca:core [quarkusDev]" type="GradleRunConfiguration" />
+    <toRun name="boudicca:publisher-html [bootRun]" type="GradleRunConfiguration" />
+    <method v="2" />
+  </configuration>
+</component>

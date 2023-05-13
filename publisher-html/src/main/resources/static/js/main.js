@@ -5,21 +5,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const drawer = document.getElementById("drawer");
 
   filterButton.addEventListener("click", () => {
-    if (!drawer.classList.contains("drawer-open")) {
-      document.addEventListener(
-        "click",
-        (event) => {
-          if (
-            !drawer.contains(event.target) &&
-            event.target.id !== "filterButton"
-          ) {
-            drawer.classList.remove("drawer-open");
-          }
-        },
-        { once: true }
-      );
+    drawer.classList.add("drawer-open");
+  });
+
+  document.addEventListener("click", (event) => {
+    if (
+      !drawer.contains(event.target) &&
+      !filterButton.contains(event.target)
+    ) {
+      drawer.classList.remove("drawer-open");
     }
-    drawer.classList.toggle("drawer-open");
   });
 
   const createEventDomElement = (event) => {

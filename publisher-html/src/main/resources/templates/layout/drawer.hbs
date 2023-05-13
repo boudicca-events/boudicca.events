@@ -20,8 +20,36 @@
         visibility: visible;
         opacity: 1;
     }
+
+    fieldset {
+        padding: 0;
+        border: none;
+    }
+
+    legend {
+        margin-bottom: 12px;
+    }
 </style>
 
 <div id="drawer" class="drawer">
-    <strong>Deine Filter</strong>
+    <div>
+        <h2>Filtersuche</h2>
+    </div>
+
+    <fieldset>
+        <legend>Datum</legend>
+        <div class="header-search-filter">
+            <div class="header-date-search">
+                <div class="filter-input-wrapper">
+                    <label for="fromDate" class="filter-label">Von</label>
+                    <input id="fromDate" name="fromDate" type="date" class="date-input" />
+                </div>
+                
+                    <div class="filter-input-wrapper">
+                    <label for="toDate" class="filter-label">Bis</label>
+                    <input id="toDate" name="toDate" type="date" class="date-input" />
+                </div>
+            </div>
+        </div>
+    </fieldset>
 </div>

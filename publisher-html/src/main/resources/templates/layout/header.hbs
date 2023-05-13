@@ -68,6 +68,10 @@
     }
 
     .header-search {
+        display: flex;
+    }
+
+    .header-search-wrapper {
         position: relative;
     }
 
@@ -135,20 +139,28 @@
 
             <div class="header-right">
                 <div class="header-search">
-                    <div>
-                        <label for="name" class="visible-hidden">Textsuche</label>
-                        <input id="name" name="name" type="text" class="search-input" />
+                    <div class="header-search-wrapper">
+                        <div>
+                            <label for="name" class="visible-hidden">Textsuche</label>
+                            <input id="name" name="name" type="text" class="search-input" />
+                        </div>
+                        <button id="searchButton" aria-describedby="Events finden" type="submit">
+                            <svg height="24px" width="24px" title="Suche Logo" viewBox="0 0 512 512" >
+                                <use xlink:href="#search"></use>  
+                            </svg>
+                        </button>
                     </div>
-                    <button id="searchButton" aria-describedby="Events finden" type="submit">
-                        <svg height="24px" width="24px" title="Suche Logo" viewBox="0 0 512 512" >
-                            <use xlink:href="#search"></use>  
+
+                    <button id="filterButton" aria-describedby="Filter öffnen" aria-controls="drawer" type="button">
+                        <svg height="24px" width="24px" title="Filter Logo" viewBox="0 0 512 512" >
+                            <use xlink:href="#funnel"></use>  
                         </svg>
                     </button>
+                     {{> layout/drawer}}
                 </div>
             </div>
         </div>
         
-
          <div class="header-search-filter">
             <div class="header-date-search">
                 <div class="filter-input-wrapper">

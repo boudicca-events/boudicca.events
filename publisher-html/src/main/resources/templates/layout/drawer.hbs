@@ -1,0 +1,27 @@
+<style>
+    .drawer {
+        z-index: 9999;
+        min-width: 500px;
+        display: flex;
+        height: 100%;
+        flex-direction: column;
+        background: white;
+        padding: 32px;
+        opacity: 0;
+        position: fixed;
+        right: 0;
+        top: 0;
+        visibility: hidden;
+        border-left: 2px solid black;
+        box-shadow: 1px 0px 10px 11px #87878724;
+    }
+
+    .drawer-open {
+        visibility: visible;
+        opacity: 1;
+    }
+</style>
+
+<div id="drawer" class="drawer">
+    <strong>Deine Filter</strong>
+</div>

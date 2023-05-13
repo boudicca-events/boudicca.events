@@ -1,6 +1,26 @@
 document.addEventListener("DOMContentLoaded", () => {
   const searchForm = document.getElementById("searchForm");
   const eventsContainer = document.getElementById("eventsContainer");
+  const filterButton = document.getElementById("filterButton");
+  const drawer = document.getElementById("drawer");
+
+  filterButton.addEventListener("click", () => {
+    if (!drawer.classList.contains("drawer-open")) {
+      document.addEventListener(
+        "click",
+        (event) => {
+          if (
+            !drawer.contains(event.target) &&
+            event.target.id !== "filterButton"
+          ) {
+            drawer.classList.remove("drawer-open");
+          }
+        },
+        { once: true }
+      );
+    }
+    drawer.classList.toggle("drawer-open");
+  });
 
   const createEventDomElement = (event) => {
     // TODO: re use handlebars template

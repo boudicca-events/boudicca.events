@@ -3,12 +3,9 @@ package events.boudicca.eventcollector.collectors
 import events.boudicca.SemanticKeys
 import events.boudicca.api.eventcollector.Event
 import events.boudicca.api.eventcollector.TwoStepEventCollector
-import it.skrape.core.htmlDocument
-import it.skrape.fetcher.HttpFetcher
-import it.skrape.fetcher.response
-import it.skrape.fetcher.skrape
-import it.skrape.selects.Doc
-import it.skrape.selects.DocElement
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
+import org.jsoup.nodes.Element
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.OffsetDateTime
@@ -17,132 +14,66 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 
 
-class BrucknerhausCollector : TwoStepEventCollector<DocElement>("brucknerhaus") {
+class BrucknerhausCollector : TwoStepEventCollector<Element>("brucknerhaus") {
 
-    override fun getAllUnparsedEvents(): List<DocElement> {
-        val events = mutableListOf<DocElement>()
-        val baseUrl = "https://www.brucknerhaus.at/programm/veranstaltungen"
-        val otherUrls = mutableListOf<String>()
-        skrape(HttpFetcher) {
-            request {
-                url = baseUrl
-            }
-            response {
-                htmlDocument {
-                    selection("ul.pagination>li") {
-                        findAll {
-                            otherUrls.addAll(
-                                filter { it.attribute("class").isEmpty() }
-                                    .map { "https://www.brucknerhaus.at" + it.children.first().attribute("href") }
-                            )
-                        }
-                    }
-                    events.addAll(findUnparsedEvents(this))
-                }
-            }
-        }
+    override fun getAllUnparsedEvents(): List<Element> {
+        val events = mutableListOf<Element>()
+
+        val document = Jsoup.connect("https://www.brucknerhaus.at/programm/veranstaltungen").get()
+        val otherUrls = document.select("ul.pagination>li")
+            .toList()
+            .filter { it.attr("class").isEmpty() }
+            .map { "https://www.brucknerhaus.at" + it.children().first()!!.attr("href") }
+
+        events.addAll(findUnparsedEvents(document))
 
         otherUrls.forEach {
-            skrape(HttpFetcher) {
-                request {
-                    url = it
-                }
-                response {
-                    htmlDocument {
-                        events.addAll(findUnparsedEvents(this))
-                    }
-                }
-            }
+            events.addAll(findUnparsedEvents(Jsoup.connect(it).get()))
         }
 
         return events
     }
 
-    private fun findUnparsedEvents(doc: Doc): List<DocElement> {
-        val events = mutableListOf<DocElement>()
-        doc.selection("div.event div.event__element") {
-            findAll {
-                events.addAll(this)
-            }
-        }
-        return events
+    private fun findUnparsedEvents(doc: Document): List<Element> {
+        return doc.select("div.event div.event__element")
     }
 
-    override fun parseEvent(event: DocElement): Event? {
-        var name: String? = null
-        val startDate: OffsetDateTime? = parseDate(event)
+    override fun parseEvent(event: Element): Event {
+        val startDate: OffsetDateTime = parseDate(event)
         val data = mutableMapOf<String, String>()
 
-        event.apply {
-            selection("a.headline_link") {
-                findFirst {
-                    data[SemanticKeys.URL] = "https://www.brucknerhaus.at" + attribute("href")
-                }
-            }
-            selection("div.event__name") {
-                findFirst {
-                    name = text
-                }
-            }
-            selection("div.event__image img") {
-                findFirst {
-                    data[SemanticKeys.PICTUREURL] = attribute("src")
-                }
-            }
-            try {
-                selection("div.event__teaser p") {
-                    findFirst {
-                        data[SemanticKeys.DESCRIPTION] = text
-                    }
-                }
-            } catch (ignored: Exception) {
-                try {
-                    selection("div.event__teaser .fr-view") {
-                        findFirst {
-                            data[SemanticKeys.DESCRIPTION] = children.first().text
-                        }
-                    }
-                } catch (ignored2: Exception) {
-                    //TODO some just don't have a small description...
-                }
-            }
+        val name = event.select("div.event__name").text()
+        data[SemanticKeys.URL] = "https://www.brucknerhaus.at" + event.select("a.headline_link").attr("href")
+        data[SemanticKeys.PICTUREURL] = event.select("div.event__image img").attr("src")
+
+        var description = event.select("div.event__teaser p").text()
+        if (description.isBlank()) {
+            description = event.select("div.event__teaser .fr-view").first()?.children()?.first()?.text() ?: ""
         }
+        data[SemanticKeys.DESCRIPTION] = description
 
         data[SemanticKeys.TYPE] = "concert" //TODO check
         data[SemanticKeys.LOCATION_NAME] = "Brucknerhaus" //TODO not all events are there...
         data[SemanticKeys.LOCATION_URL] = "https://www.brucknerhaus.at/"
         data[SemanticKeys.LOCATION_CITY] = "Linz"
 
-        if (name != null && startDate != null) {
-            return Event(name!!, startDate!!, data)
-        }
-        return null
+        return Event(name, startDate, data)
     }
 
-    private fun parseDate(event: DocElement): OffsetDateTime? {
-        var datePart1: String? = null
-        var datePart2: String? = null
-        var datePart3: String? = null
-        var time: String? = null
+    private fun parseDate(event: Element): OffsetDateTime {
+        val dateElement = event.select("div.event__date").first()!!
+        val datePart1 = dateElement.children()[1].children()[0].text()
+        val datePart2 = dateElement.children()[1].children()[1].text()
+        val datePart3 = dateElement.children()[2].children()[0].text()
 
-        event.selection("div.event__date") {
-            findFirst {
-                datePart1 = children.get(1).children.get(0).text
-                datePart2 = children.get(1).children.get(1).text
-                datePart3 = children.get(2).children.get(0).text
-            }
-        }
-        event.selection("div.event__location") {
-            findFirst {
-                time = children.get(0).children.get(0).text
-            }
-        }
+        val timeElement = event.select("div.event__location").first()!!
+        val time = timeElement.children()[0].children()[0].text()
 
         val localDate = LocalDate.parse(
-            datePart1!! + " " + mapMonth(datePart2!!) + " " + datePart3!!,
+            datePart1 + " " + mapMonth(datePart2) + " " + datePart3,
             DateTimeFormatter.ofPattern("d M uu").withLocale(Locale.GERMAN)
         )
-        val localTime = LocalTime.parse(time!!, DateTimeFormatter.ofPattern("kk:mm"))
+        val localTime = LocalTime.parse(time, DateTimeFormatter.ofPattern("kk:mm"))
 
         return localDate.atTime(localTime).atZone(ZoneId.of("CET")).toOffsetDateTime()
     }

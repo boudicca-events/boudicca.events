@@ -29,11 +29,28 @@
     legend {
         margin-bottom: 12px;
     }
+
+    .drawer-header {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    #filterSearchButton {
+        padding: 12px 24px;
+        border: 1px solid black;
+        margin-top: 24px;
+        font-size: 18px;
+    }
 </style>
 
 <div id="drawer" class="drawer">
-    <div>
+    <div class="drawer-header">
         <h2>Filtersuche</h2>
+        <button type="button" id="closeDrawerButton" title="Filtersuche schließen">
+            <svg title="Schließen Logo" height="56px" width="56px" viewBox="0 0 512 512" >
+                <use xlink:href="#close"></use>  
+            </svg>
+        </button>
     </div>
 
     <fieldset>
@@ -52,4 +69,8 @@
             </div>
         </div>
     </fieldset>
+
+    <button id="filterSearchButton" type="submit">
+        Suchen
+    </button>
 </div>

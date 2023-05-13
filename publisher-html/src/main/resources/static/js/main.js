@@ -3,6 +3,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const eventsContainer = document.getElementById("eventsContainer");
   const filterButton = document.getElementById("filterButton");
   const drawer = document.getElementById("drawer");
+  const closeDrawerButton = document.getElementById("closeDrawerButton");
+  const filterSearchButton = document.getElementById("filterSearchButton");
+
+  filterSearchButton.addEventListener("click", () => {
+    drawer.classList.remove("drawer-open");
+  });
+
+  closeDrawerButton.addEventListener("click", () => {
+    drawer.classList.remove("drawer-open");
+  });
 
   filterButton.addEventListener("click", () => {
     drawer.classList.add("drawer-open");

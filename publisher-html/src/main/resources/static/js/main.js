@@ -23,9 +23,14 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="event-image${
               event.type ? ` event-image-${event.type}` : ""
             }">
-                <svg title="Event Bild" viewBox="0 0 512 512" height="100px" >
-                    <use xlink:href="#${event.type ?? "image"}"></use>  
-                </svg>
+                ${
+                  event.pictureUrl
+                    ? `<img src="${event.pictureUrl}" height="100px" alt="Eventbild" />`
+                    : `<svg title="Event Bild" viewBox="0 0 512 512" height="100px" >
+                <use xlink:href="#${event.type ?? "image"}"></use>  
+                </svg>`
+                }
+                
 
                 ${
                   event.url

@@ -35,7 +35,7 @@ class PosthofFetcher : TwoStepEventCollector<Element>("posthof") {
         events.addAll(document.select("div.event-list-item"))
     }
 
-    override fun parseEvent(event: Element): Event? {
+    override fun parseEvent(event: Element): Event {
         val data = mutableMapOf<String, String>()
 
         var name = event.select("div.h3>a").text()

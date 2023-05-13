@@ -30,7 +30,7 @@ class ZuckerfabrikFetcher : TwoStepEventCollector<Pair<String, Document>>("zucke
         return events
     }
 
-    override fun parseEvent(event: Pair<String, Document>): Event? {
+    override fun parseEvent(event: Pair<String, Document>): Event {
         val (url, doc) = event
         val data = mutableMapOf<String, String>()
         data[SemanticKeys.URL] = url

@@ -18,7 +18,7 @@ class EventService {
         "kabarett", "theater", "wissenskabarett", "provinzkrimi",
         "comedy", "figurentheater", "film", "visual comedy", "tanz", "performance"
     );
-    private val musicTypes = arrayOf("concert", "alternative", "singer/songwriter", "party", "songwriter/alternative");
+    private val musicTypes = arrayOf("konzert", "concert", "alternative", "singer/songwriter", "party", "songwriter/alternative");
     private val techTypes = arrayOf("techmeetup");
 
     init {

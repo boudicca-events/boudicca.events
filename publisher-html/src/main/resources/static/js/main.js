@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const closeDrawerButton = document.getElementById("closeDrawerButton");
   const filterSearchButton = document.getElementById("filterSearchButton");
 
-  let offset = 0;
+  let offset = eventsContainer.children.length;
 
   filterSearchButton.addEventListener("click", () => {
     closeDrawer();
@@ -76,7 +76,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 <use xlink:href="#${event.type ?? "image"}"></use>  
                 </svg>`
                 }
-                
 
                 ${
                   event.url

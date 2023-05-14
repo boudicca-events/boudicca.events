@@ -1,5 +1,4 @@
 <div class="event">
-   
         <div class="event-image {{#if event.type}}event-image-{{event.type}}{{/if}}">
             {{#if event.pictureUrl}}
                 <img src="{{event.pictureUrl}}" height="100px" />
@@ -33,15 +32,6 @@
                     </svg>
                     <p>{{event.locationName}}{{#if event.city}}, {{event.city}} {{/if}} </p>
                 </div>
-
-                {{#if event.description}}
-                    <div class="event-details-description">
-                        <details>
-                            <summary>Mehr zum Event lesen</summary>
-                            <p>{{event.description}} </p>
-                        </details>
-                    </div>
-                {{/if}}
             </div>
         </div>
 </div>

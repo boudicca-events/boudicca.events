@@ -45,6 +45,13 @@ class EventService {
             .sortedBy { it }
     }
 
+    fun getLocationCities(): List<String> {
+        return publisherApi.eventsGet()
+            .mapNotNull { it.data?.get(SemanticKeys.LOCATION_CITY) }
+            .filter { it.isNotBlank() }
+            .sortedBy { it }
+    }
+
     private fun mapEvents(
         events: Set<Event>,
         offset: Int = 0,
@@ -62,6 +69,11 @@ class EventService {
     private fun matchesFilter(event: Event, filterDTO: FilterDTO): Boolean {
         if (filterDTO.locationName != null
             && event.data?.get(SemanticKeys.LOCATION_NAME) != filterDTO.locationName
+        ) {
+            return false
+        }
+        if (filterDTO.locationCity != null
+            && event.data?.get(SemanticKeys.LOCATION_CITY) != filterDTO.locationCity
         ) {
             return false
         }

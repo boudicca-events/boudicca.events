@@ -6,6 +6,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const closeDrawerButton = document.getElementById("closeDrawerButton");
   const filterSearchButton = document.getElementById("filterSearchButton");
 
+  let offset = 0;
+
   filterSearchButton.addEventListener("click", () => {
     closeDrawer();
   });
@@ -37,9 +39,33 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.style.overflow = "initial";
   };
 
+  var throttleTimer;
+  const throttle = (callback, time) => {
+    if (throttleTimer) return;
+    throttleTimer = true;
+    setTimeout(() => {
+      callback();
+      throttleTimer = false;
+    }, time);
+  };
+
+  const handleInfiniteScroll = () => {
+    throttle(() => {
+      const endOfPage =
+        window.innerHeight + window.pageYOffset >= document.body.offsetHeight;
+      if (endOfPage) {
+        onScrollSearch();
+      }
+    }, 1000);
+  };
+  window.addEventListener("scroll", handleInfiniteScroll);
+
   const createEventDomElement = (event) => {
     // TODO: re use handlebars template
-    const domElement = `<div class="event">
+    const eventNode = document.createElement("div");
+    eventNode.classList.add("event");
+
+    const eventContent = `
             <div class="event-image${
               event.type ? ` event-image-${event.type}` : ""
             }">
@@ -93,8 +119,10 @@ document.addEventListener("DOMContentLoaded", () => {
                       } 
                 </div>
             </div>
-          </div>`;
-    return domElement;
+          `;
+
+    eventNode.innerHTML = eventContent;
+    return eventNode;
   };
 
   const goTo = (url) => {
@@ -107,20 +135,40 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const onSearch = async (e) => {
     e.preventDefault();
+    offset = 0;
     const paramsAsString = new URLSearchParams(
       new FormData(e.target)
     ).toString();
-    const apiUrl = `/api/search?${paramsAsString}`;
+    const apiUrl = `/api/search?${paramsAsString}&offset=${offset}`;
 
     try {
       const response = await fetch(apiUrl);
       const data = await response.json();
 
-      const domEvents = data
-        .map((event) => createEventDomElement(event))
-        .join("");
-      eventsContainer.innerHTML = domEvents;
+      eventsContainer.innerHTML = "";
+      const domEvents = data.map((event) => createEventDomElement(event));
+      eventsContainer.append(...domEvents);
+      offset += data.length;
+      goTo(`/search?${paramsAsString}`);
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
+  const onScrollSearch = async () => {
+    const paramsAsString = new URLSearchParams(
+      new FormData(searchForm)
+    ).toString();
+    const apiUrl = `/api/search?${paramsAsString}&offset=${offset}`;
+
+    try {
+      const response = await fetch(apiUrl);
+      const data = await response.json();
+
+      const domEvents = data.map((event) => createEventDomElement(event));
+      eventsContainer.append(...domEvents);
+
+      offset += data.length;
       goTo(`/search?${paramsAsString}`);
     } catch (e) {
       console.error(e);

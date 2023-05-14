@@ -12,6 +12,8 @@ import java.time.format.DateTimeFormatter
 @Service
 class EventService {
     private val publisherApi: EventPublisherResourceApi
+    private val rows: Int = 30;
+
     private val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy 'um' HH:mm 'Uhr'")
 
     private val miscArtTypes = arrayOf(
@@ -47,7 +49,7 @@ class EventService {
         return events.toList()
             .filter { it.startDate.isAfter(OffsetDateTime.now().minusDays(1)) }
             .sortedBy { it.startDate }
-            .drop(offset).take(30)
+            .drop(offset).take(rows)
             .map { mapEvent(it) }
     }
 

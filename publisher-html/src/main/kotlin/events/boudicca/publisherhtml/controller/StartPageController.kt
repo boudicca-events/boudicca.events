@@ -49,7 +49,7 @@ class StartPageController @Autowired constructor(private val eventService: Event
         } else {
             null
         }
-        data["events"] = eventService.search(SearchDTO().name(name).fromDate(fromDateParsed).toDate(toDateParsed))
+        data["events"] = eventService.search(SearchDTO().name(name).fromDate(fromDateParsed).toDate(toDateParsed), 0)
         return ModelAndView("index", data)
     }
 }

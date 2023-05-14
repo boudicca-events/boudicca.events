@@ -25,6 +25,7 @@ class EventCollectorScheduler(
     fun run(): Nothing {
         while (true) {
             runOnce()
+            println("all event collectors ran, sleeping for $interval")
             Thread.sleep(interval.toMillis())
         }
     }
@@ -38,8 +39,6 @@ class EventCollectorScheduler(
                 e.printStackTrace()
             }
         }
-
-        println("all event collectors ran, sleeping for $interval")
     }
 
     private fun collect(eventCollector: EventCollector) {

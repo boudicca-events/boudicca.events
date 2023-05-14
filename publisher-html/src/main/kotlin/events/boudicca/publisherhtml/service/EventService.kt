@@ -12,7 +12,7 @@ import java.time.format.DateTimeFormatter
 @Service
 class EventService {
     private val publisherApi: EventPublisherResourceApi
-    private val rows: Int = 30;
+    private val rows: Int = 30
 
     private val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy 'um' HH:mm 'Uhr'")
 
@@ -20,7 +20,8 @@ class EventService {
         "kabarett", "theater", "wissenskabarett", "provinzkrimi",
         "comedy", "figurentheater", "film", "visual comedy", "tanz", "performance"
     );
-    private val musicTypes = arrayOf("konzert", "concert", "alternative", "singer/songwriter", "party", "songwriter/alternative");
+    private val musicTypes =
+        arrayOf("konzert", "concert", "alternative", "singer/songwriter", "party", "songwriter/alternative");
     private val techTypes = arrayOf("techmeetup");
 
     init {
@@ -30,27 +31,41 @@ class EventService {
     }
 
     fun getAllEvents(): List<Map<String, String?>> {
-        return mapEvents(publisherApi.eventsGet(), 0)
+        return mapEvents(publisherApi.eventsGet())
     }
 
-    fun getAllEvents(offset: Int): List<Map<String, String?>> {
-        return mapEvents(publisherApi.eventsGet(), offset)
+    fun search(searchDTO: SearchDTO, offset: Int, filterDTO: FilterDTO = FilterDTO()): List<Map<String, String?>> {
+        return mapEvents(publisherApi.eventsSearchPost(searchDTO), offset, filterDTO)
     }
 
-    fun search(searchDTO: SearchDTO): List<Map<String, String?>> {
-        return mapEvents(publisherApi.eventsSearchPost(searchDTO), 0)
+    fun getLocationNames(): List<String> {
+        return publisherApi.eventsGet()
+            .mapNotNull { it.data?.get(SemanticKeys.LOCATION_NAME) }
+            .filter { it.isNotBlank() }
+            .sortedBy { it }
     }
 
-    fun search(searchDTO: SearchDTO, offset: Int): List<Map<String, String?>> {
-        return mapEvents(publisherApi.eventsSearchPost(searchDTO), offset)
-    }
-
-    private fun mapEvents(events: Set<Event>, offset: Int): List<Map<String, String?>> {
-        return events.toList()
+    private fun mapEvents(
+        events: Set<Event>,
+        offset: Int = 0,
+        filterDTO: FilterDTO = FilterDTO()
+    ): List<Map<String, String?>> {
+        return events.asSequence()
             .filter { it.startDate.isAfter(OffsetDateTime.now().minusDays(1)) }
+            .filter { matchesFilter(it, filterDTO) }
             .sortedBy { it.startDate }
             .drop(offset).take(rows)
             .map { mapEvent(it) }
+            .toList()
+    }
+
+    private fun matchesFilter(event: Event, filterDTO: FilterDTO): Boolean {
+        if (filterDTO.locationName != null
+            && event.data?.get(SemanticKeys.LOCATION_NAME) != filterDTO.locationName
+        ) {
+            return false
+        }
+        return true
     }
 
     private fun mapEvent(event: Event): Map<String, String?> {
@@ -99,3 +114,4 @@ class EventService {
         return "http://localhost:8081"
     }
 }
+

@@ -3,7 +3,7 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-bottom: 12px;
+        margin-bottom: 24px;
     }
 
     @media only screen and (max-width: 700px) {
@@ -33,11 +33,12 @@
     }
 
     .search-input {
-        border-radius: 4px;
         padding: 4px;
         min-width: 350px;
         appearance: none;
         height: 26px;
+        border: none;
+        border-bottom: 1px solid black;
     }
 
     input:focus-visible, button:focus-visible {
@@ -60,30 +61,29 @@
     }
 
     .date-input {
-        border-radius: 24px;
         appearance: none;
         height: 28px;
-        padding: 0 12px;
-        width: 105px;
+        padding: 4px 12px;
+        width: 135px;
     }
 
     .header-search {
+        display: flex;
+    }
+
+    .header-search-wrapper {
         position: relative;
     }
 
     #searchButton {
         display: flex;
-        background-color: var(--color-main);
         height: 100%;
         align-items: center;
         position: absolute;
         right: 0;
         top: 50%;
         transform: translateY(-50%);
-        border-top-right-radius: 4px;
-        border-bottom-right-radius: 4px;
         cursor: pointer;
-        border: 2px solid black;
     }
 
     #searchButton:focus-visible {
@@ -107,14 +107,19 @@
 
     .filter-label {
         font-size: 12px;
-        padding-left: 8px;
+        padding-left: 4px;
         margin-bottom: 2px;
-        font-weight: bold;
+        font-weight: 600;
     }
 
     .filter-input-wrapper {
         display: flex;
         flex-direction: column;
+    }
+
+    #filterButton {
+        display: flex;
+        align-items: center;
     }
 
     .header-date-search {
@@ -135,30 +140,24 @@
 
             <div class="header-right">
                 <div class="header-search">
-                    <div>
-                        <label for="name" class="visible-hidden">Textsuche</label>
-                        <input id="name" name="name" type="text" class="search-input" />
+                    <div class="header-search-wrapper">
+                        <div>
+                            <label for="name" class="visible-hidden">Textsuche</label>
+                            <input id="name" name="name" type="text" class="search-input" />
+                        </div>
+                        <button id="searchButton" aria-describedby="Events finden" type="submit">
+                            <svg height="24px" width="24px" title="Suche Logo" viewBox="0 0 512 512" >
+                                <use xlink:href="#search"></use>  
+                            </svg>
+                        </button>
                     </div>
-                    <button id="searchButton" aria-describedby="Events finden" type="submit">
-                        <svg height="24px" width="24px" title="Suche Logo" viewBox="0 0 512 512" >
-                            <use xlink:href="#search"></use>  
+
+                    <button id="filterButton" aria-describedby="Filter öffnen" aria-controls="drawer" type="button">
+                        <svg height="24px" width="24px" title="Filter Logo" viewBox="0 0 512 512" >
+                            <use xlink:href="#funnel"></use>  
                         </svg>
                     </button>
-                </div>
-            </div>
-        </div>
-        
-
-         <div class="header-search-filter">
-            <div class="header-date-search">
-                <div class="filter-input-wrapper">
-                    <label for="fromDate" class="filter-label">Von</label>
-                    <input id="fromDate" name="fromDate" type="date" class="date-input" />
-                </div>
-               
-                 <div class="filter-input-wrapper">
-                    <label for="toDate" class="filter-label">Bis</label>
-                    <input id="toDate" name="toDate" type="date" class="date-input" />
+                     {{> layout/drawer}}
                 </div>
             </div>
         </div>

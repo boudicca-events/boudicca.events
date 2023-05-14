@@ -1,0 +1,82 @@
+<style>
+    .drawer {
+        z-index: 9999;
+        min-width: 500px;
+        display: flex;
+        height: 100%;
+        flex-direction: column;
+        background: white;
+        padding: 32px;
+        opacity: 0;
+        position: fixed;
+        right: 0;
+        top: 0;
+        visibility: hidden;
+        border-left: 1px solid black;
+        box-shadow: 1px 0px 10px 11px #87878724;
+    }
+
+     @media only screen and (max-width: 700px) { 
+        .drawer {
+            width: 100%;
+        }
+     }
+
+    .drawer-open {
+        visibility: visible;
+        opacity: 1;
+    }
+
+    fieldset {
+        padding: 0;
+        border: none;
+    }
+
+    legend {
+        margin-bottom: 12px;
+    }
+
+    .drawer-header {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    #filterSearchButton {
+        padding: 12px 24px;
+        border: 1px solid black;
+        margin-top: 24px;
+        font-size: 18px;
+    }
+</style>
+
+<div id="drawer" class="drawer">
+    <div class="drawer-header">
+        <h2>Filtersuche</h2>
+        <button type="button" id="closeDrawerButton" title="Filtersuche schließen">
+            <svg title="Schließen Logo" height="56px" width="56px" viewBox="0 0 512 512" >
+                <use xlink:href="#close"></use>  
+            </svg>
+        </button>
+    </div>
+
+    <fieldset>
+        <legend><strong>Datum</strong></legend>
+        <div class="header-search-filter">
+            <div class="header-date-search">
+                <div class="filter-input-wrapper">
+                    <label for="fromDate" class="filter-label">Von</label>
+                    <input id="fromDate" name="fromDate" type="date" class="date-input" />
+                </div>
+                
+                    <div class="filter-input-wrapper">
+                    <label for="toDate" class="filter-label">Bis</label>
+                    <input id="toDate" name="toDate" type="date" class="date-input" />
+                </div>
+            </div>
+        </div>
+    </fieldset>
+
+    <button id="filterSearchButton" type="submit">
+        Suchen
+    </button>
+</div>

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.servlet.ModelAndView
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -20,7 +21,7 @@ class SearchRestController @Autowired constructor(private val eventService: Even
     fun search(@RequestParam("name", required = false) name: String?,
                @RequestParam("offset", required = false) offset: Int?,
                @RequestParam("fromDate", required = false) fromDate: String?,
-               @RequestParam("toDate", required = false) toDate: String?): ResponseEntity<List<Map<String, String?>>> {
+               @RequestParam("toDate", required = false) toDate: String?): ModelAndView {
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
         val fromDateParsed = if (!fromDate.isNullOrBlank()) {
@@ -35,7 +36,7 @@ class SearchRestController @Autowired constructor(private val eventService: Even
         }
 
         val events = eventService.search(SearchDTO().name(name).fromDate(fromDateParsed).toDate(toDateParsed), offset?: 0)
-        return ResponseEntity(events, HttpStatus.OK)
+        return ModelAndView("events/eventsRaw", mapOf("events" to events))
     }
 }
 

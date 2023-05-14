@@ -6,8 +6,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const closeDrawerButton = document.getElementById("closeDrawerButton");
   const filterSearchButton = document.getElementById("filterSearchButton");
 
-  let offset = eventsContainer.children.length;
-
   filterSearchButton.addEventListener("click", () => {
     closeDrawer();
   });
@@ -60,70 +58,6 @@ document.addEventListener("DOMContentLoaded", () => {
   };
   window.addEventListener("scroll", handleInfiniteScroll);
 
-  const createEventDomElement = (event) => {
-    // TODO: re use handlebars template
-    const eventNode = document.createElement("div");
-    eventNode.classList.add("event");
-
-    const eventContent = `
-            <div class="event-image${
-              event.type ? ` event-image-${event.type}` : ""
-            }">
-                ${
-                  event.pictureUrl
-                    ? `<img src="${event.pictureUrl}" height="100px" alt="Eventbild" />`
-                    : `<svg title="Event Bild" viewBox="0 0 512 512" height="100px" >
-                <use xlink:href="#${event.type ?? "image"}"></use>  
-                </svg>`
-                }
-
-                ${
-                  event.url
-                    ? `<a class="anchor-to-eventpage" href="${event.url}" target="_blank" aria-describedby="Zur Eventseite von ${event.name}. (neues Fenster wird geöffnet)">
-                    Zur Eventseite
-                  </a>`
-                    : ""
-                }
-            </div>
-
-            <div class="event-description">
-              <p class="event-title">
-                  ${event.name}
-              </p>
-                <div class="event-details-wrapper">
-                    <div class="event-details">
-                        <svg height="24px" width="24px" title="Datum Logo" viewBox="0 0 512 512" >
-                            <use xlink:href="#time"></use>  
-                        </svg>
-                        <p>${event.startDate}</p>
-                    </div>
-                        <div class="event-details">
-                            <svg height="24px" width="24px" title="Ort Logo" viewBox="0 0 512 512" >
-                            <use xlink:href="#location"></use>  
-                        </svg>
-                        <p>${event.locationName}${
-      event.city ? `, ${event.city}` : ""
-    }</p>
-                      </div>
-
-                      ${
-                        event.description
-                          ? ` <div class="event-details-description">
-                      <details>
-                          <summary>Mehr zum Event lesen</summary>
-                          <p>${event.description} </p>
-                      </details>
-                  </div>`
-                          : ""
-                      } 
-                </div>
-            </div>
-          `;
-
-    eventNode.innerHTML = eventContent;
-    return eventNode;
-  };
-
   const goTo = (url) => {
     if ("undefined" !== typeof history.pushState) {
       history.pushState({}, "", url);
@@ -134,40 +68,33 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const onSearch = async (e) => {
     e.preventDefault();
-    offset = 0;
     const paramsAsString = new URLSearchParams(
       new FormData(e.target)
     ).toString();
-    const apiUrl = `/api/search?${paramsAsString}&offset=${offset}`;
+    const apiUrl = `/api/search?${paramsAsString}&offset=0`;
 
     try {
       const response = await fetch(apiUrl);
-      const data = await response.json();
-
-      eventsContainer.innerHTML = "";
-      const domEvents = data.map((event) => createEventDomElement(event));
-      eventsContainer.append(...domEvents);
-      offset += data.length;
+      const ssrDomEventString = await response.text();
+      eventsContainer.innerHTML = ssrDomEventString;
       goTo(`/search?${paramsAsString}`);
     } catch (e) {
       console.error(e);
     }
   };
 
+  const parser = new DOMParser();
   const onScrollSearch = async () => {
     const paramsAsString = new URLSearchParams(
       new FormData(searchForm)
     ).toString();
-    const apiUrl = `/api/search?${paramsAsString}&offset=${offset}`;
+    const apiUrl = `/api/search?${paramsAsString}&offset=${eventsContainer.children.length}`;
 
     try {
       const response = await fetch(apiUrl);
-      const data = await response.json();
-
-      const domEvents = data.map((event) => createEventDomElement(event));
-      eventsContainer.append(...domEvents);
-
-      offset += data.length;
+      const ssrDomEventString = await response.text();
+      const newEvents = parser.parseFromString(ssrDomEventString, "text/html");
+      eventsContainer.append(...newEvents.body.children);
       goTo(`/search?${paramsAsString}`);
     } catch (e) {
       console.error(e);

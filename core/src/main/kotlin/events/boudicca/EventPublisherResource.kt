@@ -3,12 +3,14 @@ package events.boudicca
 import events.boudicca.model.ComplexSearchDto
 import events.boudicca.model.Event
 import events.boudicca.model.SearchDTO
+import javax.annotation.security.PermitAll
 import javax.enterprise.context.ApplicationScoped
 import javax.inject.Inject
 import javax.ws.rs.GET
 import javax.ws.rs.POST
 import javax.ws.rs.Path
 
+@PermitAll
 @ApplicationScoped
 @Path("/events")
 class EventPublisherResource{

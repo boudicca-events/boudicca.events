@@ -1,11 +1,13 @@
 package events.boudicca
 
 import events.boudicca.model.Event
+import javax.annotation.security.RolesAllowed
 import javax.enterprise.context.ApplicationScoped
 import javax.inject.Inject
 import javax.ws.rs.POST
 import javax.ws.rs.Path
 
+@RolesAllowed("ingest")
 @ApplicationScoped
 @Path("/ingest")
 class EventIngestionResource {

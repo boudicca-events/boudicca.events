@@ -3,6 +3,7 @@ package events.boudicca.api.eventcollector
 import events.boudicca.openapi.ApiClient
 import events.boudicca.openapi.api.EventIngestionResourceApi
 import java.time.Duration
+import java.util.*
 
 class EventCollectorScheduler(
     private val interval: Duration = Duration.ofHours(24),
@@ -14,6 +15,12 @@ class EventCollectorScheduler(
     init {
         val apiClient = ApiClient()
         apiClient.updateBaseUri(boudiccaUrl)
+        apiClient.setRequestInterceptor {
+            it.header(
+                "Authorization",
+                "Basic " + Base64.getEncoder().encodeToString(autoDetectBasicAuth().encodeToByteArray())
+            )
+        }
         ingestionApi = EventIngestionResourceApi(apiClient)
     }
 
@@ -58,7 +65,7 @@ class EventCollectorScheduler(
 
 }
 
-fun autoDetectUrl(): String {
+private fun autoDetectUrl(): String {
     var url = System.getenv("BOUDICCA_URL")
     if (url != null && url.isNotBlank()) {
         return url
@@ -68,4 +75,16 @@ fun autoDetectUrl(): String {
         return url
     }
     return "http://localhost:8081"
+}
+
+private fun autoDetectBasicAuth(): String {
+    var auth = System.getenv("BOUDICCA_AUTH")
+    if (auth != null && auth.isNotBlank()) {
+        return auth
+    }
+    auth = System.getProperty("boudiccaAuth")
+    if (auth != null && auth.isNotBlank()) {
+        return auth
+    }
+    return "ingest:ingest"
 }

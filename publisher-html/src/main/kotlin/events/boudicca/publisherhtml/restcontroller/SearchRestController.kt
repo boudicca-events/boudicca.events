@@ -1,11 +1,9 @@
 package events.boudicca.publisherhtml.restcontroller
 
-import events.boudicca.openapi.model.Event
 import events.boudicca.openapi.model.SearchDTO
 import events.boudicca.publisherhtml.service.EventService
+import events.boudicca.publisherhtml.service.FilterDTO
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.ModelAndView
 import java.time.LocalDate
@@ -18,10 +16,14 @@ class SearchRestController @Autowired constructor(private val eventService: Even
 
     @GetMapping("/search")
     @ResponseBody
-    fun search(@RequestParam("name", required = false) name: String?,
-               @RequestParam("offset", required = false) offset: Int?,
-               @RequestParam("fromDate", required = false) fromDate: String?,
-               @RequestParam("toDate", required = false) toDate: String?): ModelAndView {
+    fun search(
+        @RequestParam("name", required = false) name: String?,
+        @RequestParam("offset", required = false) offset: Int?,
+        @RequestParam("fromDate", required = false) fromDate: String?,
+        @RequestParam("toDate", required = false) toDate: String?,
+        @RequestParam("locationName", required = false) locationName: String?,
+        @RequestParam("locationCity", required = false) locationCity: String?,
+    ): ModelAndView {
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
         val fromDateParsed = if (!fromDate.isNullOrBlank()) {
@@ -35,7 +37,8 @@ class SearchRestController @Autowired constructor(private val eventService: Even
             null
         }
 
-        val events = eventService.search(SearchDTO().name(name).fromDate(fromDateParsed).toDate(toDateParsed), offset?: 0)
+        val events =
+            eventService.search(SearchDTO().name(name).fromDate(fromDateParsed).toDate(toDateParsed), offset ?: 0, FilterDTO(locationName, locationCity))
         return ModelAndView("events/eventsRaw", mapOf("events" to events))
     }
 }

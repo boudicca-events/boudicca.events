@@ -42,6 +42,7 @@ class EventService {
         return publisherApi.eventsGet()
             .mapNotNull { it.data?.get(SemanticKeys.LOCATION_NAME) }
             .filter { it.isNotBlank() }
+            .toSet()
             .sortedBy { it }
     }
 
@@ -49,6 +50,7 @@ class EventService {
         return publisherApi.eventsGet()
             .mapNotNull { it.data?.get(SemanticKeys.LOCATION_CITY) }
             .filter { it.isNotBlank() }
+            .toSet()
             .sortedBy { it }
     }
 
@@ -67,12 +69,12 @@ class EventService {
     }
 
     private fun matchesFilter(event: Event, filterDTO: FilterDTO): Boolean {
-        if (filterDTO.locationName != null
+        if (!filterDTO.locationName.isNullOrBlank()
             && event.data?.get(SemanticKeys.LOCATION_NAME) != filterDTO.locationName
         ) {
             return false
         }
-        if (filterDTO.locationCity != null
+        if (!filterDTO.locationCity.isNullOrBlank()
             && event.data?.get(SemanticKeys.LOCATION_CITY) != filterDTO.locationCity
         ) {
             return false

@@ -2,6 +2,7 @@ package events.boudicca.publisherhtml.controller
 
 import events.boudicca.openapi.model.SearchDTO
 import events.boudicca.publisherhtml.service.EventService
+import events.boudicca.publisherhtml.service.FilterDTO
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
@@ -24,6 +25,8 @@ class StartPageController @Autowired constructor(private val eventService: Event
         val data: MutableMap<String, Any> = HashMap()
         data["title"] = PAGE_TITLE
         data["events"] = eventService.getAllEvents()
+        data["locationNames"] = eventService.getLocationNames()
+        data["locationCities"] = eventService.getLocationCities()
         return ModelAndView("index", data)
     }
 
@@ -32,7 +35,9 @@ class StartPageController @Autowired constructor(private val eventService: Event
     fun search(
         @RequestParam("name", required = false) name: String?,
         @RequestParam("fromDate", required = false) fromDate: String?,
-        @RequestParam("toDate", required = false) toDate: String?
+        @RequestParam("toDate", required = false) toDate: String?,
+        @RequestParam("locationName", required = false) locationName: String?,
+        @RequestParam("locationCity", required = false) locationCity: String?,
     ): ModelAndView {
         val data: MutableMap<String, Any> = HashMap()
         data["title"] = PAGE_TITLE
@@ -49,7 +54,9 @@ class StartPageController @Autowired constructor(private val eventService: Event
         } else {
             null
         }
-        data["events"] = eventService.search(SearchDTO().name(name).fromDate(fromDateParsed).toDate(toDateParsed), 0)
+        data["events"] = eventService.search(SearchDTO().name(name).fromDate(fromDateParsed).toDate(toDateParsed), 0, FilterDTO(locationName, locationCity))
+        data["locationNames"] = eventService.getLocationNames()
+        data["locationCities"] = eventService.getLocationCities()
         return ModelAndView("index", data)
     }
 }

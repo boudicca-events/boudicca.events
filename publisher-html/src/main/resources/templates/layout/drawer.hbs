@@ -33,6 +33,8 @@
     fieldset {
         padding: 0;
         border: none;
+        margin-top: 10px;
+        margin-bottom: 10px;
     }
 
     legend {
@@ -70,10 +72,37 @@
                     <label for="fromDate" class="filter-label">Von</label>
                     <input id="fromDate" name="fromDate" type="date" class="date-input" />
                 </div>
-                
-                    <div class="filter-input-wrapper">
+
+                <div class="filter-input-wrapper">
                     <label for="toDate" class="filter-label">Bis</label>
                     <input id="toDate" name="toDate" type="date" class="date-input" />
+                </div>
+            </div>
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend><strong>Veranstaltungsgebiet</strong></legend>
+        <div class="header-search-filter">
+            <div class="header-date-search">
+                <div class="filter-input-wrapper">
+                    <label for="locationName" class="filter-label">Veranstaltungsort</label>
+                    <select name="locationName" id="locationName">}
+                        <option value=""></option>
+                        {{#each locationNames as |locationName|}}
+                            <option value="{{locationName}}">{{locationName}}</option>
+                        {{/each}}
+                    </select>
+                </div>
+
+                <div class="filter-input-wrapper">
+                    <label for="locationCity" class="filter-label">Veranstaltungsstadt</label>
+                    <select name="locationCity" id="locationCity">
+                        <option value=""></option>
+                        {{#each locationCities as |locationCity|}}
+                            <option value="{{locationCity}}">{{locationCity}}</option>
+                        {{/each}}
+                    </select>
                 </div>
             </div>
         </div>

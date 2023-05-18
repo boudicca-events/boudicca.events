@@ -76,9 +76,9 @@
             <div class="header-date-search">
                 <div class="filter-input-wrapper">
                     <label for="type" class="filter-label">Veranstaltungsart</label>
-                    <select name="type" id="type">}
-                        {{#each types as |type|}}
-                            <option value="{{type}}">{{type}}</option>
+                    <select name="type" id="type">
+                        {{#each filters.types as |type|}}
+                            <option value="{{type.first}}">{{type.second}}</option>
                         {{/each}}
                     </select>
                 </div>
@@ -111,8 +111,8 @@
                     <label for="locationName" class="filter-label">Veranstaltungsort</label>
                     <select name="locationName" id="locationName">}
                         <option value="">Beliebig</option>
-                        {{#each locationNames as |locationName|}}
-                            <option value="{{locationName}}">{{locationName}}</option>
+                        {{#each filters.locationNames as |locationName|}}
+                            <option value="{{locationName.first}}">{{locationName.second}}</option>
                         {{/each}}
                     </select>
                 </div>
@@ -121,8 +121,8 @@
                     <label for="locationCity" class="filter-label">Stadt</label>
                     <select name="locationCity" id="locationCity" >
                         <option value="">Beliebig</option>
-                        {{#each locationCities as |locationCity|}}
-                            <option value="{{locationCity}}">{{locationCity}}</option>
+                        {{#each filters.locationCities as |locationCity|}}
+                            <option value="{{locationCity.first}}">{{locationCity.second}}</option>
                         {{/each}}
                     </select>
                 </div>

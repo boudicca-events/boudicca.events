@@ -31,28 +31,15 @@ class EventService {
         return mapEvents(searchApi.searchPost(searchDTO), offset)
     }
 
-    fun getLocationNames(): List<String> {
-        return searchApi.searchPost(SearchDTO())
-            .mapNotNull { it.data?.get(SemanticKeys.LOCATION_NAME) }
-            .filter { it.isNotBlank() }
-            .toSet()
-            .sortedBy { it }
+    fun filters(): Filters {
+        val filters = searchApi.filtersGet()
+        return Filters(
+            filters.types.map { Pair(it, frontEndName(it)) }.sortedBy { it.second },
+            filters.locationNames.sorted().map { Pair(it, it) },
+            filters.locationCities.sorted().map { Pair(it, it) },
+        )
     }
 
-    fun getLocationCities(): List<String> {
-        return searchApi.searchPost(SearchDTO())
-            .mapNotNull { it.data?.get(SemanticKeys.LOCATION_CITY) }
-            .filter { it.isNotBlank() }
-            .toSet()
-            .sortedBy { it }
-    }
-
-    fun getAllTypes(): List<String> {
-        val types = EventTypes.values().map { frontEndTypeName(it) }.toMutableList()
-        types.add(0, "Alle")
-        types.add("Andere")
-        return types
-    }
 
     private fun mapEvents(
         events: List<Event>,
@@ -111,10 +98,27 @@ class EventService {
 
     private fun frontEndTypeName(type: EventTypes): String {
         return when (type) {
-            EventTypes.MUSIC -> "Musik"
-            EventTypes.ART -> "Kunst"
-            EventTypes.TECH -> "Technologie"
+            EventTypes.MUSIC -> "music"
+            EventTypes.ART -> "miscArt"
+            EventTypes.TECH -> "tech"
         }
     }
+
+    private fun frontEndName(type: String): String {
+        return when (type) {
+            "MUSIC" -> "Musik"
+            "ART" -> "Kunst"
+            "TECH" -> "Technologie"
+            "ALL" -> "Alle"
+            "OTHER" -> "Andere"
+            else -> "???"
+        }
+    }
+
+    data class Filters(
+        val types: List<Pair<String, String>>,
+        val locationNames: List<Pair<String, String>>,
+        val locationCities: List<Pair<String, String>>,
+    )
 }
 

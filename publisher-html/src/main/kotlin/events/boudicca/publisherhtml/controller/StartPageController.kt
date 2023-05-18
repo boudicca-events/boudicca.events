@@ -24,9 +24,7 @@ class StartPageController @Autowired constructor(private val eventService: Event
         val data: MutableMap<String, Any> = HashMap()
         data["title"] = PAGE_TITLE
         data["events"] = eventService.getAllEvents()
-        data["locationNames"] = eventService.getLocationNames()
-        data["locationCities"] = eventService.getLocationCities()
-        data["types"] = eventService.getAllTypes()
+        data["filters"] = eventService.filters()
         return ModelAndView("index", data)
     }
 
@@ -58,9 +56,7 @@ class StartPageController @Autowired constructor(private val eventService: Event
         data["events"] = eventService.search(
             SearchDTO().name(name).fromDate(fromDateParsed).toDate(toDateParsed).type(type).locationName(locationName).locationCity(locationCity)
             , 0)
-        data["locationNames"] = eventService.getLocationNames()
-        data["locationCities"] = eventService.getLocationCities()
-        data["types"] = eventService.getAllTypes()
+        data["filters"] = eventService.filters()
         return ModelAndView("index", data)
     }
 }

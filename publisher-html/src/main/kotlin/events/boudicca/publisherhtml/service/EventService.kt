@@ -1,5 +1,6 @@
 package events.boudicca.publisherhtml.service
 
+import events.boudicca.EventTypes
 import events.boudicca.SemanticKeys
 import events.boudicca.search.openapi.ApiClient
 import events.boudicca.search.openapi.api.SearchResourceApi
@@ -26,8 +27,8 @@ class EventService {
         return mapEvents(searchApi.searchPost(SearchDTO()))
     }
 
-    fun search(searchDTO: SearchDTO, offset: Int, filterDTO: FilterDTO = FilterDTO()): List<Map<String, String?>> {
-        return mapEvents(searchApi.searchPost(searchDTO), offset, filterDTO)
+    fun search(searchDTO: SearchDTO, offset: Int): List<Map<String, String?>> {
+        return mapEvents(searchApi.searchPost(searchDTO), offset)
     }
 
     fun getLocationNames(): List<String> {
@@ -47,56 +48,21 @@ class EventService {
     }
 
     fun getAllTypes(): List<String> {
-        val types = EventTypes.values().map { it.frontEndName }.toMutableList()
+        val types = EventTypes.values().map { frontEndTypeName(it) }.toMutableList()
         types.add(0, "Alle")
         types.add("Andere")
         return types
     }
 
     private fun mapEvents(
-        events: Set<Event>,
-        offset: Int = 0,
-        filterDTO: FilterDTO = FilterDTO()
+        events: List<Event>,
+        offset: Int = 0
     ): List<Map<String, String?>> {
         return events.asSequence()
             .filter { it.startDate.isAfter(OffsetDateTime.now().minusDays(1)) }
-            .filter { matchesFilter(it, filterDTO) }
-            .sortedBy { it.startDate }
             .drop(offset).take(rows)
             .map { mapEvent(it) }
             .toList()
-    }
-
-    private fun matchesFilter(event: Event, filterDTO: FilterDTO): Boolean {
-        if (!filterDTO.type.isNullOrBlank()) {
-            if (!matchTypeFilter(filterDTO.type, event)) {
-                return false
-            }
-        }
-        if (!filterDTO.locationName.isNullOrBlank()
-            && event.data?.get(SemanticKeys.LOCATION_NAME) != filterDTO.locationName
-        ) {
-            return false
-        }
-        if (!filterDTO.locationCity.isNullOrBlank()
-            && event.data?.get(SemanticKeys.LOCATION_CITY) != filterDTO.locationCity
-        ) {
-            return false
-        }
-        return true
-    }
-
-    private fun matchTypeFilter(type: String, event: Event): Boolean {
-        if (type == "Alle") {
-            return true
-        }
-
-        val lowerCaseType = event.data?.get(SemanticKeys.TYPE)?.lowercase() ?: ""
-        val eventType = EventTypes.values().firstOrNull { it.types.contains(lowerCaseType) }
-        if (eventType == null) {
-            return type == "Andere"
-        }
-        return eventType.frontEndName == type
     }
 
     private fun mapEvent(event: Event): Map<String, String?> {
@@ -120,7 +86,7 @@ class EventService {
         val lowerCaseType = type.lowercase()
         for (eventType in EventTypes.values()) {
             if (eventType.types.contains(lowerCaseType)) {
-                return eventType.frontEndTypeName
+                return frontEndTypeName(eventType)
             }
         }
 
@@ -143,26 +109,12 @@ class EventService {
         return "http://localhost:8082"
     }
 
-    enum class EventTypes(
-        val frontEndName: String,
-        val frontEndTypeName: String,
-        val types: Set<String>,
-    ) {
-        MUSIC(
-            "Musik", "music",
-            setOf("konzert", "concert", "alternative", "singer/songwriter", "party", "songwriter/alternative")
-        ),
-        ART(
-            "Kunst", "miscArt",
-            setOf(
-                "kabarett", "theater", "wissenskabarett", "provinzkrimi", "comedy", "figurentheater", "film",
-                "visual comedy", "tanz", "performance", "musiklesung", "literatur"
-            )
-        ),
-        TECH(
-            "Technologie", "tech",
-            setOf("techmeetup")
-        ),
+    private fun frontEndTypeName(type: EventTypes): String {
+        return when (type) {
+            EventTypes.MUSIC -> "Musik"
+            EventTypes.ART -> "Kunst"
+            EventTypes.TECH -> "Technologie"
+        }
     }
 }
 

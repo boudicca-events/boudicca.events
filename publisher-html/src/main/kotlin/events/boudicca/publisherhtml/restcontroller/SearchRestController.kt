@@ -2,7 +2,6 @@ package events.boudicca.publisherhtml.restcontroller
 
 import events.boudicca.search.openapi.model.SearchDTO
 import events.boudicca.publisherhtml.service.EventService
-import events.boudicca.publisherhtml.service.FilterDTO
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.ModelAndView
@@ -39,7 +38,9 @@ class SearchRestController @Autowired constructor(private val eventService: Even
         }
 
         val events =
-            eventService.search(SearchDTO().name(name).fromDate(fromDateParsed).toDate(toDateParsed), offset ?: 0, FilterDTO(type, locationName, locationCity))
+            eventService.search(
+                SearchDTO().name(name).fromDate(fromDateParsed).toDate(toDateParsed).type(type).locationName(locationName).locationCity(locationCity)
+                , offset ?: 0)
         return ModelAndView("events/eventsRaw", mapOf("events" to events))
     }
 }

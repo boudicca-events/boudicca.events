@@ -2,7 +2,6 @@ package events.boudicca.publisherhtml.controller
 
 import events.boudicca.search.openapi.model.SearchDTO
 import events.boudicca.publisherhtml.service.EventService
-import events.boudicca.publisherhtml.service.FilterDTO
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
@@ -56,7 +55,9 @@ class StartPageController @Autowired constructor(private val eventService: Event
         } else {
             null
         }
-        data["events"] = eventService.search(SearchDTO().name(name).fromDate(fromDateParsed).toDate(toDateParsed), 0, FilterDTO(type, locationName, locationCity))
+        data["events"] = eventService.search(
+            SearchDTO().name(name).fromDate(fromDateParsed).toDate(toDateParsed).type(type).locationName(locationName).locationCity(locationCity)
+            , 0)
         data["locationNames"] = eventService.getLocationNames()
         data["locationCities"] = eventService.getLocationCities()
         data["types"] = eventService.getAllTypes()

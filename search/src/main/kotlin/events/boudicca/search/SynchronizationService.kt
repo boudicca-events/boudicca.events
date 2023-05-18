@@ -1,6 +1,6 @@
-package events.boudicca
+package events.boudicca.search
 
-import events.boudicca.model.Event
+import events.boudicca.search.model.Event
 import events.boudicca.openapi.ApiClient
 import events.boudicca.openapi.api.EventPublisherResourceApi
 import io.quarkus.scheduler.Scheduled

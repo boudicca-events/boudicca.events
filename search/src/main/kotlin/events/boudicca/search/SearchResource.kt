@@ -1,7 +1,7 @@
-package events.boudicca
+package events.boudicca.search
 
-import events.boudicca.model.Event
-import events.boudicca.model.SearchDTO
+import events.boudicca.search.model.Event
+import events.boudicca.search.model.SearchDTO
 import javax.enterprise.context.ApplicationScoped
 import javax.inject.Inject
 import javax.ws.rs.POST
@@ -16,7 +16,7 @@ class SearchResource {
 
     @Path("search")
     @POST
-    fun search(searchDTO: SearchDTO): Set<Event> {
+    fun search(searchDTO: SearchDTO): List<Event> {
         return searchService.search(searchDTO)
     }
 

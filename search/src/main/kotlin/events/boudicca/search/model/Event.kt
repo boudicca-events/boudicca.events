@@ -1,4 +1,4 @@
-package events.boudicca.model
+package events.boudicca.search.model
 
 import java.time.ZonedDateTime
 

@@ -21,6 +21,7 @@ class SearchRestController @Autowired constructor(private val eventService: Even
         @RequestParam("offset", required = false) offset: Int?,
         @RequestParam("fromDate", required = false) fromDate: String?,
         @RequestParam("toDate", required = false) toDate: String?,
+        @RequestParam("type", required = false) type: String?,
         @RequestParam("locationName", required = false) locationName: String?,
         @RequestParam("locationCity", required = false) locationCity: String?,
     ): ModelAndView {
@@ -38,7 +39,7 @@ class SearchRestController @Autowired constructor(private val eventService: Even
         }
 
         val events =
-            eventService.search(SearchDTO().name(name).fromDate(fromDateParsed).toDate(toDateParsed), offset ?: 0, FilterDTO(locationName, locationCity))
+            eventService.search(SearchDTO().name(name).fromDate(fromDateParsed).toDate(toDateParsed), offset ?: 0, FilterDTO(type, locationName, locationCity))
         return ModelAndView("events/eventsRaw", mapOf("events" to events))
     }
 }

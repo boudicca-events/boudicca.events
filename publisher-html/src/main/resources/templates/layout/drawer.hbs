@@ -65,6 +65,22 @@
     </div>
 
     <fieldset>
+        <legend><strong>Veranstaltungsart</strong></legend>
+        <div class="header-search-filter">
+            <div class="header-date-search">
+                <div class="filter-input-wrapper">
+                    <label for="type" class="filter-label">Veranstaltungsart</label>
+                    <select name="type" id="type">}
+                        {{#each types as |type|}}
+                            <option value="{{type}}">{{type}}</option>
+                        {{/each}}
+                    </select>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+
+    <fieldset>
         <legend><strong>Datum</strong></legend>
         <div class="header-search-filter">
             <div class="header-date-search">

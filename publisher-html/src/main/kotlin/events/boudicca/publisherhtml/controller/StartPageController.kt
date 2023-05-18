@@ -27,6 +27,7 @@ class StartPageController @Autowired constructor(private val eventService: Event
         data["events"] = eventService.getAllEvents()
         data["locationNames"] = eventService.getLocationNames()
         data["locationCities"] = eventService.getLocationCities()
+        data["types"] = eventService.getAllTypes()
         return ModelAndView("index", data)
     }
 
@@ -36,6 +37,7 @@ class StartPageController @Autowired constructor(private val eventService: Event
         @RequestParam("name", required = false) name: String?,
         @RequestParam("fromDate", required = false) fromDate: String?,
         @RequestParam("toDate", required = false) toDate: String?,
+        @RequestParam("type", required = false) type: String?,
         @RequestParam("locationName", required = false) locationName: String?,
         @RequestParam("locationCity", required = false) locationCity: String?,
     ): ModelAndView {
@@ -54,9 +56,10 @@ class StartPageController @Autowired constructor(private val eventService: Event
         } else {
             null
         }
-        data["events"] = eventService.search(SearchDTO().name(name).fromDate(fromDateParsed).toDate(toDateParsed), 0, FilterDTO(locationName, locationCity))
+        data["events"] = eventService.search(SearchDTO().name(name).fromDate(fromDateParsed).toDate(toDateParsed), 0, FilterDTO(type, locationName, locationCity))
         data["locationNames"] = eventService.getLocationNames()
         data["locationCities"] = eventService.getLocationCities()
+        data["types"] = eventService.getAllTypes()
         return ModelAndView("index", data)
     }
 }

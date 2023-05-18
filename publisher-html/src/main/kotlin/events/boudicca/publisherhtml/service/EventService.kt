@@ -16,14 +16,6 @@ class EventService {
 
     private val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy 'um' HH:mm 'Uhr'")
 
-    private val miscArtTypes = arrayOf(
-        "kabarett", "theater", "wissenskabarett", "provinzkrimi",
-        "comedy", "figurentheater", "film", "visual comedy", "tanz", "performance"
-    );
-    private val musicTypes =
-        arrayOf("konzert", "concert", "alternative", "singer/songwriter", "party", "songwriter/alternative");
-    private val techTypes = arrayOf("techmeetup");
-
     init {
         val apiClient = ApiClient()
         apiClient.updateBaseUri(autoDetectUrl())
@@ -54,6 +46,13 @@ class EventService {
             .sortedBy { it }
     }
 
+    fun getAllTypes(): List<String> {
+        val types = EventTypes.values().map { it.frontEndName }.toMutableList()
+        types.add(0, "Alle")
+        types.add("Andere")
+        return types
+    }
+
     private fun mapEvents(
         events: Set<Event>,
         offset: Int = 0,
@@ -69,6 +68,11 @@ class EventService {
     }
 
     private fun matchesFilter(event: Event, filterDTO: FilterDTO): Boolean {
+        if (!filterDTO.type.isNullOrBlank()) {
+            if (!matchTypeFilter(filterDTO.type, event)) {
+                return false
+            }
+        }
         if (!filterDTO.locationName.isNullOrBlank()
             && event.data?.get(SemanticKeys.LOCATION_NAME) != filterDTO.locationName
         ) {
@@ -80,6 +84,19 @@ class EventService {
             return false
         }
         return true
+    }
+
+    private fun matchTypeFilter(type: String, event: Event): Boolean {
+        if (type == "Alle") {
+            return true
+        }
+
+        val lowerCaseType = event.data?.get(SemanticKeys.TYPE)?.lowercase() ?: ""
+        val eventType = EventTypes.values().firstOrNull { it.types.contains(lowerCaseType) }
+        if (eventType == null) {
+            return type == "Andere"
+        }
+        return eventType.frontEndName == type
     }
 
     private fun mapEvent(event: Event): Map<String, String?> {
@@ -95,24 +112,22 @@ class EventService {
         )
     }
 
-    fun mapType(type: String?): String? {
+    private fun mapType(type: String?): String? {
         if (type === null) {
             return null
         }
 
-        val lowerCaseType = type.lowercase();
-        if (miscArtTypes.contains(lowerCaseType)) {
-            return "miscArt"
-        } else if (musicTypes.contains(lowerCaseType)) {
-            return "music"
-        } else if (techTypes.contains(lowerCaseType)) {
-            return "tech"
+        val lowerCaseType = type.lowercase()
+        for (eventType in EventTypes.values()) {
+            if (eventType.types.contains(lowerCaseType)) {
+                return eventType.frontEndTypeName
+            }
         }
 
         return null
     }
 
-    fun formatDate(startDate: OffsetDateTime): String {
+    private fun formatDate(startDate: OffsetDateTime): String {
         return formatter.format(startDate);
     }
 
@@ -126,6 +141,28 @@ class EventService {
             return url
         }
         return "http://localhost:8081"
+    }
+
+    enum class EventTypes(
+        val frontEndName: String,
+        val frontEndTypeName: String,
+        val types: Set<String>,
+    ) {
+        MUSIC(
+            "Musik", "music",
+            setOf("konzert", "concert", "alternative", "singer/songwriter", "party", "songwriter/alternative")
+        ),
+        ART(
+            "Kunst", "miscArt",
+            setOf(
+                "kabarett", "theater", "wissenskabarett", "provinzkrimi", "comedy", "figurentheater", "film",
+                "visual comedy", "tanz", "performance", "musiklesung", "literatur"
+            )
+        ),
+        TECH(
+            "Technologie", "tech",
+            setOf("techmeetup")
+        ),
     }
 }
 

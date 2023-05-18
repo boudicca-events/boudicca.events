@@ -52,6 +52,12 @@
         margin-top: 24px;
         font-size: 18px;
     }
+
+    #resetSearchForm {
+        margin-top: 4px;
+        text-align: left;
+        width: max-content;
+    }
 </style>
 
 <div id="drawer" class="drawer">
@@ -65,7 +71,7 @@
     </div>
 
     <fieldset>
-        <legend><strong>Veranstaltungsart</strong></legend>
+        <legend><strong>Allgemein</strong></legend>
         <div class="header-search-filter">
             <div class="header-date-search">
                 <div class="filter-input-wrapper">
@@ -98,13 +104,13 @@
     </fieldset>
 
     <fieldset>
-        <legend><strong>Veranstaltungsgebiet</strong></legend>
+        <legend><strong>Ort</strong></legend>
         <div class="header-search-filter">
             <div class="header-date-search">
                 <div class="filter-input-wrapper">
                     <label for="locationName" class="filter-label">Veranstaltungsort</label>
                     <select name="locationName" id="locationName">}
-                        <option value=""></option>
+                        <option value="">Beliebig</option>
                         {{#each locationNames as |locationName|}}
                             <option value="{{locationName}}">{{locationName}}</option>
                         {{/each}}
@@ -112,9 +118,9 @@
                 </div>
 
                 <div class="filter-input-wrapper">
-                    <label for="locationCity" class="filter-label">Veranstaltungsstadt</label>
-                    <select name="locationCity" id="locationCity">
-                        <option value=""></option>
+                    <label for="locationCity" class="filter-label">Stadt</label>
+                    <select name="locationCity" id="locationCity" >
+                        <option value="">Beliebig</option>
                         {{#each locationCities as |locationCity|}}
                             <option value="{{locationCity}}">{{locationCity}}</option>
                         {{/each}}
@@ -127,4 +133,6 @@
     <button id="filterSearchButton" type="submit">
         Suchen
     </button>
+
+    <button id="resetSearchForm" type="button">Suche zurücksetzen</button>
 </div>

@@ -5,6 +5,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const drawer = document.getElementById("drawer");
   const closeDrawerButton = document.getElementById("closeDrawerButton");
   const filterSearchButton = document.getElementById("filterSearchButton");
+  const resetSearchFormButton = document.getElementById("resetSearchForm");
+
+  resetSearchFormButton.addEventListener("click", () => {
+    searchForm.reset();
+  });
 
   filterSearchButton.addEventListener("click", () => {
     closeDrawer();

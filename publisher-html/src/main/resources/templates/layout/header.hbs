@@ -41,11 +41,6 @@
         border-bottom: 1px solid black;
     }
 
-    input:focus-visible, button:focus-visible {
-        outline: 2px solid;
-        outline-offset: 1px;
-    }
-
     .header-search-filter {
         display: flex;
 
@@ -62,9 +57,7 @@
 
     .date-input {
         appearance: none;
-        height: 28px;
-        padding: 4px 12px;
-        width: 135px;
+        min-width: 135px;
     }
 
     .header-search {
@@ -107,7 +100,6 @@
 
     .filter-label {
         font-size: 12px;
-        padding-left: 4px;
         margin-bottom: 2px;
         font-weight: 600;
     }
@@ -115,6 +107,7 @@
     .filter-input-wrapper {
         display: flex;
         flex-direction: column;
+        width: 100%;
     }
 
     #filterButton {
@@ -125,6 +118,7 @@
 
     .header-date-search {
         display: flex;
+        flex: 1;
         gap: 8px;
     }
     

@@ -23,7 +23,7 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("com.github.jknack:handlebars:4.3.1")
 	implementation("com.github.jknack:handlebars-springmvc:4.3.1")
-	implementation(project(":publisher-api"))
+	implementation(project(":search-openapi"))
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 }

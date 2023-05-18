@@ -2,6 +2,7 @@
   <configuration default="false" name="Local Setup (without collectors)" type="CompoundRunConfigurationType">
     <toRun name="Local Core Run" type="GradleRunConfiguration" />
     <toRun name="Local HTML Publisher Run" type="GradleRunConfiguration" />
+    <toRun name="Local Search Run" type="GradleRunConfiguration" />
     <method v="2" />
   </configuration>
 </component>

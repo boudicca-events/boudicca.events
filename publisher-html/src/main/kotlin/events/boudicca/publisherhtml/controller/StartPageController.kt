@@ -1,6 +1,6 @@
 package events.boudicca.publisherhtml.controller
 
-import events.boudicca.openapi.model.SearchDTO
+import events.boudicca.search.openapi.model.SearchDTO
 import events.boudicca.publisherhtml.service.EventService
 import events.boudicca.publisherhtml.service.FilterDTO
 import org.springframework.beans.factory.annotation.Autowired

@@ -62,6 +62,6 @@ class SynchronizationService {
         if (localMode != null && localMode.isNotBlank()) {
             return "true" == localMode
         }
-        return true
+        return false
     }
 }

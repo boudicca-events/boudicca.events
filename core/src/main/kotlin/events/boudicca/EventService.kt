@@ -31,8 +31,9 @@ class EventService {
             .filter { e -> toDate == null || !e.startDate.isAfter(toDate) }
             .filter { e ->
                 val data = e.data
-                searchDTO.name == null || e.name.lowercase().contains(searchDTO.name!!.lowercase())
-                        || (data != null && data.values.any {it.lowercase().contains(searchDTO.name!!.lowercase())
+                searchDTO.name == null || e.name.lowercase().contains(searchDTO.name.lowercase())
+                        || (data != null && data.values.any {
+                    it.lowercase().contains(searchDTO.name.lowercase())
                 })
             }
             .toSet()
@@ -42,56 +43,56 @@ class EventService {
     fun searchBy(searchDto: ComplexSearchDto): Set<Event> {
         val filters = mutableSetOf<(Event) -> Boolean>()
         if (!searchDto.anyKeyExactMatch.isNullOrEmpty())
-            filters.add { event -> searchDto.anyKeyExactMatch!!.any { key -> event.data?.containsKey(key) ?: false } }
+            filters.add { event -> searchDto.anyKeyExactMatch.any { key -> event.data?.containsKey(key) ?: false } }
         if (!searchDto.allKeyExactMatch.isNullOrEmpty())
-            filters.add { event -> searchDto.allKeyExactMatch!!.all { key -> event.data?.containsKey(key) ?: false } }
+            filters.add { event -> searchDto.allKeyExactMatch.all { key -> event.data?.containsKey(key) ?: false } }
         if (!searchDto.anyKeyOrValueContains.isNullOrEmpty())
             filters.add { event ->
-                searchDto.anyKeyOrValueContains!!.any {
+                searchDto.anyKeyOrValueContains.any {
                     event.data?.keys?.any { key -> key.contains(it.lowercase()) } ?: false ||
                             event.data?.values?.any { value -> value.contains(it.lowercase()) } ?: false
                 }
             }
         if (!searchDto.allKeyOrValueContains.isNullOrEmpty())
             filters.add { event ->
-                searchDto.allKeyOrValueContains!!.all {
+                searchDto.allKeyOrValueContains.all {
                     event.data?.keys?.any { key -> key.contains(it.lowercase()) } ?: false ||
                             event.data?.values?.any { value -> value.contains(it.lowercase()) } ?: false
                 }
             }
         if (!searchDto.anyKeyOrValueExactMatch.isNullOrEmpty())
             filters.add { event ->
-                searchDto.anyKeyOrValueExactMatch!!.any {
+                searchDto.anyKeyOrValueExactMatch.any {
                     event.data?.containsKey(it.lowercase()) ?: false || event.data?.containsValue(it.lowercase()) ?: false
                 }
             }
         if (!searchDto.allKeyOrValueExactMatch.isNullOrEmpty())
             filters.add { event ->
-                searchDto.allKeyOrValueExactMatch!!.all {
+                searchDto.allKeyOrValueExactMatch.all {
                     event.data?.containsKey(it.lowercase()) ?: false || event.data?.containsValue(it.lowercase()) ?: false
                 }
             }
         if (!searchDto.anyValueForKeyContains.isNullOrEmpty())
             filters.add { event ->
-                searchDto.anyValueForKeyContains!!.any { (key, value) ->
+                searchDto.anyValueForKeyContains.any { (key, value) ->
                     event.data?.get(key)?.lowercase()?.contains(value) ?: false
                 }
             }
         if (!searchDto.allValueForKeyContains.isNullOrEmpty())
             filters.add { event ->
-                searchDto.allValueForKeyContains!!.all { (key, value) ->
+                searchDto.allValueForKeyContains.all { (key, value) ->
                     event.data?.get(key)?.lowercase()?.contains(value) ?: false
                 }
             }
         if (!searchDto.anyValueForKeyExactMatch.isNullOrEmpty())
             filters.add { event ->
-                searchDto.anyValueForKeyExactMatch!!.any { (key, value) ->
+                searchDto.anyValueForKeyExactMatch.any { (key, value) ->
                     event.data?.get(key)?.lowercase()?.equals(value) ?: false
                 }
             }
         if (!searchDto.allValueForKeyExactMatch.isNullOrEmpty())
             filters.add { event ->
-                searchDto.allValueForKeyExactMatch!!.all { (key, value) ->
+                searchDto.allValueForKeyExactMatch.all { (key, value) ->
                     event.data?.get(key)?.lowercase()?.equals(value) ?: false
                 }
             }
@@ -113,7 +114,8 @@ class EventService {
             Event(
                 name = "Cloudflight Coding Contest",
                 startDate = ZonedDateTime.of(LocalDateTime.parse("2023-03-31 14:00", formatter), zone),
-                data = mapOf("start.location.name" to "JKU Linz",
+                data = mapOf(
+                    "start.location.name" to "JKU Linz",
                     "tags" to listOf("education", "techcommunity").toString()
                 )
             )

@@ -1,9 +1,10 @@
 package events.boudicca.search
 
-import events.boudicca.search.model.Event
 import events.boudicca.openapi.ApiClient
 import events.boudicca.openapi.api.EventPublisherResourceApi
+import events.boudicca.search.model.Event
 import io.quarkus.scheduler.Scheduled
+import java.time.OffsetDateTime
 import javax.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
@@ -34,7 +35,10 @@ class SynchronizationService {
     }
 
     private fun updateEvents() {
-        events = publisherApi.eventsGet().map { toSearchEvent(it) }.toSet()
+        events = publisherApi.eventsGet()
+            //filter old events
+            .filter { it.startDate.isAfter(OffsetDateTime.now().minusDays(1)) }
+            .map { toSearchEvent(it) }.toSet()
     }
 
     private fun toSearchEvent(event: events.boudicca.openapi.model.Event): Event {

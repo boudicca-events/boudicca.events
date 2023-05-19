@@ -13,8 +13,6 @@ import java.time.format.DateTimeFormatter
 @Service
 class EventService {
     private val searchApi: SearchResourceApi
-    private val rows: Int = 30
-
     private val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy 'um' HH:mm 'Uhr'")
 
     init {
@@ -27,8 +25,8 @@ class EventService {
         return mapEvents(searchApi.searchPost(SearchDTO()))
     }
 
-    fun search(searchDTO: SearchDTO, offset: Int): List<Map<String, String?>> {
-        return mapEvents(searchApi.searchPost(searchDTO), offset)
+    fun search(searchDTO: SearchDTO): List<Map<String, String?>> {
+        return mapEvents(searchApi.searchPost(searchDTO))
     }
 
     fun filters(): Filters {
@@ -41,15 +39,8 @@ class EventService {
     }
 
 
-    private fun mapEvents(
-        events: List<Event>,
-        offset: Int = 0
-    ): List<Map<String, String?>> {
-        return events.asSequence()
-            .filter { it.startDate.isAfter(OffsetDateTime.now().minusDays(1)) }
-            .drop(offset).take(rows)
-            .map { mapEvent(it) }
-            .toList()
+    private fun mapEvents(events: List<Event>): List<Map<String, String?>> {
+        return events.map { mapEvent(it) }
     }
 
     private fun mapEvent(event: Event): Map<String, String?> {

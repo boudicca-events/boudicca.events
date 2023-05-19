@@ -9,4 +9,5 @@ data class SearchDTO(
         val type: String? = null,
         val locationName: String? = null,
         val locationCity: String? = null,
+        val offset: Int? = null,
 )

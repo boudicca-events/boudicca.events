@@ -13,13 +13,19 @@ import javax.inject.Inject
 private const val SEARCH_TYPE_ALL = "ALL"
 private const val SEARCH_TYPE_OTHER = "OTHER"
 
+private const val ROWS = 30
+
 @ApplicationScoped
 class SearchService @Inject constructor(
     private val synchronizationService: SynchronizationService
 ) {
 
     fun search(searchDTO: SearchDTO): List<Event> {
-        return order(filter(searchDTO))
+        return offset(order(filter(searchDTO)), searchDTO)
+    }
+
+    private fun offset(events: List<Event>, searchDTO: SearchDTO): List<Event> {
+        return events.drop(searchDTO.offset ?: 0).take(ROWS)
     }
 
     fun filters(): Filters {

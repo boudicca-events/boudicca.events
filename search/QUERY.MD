@@ -4,11 +4,19 @@
 
 Every query is exactly one `expression`, where expressions can take multiple (potentially nested) forms:
 
-| Expression Name | Meaning                                                                           | Format                                                    |
-|-----------------|-----------------------------------------------------------------------------------|-----------------------------------------------------------|
-| Matches         | If a field exactly matches a text value                                           | `<fieldname> = <text>`                                    |
-| Contains        | If a field contains the text value                                                | `<fieldname> ~= <text>`                                   |
-| And             | Both child-expressions have to be true so that the whole expression is true       | `<expression> & <expression>`                             |
-| Or              | At least one child-expression has to be true so that the whole expression is true | <code>&lt;expression&gt; &#124; &lt;expression&gt;</code> |
-| Not             | The child-expression has to be false so that the whole expression is true         | `! <expression>`                                          |
-| Grouping        | Marker to identify which expression is the "innermost" TODO better describe       | `( <expression> )`                                        |
+| Expression Name | Meaning                                                                           | Format                          |
+|-----------------|-----------------------------------------------------------------------------------|---------------------------------|
+| Equals          | If a field exactly equals the text value                                          | `<fieldname> equals <text>`     |
+| Contains        | If a field contains the text value                                                | `<fieldname> contains <text>`   |
+| And             | Both child-expressions have to be true so that the whole expression is true       | `<expression> and <expression>` |
+| Or              | At least one child-expression has to be true so that the whole expression is true | `<expression> or <expression>`  |
+| Not             | The child-expression has to be false so that the whole expression is true         | `not <expression>`              |
+| Grouping        | Marker to identify how expression should be grouped                               | `( <expression> )`              |
+
+where
+
+* `<text>` is an arbitrary string, but if that string matches a keyword or contains special characters (
+  space, (, ), \, ", ...) it has to be surrounded by quotes. Quotes and backslashes in the text have to be escaped by a
+  preceding backslash.
+* `<fieldname>` is a `<text>` matching a field of an event to be queried. There is the special field `*` which means "
+  any field"

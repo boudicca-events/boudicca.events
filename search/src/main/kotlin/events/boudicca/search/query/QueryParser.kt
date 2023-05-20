@@ -1,14 +1,8 @@
 package events.boudicca.search.query
 
-import events.boudicca.search.model.Event
-
-class QueryParser(private val query: String) {
-    fun parse(): Evaluator {
+object QueryParser {
+    fun parseQuery(query: String): Expression {
         val tokens = Lexer(query).lex()
-        return object : Evaluator {
-            override fun evaluate(event: Event): Boolean {
-                return false
-            }
-        }
+        return Parser(tokens).parse()
     }
 }

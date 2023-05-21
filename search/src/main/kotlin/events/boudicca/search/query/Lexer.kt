@@ -35,8 +35,8 @@ class Lexer(private val query: String) {
             if (c.isWhitespace() || c == '(' || c == ')') {
                 break
             }
-            if (!c.isLetterOrDigit()) {
-                throw IllegalStateException("unexpected non-letter character in text token: $c")
+            if (!c.isLetterOrDigit() && c != '.') {
+                throw IllegalStateException("unexpected non-letter character in text token: $c at index: $i")
             }
             tokenEnd++
         }

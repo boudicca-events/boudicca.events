@@ -54,8 +54,69 @@ class SimpleEvaluatorTest {
         assertEquals(3, events.size)
     }
 
+    @Test
+    fun testCaseInsensitiveMatching() {
+        var events = callEvaluator(
+            EqualsExpression("field", "value"),
+            listOf(
+                mapOf("field" to "value"),
+                mapOf("field" to "VAlue"),
+            )
+        )
+        assertEquals(2, events.size)
+
+        events = callEvaluator(
+            ContainsExpression("field", "value"),
+            listOf(
+                mapOf("field" to "1value2"),
+                mapOf("field" to "1VAlue2"),
+            )
+        )
+        assertEquals(2, events.size)
+    }
+
+    @Test
+    fun testCaseSensitiveFieldNameMatching() {
+        val events = callEvaluator(
+            EqualsExpression("field", "value"),
+            listOf(
+                mapOf("field" to "value"),
+                mapOf("FIELD" to "value"),
+            )
+        )
+        assertEquals(1, events.size)
+    }
+
+    @Test
+    fun testStarFieldName() {
+        var events = callEvaluator(
+            EqualsExpression("*", "value"),
+            listOf(
+                mapOf("field" to "value"),
+                mapOf("otherfield" to "value"),
+            )
+        )
+        assertEquals(2, events.size)
+
+        events = callEvaluator(
+            ContainsExpression("*", "value"),
+            listOf(
+                mapOf("field" to "1value2"),
+                mapOf("otherfield" to "1value2"),
+            )
+        )
+        assertEquals(2, events.size)
+    }
+
     private fun callEvaluator(expression: Expression): Collection<Map<String, String>> {
-        return SimpleEvaluator(testData()).evaluate(expression)
+        return callEvaluator(expression, testData())
+    }
+
+    private fun callEvaluator(
+        expression: Expression,
+        events: Collection<Map<String, String>>
+    ): Collection<Map<String, String>> {
+        return SimpleEvaluator(events).evaluate(expression)
     }
 
     private fun testData(): Collection<Map<String, String>> {

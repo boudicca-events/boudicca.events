@@ -10,13 +10,19 @@ class SimpleEvaluator(private val events: Collection<Map<String, String>>) : Eva
     private fun matchesExpression(expression: Expression, event: Map<String, String>): Boolean {
         when (expression) {
             is EqualsExpression -> {
-                return event.containsKey(expression.getFieldName()) && event[expression.getFieldName()] == expression.getText()
+                if (expression.getFieldName() == "*") {
+                    return event.values.any { it.equals(expression.getText(), true) }
+                }
+                return event.containsKey(expression.getFieldName())
+                        && event[expression.getFieldName()].equals(expression.getText(), true)
             }
 
             is ContainsExpression -> {
-                return event.containsKey(expression.getFieldName()) && event[expression.getFieldName()]!!.contains(
-                    expression.getText()
-                )
+                if (expression.getFieldName() == "*") {
+                    return event.values.any { it.contains(expression.getText(), true) }
+                }
+                return event.containsKey(expression.getFieldName())
+                        && event[expression.getFieldName()]!!.contains(expression.getText(), true)
             }
 
             is NotExpression -> {

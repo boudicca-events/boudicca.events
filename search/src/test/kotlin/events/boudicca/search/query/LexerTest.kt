@@ -167,6 +167,14 @@ class LexerTest {
         assertEquals("text", tokens[15].getToken())
     }
 
+    @Test
+    fun testDotInTextToken() {
+        val tokens = callLexer("location.name")
+        assertEquals(1, tokens.size)
+        assertEquals(TokenType.TEXT, tokens[0].getType())
+        assertEquals("location.name", tokens[0].getToken())
+    }
+
     private fun callLexer(query: String): List<Token> {
         return Lexer(query).lex()
     }

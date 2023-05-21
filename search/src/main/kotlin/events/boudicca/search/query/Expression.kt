@@ -42,6 +42,15 @@ abstract class TextExpression(
     private val fieldName: String,
     private val text: String,
 ) : Expression {
+
+    fun getFieldName(): String {
+        return fieldName
+    }
+
+    fun getText(): String {
+        return text
+    }
+
     override fun toString(): String {
         return "$name('$fieldName','$text')"
     }

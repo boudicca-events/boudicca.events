@@ -27,6 +27,7 @@ dependencies {
     implementation(project(":core-openapi"))
     testImplementation("io.quarkus:quarkus-junit5")
     testImplementation("io.rest-assured:rest-assured")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
 }
 
 group = "events.boudicca"

@@ -5,6 +5,7 @@ import events.boudicca.SemanticKeys
 import events.boudicca.search.openapi.ApiClient
 import events.boudicca.search.openapi.api.SearchResourceApi
 import events.boudicca.search.openapi.model.Event
+import events.boudicca.search.openapi.model.QueryDTO
 import events.boudicca.search.openapi.model.SearchDTO
 import org.springframework.stereotype.Service
 import java.time.OffsetDateTime
@@ -26,7 +27,12 @@ class EventService {
     }
 
     fun search(searchDTO: SearchDTO): List<Map<String, String?>> {
-        return mapEvents(searchApi.searchPost(searchDTO))
+        val name = searchDTO.name
+        if (name != null && name.startsWith('!')) {
+            return mapEvents(searchApi.queryPost(QueryDTO().query(name.substring(1)).offset(searchDTO.offset)))
+        } else {
+            return mapEvents(searchApi.searchPost(searchDTO))
+        }
     }
 
     fun filters(): Filters {

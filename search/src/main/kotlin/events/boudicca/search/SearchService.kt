@@ -5,15 +5,12 @@ import events.boudicca.SemanticKeys
 import events.boudicca.search.model.Event
 import events.boudicca.search.model.Filters
 import events.boudicca.search.model.SearchDTO
-import java.time.ZonedDateTime
-import java.util.function.Function
+import events.boudicca.search.util.Utils
 import javax.enterprise.context.ApplicationScoped
 import javax.inject.Inject
 
 private const val SEARCH_TYPE_ALL = "ALL"
 private const val SEARCH_TYPE_OTHER = "OTHER"
-
-private const val ROWS = 30
 
 @ApplicationScoped
 class SearchService @Inject constructor(
@@ -21,11 +18,7 @@ class SearchService @Inject constructor(
 ) {
 
     fun search(searchDTO: SearchDTO): List<Event> {
-        return offset(order(filter(searchDTO)), searchDTO)
-    }
-
-    private fun offset(events: List<Event>, searchDTO: SearchDTO): List<Event> {
-        return events.drop(searchDTO.offset ?: 0).take(ROWS)
+        return Utils.offset(Utils.order(filter(searchDTO)), searchDTO.offset)
     }
 
     fun filters(): Filters {
@@ -34,6 +27,21 @@ class SearchService @Inject constructor(
             getLocationNames(),
             getLocationCities(),
         )
+    }
+
+    fun filter(searchDTO: SearchDTO): Collection<Event> {
+        val fromDate = searchDTO.fromDate?.toZonedDateTime()
+        val toDate = searchDTO.toDate?.toZonedDateTime()
+        return synchronizationService.getEvents()
+            .filter { e -> fromDate == null || !e.startDate.isBefore(fromDate) }
+            .filter { e -> toDate == null || !e.startDate.isAfter(toDate) }
+            .filter { e ->
+                val data = e.data
+                searchDTO.name == null || e.name.lowercase().contains(searchDTO.name.lowercase())
+                        || (data != null && data.values.any {
+                    it.lowercase().contains(searchDTO.name.lowercase())
+                })
+            }.filter { matchesFilter(it, searchDTO) }
     }
 
     private fun getTypes(): Set<String> {
@@ -57,30 +65,6 @@ class SearchService @Inject constructor(
             .toSet()
     }
 
-    private fun order(events: Collection<Event>): List<Event> {
-        return events
-            .toList()
-            .sortedWith(
-                Comparator
-                    .comparing<Event?, ZonedDateTime?> { it.startDate }
-                    .thenComparing(Function { it.name })
-            )
-    }
-
-    private fun filter(searchDTO: SearchDTO): Collection<Event> {
-        val fromDate = searchDTO.fromDate?.toZonedDateTime()
-        val toDate = searchDTO.toDate?.toZonedDateTime()
-        return synchronizationService.getEvents()
-            .filter { e -> fromDate == null || !e.startDate.isBefore(fromDate) }
-            .filter { e -> toDate == null || !e.startDate.isAfter(toDate) }
-            .filter { e ->
-                val data = e.data
-                searchDTO.name == null || e.name.lowercase().contains(searchDTO.name.lowercase())
-                        || (data != null && data.values.any {
-                    it.lowercase().contains(searchDTO.name.lowercase())
-                })
-            }.filter { matchesFilter(it, searchDTO) }
-    }
 
     private fun matchesFilter(event: Event, searchDTO: SearchDTO): Boolean {
         if (!searchDTO.type.isNullOrBlank()) {
@@ -113,5 +97,6 @@ class SearchService @Inject constructor(
         }
         return eventType.name == type
     }
+
 
 }

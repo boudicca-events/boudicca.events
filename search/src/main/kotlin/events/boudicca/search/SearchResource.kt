@@ -2,6 +2,7 @@ package events.boudicca.search
 
 import events.boudicca.search.model.Event
 import events.boudicca.search.model.Filters
+import events.boudicca.search.model.QueryDTO
 import events.boudicca.search.model.SearchDTO
 import javax.enterprise.context.ApplicationScoped
 import javax.inject.Inject
@@ -11,7 +12,10 @@ import javax.ws.rs.Path
 
 @ApplicationScoped
 @Path("/")
-class SearchResource @Inject constructor(private var searchService: SearchService) {
+class SearchResource @Inject constructor(
+    private val searchService: SearchService,
+    private val queryService: QueryService,
+) {
 
     @Path("search")
     @POST
@@ -25,4 +29,9 @@ class SearchResource @Inject constructor(private var searchService: SearchServic
         return searchService.filters()
     }
 
+    @Path("query")
+    @POST
+    fun query(queryDTO: QueryDTO): List<Event> {
+        return queryService.query(queryDTO)
+    }
 }

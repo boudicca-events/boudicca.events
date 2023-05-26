@@ -10,5 +10,6 @@ fun main() {
 //        .debug(PosthofFetcher())
 //        .debug(ZuckerfabrikFetcher())
 //        .debug(PlanetTTCollector())
-        .debug(BrucknerhausCollector())
+//        .debug(BrucknerhausCollector())
+        .debug(LinzTermineCollector())
 }

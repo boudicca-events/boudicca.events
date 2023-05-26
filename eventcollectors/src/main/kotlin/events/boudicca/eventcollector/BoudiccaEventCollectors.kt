@@ -11,5 +11,6 @@ fun main() {
         .addEventCollector(ZuckerfabrikFetcher())
         .addEventCollector(PlanetTTCollector())
         .addEventCollector(BrucknerhausCollector())
+        .addEventCollector(LinzTermineCollector())
         .run()
 }

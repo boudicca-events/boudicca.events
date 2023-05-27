@@ -26,17 +26,18 @@ We use certain data types for the properties we expect.
 
 **Events have only two required properties: `name` and `startDate`**
 
-| Key          | Meaning                                                                                              | Format                               |
-|--------------|------------------------------------------------------------------------------------------------------|--------------------------------------|
-| name         | The name of the event                                                                                | text                                 |
-| startDate    | Time of start for the event                                                                          | date                                 |
-| endDate      | Time of end for the event                                                                            | date                                 |
-| url          | A link to the website for this event                                                                 | url                                  |
-| type         | The type of event, for example `concert`, `????` more examples please                                | text ??? maybe enum would be better? |
-| description  | Text describing this event                                                                           | text                                 |
-| tags         | A list of tags. TODO how to describe?                                                                | list\<text>                          |
-| registration | If this is a free event, a event which requires registration or a event which requires a paid ticket | enum\<registration>                  |
-| pictureUrl   | Url to a picture to be shown                                                                         | url                                  |
+| Key           | Meaning                                                                                              | Format                               |
+|---------------|------------------------------------------------------------------------------------------------------|--------------------------------------|
+| name          | The name of the event                                                                                | text                                 |
+| startDate     | Time of start for the event                                                                          | date                                 |
+| endDate       | Time of end for the event                                                                            | date                                 |
+| url           | A link to the website for this event                                                                 | url                                  |
+| type          | The type of event, for example `concert`, `????` more examples please                                | text ??? maybe enum would be better? |
+| description   | Text describing this event                                                                           | text                                 |
+| tags          | A list of tags. TODO how to describe?                                                                | list\<text>                          |
+| registration  | If this is a free event, a event which requires registration or a event which requires a paid ticket | enum\<registration>                  |
+| pictureUrl    | Url to a picture to be shown                                                                         | url                                  |
+| collectorName | Name of the collector which collected this event                                                     | text                                 |
 
 #### Registration enum values
 

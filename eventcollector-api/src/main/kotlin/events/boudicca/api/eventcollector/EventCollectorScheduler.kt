@@ -1,5 +1,6 @@
 package events.boudicca.api.eventcollector
 
+import events.boudicca.SemanticKeys
 import events.boudicca.openapi.ApiClient
 import events.boudicca.openapi.api.EventIngestionResourceApi
 import java.time.Duration
@@ -51,9 +52,20 @@ class EventCollectorScheduler(
     private fun collect(eventCollector: EventCollector) {
         val events = eventCollector.collectEvents()
         for (event in events) {
-            ingestionApi.ingestAddPost(mapToApiEvent(event))
+            ingestionApi.ingestAddPost(mapToApiEvent(postProcess(event, eventCollector.getName())))
         }
         println("collected ${events.size} events for event collector ${eventCollector.getName()}")
+    }
+
+    private fun postProcess(event: Event, collectorName: String): Event {
+        if (!event.additionalData.containsKey(SemanticKeys.COLLECTORNAME)) {
+            return Event(
+                event.name,
+                event.startDate,
+                event.additionalData.toMutableMap().apply { put(SemanticKeys.COLLECTORNAME, collectorName) }
+            )
+        }
+        return event
     }
 
     private fun mapToApiEvent(event: Event): events.boudicca.openapi.model.Event {

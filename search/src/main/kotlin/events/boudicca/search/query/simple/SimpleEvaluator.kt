@@ -1,5 +1,6 @@
 package events.boudicca.search.query.simple
 
+import events.boudicca.EventCategory
 import events.boudicca.SemanticKeys
 import events.boudicca.search.query.*
 import java.time.LocalDate
@@ -55,7 +56,7 @@ class SimpleEvaluator(private val events: Collection<Map<String, String>>) : Eva
 
             is AfterExpression -> {
                 try {
-                    if(!event.containsKey(SemanticKeys.STARTDATE)){
+                    if (!event.containsKey(SemanticKeys.STARTDATE)) {
                         return false
                     }
                     val startDate = LocalDate.parse(event[SemanticKeys.STARTDATE]!!, DateTimeFormatter.ISO_DATE_TIME)
@@ -63,6 +64,18 @@ class SimpleEvaluator(private val events: Collection<Map<String, String>>) : Eva
                 } catch (e: DateTimeParseException) {
                     return false
                 }
+            }
+
+            is IsExpression -> {
+                if (!event.containsKey(SemanticKeys.TYPE)) {
+                    return false
+                }
+                val category = EventCategory.getForType(event[SemanticKeys.TYPE])
+                val expressionCategory = expression.getText().uppercase()
+                if (category == null) {
+                    return expressionCategory == "OTHER"
+                }
+                return expressionCategory == category.name
             }
 
             else -> {

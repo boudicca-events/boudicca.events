@@ -112,11 +112,13 @@ class SimpleEvaluatorTest {
     @Test
     fun simpleBefore() {
         val events =
-            callEvaluator(BeforeExpression("2023-05-27"),
+            callEvaluator(
+                BeforeExpression("2023-05-27"),
                 listOf(
                     mapOf(SemanticKeys.STARTDATE to "2023-05-25T00:00:00"),
                     mapOf(SemanticKeys.STARTDATE to "2023-05-29T00:00:00"),
-                ))
+                )
+            )
         assertEquals(1, events.size)
         assertEquals("2023-05-25T00:00:00", events.first()[SemanticKeys.STARTDATE])
     }
@@ -124,11 +126,13 @@ class SimpleEvaluatorTest {
     @Test
     fun simpleAfter() {
         val events =
-            callEvaluator(AfterExpression("2023-05-27"),
+            callEvaluator(
+                AfterExpression("2023-05-27"),
                 listOf(
                     mapOf(SemanticKeys.STARTDATE to "2023-05-25T00:00:00"),
                     mapOf(SemanticKeys.STARTDATE to "2023-05-29T00:00:00"),
-                ))
+                )
+            )
         assertEquals(1, events.size)
         assertEquals("2023-05-29T00:00:00", events.first()[SemanticKeys.STARTDATE])
     }
@@ -136,13 +140,59 @@ class SimpleEvaluatorTest {
     @Test
     fun simpleAfterInclusiveToday() {
         val events =
-            callEvaluator(AfterExpression("2023-05-25"),
+            callEvaluator(
+                AfterExpression("2023-05-25"),
                 listOf(
                     mapOf(SemanticKeys.STARTDATE to "2023-05-25T00:00:00"),
                     mapOf(SemanticKeys.STARTDATE to "2023-05-29T00:00:00"),
-                ))
+                )
+            )
         assertEquals(2, events.size)
     }
+
+    @Test
+    fun simpleIsMusic() {
+        val events =
+            callEvaluator(
+                IsExpression("MUSIC"),
+                listOf(
+                    mapOf(SemanticKeys.TYPE to "konzert"),
+                    mapOf(SemanticKeys.TYPE to "theater"),
+                )
+            )
+        assertEquals(1, events.size)
+        assertEquals("konzert", events.first()[SemanticKeys.TYPE])
+    }
+
+    @Test
+    fun simpleIsMusicIgnoreCase() {
+        val events =
+            callEvaluator(
+                IsExpression("muSIC"),
+                listOf(
+                    mapOf(SemanticKeys.TYPE to "konzert"),
+                    mapOf(SemanticKeys.TYPE to "theater"),
+                )
+            )
+        assertEquals(1, events.size)
+        assertEquals("konzert", events.first()[SemanticKeys.TYPE])
+    }
+
+    @Test
+    fun simpleIsOther() {
+        val events =
+            callEvaluator(
+                IsExpression("other"),
+                listOf(
+                    mapOf(SemanticKeys.TYPE to "konzert"),
+                    mapOf(SemanticKeys.TYPE to "theater"),
+                    mapOf(SemanticKeys.TYPE to "whatever"),
+                )
+            )
+        assertEquals(1, events.size)
+        assertEquals("whatever", events.first()[SemanticKeys.TYPE])
+    }
+
 
     private fun callEvaluator(expression: Expression): Collection<Map<String, String>> {
         return callEvaluator(expression, testData())

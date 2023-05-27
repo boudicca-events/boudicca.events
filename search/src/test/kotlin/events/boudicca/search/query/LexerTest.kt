@@ -192,11 +192,10 @@ class LexerTest {
     }
 
     @Test
-    fun testDotInTextToken() {
-        val tokens = callLexer("location.name")
+    fun testIsOperator() {
+        val tokens = callLexer("is")
         assertEquals(1, tokens.size)
-        assertEquals(TokenType.TEXT, tokens[0].getType())
-        assertEquals("location.name", tokens[0].getToken())
+        assertEquals(TokenType.IS, tokens[0].getType())
     }
 
     private fun callLexer(query: String): List<Token> {

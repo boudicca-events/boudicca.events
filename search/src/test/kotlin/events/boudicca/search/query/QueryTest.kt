@@ -44,16 +44,34 @@ class QueryTest {
         assertEquals("event2", events.first()["name"])
     }
 
+    @Test
+    fun queryWithIs() {
+        val events =
+            evaluateQuery("is music and name contains event")
+        assertEquals(1, events.size)
+        assertEquals("event1", events.first()["name"])
+    }
+
     private fun evaluateQuery(string: String): Collection<Map<String, String>> {
         return SimpleEvaluator(testData()).evaluate(QueryParser.parseQuery(string))
     }
 
     private fun testData(): Collection<Map<String, String>> {
         return listOf(
-            mapOf("name" to "event1", "field" to "value1", SemanticKeys.STARTDATE to "2023-05-26T00:00:00Z"),
-            mapOf("name" to "event2", "field" to "value2", SemanticKeys.STARTDATE to "2023-05-29T00:00:00Z"),
+            mapOf(
+                "name" to "event1",
+                "field" to "value1",
+                SemanticKeys.STARTDATE to "2023-05-26T00:00:00Z",
+                SemanticKeys.TYPE to "konzert"
+            ),
+            mapOf(
+                "name" to "event2",
+                "field" to "value2",
+                SemanticKeys.STARTDATE to "2023-05-29T00:00:00Z",
+                SemanticKeys.TYPE to "theater"
+            ),
             mapOf("name" to "somethingelse", "field" to "wuuut", SemanticKeys.STARTDATE to "2023-05-31T00:00:00Z"),
-            mapOf("name" to "somethingelse2", "field" to "wuuut"),
+            mapOf("name" to "somethingelse2", "field" to "wuuut", SemanticKeys.TYPE to "konzert"),
             mapOf("name" to "somethingelse3", "field" to "this is a\\longer text"),
         )
     }

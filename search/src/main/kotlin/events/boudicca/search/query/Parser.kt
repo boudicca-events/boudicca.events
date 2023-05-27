@@ -18,12 +18,12 @@ class Parser(private val tokens: List<Token>) {
         }
         val token = tokens[i]
         if (token.getType() == TokenType.TEXT) {
-            parseTextExpression()
+            parseFieldAndTextExpression()
         } else if (token.getType() == TokenType.NOT) {
             parseNotExpression()
         } else if (token.getType() == TokenType.GROUPING_OPEN) {
             parseGroupOpen()
-        } else if (token.getType() == TokenType.BEFORE || token.getType() == TokenType.AFTER) {
+        } else if (token.getType() == TokenType.BEFORE || token.getType() == TokenType.AFTER || token.getType() == TokenType.IS) {
             parseDateExpression(token)
         } else {
             throw IllegalStateException("unexpected token ${token.getType()} at start of expression at index $i")
@@ -44,11 +44,13 @@ class Parser(private val tokens: List<Token>) {
         if (i + 1 >= tokens.size) {
             throw IllegalStateException("expecting date, found end of query")
         }
-        val dateToken = getText(i + 1)
+        val textToken = getText(i + 1)
         if (token.getType() == TokenType.BEFORE) {
-            lastExpression = BeforeExpression(dateToken.getToken()!!)
+            lastExpression = BeforeExpression(textToken.getToken()!!)
         } else if (token.getType() == TokenType.AFTER) {
-            lastExpression = AfterExpression(dateToken.getToken()!!)
+            lastExpression = AfterExpression(textToken.getToken()!!)
+        } else if (token.getType() == TokenType.IS) {
+            lastExpression = IsExpression(textToken.getToken()!!)
         } else {
             throw IllegalStateException("unknown token type ${token.getType()}")
         }
@@ -89,12 +91,12 @@ class Parser(private val tokens: List<Token>) {
         lastExpression = NotExpression(lastExpression!!)
     }
 
-    private fun parseTextExpression() {
+    private fun parseFieldAndTextExpression() {
         if (i + 2 >= tokens.size) {
             throw IllegalStateException("trying to parse text expression and needing 3 arguments, but there are not enough at index $i")
         }
         val fieldName = getText(i)
-        val expression = getTextExpression(i + 1)
+        val expression = getFieldAndTextExpression(i + 1)
         val text = getText(i + 2)
 
         if (expression.getType() == TokenType.CONTAINS) {
@@ -107,7 +109,7 @@ class Parser(private val tokens: List<Token>) {
         i += 3
     }
 
-    private fun getTextExpression(i: Int): Token {
+    private fun getFieldAndTextExpression(i: Int): Token {
         val token = tokens[i]
         if (token.getType() != TokenType.CONTAINS && token.getType() != TokenType.EQUALS) {
             throw IllegalStateException("expecting text expression token at index $i but was ${token.getType()}")

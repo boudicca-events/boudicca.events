@@ -23,6 +23,7 @@ enum class TokenType {
     NOT,
     BEFORE,
     AFTER,
+    IS,
     GROUPING_OPEN,
     GROUPING_CLOSE,
 }

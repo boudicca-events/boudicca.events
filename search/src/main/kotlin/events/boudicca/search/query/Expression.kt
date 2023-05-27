@@ -41,7 +41,7 @@ abstract class HasTwoChildren(
     }
 }
 
-abstract class TextExpression(
+abstract class FieldAndTextExpression(
     private val name: String,
     private val fieldName: String,
     private val text: String,
@@ -60,10 +60,24 @@ abstract class TextExpression(
     }
 }
 
+abstract class TextExpression(
+    private val name: String,
+    private val text: String,
+) : Expression {
+
+    fun getText(): String {
+        return text
+    }
+
+    override fun toString(): String {
+        return "$name('$text')"
+    }
+}
+
 abstract class DateExpression(
     private val name: String,
     dateText: String,
-) : Expression {
+) : TextExpression(name, dateText) {
 
     private val date: LocalDate
 
@@ -101,12 +115,12 @@ class NotExpression(
 class ContainsExpression(
     fieldName: String,
     text: String,
-) : TextExpression("CONTAINS", fieldName, text)
+) : FieldAndTextExpression("CONTAINS", fieldName, text)
 
 class EqualsExpression(
     fieldName: String,
     text: String,
-) : TextExpression("EQUALS", fieldName, text)
+) : FieldAndTextExpression("EQUALS", fieldName, text)
 
 class BeforeExpression(
     text: String,
@@ -115,4 +129,8 @@ class BeforeExpression(
 class AfterExpression(
     text: String,
 ) : DateExpression("AFTER", text)
+
+class IsExpression(
+    text: String,
+) : TextExpression("IS", text)
 

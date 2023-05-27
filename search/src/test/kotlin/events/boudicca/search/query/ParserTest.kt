@@ -197,13 +197,17 @@ class ParserTest {
     }
 
     @Test
-    fun testAfterWi() {
+    fun testIs() {
         assertEquals(
-            "AFTER('2023-05-27')",
+            "IS('MUSIC')",
             callParser(
-                after(), text("2023-05-27")
+                `is`(), text("MUSIC")
             )
         )
+    }
+
+    private fun `is`(): Token {
+        return Token(TokenType.IS, null)
     }
 
     private fun before(): Token {

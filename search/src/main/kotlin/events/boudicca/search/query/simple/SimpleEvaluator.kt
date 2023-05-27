@@ -55,9 +55,11 @@ class SimpleEvaluator(private val events: Collection<Map<String, String>>) : Eva
 
             is AfterExpression -> {
                 try {
-                    return event.containsKey(SemanticKeys.STARTDATE) &&
-                            LocalDate.parse(event[SemanticKeys.STARTDATE]!!, DateTimeFormatter.ISO_DATE_TIME)
-                                .isAfter(expression.getDate())
+                    if(!event.containsKey(SemanticKeys.STARTDATE)){
+                        return false
+                    }
+                    val startDate = LocalDate.parse(event[SemanticKeys.STARTDATE]!!, DateTimeFormatter.ISO_DATE_TIME)
+                    return startDate.isEqual(expression.getDate()) || startDate.isAfter(expression.getDate())
                 } catch (e: DateTimeParseException) {
                     return false
                 }

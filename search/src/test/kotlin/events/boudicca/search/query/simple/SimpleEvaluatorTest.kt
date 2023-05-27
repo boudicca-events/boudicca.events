@@ -133,6 +133,17 @@ class SimpleEvaluatorTest {
         assertEquals("2023-05-29T00:00:00", events.first()[SemanticKeys.STARTDATE])
     }
 
+    @Test
+    fun simpleAfterInclusiveToday() {
+        val events =
+            callEvaluator(AfterExpression("2023-05-25"),
+                listOf(
+                    mapOf(SemanticKeys.STARTDATE to "2023-05-25T00:00:00"),
+                    mapOf(SemanticKeys.STARTDATE to "2023-05-29T00:00:00"),
+                ))
+        assertEquals(2, events.size)
+    }
+
     private fun callEvaluator(expression: Expression): Collection<Map<String, String>> {
         return callEvaluator(expression, testData())
     }

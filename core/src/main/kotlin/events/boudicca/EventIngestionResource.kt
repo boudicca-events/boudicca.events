@@ -10,10 +10,7 @@ import javax.ws.rs.Path
 @RolesAllowed("ingest")
 @ApplicationScoped
 @Path("/ingest")
-class EventIngestionResource {
-
-    @Inject
-    private lateinit var eventService: EventService
+class EventIngestionResource @Inject constructor(private val eventService: EventService) {
 
     @POST
     @Path("/add")

@@ -13,10 +13,7 @@ import javax.ws.rs.Path
 @PermitAll
 @ApplicationScoped
 @Path("/events")
-class EventPublisherResource{
-
-    @Inject
-    private lateinit var eventService: EventService
+class EventPublisherResource @Inject constructor(private val eventService: EventService){
 
     @GET
     fun list(): Set<Event> {

@@ -14,5 +14,19 @@ public enum EventCategory {
         this.types = types;
     }
 
+    public static EventCategory getForType(String type) {
+        if (type == null) {
+            return null;
+        }
 
+        String lowerType = type.toLowerCase();
+        for (EventCategory category : EventCategory.values()) {
+            for (String categoryType : category.types) {
+                if (lowerType.contains(categoryType)) {
+                    return category;
+                }
+            }
+        }
+        return null;
+    }
 }

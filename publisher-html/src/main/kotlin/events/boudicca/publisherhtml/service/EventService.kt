@@ -63,19 +63,10 @@ class EventService {
     }
 
     private fun mapType(type: String?): String? {
-        if (type === null) {
-            return null
+        val category = EventCategory.getForType(type)
+        if (category != null) {
+            return frontEndCategoryName(category)
         }
-
-        val lowerCaseType = type.lowercase()
-        for (eventCategory in EventCategory.values()) {
-            for(subtype in eventCategory.types){
-                if (lowerCaseType.contains(subtype)) {
-                    return frontEndCategoryName(eventCategory)
-                }
-            }
-        }
-
         return null
     }
 

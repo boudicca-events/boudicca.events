@@ -1,10 +1,10 @@
 <div class="event">
-        <div class="event-image {{#if event.type}}event-image-{{event.type}}{{/if}}">
+        <div class="event-image {{#if event.category}}event-image-{{event.category}}{{/if}}">
             {{#if event.pictureUrl}}
                 <img src="{{event.pictureUrl}}" height="100px" />
             {{else}}
                 <svg title="Event Bild" viewBox="0 0 512 512" height="100px" >
-                    <use xlink:href="#{{#if event.type}}{{event.type}}{{else}}image{{/if}}"></use>
+                    <use xlink:href="#{{#if event.category}}{{event.category}}{{else}}image{{/if}}"></use>
                 </svg>
             {{/if}}
             {{#if event.url}}

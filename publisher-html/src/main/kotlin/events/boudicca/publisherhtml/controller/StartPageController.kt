@@ -34,7 +34,7 @@ class StartPageController @Autowired constructor(private val eventService: Event
         @RequestParam("name", required = false) name: String?,
         @RequestParam("fromDate", required = false) fromDate: String?,
         @RequestParam("toDate", required = false) toDate: String?,
-        @RequestParam("type", required = false) type: String?,
+        @RequestParam("category", required = false) category: String?,
         @RequestParam("locationName", required = false) locationName: String?,
         @RequestParam("locationCity", required = false) locationCity: String?,
     ): ModelAndView {
@@ -54,7 +54,7 @@ class StartPageController @Autowired constructor(private val eventService: Event
             null
         }
         data["events"] = eventService.search(
-            SearchDTO().name(name).fromDate(fromDateParsed).toDate(toDateParsed).type(type).locationName(locationName)
+            SearchDTO().name(name).fromDate(fromDateParsed).toDate(toDateParsed).category(category).locationName(locationName)
                 .locationCity(locationCity).offset(0)
         )
         data["filters"] = eventService.filters()

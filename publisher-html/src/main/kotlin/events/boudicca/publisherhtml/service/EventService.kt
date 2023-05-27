@@ -1,6 +1,6 @@
 package events.boudicca.publisherhtml.service
 
-import events.boudicca.EventTypes
+import events.boudicca.EventCategory
 import events.boudicca.SemanticKeys
 import events.boudicca.search.openapi.ApiClient
 import events.boudicca.search.openapi.api.SearchResourceApi
@@ -38,7 +38,7 @@ class EventService {
     fun filters(): Filters {
         val filters = searchApi.filtersGet()
         return Filters(
-            filters.types.map { Pair(it, frontEndName(it)) }.sortedBy { it.second },
+            filters.categories.map { Pair(it, frontEndName(it)) }.sortedBy { it.second },
             filters.locationNames.sorted().map { Pair(it, it) },
             filters.locationCities.sorted().map { Pair(it, it) },
         )
@@ -57,7 +57,7 @@ class EventService {
             "startDate" to formatDate(event.startDate),
             "locationName" to (event.data?.get(SemanticKeys.LOCATION_NAME) ?: "unbekannt"),
             "city" to event.data?.get(SemanticKeys.LOCATION_CITY),
-            "type" to mapType(event.data?.get(SemanticKeys.TYPE)),
+            "category" to mapType(event.data?.get(SemanticKeys.TYPE)),
             "pictureUrl" to (event.data?.get("pictureUrl") ?: ""),
         )
     }
@@ -68,10 +68,10 @@ class EventService {
         }
 
         val lowerCaseType = type.lowercase()
-        for (eventType in EventTypes.values()) {
-            for(subtype in eventType.types){
+        for (eventCategory in EventCategory.values()) {
+            for(subtype in eventCategory.types){
                 if (lowerCaseType.contains(subtype)) {
-                    return frontEndTypeName(eventType)
+                    return frontEndCategoryName(eventCategory)
                 }
             }
         }
@@ -95,11 +95,11 @@ class EventService {
         return "http://localhost:8082"
     }
 
-    private fun frontEndTypeName(type: EventTypes): String {
+    private fun frontEndCategoryName(type: EventCategory): String {
         return when (type) {
-            EventTypes.MUSIC -> "music"
-            EventTypes.ART -> "miscArt"
-            EventTypes.TECH -> "tech"
+            EventCategory.MUSIC -> "music"
+            EventCategory.ART -> "miscArt"
+            EventCategory.TECH -> "tech"
         }
     }
 
@@ -115,7 +115,7 @@ class EventService {
     }
 
     data class Filters(
-        val types: List<Pair<String, String>>,
+        val categories: List<Pair<String, String>>,
         val locationNames: List<Pair<String, String>>,
         val locationCities: List<Pair<String, String>>,
     )

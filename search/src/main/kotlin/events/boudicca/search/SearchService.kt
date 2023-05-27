@@ -1,6 +1,6 @@
 package events.boudicca.search
 
-import events.boudicca.EventTypes
+import events.boudicca.EventCategory
 import events.boudicca.SemanticKeys
 import events.boudicca.search.model.Event
 import events.boudicca.search.model.Filters
@@ -23,7 +23,7 @@ class SearchService @Inject constructor(
 
     fun filters(): Filters {
         return Filters(
-            getTypes(),
+            getCategories(),
             getLocationNames(),
             getLocationCities(),
         )
@@ -44,11 +44,11 @@ class SearchService @Inject constructor(
             }.filter { matchesFilter(it, searchDTO) }
     }
 
-    private fun getTypes(): Set<String> {
-        val types = EventTypes.values().map { it.name }.toMutableSet()
-        types.add(SEARCH_TYPE_ALL)
-        types.add(SEARCH_TYPE_OTHER)
-        return types
+    private fun getCategories(): Set<String> {
+        val categories = EventCategory.values().map { it.name }.toMutableSet()
+        categories.add(SEARCH_TYPE_ALL)
+        categories.add(SEARCH_TYPE_OTHER)
+        return categories
     }
 
     private fun getLocationNames(): Set<String> {
@@ -67,8 +67,8 @@ class SearchService @Inject constructor(
 
 
     private fun matchesFilter(event: Event, searchDTO: SearchDTO): Boolean {
-        if (!searchDTO.type.isNullOrBlank()) {
-            if (!matchTypeFilter(searchDTO.type, event)) {
+        if (!searchDTO.category.isNullOrBlank()) {
+            if (!matchCategoryFilter(searchDTO.category, event)) {
                 return false
             }
         }
@@ -85,19 +85,19 @@ class SearchService @Inject constructor(
         return true
     }
 
-    private fun matchTypeFilter(type: String, event: Event): Boolean {
-        if (type == SEARCH_TYPE_ALL) {
+    private fun matchCategoryFilter(category: String, event: Event): Boolean {
+        if (category == SEARCH_TYPE_ALL) {
             return true
         }
 
         val lowerCaseType = event.data?.get(SemanticKeys.TYPE)?.lowercase() ?: ""
-        val eventType = EventTypes.values().firstOrNull {
+        val eventCategory = EventCategory.values().firstOrNull {
             it.types.any { lowerCaseType.contains(it) }
         }
-        if (eventType == null) {
-            return type == SEARCH_TYPE_OTHER
+        if (eventCategory == null) {
+            return category == SEARCH_TYPE_OTHER
         }
-        return eventType.name == type
+        return eventCategory.name == category
     }
 
 

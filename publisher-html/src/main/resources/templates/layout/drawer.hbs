@@ -75,10 +75,10 @@
         <div class="header-search-filter">
             <div class="header-date-search">
                 <div class="filter-input-wrapper">
-                    <label for="type" class="filter-label">Veranstaltungsart</label>
-                    <select name="type" id="type">
-                        {{#each filters.types as |type|}}
-                            <option value="{{type.first}}">{{type.second}}</option>
+                    <label for="category" class="filter-label">Veranstaltungsart</label>
+                    <select name="category" id="category">
+                        {{#each filters.categories as |category|}}
+                            <option value="{{category.first}}">{{category.second}}</option>
                         {{/each}}
                     </select>
                 </div>

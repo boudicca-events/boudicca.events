@@ -11,5 +11,6 @@ fun main() {
 //        .debug(ZuckerfabrikFetcher())
 //        .debug(PlanetTTCollector())
 //        .debug(BrucknerhausCollector())
-        .debug(LinzTermineCollector())
+//        .debug(LinzTermineCollector())
+        .debug(OOESeniorenbundCollector())
 }

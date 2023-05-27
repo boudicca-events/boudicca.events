@@ -12,5 +12,6 @@ fun main() {
         .addEventCollector(PlanetTTCollector())
         .addEventCollector(BrucknerhausCollector())
         .addEventCollector(LinzTermineCollector())
+        .addEventCollector(OOESeniorenbundCollector())
         .run()
 }

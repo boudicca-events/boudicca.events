@@ -151,6 +151,19 @@ class SimpleEvaluatorTest {
     }
 
     @Test
+    fun simpleBeforeInclusiveToday() {
+        val events =
+            callEvaluator(
+                BeforeExpression("2023-05-29"),
+                listOf(
+                    mapOf(SemanticKeys.STARTDATE to "2023-05-25T00:00:00"),
+                    mapOf(SemanticKeys.STARTDATE to "2023-05-29T00:00:00"),
+                )
+            )
+        assertEquals(2, events.size)
+    }
+
+    @Test
     fun simpleIsMusic() {
         val events =
             callEvaluator(

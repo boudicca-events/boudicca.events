@@ -4,8 +4,16 @@ import events.boudicca.SemanticKeys
 import events.boudicca.search.query.simple.SimpleEvaluator
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 class QueryTest {
+
+    @Test
+    fun emptyQuery() {
+        assertThrows<IllegalStateException> {
+            evaluateQuery("")
+        }
+    }
 
     @Test
     fun simpleEquals() {

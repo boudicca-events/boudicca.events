@@ -19,7 +19,7 @@ potentially nested) forms:
 | Or              | At least one child-expression has to be true so that the whole expression is true | `<expression> or <expression>`  |
 | Not             | The child-expression has to be false so that the whole expression is true         | `not <expression>`              |
 | After           | Filter events starting at or after the given date                                 | `after <date>`                  |
-| Before          | Filter events starting before the given date (exclusive the given date)           | `before <date>`                 |
+| Before          | Filter events starting at or before the given date                                | `before <date>`                 |
 | Is              | Filter events belonging to a certain category                                     | `is <category>`                 |
 | Grouping        | Marker to identify how expression should be grouped                               | `( <expression> )`              |
 

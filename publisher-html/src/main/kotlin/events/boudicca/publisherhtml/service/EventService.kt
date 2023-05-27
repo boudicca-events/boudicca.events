@@ -69,8 +69,10 @@ class EventService {
 
         val lowerCaseType = type.lowercase()
         for (eventType in EventTypes.values()) {
-            if (eventType.types.contains(lowerCaseType)) {
-                return frontEndTypeName(eventType)
+            for(subtype in eventType.types){
+                if (lowerCaseType.contains(subtype)) {
+                    return frontEndTypeName(eventType)
+                }
             }
         }
 

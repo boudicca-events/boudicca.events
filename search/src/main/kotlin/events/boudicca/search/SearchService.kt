@@ -91,7 +91,9 @@ class SearchService @Inject constructor(
         }
 
         val lowerCaseType = event.data?.get(SemanticKeys.TYPE)?.lowercase() ?: ""
-        val eventType = EventTypes.values().firstOrNull { it.types.contains(lowerCaseType) }
+        val eventType = EventTypes.values().firstOrNull {
+            it.types.any { lowerCaseType.contains(it) }
+        }
         if (eventType == null) {
             return type == SEARCH_TYPE_OTHER
         }

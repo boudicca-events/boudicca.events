@@ -3,6 +3,7 @@ package events.boudicca.eventcollector.collectors
 import events.boudicca.SemanticKeys
 import events.boudicca.api.eventcollector.Event
 import events.boudicca.api.eventcollector.EventCollector
+import org.jsoup.HttpStatusException
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -20,12 +21,32 @@ class LinzTermineCollector : EventCollector {
     override fun collectEvents(): List<events.boudicca.api.eventcollector.Event> {
         val locations = parseLocations()
         val events = parseEvents()
-        return mapEvents(events, locations)
+        val eventWebsites = getEventWebsites(events)
+        return mapEvents(events, locations, eventWebsites)
+    }
+
+    private fun getEventWebsites(events: List<Event>): Map<Int, Document> {
+        //TODO we may loose some events because either they do not have a linztermine.at link or the linztermine.at link points to a 404... not sure what to do about that
+        return events
+            .filter {
+                it.url.contains("linztermine.at")
+            }
+            .map {
+                try {
+                    Pair(it.id, Jsoup.connect(it.url).get() as Document?)
+                } catch (ignored: HttpStatusException) {
+                    //some linztermine.at links just 404 and go nowhere... not sure what this is supposed to mean
+                    Pair(it.id, null as Document?)
+                }
+            }
+            .filter { it.second != null }
+            .associate { Pair(it.first, it.second!!) }
     }
 
     private fun mapEvents(
         eventList: List<Event>,
-        locations: Map<Int, Location>
+        locations: Map<Int, Location>,
+        eventWebsites: Map<Int, Document>
     ): List<events.boudicca.api.eventcollector.Event> {
         val mappedEvents = mutableListOf<events.boudicca.api.eventcollector.Event>()
         for (event in eventList) {
@@ -35,6 +56,16 @@ class LinzTermineCollector : EventCollector {
             }
 
             val location = locations[event.locationId]
+            val website = eventWebsites[event.id]
+            if (website == null) {
+                continue
+            }
+            val description = website.select("span.content-description").text()
+            val pictureUrl = if (!website.select("div.letterbox > img").isEmpty()) {
+                "https://www.linztermine.at" + website.select("div.letterbox > img").attr("src")
+            } else {
+                ""
+            }
             for (date in event.dates) {
                 mappedEvents.add(
                     Event(
@@ -43,12 +74,12 @@ class LinzTermineCollector : EventCollector {
                         mapOf(
                             SemanticKeys.ENDDATE to date.second.format(DateTimeFormatter.ISO_DATE_TIME),
                             SemanticKeys.TYPE to (event.type ?: ""),
-                            SemanticKeys.DESCRIPTION to event.description,
-                            SemanticKeys.DESCRIPTION to event.description,
+                            SemanticKeys.DESCRIPTION to description,
+                            SemanticKeys.PICTUREURL to pictureUrl,
                             SemanticKeys.REGISTRATION to (if (event.freeOfCharge) "FREE" else "TICKET"),
                             SemanticKeys.URL to event.url,
                             SemanticKeys.LOCATION_NAME to (location?.name
-                                        ?: event.locationFallbackName), //they do not include all locations in their location.xml files -.-
+                                ?: event.locationFallbackName), //they do not include all locations in their location.xml files -.-
                             SemanticKeys.LOCATION_CITY to (location?.city ?: ""),
                             SemanticKeys.LOCATION_URL to (location?.url ?: ""),
                         ).filter { it.value.isNotBlank() }
@@ -65,8 +96,8 @@ class LinzTermineCollector : EventCollector {
         return xml.child(0).children().toList()
             .map {
                 Event(
+                    it.attr("id").toInt(),
                     it.select("title").text(),
-                    it.select("description").text(),
                     it.select("tags").first()?.child(0)?.text(),
                     it.select("date").map {
                         Pair(
@@ -86,7 +117,7 @@ class LinzTermineCollector : EventCollector {
         var fallback: String? = null
         for (link in event.select("links link").toList()) {
             val linkUrl = link.select("url").text()
-            if (linkUrl.contains("linztermine.at")) {
+            if (!linkUrl.contains("linztermine.at")) {
                 fallback = linkUrl
             } else {
                 return linkUrl
@@ -128,8 +159,8 @@ class LinzTermineCollector : EventCollector {
     )
 
     data class Event(
+        val id: Int,
         val name: String,
-        val description: String,
         val type: String?,
         val dates: List<Pair<ZonedDateTime, ZonedDateTime>>,
         val freeOfCharge: Boolean,

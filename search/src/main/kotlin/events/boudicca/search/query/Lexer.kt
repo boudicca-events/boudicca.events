@@ -35,7 +35,7 @@ class Lexer(private val query: String) {
             if (c.isWhitespace() || c == '(' || c == ')') {
                 break
             }
-            if (!c.isLetterOrDigit() && c != '.') {
+            if (!c.isLetterOrDigit() && c != '.' && c != '-') {
                 throw IllegalStateException("unexpected non-letter character in text token: $c at index: $i")
             }
             tokenEnd++
@@ -50,6 +50,8 @@ class Lexer(private val query: String) {
             "not" -> tokens.add(Token(TokenType.NOT, null))
             "equals" -> tokens.add(Token(TokenType.EQUALS, null))
             "contains" -> tokens.add(Token(TokenType.CONTAINS, null))
+            "before" -> tokens.add(Token(TokenType.BEFORE, null))
+            "after" -> tokens.add(Token(TokenType.AFTER, null))
             else -> tokens.add(Token(TokenType.TEXT, token))
         }
         i = tokenEnd

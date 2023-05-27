@@ -21,6 +21,8 @@ enum class TokenType {
     EQUALS,
     CONTAINS,
     NOT,
+    BEFORE,
+    AFTER,
     GROUPING_OPEN,
     GROUPING_CLOSE,
 }

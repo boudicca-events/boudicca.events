@@ -166,6 +166,52 @@ class ParserTest {
             //boolean operator without first expression
             callParser(and(), text("field"), equals(), text("text"))
         }
+        assertThrows<IllegalStateException> {
+            //after operator needs parameter
+            callParser(after())
+        }
+        assertThrows<IllegalStateException> {
+            //wrong date format
+            callParser(after(),text("27-5-2023"))
+        }
+    }
+
+    @Test
+    fun testBefore() {
+        assertEquals(
+            "BEFORE('2023-05-27')",
+            callParser(
+                before(), text("2023-05-27")
+            )
+        )
+    }
+
+    @Test
+    fun testAfter() {
+        assertEquals(
+            "AFTER('2023-05-27')",
+            callParser(
+                after(), text("2023-05-27")
+            )
+        )
+    }
+
+    @Test
+    fun testAfterWi() {
+        assertEquals(
+            "AFTER('2023-05-27')",
+            callParser(
+                after(), text("2023-05-27")
+            )
+        )
+    }
+
+    private fun before(): Token {
+        return Token(TokenType.BEFORE, null)
+    }
+
+    private fun after(): Token {
+        return Token(TokenType.AFTER, null)
     }
 
     private fun grOpen(): Token {

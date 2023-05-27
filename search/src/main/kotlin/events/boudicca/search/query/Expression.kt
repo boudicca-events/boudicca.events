@@ -1,5 +1,9 @@
 package events.boudicca.search.query
 
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
+
 interface Expression {
     override fun toString(): String
 }
@@ -56,6 +60,29 @@ abstract class TextExpression(
     }
 }
 
+abstract class DateExpression(
+    private val name: String,
+    dateText: String,
+) : Expression {
+
+    private val date: LocalDate
+
+    init {
+        try {
+            date = LocalDate.parse(dateText, DateTimeFormatter.ISO_LOCAL_DATE)
+        } catch (e: DateTimeParseException) {
+            throw IllegalStateException("date in wrong format $dateText")
+        }
+    }
+
+    fun getDate(): LocalDate {
+        return date
+    }
+
+    override fun toString(): String {
+        return "$name('${date.format(DateTimeFormatter.ISO_LOCAL_DATE)}')"
+    }
+}
 
 class AndExpression(
     leftChild: Expression,
@@ -80,4 +107,12 @@ class EqualsExpression(
     fieldName: String,
     text: String,
 ) : TextExpression("EQUALS", fieldName, text)
+
+class BeforeExpression(
+    text: String,
+) : DateExpression("BEFORE", text)
+
+class AfterExpression(
+    text: String,
+) : DateExpression("AFTER", text)
 

@@ -1,5 +1,6 @@
 package events.boudicca.search.query.simple
 
+import events.boudicca.SemanticKeys
 import events.boudicca.search.query.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -106,6 +107,30 @@ class SimpleEvaluatorTest {
             )
         )
         assertEquals(2, events.size)
+    }
+
+    @Test
+    fun simpleBefore() {
+        val events =
+            callEvaluator(BeforeExpression("2023-05-27"),
+                listOf(
+                    mapOf(SemanticKeys.STARTDATE to "2023-05-25T00:00:00"),
+                    mapOf(SemanticKeys.STARTDATE to "2023-05-29T00:00:00"),
+                ))
+        assertEquals(1, events.size)
+        assertEquals("2023-05-25T00:00:00", events.first()[SemanticKeys.STARTDATE])
+    }
+
+    @Test
+    fun simpleAfter() {
+        val events =
+            callEvaluator(AfterExpression("2023-05-27"),
+                listOf(
+                    mapOf(SemanticKeys.STARTDATE to "2023-05-25T00:00:00"),
+                    mapOf(SemanticKeys.STARTDATE to "2023-05-29T00:00:00"),
+                ))
+        assertEquals(1, events.size)
+        assertEquals("2023-05-29T00:00:00", events.first()[SemanticKeys.STARTDATE])
     }
 
     private fun callEvaluator(expression: Expression): Collection<Map<String, String>> {

@@ -18,18 +18,22 @@ potentially nested) forms:
 | And             | Both child-expressions have to be true so that the whole expression is true       | `<expression> and <expression>` |
 | Or              | At least one child-expression has to be true so that the whole expression is true | `<expression> or <expression>`  |
 | Not             | The child-expression has to be false so that the whole expression is true         | `not <expression>`              |
+| After           | Filter events starting at or after the given date                                 | `after <date>`                  |
+| Before          | Filter events starting before the given date (exclusive the given date)           | `before <date>`                 |
 | Grouping        | Marker to identify how expression should be grouped                               | `( <expression> )`              |
 
 where
 
 * `<text>` is an arbitrary string, but if that string matches a keyword or contains special characters (
   space, (, ), \, ", ...) it has to be surrounded by quotes. Quotes and backslashes in the quote-escaped text have to be
-  escaped by a
-  preceding backslash. The one exception which does not have to be quote-escaped is a dot '.', because a lot of
-  field-names contain a dot (like `location.name`) and this makes it easier to write queries for them
+  escaped by a preceding backslash. Special characters which are allowed without quote-escaping are the dot '.' and the
+  minus '-'.
+  This is because a lot of field-names contain a dot (like `location.name`) and dates contain -, and these exceptions
+  makes it easier to write queries for them.
 * `<fieldname>` is a `<text>` matching a field of an event to be queried. There is the special field `"*"` which means
   "any field". Please note that * is a special character and thus the quotes are needed. Also note that the fieldname
   matching is case-sensitive, so the fieldnames `name` and `NAME` are different fields.
+* `<date>` is a `<text>` in the ISO Local Date format `YYYY-MM-DD`, for example `2023-05-27`
 
 In contrast to other queries or math there is no operator precedence here, they will be ordered/grouped randomly
 (depending solely on the parser). So make sure to use the grouping `(...)` mechanism!
@@ -45,6 +49,8 @@ In contrast to other queries or math there is no operator precedence here, they 
   description: `description contains "a \"longer\" sentence"`
 * Search for any event in Wien but not in
   Gasometer: `location.city equals Wien and (not location.name equals Gasometer)`
+* Search for any event while I am in Vienna on
+  holiday: `location.city equals Wien and after 2023-05-27 and before 2023-05-31`
 
 See our [Semantic Conventions](SEMANTIC_CONVENTIONS.md) to find common field names.
 

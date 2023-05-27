@@ -123,6 +123,30 @@ class LexerTest {
     }
 
     @Test
+    fun testAfterOperator() {
+        val tokens = callLexer("after")
+        assertEquals(1, tokens.size)
+        assertEquals(TokenType.AFTER, tokens[0].getType())
+    }
+
+    @Test
+    fun testBeforeOperator() {
+        val tokens = callLexer("before")
+        assertEquals(1, tokens.size)
+        assertEquals(TokenType.BEFORE, tokens[0].getType())
+    }
+
+    @Test
+    fun testSpecialAllowedCharacters() {
+        val tokens = callLexer("text.dot text-minus")
+        assertEquals(2, tokens.size)
+        assertEquals(TokenType.TEXT, tokens[0].getType())
+        assertEquals("text.dot", tokens[0].getToken())
+        assertEquals(TokenType.TEXT, tokens[1].getType())
+        assertEquals("text-minus", tokens[1].getToken())
+    }
+
+    @Test
     fun testVariousErrors() {
         assertThrows<IllegalStateException> {
             callLexer("textwith!init")

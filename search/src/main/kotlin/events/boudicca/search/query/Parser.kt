@@ -23,6 +23,8 @@ class Parser(private val tokens: List<Token>) {
             parseNotExpression()
         } else if (token.getType() == TokenType.GROUPING_OPEN) {
             parseGroupOpen()
+        } else if (token.getType() == TokenType.BEFORE || token.getType() == TokenType.AFTER) {
+            parseDateExpression(token)
         } else {
             throw IllegalStateException("unexpected token ${token.getType()} at start of expression at index $i")
         }
@@ -36,6 +38,21 @@ class Parser(private val tokens: List<Token>) {
                 throw IllegalStateException("unexpected token ${token.getType()} after end of expression at index $i")
             }
         }
+    }
+
+    private fun parseDateExpression(token: Token) {
+        if (i + 1 >= tokens.size) {
+            throw IllegalStateException("expecting date, found end of query")
+        }
+        val dateToken = getText(i + 1)
+        if (token.getType() == TokenType.BEFORE) {
+            lastExpression = BeforeExpression(dateToken.getToken()!!)
+        } else if (token.getType() == TokenType.AFTER) {
+            lastExpression = AfterExpression(dateToken.getToken()!!)
+        } else {
+            throw IllegalStateException("unknown token type ${token.getType()}")
+        }
+        i += 2
     }
 
     private fun parseGroupOpen() {

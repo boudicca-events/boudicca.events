@@ -83,7 +83,7 @@ class BrucknerhausCollector : TwoStepEventCollector<Element>("brucknerhaus") {
             "JAN" -> "1"
             "FEB" -> "2"
             "MÄRZ" -> "3"
-            "APRIL" -> "4"
+            "APR" -> "4"
             "MAI" -> "5"
             "JUNI" -> "6"
             "JULI" -> "7"

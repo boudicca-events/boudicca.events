@@ -1,10 +1,13 @@
 package events.boudicca.search
 
+import events.boudicca.SemanticKeys
 import events.boudicca.openapi.ApiClient
 import events.boudicca.openapi.api.EventPublisherResourceApi
 import events.boudicca.search.model.Event
 import io.quarkus.scheduler.Scheduled
 import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 import javax.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
@@ -37,8 +40,20 @@ class SynchronizationService {
     private fun updateEvents() {
         events = publisherApi.eventsGet()
             //filter old events
-            .filter { it.startDate.isAfter(OffsetDateTime.now().minusDays(1)) }
+            .filter { getEndDate(it).isAfter(OffsetDateTime.now().minusDays(1)) }
             .map { toSearchEvent(it) }.toSet()
+    }
+
+    private fun getEndDate(it: events.boudicca.openapi.model.Event): OffsetDateTime {
+        val data = it.data
+        if (data != null && data.containsKey(SemanticKeys.ENDDATE)) {
+            try {
+                return OffsetDateTime.parse(data[SemanticKeys.ENDDATE], DateTimeFormatter.ISO_DATE_TIME)
+            } catch (ignored: DateTimeParseException) {
+                ignored.printStackTrace()
+            }
+        }
+        return it.startDate
     }
 
     private fun toSearchEvent(event: events.boudicca.openapi.model.Event): Event {
@@ -69,3 +84,4 @@ class SynchronizationService {
         return false
     }
 }
+

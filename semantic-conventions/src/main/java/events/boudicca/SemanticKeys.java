@@ -15,7 +15,7 @@ public class SemanticKeys {
 
     // location properties
     public static final String LOCATION_NAME = "location.name";
-    public static final String LOCATION_URL = "locatiom.url";
+    public static final String LOCATION_URL = "location.url";
     public static final String LOCATION_COORDINATES = "location.coordinates";
     public static final String LOCATION_CITY = "location.city";
 

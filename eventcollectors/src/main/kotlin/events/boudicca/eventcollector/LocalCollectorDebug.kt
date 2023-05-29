@@ -12,5 +12,6 @@ fun main() {
 //        .debug(PlanetTTCollector())
 //        .debug(BrucknerhausCollector())
 //        .debug(LinzTermineCollector())
-        .debug(OOESeniorenbundCollector())
+//        .debug(OOESeniorenbundCollector())
+        .debug(KupfTicketCollector())
 }

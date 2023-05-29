@@ -13,5 +13,6 @@ fun main() {
         .addEventCollector(BrucknerhausCollector())
         .addEventCollector(LinzTermineCollector())
         .addEventCollector(OOESeniorenbundCollector())
+        .addEventCollector(KupfTicketCollector())
         .run()
 }

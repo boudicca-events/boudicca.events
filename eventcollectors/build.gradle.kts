@@ -14,6 +14,7 @@ dependencies {
     implementation("org.jsoup:jsoup:1.16.1")
     implementation("org.mnode.ical4j:ical4j:3.2.10")
     implementation("com.rometools:rome:2.1.0")
+    implementation("com.beust:klaxon:5.6")
 }
 
 group = "events.boudicca"

@@ -3,15 +3,10 @@ package events.boudicca.eventcollector.collectors
 import events.boudicca.SemanticKeys
 import events.boudicca.api.eventcollector.Event
 import events.boudicca.api.eventcollector.EventCollector
-import it.skrape.core.htmlDocument
-import it.skrape.fetcher.HttpFetcher
-import it.skrape.fetcher.response
-import it.skrape.fetcher.skrape
-import it.skrape.selects.html5.a
-import it.skrape.selects.html5.div
 import net.fortuna.ical4j.data.CalendarBuilder
 import net.fortuna.ical4j.model.Calendar
 import net.fortuna.ical4j.model.component.VEvent
+import org.jsoup.Jsoup
 import java.net.URL
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -25,57 +20,21 @@ class JkuEventCollector : EventCollector {
     }
 
     override fun collectEvents(): List<Event> {
-        val eventUrls = mutableSetOf<String>()
-        val icsUrls = mutableSetOf<String>()
-        val baseUrl = "https://www.jku.at"
-        skrape(HttpFetcher) {
-            request {
-                url = "${baseUrl}/studium/studieninteressierte/messen-events/"
-            }
-            response {
-                htmlDocument {
-                    div {
-                        withClass = "news_list_item"
-                        findAll {
-                            a {
-                                findAll {
-                                    forEach {
-                                        eventUrls.add(it.attribute("href"))
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        val document = Jsoup.connect("https://www.jku.at/studium/studieninteressierte/messen-events/").get()
+        val eventUrls = document.select("div.news_list_item a").eachAttr("href")
 
-        eventUrls.forEach { eventUrl ->
-            skrape(HttpFetcher) {
-                request {
-                    url = "${baseUrl}${eventUrl}"
-                }
-                response {
-                    htmlDocument {
-                        a {
-                            findAll {
-                                forEach {
-                                    val href = it.attribute("href")
-                                    if (href.endsWith(".ics")) {
-                                        icsUrls.add(href)
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+        val icsUrls = eventUrls
+            .flatMap {
+                val document = Jsoup.connect("https://www.jku.at$it").get()
+                document.select("a").eachAttr("href")
             }
-        }
+            .filter { it.endsWith(".ics") }
+
 
         val events = mutableListOf<Event>()
 
         icsUrls.forEach {
-            val fullUrl = "${baseUrl}${it}"
+            val fullUrl = "https://www.jku.at${it}"
             val url = URL(fullUrl)
             events.addAll(parseEventFromIcs(url))
         }

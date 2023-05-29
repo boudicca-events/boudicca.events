@@ -11,7 +11,7 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
-class TechnologiePlauscherlFetcher : EventCollector {
+class TechnologiePlauscherlCollector : EventCollector {
     override fun getName(): String {
         return "technologieplauscherl"
     }

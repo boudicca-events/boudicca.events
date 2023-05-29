@@ -10,7 +10,7 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
-class PosthofFetcher : TwoStepEventCollector<Element>("posthof") {
+class PosthofCollector : TwoStepEventCollector<Element>("posthof") {
 
     override fun getAllUnparsedEvents(): List<Element> {
         val events = mutableListOf<Element>()

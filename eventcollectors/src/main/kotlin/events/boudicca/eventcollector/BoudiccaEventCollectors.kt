@@ -5,10 +5,10 @@ import events.boudicca.eventcollector.collectors.*
 
 fun main() {
     EventCollectorScheduler()
-        .addEventCollector(PosthofFetcher())
-        .addEventCollector(JkuEventFetcher())
-        .addEventCollector(TechnologiePlauscherlFetcher())
-        .addEventCollector(ZuckerfabrikFetcher())
+        .addEventCollector(PosthofCollector())
+        .addEventCollector(JkuEventCollector())
+        .addEventCollector(TechnologiePlauscherlCollector())
+        .addEventCollector(ZuckerfabrikCollector())
         .addEventCollector(PlanetTTCollector())
         .addEventCollector(BrucknerhausCollector())
         .addEventCollector(LinzTermineCollector())

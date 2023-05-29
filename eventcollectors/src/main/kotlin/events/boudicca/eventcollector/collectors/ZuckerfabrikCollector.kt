@@ -13,7 +13,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-class ZuckerfabrikFetcher : TwoStepEventCollector<Pair<String, Document>>("zuckerfabrik") {
+class ZuckerfabrikCollector : TwoStepEventCollector<Pair<String, Document>>("zuckerfabrik") {
 
     override fun getAllUnparsedEvents(): List<Pair<String, Document>> {
         val events = mutableListOf<Pair<String, Document>>()

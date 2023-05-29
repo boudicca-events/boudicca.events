@@ -19,7 +19,7 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
-class JkuEventFetcher : EventCollector {
+class JkuEventCollector : EventCollector {
     override fun getName(): String {
         return "jku"
     }

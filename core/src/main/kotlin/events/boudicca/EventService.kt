@@ -7,19 +7,29 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+import java.util.*
 import javax.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
 class EventService {
 
-    private val events = mutableSetOf<Event>()
+    private val events = Collections.synchronizedSet(mutableSetOf<Event>())
 
     fun list(): Set<Event> {
         return events
     }
 
     fun add(event: Event) {
-        events.removeIf { eventInDb -> eventInDb.name == event.name }
+        val duplicates = events.filter { eventInDb -> eventInDb.name == event.name }.toSet()
+
+        //some cheap logging for finding duplicate events between different collectors
+        for (duplicate in duplicates) {
+            if (duplicate.data?.get(SemanticKeys.COLLECTORNAME) != event.data?.get(SemanticKeys.COLLECTORNAME)) {
+                println("event $event will overwrite $duplicate")
+            }
+        }
+
+        events.removeAll(duplicates)
         events.add(event)
     }
 

@@ -50,11 +50,14 @@ class EventCollectorScheduler(
     }
 
     private fun collect(eventCollector: EventCollector) {
+        val startTime = System.currentTimeMillis()
         val events = eventCollector.collectEvents()
+        val collectTime = System.currentTimeMillis()
         for (event in events) {
             ingestionApi.ingestAddPost(mapToApiEvent(postProcess(event, eventCollector.getName())))
         }
-        println("collected ${events.size} events for event collector ${eventCollector.getName()}")
+        val ingestTime = System.currentTimeMillis()
+        println("collected ${events.size} events for event collector ${eventCollector.getName()}, collecting took ${(collectTime - startTime) / 1000}s, ingesting took ${(ingestTime - collectTime) / 1000}s")
     }
 
     private fun postProcess(event: Event, collectorName: String): Event {

@@ -79,10 +79,18 @@
         flex-direction: column;
         gap: 4px;
     }
+
+    #loadMoreButton {
+        font-size: var(--font-size-large);
+        margin-top: var(--space-xxlarge);
+    }
 </style>
 
 <div id="eventsContainer" class="events-grid">
     {{#each events as |event|}}
         {{> events/event event}}
     {{/each}}
+</div>
+<div style="text-align: center">
+    <button id="loadMoreButton">Mehr laden</button>
 </div>

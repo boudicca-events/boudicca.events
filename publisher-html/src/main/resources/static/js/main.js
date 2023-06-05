@@ -6,6 +6,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const closeDrawerButton = document.getElementById("closeDrawerButton");
   const filterSearchButton = document.getElementById("filterSearchButton");
   const resetSearchFormButton = document.getElementById("resetSearchForm");
+  const loadMoreButton = document.getElementById("loadMoreButton");
+
+  loadMoreButton.addEventListener("click", () => {
+    onLoadMoreSearch();
+  });
 
   resetSearchFormButton.addEventListener("click", () => {
     searchForm.reset();
@@ -42,27 +47,6 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.style.overflow = "initial";
   };
 
-  var throttleTimer;
-  const throttle = (callback, time) => {
-    if (throttleTimer) return;
-    throttleTimer = true;
-    setTimeout(() => {
-      callback();
-      throttleTimer = false;
-    }, time);
-  };
-
-  const handleInfiniteScroll = () => {
-    throttle(() => {
-      const endOfPage =
-        window.innerHeight + window.pageYOffset >= document.body.offsetHeight;
-      if (endOfPage) {
-        onScrollSearch();
-      }
-    }, 1000);
-  };
-  window.addEventListener("scroll", handleInfiniteScroll);
-
   const goTo = (url) => {
     if ("undefined" !== typeof history.pushState) {
       history.pushState({}, "", url);
@@ -89,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const parser = new DOMParser();
-  const onScrollSearch = async () => {
+  const onLoadMoreSearch = async () => {
     const paramsAsString = new URLSearchParams(
       new FormData(searchForm)
     ).toString();

@@ -87,6 +87,6 @@ class PosthofCollector : TwoStepEventCollector<Element>("posthof") {
         "funk",
         "folk",
         "dub",
-        "klassik",        //TODO moar
+        "klassik",        //TODO moar and moar generic
     )
 }

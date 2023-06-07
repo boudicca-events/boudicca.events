@@ -14,5 +14,6 @@ fun main() {
         .addEventCollector(LinzTermineCollector())
         .addEventCollector(OOESeniorenbundCollector())
         .addEventCollector(KupfTicketCollector())
+        .addEventCollector(SpinnereiCollector())
         .run()
 }

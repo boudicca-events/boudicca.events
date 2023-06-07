@@ -13,5 +13,6 @@ fun main() {
 //        .debug(BrucknerhausCollector())
 //        .debug(LinzTermineCollector())
 //        .debug(OOESeniorenbundCollector())
-        .debug(KupfTicketCollector())
+//        .debug(KupfTicketCollector())
+        .debug(SpinnereiCollector())
 }

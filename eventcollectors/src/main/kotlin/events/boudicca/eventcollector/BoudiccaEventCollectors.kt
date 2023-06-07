@@ -15,5 +15,6 @@ fun main() {
         .addEventCollector(OOESeniorenbundCollector())
         .addEventCollector(KupfTicketCollector())
         .addEventCollector(SpinnereiCollector())
+        .addEventCollector(SchlachthofCollector())
         .run()
 }

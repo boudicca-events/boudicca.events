@@ -24,7 +24,7 @@ class SchlachthofCollector : TwoStepEventCollector<Element>("schlachthof") {
     override fun parseEvent(event: Element): Event {
         val data = mutableMapOf<String, String>()
 
-        val name = event.select("h2").text()
+        val name = event.select("h2").text().trim()
         val startDate = parseDate(event.select("div.event_list_details>p:nth-child(1)").text())
 
         data[SemanticKeys.DESCRIPTION] = event.select("div.event_list_previewtext").text()

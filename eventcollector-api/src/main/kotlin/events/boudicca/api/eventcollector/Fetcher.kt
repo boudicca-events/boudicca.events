@@ -6,16 +6,17 @@ import java.net.http.HttpRequest
 import java.net.http.HttpResponse.BodyHandlers
 
 /* how long we want to wait between request as to not overload the target server */
-const val MIN_WAIT_TIME_IN_MS = 100
+const val DEFAULT_MIN_WAIT_TIME_IN_MS = 100L
 
-class Fetcher {
+class Fetcher(waitTimeInMs: Long = DEFAULT_MIN_WAIT_TIME_IN_MS) {
 
+    private val realWaitTimeInMs = Math.max(DEFAULT_MIN_WAIT_TIME_IN_MS, waitTimeInMs)
     private val newHttpClient = HttpClient.newHttpClient()
 
     private var lastRequest = 0L
 
     fun fetchUrl(url: String): String {
-        val waitTime = lastRequest + MIN_WAIT_TIME_IN_MS - System.currentTimeMillis()
+        val waitTime = lastRequest + realWaitTimeInMs - System.currentTimeMillis()
         if (waitTime > 0) {
             Thread.sleep(waitTime)
         }
@@ -23,7 +24,12 @@ class Fetcher {
             .GET()
             .header("User-Agent", "boudicca.events collector")
             .build()
+        val requestStartTime = System.currentTimeMillis()
         val response = newHttpClient.send(request, BodyHandlers.ofString())
+        val requestTime = System.currentTimeMillis() - requestStartTime
+        if (requestTime > 1000) {
+            println("slow request detected. took $requestTime ms fetching $url")
+        }
         lastRequest = System.currentTimeMillis()
         return response.body()
     }

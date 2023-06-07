@@ -2,6 +2,7 @@ package events.boudicca.eventcollector.collectors
 
 import events.boudicca.SemanticKeys
 import events.boudicca.api.eventcollector.Event
+import events.boudicca.api.eventcollector.Fetcher
 import events.boudicca.api.eventcollector.TwoStepEventCollector
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
@@ -13,7 +14,8 @@ import java.time.format.DateTimeFormatter
 class PlanetTTCollector : TwoStepEventCollector<Element>("planettt") {
 
     override fun getAllUnparsedEvents(): List<Element> {
-        val document = Jsoup.connect("https://planet.tt/index.php?article_id=173&start=0&limit=200&locat=Home").get()
+        val fetcher = Fetcher()
+        val document = Jsoup.parse(fetcher.fetchUrl("https://planet.tt/index.php?article_id=173&start=0&limit=200&locat=Home"))
         return document.select("article.event_articles")
     }
 

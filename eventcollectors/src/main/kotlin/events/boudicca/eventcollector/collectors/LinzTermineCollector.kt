@@ -3,6 +3,7 @@ package events.boudicca.eventcollector.collectors
 import events.boudicca.SemanticKeys
 import events.boudicca.api.eventcollector.Event
 import events.boudicca.api.eventcollector.EventCollector
+import events.boudicca.api.eventcollector.Fetcher
 import org.jsoup.HttpStatusException
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -14,6 +15,8 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 class LinzTermineCollector : EventCollector {
+    private val fetcher = Fetcher()
+
     override fun getName(): String {
         return "Linz Termine"
     }
@@ -26,6 +29,7 @@ class LinzTermineCollector : EventCollector {
     }
 
     private fun getEventWebsites(events: List<Event>): Map<Int, Document> {
+        val fetcher = Fetcher()
         //TODO we may loose some events because either they do not have a linztermine.at link or the linztermine.at link points to a 404... not sure what to do about that
         return events
             .filter {
@@ -33,7 +37,7 @@ class LinzTermineCollector : EventCollector {
             }
             .map {
                 try {
-                    Pair(it.id, Jsoup.connect(it.url).get() as Document?)
+                    Pair(it.id, Jsoup.parse(fetcher.fetchUrl(it.url.replace("http://","https://"))) as Document?)
                 } catch (ignored: HttpStatusException) {
                     //some linztermine.at links just 404 and go nowhere... not sure what this is supposed to mean
                     Pair(it.id, null as Document?)
@@ -148,7 +152,7 @@ class LinzTermineCollector : EventCollector {
     }
 
     private fun loadXml(s: String): Document {
-        return Jsoup.connect(s).parser(Parser.xmlParser()).get()
+        return Jsoup.parse(fetcher.fetchUrl(s), Parser.xmlParser())
     }
 
     data class Location(

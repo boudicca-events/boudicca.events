@@ -5,6 +5,7 @@ import com.beust.klaxon.Parser
 import com.beust.klaxon.lookup
 import events.boudicca.SemanticKeys
 import events.boudicca.api.eventcollector.Event
+import events.boudicca.api.eventcollector.Fetcher
 import events.boudicca.api.eventcollector.TwoStepEventCollector
 import org.jsoup.HttpStatusException
 import org.jsoup.Jsoup
@@ -15,7 +16,8 @@ import java.time.format.DateTimeFormatter
 class KupfTicketCollector : TwoStepEventCollector<JsonObject>("kupfticket") {
 
     override fun getAllUnparsedEvents(): List<JsonObject> {
-        val document = Jsoup.connect("https://kupfticket.com/events").get()
+        val fetcher = Fetcher()
+        val document = Jsoup.parse(fetcher.fetchUrl("https://kupfticket.com/events"))
         val next_data = document.select("body script#__NEXT_DATA__").first()!!.data()
         val jsonObject = Parser.default().parse(StringReader(next_data)) as JsonObject
 
@@ -25,16 +27,19 @@ class KupfTicketCollector : TwoStepEventCollector<JsonObject>("kupfticket") {
             .asSequence()
             .mapNotNull {
                 try {
-                    Jsoup.connect("https://kupfticket.com/events/$it").get()//some links just 404...
+                    fetcher.fetchUrl("https://kupfticket.com/events/$it")//some links just 404...
                 } catch (e: HttpStatusException) {
                     Thread.sleep(1000)
                     try {
-                        Jsoup.connect("https://kupfticket.com/events/$it").get()//what do you mean stable?
+                        fetcher.fetchUrl("https://kupfticket.com/events/$it")//what do you mean stable?
                     } catch (e2: HttpStatusException) {
                         println("https://kupfticket.com/events/$it error after retry: " + e2.statusCode)
                         null
                     }
                 }
+            }
+            .map {
+                Jsoup.parse(it)
             }
             .map { it.select("body script#__NEXT_DATA__").first()!!.data() }
             .map {

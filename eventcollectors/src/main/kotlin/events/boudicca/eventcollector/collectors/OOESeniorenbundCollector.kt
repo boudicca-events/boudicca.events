@@ -2,6 +2,7 @@ package events.boudicca.eventcollector.collectors
 
 import events.boudicca.SemanticKeys
 import events.boudicca.api.eventcollector.Event
+import events.boudicca.api.eventcollector.Fetcher
 import events.boudicca.api.eventcollector.TwoStepEventCollector
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -18,12 +19,13 @@ import java.util.regex.Pattern
 class OOESeniorenbundCollector : TwoStepEventCollector<Pair<Document, String>>("ooesb") {
 
     override fun getAllUnparsedEvents(): List<Pair<Document, String>> {
-        val document = Jsoup.connect("https://servicebroker.media-data.at/overview.html?key=QVKSBOOE").get()
+        val fetcher = Fetcher()
+        val document = Jsoup.parse(fetcher.fetchUrl("https://servicebroker.media-data.at/overview.html?key=QVKSBOOE"))
 
         return document.select("a.link-detail")
             .toList()
             .map { "https://servicebroker.media-data.at/" + it.attr("href") }
-            .map { Pair(Jsoup.connect(it).get(), it) }
+            .map { Pair(Jsoup.parse(fetcher.fetchUrl(it)), it) }
     }
 
     override fun parseEvent(pair: Pair<Document, String>): Event {

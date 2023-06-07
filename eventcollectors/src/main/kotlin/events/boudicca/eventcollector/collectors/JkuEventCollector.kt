@@ -3,6 +3,7 @@ package events.boudicca.eventcollector.collectors
 import events.boudicca.SemanticKeys
 import events.boudicca.api.eventcollector.Event
 import events.boudicca.api.eventcollector.EventCollector
+import events.boudicca.api.eventcollector.Fetcher
 import net.fortuna.ical4j.data.CalendarBuilder
 import net.fortuna.ical4j.model.Calendar
 import net.fortuna.ical4j.model.component.VEvent
@@ -20,12 +21,13 @@ class JkuEventCollector : EventCollector {
     }
 
     override fun collectEvents(): List<Event> {
-        val document = Jsoup.connect("https://www.jku.at/studium/studieninteressierte/messen-events/").get()
+        val fetcher = Fetcher()
+        val document = Jsoup.parse(fetcher.fetchUrl("https://www.jku.at/studium/studieninteressierte/messen-events/"))
         val eventUrls = document.select("div.news_list_item a").eachAttr("href")
 
         val icsUrls = eventUrls
             .flatMap {
-                val document = Jsoup.connect("https://www.jku.at$it").get()
+                val document = Jsoup.parse(fetcher.fetchUrl("https://www.jku.at$it"))
                 document.select("a").eachAttr("href")
             }
             .filter { it.endsWith(".ics") }

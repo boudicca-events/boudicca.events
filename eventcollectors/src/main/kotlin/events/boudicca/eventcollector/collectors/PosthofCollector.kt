@@ -2,6 +2,7 @@ package events.boudicca.eventcollector.collectors
 
 import events.boudicca.SemanticKeys
 import events.boudicca.api.eventcollector.Event
+import events.boudicca.api.eventcollector.Fetcher
 import events.boudicca.api.eventcollector.TwoStepEventCollector
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -13,9 +14,10 @@ import java.time.format.DateTimeFormatter
 class PosthofCollector : TwoStepEventCollector<Element>("posthof") {
 
     override fun getAllUnparsedEvents(): List<Element> {
+        val fetcher = Fetcher()
         val events = mutableListOf<Element>()
 
-        val document = Jsoup.connect("https://www.posthof.at/programm/alles/").get()
+        val document = Jsoup.parse(fetcher.fetchUrl("https://www.posthof.at/programm/alles/"))
         val otherUrls = document.select("div.news-list-browse table a")
             .toList()
             .filter {
@@ -25,7 +27,7 @@ class PosthofCollector : TwoStepEventCollector<Element>("posthof") {
         parseEventList(document, events)
 
         otherUrls.forEach {
-            parseEventList(Jsoup.connect("https://posthof.at/$it").get(), events)
+            parseEventList(Jsoup.parse(fetcher.fetchUrl("https://posthof.at/$it")), events)
         }
 
         return events

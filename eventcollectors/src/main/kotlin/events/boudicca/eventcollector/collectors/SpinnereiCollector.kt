@@ -2,6 +2,7 @@ package events.boudicca.eventcollector.collectors
 
 import events.boudicca.SemanticKeys
 import events.boudicca.api.eventcollector.Event
+import events.boudicca.api.eventcollector.Fetcher
 import events.boudicca.api.eventcollector.TwoStepEventCollector
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -14,15 +15,16 @@ import java.time.format.DateTimeFormatter
 class SpinnereiCollector : TwoStepEventCollector<Pair<String, Document>>("spinnerei") {
 
     override fun getAllUnparsedEvents(): List<Pair<String, Document>> {
+        val fetcher = Fetcher()
         val events = mutableListOf<Pair<String, Document>>()
         val eventUrls = mutableSetOf<String>()
 
-        val document = Jsoup.connect("https://spinnerei.kulturpark.at/programm/").get()
+        val document = Jsoup.parse(fetcher.fetchUrl("https://spinnerei.kulturpark.at/programm/"))
         document.select("div.container-programm-uebersicht > a")
             .forEach { eventUrls.add(it.attr("href")) }
 
         eventUrls.forEach {
-            events.add(Pair(it, Jsoup.connect(it).get()))
+            events.add(Pair(it, Jsoup.parse(fetcher.fetchUrl(it))))
         }
 
         return events

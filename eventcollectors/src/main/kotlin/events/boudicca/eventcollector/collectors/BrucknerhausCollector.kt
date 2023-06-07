@@ -2,6 +2,7 @@ package events.boudicca.eventcollector.collectors
 
 import events.boudicca.SemanticKeys
 import events.boudicca.api.eventcollector.Event
+import events.boudicca.api.eventcollector.Fetcher
 import events.boudicca.api.eventcollector.TwoStepEventCollector
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -19,7 +20,8 @@ class BrucknerhausCollector : TwoStepEventCollector<Element>("brucknerhaus") {
     override fun getAllUnparsedEvents(): List<Element> {
         val events = mutableListOf<Element>()
 
-        val document = Jsoup.connect("https://www.brucknerhaus.at/programm/veranstaltungen").get()
+        val fetcher = Fetcher()
+        val document = Jsoup.parse(fetcher.fetchUrl("https://www.brucknerhaus.at/programm/veranstaltungen"))
         val otherUrls = document.select("ul.pagination>li")
             .toList()
             .filter { it.attr("class").isEmpty() }
@@ -28,7 +30,7 @@ class BrucknerhausCollector : TwoStepEventCollector<Element>("brucknerhaus") {
         events.addAll(findUnparsedEvents(document))
 
         otherUrls.forEach {
-            events.addAll(findUnparsedEvents(Jsoup.connect(it).get()))
+            events.addAll(findUnparsedEvents(Jsoup.parse(fetcher.fetchUrl(it))))
         }
 
         return events

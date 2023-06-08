@@ -4,11 +4,11 @@ import events.boudicca.SemanticKeys
 import events.boudicca.api.eventcollector.Event
 import events.boudicca.api.eventcollector.EventCollector
 import events.boudicca.api.eventcollector.Fetcher
-import org.jsoup.HttpStatusException
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.parser.Parser
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -28,29 +28,29 @@ class LinzTermineCollector : EventCollector {
         return mapEvents(events, locations, eventWebsites)
     }
 
-    private fun getEventWebsites(events: List<Event>): Map<Int, Document> {
-        val fetcher = Fetcher()
+    private fun getEventWebsites(events: List<Event>): Map<String, Document> {
         //TODO we may loose some events because either they do not have a linztermine.at link or the linztermine.at link points to a 404... not sure what to do about that
         return events
+            .map { it.url }
             .filter {
-                it.url.contains("linztermine.at")
+                it.contains("linztermine.at")
             }
-            .map {
+            .toSet() //filter duplicates
+            .mapNotNull {
                 try {
-                    Pair(it.id, Jsoup.parse(fetcher.fetchUrl(it.url.replace("http://","https://"))) as Document?)
-                } catch (ignored: HttpStatusException) {
+                    Pair(it, Jsoup.parse(fetcher.fetchUrl(it.replace("http://", "https://"))))
+                } catch (ignored: RuntimeException) {
                     //some linztermine.at links just 404 and go nowhere... not sure what this is supposed to mean
-                    Pair(it.id, null as Document?)
+                    null
                 }
             }
-            .filter { it.second != null }
-            .associate { Pair(it.first, it.second!!) }
+            .associate { Pair(it.first, it.second) }
     }
 
     private fun mapEvents(
         eventList: List<Event>,
         locations: Map<Int, Location>,
-        eventWebsites: Map<Int, Document>
+        eventWebsites: Map<String, Document>
     ): List<events.boudicca.api.eventcollector.Event> {
         val mappedEvents = mutableListOf<events.boudicca.api.eventcollector.Event>()
         for (event in eventList) {
@@ -60,7 +60,7 @@ class LinzTermineCollector : EventCollector {
             }
 
             val location = locations[event.locationId]
-            val website = eventWebsites[event.id]
+            val website = eventWebsites[event.url]
             if (website == null) {
                 continue
             }
@@ -96,25 +96,44 @@ class LinzTermineCollector : EventCollector {
 
     private fun parseEvents(): List<Event> {
         val formatter = DateTimeFormatter.ofPattern("uuuu-MM-dd kk:mm:ss")
-        val xml = loadXml("https://www.linztermine.at/schnittstelle/downloads/events_xml.php") //TODO more then 7 days?
-        return xml.child(0).children().toList()
-            .map {
-                Event(
-                    it.attr("id").toInt(),
-                    it.select("title").text(),
-                    it.select("tags").first()?.child(0)?.text(),
-                    it.select("date").map {
-                        Pair(
-                            LocalDateTime.parse(it.attr("dFrom"), formatter).atZone(ZoneId.of("CET")),
-                            LocalDateTime.parse(it.attr("dTo"), formatter).atZone(ZoneId.of("CET")),
-                        )
-                    },
-                    it.attr("freeofcharge") == "1",
-                    findLink(it),
-                    it.select("location").attr("id").toInt(),
-                    it.select("location").text()
+
+        var date = LocalDate.now(ZoneId.of("CET"))
+        val links = mutableListOf<String>()
+        for (i in 1..(4 * 6)) {
+            links.add(
+                "https://www.linztermine.at/schnittstelle/downloads/events_xml.php?lt_datefrom=" + date.format(
+                    DateTimeFormatter.ofPattern("uuuu-MM-dd")
                 )
+            )
+            date = date.plusWeeks(1)
+        }
+        return links.mapNotNull {
+            try {
+                loadXml(it)
+            } catch (e: RuntimeException) {
+                //booooh
+                null
             }
+        }.flatMap {
+            it.child(0).children().toList()
+                .map {
+                    Event(
+                        it.attr("id").toInt(),
+                        it.select("title").text(),
+                        it.select("tags").first()?.child(0)?.text(),
+                        it.select("date").map {
+                            Pair(
+                                LocalDateTime.parse(it.attr("dFrom"), formatter).atZone(ZoneId.of("CET")),
+                                LocalDateTime.parse(it.attr("dTo"), formatter).atZone(ZoneId.of("CET")),
+                            )
+                        },
+                        it.attr("freeofcharge") == "1",
+                        findLink(it),
+                        it.select("location").attr("id").toInt(),
+                        it.select("location").text()
+                    )
+                }
+        }.distinctBy { it.id }
     }
 
     private fun findLink(event: Element): String {

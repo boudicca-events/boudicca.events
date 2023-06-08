@@ -15,7 +15,7 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 class LinzTermineCollector : EventCollector {
-    private val fetcher = Fetcher(500) //server seems really slow...
+    private val fetcher = Fetcher(1000) //server seems really slow...
 
     override fun getName(): String {
         return "Linz Termine"

@@ -17,7 +17,7 @@ class PosthofCollector : TwoStepEventCollector<Element>("posthof") {
         val fetcher = Fetcher()
         val events = mutableListOf<Element>()
 
-        val document = Jsoup.parse(fetcher.fetchUrl("https://www.posthof.at/programm/alles/"))
+        val document = Jsoup.parse(fetcher.fetchUrl("https://www.posthof.at/programm/alles/browse/1/"))
         val otherUrls = document.select("div.news-list-browse table a")
             .toList()
             .filter {
@@ -27,7 +27,7 @@ class PosthofCollector : TwoStepEventCollector<Element>("posthof") {
         parseEventList(document, events)
 
         otherUrls.forEach {
-            parseEventList(Jsoup.parse(fetcher.fetchUrl("https://posthof.at/$it")), events)
+            parseEventList(Jsoup.parse(fetcher.fetchUrl("https://www.posthof.at/$it")), events)
         }
 
         return events

@@ -3,34 +3,39 @@ package events.boudicca
 import events.boudicca.model.ComplexSearchDto
 import events.boudicca.model.Event
 import events.boudicca.model.SearchDTO
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
-import java.util.*
+import java.util.concurrent.locks.ReentrantLock
 import javax.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
 class EventService {
 
-    private val events = Collections.synchronizedSet(mutableSetOf<Event>())
+    @Volatile
+    private var events = setOf<Event>()
+    private val addLock = ReentrantLock()
 
     fun list(): Set<Event> {
         return events
     }
 
     fun add(event: Event) {
-        val duplicates = events.filter { eventInDb -> eventInDb.name == event.name }.toSet()
+        addLock.lock()
+        try {
+            val eventsCopy = events.toMutableSet()
+            val duplicates = eventsCopy.filter { eventInDb -> eventInDb.name == event.name }.toSet()
 
-        //some cheap logging for finding duplicate events between different collectors
-        for (duplicate in duplicates) {
-            if (duplicate.data?.get(SemanticKeys.COLLECTORNAME) != event.data?.get(SemanticKeys.COLLECTORNAME)) {
-                println("event $event will overwrite $duplicate")
+            //some cheap logging for finding duplicate events between different collectors
+            for (duplicate in duplicates) {
+                if (duplicate.data?.get(SemanticKeys.COLLECTORNAME) != event.data?.get(SemanticKeys.COLLECTORNAME)) {
+                    println("event $event will overwrite $duplicate")
+                }
             }
-        }
 
-        events.removeAll(duplicates)
-        events.add(event)
+            eventsCopy.removeAll(duplicates)
+            eventsCopy.add(event)
+            events = eventsCopy
+        } finally {
+            addLock.unlock()
+        }
     }
 
     fun search(searchDTO: SearchDTO): Set<Event> {
@@ -108,27 +113,5 @@ class EventService {
             }
 
         return filters.fold(list()) { events, currentFilter -> events.filter(currentFilter).toSet() }
-    }
-
-    init {
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
-        val zone = ZoneId.of("Europe/Vienna")
-        events.add(
-            Event(
-                name = "Linz hACkT",
-                startDate = ZonedDateTime.of(LocalDateTime.parse("2023-03-24 15:00", formatter), zone),
-                data = mapOf("tags" to listOf("techcommunity", "hackaton").toString())
-            )
-        )
-        events.add(
-            Event(
-                name = "Cloudflight Coding Contest",
-                startDate = ZonedDateTime.of(LocalDateTime.parse("2023-03-31 14:00", formatter), zone),
-                data = mapOf(
-                    "start.location.name" to "JKU Linz",
-                    "tags" to listOf("education", "techcommunity").toString()
-                )
-            )
-        )
     }
 }

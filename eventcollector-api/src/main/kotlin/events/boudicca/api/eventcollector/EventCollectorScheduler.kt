@@ -39,14 +39,16 @@ class EventCollectorScheduler(
     }
 
     fun runOnce() {
-        for (eventCollector in eventCollectors) {
-            try {
-                collect(eventCollector)
-            } catch (e: Exception) {
-                println("event collector ${eventCollector.getName()} threw execption while collecting")
-                e.printStackTrace()
+        eventCollectors
+            .parallelStream()
+            .forEach { eventCollector ->
+                try {
+                    collect(eventCollector)
+                } catch (e: Exception) {
+                    println("event collector ${eventCollector.getName()} threw execption while collecting")
+                    e.printStackTrace()
+                }
             }
-        }
     }
 
     private fun collect(eventCollector: EventCollector) {

@@ -16,5 +16,6 @@ fun main() {
         .addEventCollector(KupfTicketCollector())
         .addEventCollector(SpinnereiCollector())
         .addEventCollector(SchlachthofCollector())
+        .addEventCollector(WissensturmCollector())
         .run()
 }

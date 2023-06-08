@@ -16,18 +16,20 @@ abstract class TwoStepEventCollector<T>(private val name: String) : EventCollect
         }
 
         if (allEvents != null) {
-            val mappedEvents = allEvents.mapNotNull {
-                var event: Event? = null
+            val mappedEvents = allEvents.flatMap {
+                var events: List<Event?> = listOf()
                 try {
-                    event = parseEvent(it)
-                    if (event == null) {
+                    val parsedEvents = parseMultipleEvents(it)
+                    if (parsedEvents == null) {
                         System.err.println("collector ${getName()} returned null while parsing event: $it")
+                    } else {
+                        events = parsedEvents
                     }
                 } catch (e: Exception) {
                     System.err.println("collector ${getName()} throw exception while parsing event: $it")
                     e.printStackTrace()
                 }
-                event
+                events.filterNotNull()
             }
 
             return mappedEvents
@@ -35,7 +37,13 @@ abstract class TwoStepEventCollector<T>(private val name: String) : EventCollect
         return emptyList()
     }
 
-    abstract fun parseEvent(event: T): Event? //can be used by java so make nullable just to make sure
+    open fun parseMultipleEvents(event: T): List<Event?>? { //can be used by java so make nullable just to make sure
+        return listOf(parseEvent(event))
+    }
+
+    open fun parseEvent(event: T): Event? { //can be used by java so make nullable just to make sure
+        throw NotImplementedError("child classes has to either implement parseMultipleEvents or parseEvent")
+    }
 
     abstract fun getAllUnparsedEvents(): List<T>? //can be used by java so make nullable just to make sure
 }

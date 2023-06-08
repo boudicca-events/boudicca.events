@@ -15,5 +15,6 @@ fun main() {
 //        .debug(OOESeniorenbundCollector())
 //        .debug(KupfTicketCollector())
 //        .debug(SpinnereiCollector())
-        .debug(SchlachthofCollector())
+//        .debug(SchlachthofCollector())
+        .debug(WissensturmCollector())
 }

@@ -5,6 +5,7 @@ import events.boudicca.openapi.api.EventPublisherResourceApi
 import events.boudicca.search.util.Utils
 import java.io.FileOutputStream
 import java.io.ObjectOutputStream
+import java.io.Serializable
 import kotlin.random.Random
 
 const val WANTED_EVENTS = 100_000
@@ -19,7 +20,7 @@ fun main() {
 
 object TestDataGenerator {
 
-    fun getTestData(): Collection<Map<String, String>> {
+    fun getTestData(): Pair<Collection<Map<String, String>>, Map<String, Metadata>> {
         val apiClient = ApiClient()
         apiClient.updateBaseUri("https://api.boudicca.events")
         val eventPublisherResourceApi = EventPublisherResourceApi(apiClient)
@@ -27,32 +28,20 @@ object TestDataGenerator {
         val originalEvents = eventPublisherResourceApi.eventsGet()
         val originalEventsMapped = originalEvents.filterNotNull().map { Utils.mapEventToMap(it) }
 
-        val remixEvents = remixEvents(originalEventsMapped)
-        return remixEvents
+        return remixEvents(originalEventsMapped)
     }
 
     /**
      * takes events + remixes them to generate a big amount of test data
      */
-    private fun remixEvents(events: List<Map<String, String>>): Collection<Map<String, String>> {
-        val remixesNeeded = WANTED_EVENTS - events.size
-        if (remixesNeeded < 0) {
-            return events
-        }
-        return generateRemixes(events, remixesNeeded)
-    }
-
-    private fun generateRemixes(
-        events: List<Map<String, String>>,
-        remixesNeeded: Int
-    ): Collection<Map<String, String>> {
+    private fun remixEvents(events: List<Map<String, String>>): Pair<Collection<Map<String, String>>, Map<String, Metadata>> {
         val metadata = generateMetaData(events)
 
         val remixes = mutableListOf<Map<String, String>>()
-        for (i in 1..remixesNeeded) {
+        for (i in 1..(WANTED_EVENTS - events.size)) {
             remixes.add(generateRemix(metadata))
         }
-        return events.plus(remixes)
+        return Pair(events.plus(remixes), metadata)
     }
 
     private fun generateRemix(metadata: Map<String, Metadata>): Map<String, String> {
@@ -99,10 +88,10 @@ object TestDataGenerator {
         return Metadata(count.toFloat() / events.size.toFloat(), words.toList(), min, max)
     }
 
-    private data class Metadata(
+    data class Metadata(
         val percentage: Float,
         val words: List<String>,
         val min: Int,
         val max: Int,
-    )
+    ) : Serializable
 }

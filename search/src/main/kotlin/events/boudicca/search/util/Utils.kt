@@ -1,8 +1,10 @@
 package events.boudicca.search.util
 
+import events.boudicca.SemanticKeys
 import events.boudicca.search.model.Event
-import events.boudicca.search.model.SearchDTO
+import java.time.OffsetDateTime
 import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import java.util.function.Function
 
 object Utils {
@@ -22,4 +24,22 @@ object Utils {
             )
     }
 
+    fun mapEventToMap(event: Event): Map<String, String> {
+        return mapEventToMap(event.name, event.startDate.toOffsetDateTime(), event.data)
+    }
+
+    fun mapEventToMap(event: events.boudicca.openapi.model.Event): Map<String, String> {
+        return mapEventToMap(event.name, event.startDate, event.data)
+    }
+
+    private fun mapEventToMap(
+        name: String,
+        startDate: OffsetDateTime,
+        data: Map<String, String>?
+    ): Map<String, String> {
+        val data = data?.toMutableMap() ?: mutableMapOf()
+        data[SemanticKeys.NAME] = name
+        data[SemanticKeys.STARTDATE] = startDate.format(DateTimeFormatter.ISO_DATE_TIME)
+        return data
+    }
 }

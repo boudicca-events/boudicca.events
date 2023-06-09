@@ -1,4 +1,4 @@
-package events.boudicca.search.query.simple
+package events.boudicca.search.query.evaluator
 
 import events.boudicca.EventCategory
 import events.boudicca.SemanticKeys

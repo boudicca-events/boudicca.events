@@ -4,7 +4,7 @@ import events.boudicca.SemanticKeys
 import events.boudicca.search.model.Event
 import events.boudicca.search.model.QueryDTO
 import events.boudicca.search.query.QueryParser
-import events.boudicca.search.query.simple.SimpleEvaluator
+import events.boudicca.search.query.evaluator.SimpleEvaluator
 import events.boudicca.search.util.Utils
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -41,10 +41,7 @@ class QueryService @Inject constructor(
     }
 
     private fun toMap(event: Event): Map<String, String> {
-        val data = event.data?.toMutableMap() ?: mutableMapOf()
-        data[SemanticKeys.NAME] = event.name
-        data[SemanticKeys.STARTDATE] = event.startDate.format(DateTimeFormatter.ISO_DATE_TIME)
-        return data
+        return Utils.mapEventToMap(event)
     }
 
 }

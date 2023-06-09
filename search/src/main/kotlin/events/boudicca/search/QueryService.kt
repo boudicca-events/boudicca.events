@@ -3,8 +3,10 @@ package events.boudicca.search
 import events.boudicca.SemanticKeys
 import events.boudicca.search.model.Event
 import events.boudicca.search.model.QueryDTO
+import events.boudicca.search.query.Evaluator
 import events.boudicca.search.query.Page
 import events.boudicca.search.query.QueryParser
+import events.boudicca.search.query.evaluator.NoopEvaluator
 import events.boudicca.search.query.evaluator.SimpleEvaluator
 import events.boudicca.search.util.Utils
 import java.time.ZonedDateTime
@@ -16,7 +18,10 @@ import javax.enterprise.event.Observes
 class QueryService {
 
     @Volatile
-    private var events: Set<Event> = emptySet()
+    private var events = emptyList<Event>()
+
+    @Volatile
+    private var evaluator: Evaluator = NoopEvaluator()
 
     fun query(queryDTO: QueryDTO): List<Event> {
         if (queryDTO.query == null) {
@@ -27,12 +32,13 @@ class QueryService {
     }
 
     fun onEventsUpdate(@Observes events: EventsUpdatedEvent) {
-        this.events = events.events.toSet()
+        this.events = Utils.order(events.events)
+        this.evaluator = SimpleEvaluator(events.events.map { toMap(it) })
     }
 
     private fun evaluateQuery(query: String, page: Page): List<Event> {
         val expression = QueryParser.parseQuery(query)
-        val filteredEvents = SimpleEvaluator(events.map { toMap(it) }).evaluate(expression, page)
+        val filteredEvents = evaluator.evaluate(expression, page)
         return filteredEvents.map { toEvent(it) }
     }
 

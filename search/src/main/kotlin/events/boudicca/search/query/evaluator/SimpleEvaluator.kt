@@ -10,15 +10,17 @@ import java.time.format.DateTimeParseException
 import java.util.function.Function
 
 class SimpleEvaluator(rawEvents: Collection<Map<String, String>>) : Evaluator {
+
     private val events = rawEvents
         .toList()
+        //precomputing the dates makes sorting waaay faster
+        .map { Pair(it, OffsetDateTime.parse(it[SemanticKeys.STARTDATE], DateTimeFormatter.ISO_DATE_TIME)) }
         .sortedWith(
             Comparator
-                .comparing<Map<String, String>, OffsetDateTime> {
-                    OffsetDateTime.parse(it[SemanticKeys.STARTDATE], DateTimeFormatter.ISO_DATE_TIME)
-                }
-                .thenComparing(Function { it[SemanticKeys.NAME]!! })
+                .comparing<Pair<Map<String, String>, OffsetDateTime>, OffsetDateTime> { it.second }
+                .thenComparing(Function { it.first[SemanticKeys.NAME]!! })
         )
+        .map { it.first }
 
     override fun evaluate(expression: Expression, page: Page): List<Map<String, String>> {
         return events

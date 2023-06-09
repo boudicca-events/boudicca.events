@@ -22,20 +22,33 @@ class SearchService @Inject constructor(
 ) {
 
     @Volatile
-    private var events: Set<Event> = emptySet()
+    private var events = emptyList<Event>()
+
+    @Volatile
+    private var locationNames = emptySet<String>()
+
+    @Volatile
+    private var locationCities = emptySet<String>()
 
     fun search(searchDTO: SearchDTO): List<Event> {
         val query = createQuery(searchDTO)
         if (query.isNotBlank()) {
             return queryService.query(QueryDTO(query, searchDTO.offset))
         } else {
-            //TODO what to do about this?
-            return Utils.offset(Utils.order(events), searchDTO.offset)
+            return Utils.offset(events, searchDTO.offset)
         }
     }
 
     fun onEventsUpdate(@Observes events: EventsUpdatedEvent) {
-        this.events = events.events.toSet()
+        this.events = Utils.order(events.events)
+        locationNames = this.events
+            .mapNotNull { it.data?.get(SemanticKeys.LOCATION_NAME) }
+            .filter { it.isNotBlank() }
+            .toSet()
+        locationCities = this.events
+            .mapNotNull { it.data?.get(SemanticKeys.LOCATION_CITY) }
+            .filter { it.isNotBlank() }
+            .toSet()
     }
 
     private fun createQuery(searchDTO: SearchDTO): String {
@@ -85,17 +98,11 @@ class SearchService @Inject constructor(
     }
 
     private fun getLocationNames(): Set<String> {
-        return events
-            .mapNotNull { it.data?.get(SemanticKeys.LOCATION_NAME) }
-            .filter { it.isNotBlank() }
-            .toSet()
+        return locationNames
     }
 
     private fun getLocationCities(): Set<String> {
-        return events
-            .mapNotNull { it.data?.get(SemanticKeys.LOCATION_CITY) }
-            .filter { it.isNotBlank() }
-            .toSet()
+        return locationCities
     }
 
 }

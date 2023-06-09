@@ -10,6 +10,7 @@ import events.boudicca.search.util.Utils
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import javax.enterprise.context.ApplicationScoped
+import javax.enterprise.event.Observes
 import javax.inject.Inject
 
 private const val SEARCH_TYPE_ALL = "ALL"
@@ -17,9 +18,11 @@ private const val SEARCH_TYPE_OTHER = "OTHER"
 
 @ApplicationScoped
 class SearchService @Inject constructor(
-    private val synchronizationService: SynchronizationService,
     private val queryService: QueryService,
 ) {
+
+    @Volatile
+    private var events: Set<Event> = emptySet()
 
     fun search(searchDTO: SearchDTO): List<Event> {
         val query = createQuery(searchDTO)
@@ -27,8 +30,12 @@ class SearchService @Inject constructor(
             return queryService.query(QueryDTO(query, searchDTO.offset))
         } else {
             //TODO what to do about this?
-            return Utils.offset(Utils.order(synchronizationService.getEvents()), searchDTO.offset)
+            return Utils.offset(Utils.order(events), searchDTO.offset)
         }
+    }
+
+    fun onEventsUpdate(@Observes events: EventsUpdatedEvent) {
+        this.events = events.events.toSet()
     }
 
     private fun createQuery(searchDTO: SearchDTO): String {
@@ -78,14 +85,14 @@ class SearchService @Inject constructor(
     }
 
     private fun getLocationNames(): Set<String> {
-        return synchronizationService.getEvents()
+        return events
             .mapNotNull { it.data?.get(SemanticKeys.LOCATION_NAME) }
             .filter { it.isNotBlank() }
             .toSet()
     }
 
     private fun getLocationCities(): Set<String> {
-        return synchronizationService.getEvents()
+        return events
             .mapNotNull { it.data?.get(SemanticKeys.LOCATION_CITY) }
             .filter { it.isNotBlank() }
             .toSet()

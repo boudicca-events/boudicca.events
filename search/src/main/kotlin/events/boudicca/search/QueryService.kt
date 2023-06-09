@@ -10,24 +10,28 @@ import events.boudicca.search.util.Utils
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import javax.enterprise.context.ApplicationScoped
-import javax.inject.Inject
+import javax.enterprise.event.Observes
 
 @ApplicationScoped
-class QueryService @Inject constructor(
-    private val synchronizationService: SynchronizationService
-) {
+class QueryService {
+
+    @Volatile
+    private var events: Set<Event> = emptySet()
 
     fun query(queryDTO: QueryDTO): List<Event> {
         if (queryDTO.query == null) {
-            return Utils.offset(Utils.order(synchronizationService.getEvents()), queryDTO.offset)
+            return Utils.offset(Utils.order(events), queryDTO.offset)
         }
 
         return evaluateQuery(queryDTO.query, Page(queryDTO.offset ?: 0, 30))
     }
 
+    fun onEventsUpdate(@Observes events: EventsUpdatedEvent) {
+        this.events = events.events.toSet()
+    }
+
     private fun evaluateQuery(query: String, page: Page): List<Event> {
         val expression = QueryParser.parseQuery(query)
-        val events = synchronizationService.getEvents()
         val filteredEvents = SimpleEvaluator(events.map { toMap(it) }).evaluate(expression, page)
         return filteredEvents.map { toEvent(it) }
     }

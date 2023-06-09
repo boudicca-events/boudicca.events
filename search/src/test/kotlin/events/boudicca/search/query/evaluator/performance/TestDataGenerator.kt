@@ -1,5 +1,6 @@
 package events.boudicca.search.query.evaluator.performance
 
+import events.boudicca.SemanticKeys
 import events.boudicca.openapi.ApiClient
 import events.boudicca.openapi.api.EventPublisherResourceApi
 import events.boudicca.search.util.Utils
@@ -71,7 +72,7 @@ object TestDataGenerator {
         var min = Int.MAX_VALUE
         var max = Int.MIN_VALUE
         var count = 0
-        val words = mutableSetOf<String>()
+        var words = mutableSetOf<String>()
 
         events
             .mapNotNull { it[field] }
@@ -85,6 +86,10 @@ object TestDataGenerator {
                 min = Math.min(min, fieldWords.size)
                 max = Math.max(max, fieldWords.size)
             }
+        if (field == SemanticKeys.LOCATION_NAME) {
+            max = 3
+            words = words.take(5).toMutableSet()
+        }
         return Metadata(count.toFloat() / events.size.toFloat(), words.toList(), min, max)
     }
 

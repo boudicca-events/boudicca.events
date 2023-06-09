@@ -3,6 +3,7 @@ package events.boudicca.search
 import events.boudicca.SemanticKeys
 import events.boudicca.search.model.Event
 import events.boudicca.search.model.QueryDTO
+import events.boudicca.search.query.Page
 import events.boudicca.search.query.QueryParser
 import events.boudicca.search.query.evaluator.SimpleEvaluator
 import events.boudicca.search.util.Utils
@@ -21,13 +22,13 @@ class QueryService @Inject constructor(
             return Utils.offset(Utils.order(synchronizationService.getEvents()), queryDTO.offset)
         }
 
-        return Utils.offset(Utils.order(evaluateQuery(queryDTO.query)), queryDTO.offset)
+        return evaluateQuery(queryDTO.query, Page(queryDTO.offset ?: 0, 30))
     }
 
-    private fun evaluateQuery(query: String): Collection<Event> {
+    private fun evaluateQuery(query: String, page: Page): List<Event> {
         val expression = QueryParser.parseQuery(query)
         val events = synchronizationService.getEvents()
-        val filteredEvents = SimpleEvaluator(events.map { toMap(it) }).evaluate(expression)
+        val filteredEvents = SimpleEvaluator(events.map { toMap(it) }).evaluate(expression, page)
         return filteredEvents.map { toEvent(it) }
     }
 

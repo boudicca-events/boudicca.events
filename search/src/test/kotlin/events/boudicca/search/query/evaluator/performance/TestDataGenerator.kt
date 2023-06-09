@@ -53,7 +53,7 @@ object TestDataGenerator {
                     value.append(field.value.words.random())
                     value.append(" ")
                 }
-                remix[field.key] = value.toString()
+                remix[field.key] = value.toString().trim()
             }
         }
         return remix

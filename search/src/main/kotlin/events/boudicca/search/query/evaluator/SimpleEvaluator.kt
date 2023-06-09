@@ -4,12 +4,29 @@ import events.boudicca.EventCategory
 import events.boudicca.SemanticKeys
 import events.boudicca.search.query.*
 import java.time.LocalDate
+import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
+import java.util.function.Function
 
-class SimpleEvaluator(private val events: Collection<Map<String, String>>) : Evaluator {
-    override fun evaluate(expression: Expression): Collection<Map<String, String>> {
-        return events.filter { matchesExpression(expression, it) }
+class SimpleEvaluator(rawEvents: Collection<Map<String, String>>) : Evaluator {
+    private val events = rawEvents
+        .toList()
+        .sortedWith(
+            Comparator
+                .comparing<Map<String, String>, OffsetDateTime> {
+                    OffsetDateTime.parse(it[SemanticKeys.STARTDATE], DateTimeFormatter.ISO_DATE_TIME)
+                }
+                .thenComparing(Function { it[SemanticKeys.NAME]!! })
+        )
+
+    override fun evaluate(expression: Expression, page: Page): List<Map<String, String>> {
+        return events
+            .asSequence()
+            .filter { matchesExpression(expression, it) }
+            .drop(page.offset)
+            .take(page.size)
+            .toList()
     }
 
     private fun matchesExpression(expression: Expression, event: Map<String, String>): Boolean {

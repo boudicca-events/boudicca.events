@@ -215,7 +215,7 @@ class SimpleEvaluatorTest {
         expression: Expression,
         events: Collection<Map<String, String>>
     ): Collection<Map<String, String>> {
-        return SimpleEvaluator(events).evaluate(expression)
+        return SimpleEvaluator(events).evaluate(expression, PAGE_ALL)
     }
 
     private fun testData(): Collection<Map<String, String>> {

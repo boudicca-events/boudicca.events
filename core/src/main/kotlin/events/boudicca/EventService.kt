@@ -3,45 +3,32 @@ package events.boudicca
 import events.boudicca.model.ComplexSearchDto
 import events.boudicca.model.Event
 import events.boudicca.model.SearchDTO
-import java.util.concurrent.locks.ReentrantLock
+import java.util.concurrent.ConcurrentHashMap
 import javax.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
 class EventService {
 
-    @Volatile
-    private var events = setOf<Event>()
-    private val addLock = ReentrantLock()
+    private val events = ConcurrentHashMap<String, Event>()
 
     fun list(): Set<Event> {
-        return events
+        return events.values.toSet()
     }
 
     fun add(event: Event) {
-        addLock.lock()
-        try {
-            val eventsCopy = events.toMutableSet()
-            val duplicates = eventsCopy.filter { eventInDb -> eventInDb.name == event.name }.toSet()
-
-            //some cheap logging for finding duplicate events between different collectors
-            for (duplicate in duplicates) {
-                if (duplicate.data?.get(SemanticKeys.COLLECTORNAME) != event.data?.get(SemanticKeys.COLLECTORNAME)) {
-                    println("event $event will overwrite $duplicate")
-                }
-            }
-
-            eventsCopy.removeAll(duplicates)
-            eventsCopy.add(event)
-            events = eventsCopy
-        } finally {
-            addLock.unlock()
+        val duplicate = events[event.name]
+        //some cheap logging for finding duplicate events between different collectors
+        if (duplicate != null && duplicate.data?.get(SemanticKeys.COLLECTORNAME) != event.data?.get(SemanticKeys.COLLECTORNAME)) {
+            println("event $event will overwrite $duplicate")
         }
+
+        events[event.name] = event
     }
 
     fun search(searchDTO: SearchDTO): Set<Event> {
         val fromDate = searchDTO.fromDate?.toZonedDateTime()
         val toDate = searchDTO.toDate?.toZonedDateTime()
-        return events
+        return events.values
             .filter { e -> fromDate == null || !e.startDate.isBefore(fromDate) }
             .filter { e -> toDate == null || !e.startDate.isAfter(toDate) }
             .filter { e ->

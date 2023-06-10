@@ -70,6 +70,14 @@ class EventCollectorScheduler(
                 event.additionalData.toMutableMap().apply { put(SemanticKeys.COLLECTORNAME, collectorName) }
             )
         }
+        if (event.name.isBlank()) {
+            println("event from collector $collectorName has empty name: $event")
+        }
+        for (entry in event.additionalData.entries) {
+            if (entry.value.isBlank()) {
+                println("event from collector $collectorName contains empty field ${entry.key}: $event")
+            }
+        }
         return event
     }
 

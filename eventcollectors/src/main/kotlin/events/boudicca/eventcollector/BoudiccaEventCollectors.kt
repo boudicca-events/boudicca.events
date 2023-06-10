@@ -18,5 +18,6 @@ fun main() {
         .addEventCollector(SpinnereiCollector())
         .addEventCollector(SchlachthofCollector())
         .addEventCollector(WissensturmCollector())
+        .addEventCollector(LandestheaterLinzCollector())
         .run()
 }

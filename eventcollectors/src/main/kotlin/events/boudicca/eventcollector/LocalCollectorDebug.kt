@@ -16,5 +16,6 @@ fun main() {
 //        .debug(KupfTicketCollector())
 //        .debug(SpinnereiCollector())
 //        .debug(SchlachthofCollector())
-        .debug(WissensturmCollector())
+//        .debug(WissensturmCollector())
+        .debug(LandestheaterLinzCollector())
 }

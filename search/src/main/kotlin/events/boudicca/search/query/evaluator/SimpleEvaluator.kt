@@ -2,33 +2,34 @@ package events.boudicca.search.query.evaluator
 
 import events.boudicca.EventCategory
 import events.boudicca.SemanticKeys
+import events.boudicca.search.model.Event
+import events.boudicca.search.model.SearchResultDTO
 import events.boudicca.search.query.*
 import java.time.LocalDate
-import java.time.OffsetDateTime
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 import java.util.function.Function
 
-class SimpleEvaluator(rawEvents: Collection<Map<String, String>>) : Evaluator {
+class SimpleEvaluator(rawEvents: Collection<Event>) : Evaluator {
 
     private val events = rawEvents
         .toList()
-        //precomputing the dates makes sorting waaay faster
-        .map { Pair(it, OffsetDateTime.parse(it[SemanticKeys.STARTDATE], DateTimeFormatter.ISO_DATE_TIME)) }
         .sortedWith(
             Comparator
-                .comparing<Pair<Map<String, String>, OffsetDateTime>, OffsetDateTime> { it.second }
-                .thenComparing(Function { it.first[SemanticKeys.NAME]!! })
+                .comparing<Event, ZonedDateTime> { it.startDate }
+                .thenComparing(Function { it.name })
         )
-        .map { it.first }
+        .map { EvaluatorUtil.mapEventToMap(it) }
 
-    override fun evaluate(expression: Expression, page: Page): List<Map<String, String>> {
-        return events
-            .asSequence()
+    override fun evaluate(expression: Expression, page: Page): SearchResultDTO {
+        val results = events
             .filter { matchesExpression(expression, it) }
+        return SearchResultDTO(results
             .drop(page.offset)
             .take(page.size)
-            .toList()
+            .map { EvaluatorUtil.toEvent(it) }
+            .toList(), results.size)
     }
 
     private fun matchesExpression(expression: Expression, event: Map<String, String>): Boolean {

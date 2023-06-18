@@ -1,9 +1,14 @@
 package events.boudicca.search.query.evaluator
 
 import events.boudicca.SemanticKeys
+import events.boudicca.search.model.Event
 import events.boudicca.search.query.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 
 class SimpleEvaluatorTest {
 
@@ -11,7 +16,7 @@ class SimpleEvaluatorTest {
     fun simpleEquals() {
         val events = callEvaluator(EqualsExpression("name", "event1"))
         assertEquals(1, events.size)
-        assertEquals("event1", events.first()["name"])
+        assertEquals("event1", events.first().name)
     }
 
     @Test
@@ -112,39 +117,39 @@ class SimpleEvaluatorTest {
     @Test
     fun simpleBefore() {
         val events =
-            callEvaluator(
+            callEvaluatorWithEvents(
                 BeforeExpression("2023-05-27"),
                 listOf(
-                    mapOf(SemanticKeys.STARTDATE to "2023-05-25T00:00:00"),
-                    mapOf(SemanticKeys.STARTDATE to "2023-05-29T00:00:00"),
+                    event("event1", "2023-05-25T00:00:00"),
+                    event("event2", "2023-05-29T00:00:00"),
                 )
             )
         assertEquals(1, events.size)
-        assertEquals("2023-05-25T00:00:00", events.first()[SemanticKeys.STARTDATE])
+        assertEquals(parseLocalDate("2023-05-25T00:00:00"), events.first().startDate)
     }
 
     @Test
     fun simpleAfter() {
         val events =
-            callEvaluator(
+            callEvaluatorWithEvents(
                 AfterExpression("2023-05-27"),
                 listOf(
-                    mapOf(SemanticKeys.STARTDATE to "2023-05-25T00:00:00"),
-                    mapOf(SemanticKeys.STARTDATE to "2023-05-29T00:00:00"),
+                    event("event1", "2023-05-25T00:00:00"),
+                    event("event2", "2023-05-29T00:00:00"),
                 )
             )
         assertEquals(1, events.size)
-        assertEquals("2023-05-29T00:00:00", events.first()[SemanticKeys.STARTDATE])
+        assertEquals(parseLocalDate("2023-05-29T00:00:00"), events.first().startDate)
     }
 
     @Test
     fun simpleAfterInclusiveToday() {
         val events =
-            callEvaluator(
+            callEvaluatorWithEvents(
                 AfterExpression("2023-05-25"),
                 listOf(
-                    mapOf(SemanticKeys.STARTDATE to "2023-05-25T00:00:00"),
-                    mapOf(SemanticKeys.STARTDATE to "2023-05-29T00:00:00"),
+                    event("event1", "2023-05-25T00:00:00"),
+                    event("event2", "2023-05-29T00:00:00"),
                 )
             )
         assertEquals(2, events.size)
@@ -153,11 +158,11 @@ class SimpleEvaluatorTest {
     @Test
     fun simpleBeforeInclusiveToday() {
         val events =
-            callEvaluator(
+            callEvaluatorWithEvents(
                 BeforeExpression("2023-05-29"),
                 listOf(
-                    mapOf(SemanticKeys.STARTDATE to "2023-05-25T00:00:00"),
-                    mapOf(SemanticKeys.STARTDATE to "2023-05-29T00:00:00"),
+                    event("event1", "2023-05-25T00:00:00"),
+                    event("event2", "2023-05-29T00:00:00"),
                 )
             )
         assertEquals(2, events.size)
@@ -174,7 +179,7 @@ class SimpleEvaluatorTest {
                 )
             )
         assertEquals(1, events.size)
-        assertEquals("konzert", events.first()[SemanticKeys.TYPE])
+        assertEquals("konzert", events.first().data!![SemanticKeys.TYPE])
     }
 
     @Test
@@ -188,7 +193,7 @@ class SimpleEvaluatorTest {
                 )
             )
         assertEquals(1, events.size)
-        assertEquals("konzert", events.first()[SemanticKeys.TYPE])
+        assertEquals("konzert", events.first().data!![SemanticKeys.TYPE])
     }
 
     @Test
@@ -203,27 +208,49 @@ class SimpleEvaluatorTest {
                 )
             )
         assertEquals(1, events.size)
-        assertEquals("whatever", events.first()[SemanticKeys.TYPE])
+        assertEquals("whatever", events.first().data!![SemanticKeys.TYPE])
     }
 
 
-    private fun callEvaluator(expression: Expression): Collection<Map<String, String>> {
-        return callEvaluator(expression, testData())
+    private fun callEvaluator(expression: Expression): Collection<Event> {
+        return callEvaluatorWithEvents(expression, testData())
     }
 
     private fun callEvaluator(
         expression: Expression,
         events: Collection<Map<String, String>>
-    ): Collection<Map<String, String>> {
-        return SimpleEvaluator(events).evaluate(expression, PAGE_ALL)
+    ): List<Event> {
+        return callEvaluatorWithEvents(expression, events.map { Event("name", ZonedDateTime.now(), it) })
     }
 
-    private fun testData(): Collection<Map<String, String>> {
+    private fun callEvaluatorWithEvents(
+        expression: Expression,
+        events: Collection<Event>
+    ): List<Event> {
+        return SimpleEvaluator(events)
+            .evaluate(expression, PAGE_ALL)
+            .result
+    }
+
+    private fun testData(): Collection<Event> {
         return listOf(
-            mapOf("name" to "event1", "field" to "value1"),
-            mapOf("name" to "event2", "field" to "value2"),
-            mapOf("name" to "somethingelse", "field" to "wuuut"),
-            mapOf("name" to "somethingelse2", "field" to "wuuut"),
+            event("event1", "field" to "value1"),
+            event("event2", "field" to "value2"),
+            event("somethingelse", "field" to "wuuut"),
+            event("somethingelse2", "field" to "wuuut"),
         )
     }
+
+    private fun event(name: String, vararg data: Pair<String, String>): Event {
+        return Event(name, ZonedDateTime.now(), data.toMap())
+    }
+
+    private fun event(name: String, startDateAsString: String): Event {
+        return Event(name, parseLocalDate(startDateAsString), emptyMap())
+    }
+
+    private fun parseLocalDate(startDateAsString: String): ZonedDateTime {
+        return LocalDateTime.parse(startDateAsString, DateTimeFormatter.ISO_LOCAL_DATE_TIME).atZone(ZoneId.of("CET"))
+    }
 }
+

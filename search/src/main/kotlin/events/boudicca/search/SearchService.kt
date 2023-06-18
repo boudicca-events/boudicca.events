@@ -2,10 +2,7 @@ package events.boudicca.search
 
 import events.boudicca.EventCategory
 import events.boudicca.SemanticKeys
-import events.boudicca.search.model.Event
-import events.boudicca.search.model.Filters
-import events.boudicca.search.model.QueryDTO
-import events.boudicca.search.model.SearchDTO
+import events.boudicca.search.model.*
 import events.boudicca.search.util.Utils
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
@@ -30,7 +27,7 @@ class SearchService @Inject constructor(
     @Volatile
     private var locationCities = emptySet<String>()
 
-    fun search(searchDTO: SearchDTO): List<Event> {
+    fun search(searchDTO: SearchDTO): SearchResultDTO {
         val query = createQuery(searchDTO)
         if (query.isNotBlank()) {
             return queryService.query(QueryDTO(query, searchDTO.offset))

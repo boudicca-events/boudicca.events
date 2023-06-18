@@ -7,6 +7,7 @@ import events.boudicca.search.openapi.api.SearchResourceApi
 import events.boudicca.search.openapi.model.Event
 import events.boudicca.search.openapi.model.QueryDTO
 import events.boudicca.search.openapi.model.SearchDTO
+import events.boudicca.search.openapi.model.SearchResultDTO
 import org.springframework.stereotype.Service
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
@@ -45,8 +46,9 @@ class EventService {
     }
 
 
-    private fun mapEvents(events: List<Event>): List<Map<String, String?>> {
-        return events.map { mapEvent(it) }
+    private fun mapEvents(result: SearchResultDTO): List<Map<String, String?>> {
+        //TODO @patzi: result contains result.totalResults, do something with it
+        return result.result.map { mapEvent(it) }
     }
 
     private fun mapEvent(event: Event): Map<String, String?> {

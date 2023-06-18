@@ -1,6 +1,7 @@
 package events.boudicca.search.query
 
 import events.boudicca.SemanticKeys
+import events.boudicca.search.query.evaluator.EvaluatorUtil
 import events.boudicca.search.query.evaluator.SimpleEvaluator
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -61,7 +62,9 @@ class QueryTest {
     }
 
     private fun evaluateQuery(string: String): Collection<Map<String, String>> {
-        return SimpleEvaluator(testData()).evaluate(QueryParser.parseQuery(string), PAGE_ALL)
+        return SimpleEvaluator(testData()
+            .map { EvaluatorUtil.toEvent(it) }).evaluate(QueryParser.parseQuery(string), PAGE_ALL)
+            .result.map { EvaluatorUtil.mapEventToMap(it) }
     }
 
     private fun testData(): Collection<Map<String, String>> {
@@ -79,8 +82,8 @@ class QueryTest {
                 SemanticKeys.TYPE to "theater"
             ),
             mapOf("name" to "somethingelse", "field" to "wuuut", SemanticKeys.STARTDATE to "2023-05-31T00:00:00Z"),
-            mapOf("name" to "somethingelse2", "field" to "wuuut", SemanticKeys.TYPE to "konzert"),
-            mapOf("name" to "somethingelse3", "field" to "this is a\\longer text"),
+            mapOf("name" to "somethingelse2", "field" to "wuuut", SemanticKeys.STARTDATE to "2024-05-31T00:00:00Z", SemanticKeys.TYPE to "konzert"),
+            mapOf("name" to "somethingelse3", "field" to "this is a\\longer text", SemanticKeys.STARTDATE to "2024-05-31T00:00:00Z"),
         )
     }
 }

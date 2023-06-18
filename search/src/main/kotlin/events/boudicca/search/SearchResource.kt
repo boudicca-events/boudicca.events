@@ -1,9 +1,6 @@
 package events.boudicca.search
 
-import events.boudicca.search.model.Event
-import events.boudicca.search.model.Filters
-import events.boudicca.search.model.QueryDTO
-import events.boudicca.search.model.SearchDTO
+import events.boudicca.search.model.*
 import javax.enterprise.context.ApplicationScoped
 import javax.inject.Inject
 import javax.ws.rs.GET
@@ -22,7 +19,7 @@ class SearchResource @Inject constructor(
 
     @Path("search")
     @POST
-    fun search(searchDTO: SearchDTO): List<Event> {
+    fun search(searchDTO: SearchDTO): SearchResultDTO {
         if (localMode) {
             synchronizationService.update()
         }
@@ -40,7 +37,7 @@ class SearchResource @Inject constructor(
 
     @Path("query")
     @POST
-    fun query(queryDTO: QueryDTO): List<Event> {
+    fun query(queryDTO: QueryDTO): SearchResultDTO{
         if (localMode) {
             synchronizationService.update()
         }

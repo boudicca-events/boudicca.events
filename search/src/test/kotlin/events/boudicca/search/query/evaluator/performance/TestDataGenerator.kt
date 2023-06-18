@@ -3,7 +3,8 @@ package events.boudicca.search.query.evaluator.performance
 import events.boudicca.SemanticKeys
 import events.boudicca.openapi.ApiClient
 import events.boudicca.openapi.api.EventPublisherResourceApi
-import events.boudicca.search.util.Utils
+import events.boudicca.search.model.Event
+import events.boudicca.search.query.evaluator.EvaluatorUtil
 import java.io.FileOutputStream
 import java.io.ObjectOutputStream
 import java.io.Serializable
@@ -27,7 +28,8 @@ object TestDataGenerator {
         val eventPublisherResourceApi = EventPublisherResourceApi(apiClient)
 
         val originalEvents = eventPublisherResourceApi.eventsGet()
-        val originalEventsMapped = originalEvents.filterNotNull().map { Utils.mapEventToMap(it) }
+        val originalEventsMapped = originalEvents.filterNotNull()
+            .map { EvaluatorUtil.mapEventToMap(Event(it.name, it.startDate.toZonedDateTime(), it.data)) }
 
         return remixEvents(originalEventsMapped)
     }

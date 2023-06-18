@@ -23,9 +23,14 @@ class LinzTermineCollector : EventCollector {
 
     override fun collectEvents(): List<events.boudicca.api.eventcollector.Event> {
         val locations = parseLocations()
-        val events = parseEvents()
+        val events = filterEvents(parseEvents())
         val eventWebsites = getEventWebsites(events)
         return mapEvents(events, locations, eventWebsites)
+    }
+
+    private fun filterEvents(events: List<Event>): List<Event> {
+        //448552 is the locationId of casino linz, i do not want gambling in my events
+        return events.filter { it.locationId != 448552 }
     }
 
     private fun getEventWebsites(events: List<Event>): Map<String, Document> {

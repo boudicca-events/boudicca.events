@@ -26,6 +26,7 @@ dependencies {
     implementation("io.quarkus:quarkus-security")
     implementation("io.quarkus:quarkus-elytron-security-properties-file")
     implementation("io.quarkus:quarkus-scheduler")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation(project(":semantic-conventions"))
     testImplementation("io.quarkus:quarkus-junit5")
     testImplementation("io.rest-assured:rest-assured")

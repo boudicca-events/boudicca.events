@@ -13,7 +13,10 @@ import javax.ws.rs.Path
 @PermitAll
 @ApplicationScoped
 @Path("/events")
-class EventPublisherResource @Inject constructor(private val eventService: EventService){
+class EventPublisherResource @Inject constructor(
+    private val eventService: EventService,
+    private val eventSearchService: EventSearchService,
+){
 
     @GET
     fun list(): Set<Event> {
@@ -23,13 +26,13 @@ class EventPublisherResource @Inject constructor(private val eventService: Event
     @Path("search")
     @POST
     fun search(searchDTO: SearchDTO): Set<Event> {
-        return eventService.search(searchDTO)
+        return eventSearchService.search(searchDTO)
     }
 
     @Path("searchBy")
     @POST
     fun searchBy(complexSearchDto: ComplexSearchDto): Set<Event> {
-        return eventService.searchBy(complexSearchDto)
+        return eventSearchService.searchBy(complexSearchDto)
     }
 
 }

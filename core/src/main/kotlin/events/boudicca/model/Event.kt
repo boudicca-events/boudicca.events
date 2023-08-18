@@ -7,3 +7,8 @@ data class Event(
         val startDate: ZonedDateTime,
         val data: Map<String, String>? = mapOf()
 )
+
+data class EventKey(
+        val name: String,
+        val startDate: ZonedDateTime,
+)

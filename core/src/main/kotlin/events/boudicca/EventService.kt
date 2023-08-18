@@ -2,6 +2,7 @@ package events.boudicca
 
 import events.boudicca.model.ComplexSearchDto
 import events.boudicca.model.Event
+import events.boudicca.model.EventKey
 import events.boudicca.model.SearchDTO
 import java.util.concurrent.ConcurrentHashMap
 import javax.enterprise.context.ApplicationScoped
@@ -9,20 +10,21 @@ import javax.enterprise.context.ApplicationScoped
 @ApplicationScoped
 class EventService {
 
-    private val events = ConcurrentHashMap<String, Event>()
+    private val events = ConcurrentHashMap<EventKey, Event>()
 
     fun list(): Set<Event> {
         return events.values.toSet()
     }
 
     fun add(event: Event) {
-        val duplicate = events[event.name]
+        val eventKey = EventKey(event.name, event.startDate)
+        val duplicate = events[eventKey]
         //some cheap logging for finding duplicate events between different collectors
         if (duplicate != null && duplicate.data?.get(SemanticKeys.COLLECTORNAME) != event.data?.get(SemanticKeys.COLLECTORNAME)) {
             println("event $event will overwrite $duplicate")
         }
 
-        events[event.name] = event
+        events[eventKey] = event
     }
 
     fun search(searchDTO: SearchDTO): Set<Event> {

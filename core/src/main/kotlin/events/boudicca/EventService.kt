@@ -1,36 +1,39 @@
 package events.boudicca
 
-import events.boudicca.model.ComplexSearchDto
-import events.boudicca.model.Event
-import events.boudicca.model.EventKey
-import events.boudicca.model.SearchDTO
+import events.boudicca.model.*
+import io.quarkus.scheduler.Scheduled
+import java.time.Duration
 import java.util.concurrent.ConcurrentHashMap
 import javax.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
 class EventService {
 
-    private val events = ConcurrentHashMap<EventKey, Event>()
+    private val events = ConcurrentHashMap<EventKey, Pair<Event, InternalEventProperties>>()
+    private val lastSeenCollectors = ConcurrentHashMap<String, Long>()
 
     fun list(): Set<Event> {
-        return events.values.toSet()
+        return events.values.map { it.first }.toSet()
     }
 
     fun add(event: Event) {
-        val eventKey = EventKey(event.name, event.startDate)
+        val eventKey = EventKey(event)
         val duplicate = events[eventKey]
         //some cheap logging for finding duplicate events between different collectors
-        if (duplicate != null && duplicate.data?.get(SemanticKeys.COLLECTORNAME) != event.data?.get(SemanticKeys.COLLECTORNAME)) {
+        if (duplicate != null && duplicate.first.data?.get(SemanticKeys.COLLECTORNAME) != event.data?.get(SemanticKeys.COLLECTORNAME)) {
             println("event $event will overwrite $duplicate")
         }
 
-        events[eventKey] = event
+        events[eventKey] = Pair(event, InternalEventProperties(System.currentTimeMillis()))
+        if (event.data?.containsKey(SemanticKeys.COLLECTORNAME) == true) {
+            lastSeenCollectors[event.data[SemanticKeys.COLLECTORNAME]!!] = System.currentTimeMillis()
+        }
     }
 
     fun search(searchDTO: SearchDTO): Set<Event> {
         val fromDate = searchDTO.fromDate?.toZonedDateTime()
         val toDate = searchDTO.toDate?.toZonedDateTime()
-        return events.values
+        return list()
             .filter { e -> fromDate == null || !e.startDate.isBefore(fromDate) }
             .filter { e -> toDate == null || !e.startDate.isAfter(toDate) }
             .filter { e ->
@@ -102,5 +105,25 @@ class EventService {
             }
 
         return filters.fold(list()) { events, currentFilter -> events.filter(currentFilter).toSet() }
+    }
+
+    private val MAX_AGE = Duration.ofDays(3).toMillis()
+
+    @Scheduled(every = "P1D")
+    fun cleanup() {
+        val toRemoveEvents = events.values
+            .filter {
+                if (it.first.data?.containsKey(SemanticKeys.COLLECTORNAME) == true) {
+                    val collectorName = it.first.data!![SemanticKeys.COLLECTORNAME]!!
+                    it.second.timeAdded + MAX_AGE < (lastSeenCollectors[collectorName] ?: 0)
+                } else {
+                    false
+                }
+            }
+
+        toRemoveEvents.forEach {
+            println("removing event because it got too old: $it")
+            events.remove(EventKey(it.first))
+        }
     }
 }

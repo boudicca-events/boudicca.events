@@ -18,7 +18,7 @@ class LinzTermineCollector : EventCollector {
     private val fetcher = Fetcher(2000) //server seems really slow...
 
     override fun getName(): String {
-        return "Linz Termine"
+        return "linz termine"
     }
 
     override fun collectEvents(): List<events.boudicca.api.eventcollector.Event> {

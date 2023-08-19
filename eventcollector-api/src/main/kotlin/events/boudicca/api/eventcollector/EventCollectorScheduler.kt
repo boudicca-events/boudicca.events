@@ -1,6 +1,7 @@
 package events.boudicca.api.eventcollector
 
 import events.boudicca.SemanticKeys
+import events.boudicca.api.eventcollector.collections.Collections
 import events.boudicca.openapi.ApiClient
 import events.boudicca.openapi.api.EventIngestionResourceApi
 import java.time.Duration
@@ -45,16 +46,21 @@ class EventCollectorScheduler(
     }
 
     fun runOnce() {
+        Collections.startFullCollection()
         eventCollectors
             .parallelStream()
             .forEach { eventCollector ->
+                Collections.startSingleCollection(eventCollector)
                 try {
                     collect(eventCollector)
                 } catch (e: Exception) {
                     println("event collector ${eventCollector.getName()} threw exception while collecting")
                     e.printStackTrace()
+                } finally {
+                    Collections.endSingleCollection()
                 }
             }
+        Collections.endFullCollection()
     }
 
     private fun collect(eventCollector: EventCollector) {

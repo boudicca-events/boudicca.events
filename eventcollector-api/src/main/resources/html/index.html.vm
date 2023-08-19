@@ -2,13 +2,38 @@
 
 <h1>Boudicca EventCollectors WebUI</h1>
 
-<h2>All Event Collectors</h2>
+<h2>Last Full Collection</h2>
 
-<ul>
-    #foreach( $name in $allCollectorNames)
-    <li>$name</li>
+#if( $hasFullCollection )
+
+    #if( $isFullCollectionOngoing )
+        <p>Full Collection is currently running for $fullCollectionDuration and started on $fullCollectionStartEndTime </p>
+    #else
+        <p>Last Full Collection took $fullCollectionDuration and started on $fullCollectionStartEndTime</p>
     #end
-</ul>
+
+    <table>
+        <thead>
+        <tr>
+            <td>Collector Name</td>
+            <td>Duration</td>
+            <td>Start/End Time</td>
+        </tr>
+        </thead>
+        <tbody>
+            #foreach( $singleCollection in $singleCollections)
+            <tr>
+                <td>$singleCollection.name</td>
+                <td>$singleCollection.duration</td>
+                <td>$singleCollection.startEndTime</td>
+            </tr>
+            #end
+        </tbody>
+    </table>
+
+#else
+    <p>No Full Collection available</p>
+#end
 
 
 #footer()

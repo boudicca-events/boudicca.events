@@ -30,6 +30,12 @@ class EventCollectorScheduler(
         return this
     }
 
+    fun startWebUi(port: Int = 8083): EventCollectorScheduler {
+        EventCollectorWebUi(port, this).start()
+
+        return this
+    }
+
     fun run(): Nothing {
         while (true) {
             runOnce()
@@ -45,7 +51,7 @@ class EventCollectorScheduler(
                 try {
                     collect(eventCollector)
                 } catch (e: Exception) {
-                    println("event collector ${eventCollector.getName()} threw execption while collecting")
+                    println("event collector ${eventCollector.getName()} threw exception while collecting")
                     e.printStackTrace()
                 }
             }
@@ -86,6 +92,10 @@ class EventCollectorScheduler(
             .name(event.name)
             .startDate(event.startDate)
             .data(event.additionalData)
+    }
+
+    fun getCollectors(): List<EventCollector> {
+        return eventCollectors
     }
 
 }

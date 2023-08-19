@@ -10,6 +10,7 @@ repositories {
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
+    implementation("org.apache.velocity:velocity-engine-core:2.3")
     api(project(":core-openapi"))
 }
 

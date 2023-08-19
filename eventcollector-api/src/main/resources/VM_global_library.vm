@@ -1,0 +1,13 @@
+#macro( header )
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Boudicca EventCollectors WebUI</title>
+</head>
+<body>
+#end
+
+#macro( footer )
+</body>
+</html>
+#end

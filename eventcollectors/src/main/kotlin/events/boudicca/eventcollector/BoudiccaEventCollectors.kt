@@ -6,6 +6,7 @@ import events.boudicca.eventcollector.collectors.*
 fun main() {
     Thread.sleep(10000) // let core startup first when both are deployed.... we should do a better thing here
     EventCollectorScheduler()
+        .startWebUi()
         .addEventCollector(LinzTermineCollector())
         .addEventCollector(PosthofCollector())
         .addEventCollector(JkuEventCollector())

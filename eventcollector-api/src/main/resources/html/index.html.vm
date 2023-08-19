@@ -1,0 +1,14 @@
+#header()
+
+<h1>Boudicca EventCollectors WebUI</h1>
+
+<h2>All Event Collectors</h2>
+
+<ul>
+    #foreach( $name in $allCollectorNames)
+    <li>$name</li>
+    #end
+</ul>
+
+
+#footer()

@@ -8,25 +8,7 @@
 
     <p>Full Collection is currently running for ${fullCollection.duration}, started on $fullCollection.startEndTime and currently has $fullCollection.totalErrors errors</p>
 
-    <table>
-        <thead>
-        <tr>
-            <td>Collector Name</td>
-            <td>Duration</td>
-            <td>Start/End Time</td>
-        </tr>
-        </thead>
-        <tbody>
-            #foreach( $singleCollection in $fullCollection.singleCollections)
-            <tr>
-                <td>#if( $singleCollection.errorsCount > 0)⚠#end
-                    #if( $singleCollection.id )<a href="singleCollection?id=$singleCollection.id">$singleCollection.name</a>#else $singleCollection.name #end</td>
-                <td>$singleCollection.duration</td>
-                <td>$singleCollection.startEndTime</td>
-            </tr>
-            #end
-        </tbody>
-    </table>
+    #singleCollectionsTable($fullCollection.singleCollections)
 
 #else
     <p>No Full Collection ongoing</p>

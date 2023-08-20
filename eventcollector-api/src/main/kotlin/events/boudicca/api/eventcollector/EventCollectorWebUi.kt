@@ -36,6 +36,7 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
         setupStaticFolder("/js/")
         setupIndex()
         setupSingleCollection()
+        setupFullCollection()
     }
 
     private fun setupIndex() {
@@ -57,6 +58,69 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
                     Collections.getAllPastCollections().map { mapFullCollectionToFrontEnd(it) })
 
                 sendResponse(it, "/html/index.html.vm", context)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                send500(it)
+            }
+        }
+    }
+
+    private fun setupSingleCollection() {
+        server.createContext("/singleCollection") {
+            try {
+                val id = parseId(it.requestURI.query)
+                if (id != null) {
+                    val singleCollection = findSingleCollection(id)
+                    if (singleCollection != null) {
+                        val context = VelocityContext()
+
+                        context.put("singleCollection", mapSingleCollectionToFrontend(singleCollection))
+                        context.put("httpCalls",
+                            singleCollection.httpCalls
+                                .sortedBy { it.startTime }
+                                .map {
+                                    mapOf(
+                                        "id" to it.id,
+                                        "url" to it.url,
+                                        "responseCode" to if (it.responseCode == 0) "-" else it.responseCode,
+                                        "duration" to formatDuration(it.startTime, it.endTime),
+                                        "startEndTime" to formatStartEndTime(it.startTime, it.endTime),
+                                    )
+                                }
+                        )
+                        context.put(
+                            "log",
+                            EscapeTool().html(singleCollection.logLines.map { String(it.second) }.joinToString("\n"))
+                        )
+
+                        sendResponse(it, "/html/singleCollection.html.vm", context)
+                        return@createContext
+                    }
+                }
+                send404(it)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                send500(it)
+            }
+        }
+    }
+
+    private fun setupFullCollection() {
+        server.createContext("/fullCollection") {
+            try {
+                val id = parseId(it.requestURI.query)
+                if (id != null) {
+                    val fullCollection = findFullCollection(id)
+                    if (fullCollection != null) {
+                        val context = VelocityContext()
+
+                        context.put("fullCollection", mapFullCollectionToFrontEnd(fullCollection))
+
+                        sendResponse(it, "/html/fullCollection.html.vm", context)
+                        return@createContext
+                    }
+                }
+                send404(it)
             } catch (e: Exception) {
                 e.printStackTrace()
                 send500(it)
@@ -108,51 +172,15 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
         }
     }
 
-    private fun setupSingleCollection() {
-        server.createContext("/singleCollection") {
-            try {
-                val id = parseId(it.requestURI.query)
-                if (id != null) {
-                    val singleCollection = findSingleCollection(id)
-                    if (singleCollection != null) {
-                        val context = VelocityContext()
-
-                        context.put("singleCollection", mapSingleCollectionToFrontend(singleCollection))
-                        context.put("httpCalls",
-                            singleCollection.httpCalls
-                                .sortedBy { it.startTime }
-                                .map {
-                                    mapOf(
-                                        "id" to it.id,
-                                        "url" to it.url,
-                                        "responseCode" to if (it.responseCode == 0) "-" else it.responseCode,
-                                        "duration" to formatDuration(it.startTime, it.endTime),
-                                        "startEndTime" to formatStartEndTime(it.startTime, it.endTime),
-                                    )
-                                }
-                        )
-                        context.put(
-                            "log",
-                            EscapeTool().html(singleCollection.logLines.map { String(it.second) }.joinToString("\n"))
-                        )
-
-                        sendResponse(it, "/html/singleCollection.html.vm", context)
-                        return@createContext
-                    }
-                }
-                send404(it)
-            } catch (e: Exception) {
-                e.printStackTrace()
-                send500(it)
-            }
-        }
-    }
-
     private fun findSingleCollection(id: Int): SingleCollection? {
         return Collections.getAllPastCollections()
             .union(listOf(Collections.getCurrentFullCollection()).filterNotNull())
             .flatMap { it.singleCollections }
             .find { it.id == id }
+    }
+
+    private fun findFullCollection(id: Int): FullCollection? {
+        return Collections.getAllPastCollections().find { it.id == id }
     }
 
     private fun parseId(query: String?): Int? {
@@ -173,22 +201,22 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
         return null
     }
 
-    private fun formatStartEndTime(startTime: Long, endTime: Long): String {
-        val startTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(startTime), ZoneId.of("CET"))
+    private fun formatStartEndTime(startTimeInMillis: Long, endTimeInMillis: Long): String {
+        val startTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(startTimeInMillis), ZoneId.of("CET"))
         val formattedStartTime = DateTimeFormatter.ofPattern("d.M.uu HH:mm").format(startTime)
 
-        if (endTime == 0L) {
+        if (endTimeInMillis == 0L) {
             return formattedStartTime +
                     " / ..."
         }
 
-        val endTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(endTime), ZoneId.of("CET"))
-        if (startTime.toLocalDate().equals(endTime.toLocalDate())) {
-            return formattedStartTime +
+        val endTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(endTimeInMillis), ZoneId.of("CET"))
+        return if (startTime.toLocalDate().equals(endTime.toLocalDate())) {
+            formattedStartTime +
                     " / " +
                     DateTimeFormatter.ofPattern("HH:mm").format(endTime)
         } else {
-            return formattedStartTime +
+            formattedStartTime +
                     " / " +
                     DateTimeFormatter.ofPattern("d.M.uu HH:mm").format(endTime)
         }
@@ -198,12 +226,12 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
         val realEndTime = if (endTime != 0L) endTime else System.currentTimeMillis()
         val durationInMillis = realEndTime - startTime
         val duration = Duration.ofMillis(durationInMillis)
-        if (duration.compareTo(Duration.ofSeconds(5)) < 0) {
-            return "${duration.toMillis()} ms"
-        } else if (duration.compareTo(Duration.ofMinutes(5)) < 0) {
-            return "${duration.toSeconds()} s"
+        return if (duration < Duration.ofSeconds(5)) {
+            "${duration.toMillis()} ms"
+        } else if (duration < Duration.ofMinutes(5)) {
+            "${duration.toSeconds()} s"
         } else {
-            return "${duration.toMinutes()} m"
+            "${duration.toMinutes()} m"
         }
     }
 

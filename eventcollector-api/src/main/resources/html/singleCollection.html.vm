@@ -3,7 +3,7 @@
 <a href="./">Back</a>
 <h1>Boudicca EventCollectors WebUI</h1>
 
-<h2>Single Selection</h2>
+<h2>Single Collection</h2>
 
 <p>Collector: $singleCollection.name</p>
 <p>Duration: $singleCollection.duration</p>

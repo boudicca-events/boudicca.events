@@ -1,5 +1,6 @@
 package events.boudicca.api.eventcollector
 
+import events.boudicca.api.eventcollector.collections.Collections
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -40,9 +41,11 @@ class Fetcher(waitTimeInMs: Long = DEFAULT_MIN_WAIT_TIME_IN_MS) {
         if (waitTime > 0) {
             Thread.sleep(waitTime)
         }
+        Collections.startHttpCall(url)
         val requestStartTime = System.currentTimeMillis()
         val response = newHttpClient.send(request, BodyHandlers.ofString())
         if (response.statusCode() != 200) {
+            Collections.endHttpCall(response.statusCode())
             throw RuntimeException("request to $url failed with status code ${response.statusCode()}")
         }
         val requestTime = System.currentTimeMillis() - requestStartTime
@@ -50,6 +53,7 @@ class Fetcher(waitTimeInMs: Long = DEFAULT_MIN_WAIT_TIME_IN_MS) {
             println("slow request detected. took $requestTime ms fetching $url")
         }
         lastRequest = System.currentTimeMillis()
+        Collections.endHttpCall(response.statusCode())
         return response.body()
     }
 

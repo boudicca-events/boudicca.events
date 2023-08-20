@@ -1,0 +1,34 @@
+#header()
+
+<a href="./">Back</a>
+<h1>Boudicca EventCollectors WebUI</h1>
+
+<h2>Single Selection</h2>
+
+<p>Collector: $singleCollection.name</p>
+<p>Duration: $singleCollection.duration</p>
+<p>Start/End Time: $singleCollection.startEndTime</p>
+
+<table>
+    <thead>
+    <tr>
+        <td>Url</td>
+        <td>Response Code</td>
+        <td>Duration</td>
+        <td>Start/End Time</td>
+    </tr>
+    </thead>
+    <tbody>
+        #foreach( $httpCall in $httpCalls)
+        <tr>
+            <td>$httpCall.url</td>
+            <td>$httpCall.responseCode</td>
+            <td>$httpCall.duration</td>
+            <td>$httpCall.startEndTime</td>
+        </tr>
+        #end
+    </tbody>
+</table>
+
+
+#footer()

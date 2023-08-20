@@ -3,6 +3,7 @@ package events.boudicca.api.eventcollector
 import com.sun.net.httpserver.HttpExchange
 import com.sun.net.httpserver.HttpServer
 import events.boudicca.api.eventcollector.collections.Collections
+import events.boudicca.api.eventcollector.collections.SingleCollection
 import org.apache.velocity.VelocityContext
 import org.apache.velocity.app.VelocityEngine
 import java.io.StringWriter
@@ -30,6 +31,7 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
         setupStaticFolder("/css/")
         setupStaticFolder("/js/")
         setupIndex()
+        setupSingleCollection()
     }
 
     private fun setupIndex() {
@@ -50,20 +52,16 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
                     context.put("isFullCollectionOngoing", isFullCollectionOngoing)
                     context.put(
                         "fullCollectionDuration",
-                        formatCollectionDuration(fullCollection.startTime, fullCollection.endTime)
+                        formatDuration(fullCollection.startTime, fullCollection.endTime)
                     )
                     context.put(
                         "fullCollectionStartEndTime",
-                        formatCollectionStartEndTime(fullCollection.startTime, fullCollection.endTime)
+                        formatStartEndTime(fullCollection.startTime, fullCollection.endTime)
                     )
 
                     val singleCollections = fullCollection.singleCollections
                         .map {
-                            mapOf(
-                                "name" to it.collector!!.getName(),
-                                "duration" to formatCollectionDuration(it.startTime, it.endTime),
-                                "startEndTime" to formatCollectionStartEndTime(it.startTime, it.endTime),
-                            )
+                            mapSingleCollectionToFrontend(it)
                         }
                         .associateBy { it["name"]!! }
                     context.put("singleCollections",
@@ -72,6 +70,7 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
                             .sorted()
                             .map {
                                 singleCollections[it] ?: mapOf(
+                                    "id" to null,
                                     "name" to it,
                                     "duration" to "-",
                                     "startEndTime" to "-",
@@ -88,7 +87,78 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
         }
     }
 
-    private fun formatCollectionStartEndTime(startTime: Long, endTime: Long): String {
+    private fun mapSingleCollectionToFrontend(it: SingleCollection): Map<String, String?> {
+        return mapOf(
+            "id" to it.id.toString(),
+            "name" to it.collector!!.getName(),
+            "duration" to formatDuration(it.startTime, it.endTime),
+            "startEndTime" to formatStartEndTime(it.startTime, it.endTime),
+        )
+    }
+
+    private fun setupSingleCollection() {
+        server.createContext("/singleCollection") {
+            try {
+                val id = parseId(it.requestURI.query)
+                if (id != null) {
+                    val singleCollection = findSingleCollection(id)
+                    if (singleCollection != null) {
+
+                        val context = VelocityContext()
+
+                        context.put("singleCollection", mapSingleCollectionToFrontend(singleCollection))
+                        context.put("httpCalls",
+                            singleCollection.httpCalls
+                                .sortedBy { it.startTime }
+                                .map {
+                                    mapOf(
+                                        "id" to it.id,
+                                        "url" to it.url,
+                                        "responseCode" to it.responseCode,
+                                        "duration" to formatDuration(it.startTime, it.endTime),
+                                        "startEndTime" to formatStartEndTime(it.startTime, it.endTime),
+                                    )
+                                }
+                        )
+
+                        sendResponse(it, "/html/singleCollection.html.vm", context)
+                        return@createContext
+                    }
+                }
+                send404(it)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                send500(it)
+            }
+        }
+    }
+
+    private fun findSingleCollection(id: Int): SingleCollection? {
+        return Collections.getAllPastCollections()
+            .union(listOf(Collections.getCurrentFullCollection()).filterNotNull())
+            .flatMap { it.singleCollections }
+            .find { it.id == id }
+    }
+
+    private fun parseId(query: String?): Int? {
+        if (query == null) {
+            return null
+        }
+
+        val id = query.split('&')
+            .map {
+                it.split('=')
+            }
+            .find {
+                it[0] == "id"
+            }
+        if (id != null) {
+            return id[1].toInt()
+        }
+        return null
+    }
+
+    private fun formatStartEndTime(startTime: Long, endTime: Long): String {
         val startTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(startTime), ZoneId.of("CET"))
         val formattedStartTime = DateTimeFormatter.ofPattern("d.M.uu HH:mm").format(startTime)
 
@@ -109,7 +179,7 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
         }
     }
 
-    private fun formatCollectionDuration(startTime: Long, endTime: Long): String {
+    private fun formatDuration(startTime: Long, endTime: Long): String {
         val realEndTime = if (endTime != 0L) endTime else System.currentTimeMillis()
         val durationInMillis = realEndTime - startTime
         val duration = Duration.ofMillis(durationInMillis)

@@ -17,6 +17,7 @@ import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorScheduler) {
 
@@ -81,7 +82,6 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
                                 .sortedBy { it.startTime }
                                 .map {
                                     mapOf(
-                                        "id" to it.id,
                                         "url" to it.url,
                                         "responseCode" to if (it.responseCode == 0) "-" else it.responseCode,
                                         "duration" to formatDuration(it.startTime, it.endTime),
@@ -173,18 +173,18 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
         }
     }
 
-    private fun findSingleCollection(id: Int): SingleCollection? {
+    private fun findSingleCollection(id: UUID): SingleCollection? {
         return Collections.getAllPastCollections()
             .union(listOf(Collections.getCurrentFullCollection()).filterNotNull())
             .flatMap { it.singleCollections }
             .find { it.id == id }
     }
 
-    private fun findFullCollection(id: Int): FullCollection? {
+    private fun findFullCollection(id: UUID): FullCollection? {
         return Collections.getAllPastCollections().find { it.id == id }
     }
 
-    private fun parseId(query: String?): Int? {
+    private fun parseId(query: String?): UUID? {
         if (query == null) {
             return null
         }
@@ -197,7 +197,7 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
                 it[0] == "id"
             }
         if (id != null) {
-            return id[1].toInt()
+            return UUID.fromString(id[1])
         }
         return null
     }

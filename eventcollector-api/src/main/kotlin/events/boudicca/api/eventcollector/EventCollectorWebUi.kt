@@ -9,6 +9,7 @@ import org.apache.velocity.VelocityContext
 import org.apache.velocity.app.VelocityEngine
 import org.apache.velocity.tools.generic.EscapeTool
 import org.slf4j.LoggerFactory
+import java.io.IOException
 import java.io.StringWriter
 import java.net.InetSocketAddress
 import java.time.Duration
@@ -59,7 +60,7 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
 
                 sendResponse(it, "/html/index.html.vm", context)
             } catch (e: Exception) {
-                e.printStackTrace()
+                LOG.error("error while handling request", e)
                 send500(it)
             }
         }
@@ -135,7 +136,7 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
             "id" to fullCollection.id.toString(),
             "duration" to formatDuration(fullCollection.startTime, fullCollection.endTime),
             "startEndTime" to formatStartEndTime(fullCollection.startTime, fullCollection.endTime),
-            "totalErrors" to fullCollection.singleCollections
+            "errorsCount" to fullCollection.singleCollections
                 .flatMap { it.logLines }
                 .count { it.first }.toString(),
             "singleCollections" to
@@ -270,11 +271,15 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
     }
 
     private fun sendString(it: HttpExchange, responseCode: Int, contentType: String, content: String) {
-        val bytes = content.toByteArray(Charsets.UTF_8)
-        it.responseHeaders.add("Content-Type", contentType)
-        it.sendResponseHeaders(responseCode, bytes.size.toLong())
-        it.responseBody.write(bytes)
-        it.close()
+        try{
+            val bytes = content.toByteArray(Charsets.UTF_8)
+            it.responseHeaders.add("Content-Type", contentType)
+            it.sendResponseHeaders(responseCode, bytes.size.toLong())
+            it.responseBody.write(bytes)
+            it.close()
+        }catch (e: IOException){
+            LOG.debug("error sending response", e)
+        }
     }
 
     fun start() {

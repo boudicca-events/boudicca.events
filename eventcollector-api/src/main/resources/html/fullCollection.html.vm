@@ -7,7 +7,7 @@
 
 <p>Start/End Time: $fullCollection.startEndTime</p>
 <p>Duration: $fullCollection.duration</p>
-<p>Errors: $fullCollection.totalErrors</p>
+<p>Errors: $fullCollection.errorsCount</p>
 
 #singleCollectionsTable($fullCollection.singleCollections)
 

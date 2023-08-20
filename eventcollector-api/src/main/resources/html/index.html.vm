@@ -21,15 +21,14 @@
     <tr>
         <td>Start/End Time</td>
         <td>Duration</td>
-        <td>Total Errors</td>
     </tr>
     </thead>
     <tbody>
         #foreach( $fullCollection in $fullCollections)
         <tr>
-            <td>#if( $fullCollection.id )<a href="fullCollection?id=$fullCollection.id">$fullCollection.startEndTime</a>#else $fullCollection.startEndTime #end</td>
+            <td>#if( $fullCollection.errorsCount > 0)⚠#end
+                #if( $fullCollection.id )<a href="fullCollection?id=$fullCollection.id">$fullCollection.startEndTime</a>#else $fullCollection.startEndTime #end</td>
             <td>$fullCollection.duration</td>
-            <td>$fullCollection.totalErrors</td>
         </tr>
         #end
     </tbody>

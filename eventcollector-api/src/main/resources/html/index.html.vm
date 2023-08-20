@@ -6,7 +6,7 @@
 
 #if( $hasOngoingFullCollection )
 
-    <p>Full Collection is currently running for ${fullCollection.duration}, started on $fullCollection.startEndTime and currently has $fullCollection.totalErrors errors</p>
+    <p>Full Collection is currently running for ${fullCollection.duration}, started on $fullCollection.startEndTime and currently has $fullCollection.errorsCount errors</p>
 
     #singleCollectionsTable($fullCollection.singleCollections)
 

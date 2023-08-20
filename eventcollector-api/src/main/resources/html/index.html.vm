@@ -2,15 +2,11 @@
 
 <h1>Boudicca EventCollectors WebUI</h1>
 
-<h2>Last Full Collection</h2>
+<h2>Current Full Collection</h2>
 
-#if( $hasFullCollection )
+#if( $hasOngoingFullCollection )
 
-    #if( $isFullCollectionOngoing )
-        <p>Full Collection is currently running for $fullCollectionDuration and started on $fullCollectionStartEndTime </p>
-    #else
-        <p>Last Full Collection took $fullCollectionDuration and started on $fullCollectionStartEndTime</p>
-    #end
+    <p>Full Collection is currently running for ${fullCollection.duration}, started on $fullCollection.startEndTime and currently has $fullCollection.totalErrors errors</p>
 
     <table>
         <thead>
@@ -21,7 +17,7 @@
         </tr>
         </thead>
         <tbody>
-            #foreach( $singleCollection in $singleCollections)
+            #foreach( $singleCollection in $fullCollection.singleCollections)
             <tr>
                 <td>#if( $singleCollection.errorsCount > 0)⚠#end
                     #if( $singleCollection.id )<a href="singleCollection?id=$singleCollection.id">$singleCollection.name</a>#else $singleCollection.name #end</td>
@@ -33,8 +29,29 @@
     </table>
 
 #else
-    <p>No Full Collection available</p>
+    <p>No Full Collection ongoing</p>
 #end
+
+<h2>Past Full Collections</h2>
+
+<table>
+    <thead>
+    <tr>
+        <td>Start/End Time</td>
+        <td>Duration</td>
+        <td>Total Errors</td>
+    </tr>
+    </thead>
+    <tbody>
+        #foreach( $fullCollection in $fullCollections)
+        <tr>
+            <td>#if( $fullCollection.id )<a href="fullCollection?id=$fullCollection.id">$fullCollection.startEndTime</a>#else $fullCollection.startEndTime #end</td>
+            <td>$fullCollection.duration</td>
+            <td>$fullCollection.totalErrors</td>
+        </tr>
+        #end
+    </tbody>
+</table>
 
 
 #footer()

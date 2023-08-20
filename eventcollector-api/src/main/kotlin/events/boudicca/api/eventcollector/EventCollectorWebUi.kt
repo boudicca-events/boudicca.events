@@ -3,6 +3,7 @@ package events.boudicca.api.eventcollector
 import com.sun.net.httpserver.HttpExchange
 import com.sun.net.httpserver.HttpServer
 import events.boudicca.api.eventcollector.collections.Collections
+import events.boudicca.api.eventcollector.collections.FullCollection
 import events.boudicca.api.eventcollector.collections.SingleCollection
 import org.apache.velocity.VelocityContext
 import org.apache.velocity.app.VelocityEngine
@@ -40,38 +41,20 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
     private fun setupIndex() {
         server.createContext("/") {
             try {
-                var fullCollection = Collections.getCurrentFullCollection()
-                var isFullCollectionOngoing = true
-                if (fullCollection == null) {
-                    isFullCollectionOngoing = false
-                    fullCollection = Collections.getAllPastCollections().lastOrNull()
-                }
-
                 val context = VelocityContext()
 
-                context.put("hasFullCollection", fullCollection != null)
+                val fullCollection = Collections.getCurrentFullCollection()
+                context.put("hasOngoingFullCollection", fullCollection != null)
 
                 if (fullCollection != null) {
-                    context.put("isFullCollectionOngoing", isFullCollectionOngoing)
                     context.put(
-                        "fullCollectionDuration",
-                        formatDuration(fullCollection.startTime, fullCollection.endTime)
-                    )
-                    context.put(
-                        "fullCollectionStartEndTime",
-                        formatStartEndTime(fullCollection.startTime, fullCollection.endTime)
-                    )
-
-                    val singleCollections = fullCollection.singleCollections.associateBy { it.collector!!.getName() }
-                    context.put("singleCollections",
-                        scheduler.getCollectors()
-                            .map { it.getName() }
-                            .sorted()
-                            .map {
-                                mapSingleCollectionToFrontend(it, singleCollections[it])
-                            }
+                        "fullCollection",
+                        mapFullCollectionToFrontEnd(fullCollection)
                     )
                 }
+
+                context.put("fullCollections",
+                    Collections.getAllPastCollections().map { mapFullCollectionToFrontEnd(it) })
 
                 sendResponse(it, "/html/index.html.vm", context)
             } catch (e: Exception) {
@@ -79,6 +62,26 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
                 send500(it)
             }
         }
+    }
+
+    private fun mapFullCollectionToFrontEnd(fullCollection: FullCollection): Map<String, *> {
+        val singleCollections = fullCollection.singleCollections.associateBy { it.collector!!.getName() }
+
+        return mapOf(
+            "id" to fullCollection.id.toString(),
+            "duration" to formatDuration(fullCollection.startTime, fullCollection.endTime),
+            "startEndTime" to formatStartEndTime(fullCollection.startTime, fullCollection.endTime),
+            "totalErrors" to fullCollection.singleCollections
+                .flatMap { it.logLines }
+                .count { it.first }.toString(),
+            "singleCollections" to
+                    scheduler.getCollectors()
+                        .map { it.getName() }
+                        .sorted()
+                        .map {
+                            mapSingleCollectionToFrontend(it, singleCollections[it])
+                        }
+        )
     }
 
     private fun mapSingleCollectionToFrontend(it: SingleCollection): Map<String, String?> {
@@ -128,7 +131,10 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
                                     )
                                 }
                         )
-                        context.put("log", EscapeTool().html(singleCollection.logLines.map { String(it.second) }.joinToString("\n")))
+                        context.put(
+                            "log",
+                            EscapeTool().html(singleCollection.logLines.map { String(it.second) }.joinToString("\n"))
+                        )
 
                         sendResponse(it, "/html/singleCollection.html.vm", context)
                         return@createContext

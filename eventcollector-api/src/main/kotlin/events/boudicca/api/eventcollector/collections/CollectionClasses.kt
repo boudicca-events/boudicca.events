@@ -13,6 +13,12 @@ data class FullCollection(
     val singleCollections: MutableList<SingleCollection>
 ) {
     constructor() : this(UUID.randomUUID(), 0, 0, Collections.synchronizedList(mutableListOf()))
+
+    override fun toString(): String {
+        return "FullCollection(\nid=$id, \nstartTime=$startTime, \nendTime=$endTime, \nsingleCollections=$singleCollections)"
+    }
+
+
 }
 
 data class SingleCollection(
@@ -23,8 +29,12 @@ data class SingleCollection(
     val httpCalls: MutableList<HttpCall>,
     val logLines: MutableList<Pair<Boolean, ByteArray>>,
 ) {
-
     constructor() : this(UUID.randomUUID(), 0, 0, null, mutableListOf(), mutableListOf())
+
+    override fun toString(): String {
+        return "SingleCollection(\nid=$id, \nstartTime=$startTime, \nendTime=$endTime, \ncollector=$collector, \nhttpCalls=$httpCalls, \nlogLines=${logLines.map { Pair(it.first, String(it.second)) }})"
+    }
+
 }
 
 data class HttpCall(

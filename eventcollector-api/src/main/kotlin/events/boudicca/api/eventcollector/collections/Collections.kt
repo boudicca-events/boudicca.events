@@ -25,6 +25,10 @@ object Collections {
 
     fun endFullCollection() {
         val fullCollection = currentFullCollection.get()
+        if (fullCollection == null) {
+            LOG.error("no full single collection available, cannot end it")
+            return
+        }
         fullCollection.endTime = System.currentTimeMillis()
         currentFullCollection.set(null)
         pastFullCollections.add(fullCollection)
@@ -37,14 +41,40 @@ object Collections {
         val singleCollection = SingleCollection()
         singleCollection.startTime = System.currentTimeMillis()
         singleCollection.collector = collector
-        currentFullCollection.get().singleCollections.add(singleCollection)
+        currentFullCollection.get()?.singleCollections?.add(singleCollection)
         currentSingleCollections.set(singleCollection)
     }
 
     fun endSingleCollection() {
         val singleCollection = currentSingleCollections.get()
+        if (singleCollection == null) {
+            LOG.error("no current single collection available, cannot end it")
+            return
+        }
         singleCollection.endTime = System.currentTimeMillis()
         currentSingleCollections.set(null)
+    }
+
+    fun startHttpCall(url: String) {
+        if (currentHttpCalls.get() != null) {
+            LOG.error("a current http call is already set, this seems like a bug")
+        }
+        val httpCall = HttpCall()
+        httpCall.startTime = System.currentTimeMillis()
+        httpCall.url = url
+        currentSingleCollections.get()?.httpCalls?.add(httpCall)
+        currentHttpCalls.set(httpCall)
+    }
+
+    fun endHttpCall(responseCode: Int) {
+        val httpCall = currentHttpCalls.get()
+        if (httpCall == null) {
+            LOG.error("no current http call available, cannot end it")
+            return
+        }
+        httpCall.endTime = System.currentTimeMillis()
+        httpCall.responseCode = responseCode
+        currentHttpCalls.set(null)
     }
 
     fun getAllPastCollections(): List<FullCollection> {
@@ -57,23 +87,5 @@ object Collections {
 
     fun getCurrentSingleCollection(): SingleCollection? {
         return currentSingleCollections.get()
-    }
-
-    fun startHttpCall(url: String) {
-        if (currentHttpCalls.get() != null) {
-            LOG.error("a current http call is already set, this seems like a bug")
-        }
-        val httpCall = HttpCall()
-        httpCall.startTime = System.currentTimeMillis()
-        httpCall.url = url
-        currentSingleCollections.get().httpCalls.add(httpCall)
-        currentHttpCalls.set(httpCall)
-    }
-
-    fun endHttpCall(responseCode: Int) {
-        val httpCall = currentHttpCalls.get()
-        httpCall.endTime = System.currentTimeMillis()
-        httpCall.responseCode = responseCode
-        currentHttpCalls.set(null)
     }
 }

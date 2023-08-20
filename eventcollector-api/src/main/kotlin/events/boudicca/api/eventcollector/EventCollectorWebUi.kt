@@ -6,6 +6,8 @@ import events.boudicca.api.eventcollector.collections.Collections
 import events.boudicca.api.eventcollector.collections.SingleCollection
 import org.apache.velocity.VelocityContext
 import org.apache.velocity.app.VelocityEngine
+import org.apache.velocity.tools.generic.EscapeTool
+import org.slf4j.LoggerFactory
 import java.io.StringWriter
 import java.net.InetSocketAddress
 import java.time.Duration
@@ -18,12 +20,13 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
 
     private val server: HttpServer
     private val ve: VelocityEngine = VelocityEngine()
+    private val LOG = LoggerFactory.getLogger(this::class.java)
 
     init {
         //set velocity to load templates from the classpath
-        ve.setProperty("resource.loader", "classpath")
+        ve.setProperty("resource.loaders", "classpath")
         ve.setProperty(
-            "classpath.resource.loader.class",
+            "resource.loader.classpath.class",
             "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader"
         )
 
@@ -59,22 +62,13 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
                         formatStartEndTime(fullCollection.startTime, fullCollection.endTime)
                     )
 
-                    val singleCollections = fullCollection.singleCollections
-                        .map {
-                            mapSingleCollectionToFrontend(it)
-                        }
-                        .associateBy { it["name"]!! }
+                    val singleCollections = fullCollection.singleCollections.associateBy { it.collector!!.getName() }
                     context.put("singleCollections",
                         scheduler.getCollectors()
                             .map { it.getName() }
                             .sorted()
                             .map {
-                                singleCollections[it] ?: mapOf(
-                                    "id" to null,
-                                    "name" to it,
-                                    "duration" to "-",
-                                    "startEndTime" to "-",
-                                )
+                                mapSingleCollectionToFrontend(it, singleCollections[it])
                             }
                     )
                 }
@@ -88,12 +82,27 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
     }
 
     private fun mapSingleCollectionToFrontend(it: SingleCollection): Map<String, String?> {
-        return mapOf(
-            "id" to it.id.toString(),
-            "name" to it.collector!!.getName(),
-            "duration" to formatDuration(it.startTime, it.endTime),
-            "startEndTime" to formatStartEndTime(it.startTime, it.endTime),
-        )
+        return mapSingleCollectionToFrontend(it.collector!!.getName(), it)
+    }
+
+    private fun mapSingleCollectionToFrontend(name: String, it: SingleCollection?): Map<String, String?> {
+        if (it != null) {
+            return mapOf(
+                "id" to it.id.toString(),
+                "name" to it.collector!!.getName(),
+                "duration" to formatDuration(it.startTime, it.endTime),
+                "startEndTime" to formatStartEndTime(it.startTime, it.endTime),
+                "errorsCount" to it.logLines.filter { it.first }.count().toString(),
+            )
+        } else {
+            return mapOf(
+                "id" to null,
+                "name" to name,
+                "duration" to "-",
+                "startEndTime" to "-",
+                "errorsCount" to "-",
+            )
+        }
     }
 
     private fun setupSingleCollection() {
@@ -103,7 +112,6 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
                 if (id != null) {
                     val singleCollection = findSingleCollection(id)
                     if (singleCollection != null) {
-
                         val context = VelocityContext()
 
                         context.put("singleCollection", mapSingleCollectionToFrontend(singleCollection))
@@ -114,12 +122,13 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
                                     mapOf(
                                         "id" to it.id,
                                         "url" to it.url,
-                                        "responseCode" to it.responseCode,
+                                        "responseCode" to if (it.responseCode == 0) "-" else it.responseCode,
                                         "duration" to formatDuration(it.startTime, it.endTime),
                                         "startEndTime" to formatStartEndTime(it.startTime, it.endTime),
                                     )
                                 }
                         )
+                        context.put("log", EscapeTool().html(singleCollection.logLines.map { String(it.second) }.joinToString("\n")))
 
                         sendResponse(it, "/html/singleCollection.html.vm", context)
                         return@createContext
@@ -235,7 +244,7 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
     }
 
     fun start() {
-        println("webui starting and listening on ${server.address}")
+        LOG.info("webui starting and listening on ${server.address}")
         server.start()
     }
 

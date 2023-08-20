@@ -4,6 +4,7 @@ import events.boudicca.SemanticKeys
 import events.boudicca.api.eventcollector.collections.Collections
 import events.boudicca.openapi.ApiClient
 import events.boudicca.openapi.api.EventIngestionResourceApi
+import org.slf4j.LoggerFactory
 import java.time.Duration
 import java.util.*
 
@@ -13,6 +14,7 @@ class EventCollectorScheduler(
 ) {
     private val eventCollectors: MutableList<EventCollector> = mutableListOf()
     private val ingestionApi: EventIngestionResourceApi
+    private val LOG = LoggerFactory.getLogger(this::class.java)
 
     init {
         val apiClient = ApiClient()
@@ -40,7 +42,7 @@ class EventCollectorScheduler(
     fun run(): Nothing {
         while (true) {
             runOnce()
-            println("all event collectors ran, sleeping for $interval")
+            LOG.info("all event collectors ran, sleeping for $interval")
             Thread.sleep(interval.toMillis())
         }
     }
@@ -50,31 +52,28 @@ class EventCollectorScheduler(
         try {
             eventCollectors
                 .parallelStream()
-                .forEach { eventCollector ->
-                    Collections.startSingleCollection(eventCollector)
-                    try {
-                        collect(eventCollector)
-                    } catch (e: Exception) {
-                        println("event collector ${eventCollector.getName()} threw exception while collecting")
-                        e.printStackTrace()
-                    } finally {
-                        Collections.endSingleCollection()
-                    }
-                }
+                .forEach { collect(it) }
         } finally {
             Collections.endFullCollection()
         }
     }
 
     private fun collect(eventCollector: EventCollector) {
-        val startTime = System.currentTimeMillis()
-        val events = eventCollector.collectEvents()
-        val collectTime = System.currentTimeMillis()
-        for (event in events) {
-            ingestionApi.ingestAddPost(mapToApiEvent(postProcess(event, eventCollector.getName())))
+        Collections.startSingleCollection(eventCollector)
+        try {
+            val startTime = System.currentTimeMillis()
+            val events = eventCollector.collectEvents()
+            val collectTime = System.currentTimeMillis()
+            for (event in events) {
+                ingestionApi.ingestAddPost(mapToApiEvent(postProcess(event, eventCollector.getName())))
+            }
+            val ingestTime = System.currentTimeMillis()
+            Collections.endSingleCollection()
+            LOG.info("collected ${events.size} events for event collector ${eventCollector.getName()}, collecting took ${(collectTime - startTime) / 1000}s, ingesting took ${(ingestTime - collectTime) / 1000}s")
+        } catch (e: Exception) {
+            LOG.error("event collector ${eventCollector.getName()} threw exception while collecting", e)
+            Collections.endSingleCollection()
         }
-        val ingestTime = System.currentTimeMillis()
-        println("collected ${events.size} events for event collector ${eventCollector.getName()}, collecting took ${(collectTime - startTime) / 1000}s, ingesting took ${(ingestTime - collectTime) / 1000}s")
     }
 
     private fun postProcess(event: Event, collectorName: String): Event {
@@ -86,11 +85,11 @@ class EventCollectorScheduler(
             )
         }
         if (event.name.isBlank()) {
-            println("event from collector $collectorName has empty name: $event")
+            LOG.warn("event from collector $collectorName has empty name: $event")
         }
         for (entry in event.additionalData.entries) {
             if (entry.value.isBlank()) {
-                println("event from collector $collectorName contains empty field ${entry.key}: $event")
+                LOG.warn("event from collector $collectorName contains empty field ${entry.key}: $event")
             }
         }
         return event

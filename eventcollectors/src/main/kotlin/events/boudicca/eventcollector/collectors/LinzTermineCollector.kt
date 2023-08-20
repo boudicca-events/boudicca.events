@@ -8,6 +8,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.parser.Parser
+import org.slf4j.LoggerFactory
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -16,6 +17,7 @@ import java.time.format.DateTimeFormatter
 
 class LinzTermineCollector : EventCollector {
     private val fetcher = Fetcher(2000) //server seems really slow...
+    private val LOG = LoggerFactory.getLogger(this::class.java)
 
     override fun getName(): String {
         return "linz termine"
@@ -60,7 +62,7 @@ class LinzTermineCollector : EventCollector {
         val mappedEvents = mutableListOf<events.boudicca.api.eventcollector.Event>()
         for (event in eventList) {
             if (event.dates.isEmpty()) {
-                println("event does not contain any dates: $event")
+                LOG.warn("event does not contain any dates: $event")
                 continue
             }
 

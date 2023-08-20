@@ -8,7 +8,9 @@
 <p>Collector: $singleCollection.name</p>
 <p>Duration: $singleCollection.duration</p>
 <p>Start/End Time: $singleCollection.startEndTime</p>
+<p>Errors: $singleCollection.errorsCount</p>
 
+<h3>Http Calls</h3>
 <table>
     <thead>
     <tr>
@@ -30,5 +32,7 @@
     </tbody>
 </table>
 
+<h3>Log lines</h3>
+<pre>$log</pre>
 
 #footer()

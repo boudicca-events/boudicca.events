@@ -6,12 +6,15 @@ import events.boudicca.api.eventcollector.Fetcher
 import events.boudicca.api.eventcollector.TwoStepEventCollector
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
+import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 class PlanetTTCollector : TwoStepEventCollector<Element>("planettt") {
+
+    private val LOG = LoggerFactory.getLogger(this::class.java)
 
     override fun getAllUnparsedEvents(): List<Element> {
         val fetcher = Fetcher()
@@ -54,7 +57,7 @@ class PlanetTTCollector : TwoStepEventCollector<Element>("planettt") {
             data[SemanticKeys.LOCATION_URL] = "https://www.gasometer.at/"
             data[SemanticKeys.LOCATION_CITY] = "Wien"
         } else {
-            println("could not guess location from img src: $location")
+            LOG.warn("could not guess location from img src: $location")
         }
     }
 

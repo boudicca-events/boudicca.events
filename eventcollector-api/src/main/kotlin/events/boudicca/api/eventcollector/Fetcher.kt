@@ -42,15 +42,10 @@ class Fetcher(waitTimeInMs: Long = DEFAULT_MIN_WAIT_TIME_IN_MS) {
             Thread.sleep(waitTime)
         }
         Collections.startHttpCall(url)
-        val requestStartTime = System.currentTimeMillis()
         val response = newHttpClient.send(request, BodyHandlers.ofString())
         if (response.statusCode() != 200) {
             Collections.endHttpCall(response.statusCode())
             throw RuntimeException("request to $url failed with status code ${response.statusCode()}")
-        }
-        val requestTime = System.currentTimeMillis() - requestStartTime
-        if (requestTime > 1000) {
-            println("slow request detected. took $requestTime ms fetching $url")
         }
         lastRequest = System.currentTimeMillis()
         Collections.endHttpCall(response.statusCode())

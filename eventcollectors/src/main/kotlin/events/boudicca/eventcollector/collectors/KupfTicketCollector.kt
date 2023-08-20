@@ -9,11 +9,14 @@ import events.boudicca.api.eventcollector.Fetcher
 import events.boudicca.api.eventcollector.TwoStepEventCollector
 import org.jsoup.HttpStatusException
 import org.jsoup.Jsoup
+import org.slf4j.LoggerFactory
 import java.io.StringReader
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
 class KupfTicketCollector : TwoStepEventCollector<JsonObject>("kupfticket") {
+
+    private val LOG = LoggerFactory.getLogger(this::class.java)
 
     override fun getAllUnparsedEvents(): List<JsonObject> {
         val fetcher = Fetcher()
@@ -33,7 +36,7 @@ class KupfTicketCollector : TwoStepEventCollector<JsonObject>("kupfticket") {
                     try {
                         fetcher.fetchUrl("https://kupfticket.com/events/$it")//what do you mean stable?
                     } catch (e2: HttpStatusException) {
-                        println("https://kupfticket.com/events/$it error after retry: " + e2.statusCode)
+                        LOG.error("https://kupfticket.com/events/$it error after retry: " + e2.statusCode)
                         null
                     }
                 }

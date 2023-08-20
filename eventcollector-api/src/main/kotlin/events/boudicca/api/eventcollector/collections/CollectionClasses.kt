@@ -21,9 +21,11 @@ data class SingleCollection(
     var startTime: Long,
     var endTime: Long,
     var collector: EventCollector?,
-    val httpCalls: MutableList<HttpCall>
+    val httpCalls: MutableList<HttpCall>,
+    val logLines: MutableList<Pair<Boolean, ByteArray>>,
 ) {
-    constructor() : this(counter.incrementAndGet(), 0, 0, null, mutableListOf())
+
+    constructor() : this(counter.incrementAndGet(), 0, 0, null, mutableListOf(), mutableListOf())
 }
 
 data class HttpCall(

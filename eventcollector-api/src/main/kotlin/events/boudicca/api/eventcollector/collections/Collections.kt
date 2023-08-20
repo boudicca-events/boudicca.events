@@ -1,8 +1,8 @@
 package events.boudicca.api.eventcollector.collections
 
 import events.boudicca.api.eventcollector.EventCollector
+import org.slf4j.LoggerFactory
 import java.util.Collections
-import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicReference
 
 object Collections {
@@ -11,10 +11,11 @@ object Collections {
     private val currentSingleCollections = ThreadLocal<SingleCollection>()
     private val currentHttpCalls = ThreadLocal<HttpCall>()
     private val pastFullCollections = Collections.synchronizedList(mutableListOf<FullCollection>())
+    private val LOG = LoggerFactory.getLogger(this::class.java)
 
     fun startFullCollection() {
         if (currentFullCollection.get() != null) {
-            println("a current full collection is already set, this seems like a bug")
+            LOG.error("a current full collection is already set, this seems like a bug")
         }
 
         val fullCollection = FullCollection()
@@ -31,7 +32,7 @@ object Collections {
 
     fun startSingleCollection(collector: EventCollector) {
         if (currentSingleCollections.get() != null) {
-            println("a current single collection is already set, this seems like a bug")
+            LOG.error("a current single collection is already set, this seems like a bug")
         }
         val singleCollection = SingleCollection()
         singleCollection.startTime = System.currentTimeMillis()
@@ -54,9 +55,13 @@ object Collections {
         return currentFullCollection.get()
     }
 
+    fun getCurrentSingleCollection(): SingleCollection? {
+        return currentSingleCollections.get()
+    }
+
     fun startHttpCall(url: String) {
         if (currentHttpCalls.get() != null) {
-            println("a current http call is already set, this seems like a bug")
+            LOG.error("a current http call is already set, this seems like a bug")
         }
         val httpCall = HttpCall()
         httpCall.startTime = System.currentTimeMillis()

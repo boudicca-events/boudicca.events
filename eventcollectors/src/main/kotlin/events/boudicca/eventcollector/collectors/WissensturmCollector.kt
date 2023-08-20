@@ -38,7 +38,7 @@ class WissensturmCollector : TwoStepEventCollector<Pair<String, Document>>("wiss
         val data = mutableMapOf<String, String>()
 
         val name = event.select("div.kw-kurdetails h1").text()
-        val datesAndLocations = parseDates(event)
+        val datesAndLocations = parseDatesAndLocations(event)
 
         data[SemanticKeys.DESCRIPTION] = event.select("div.kw-kurdetails div.content-txt:nth-child(2)").text()
         data[SemanticKeys.URL] = url
@@ -48,7 +48,9 @@ class WissensturmCollector : TwoStepEventCollector<Pair<String, Document>>("wiss
             data[SemanticKeys.PICTUREURL] = pictureUrl.attr("src")
         }
 
-        return datesAndLocations.map {
+        return datesAndLocations
+            .filter { it.first != null }
+            .map {
             val dataCopy = data.toMutableMap()
             dataCopy[SemanticKeys.ENDDATE] = DateTimeFormatter.ISO_DATE_TIME.format(it.second)
             if (
@@ -61,32 +63,36 @@ class WissensturmCollector : TwoStepEventCollector<Pair<String, Document>>("wiss
             } else {
                 dataCopy[SemanticKeys.LOCATION_NAME] = it.third
             }
-            Event(name, it.first, dataCopy)
+            Event(name, it.first!!, dataCopy)
         }
     }
 
-    private fun parseDates(event: Document): List<Triple<OffsetDateTime, OffsetDateTime, String>> {
+    private fun parseDatesAndLocations(event: Document): List<Triple<OffsetDateTime?, OffsetDateTime?, String>> {
         return event.select("table tbody tr")
             .toList()
             .map {
                 val fullDateText = it.child(0).text()
-                val date = fullDateText.substring(4, 14)
-                val startTime = fullDateText.substring(15, 20)
-                val endTime = fullDateText.substring(23, 28)
+                if (fullDateText.contains("ausfall", true) || fullDateText.contains("zusatz", true)) {
+                    Triple(null, null, it.child(it.childrenSize() - 1).text())
+                } else {
+                    val date = fullDateText.substring(4, 14)
+                    val startTime = fullDateText.substring(15, 20)
+                    val endTime = fullDateText.substring(23, 28)
 
-                val localDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("dd.MM.uuuu"))
-                val localStartTime = LocalTime.parse(startTime, DateTimeFormatter.ofPattern("kk:mm"))
-                val localEndTime = LocalTime.parse(endTime, DateTimeFormatter.ofPattern("kk:mm"))
+                    val localDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("dd.MM.uuuu"))
+                    val localStartTime = LocalTime.parse(startTime, DateTimeFormatter.ofPattern("kk:mm"))
+                    val localEndTime = LocalTime.parse(endTime, DateTimeFormatter.ofPattern("kk:mm"))
 
-                Triple(
-                    localDate.atTime(localStartTime)
-                        .atZone(ZoneId.of("CET"))
-                        .toOffsetDateTime(),
-                    localDate.atTime(localEndTime)
-                        .atZone(ZoneId.of("CET"))
-                        .toOffsetDateTime(),
-                    it.child(it.childrenSize() - 1).text()
-                )
+                    Triple(
+                        localDate.atTime(localStartTime)
+                            .atZone(ZoneId.of("CET"))
+                            .toOffsetDateTime(),
+                        localDate.atTime(localEndTime)
+                            .atZone(ZoneId.of("CET"))
+                            .toOffsetDateTime(),
+                        it.child(it.childrenSize() - 1).text()
+                    )
+                }
             }
     }
 

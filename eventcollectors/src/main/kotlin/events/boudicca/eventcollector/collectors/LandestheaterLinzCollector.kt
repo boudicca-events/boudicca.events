@@ -56,7 +56,8 @@ class LandestheaterLinzCollector :
 
     private fun parseDateFromSection(section: Element): LocalDate {
         val dateText = section.select("div.lth-section-title > div.lth-evitem-date > span.lth-book").text()
-        return LocalDate.parse(dateText, DateTimeFormatter.ofPattern("dd. MMMM uuuu", Locale.GERMAN))
+        val cleanedUpText = dateText.replace("Jänner", "Januar") //java does not parse Jänner...
+        return LocalDate.parse(cleanedUpText, DateTimeFormatter.ofPattern("dd. MMMM uuuu", Locale.GERMAN))
     }
 
     private fun fetchList(fetcher: Fetcher): Document {

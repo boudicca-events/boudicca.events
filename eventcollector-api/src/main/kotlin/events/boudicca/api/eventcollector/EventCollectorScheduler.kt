@@ -3,6 +3,7 @@ package events.boudicca.api.eventcollector
 import events.boudicca.SemanticKeys
 import events.boudicca.api.eventcollector.collections.Collections
 import events.boudicca.openapi.ApiClient
+import events.boudicca.openapi.ApiException
 import events.boudicca.openapi.api.EventIngestionResourceApi
 import org.slf4j.LoggerFactory
 import java.time.Duration
@@ -64,13 +65,17 @@ class EventCollectorScheduler(
             val events = eventCollector.collectEvents()
             Collections.getCurrentSingleCollection()!!.totalEventsCollected = events.size
             if (events.isEmpty()) {
-                LOG.warn("event collector ${eventCollector.getName()} collected 0 events")
+                LOG.warn("collector collected 0 events!")
             }
-            for (event in events) {
-                ingestionApi.ingestAddPost(mapToApiEvent(postProcess(event, eventCollector.getName())))
+            try {
+                for (event in events) {
+                    ingestionApi.ingestAddPost(mapToApiEvent(postProcess(event, eventCollector.getName())))
+                }
+            } catch (e: ApiException) {
+                LOG.error("could not ingest events, is the core available?", e)
             }
         } catch (e: Exception) {
-            LOG.error("event collector ${eventCollector.getName()} threw exception while collecting", e)
+            LOG.error("collector threw exception while collecting", e)
         } finally {
             Collections.endSingleCollection()
         }

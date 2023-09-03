@@ -40,6 +40,7 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
         setupIndex()
         setupSingleCollection()
         setupFullCollection()
+        setupNoFavicon()
     }
 
     private fun setupIndex() {
@@ -55,6 +56,7 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
                         "fullCollection",
                         mapFullCollectionToFrontEnd(fullCollection)
                     )
+                    context.put("log", formatLogLines(fullCollection.logLines))
                 }
 
                 context.put("fullCollections",
@@ -125,6 +127,12 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
         }
     }
 
+    private fun setupNoFavicon() {
+        server.createContext("/favicon.ico"){
+            send404(it)
+        }
+    }
+
     private fun mapFullCollectionToFrontEnd(fullCollection: FullCollection): Map<String, *> {
         val singleCollections = fullCollection.singleCollections.associateBy { it.collector!!.getName() }
 
@@ -159,7 +167,7 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
                 "name" to it.collector!!.getName(),
                 "duration" to formatDuration(it.startTime, it.endTime),
                 "startEndTime" to formatStartEndTime(it.startTime, it.endTime),
-                "errorsCount" to it.logLines.filter { it.first }.count().toString(),
+                "errorsCount" to it.logLines.count { it.first }.toString(),
                 "totalEventsCollected" to (it.totalEventsCollected ?: "-").toString(),
             )
         } else {

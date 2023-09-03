@@ -108,6 +108,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // TODO: could use `Proxy`
   const params = new URLSearchParams(window.location.search);
+  // TODO does not work for flags-checkboxes
   const hydrateFormValues = () => {
     params.forEach((x, y) => (document.getElementById(y).value = x));
   };

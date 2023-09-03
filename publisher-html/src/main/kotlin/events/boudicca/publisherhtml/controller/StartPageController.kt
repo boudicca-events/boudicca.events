@@ -37,6 +37,7 @@ class StartPageController @Autowired constructor(private val eventService: Event
         @RequestParam("category", required = false) category: String?,
         @RequestParam("locationName", required = false) locationName: String?,
         @RequestParam("locationCity", required = false) locationCity: String?,
+        @RequestParam("flags", required = false) flags: List<String?>?,
     ): ModelAndView {
         val data: MutableMap<String, Any> = HashMap()
         data["title"] = PAGE_TITLE
@@ -55,7 +56,7 @@ class StartPageController @Autowired constructor(private val eventService: Event
         }
         data["events"] = eventService.search(
             SearchDTO().name(name).fromDate(fromDateParsed).toDate(toDateParsed).category(category).locationName(locationName)
-                .locationCity(locationCity).offset(0)
+                .locationCity(locationCity).offset(0).flags(flags)
         )
         data["filters"] = eventService.filters()
         return ModelAndView("index", data)

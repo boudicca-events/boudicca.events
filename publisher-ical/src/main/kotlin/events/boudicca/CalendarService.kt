@@ -35,6 +35,7 @@ class CalendarService {
             calendar.components.add(calendarEvent)
         }
 
+        //TODO oh look at this nice race condition here
         val file = File("calendar.ics")
         file.writeText(calendar.toString())
 

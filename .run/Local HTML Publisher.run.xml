@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Local HTML Publisher" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <module name="boudicca.publisher-html.main" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="events.boudicca.publisherhtml.PublisherHtmlApplicationKt" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

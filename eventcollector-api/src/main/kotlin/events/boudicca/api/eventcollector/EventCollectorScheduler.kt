@@ -61,17 +61,13 @@ class EventCollectorScheduler(
     private fun collect(eventCollector: EventCollector) {
         Collections.startSingleCollection(eventCollector)
         try {
-            val startTime = System.currentTimeMillis()
             val events = eventCollector.collectEvents()
-            val collectTime = System.currentTimeMillis()
             for (event in events) {
                 ingestionApi.ingestAddPost(mapToApiEvent(postProcess(event, eventCollector.getName())))
             }
-            val ingestTime = System.currentTimeMillis()
-            Collections.endSingleCollection()
-            LOG.info("collected ${events.size} events for event collector ${eventCollector.getName()}, collecting took ${(collectTime - startTime) / 1000}s, ingesting took ${(ingestTime - collectTime) / 1000}s")
         } catch (e: Exception) {
             LOG.error("event collector ${eventCollector.getName()} threw exception while collecting", e)
+        } finally {
             Collections.endSingleCollection()
         }
     }

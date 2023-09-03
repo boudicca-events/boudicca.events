@@ -11,4 +11,7 @@
 
 #singleCollectionsTable($fullCollection.singleCollections)
 
+<h3>Log lines</h3>
+<pre>$log</pre>
+
 #footer()

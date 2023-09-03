@@ -55,13 +55,14 @@ object Collections {
         currentSingleCollections.set(null)
     }
 
-    fun startHttpCall(url: String) {
+    fun startHttpCall(url: String, postData: String? = null) {
         if (currentHttpCalls.get() != null) {
             LOG.error("a current http call is already set, this seems like a bug")
         }
         val httpCall = HttpCall()
         httpCall.startTime = System.currentTimeMillis()
         httpCall.url = url
+        httpCall.postData = postData
         currentSingleCollections.get()?.httpCalls?.add(httpCall)
         currentHttpCalls.set(httpCall)
     }

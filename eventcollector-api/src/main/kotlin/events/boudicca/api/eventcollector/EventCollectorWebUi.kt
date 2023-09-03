@@ -4,6 +4,7 @@ import com.sun.net.httpserver.HttpExchange
 import com.sun.net.httpserver.HttpServer
 import events.boudicca.api.eventcollector.collections.Collections
 import events.boudicca.api.eventcollector.collections.FullCollection
+import events.boudicca.api.eventcollector.collections.HttpCall
 import events.boudicca.api.eventcollector.collections.SingleCollection
 import org.apache.velocity.VelocityContext
 import org.apache.velocity.app.VelocityEngine
@@ -78,21 +79,14 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
 
                         context.put("singleCollection", mapSingleCollectionToFrontend(singleCollection))
                         context.put("httpCalls",
+
                             singleCollection.httpCalls
                                 .sortedBy { it.startTime }
                                 .map {
-                                    mapOf(
-                                        "url" to it.url,
-                                        "responseCode" to if (it.responseCode == 0) "-" else it.responseCode,
-                                        "duration" to formatDuration(it.startTime, it.endTime),
-                                        "startEndTime" to formatStartEndTime(it.startTime, it.endTime),
-                                    )
+                                    mapHttpCallToFrontend(it)
                                 }
                         )
-                        context.put(
-                            "log",
-                            EscapeTool().html(singleCollection.logLines.map { String(it.second) }.joinToString("\n"))
-                        )
+                        context.put("log", formatLogLines(singleCollection.logLines))
 
                         sendResponse(it, "/html/singleCollection.html.vm", context)
                         return@createContext
@@ -117,6 +111,8 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
 
                         context.put("fullCollection", mapFullCollectionToFrontEnd(fullCollection))
 
+                        context.put("log", formatLogLines(fullCollection.logLines))
+
                         sendResponse(it, "/html/fullCollection.html.vm", context)
                         return@createContext
                     }
@@ -138,6 +134,7 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
             "startEndTime" to formatStartEndTime(fullCollection.startTime, fullCollection.endTime),
             "errorsCount" to fullCollection.singleCollections
                 .flatMap { it.logLines }
+                .union(fullCollection.logLines)
                 .count { it.first }.toString(),
             "singleCollections" to
                     scheduler.getCollectors()
@@ -160,7 +157,7 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
                 "name" to it.collector!!.getName(),
                 "duration" to formatDuration(it.startTime, it.endTime),
                 "startEndTime" to formatStartEndTime(it.startTime, it.endTime),
-                "errorsCount" to it.logLines.filter { it.first }.count().toString(),
+                "errorsCount" to it.logLines.filter { it.first }.count().toString()
             )
         } else {
             return mapOf(
@@ -171,6 +168,16 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
                 "errorsCount" to "-",
             )
         }
+    }
+
+    private fun mapHttpCallToFrontend(it: HttpCall): Map<String, String> {
+        return mapOf(
+            "url" to it.url!!,
+            "responseCode" to if (it.responseCode == 0) "-" else it.responseCode.toString(),
+            "duration" to formatDuration(it.startTime, it.endTime),
+            "startEndTime" to formatStartEndTime(it.startTime, it.endTime),
+            "postData" to (it.postData ?: ""),
+        )
     }
 
     private fun findSingleCollection(id: UUID): SingleCollection? {
@@ -236,6 +243,9 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
         }
     }
 
+    private fun formatLogLines(logLines: List<Pair<Boolean, ByteArray>>): String? =
+        EscapeTool().html(logLines.map { String(it.second) }.joinToString("\n"))
+
     private fun setupStaticFolder(prefix: String) {
         server.createContext(prefix) {
             val normalizedUri = it.requestURI.normalize().toString()
@@ -255,7 +265,6 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
     }
 
     private fun sendResponse(it: HttpExchange, templateName: String, context: VelocityContext) {
-
         val response = try {
             val template = ve.getTemplate(templateName)
             val writer = StringWriter()
@@ -271,13 +280,13 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
     }
 
     private fun sendString(it: HttpExchange, responseCode: Int, contentType: String, content: String) {
-        try{
+        try {
             val bytes = content.toByteArray(Charsets.UTF_8)
             it.responseHeaders.add("Content-Type", contentType)
             it.sendResponseHeaders(responseCode, bytes.size.toLong())
             it.responseBody.write(bytes)
             it.close()
-        }catch (e: IOException){
+        } catch (e: IOException) {
             LOG.debug("error sending response", e)
         }
     }

@@ -18,6 +18,7 @@
         <td>Response Code</td>
         <td>Duration</td>
         <td>Start/End Time</td>
+        <td>Post Data (if it is a post request)</td>
     </tr>
     </thead>
     <tbody>
@@ -27,6 +28,7 @@
             <td>$httpCall.responseCode</td>
             <td>$httpCall.duration</td>
             <td>$httpCall.startEndTime</td>
+            <td>$httpCall.postData</td>
         </tr>
         #end
     </tbody>

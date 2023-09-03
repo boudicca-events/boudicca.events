@@ -13,6 +13,17 @@ class CollectionsFilter(private val encoder: Encoder<ILoggingEvent>) : Filter<IL
         if (currentSingleCollection != null) {
             currentSingleCollection.logLines.add(Pair(event.level.isGreaterOrEqual(Level.WARN), encoder.encode(event)))
             return FilterReply.DENY
+        } else {
+            val currentFullCollection = Collections.getCurrentFullCollection()
+            if (currentFullCollection != null) {
+                currentFullCollection.logLines.add(
+                    Pair(
+                        event.level.isGreaterOrEqual(Level.WARN),
+                        encoder.encode(event)
+                    )
+                )
+                return FilterReply.DENY
+            }
         }
         return FilterReply.NEUTRAL
     }

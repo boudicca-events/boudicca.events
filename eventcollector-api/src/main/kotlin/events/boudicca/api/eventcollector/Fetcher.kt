@@ -23,6 +23,7 @@ class Fetcher(waitTimeInMs: Long = DEFAULT_MIN_WAIT_TIME_IN_MS) {
             .header("User-Agent", "boudicca.events collector")
             .build()
 
+        Collections.startHttpCall(url)
         return doRequest(request, url)
     }
 
@@ -33,6 +34,7 @@ class Fetcher(waitTimeInMs: Long = DEFAULT_MIN_WAIT_TIME_IN_MS) {
             .header("Content-Type", contentType)
             .build()
 
+        Collections.startHttpCall(url, String(content)) //TODO what if this is not string content?
         return doRequest(request, url)
     }
 
@@ -41,7 +43,6 @@ class Fetcher(waitTimeInMs: Long = DEFAULT_MIN_WAIT_TIME_IN_MS) {
         if (waitTime > 0) {
             Thread.sleep(waitTime)
         }
-        Collections.startHttpCall(url)
         val response = newHttpClient.send(request, BodyHandlers.ofString())
         if (response.statusCode() != 200) {
             Collections.endHttpCall(response.statusCode())

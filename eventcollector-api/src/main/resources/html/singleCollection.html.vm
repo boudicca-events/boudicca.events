@@ -9,6 +9,7 @@
 <p>Duration: $singleCollection.duration</p>
 <p>Start/End Time: $singleCollection.startEndTime</p>
 <p>Errors: $singleCollection.errorsCount</p>
+<p>Total Events Collected: $singleCollection.totalEventsCollected</p>
 
 <h3>Http Calls</h3>
 <table>

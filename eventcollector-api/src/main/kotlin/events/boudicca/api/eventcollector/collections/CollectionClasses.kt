@@ -29,10 +29,11 @@ data class SingleCollection(
     var startTime: Long,
     var endTime: Long,
     var collector: EventCollector?,
+    var totalEventsCollected: Int?,
     val httpCalls: MutableList<HttpCall>,
     val logLines: MutableList<Pair<Boolean, ByteArray>>,
 ) {
-    constructor() : this(UUID.randomUUID(), 0, 0, null, mutableListOf(), mutableListOf())
+    constructor() : this(UUID.randomUUID(), 0, 0, null, null, mutableListOf(), mutableListOf())
 
     override fun toString(): String {
         return "SingleCollection(\nid=$id, \nstartTime=$startTime, \nendTime=$endTime, \ncollector=$collector, \nhttpCalls=$httpCalls, \nlogLines=${

@@ -62,6 +62,7 @@ class EventCollectorScheduler(
         Collections.startSingleCollection(eventCollector)
         try {
             val events = eventCollector.collectEvents()
+            Collections.getCurrentSingleCollection()!!.totalEventsCollected = events.size
             for (event in events) {
                 ingestionApi.ingestAddPost(mapToApiEvent(postProcess(event, eventCollector.getName())))
             }

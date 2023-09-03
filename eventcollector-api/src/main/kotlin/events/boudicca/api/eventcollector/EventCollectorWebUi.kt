@@ -136,6 +136,8 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
                 .flatMap { it.logLines }
                 .union(fullCollection.logLines)
                 .count { it.first }.toString(),
+            "totalEventsCollected" to fullCollection.singleCollections
+                .sumOf { it.totalEventsCollected ?: 0 },
             "singleCollections" to
                     scheduler.getCollectors()
                         .map { it.getName() }
@@ -157,7 +159,8 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
                 "name" to it.collector!!.getName(),
                 "duration" to formatDuration(it.startTime, it.endTime),
                 "startEndTime" to formatStartEndTime(it.startTime, it.endTime),
-                "errorsCount" to it.logLines.filter { it.first }.count().toString()
+                "errorsCount" to it.logLines.filter { it.first }.count().toString(),
+                "totalEventsCollected" to (it.totalEventsCollected ?: "-").toString(),
             )
         } else {
             return mapOf(
@@ -166,6 +169,7 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
                 "duration" to "-",
                 "startEndTime" to "-",
                 "errorsCount" to "-",
+                "totalEventsCollected" to "-",
             )
         }
     }

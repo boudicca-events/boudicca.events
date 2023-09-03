@@ -19,6 +19,11 @@ public class SemanticKeys {
     public static final String LOCATION_COORDINATES = "location.coordinates";
     public static final String LOCATION_CITY = "location.city";
 
+    // accessibility properties
+    public static final String ACCESSIBILITY_ACCESSIBLEENTRY = "accessibility.accessibleEntry";
+    public static final String ACCESSIBILITY_ACCESSIBLESEATS = "accessibility.accessibleSeats";
+    public static final String ACCESSIBILITY_ACCESSIBLETOILETS = "accessibility.accessibleToilets";
+
     // concert properties
     public static final String CONCERT_GENRE = "concert.genre";
     public static final String CONCERT_BANDLIST = "concert.bandlist";

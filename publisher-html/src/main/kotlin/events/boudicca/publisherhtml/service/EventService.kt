@@ -14,14 +14,8 @@ import java.time.format.DateTimeFormatter
 
 @Service
 class EventService {
-    private val searchApi: SearchResourceApi
+    private val searchApi: SearchResourceApi = createSearchApi()
     private val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy 'um' HH:mm 'Uhr'")
-
-    init {
-        val apiClient = ApiClient()
-        apiClient.updateBaseUri(autoDetectUrl())
-        searchApi = SearchResourceApi(apiClient)
-    }
 
     fun getAllEvents(): List<Map<String, String?>> {
         return mapEvents(searchApi.searchPost(SearchDTO()))
@@ -74,6 +68,12 @@ class EventService {
 
     private fun formatDate(startDate: OffsetDateTime): String {
         return formatter.format(startDate);
+    }
+
+    private fun createSearchApi(): SearchResourceApi {
+        val apiClient = ApiClient()
+        apiClient.updateBaseUri(autoDetectUrl())
+        return SearchResourceApi(apiClient)
     }
 
     private fun autoDetectUrl(): String {

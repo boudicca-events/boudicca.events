@@ -56,6 +56,9 @@ class PosthofCollector : TwoStepEventCollector<Element>("posthof") {
         data[SemanticKeys.LOCATION_NAME] = "Posthof"
         data[SemanticKeys.LOCATION_URL] = "https://www.posthof.at"
         data[SemanticKeys.LOCATION_CITY] = "Linz"
+        data[SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY] = "true"
+        data[SemanticKeys.ACCESSIBILITY_ACCESSIBLESEATS] = "true"
+        data[SemanticKeys.ACCESSIBILITY_ACCESSIBLETOILETS] = "true"
 
         return Event(name, startDate.toOffsetDateTime(), data)
     }

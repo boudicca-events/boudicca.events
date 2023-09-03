@@ -23,6 +23,7 @@ class SearchRestController @Autowired constructor(private val eventService: Even
         @RequestParam("category", required = false) category: String?,
         @RequestParam("locationName", required = false) locationName: String?,
         @RequestParam("locationCity", required = false) locationCity: String?,
+        @RequestParam("flags", required = false) flags: List<String?>?,
     ): ModelAndView {
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
@@ -39,7 +40,7 @@ class SearchRestController @Autowired constructor(private val eventService: Even
 
         val events = eventService.search(
             SearchDTO().name(name).fromDate(fromDateParsed).toDate(toDateParsed).category(category)
-                .locationName(locationName).locationCity(locationCity).offset(offset ?: 0)
+                .locationName(locationName).locationCity(locationCity).offset(offset ?: 0).flags(flags)
         )
         return ModelAndView("events/eventsRaw", mapOf("events" to events))
     }

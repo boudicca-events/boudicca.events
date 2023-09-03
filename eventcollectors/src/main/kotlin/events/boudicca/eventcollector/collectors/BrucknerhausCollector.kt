@@ -58,6 +58,9 @@ class BrucknerhausCollector : TwoStepEventCollector<Element>("brucknerhaus") {
         data[SemanticKeys.LOCATION_NAME] = "Brucknerhaus" //TODO not all events are there...
         data[SemanticKeys.LOCATION_URL] = "https://www.brucknerhaus.at/"
         data[SemanticKeys.LOCATION_CITY] = "Linz"
+        data[SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY] = "true"
+        data[SemanticKeys.ACCESSIBILITY_ACCESSIBLESEATS] = "true"
+        data[SemanticKeys.ACCESSIBILITY_ACCESSIBLETOILETS] = "true"
 
         return Event(name, startDate, data)
     }

@@ -3,12 +3,13 @@ package events.boudicca.search.model
 import java.time.OffsetDateTime
 
 data class SearchDTO(
-    val name: String?,
-    val fromDate: OffsetDateTime?,
-    val toDate: OffsetDateTime?,
+    val name: String? = null,
+    val fromDate: OffsetDateTime? = null,
+    val toDate: OffsetDateTime? =null,
     val category: String? = null,
     val locationName: String? = null,
     val locationCity: String? = null,
     val offset: Int? = null,
     val size: Int? = null,
+    val flags: List<String?>? = null,
 )

@@ -16,14 +16,14 @@
         box-shadow: 1px 0px 10px 11px #87878724;
     }
 
-     @media only screen and (max-width: 700px) { 
+    @media only screen and (max-width: 700px) {
         .drawer {
             width: 100vw;
             border: none;
             box-shadow: none;
             min-width: 0;
         }
-     }
+    }
 
     .drawer-open {
         visibility: visible;
@@ -64,8 +64,8 @@
     <div class="drawer-header">
         <h2>Filtersuche</h2>
         <button type="button" id="closeDrawerButton" title="Filtersuche schließen">
-            <svg title="Schließen Logo" height="56px" width="56px" viewBox="0 0 512 512" >
-                <use xlink:href="#close"></use>  
+            <svg title="Schließen Logo" height="56px" width="56px" viewBox="0 0 512 512">
+                <use xlink:href="#close"></use>
             </svg>
         </button>
     </div>
@@ -92,12 +92,12 @@
             <div class="header-date-search">
                 <div class="filter-input-wrapper">
                     <label for="fromDate" class="filter-label">Von</label>
-                    <input id="fromDate" name="fromDate" type="date" class="date-input" />
+                    <input id="fromDate" name="fromDate" type="date" class="date-input"/>
                 </div>
 
                 <div class="filter-input-wrapper">
                     <label for="toDate" class="filter-label">Bis</label>
-                    <input id="toDate" name="toDate" type="date" class="date-input" />
+                    <input id="toDate" name="toDate" type="date" class="date-input"/>
                 </div>
             </div>
         </div>
@@ -119,12 +119,35 @@
 
                 <div class="filter-input-wrapper">
                     <label for="locationCity" class="filter-label">Stadt</label>
-                    <select name="locationCity" id="locationCity" >
+                    <select name="locationCity" id="locationCity">
                         <option value="">Beliebig</option>
                         {{#each filters.locationCities as |locationCity|}}
                             <option value="{{locationCity.first}}">{{locationCity.second}}</option>
                         {{/each}}
                     </select>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend><strong>Accessibility</strong></legend>
+        <div class="header-search-filter">
+            <div class="header-date-search">
+                <div class="filter-input-wrapper">
+                    <label for="accessibleEntry" class="filter-label">Barrierefreier Zugang
+                        <input type="checkbox" id="accessibleEntry" value="accessibility.accessibleEntry" name="flags">
+                    </label>
+                </div>
+                <div class="filter-input-wrapper">
+                    <label for="accessibleSeats" class="filter-label">Rollstuhlplatz
+                        <input type="checkbox" id="accessibleSeats" value="accessibility.accessibleSeats" name="flags">
+                    </label>
+                </div>
+                <div class="filter-input-wrapper">
+                    <label for="accessibleToilets" class="filter-label">Barrierefreie Toiletten
+                        <input type="checkbox" id="accessibleToilets" value="accessibility.accessibleToilets" name="flags">
+                    </label>
                 </div>
             </div>
         </div>

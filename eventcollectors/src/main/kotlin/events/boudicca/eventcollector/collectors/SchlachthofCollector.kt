@@ -37,6 +37,9 @@ class SchlachthofCollector : TwoStepEventCollector<Element>("schlachthof") {
         data[SemanticKeys.LOCATION_NAME] = "Alter Schlachthof"
         data[SemanticKeys.LOCATION_URL] = "https://www.schlachthofwels.at"
         data[SemanticKeys.LOCATION_CITY] = "Wels"
+        data[SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY] = "true"
+        data[SemanticKeys.ACCESSIBILITY_ACCESSIBLESEATS] = "true"
+        data[SemanticKeys.ACCESSIBILITY_ACCESSIBLETOILETS] = "true"
 
         return Event(name, startDate, data)
     }

@@ -47,6 +47,9 @@ class SpinnereiCollector : TwoStepEventCollector<Pair<String, Document>>("spinne
         data[SemanticKeys.LOCATION_NAME] = "Spinnerei"
         data[SemanticKeys.LOCATION_URL] = "https://spinnerei.kulturpark.at/"
         data[SemanticKeys.LOCATION_CITY] = "Traun"
+        data[SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY] = "true"
+        data[SemanticKeys.ACCESSIBILITY_ACCESSIBLESEATS] = "true"
+        data[SemanticKeys.ACCESSIBILITY_ACCESSIBLETOILETS] = "true"
 
         return Event(name, startDate, data)
     }

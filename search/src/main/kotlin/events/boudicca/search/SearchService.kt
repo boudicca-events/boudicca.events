@@ -68,6 +68,9 @@ class SearchService @Inject constructor(
         if (searchDTO.toDate != null) {
             queryParts.add("before " + formatDate(searchDTO.toDate))
         }
+        for (flag in (searchDTO.flags ?: emptyList()).filter { !it.isNullOrBlank() }) {
+            queryParts.add(escape(flag!!) + " equals \"true\"")
+        }
         return queryParts.joinToString(" and ")
     }
 

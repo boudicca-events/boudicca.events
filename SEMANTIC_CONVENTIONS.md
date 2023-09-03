@@ -21,6 +21,7 @@ We use certain data types for the properties we expect.
 * `coordinates`: ???? TBD
 * `list<?>`: A list of elements, the `?` describes the type of the elements in the list
 * `enum<?>`: Has to be one of the specified distinct values
+* `boolean`: The text "true" or "false"
 
 ### General Properties
 
@@ -56,7 +57,11 @@ We use certain data types for the properties we expect.
 
 ### Accessibility Properties
 
-???? TBD
+| Key                             | Meaning                                                    | Format  |
+|---------------------------------|------------------------------------------------------------|---------|
+| accessibility.accessibleEntry   | If the entry/exit is accessible                            | boolean |
+| accessibility.accessibleSeats   | If there are wheelchair places available on the event hall | boolean |
+| accessibility.accessibleToilets | If there are accessible toilets available                  | boolean |
 
 ### Concert(/Music?) Properties
 

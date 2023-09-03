@@ -106,6 +106,9 @@ class LandestheaterLinzCollector :
             data[SemanticKeys.LOCATION_NAME] = "Musiktheater"
             data[SemanticKeys.LOCATION_URL] = "https://www.landestheater-linz.at/musiktheater"
             data[SemanticKeys.LOCATION_CITY] = "Linz"
+            data[SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY] = "true"
+            data[SemanticKeys.ACCESSIBILITY_ACCESSIBLESEATS] = "true"
+            data[SemanticKeys.ACCESSIBILITY_ACCESSIBLETOILETS] = "true"
         } else if (locationName == "Studiobühne") {
             data[SemanticKeys.LOCATION_NAME] = "Studiobühne"
             //there is no dedicated page for it, but it is in the same building, so....
@@ -115,10 +118,16 @@ class LandestheaterLinzCollector :
             data[SemanticKeys.LOCATION_NAME] = "Schauspielhaus"
             data[SemanticKeys.LOCATION_URL] = "https://www.landestheater-linz.at/schauspielhaus"
             data[SemanticKeys.LOCATION_CITY] = "Linz"
+            data[SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY] = "true"
+            data[SemanticKeys.ACCESSIBILITY_ACCESSIBLESEATS] = "true"
+            data[SemanticKeys.ACCESSIBILITY_ACCESSIBLETOILETS] = "true"
         } else if (locationName == "Kammerspiele") {
             data[SemanticKeys.LOCATION_NAME] = "Kammerspiele"
             data[SemanticKeys.LOCATION_URL] = "https://www.landestheater-linz.at/kammerspiele"
             data[SemanticKeys.LOCATION_CITY] = "Linz"
+            data[SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY] = "true"
+            data[SemanticKeys.ACCESSIBILITY_ACCESSIBLESEATS] = "true"
+            data[SemanticKeys.ACCESSIBILITY_ACCESSIBLETOILETS] = "true"
         } else if (locationName.isNotBlank()) {
             data[SemanticKeys.LOCATION_NAME] = locationName
         }

@@ -5,6 +5,7 @@ import events.boudicca.openapi.ApiClient
 import events.boudicca.openapi.api.EventPublisherResourceApi
 import events.boudicca.search.model.Event
 import io.quarkus.scheduler.Scheduled
+import java.time.Duration
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
@@ -16,13 +17,7 @@ class SynchronizationService @Inject constructor(
     private val synchEvent: javax.enterprise.event.Event<EventsUpdatedEvent>
 ) {
 
-    private val publisherApi: EventPublisherResourceApi
-
-    init {
-        val apiClient = ApiClient()
-        apiClient.updateBaseUri(autoDetectUrl())
-        publisherApi = EventPublisherResourceApi(apiClient)
-    }
+    private val publisherApi: EventPublisherResourceApi = createEventPublisherApi()
 
     @Scheduled(every = "1h")
     fun update() {
@@ -33,6 +28,8 @@ class SynchronizationService @Inject constructor(
         val events = publisherApi.eventsGet()
             //filter old events
             .filter { getEndDate(it).isAfter(OffsetDateTime.now().minusDays(1)) }
+            //filter long running events
+            .filter { getEndDate(it).toEpochSecond() - it.startDate.toEpochSecond() < Duration.ofDays(30).toSeconds() }
             .map { toSearchEvent(it) }.toSet()
         synchEvent.fire(EventsUpdatedEvent(events))
     }
@@ -51,6 +48,12 @@ class SynchronizationService @Inject constructor(
 
     private fun toSearchEvent(event: events.boudicca.openapi.model.Event): Event {
         return Event(event.name, event.startDate.toZonedDateTime(), event.data)
+    }
+
+    private fun createEventPublisherApi(): EventPublisherResourceApi {
+        val apiClient = ApiClient()
+        apiClient.updateBaseUri(autoDetectUrl())
+        return EventPublisherResourceApi(apiClient)
     }
 
     private fun autoDetectUrl(): String {

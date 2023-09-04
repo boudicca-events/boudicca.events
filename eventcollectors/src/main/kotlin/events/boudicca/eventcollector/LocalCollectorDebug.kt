@@ -17,5 +17,6 @@ fun main() {
 //        .debug(SpinnereiCollector())
 //        .debug(SchlachthofCollector())
 //        .debug(WissensturmCollector())
-        .debug(LandestheaterLinzCollector())
+//        .debug(LandestheaterLinzCollector())
+        .debug(TribueneLinzCollector())
 }

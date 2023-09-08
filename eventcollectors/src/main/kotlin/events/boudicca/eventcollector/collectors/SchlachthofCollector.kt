@@ -52,7 +52,7 @@ class SchlachthofCollector : TwoStepEventCollector<Element>("schlachthof") {
     private fun parseDate(text: String): OffsetDateTime {
         return LocalDateTime
             .parse(text.substring(6), DateTimeFormatter.ofPattern("dd.MM.uu kk:mm"))
-            .atZone(ZoneId.of("CET"))
+            .atZone(ZoneId.of("Europe/Vienna"))
             .toOffsetDateTime()
     }
 

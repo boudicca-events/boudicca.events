@@ -10,12 +10,14 @@ import events.boudicca.search.openapi.model.SearchDTO
 import events.boudicca.search.openapi.model.SearchResultDTO
 import org.springframework.stereotype.Service
 import java.time.OffsetDateTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 @Service
 class EventService {
     private val searchApi: SearchResourceApi = createSearchApi()
-    private val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy 'um' HH:mm 'Uhr'")
+    private val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy 'um' HH:mm 'Uhr'", Locale.GERMAN)
 
     fun getAllEvents(): List<Map<String, String?>> {
         return mapEvents(searchApi.searchPost(SearchDTO()))
@@ -67,7 +69,7 @@ class EventService {
     }
 
     private fun formatDate(startDate: OffsetDateTime): String {
-        return formatter.format(startDate);
+        return formatter.format(startDate.atZoneSameInstant(ZoneId.of("Europe/Vienna")))
     }
 
     private fun createSearchApi(): SearchResourceApi {

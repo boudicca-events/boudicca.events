@@ -109,7 +109,7 @@ class PlanetTTCollector : TwoStepEventCollector<Element>("planettt") {
 
         return LocalDate.parse(date, DateTimeFormatter.ofPattern("dd. MMMM uuuu", Locale.ENGLISH))
             .atTime(LocalTime.parse(time, DateTimeFormatter.ofPattern("kk:mm", Locale.ENGLISH)))
-            .atZone(ZoneId.of("CET"))
+            .atZone(ZoneId.of("Europe/Vienna"))
             .toOffsetDateTime()
     }
 

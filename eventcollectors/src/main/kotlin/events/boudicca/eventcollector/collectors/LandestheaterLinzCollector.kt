@@ -61,7 +61,7 @@ class LandestheaterLinzCollector :
     }
 
     private fun fetchList(fetcher: Fetcher): Document {
-        val nowDate = LocalDate.now(ZoneId.of("CET"))
+        val nowDate = LocalDate.now(ZoneId.of("Europe/Vienna"))
         val toDate = nowDate.plusMonths(6)
         val now = nowDate.format(DateTimeFormatter.ofPattern("dd.MM.uuuu"))
         val to = toDate.format(DateTimeFormatter.ofPattern("dd.MM.uuuu"))
@@ -141,14 +141,14 @@ class LandestheaterLinzCollector :
             val startTime = LocalTime.parse(startTimeText, DateTimeFormatter.ofPattern("kk:mm"))
             val endTime = LocalTime.parse(endTimeText, DateTimeFormatter.ofPattern("kk:mm"))
             return Pair(
-                date.atTime(startTime).atZone(ZoneId.of("CET")).toOffsetDateTime(),
-                date.atTime(endTime).atZone(ZoneId.of("CET")).toOffsetDateTime(),
+                date.atTime(startTime).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime(),
+                date.atTime(endTime).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime(),
             )
         } else {
             val startTimeText = timeText.substring(0, 5)
             val startTime = LocalTime.parse(startTimeText, DateTimeFormatter.ofPattern("kk:mm"))
             return Pair(
-                date.atTime(startTime).atZone(ZoneId.of("CET")).toOffsetDateTime(),
+                date.atTime(startTime).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime(),
                 null
             )
         }

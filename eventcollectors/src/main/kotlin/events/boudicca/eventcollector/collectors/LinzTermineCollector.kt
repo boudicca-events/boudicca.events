@@ -104,7 +104,7 @@ class LinzTermineCollector : EventCollector {
     private fun parseEvents(): List<Event> {
         val formatter = DateTimeFormatter.ofPattern("uuuu-MM-dd kk:mm:ss")
 
-        var date = LocalDate.now(ZoneId.of("CET"))
+        var date = LocalDate.now(ZoneId.of("Europe/Vienna"))
         val links = mutableListOf<String>()
         for (i in 1..(4 * 6)) {
             links.add(
@@ -130,8 +130,8 @@ class LinzTermineCollector : EventCollector {
                         it.select("tags").first()?.child(0)?.text(),
                         it.select("date").map {
                             Pair(
-                                LocalDateTime.parse(it.attr("dFrom"), formatter).atZone(ZoneId.of("CET")),
-                                LocalDateTime.parse(it.attr("dTo"), formatter).atZone(ZoneId.of("CET")),
+                                LocalDateTime.parse(it.attr("dFrom"), formatter).atZone(ZoneId.of("Europe/Vienna")),
+                                LocalDateTime.parse(it.attr("dTo"), formatter).atZone(ZoneId.of("Europe/Vienna")),
                             )
                         },
                         it.attr("freeofcharge") == "1",

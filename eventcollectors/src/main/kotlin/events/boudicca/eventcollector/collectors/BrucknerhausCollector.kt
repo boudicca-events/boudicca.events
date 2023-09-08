@@ -80,7 +80,7 @@ class BrucknerhausCollector : TwoStepEventCollector<Element>("brucknerhaus") {
         )
         val localTime = LocalTime.parse(time, DateTimeFormatter.ofPattern("kk:mm"))
 
-        return localDate.atTime(localTime).atZone(ZoneId.of("CET")).toOffsetDateTime()
+        return localDate.atTime(localTime).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
     }
 
     private fun mapMonth(month: String): String {

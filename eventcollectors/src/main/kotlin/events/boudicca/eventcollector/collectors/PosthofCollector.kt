@@ -45,7 +45,7 @@ class PosthofCollector : TwoStepEventCollector<Element>("posthof") {
         val startDate = LocalDateTime.parse(
             event.select("span.news-list-date").text().substring(4),
             DateTimeFormatter.ofPattern("dd.MM.uuuu // kk:mm")
-        ).atZone(ZoneId.of("CET"))
+        ).atZone(ZoneId.of("Europe/Vienna"))
 
         mapType(data, event.select("span.news-list-category").text())
         data[SemanticKeys.URL] = "https://www.posthof.at/" + event.select("div.h3>a").attr("href")

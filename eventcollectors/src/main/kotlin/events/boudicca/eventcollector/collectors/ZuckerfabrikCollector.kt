@@ -73,10 +73,10 @@ class ZuckerfabrikCollector : TwoStepEventCollector<Pair<String, Document>>("zuc
             endTime = LocalTime.parse(timeSplit[1], timeFormatter)
         }
         startTime = LocalTime.parse(startTimeString, timeFormatter)
-        val startDate = date.atTime(startTime).atZone(ZoneId.of("CET")).toOffsetDateTime()
+        val startDate = date.atTime(startTime).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
         if (endTime != null) {
             data[SemanticKeys.ENDDATE] =
-                date.atTime(startTime).atZone(ZoneId.of("CET")).toOffsetDateTime().toString()
+                date.atTime(startTime).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime().toString()
         }
         return startDate
     }

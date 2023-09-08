@@ -83,28 +83,28 @@ class OOESeniorenbundCollector : TwoStepEventCollector<Pair<Document, String>>("
         if (dateFromTillMatcher.matches()) {
             val localDate = LocalDate.parse(dateFromTillMatcher.group(1), dateFormatter)
             return Pair(
-                localDate.atTime(LocalTime.parse(dateFromTillMatcher.group(2), timeFormatter)).atZone(ZoneId.of("CET")),
-                localDate.atTime(LocalTime.parse(dateFromTillMatcher.group(3), timeFormatter)).atZone(ZoneId.of("CET"))
+                localDate.atTime(LocalTime.parse(dateFromTillMatcher.group(2), timeFormatter)).atZone(ZoneId.of("Europe/Vienna")),
+                localDate.atTime(LocalTime.parse(dateFromTillMatcher.group(3), timeFormatter)).atZone(ZoneId.of("Europe/Vienna"))
             )
         } else if (dateFromDateTillMatcher.matches()) {
             val startLocalDate = LocalDate.parse(dateFromDateTillMatcher.group(1), dateFormatter)
             val endLocalDate = LocalDate.parse(dateFromDateTillMatcher.group(3), dateFormatter)
             return Pair(
                 startLocalDate.atTime(LocalTime.parse(dateFromDateTillMatcher.group(2), timeFormatter))
-                    .atZone(ZoneId.of("CET")),
+                    .atZone(ZoneId.of("Europe/Vienna")),
                 endLocalDate.atTime(LocalTime.parse(dateFromDateTillMatcher.group(4), timeFormatter))
-                    .atZone(ZoneId.of("CET"))
+                    .atZone(ZoneId.of("Europe/Vienna"))
             )
         } else if (dateFromDateTillWithoutTimeMatcher.matches()) {
             val startLocalDate = LocalDate.parse(dateFromDateTillWithoutTimeMatcher.group(1), dateFormatter)
             val endLocalDate = LocalDate.parse(dateFromDateTillWithoutTimeMatcher.group(2), dateFormatter)
             return Pair(
-                startLocalDate.atTime(0, 0, 0).atZone(ZoneId.of("CET")),
-                endLocalDate.atTime(0, 0, 0).atZone(ZoneId.of("CET"))
+                startLocalDate.atTime(0, 0, 0).atZone(ZoneId.of("Europe/Vienna")),
+                endLocalDate.atTime(0, 0, 0).atZone(ZoneId.of("Europe/Vienna"))
             )
         } else {
             return Pair(
-                LocalDate.parse(dateString, dateFormatter).atTime(0, 0, 0).atZone(ZoneId.of("CET")),
+                LocalDate.parse(dateString, dateFormatter).atTime(0, 0, 0).atZone(ZoneId.of("Europe/Vienna")),
                 null
             )
         }

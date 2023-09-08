@@ -68,7 +68,7 @@ class SpinnereiCollector : TwoStepEventCollector<Pair<String, Document>>("spinne
 
         val date = LocalDate.parse(split[1], DateTimeFormatter.ofPattern("dd.MM.uu"))
         val time = LocalTime.parse(split[2], DateTimeFormatter.ofPattern("kk:mm"))
-        return date.atTime(time).atZone(ZoneId.of("CET")).toOffsetDateTime()
+        return date.atTime(time).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
     }
 
 }

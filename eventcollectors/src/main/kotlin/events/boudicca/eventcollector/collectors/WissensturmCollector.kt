@@ -18,7 +18,7 @@ class WissensturmCollector : TwoStepEventCollector<Pair<String, Document>>("wiss
         val fetcher = Fetcher(500)
 
         val eventUrls = mutableListOf<String>()
-        var date = LocalDate.now(ZoneId.of("CET"))
+        var date = LocalDate.now(ZoneId.of("Europe/Vienna"))
 
         //only collect 6 months for now
         for (i in 1..6) {
@@ -88,10 +88,10 @@ class WissensturmCollector : TwoStepEventCollector<Pair<String, Document>>("wiss
 
                     Triple(
                         localDate.atTime(localStartTime)
-                            .atZone(ZoneId.of("CET"))
+                            .atZone(ZoneId.of("Europe/Vienna"))
                             .toOffsetDateTime(),
                         localDate.atTime(localEndTime)
-                            .atZone(ZoneId.of("CET"))
+                            .atZone(ZoneId.of("Europe/Vienna"))
                             .toOffsetDateTime(),
                         it.child(it.childrenSize() - 1).text()
                     )

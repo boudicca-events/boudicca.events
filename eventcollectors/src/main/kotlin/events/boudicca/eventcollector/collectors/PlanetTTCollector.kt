@@ -10,26 +10,47 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import org.slf4j.LoggerFactory
 import java.io.StringReader
-import java.time.*
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.OffsetDateTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
+import java.util.regex.Pattern
 
 class PlanetTTCollector : TwoStepEventCollector<Element>("planettt") {
 
     private val LOG = LoggerFactory.getLogger(this::class.java)
     private val fetcher = Fetcher()
+    private var modalNonce: String? = null
 
     override fun getAllUnparsedEvents(): List<Element> {
+        val nonces = fetchNonces()
+        modalNonce = nonces.second
         val response = fetcher.fetchUrlPost(
             "https://planet.tt/wp-admin/admin-ajax.php",
             "application/x-www-form-urlencoded; charset=UTF-8",
-            "action=pl_events_list&_ajax_nonce=7b57a6bf68&start=0&length=200&search=&location=&eventid=-1".toByteArray(
+            "action=pl_events_list&_ajax_nonce=${nonces.first}&start=0&length=200&search=&location=&eventid=-1".toByteArray(
                 Charsets.UTF_8
             )
         )
         val jsonResponse = Parser.default().parse(StringReader(response)) as JsonObject
         val events = Jsoup.parse(jsonResponse.obj("data")!!.string("events")!!)
         return events.select("div.pl-card")
+    }
+
+    private fun fetchNonces(): Pair<String, String> {
+        val mainSite = fetcher.fetchUrl("https://planet.tt/")
+        val javascript = Jsoup.parse(mainSite).select("script#em-events-script-js-extra").html()
+        val listPattern = Pattern.compile(".*\"list_nonce\":\"([\\w\\d]+)\".*")
+        val listMatcher = listPattern.matcher(javascript)
+        val modalPattern = Pattern.compile(".*\"modal_nonce\":\"([\\w\\d]+)\".*")
+        val modalMatcher = modalPattern.matcher(javascript)
+        if (listMatcher.find() && modalMatcher.find()) {
+            return Pair(listMatcher.group(1), modalMatcher.group(1))
+        } else {
+            throw RuntimeException("could not parse nonces from script")
+        }
     }
 
     override fun parseEvent(event: Element): Event {
@@ -39,7 +60,7 @@ class PlanetTTCollector : TwoStepEventCollector<Element>("planettt") {
         val response = fetcher.fetchUrlPost(
             "https://planet.tt/wp-admin/admin-ajax.php",
             "application/x-www-form-urlencoded; charset=UTF-8",
-            "action=pl_events_modal&_ajax_nonce=559066db04&eventid=$eventId&postid=$postId".toByteArray(
+            "action=pl_events_modal&_ajax_nonce=${modalNonce}&eventid=$eventId&postid=$postId".toByteArray(
                 Charsets.UTF_8
             )
         )
@@ -92,4 +113,7 @@ class PlanetTTCollector : TwoStepEventCollector<Element>("planettt") {
             .toOffsetDateTime()
     }
 
+    override fun cleanup() {
+        modalNonce = null
+    }
 }

@@ -1,12 +1,13 @@
-package events.boudicca
+package events.boudicca.eventdb
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import events.boudicca.model.Event
-import events.boudicca.model.EventKey
-import events.boudicca.model.InternalEventProperties
+import events.boudicca.SemanticKeys
+import events.boudicca.eventdb.model.Event
+import events.boudicca.eventdb.model.EventKey
+import events.boudicca.eventdb.model.InternalEventProperties
 import io.quarkus.runtime.ShutdownEvent
 import io.quarkus.scheduler.Scheduled
 import java.io.IOException

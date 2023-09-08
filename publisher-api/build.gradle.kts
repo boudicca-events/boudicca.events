@@ -10,7 +10,7 @@ repositories {
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
-    api(project(":core-openapi"))
+    api(project(":eventdb-openapi"))
 }
 
 java {

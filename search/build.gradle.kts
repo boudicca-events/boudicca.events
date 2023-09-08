@@ -24,7 +24,7 @@ dependencies {
     implementation("io.quarkus:quarkus-container-image-docker")
     implementation("io.quarkus:quarkus-smallrye-openapi")
     implementation("io.quarkus:quarkus-scheduler")
-    implementation(project(":core-openapi"))
+    implementation(project(":eventdb-openapi"))
     testImplementation("io.quarkus:quarkus-junit5")
     testImplementation("io.rest-assured:rest-assured")
     testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")

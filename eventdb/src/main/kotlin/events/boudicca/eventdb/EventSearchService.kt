@@ -1,8 +1,8 @@
-package events.boudicca
+package events.boudicca.eventdb
 
-import events.boudicca.model.ComplexSearchDto
-import events.boudicca.model.Event
-import events.boudicca.model.SearchDTO
+import events.boudicca.eventdb.model.ComplexSearchDto
+import events.boudicca.eventdb.model.Event
+import events.boudicca.eventdb.model.SearchDTO
 import javax.enterprise.context.ApplicationScoped
 import javax.inject.Inject
 

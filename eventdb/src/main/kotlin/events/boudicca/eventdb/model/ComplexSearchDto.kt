@@ -1,4 +1,4 @@
-package events.boudicca.model
+package events.boudicca.eventdb.model
 
 data class ComplexSearchDto(
     val anyKeyExactMatch: Set<String>? = setOf(),

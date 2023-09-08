@@ -1,4 +1,4 @@
-package events.boudicca.model
+package events.boudicca.eventdb.model
 
 import java.time.OffsetDateTime
 

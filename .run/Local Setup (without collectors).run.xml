@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Local Setup (without collectors)" type="CompoundRunConfigurationType">
-    <toRun name="Local Core" type="QuarkusRunConfigurationType" />
-    <toRun name="Local Search" type="QuarkusRunConfigurationType" />
+    <toRun name="LocalEventDB" type="QuarkusRunConfigurationType" />
+    <toRun name="LocalSearch" type="QuarkusRunConfigurationType" />
     <toRun name="Local HTML Publisher" type="SpringBootApplicationConfigurationType" />
     <method v="2" />
   </configuration>

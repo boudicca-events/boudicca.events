@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Local Core" type="QuarkusRunConfigurationType" factoryName="Quarkus">
-    <module name="boudicca.core.main" />
-    <QsGradleRunConfiguration>
+  <configuration default="false" name="LocalEventDB" type="QuarkusRunConfigurationType" factoryName="Quarkus">
+    <module name="boudicca.eventdb.main" />
+    <LocalEventDB>
       <ExternalSystemSettings>
         <option name="env">
           <map>
@@ -9,14 +9,16 @@
           </map>
         </option>
         <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$/core" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/eventdb" />
         <option name="externalSystemIdString" value="GRADLE" />
         <option name="scriptParameters" value="" />
         <option name="taskDescriptions">
           <list />
         </option>
         <option name="taskNames">
-          <list />
+          <list>
+            <option value="quarkusDev" />
+          </list>
         </option>
         <option name="vmOptions" value="" />
       </ExternalSystemSettings>
@@ -24,7 +26,7 @@
       <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
       <DebugAllEnabled>false</DebugAllEnabled>
       <RunAsTest>false</RunAsTest>
-    </QsGradleRunConfiguration>
+    </LocalEventDB>
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

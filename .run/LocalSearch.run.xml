@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Local Search" type="QuarkusRunConfigurationType" factoryName="Quarkus">
+  <configuration default="false" name="LocalSearch" type="QuarkusRunConfigurationType" factoryName="Quarkus">
     <module name="boudicca.search.main" />
-    <QsGradleRunConfiguration>
+    <LocalSearch>
       <ExternalSystemSettings>
         <option name="env">
           <map>
@@ -16,7 +16,9 @@
           <list />
         </option>
         <option name="taskNames">
-          <list />
+          <list>
+            <option value="quarkusDev" />
+          </list>
         </option>
         <option name="vmOptions" value="" />
       </ExternalSystemSettings>
@@ -24,7 +26,7 @@
       <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
       <DebugAllEnabled>false</DebugAllEnabled>
       <RunAsTest>false</RunAsTest>
-    </QsGradleRunConfiguration>
+    </LocalSearch>
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

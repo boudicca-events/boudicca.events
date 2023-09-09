@@ -1,7 +1,7 @@
 package events.boudicca.eventcollector
 
 import events.boudicca.api.eventcollector.EventCollectorDebugger
-import events.boudicca.eventcollector.collectors.*
+import events.boudicca.eventcollector.collectors.KapuCollector
 
 fun main() {
     EventCollectorDebugger()
@@ -17,5 +17,6 @@ fun main() {
 //        .debug(SpinnereiCollector())
 //        .debug(SchlachthofCollector())
 //        .debug(WissensturmCollector())
-        .debug(LandestheaterLinzCollector())
+//        .debug(LandestheaterLinzCollector())
+        .debug(KapuCollector())
 }

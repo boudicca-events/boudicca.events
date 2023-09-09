@@ -5,16 +5,26 @@ import events.boudicca.api.eventcollector.collections.Collections
 class EventCollectorDebugger {
 
     fun debug(eventCollector: EventCollector) {
-        Collections.startFullCollection()
-        Collections.startSingleCollection(eventCollector)
-        val events = eventCollector.collectEvents()
-        Collections.endSingleCollection()
-        Collections.endFullCollection()
-        events.forEach {
+        val collectedEvents = mutableListOf<Event>()
+        EventCollectorScheduler(eventSink = { collectedEvents.add(it) })
+            .startWebUi()
+            .addEventCollector(eventCollector)
+            .runOnce()
+
+        collectedEvents.forEach {
             println(it)
         }
         println(Collections.getAllPastCollections()[0])
-        println("debugger collected ${events.size} events")
+        println("debugger collected ${collectedEvents.size} events")
+        val errorCount =
+            Collections.getAllPastCollections()[0].logLines
+                .union(Collections.getAllPastCollections()[0].singleCollections.flatMap { it.logLines })
+                .count { it.first }
+        if (errorCount != 0) {
+            println("found $errorCount errors!")
+        }
+
+        readlnOrNull()
     }
 
 }

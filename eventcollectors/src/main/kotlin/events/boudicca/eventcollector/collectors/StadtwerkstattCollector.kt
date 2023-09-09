@@ -14,7 +14,7 @@ import java.time.format.DateTimeFormatter
 
 class StadtwerkstattCollector : TwoStepEventCollector<String>("stadtwerkstatt") {
 
-    private val fetcher = Fetcher(500)
+    private val fetcher = Fetcher(2000)
 
     override fun getAllUnparsedEvents(): List<String> {
         val document = Jsoup.parse(fetcher.fetchUrl("https://club.stwst.at/"))
@@ -33,8 +33,14 @@ class StadtwerkstattCollector : TwoStepEventCollector<String>("stadtwerkstatt") 
 
         val data = mutableMapOf<String, String>()
         data[SemanticKeys.URL] = event
-        data[SemanticKeys.TYPE] = eventSite.select("div.genre").text()
-        data[SemanticKeys.DESCRIPTION] = eventSite.select("div.event-text").text()
+        val type = eventSite.select("div.genre").text()
+        if (type.isNotBlank()) {
+            data[SemanticKeys.TYPE] = type
+        }
+        val description = eventSite.select("div.event-text").text()
+        if (description.isNotBlank()) {
+            data[SemanticKeys.DESCRIPTION] = description
+        }
 
         val img = eventSite.select("div.event-text img")
         if (!img.isEmpty()) {

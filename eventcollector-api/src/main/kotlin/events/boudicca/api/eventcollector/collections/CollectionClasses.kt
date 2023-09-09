@@ -20,7 +20,7 @@ data class FullCollection(
     )
 
     override fun toString(): String {
-        return "FullCollection(\nid=$id, \nstartTime=$startTime, \nendTime=$endTime, \nsingleCollections=$singleCollections)"
+        return "FullCollection(\nid=$id, \nstartTime=$startTime, \nendTime=$endTime, \nsingleCollections=$singleCollections, \nlogLines=$logLines)"
     }
 }
 

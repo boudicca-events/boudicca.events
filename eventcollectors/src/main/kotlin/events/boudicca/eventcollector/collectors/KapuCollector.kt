@@ -32,7 +32,13 @@ class KapuCollector : TwoStepEventCollector<String>("kapu") {
         val data = mutableMapOf<String, String>()
         data[SemanticKeys.URL] = url
         data[SemanticKeys.TYPE] = eventSite.select("article.event > div.container > div.wot").text()
-        data[SemanticKeys.DESCRIPTION] = eventSite.select("div.textbereich__field-text").text()
+
+        var description = eventSite.select("div.textbereich__field-text").text()
+        if (description.isBlank()) {
+            description = eventSite.select("div.text-bild__field-image-text").text()
+        }
+        data[SemanticKeys.DESCRIPTION] = description
+
         data[SemanticKeys.PICTUREURL] = "https://www.kapu.or.at" + eventSite.select("article.event img.media__image").attr("data-src")
 
         data[SemanticKeys.LOCATION_NAME] = "Kapu"

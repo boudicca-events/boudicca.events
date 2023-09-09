@@ -72,7 +72,9 @@ class PosthofCollector : TwoStepEventCollector<Element>("posthof") {
                 return
             }
         }
-        data[SemanticKeys.TYPE] = type
+        if (type.isNotBlank()) {
+            data[SemanticKeys.TYPE] = type
+        }
     }
 
     private val KNOWN_MUSIC_TYPES: Set<String> = setOf(

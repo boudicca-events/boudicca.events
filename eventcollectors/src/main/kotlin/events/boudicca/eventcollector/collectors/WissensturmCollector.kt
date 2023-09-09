@@ -40,7 +40,10 @@ class WissensturmCollector : TwoStepEventCollector<Pair<String, Document>>("wiss
         val name = event.select("div.kw-kurdetails h1").text()
         val datesAndLocations = parseDatesAndLocations(event)
 
-        data[SemanticKeys.DESCRIPTION] = event.select("div.kw-kurdetails div.content-txt:nth-child(2)").text()
+        val description = event.select("div.kw-kurdetails div.content-txt:nth-child(2)").text()
+        if (description.isNotBlank()) {
+            data[SemanticKeys.DESCRIPTION] = description
+        }
         data[SemanticKeys.URL] = url
 
         val pictureUrl = event.select("div.kw-kurdetails div.content-txt:nth-child(2) img")
@@ -51,23 +54,23 @@ class WissensturmCollector : TwoStepEventCollector<Pair<String, Document>>("wiss
         return datesAndLocations
             .filter { it.first != null }
             .map {
-            val dataCopy = data.toMutableMap()
-            dataCopy[SemanticKeys.ENDDATE] = DateTimeFormatter.ISO_DATE_TIME.format(it.second)
-            if (
-                it.third.contains("wissensturm", ignoreCase = true)
-                || it.third.contains("WT;", ignoreCase = false)
-            ) {
-                dataCopy[SemanticKeys.LOCATION_NAME] = "Wissensturm"
-                dataCopy[SemanticKeys.LOCATION_URL] = "https://wissensturm.linz.at/"
-                dataCopy[SemanticKeys.LOCATION_CITY] = "Linz"
-                dataCopy[SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY] = "true"
-                dataCopy[SemanticKeys.ACCESSIBILITY_ACCESSIBLESEATS] = "true"
-                dataCopy[SemanticKeys.ACCESSIBILITY_ACCESSIBLETOILETS] = "true"
-            } else {
-                dataCopy[SemanticKeys.LOCATION_NAME] = it.third
+                val dataCopy = data.toMutableMap()
+                dataCopy[SemanticKeys.ENDDATE] = DateTimeFormatter.ISO_DATE_TIME.format(it.second)
+                if (
+                    it.third.contains("wissensturm", ignoreCase = true)
+                    || it.third.contains("WT;", ignoreCase = false)
+                ) {
+                    dataCopy[SemanticKeys.LOCATION_NAME] = "Wissensturm"
+                    dataCopy[SemanticKeys.LOCATION_URL] = "https://wissensturm.linz.at/"
+                    dataCopy[SemanticKeys.LOCATION_CITY] = "Linz"
+                    dataCopy[SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY] = "true"
+                    dataCopy[SemanticKeys.ACCESSIBILITY_ACCESSIBLESEATS] = "true"
+                    dataCopy[SemanticKeys.ACCESSIBILITY_ACCESSIBLETOILETS] = "true"
+                } else {
+                    dataCopy[SemanticKeys.LOCATION_NAME] = it.third
+                }
+                Event(name, it.first!!, dataCopy)
             }
-            Event(name, it.first!!, dataCopy)
-        }
     }
 
     private fun parseDatesAndLocations(event: Document): List<Triple<OffsetDateTime?, OffsetDateTime?, String>> {

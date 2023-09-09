@@ -72,8 +72,10 @@ class PlanetTTCollector : TwoStepEventCollector<Element>("planettt") {
 
         val name = fullEvent.select("div.pl-modal-name").text()
         data[SemanticKeys.URL] = "https://planet.tt/" //TODO this is broken on their site right now -.-
-        data[SemanticKeys.PICTUREURL] =
-            fullEvent.select("div.pl-modal-thumbnail img").attr("src")
+        val pictureUrl = fullEvent.select("div.pl-modal-thumbnail img").attr("src")
+        if (pictureUrl.isNotBlank()) {
+            data[SemanticKeys.PICTUREURL] = pictureUrl
+        }
         data[SemanticKeys.DESCRIPTION] = fullEvent.select("div.pl-modal-desc > p").text() + "\n" +
                 fullEvent.select("div.pl-modal-desc > div.acts").text()
 

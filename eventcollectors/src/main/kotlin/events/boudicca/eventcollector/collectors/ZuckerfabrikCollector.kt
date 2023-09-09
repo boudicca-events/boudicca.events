@@ -46,7 +46,10 @@ class ZuckerfabrikCollector : TwoStepEventCollector<Pair<String, Document>>("zuc
         val startDate = parseTypeAndDate(data, storycontent[1])
         data[SemanticKeys.DESCRIPTION] = (2 until storycontent.size).joinToString("\n") { storycontent[it].text() }
 
-        data[SemanticKeys.PICTUREURL] = doc.select("div#storycontent img").attr("src")
+        val pictureUrl = doc.select("div#storycontent img").attr("src")
+        if (pictureUrl.isNotBlank()) {
+            data[SemanticKeys.PICTUREURL] = pictureUrl
+        }
 
         data[SemanticKeys.LOCATION_NAME] = "Zuckerfabrik"
         data[SemanticKeys.LOCATION_URL] = "https://www.zuckerfabrik.at"

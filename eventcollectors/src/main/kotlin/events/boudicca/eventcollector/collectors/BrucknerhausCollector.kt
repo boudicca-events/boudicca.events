@@ -52,7 +52,9 @@ class BrucknerhausCollector : TwoStepEventCollector<Element>("brucknerhaus") {
         if (description.isBlank()) {
             description = event.select("div.event__teaser .fr-view").first()?.children()?.first()?.text() ?: ""
         }
-        data[SemanticKeys.DESCRIPTION] = description
+        if (description.isNotBlank()) {
+            data[SemanticKeys.DESCRIPTION] = description
+        }
 
         data[SemanticKeys.TYPE] = "concert" //TODO check
         data[SemanticKeys.LOCATION_NAME] = "Brucknerhaus" //TODO not all events are there...

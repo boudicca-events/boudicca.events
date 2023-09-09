@@ -21,5 +21,6 @@ fun main() {
         .addEventCollector(WissensturmCollector())
         .addEventCollector(LandestheaterLinzCollector())
         .addEventCollector(KapuCollector())
+        .addEventCollector(StadtwerkstattCollector())
         .run()
 }

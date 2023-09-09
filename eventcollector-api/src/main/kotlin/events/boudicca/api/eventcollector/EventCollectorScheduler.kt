@@ -37,7 +37,7 @@ class EventCollectorScheduler(
     fun run(): Nothing {
         while (true) {
             runOnce()
-            LOG.info("all event collectors ran, sleeping for $interval")
+            LOG.info("sleeping for $interval")
             Thread.sleep(interval.toMillis())
         }
     }

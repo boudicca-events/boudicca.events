@@ -23,5 +23,6 @@ fun main() {
         .addEventCollector(KapuCollector())
         .addEventCollector(StadtwerkstattCollector())
         .addEventCollector(InnovationsHauptplatzCodingWeeksCollector())
+        .addEventCollector(OteloLinzCollector())
         .run()
 }

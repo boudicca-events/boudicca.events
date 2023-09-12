@@ -20,5 +20,6 @@ fun main() {
 //        .debug(LandestheaterLinzCollector())
 //        .debug(KapuCollector())
 //        .debug(StadtwerkstattCollector())
-        .debug(InnovationsHauptplatzCodingWeeksCollector())
+//        .debug(InnovationsHauptplatzCodingWeeksCollector())
+        .debug(OteloLinzCollector())
 }

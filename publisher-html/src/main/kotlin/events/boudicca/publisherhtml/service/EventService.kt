@@ -53,7 +53,7 @@ class EventService {
             "description" to event.data?.get(SemanticKeys.DESCRIPTION),
             "url" to event.data?.get(SemanticKeys.URL),
             "startDate" to formatDate(event.startDate),
-            "locationName" to (event.data?.get(SemanticKeys.LOCATION_NAME) ?: "unbekannt"),
+            "locationName" to (event.data?.get(SemanticKeys.LOCATION_NAME) ?: ""),
             "city" to event.data?.get(SemanticKeys.LOCATION_CITY),
             "category" to mapType(event.data?.get(SemanticKeys.TYPE)),
             "pictureUrl" to (event.data?.get("pictureUrl") ?: ""),

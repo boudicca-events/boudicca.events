@@ -9,19 +9,21 @@ Queries can look like `name contains Bandname or name contains Bandname2`
 ## Syntax
 
 A query is always UTF-8 encoded text and every query is exactly one `expression`, where expressions can take multiple (
-potentially nested) forms:
+potentially nested) forms. Please note that expressions are case-insensitive:
 
-| Expression Name | Meaning                                                                           | Format                          |
-|-----------------|-----------------------------------------------------------------------------------|---------------------------------|
-| Equals          | If a field exactly (but case-insensitive) equals the text value                   | `<fieldname> equals <text>`     |
-| Contains        | If a field contains (case-insensitive) the text value                             | `<fieldname> contains <text>`   |
-| And             | Both child-expressions have to be true so that the whole expression is true       | `<expression> and <expression>` |
-| Or              | At least one child-expression has to be true so that the whole expression is true | `<expression> or <expression>`  |
-| Not             | The child-expression has to be false so that the whole expression is true         | `not <expression>`              |
-| After           | Filter events starting at or after the given date                                 | `after <date>`                  |
-| Before          | Filter events starting at or before the given date                                | `before <date>`                 |
-| Is              | Filter events belonging to a certain category                                     | `is <category>`                 |
-| Grouping        | Marker to identify how expression should be grouped                               | `( <expression> )`              |
+| Expression Name  | Meaning                                                                                      | Format                          |
+|------------------|----------------------------------------------------------------------------------------------|---------------------------------|
+| Equals           | If a field exactly (but case-insensitive) equals the text value                              | `<fieldname> equals <text>`     |
+| Contains         | If a field contains (case-insensitive) the text value                                        | `<fieldname> contains <text>`   |
+| And              | Both child-expressions have to be true so that the whole expression is true                  | `<expression> and <expression>` |
+| Or               | At least one child-expression has to be true so that the whole expression is true            | `<expression> or <expression>`  |
+| Not              | The child-expression has to be false so that the whole expression is true                    | `not <expression>`              |
+| After            | Filter events starting at or after the given date                                            | `after <date>`                  |
+| Before           | Filter events starting at or before the given date                                           | `before <date>`                 |
+| Is               | Filter events belonging to a certain category                                                | `is <category>`                 |
+| Grouping         | Marker to identify how expression should be grouped                                          | `( <expression> )`              |
+| Duration Longer  | Filter events on their duration in hours (inclusive), events without endDate have 0 duration | `durationLonger <number`        |
+| Duration Shorter | Filter events on their duration in hours (inclusive), events without endDate have 0 duration | `durationShorter <number>`      |
 
 where
 
@@ -31,6 +33,7 @@ where
   minus '-'.
   This is because a lot of field-names contain a dot (like `location.name`) and dates contain -, and these exceptions
   makes it easier to write queries for them.
+* `<number>` is a integer or decimal value, can be positive or negative, for example `2`, `-5`, `-2.5`
 * `<fieldname>` is a `<text>` matching a field of an event to be queried. There is the special field `"*"` which means
   "any field". Please note that * is a special character and thus the quotes are needed. Also note that the fieldname
   matching is case-sensitive, so the fieldnames `name` and `NAME` are different fields.

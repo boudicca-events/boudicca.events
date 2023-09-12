@@ -198,6 +198,20 @@ class LexerTest {
         assertEquals(TokenType.IS, tokens[0].getType())
     }
 
+    @Test
+    fun testDurationLongerOperator() {
+        val tokens = callLexer("durationLonger")
+        assertEquals(1, tokens.size)
+        assertEquals(TokenType.DURATIONLONGER, tokens[0].getType())
+    }
+
+    @Test
+    fun testDurationShorterOperator() {
+        val tokens = callLexer("durationShorter")
+        assertEquals(1, tokens.size)
+        assertEquals(TokenType.DURATIONSHORTER, tokens[0].getType())
+    }
+
     private fun callLexer(query: String): List<Token> {
         return Lexer(query).lex()
     }

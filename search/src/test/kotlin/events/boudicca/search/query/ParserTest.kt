@@ -172,7 +172,7 @@ class ParserTest {
         }
         assertThrows<IllegalStateException> {
             //wrong date format
-            callParser(after(),text("27-5-2023"))
+            callParser(after(), text("27-5-2023"))
         }
     }
 
@@ -202,6 +202,26 @@ class ParserTest {
             "IS('MUSIC')",
             callParser(
                 `is`(), text("MUSIC")
+            )
+        )
+    }
+
+    @Test
+    fun testDurationShorter() {
+        assertEquals(
+            "DURATIONSHORTER(-2)",
+            callParser(
+                durationShorter(), text("-2")
+            )
+        )
+    }
+
+    @Test
+    fun testDurationLonger() {
+        assertEquals(
+            "DURATIONLONGER(2.6)",
+            callParser(
+                durationLonger(), text("2.6")
             )
         )
     }
@@ -248,6 +268,14 @@ class ParserTest {
 
     private fun text(s: String): Token {
         return Token(TokenType.TEXT, s)
+    }
+
+    private fun durationShorter(): Token {
+        return Token(TokenType.DURATIONSHORTER, null)
+    }
+
+    private fun durationLonger(): Token {
+        return Token(TokenType.DURATIONLONGER, null)
     }
 
     private fun callParser(vararg tokens: Token): String {

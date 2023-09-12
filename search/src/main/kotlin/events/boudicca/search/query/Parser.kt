@@ -1,5 +1,7 @@
 package events.boudicca.search.query
 
+import java.math.BigDecimal
+
 class Parser(private val tokens: List<Token>) {
     private var i = 0
     private var groupDepth = 0
@@ -23,8 +25,8 @@ class Parser(private val tokens: List<Token>) {
             parseNotExpression()
         } else if (token.getType() == TokenType.GROUPING_OPEN) {
             parseGroupOpen()
-        } else if (token.getType() == TokenType.BEFORE || token.getType() == TokenType.AFTER || token.getType() == TokenType.IS) {
-            parseDateExpression(token)
+        } else if (token.getType() == TokenType.BEFORE || token.getType() == TokenType.AFTER || token.getType() == TokenType.IS || token.getType() == TokenType.DURATIONLONGER || token.getType() == TokenType.DURATIONSHORTER) {
+            parseSingleFieldExpression(token)
         } else {
             throw IllegalStateException("unexpected token ${token.getType()} at start of expression at index $i")
         }
@@ -40,7 +42,7 @@ class Parser(private val tokens: List<Token>) {
         }
     }
 
-    private fun parseDateExpression(token: Token) {
+    private fun parseSingleFieldExpression(token: Token) {
         if (i + 1 >= tokens.size) {
             throw IllegalStateException("expecting date, found end of query")
         }
@@ -51,10 +53,18 @@ class Parser(private val tokens: List<Token>) {
             lastExpression = AfterExpression(textToken.getToken()!!)
         } else if (token.getType() == TokenType.IS) {
             lastExpression = IsExpression(textToken.getToken()!!)
+        } else if (token.getType() == TokenType.DURATIONSHORTER) {
+            lastExpression = DurationShorterExpression(parseNumber(textToken.getToken()!!))
+        } else if (token.getType() == TokenType.DURATIONLONGER) {
+            lastExpression = DurationLongerExpression(parseNumber(textToken.getToken()!!))
         } else {
             throw IllegalStateException("unknown token type ${token.getType()}")
         }
         i += 2
+    }
+
+    private fun parseNumber(token: String): Number {
+        return BigDecimal(token)
     }
 
     private fun parseGroupOpen() {

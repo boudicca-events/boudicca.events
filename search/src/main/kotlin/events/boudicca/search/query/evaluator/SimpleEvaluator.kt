@@ -100,6 +100,16 @@ class SimpleEvaluator(rawEvents: Collection<Event>) : Evaluator {
                 return expressionCategory == category.name
             }
 
+            is DurationLongerExpression -> {
+                val duration = EvaluatorUtil.getDuration(event)
+                return duration >= expression.getNumber().toDouble()
+            }
+
+            is DurationShorterExpression -> {
+                val duration = EvaluatorUtil.getDuration(event)
+                return duration <= expression.getNumber().toDouble()
+            }
+
             else -> {
                 throw IllegalStateException("unknown expression kind $expression")
             }

@@ -74,6 +74,20 @@ abstract class TextExpression(
     }
 }
 
+abstract class NumberExpression(
+    private val name: String,
+    private val number: Number,
+) : Expression {
+
+    fun getNumber(): Number {
+        return number
+    }
+
+    override fun toString(): String {
+        return "$name($number)"
+    }
+}
+
 abstract class DateExpression(
     private val name: String,
     dateText: String,
@@ -134,3 +148,10 @@ class IsExpression(
     text: String,
 ) : TextExpression("IS", text)
 
+class DurationShorterExpression(
+    duration: Number,
+) : NumberExpression("DURATIONSHORTER", duration)
+
+class DurationLongerExpression(
+    duration: Number,
+) : NumberExpression("DURATIONLONGER", duration)

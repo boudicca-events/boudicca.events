@@ -6,6 +6,7 @@ import events.boudicca.search.query.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -211,6 +212,65 @@ class SimpleEvaluatorTest {
         assertEquals("whatever", events.first().data!![SemanticKeys.TYPE])
     }
 
+    @Test
+    fun durationLonger() {
+        val events =
+            callEvaluator(
+                DurationLongerExpression(2.0),
+                listOf(
+                    mapOf(
+                        SemanticKeys.NAME to "event1",
+                        SemanticKeys.STARTDATE to "2024-05-31T00:00:00Z",
+                        SemanticKeys.ENDDATE to "2024-05-31T03:00:00Z",
+                    ),
+                    mapOf(
+                        SemanticKeys.NAME to "event2",
+                        SemanticKeys.STARTDATE to "2024-05-31T00:00:00Z",
+                        SemanticKeys.ENDDATE to "2024-05-31T00:00:00Z",
+                    ),
+                )
+            )
+        assertEquals(1, events.size)
+        assertEquals("event1", events.first().name)
+    }
+
+    @Test
+    fun durationShorter() {
+        val events =
+            callEvaluator(
+                DurationShorterExpression(2.0),
+                listOf(
+                    mapOf(
+                        SemanticKeys.NAME to "event1",
+                        SemanticKeys.STARTDATE to "2024-05-31T00:00:00Z",
+                        SemanticKeys.ENDDATE to "2024-05-31T03:00:00Z",
+                    ),
+                    mapOf(
+                        SemanticKeys.NAME to "event2",
+                        SemanticKeys.STARTDATE to "2024-05-31T00:00:00Z",
+                        SemanticKeys.ENDDATE to "2024-05-31T00:00:00Z",
+                    ),
+                )
+            )
+        assertEquals(1, events.size)
+        assertEquals("event2", events.first().name)
+    }
+
+    @Test
+    fun durationZero() {
+        val events =
+            callEvaluator(
+                DurationLongerExpression(0.0),
+                listOf(
+                    mapOf(
+                        SemanticKeys.NAME to "event1",
+                    ),
+                )
+            )
+        assertEquals(1, events.size)
+        assertEquals("event1", events.first().name)
+    }
+
 
     private fun callEvaluator(expression: Expression): Collection<Event> {
         return callEvaluatorWithEvents(expression, testData())
@@ -220,7 +280,18 @@ class SimpleEvaluatorTest {
         expression: Expression,
         events: Collection<Map<String, String>>
     ): List<Event> {
-        return callEvaluatorWithEvents(expression, events.map { Event("name", ZonedDateTime.now(), it) })
+        return callEvaluatorWithEvents(
+            expression,
+            events.map {
+                Event(
+                    it.getOrDefault(SemanticKeys.NAME, "name"),
+                    if (it.containsKey(SemanticKeys.STARTDATE))
+                        ZonedDateTime.parse(it[SemanticKeys.STARTDATE]!!, DateTimeFormatter.ISO_DATE_TIME)
+                    else
+                        ZonedDateTime.now(),
+                    it
+                )
+            })
     }
 
     private fun callEvaluatorWithEvents(

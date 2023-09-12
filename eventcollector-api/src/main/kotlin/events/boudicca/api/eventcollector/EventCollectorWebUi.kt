@@ -128,7 +128,7 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
     }
 
     private fun setupNoFavicon() {
-        server.createContext("/favicon.ico"){
+        server.createContext("/favicon.ico") {
             send404(it)
         }
     }
@@ -164,7 +164,7 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
         if (it != null) {
             return mapOf(
                 "id" to it.id.toString(),
-                "name" to it.collector!!.getName(),
+                "name" to EscapeTool().html(it.collector!!.getName()),
                 "duration" to formatDuration(it.startTime, it.endTime),
                 "startEndTime" to formatStartEndTime(it.startTime, it.endTime),
                 "errorsCount" to it.logLines.count { it.first }.toString(),

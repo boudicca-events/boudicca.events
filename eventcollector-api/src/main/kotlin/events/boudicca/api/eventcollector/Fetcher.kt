@@ -39,18 +39,24 @@ class Fetcher(waitTimeInMs: Long = DEFAULT_MIN_WAIT_TIME_IN_MS) {
     }
 
     private fun doRequest(request: HttpRequest, url: String): String {
-        val waitTime = lastRequest + realWaitTimeInMs - System.currentTimeMillis()
-        if (waitTime > 0) {
-            Thread.sleep(waitTime)
-        }
-        val response = newHttpClient.send(request, BodyHandlers.ofString())
-        if (response.statusCode() != 200) {
+        try {
+            val waitTime = lastRequest + realWaitTimeInMs - System.currentTimeMillis()
+            if (waitTime > 0) {
+                Thread.sleep(waitTime)
+            }
+            val response = newHttpClient.send(request, BodyHandlers.ofString())
+            if (response.statusCode() != 200) {
+                Collections.endHttpCall(response.statusCode())
+                throw RuntimeException("request to $url failed with status code ${response.statusCode()}")
+            }
+            lastRequest = System.currentTimeMillis()
+            val body = response.body()
             Collections.endHttpCall(response.statusCode())
-            throw RuntimeException("request to $url failed with status code ${response.statusCode()}")
+            return body
+        } catch (e: Exception) {
+            Collections.endHttpCall(-1)
+            throw e
         }
-        lastRequest = System.currentTimeMillis()
-        Collections.endHttpCall(response.statusCode())
-        return response.body()
     }
 
 }

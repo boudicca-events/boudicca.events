@@ -6,6 +6,8 @@ import events.boudicca.search.model.Event
 import events.boudicca.search.model.SearchResultDTO
 import events.boudicca.search.query.*
 import java.time.LocalDate
+import java.time.OffsetDateTime
+import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
@@ -69,7 +71,7 @@ class SimpleEvaluator(rawEvents: Collection<Event>) : Evaluator {
                     if (!event.containsKey(SemanticKeys.STARTDATE)) {
                         return false
                     }
-                    val startDate = LocalDate.parse(event[SemanticKeys.STARTDATE]!!, DateTimeFormatter.ISO_DATE_TIME)
+                    val startDate = getLocalStartDate(event)
                     return startDate.isEqual(expression.getDate()) || startDate.isBefore(expression.getDate())
                 } catch (e: DateTimeParseException) {
                     return false
@@ -81,7 +83,7 @@ class SimpleEvaluator(rawEvents: Collection<Event>) : Evaluator {
                     if (!event.containsKey(SemanticKeys.STARTDATE)) {
                         return false
                     }
-                    val startDate = LocalDate.parse(event[SemanticKeys.STARTDATE]!!, DateTimeFormatter.ISO_DATE_TIME)
+                    val startDate = getLocalStartDate(event)
                     return startDate.isEqual(expression.getDate()) || startDate.isAfter(expression.getDate())
                 } catch (e: DateTimeParseException) {
                     return false
@@ -115,4 +117,9 @@ class SimpleEvaluator(rawEvents: Collection<Event>) : Evaluator {
             }
         }
     }
+
+    private fun getLocalStartDate(event: Map<String, String>): LocalDate =
+        OffsetDateTime.parse(event[SemanticKeys.STARTDATE]!!, DateTimeFormatter.ISO_DATE_TIME)
+            .atZoneSameInstant(ZoneId.of("Europe/Vienna"))
+            .toLocalDate()
 }

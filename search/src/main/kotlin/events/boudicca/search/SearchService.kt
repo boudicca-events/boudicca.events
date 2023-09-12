@@ -5,6 +5,7 @@ import events.boudicca.SemanticKeys
 import events.boudicca.search.model.*
 import events.boudicca.search.util.Utils
 import java.time.OffsetDateTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import javax.enterprise.context.ApplicationScoped
 import javax.enterprise.event.Observes
@@ -68,14 +69,24 @@ class SearchService @Inject constructor(
         if (searchDTO.toDate != null) {
             queryParts.add("before " + formatDate(searchDTO.toDate))
         }
+        if (searchDTO.durationShorter != null) {
+            queryParts.add("durationShorter " + formatNumber(searchDTO.durationShorter))
+        }
+        if (searchDTO.durationLonger != null) {
+            queryParts.add("durationLonger " + formatNumber(searchDTO.durationLonger))
+        }
         for (flag in (searchDTO.flags ?: emptyList()).filter { !it.isNullOrBlank() }) {
             queryParts.add(escape(flag!!) + " equals \"true\"")
         }
         return queryParts.joinToString(" and ")
     }
 
+    private fun formatNumber(durationShorter: Double): String {
+        return durationShorter.toString()
+    }
+
     private fun formatDate(date: OffsetDateTime): String {
-        return date.format(DateTimeFormatter.ISO_LOCAL_DATE)
+        return date.atZoneSameInstant(ZoneId.of("Europe/Vienna")).format(DateTimeFormatter.ISO_LOCAL_DATE)
     }
 
     private fun escape(name: String): String {

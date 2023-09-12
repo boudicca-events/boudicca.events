@@ -12,4 +12,6 @@ data class SearchDTO(
     val offset: Int? = null,
     val size: Int? = null,
     val flags: List<String?>? = null,
+    val durationShorter: Double? = null,
+    val durationLonger: Double? = null,
 )

@@ -9,10 +9,14 @@ import events.boudicca.search.openapi.model.QueryDTO
 import events.boudicca.search.openapi.model.SearchDTO
 import events.boudicca.search.openapi.model.SearchResultDTO
 import org.springframework.stereotype.Service
+import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
+
+//we do not want long-running events on our site, so we filter for events short then 30 days
+const val DEFAULT_DURATION_SHORTER_VALUE = 24 * 30
 
 @Service
 class EventService {
@@ -28,6 +32,7 @@ class EventService {
         if (name != null && name.startsWith('!')) {
             return mapEvents(searchApi.queryPost(QueryDTO().query(name.substring(1)).offset(searchDTO.offset)))
         } else {
+            setDefaults(searchDTO)
             return mapEvents(searchApi.searchPost(searchDTO))
         }
     }
@@ -106,6 +111,15 @@ class EventService {
             "ALL" -> "Alle"
             "OTHER" -> "Andere"
             else -> "???"
+        }
+    }
+
+    private fun setDefaults(searchDTO: SearchDTO) {
+        if (searchDTO.fromDate == null) {
+            searchDTO.fromDate = LocalDate.now().atStartOfDay().atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
+        }
+        if (searchDTO.durationShorter == null) {
+            searchDTO.durationShorter = DEFAULT_DURATION_SHORTER_VALUE.toDouble()
         }
     }
 

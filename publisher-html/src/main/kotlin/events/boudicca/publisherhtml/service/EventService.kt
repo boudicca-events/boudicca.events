@@ -23,10 +23,6 @@ class EventService {
     private val searchApi: SearchResourceApi = createSearchApi()
     private val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy 'um' HH:mm 'Uhr'", Locale.GERMAN)
 
-    fun getAllEvents(): List<Map<String, String?>> {
-        return mapEvents(searchApi.searchPost(SearchDTO()))
-    }
-
     fun search(searchDTO: SearchDTO): List<Map<String, String?>> {
         val name = searchDTO.name
         if (name != null && name.startsWith('!')) {

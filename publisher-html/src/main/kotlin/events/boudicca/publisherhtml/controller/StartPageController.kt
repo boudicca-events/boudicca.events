@@ -23,7 +23,7 @@ class StartPageController @Autowired constructor(private val eventService: Event
     fun getIndex(): ModelAndView {
         val data: MutableMap<String, Any> = HashMap()
         data["title"] = PAGE_TITLE
-        data["events"] = eventService.getAllEvents()
+        data["events"] = eventService.search(SearchDTO())
         data["filters"] = eventService.filters()
         return ModelAndView("index", data)
     }
@@ -45,12 +45,12 @@ class StartPageController @Autowired constructor(private val eventService: Event
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
         val fromDateParsed = if (!fromDate.isNullOrBlank()) {
-            LocalDate.parse(fromDate, formatter).atTime(0, 0, 0).atZone(ZoneId.systemDefault()).toOffsetDateTime()
+            LocalDate.parse(fromDate, formatter).atStartOfDay().atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
         } else {
             null
         }
         val toDateParsed = if (!toDate.isNullOrBlank()) {
-            LocalDate.parse(toDate, formatter).atTime(0, 0, 0).atZone(ZoneId.systemDefault()).toOffsetDateTime()
+            LocalDate.parse(toDate, formatter).atStartOfDay().atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
         } else {
             null
         }

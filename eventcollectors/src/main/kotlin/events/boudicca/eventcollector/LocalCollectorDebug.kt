@@ -19,5 +19,6 @@ fun main() {
 //        .debug(WissensturmCollector())
 //        .debug(LandestheaterLinzCollector())
 //        .debug(KapuCollector())
-        .debug(StadtwerkstattCollector())
+//        .debug(StadtwerkstattCollector())
+        .debug(InnovationsHauptplatzCodingWeeksCollector())
 }

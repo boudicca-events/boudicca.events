@@ -6,10 +6,10 @@ class EventCollectorDebugger {
 
     fun debug(eventCollector: EventCollector) {
         val collectedEvents = mutableListOf<Event>()
-        EventCollectorScheduler(eventSink = { collectedEvents.add(it) })
+        val scheduler = EventCollectorScheduler(eventSink = { collectedEvents.add(it) })
             .startWebUi()
             .addEventCollector(eventCollector)
-            .runOnce()
+        scheduler.runOnce()
 
         collectedEvents.forEach {
             println(it)
@@ -25,6 +25,7 @@ class EventCollectorDebugger {
         }
 
         readlnOrNull()
+        scheduler.close()
     }
 
 }

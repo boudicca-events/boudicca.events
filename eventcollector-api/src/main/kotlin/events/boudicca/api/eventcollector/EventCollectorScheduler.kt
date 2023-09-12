@@ -13,7 +13,7 @@ import java.util.function.Consumer
 class EventCollectorScheduler(
     private val interval: Duration = Duration.ofHours(24),
     private val eventSink: Consumer<Event> = createBoudiccaEventSink(autoDetectUrl())
-) {
+) : AutoCloseable {
 
     constructor(
         interval: Duration = Duration.ofHours(24),
@@ -22,6 +22,7 @@ class EventCollectorScheduler(
 
     private val eventCollectors: MutableList<EventCollector> = mutableListOf()
     private val LOG = LoggerFactory.getLogger(this::class.java)
+    private var eventCollectorWebUi: EventCollectorWebUi? = null
 
     fun addEventCollector(eventCollector: EventCollector): EventCollectorScheduler {
         eventCollectors.add(eventCollector)
@@ -29,7 +30,12 @@ class EventCollectorScheduler(
     }
 
     fun startWebUi(port: Int = 8083): EventCollectorScheduler {
-        EventCollectorWebUi(port, this).start()
+        synchronized(this) {
+            if (eventCollectorWebUi == null) {
+                eventCollectorWebUi = EventCollectorWebUi(port, this)
+                eventCollectorWebUi!!.start()
+            }
+        }
 
         return this
     }
@@ -98,6 +104,14 @@ class EventCollectorScheduler(
 
     fun getCollectors(): List<EventCollector> {
         return eventCollectors
+    }
+
+    override fun close() {
+        synchronized(this) {
+            if (eventCollectorWebUi != null) {
+                eventCollectorWebUi!!.stop()
+            }
+        }
     }
 
 }

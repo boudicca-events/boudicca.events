@@ -308,4 +308,8 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
         server.start()
     }
 
+    fun stop() {
+        server.stop(2)
+    }
+
 }

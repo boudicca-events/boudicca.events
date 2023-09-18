@@ -9,6 +9,7 @@ import events.boudicca.search.openapi.model.QueryDTO
 import events.boudicca.search.openapi.model.SearchDTO
 import events.boudicca.search.openapi.model.SearchResultDTO
 import org.springframework.stereotype.Service
+import java.net.URLEncoder
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.ZoneId
@@ -57,7 +58,7 @@ class EventService {
             "locationName" to (event.data?.get(SemanticKeys.LOCATION_NAME) ?: ""),
             "city" to event.data?.get(SemanticKeys.LOCATION_CITY),
             "category" to mapType(event.data?.get(SemanticKeys.TYPE)),
-            "pictureUrl" to (event.data?.get("pictureUrl") ?: ""),
+            "pictureUrl" to URLEncoder.encode(event.data?.get("pictureUrl") ?: "", Charsets.UTF_8),
         )
     }
 

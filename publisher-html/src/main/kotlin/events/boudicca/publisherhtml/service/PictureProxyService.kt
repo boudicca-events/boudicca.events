@@ -2,6 +2,9 @@ package events.boudicca.publisherhtml.service
 
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
+import java.awt.image.BufferedImage
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -11,6 +14,8 @@ import java.time.temporal.ChronoUnit
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
+import javax.imageio.ImageIO
+import kotlin.math.max
 
 @Service
 class PictureProxyService {
@@ -39,13 +44,41 @@ class PictureProxyService {
             if (body.isEmpty()) {
                 Optional.empty()
             } else {
-                Optional.of(body)
+                Optional.of(resize(body))
             }
         }
 
         cache[url] = CacheEntry(optional)
 
         return optional
+    }
+
+    private fun resize(picture: ByteArray): ByteArray {
+        val bufferedImage = ImageIO.read(ByteArrayInputStream(picture))
+
+        val (width, height) = calcResizedDimensions(bufferedImage.width, bufferedImage.height)
+
+        val scaledImage = bufferedImage.getScaledInstance(width, height, 0)
+
+        val scaledBufferedImage = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
+        scaledBufferedImage.graphics.drawImage(scaledImage, 0, 0, null)
+
+        val outputStream = ByteArrayOutputStream()
+        ImageIO.write(scaledBufferedImage, "jpeg", outputStream)
+        return outputStream.toByteArray()
+    }
+
+    private val WANTED_WIDTH = 300
+    private val WANTED_HEIGHT = 250
+    private fun calcResizedDimensions(width: Int, height: Int): Pair<Int, Int> {
+        val widthScaleFactor = WANTED_WIDTH / width.toDouble()
+        val heightScaleFactor = WANTED_HEIGHT / height.toDouble()
+        val maxScaleFactor = max(widthScaleFactor, heightScaleFactor)
+        return if (maxScaleFactor >= 1) {
+            Pair(width, height)
+        } else {
+            Pair((width * maxScaleFactor).toInt(), (height * maxScaleFactor).toInt())
+        }
     }
 
     @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.HOURS)

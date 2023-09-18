@@ -21,5 +21,6 @@ fun main() {
 //        .debug(KapuCollector())
 //        .debug(StadtwerkstattCollector())
 //        .debug(InnovationsHauptplatzCodingWeeksCollector())
-        .debug(OteloLinzCollector())
+//        .debug(OteloLinzCollector())
+        .debug(EnnsEventsCollector())
 }

@@ -1,67 +1,26 @@
 # boudicca
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+## Local development setup with IntelliJ
 
-If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
+### Frontend only setup
 
-## Running the application in dev mode
-TODO: Fix it
+If you want to develop only on the Frontend ([publisher-html](publisher-html)) without building the backend, then you can use the `Boudicca HTML Publisher` run config.
 
-You can run your application in dev mode that enables live coding using:
+This run configuration uses the boudicca website as backend.
 
-```shell script
-./gradlew quarkusDev
-```
+### Full setup
 
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at http://localhost:8080/q/dev/.
+Build all modules with gradle first.
 
-## Packaging and running the application
+In the `LocalSearch` service run configuration, set the `BOUDICCA_LOCAL=true` environment variable.
 
-The application can be packaged using:
+This prevents the `LocalSearch` service from caching the search results.
 
-```shell script
-./gradlew build
-```
+To run the application, use the `Local Setup (without collectors)`.
 
-It produces the `quarkus-run.jar` file in the `build/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `build/quarkus-app/lib/` directory.
+Then you can fill up the database with one of two options:
 
-The application is now runnable using `java -jar build/quarkus-app/quarkus-run.jar`.
+- (recommended) Run `LocalFetchFromOnlineBoudiccaKt` to fetch the events from the boudicca website.
+- (slow option): Run `BoudiccaEventCollectorsKt` to scrape all current events from the websites with the help of the event collectors
 
-If you want to build an _über-jar_, execute the following command:
-
-```shell script
-./gradlew build -Dquarkus.package.type=uber-jar
-```
-
-The application, packaged as an _über-jar_, is now runnable using `java -jar build/*-runner.jar`.
-
-## Creating a native executable
-
-You can create a native executable using:
-
-```shell script
-./gradlew build -Dquarkus.package.type=native
-```
-
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using:
-
-```shell script
-./gradlew build -Dquarkus.package.type=native -Dquarkus.native.container-build=true
-```
-
-You can then execute your native executable with: `./build/boudicca-1.0-SNAPSHOT-runner`
-
-If you want to learn more about building native executables, please consult https://quarkus.io/guides/gradle-tooling.
-
-## Related Guides
-
-- Kotlin ([guide](https://quarkus.io/guides/kotlin)): Write your services in Kotlin
-
-## Provided Code
-
-### RESTEasy Reactive
-
-Easily start your Reactive RESTful Web Services
-
-[Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
+After the database is filled up, call `localhost:8080` to see the application.

@@ -1,5 +1,7 @@
 package events.boudicca.eventdb
 
+import io.swagger.v3.oas.annotations.OpenAPIDefinition
+import io.swagger.v3.oas.annotations.servers.Server
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
@@ -14,7 +16,11 @@ import org.springframework.security.web.SecurityFilterChain
 import org.springframework.web.servlet.config.annotation.CorsRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
-
+@OpenAPIDefinition(
+    servers = [
+        Server(url = "/", description = "Default Server URL")
+    ]
+)
 @SpringBootApplication
 @EnableScheduling
 class EventDBApplication : WebMvcConfigurer {

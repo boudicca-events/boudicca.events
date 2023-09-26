@@ -1,8 +1,10 @@
 package events.boudicca.search.query
 
 import events.boudicca.SemanticKeys
-import events.boudicca.search.query.evaluator.EvaluatorUtil
-import events.boudicca.search.query.evaluator.SimpleEvaluator
+import events.boudicca.search.service.query.evaluator.EvaluatorUtil
+import events.boudicca.search.service.query.evaluator.SimpleEvaluator
+import events.boudicca.search.service.query.PAGE_ALL
+import events.boudicca.search.service.query.QueryParser
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Test

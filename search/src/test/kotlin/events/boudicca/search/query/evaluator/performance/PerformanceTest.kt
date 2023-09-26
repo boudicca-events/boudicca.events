@@ -1,9 +1,9 @@
 package events.boudicca.search.query.evaluator.performance
 
-import events.boudicca.search.query.ContainsExpression
-import events.boudicca.search.query.PAGE_ALL
-import events.boudicca.search.query.evaluator.EvaluatorUtil
-import events.boudicca.search.query.evaluator.SimpleEvaluator
+import events.boudicca.search.service.query.ContainsExpression
+import events.boudicca.search.service.query.PAGE_ALL
+import events.boudicca.search.service.query.evaluator.EvaluatorUtil
+import events.boudicca.search.service.query.evaluator.SimpleEvaluator
 import java.io.FileInputStream
 import java.io.ObjectInputStream
 import kotlin.random.Random

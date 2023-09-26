@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="LocalHtmlPublisher" type="JetRunConfigurationType">
+    <option name="MAIN_CLASS_NAME" value="events.boudicca.publisherhtml.PublisherHtmlApplicationKt" />
+    <module name="boudicca.publisher-html.main" />
+    <shortenClasspath name="NONE" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

@@ -1,0 +1,168 @@
+---
+openapi: 3.0.3
+info:
+  title: search API
+  version: 1.0-SNAPSHOT
+paths:
+  /filters:
+    get:
+      tags:
+      - Search Resource
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Filters'
+  /query:
+    post:
+      tags:
+      - Search Resource
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QueryDTO'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResultDTO'
+  /search:
+    post:
+      tags:
+      - Search Resource
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchDTO'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResultDTO'
+components:
+  schemas:
+    Event:
+      required:
+      - name
+      - startDate
+      type: object
+      properties:
+        name:
+          type: string
+        startDate:
+          $ref: '#/components/schemas/ZonedDateTime'
+        data:
+          type: object
+          additionalProperties:
+            type: string
+          nullable: true
+    Filters:
+      required:
+      - categories
+      - locationNames
+      - locationCities
+      type: object
+      properties:
+        categories:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        locationNames:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        locationCities:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+    OffsetDateTime:
+      format: date-time
+      type: string
+      example: 2022-03-10T12:15:50-04:00
+    QueryDTO:
+      type: object
+      properties:
+        query:
+          type: string
+          nullable: true
+        offset:
+          format: int32
+          type: integer
+          nullable: true
+        size:
+          format: int32
+          type: integer
+          nullable: true
+    SearchDTO:
+      type: object
+      properties:
+        name:
+          type: string
+          nullable: true
+        fromDate:
+          type: string
+          allOf:
+          - $ref: '#/components/schemas/OffsetDateTime'
+          nullable: true
+        toDate:
+          type: string
+          allOf:
+          - $ref: '#/components/schemas/OffsetDateTime'
+          nullable: true
+        category:
+          type: string
+          nullable: true
+        locationName:
+          type: string
+          nullable: true
+        locationCity:
+          type: string
+          nullable: true
+        offset:
+          format: int32
+          type: integer
+          nullable: true
+        size:
+          format: int32
+          type: integer
+          nullable: true
+        flags:
+          type: array
+          items:
+            type: string
+          nullable: true
+        durationShorter:
+          format: double
+          type: number
+          nullable: true
+        durationLonger:
+          format: double
+          type: number
+          nullable: true
+    SearchResultDTO:
+      required:
+      - result
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/Event'
+        totalResults:
+          format: int32
+          type: integer
+    ZonedDateTime:
+      format: date-time
+      type: string
+      example: 2022-03-10T12:15:50-04:00

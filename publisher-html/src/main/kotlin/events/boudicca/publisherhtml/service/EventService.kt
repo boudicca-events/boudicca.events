@@ -8,6 +8,8 @@ import events.boudicca.search.openapi.model.Event
 import events.boudicca.search.openapi.model.QueryDTO
 import events.boudicca.search.openapi.model.SearchDTO
 import events.boudicca.search.openapi.model.SearchResultDTO
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.net.URLEncoder
 import java.time.LocalDate
@@ -20,7 +22,7 @@ import java.util.*
 const val DEFAULT_DURATION_SHORTER_VALUE = 24 * 30
 
 @Service
-class EventService {
+class EventService @Autowired constructor(@Value("\${boudicca.search.url}") private val search: String) {
     private val searchApi: SearchResourceApi = createSearchApi()
     private val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy 'um' HH:mm 'Uhr'", Locale.GERMAN)
 
@@ -76,20 +78,8 @@ class EventService {
 
     private fun createSearchApi(): SearchResourceApi {
         val apiClient = ApiClient()
-        apiClient.updateBaseUri(autoDetectUrl())
+        apiClient.updateBaseUri(search)
         return SearchResourceApi(apiClient)
-    }
-
-    private fun autoDetectUrl(): String {
-        var url = System.getenv("BOUDICCA_URL")
-        if (url != null && url.isNotBlank()) {
-            return url
-        }
-        url = System.getProperty("boudiccaUrl")
-        if (url != null && url.isNotBlank()) {
-            return url
-        }
-        return "http://localhost:8082"
     }
 
     private fun frontEndCategoryName(type: EventCategory): String {

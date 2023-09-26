@@ -21,9 +21,8 @@ val jackson_version = "2.14.1"
 val jakarta_annotation_version = "1.3.5"
 
 dependencies {
-    openapi(project(mapOf(
-            "path" to ":search",
-            "configuration" to "openapi")))
+//    openapi(project(mapOf("path" to ":search", "configuration" to "openapi")))
+    openapi(files("src/main/resources/openapi.yml"))
 
     implementation("com.google.code.findbugs:jsr305:3.0.2")
     implementation("com.fasterxml.jackson.core:jackson-core:$jackson_version")

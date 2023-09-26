@@ -3,6 +3,8 @@ package events.boudicca.search.query.evaluator
 import events.boudicca.SemanticKeys
 import events.boudicca.search.model.Event
 import events.boudicca.search.query.*
+import events.boudicca.search.service.query.*
+import events.boudicca.search.service.query.evaluator.SimpleEvaluator
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime

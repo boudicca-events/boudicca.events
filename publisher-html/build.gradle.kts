@@ -9,9 +9,9 @@ plugins {
 	id("com.netflix.nebula.jakartaee-migration") version "0.9.0"
 }
 
-group = "events.boudicca"
-version = "0.0.1-SNAPSHOT"
-java.sourceCompatibility = JavaVersion.VERSION_17
+java {
+	sourceCompatibility = JavaVersion.VERSION_17
+}
 
 repositories {
 	mavenCentral()
@@ -48,6 +48,7 @@ tasks.withType<Jar> {
 }
 
 task<Exec>("imageBuild") {
+	inputs.file("src/main/docker/Dockerfile")
 	dependsOn(tasks.withType<BootJar>())
 	commandLine("docker", "build", "-t", "boudicca-html", "-f", "src/main/docker/Dockerfile", ".")
 }

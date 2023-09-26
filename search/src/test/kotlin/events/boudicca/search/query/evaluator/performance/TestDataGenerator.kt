@@ -4,7 +4,7 @@ import events.boudicca.SemanticKeys
 import events.boudicca.openapi.ApiClient
 import events.boudicca.openapi.api.EventPublisherResourceApi
 import events.boudicca.search.model.Event
-import events.boudicca.search.query.evaluator.EvaluatorUtil
+import events.boudicca.search.service.query.evaluator.EvaluatorUtil
 import java.io.FileOutputStream
 import java.io.ObjectOutputStream
 import java.io.Serializable

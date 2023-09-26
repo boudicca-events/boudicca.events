@@ -1,32 +1,9 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="LocalEventDB" type="QuarkusRunConfigurationType" factoryName="Quarkus">
+  <configuration default="false" name="LocalEventDB" type="JetRunConfigurationType">
+    <option name="MAIN_CLASS_NAME" value="events.boudicca.eventdb.EventDBApplicationKt" />
     <module name="boudicca.eventdb.main" />
-    <LocalEventDB>
-      <ExternalSystemSettings>
-        <option name="env">
-          <map>
-            <entry key="BOUDICCA_STORE_PATH" value="..\..\..\..\..\boudicca.store" />
-          </map>
-        </option>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$/eventdb" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value="quarkusDev" />
-          </list>
-        </option>
-        <option name="vmOptions" value="" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <RunAsTest>false</RunAsTest>
-    </LocalEventDB>
+    <shortenClasspath name="NONE" />
+    <option name="VM_PARAMETERS" value="-Dboudicca.store.path=boudicca.store" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

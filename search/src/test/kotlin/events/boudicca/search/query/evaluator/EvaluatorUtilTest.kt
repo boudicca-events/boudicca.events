@@ -1,6 +1,7 @@
 package events.boudicca.search.query.evaluator
 
 import events.boudicca.SemanticKeys
+import events.boudicca.search.service.query.evaluator.EvaluatorUtil
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 

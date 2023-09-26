@@ -1,5 +1,8 @@
 package events.boudicca.search.query
 
+import events.boudicca.search.service.query.Lexer
+import events.boudicca.search.service.query.Token
+import events.boudicca.search.service.query.TokenType
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows

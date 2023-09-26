@@ -12,7 +12,7 @@ import java.util.function.Consumer
 
 class EventCollectorScheduler(
     private val interval: Duration = Duration.ofHours(24),
-    private val eventSink: Consumer<Event> = createBoudiccaEventSink(autoDetectUrl())
+    private val eventSink: Consumer<Event> = createBoudiccaEventSink(Configuration.getProperty("boudicca.eventdb.url"))
 ) : AutoCloseable {
 
     constructor(
@@ -29,10 +29,15 @@ class EventCollectorScheduler(
         return this
     }
 
-    fun startWebUi(port: Int = 8083): EventCollectorScheduler {
+    fun startWebUi(port: Int = -1): EventCollectorScheduler {
+        val realPort = if (port == -1) {
+            Configuration.getProperty("server.port").toInt()
+        } else {
+            port
+        }
         synchronized(this) {
             if (eventCollectorWebUi == null) {
-                eventCollectorWebUi = EventCollectorWebUi(port, this)
+                eventCollectorWebUi = EventCollectorWebUi(realPort, this)
                 eventCollectorWebUi!!.start()
             }
         }
@@ -122,7 +127,8 @@ fun createBoudiccaEventSink(url: String): Consumer<Event> {
     apiClient.setRequestInterceptor {
         it.header(
             "Authorization",
-            "Basic " + Base64.getEncoder().encodeToString(autoDetectBasicAuth().encodeToByteArray())
+            "Basic " + Base64.getEncoder()
+                .encodeToString(Configuration.getProperty("boudicca.ingest.auth").encodeToByteArray())
         )
     }
     val ingestionApi = EventIngestionResourceApi(apiClient)
@@ -136,28 +142,4 @@ private fun mapToApiEvent(event: Event): events.boudicca.openapi.model.Event {
         .name(event.name)
         .startDate(event.startDate)
         .data(event.additionalData)
-}
-
-private fun autoDetectUrl(): String {
-    var url = System.getenv("BOUDICCA_URL")
-    if (url != null && url.isNotBlank()) {
-        return url
-    }
-    url = System.getProperty("boudiccaUrl")
-    if (url != null && url.isNotBlank()) {
-        return url
-    }
-    return "http://localhost:8081"
-}
-
-private fun autoDetectBasicAuth(): String {
-    var auth = System.getenv("BOUDICCA_AUTH")
-    if (auth != null && auth.isNotBlank()) {
-        return auth
-    }
-    auth = System.getProperty("boudiccaAuth")
-    if (auth != null && auth.isNotBlank()) {
-        return auth
-    }
-    return "ingest:ingest"
 }

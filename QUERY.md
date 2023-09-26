@@ -1,8 +1,8 @@
-# _insert name here_ Doc
+# Boudicca Query Language
 
 ## Introduction
 
-The _insert name here_ is a simple query language for making custom queries/filters where our normal search is
+The Boudicca Query Language is a simple query language for making custom queries/filters where our normal search is
 insufficient.
 Queries can look like `name contains Bandname or name contains Bandname2`
 

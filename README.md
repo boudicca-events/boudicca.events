@@ -1,4 +1,4 @@
-# boudicca
+# boudicca.events
 
 ## Local development setup with IntelliJ
 

@@ -1,0 +1,13 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="OnlineHtmlPublisher" type="JetRunConfigurationType">
+    <envs>
+      <env name="BOUDICCA_SEARCH_URL" value="https://search.boudicca.events" />
+    </envs>
+    <option name="MAIN_CLASS_NAME" value="events.boudicca.publisherhtml.PublisherHtmlApplicationKt" />
+    <module name="boudicca.publisher-html.main" />
+    <shortenClasspath name="NONE" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

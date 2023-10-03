@@ -84,6 +84,14 @@
         font-size: var(--font-size-large);
         margin-top: var(--space-xxlarge);
     }
+
+    #endOfResults {
+        font-size: var(--font-size-large);
+        margin-top: var(--space-xxlarge);
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-medium);
+    }
 </style>
 
 <div id="eventsContainer" class="events-grid">
@@ -93,4 +101,8 @@
 </div>
 <div style="text-align: center">
     <button id="loadMoreButton">Mehr laden</button>
+</div>
+<div id="endOfResults" style="display: none">
+    <p>Du hast das Ende der Suchergebnisse erreicht.</p>
+    <p>Es fehlen Inhalte? Schreibe uns deine Empfehlung via E-Mail an <a href="mailto:team@boudicca.events">team@boudicca.events</a>.</p>
 </div>

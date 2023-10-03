@@ -57,16 +57,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const onSearchLoadMoreButtonBehaviour = (response) => {
     const loadMoreButton = document.getElementById("loadMoreButton");
-    if (!loadMoreButton) {
+    const endOfResultsInfo = document.getElementById("endOfResults");
+    if (!loadMoreButton || !endOfResultsInfo) {
       return;
     }
 
     if (!response) {
       if (loadMoreButton) {
         loadMoreButton.style.display = "none";
+        endOfResultsInfo.style.display = "block";
       }
     } else {
       loadMoreButton.style.display = "inline-block";
+      endOfResultsInfo.style.display = "none";
     }
   };
 

@@ -18,9 +18,6 @@ dependencies {
     implementation("com.beust:klaxon:5.6")
 }
 
-group = "events.boudicca"
-version = "1.0-SNAPSHOT"
-
 java {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17

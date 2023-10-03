@@ -2,11 +2,11 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
-	id("org.springframework.boot") version "3.0.6"
-	id("io.spring.dependency-management") version "1.1.0"
+	id("org.springframework.boot") version "3.1.4"
+	id("io.spring.dependency-management") version "1.1.3"
 	kotlin("jvm")
 	kotlin("plugin.spring")
-	id("com.netflix.nebula.jakartaee-migration") version "0.9.0"
+	id("com.netflix.nebula.jakartaee-migration") version "0.19.0"
 }
 
 java {

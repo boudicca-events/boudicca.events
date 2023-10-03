@@ -25,5 +25,6 @@ fun main() {
         .addEventCollector(InnovationsHauptplatzCodingWeeksCollector())
         .addEventCollector(OteloLinzCollector())
         .addEventCollector(EnnsEventsCollector())
+        .addEventCollector(UlfOoeCollector())
         .run()
 }

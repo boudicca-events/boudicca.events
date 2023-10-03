@@ -6,6 +6,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const closeDrawerButton = document.getElementById("closeDrawerButton");
   const filterSearchButton = document.getElementById("filterSearchButton");
   const resetSearchFormButton = document.getElementById("resetSearchForm");
+  const loadMoreButton = document.getElementById("loadMoreButton");
+
+  loadMoreButton.addEventListener("click", () => {
+    onLoadMoreSearch();
+  });
 
   resetSearchFormButton.addEventListener("click", () => {
     searchForm.reset();
@@ -42,32 +47,29 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.style.overflow = "initial";
   };
 
-  var throttleTimer;
-  const throttle = (callback, time) => {
-    if (throttleTimer) return;
-    throttleTimer = true;
-    setTimeout(() => {
-      callback();
-      throttleTimer = false;
-    }, time);
-  };
-
-  const handleInfiniteScroll = () => {
-    throttle(() => {
-      const endOfPage =
-        window.innerHeight + window.pageYOffset >= document.body.offsetHeight;
-      if (endOfPage) {
-        onScrollSearch();
-      }
-    }, 1000);
-  };
-  window.addEventListener("scroll", handleInfiniteScroll);
-
   const goTo = (url) => {
     if ("undefined" !== typeof history.pushState) {
       history.pushState({}, "", url);
     } else {
       window.location.assign(url);
+    }
+  };
+
+  const onSearchLoadMoreButtonBehaviour = (response) => {
+    const loadMoreButton = document.getElementById("loadMoreButton");
+    const endOfResultsInfo = document.getElementById("endOfResults");
+    if (!loadMoreButton || !endOfResultsInfo) {
+      return;
+    }
+
+    if (!response) {
+      if (loadMoreButton) {
+        loadMoreButton.style.display = "none";
+        endOfResultsInfo.style.display = "block";
+      }
+    } else {
+      loadMoreButton.style.display = "inline-block";
+      endOfResultsInfo.style.display = "none";
     }
   };
 
@@ -82,6 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const response = await fetch(apiUrl);
       const ssrDomEventString = await response.text();
       eventsContainer.innerHTML = ssrDomEventString;
+      onSearchLoadMoreButtonBehaviour(ssrDomEventString);
       goTo(`/search?${paramsAsString}`);
     } catch (e) {
       console.error(e);
@@ -89,7 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const parser = new DOMParser();
-  const onScrollSearch = async () => {
+  const onLoadMoreSearch = async () => {
     const paramsAsString = new URLSearchParams(
       new FormData(searchForm)
     ).toString();
@@ -98,6 +101,8 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const response = await fetch(apiUrl);
       const ssrDomEventString = await response.text();
+
+      onSearchLoadMoreButtonBehaviour(ssrDomEventString);
       const newEvents = parser.parseFromString(ssrDomEventString, "text/html");
       eventsContainer.append(...newEvents.body.children);
       goTo(`/search?${paramsAsString}`);

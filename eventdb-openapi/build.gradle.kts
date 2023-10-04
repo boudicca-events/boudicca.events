@@ -17,7 +17,7 @@ val openapi by configurations.creating {
     isCanBeResolved = true
 }
 
-val jackson_version = "2.14.1"
+val jackson_version = "2.15.2"
 val jakarta_annotation_version = "1.3.5"
 
 dependencies {

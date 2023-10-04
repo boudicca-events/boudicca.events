@@ -26,5 +26,6 @@ fun main() {
         .addEventCollector(OteloLinzCollector())
         .addEventCollector(EnnsEventsCollector())
         .addEventCollector(UlfOoeCollector())
+        .addEventCollector(StiftskonzerteCollector())
         .run()
 }

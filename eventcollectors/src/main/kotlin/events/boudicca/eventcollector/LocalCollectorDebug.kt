@@ -23,5 +23,6 @@ fun main() {
 //        .debug(InnovationsHauptplatzCodingWeeksCollector())
 //        .debug(OteloLinzCollector())
 //        .debug(EnnsEventsCollector())
-        .debug(UlfOoeCollector())
+//        .debug(UlfOoeCollector())
+        .debug(StiftskonzerteCollector())
 }

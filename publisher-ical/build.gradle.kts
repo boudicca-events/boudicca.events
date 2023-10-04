@@ -24,7 +24,7 @@ dependencies {
     implementation(project(":semantic-conventions"))
     implementation("it.skrape:skrapeit:1.1.5")
     implementation("it.skrape:skrapeit-http-fetcher:1.1.5")
-    implementation("org.mnode.ical4j:ical4j:3.2.12") {
+    implementation("org.mnode.ical4j:ical4j:3.2.13") {
         exclude("org.codehaus.groovy", "groovy")
         exclude("org.codehaus.groovy", "groovy-dateutil")
         exclude("commons-logging", "commons-logging")

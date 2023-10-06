@@ -29,7 +29,7 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-annotations:$jackson_version")
     implementation("com.fasterxml.jackson.core:jackson-databind:$jackson_version")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jackson_version")
-    implementation("org.openapitools:jackson-databind-nullable:0.2.1")
+    implementation("org.openapitools:jackson-databind-nullable:0.2.6")
     implementation("jakarta.annotation:jakarta.annotation-api:$jakarta_annotation_version")
     api(project(":semantic-conventions"))
 }

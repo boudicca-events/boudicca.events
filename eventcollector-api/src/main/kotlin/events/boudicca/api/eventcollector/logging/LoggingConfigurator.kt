@@ -4,16 +4,15 @@ import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.Logger
 import ch.qos.logback.classic.LoggerContext
 import ch.qos.logback.classic.layout.TTLLLayout
+import ch.qos.logback.classic.spi.Configurator
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.ConsoleAppender
-import ch.qos.logback.core.Context
 import ch.qos.logback.core.encoder.LayoutWrappingEncoder
-import ch.qos.logback.core.spi.Configurator
 import ch.qos.logback.core.spi.ContextAwareBase
 
 
 class LoggingConfigurator: ContextAwareBase(), Configurator {
-    override fun configure(c: Context): Configurator.ExecutionStatus {
+    override fun configure(context: LoggerContext?): Configurator.ExecutionStatus {
         addInfo("Setting up default configuration.")
 
         val loggerContext = context as LoggerContext

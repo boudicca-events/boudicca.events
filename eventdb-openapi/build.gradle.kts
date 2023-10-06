@@ -18,7 +18,7 @@ val openapi by configurations.creating {
 }
 
 val jackson_version = "2.15.2"
-val jakarta_annotation_version = "1.3.5"
+val jakarta_annotation_version = "2.1.1"
 
 dependencies {
 //    openapi(project(mapOf("configuration" to "openapi", "path" to ":eventdb")))

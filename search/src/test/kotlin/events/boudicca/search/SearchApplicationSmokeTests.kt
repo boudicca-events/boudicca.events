@@ -1,10 +1,10 @@
-package events.boudicca.eventdb
+package events.boudicca.ical.events.boudicca.ical
 
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
-class BasicApplicationSmokeTest {
+class SearchApplicationSmokeTests {
 
     @Test
     fun contextLoads() {

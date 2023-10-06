@@ -22,7 +22,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
     implementation(project(":semantic-conventions"))
-    implementation("it.skrape:skrapeit:1.1.5")
+    implementation("it.skrape:skrapeit:1.2.2")
     implementation("it.skrape:skrapeit-http-fetcher:1.2.2")
     implementation("org.mnode.ical4j:ical4j:3.2.13") {
         exclude("org.codehaus.groovy", "groovy")

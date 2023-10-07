@@ -1,5 +1,4 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
     id("org.springframework.boot") version "3.1.4"
@@ -22,14 +21,12 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
     implementation(project(":semantic-conventions"))
-    implementation("it.skrape:skrapeit:1.2.2")
-    implementation("it.skrape:skrapeit-http-fetcher:1.2.2")
     implementation("org.mnode.ical4j:ical4j:3.2.13") {
         exclude("org.codehaus.groovy", "groovy")
         exclude("org.codehaus.groovy", "groovy-dateutil")
         exclude("commons-logging", "commons-logging")
     }
-    implementation(project(":publisher-api"))
+    implementation(project(":search-api"))
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
@@ -48,6 +45,6 @@ tasks.withType<Test> {
 
 task<Exec>("imageBuild") {
     inputs.file("src/main/docker/Dockerfile")
-    dependsOn(tasks.withType<BootJar>())
+    dependsOn(tasks.findByPath("assemble"))
     commandLine("docker", "build", "-t", "boudicca-ical", "-f", "src/main/docker/Dockerfile", ".")
 }

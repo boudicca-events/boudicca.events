@@ -13,8 +13,10 @@ const val DEFAULT_MIN_WAIT_TIME_IN_MS = 100L
 
 class Fetcher(waitTimeInMs: Long = DEFAULT_MIN_WAIT_TIME_IN_MS) {
 
-    private val realWaitTimeInMs = max(DEFAULT_MIN_WAIT_TIME_IN_MS, waitTimeInMs)
-    private val newHttpClient = HttpClient.newHttpClient()
+    private val realWaitTimeInMs = Math.max(DEFAULT_MIN_WAIT_TIME_IN_MS, waitTimeInMs)
+    private val newHttpClient = HttpClient.newBuilder()
+        .followRedirects(HttpClient.Redirect.NORMAL)
+        .build()
 
     private var lastRequest = 0L
 

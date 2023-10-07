@@ -1,9 +1,10 @@
 package events.boudicca.ical
 
-import events.boudicca.openapi.ApiClient
-import events.boudicca.openapi.api.EventPublisherResourceApi
-import events.boudicca.openapi.model.ComplexSearchDto
-import events.boudicca.openapi.model.Event
+import events.boudicca.SemanticKeys
+import events.boudicca.search.openapi.ApiClient
+import events.boudicca.search.openapi.api.SearchResourceApi
+import events.boudicca.search.openapi.model.Event
+import events.boudicca.search.openapi.model.QueryDTO
 import net.fortuna.ical4j.model.Calendar
 import net.fortuna.ical4j.model.DateTime
 import net.fortuna.ical4j.model.component.VEvent
@@ -11,13 +12,14 @@ import net.fortuna.ical4j.model.property.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
-import java.io.File
+import java.security.MessageDigest
 import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 
 @Service
-class CalendarService @Autowired constructor(@Value("\${boudicca.eventdb.url}") private val eventDbUrl: String) {
+class CalendarService @Autowired constructor(@Value("\${boudicca.search.url}") private val searchUrl: String) {
 
-    fun createCalendar(events: Set<Event>): File {
+    fun createCalendar(events: List<Event>): ByteArray {
         // create the calendar
         val calendar = Calendar()
 
@@ -25,19 +27,24 @@ class CalendarService @Autowired constructor(@Value("\${boudicca.eventdb.url}") 
         calendar.properties.add(Version.VERSION_2_0)
 
         events.forEach { event ->
-            val location = event.data?.get("start.location.name")
+            val location = event.data?.get(SemanticKeys.LOCATION_NAME)
+            val endDate = parseEndDate(event.data?.get(SemanticKeys.ENDDATE))
             val calendarEvent = createEvent(
-                event.name, event.startDate, location, null, 0
+                event.name, event.startDate, location, endDate, 0
             )
 
             calendar.components.add(calendarEvent)
         }
 
-        //TODO oh look at this nice race condition here
-        val file = File("calendar.ics")
-        file.writeText(calendar.toString())
+        return calendar.toString().toByteArray()
+    }
 
-        return file
+    private fun parseEndDate(endDate: String?): OffsetDateTime? {
+        if (endDate == null) {
+            return null
+        }
+
+        return OffsetDateTime.parse(endDate, DateTimeFormatter.ISO_DATE_TIME)
     }
 
     fun createEvent(
@@ -47,12 +54,13 @@ class CalendarService @Autowired constructor(@Value("\${boudicca.eventdb.url}") 
         endDateTime: OffsetDateTime?,
         sequence: Int,
     ): VEvent {
+        val titleHash = title.hashCode()
         // create the event
         val event = if (endDateTime == null) {
             VEvent(
                 DateTime(startDateTime.toInstant().toEpochMilli()), title
             ).also {
-                it.properties.add(Uid("event-${startDateTime}"))
+                it.properties.add(Uid("event-${startDateTime}-${titleHash}"))
             }
         } else {
             VEvent(
@@ -60,7 +68,7 @@ class CalendarService @Autowired constructor(@Value("\${boudicca.eventdb.url}") 
                 DateTime(endDateTime.toInstant().toEpochMilli()),
                 title
             ).also {
-                it.properties.add(Uid("event-${startDateTime}-${endDateTime}"))
+                it.properties.add(Uid("event-${startDateTime}-${endDateTime}-${titleHash}"))
             }
         }
 
@@ -73,21 +81,13 @@ class CalendarService @Autowired constructor(@Value("\${boudicca.eventdb.url}") 
         return event
     }
 
-    fun getEvents(labels: List<String>?): File {
-
+    fun getEvents(query: String): ByteArray {
         val apiClient = ApiClient()
-        apiClient.updateBaseUri(eventDbUrl)
-        val eventPublisherResourceApi = EventPublisherResourceApi(apiClient)
+        apiClient.updateBaseUri(searchUrl)
+        val searchApi = SearchResourceApi(apiClient)
 
-        val events = if (labels == null) {
-            eventPublisherResourceApi.eventsGet()
-        } else {
-            val key = "tags"
-            val searchPairs = labels.map { listOf(key, it) }.toSet()
+        val events = searchApi.queryPost(QueryDTO().query(query).size(100))
 
-            eventPublisherResourceApi.eventsSearchByPost(ComplexSearchDto().anyValueForKeyContains(searchPairs))
-        }
-
-        return createCalendar(events)
+        return createCalendar(events.result)
     }
 }

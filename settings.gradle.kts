@@ -7,6 +7,7 @@ include("eventdb")
 include("eventdb-openapi")
 include("search")
 include("search-openapi")
+include("search-api")
 include("semantic-conventions")
 
 rootProject.name = "boudicca"

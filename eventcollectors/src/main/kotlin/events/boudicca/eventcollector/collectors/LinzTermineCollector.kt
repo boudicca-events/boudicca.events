@@ -38,6 +38,7 @@ class LinzTermineCollector : EventCollector {
     private fun getEventWebsites(events: List<Event>): Map<String, Document> {
         //TODO we may loose some events because either they do not have a linztermine.at link or the linztermine.at link points to a 404... not sure what to do about that
         return events
+            .asSequence()
             .map { it.url }
             .filter {
                 it.contains("linztermine.at")
@@ -65,12 +66,9 @@ class LinzTermineCollector : EventCollector {
                 LOG.warn("event does not contain any dates: $event")
                 continue
             }
+            val website = eventWebsites[event.url] ?: continue
 
             val location = locations[event.locationId]
-            val website = eventWebsites[event.url]
-            if (website == null) {
-                continue
-            }
             val description = website.select("span.content-description").text()
             val pictureUrl = if (!website.select("div.letterbox > img").isEmpty()) {
                 "https://www.linztermine.at" + website.select("div.letterbox > img").attr("src")

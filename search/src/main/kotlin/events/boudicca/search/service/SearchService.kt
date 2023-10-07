@@ -103,10 +103,10 @@ class SearchService @Autowired constructor(
     }
 
     private fun getCategories(): Set<String> {
-        val categories = EventCategory.values().map { it.name }.toMutableSet()
+        val categories = EventCategory.entries.map(EventCategory::name).toMutableSet()
         categories.add(SEARCH_TYPE_ALL)
         categories.add(SEARCH_TYPE_OTHER)
-        return categories
+        return categories.toSet()
     }
 
     private fun getLocationNames(): Set<String> {

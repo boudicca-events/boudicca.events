@@ -27,7 +27,7 @@ class StadtwerkstattCollector : TwoStepEventCollector<String>("stadtwerkstatt") 
 
         var name = eventSite.select("li.event-title").text()
         if (name.isBlank()) {
-            name = eventSite.select("ul.event-artists span.name").map { it.text().trim() }.joinToString(", ")
+            name = eventSite.select("ul.event-artists span.name").joinToString(", ") { it.text().trim() }
         }
         val startDate = parseDate(eventSite)
 

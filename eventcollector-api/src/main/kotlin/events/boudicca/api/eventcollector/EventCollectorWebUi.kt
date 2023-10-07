@@ -44,7 +44,7 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
     }
 
     private fun setupIndex() {
-        server.createContext("/") {
+        server.createContext("/") { httpExchange ->
             try {
                 val context = VelocityContext()
 
@@ -62,18 +62,18 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
                 context.put("fullCollections",
                     Collections.getAllPastCollections().map { mapFullCollectionToFrontEnd(it) })
 
-                sendResponse(it, "/html/index.html.vm", context)
+                sendResponse(httpExchange, "/html/index.html.vm", context)
             } catch (e: Exception) {
                 LOG.error("error while handling request", e)
-                send500(it)
+                send500(httpExchange)
             }
         }
     }
 
     private fun setupSingleCollection() {
-        server.createContext("/singleCollection") {
+        server.createContext("/singleCollection") { httpExchange ->
             try {
-                val id = parseId(it.requestURI.query)
+                val id = parseId(httpExchange.requestURI.query)
                 if (id != null) {
                     val singleCollection = findSingleCollection(id)
                     if (singleCollection != null) {
@@ -90,14 +90,14 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
                         )
                         context.put("log", formatLogLines(singleCollection.logLines))
 
-                        sendResponse(it, "/html/singleCollection.html.vm", context)
+                        sendResponse(httpExchange, "/html/singleCollection.html.vm", context)
                         return@createContext
                     }
                 }
-                send404(it)
+                send404(httpExchange)
             } catch (e: Exception) {
                 e.printStackTrace()
-                send500(it)
+                send500(httpExchange)
             }
         }
     }
@@ -194,7 +194,7 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
 
     private fun findSingleCollection(id: UUID): SingleCollection? {
         return Collections.getAllPastCollections()
-            .union(listOf(Collections.getCurrentFullCollection()).filterNotNull())
+            .union(listOfNotNull(Collections.getCurrentFullCollection()))
             .flatMap { it.singleCollections }
             .find { it.id == id }
     }
@@ -256,7 +256,7 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
     }
 
     private fun formatLogLines(logLines: List<Pair<Boolean, ByteArray>>): String? =
-        EscapeTool().html(logLines.map { String(it.second) }.joinToString("\n"))
+        EscapeTool().html(logLines.joinToString("\n") { String(it.second) })
 
     private fun setupStaticFolder(prefix: String) {
         server.createContext(prefix) {

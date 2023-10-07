@@ -88,20 +88,25 @@ class PlanetTTCollector : TwoStepEventCollector<Element>("planettt") {
 
     private fun mapLocation(data: MutableMap<String, String>, event: Element) {
         val location = event.select("div.pl-modal-location").attr("data-location")
-        if (location == "simmcity") {
-            data[SemanticKeys.LOCATION_NAME] = "SiMMCity"
-            data[SemanticKeys.LOCATION_URL] = "https://simmcity.at/"
-            data[SemanticKeys.LOCATION_CITY] = "Wien"
-        } else if (location == "szene") {
-            data[SemanticKeys.LOCATION_NAME] = "Szene"
-            data[SemanticKeys.LOCATION_URL] = "https://szene.wien/"
-            data[SemanticKeys.LOCATION_CITY] = "Wien"
-        } else if (location == "planet") {
-            data[SemanticKeys.LOCATION_NAME] = "Gasometer"
-            data[SemanticKeys.LOCATION_URL] = "https://www.gasometer.at/"
-            data[SemanticKeys.LOCATION_CITY] = "Wien"
-        } else {
-            LOG.warn("could not guess location from location: $location")
+        when (location) {
+            "simmcity" -> {
+                data[SemanticKeys.LOCATION_NAME] = "SiMMCity"
+                data[SemanticKeys.LOCATION_URL] = "https://simmcity.at/"
+                data[SemanticKeys.LOCATION_CITY] = "Wien"
+            }
+            "szene" -> {
+                data[SemanticKeys.LOCATION_NAME] = "Szene"
+                data[SemanticKeys.LOCATION_URL] = "https://szene.wien/"
+                data[SemanticKeys.LOCATION_CITY] = "Wien"
+            }
+            "planet" -> {
+                data[SemanticKeys.LOCATION_NAME] = "Gasometer"
+                data[SemanticKeys.LOCATION_URL] = "https://www.gasometer.at/"
+                data[SemanticKeys.LOCATION_CITY] = "Wien"
+            }
+            else -> {
+                LOG.warn("could not guess location from location: $location")
+            }
         }
     }
 

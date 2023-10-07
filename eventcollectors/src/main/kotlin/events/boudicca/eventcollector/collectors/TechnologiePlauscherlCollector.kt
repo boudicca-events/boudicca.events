@@ -1,15 +1,18 @@
 package events.boudicca.eventcollector.collectors
 
+import com.rometools.rome.feed.synd.SyndFeed
 import com.rometools.rome.io.SyndFeedInput
 import com.rometools.rome.io.XmlReader
 import events.boudicca.SemanticKeys
 import events.boudicca.api.eventcollector.Event
 import events.boudicca.api.eventcollector.EventCollector
-import java.net.URL
+import org.apache.http.client.methods.HttpGet
+import org.apache.http.impl.client.HttpClients
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+
 
 class TechnologiePlauscherlCollector : EventCollector {
     override fun getName(): String {
@@ -17,9 +20,8 @@ class TechnologiePlauscherlCollector : EventCollector {
     }
 
     override fun collectEvents(): List<Event> {
-        val url = URL("https://technologieplauscherl.at/feed")
-        val input = SyndFeedInput()
-        val feed = input.build(XmlReader(url))
+        val url = "https://technologieplauscherl.at/feed"
+        val feed = prepareSyndFeed(url)
 
         val events = feed.entries.map { entry ->
 
@@ -48,5 +50,15 @@ class TechnologiePlauscherlCollector : EventCollector {
         }
 
         return events
+    }
+
+    private fun prepareSyndFeed(url: String): SyndFeed {
+        HttpClients.createMinimal().use { client ->
+            client.execute(HttpGet(url)).use { response ->
+                response.entity.content.use { stream ->
+                    return SyndFeedInput().build(XmlReader(stream))
+                }
+            }
+        }
     }
 }

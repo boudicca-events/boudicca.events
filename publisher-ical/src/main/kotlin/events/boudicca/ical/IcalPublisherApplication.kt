@@ -7,8 +7,7 @@ import org.springframework.scheduling.annotation.EnableScheduling
 
 @SpringBootApplication
 @EnableScheduling
-class IcalPublisherApplication {
-}
+class IcalPublisherApplication
 
 fun main(args: Array<String>) {
     runApplication<IcalPublisherApplication>(*args)

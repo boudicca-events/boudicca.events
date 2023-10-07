@@ -17,7 +17,7 @@ import java.time.format.DateTimeFormatter
 @RequestMapping("/")
 class StartPageController @Autowired constructor(private val eventService: EventService) {
 
-    private val PAGE_TITLE = "Boudicca";
+    private val PAGE_TITLE = "Boudicca"
 
     @GetMapping("/")
     fun getIndex(): ModelAndView {

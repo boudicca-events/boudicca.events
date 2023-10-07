@@ -15,6 +15,7 @@ dependencies {
         exclude("org.codehaus.groovy", "groovy-dateutil")
     }
     implementation("com.rometools:rome:2.1.0")
+    implementation("org.apache.httpcomponents:httpclient:4.5.13")
     implementation("com.beust:klaxon:5.6")
 }
 

@@ -18,6 +18,7 @@ class InnovationsHauptplatzCodingWeeksCollector : TwoStepEventCollector<Element>
     override fun getAllUnparsedEvents(): List<Element> {
         val document = Jsoup.parse(fetcher.fetchUrl("https://innovation.linz.at/de/aktuelle-projekte/coding-weeks/"))
         return document.select("div#listView div.event")
+            .asSequence()
             .map { it.parent()!! }
             .filter { it.attr("href").isNotBlank() }
             .map { it.outerHtml() }

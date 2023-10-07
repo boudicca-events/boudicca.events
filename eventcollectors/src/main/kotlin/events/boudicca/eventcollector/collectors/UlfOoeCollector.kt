@@ -59,8 +59,8 @@ class UlfOoeCollector : TwoStepEventCollector<String>("ulfooe") {
             val regex = """(?<name>.*?)[,|\s]*(?<zip>\d{4}) (?<city>[\w\s]+)""".toRegex()
             val matchResult = regex.find(locationName)
             if (matchResult != null) {
-                data[SemanticKeys.LOCATION_NAME] = matchResult.groups.get("name")!!.value.trimEnd()
-                data[SemanticKeys.LOCATION_CITY] = matchResult.groups.get("city")!!.value.trimEnd()
+                data[SemanticKeys.LOCATION_NAME] = matchResult.groups["name"]!!.value.trimEnd()
+                data[SemanticKeys.LOCATION_CITY] = matchResult.groups["city"]!!.value.trimEnd()
             } else {
                 data[SemanticKeys.LOCATION_NAME] = locationName
             }

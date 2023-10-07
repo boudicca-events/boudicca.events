@@ -32,14 +32,14 @@ object EvaluatorUtil {
         if (!event.containsKey(SemanticKeys.STARTDATE) || !event.containsKey(SemanticKeys.ENDDATE)) {
             return 0.0
         }
-        try {
+        return try {
             val startDate = OffsetDateTime.parse(event[SemanticKeys.STARTDATE]!!, DateTimeFormatter.ISO_DATE_TIME)
             val endDate = OffsetDateTime.parse(event[SemanticKeys.ENDDATE]!!, DateTimeFormatter.ISO_DATE_TIME)
-            return Duration.of(endDate.toEpochSecond() - startDate.toEpochSecond(), ChronoUnit.SECONDS)
+            Duration.of(endDate.toEpochSecond() - startDate.toEpochSecond(), ChronoUnit.SECONDS)
                 .toMillis()
                 .toDouble() / 1000.0 / 60.0 / 60.0
         } catch (e: DateTimeParseException) {
-            return 0.0
+            0.0
         }
     }
 }

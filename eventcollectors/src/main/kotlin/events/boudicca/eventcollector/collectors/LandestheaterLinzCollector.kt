@@ -23,24 +23,24 @@ class LandestheaterLinzCollector :
 
         val document = fetchList(fetcher)
         document.select("section")
-            .forEach {
+            .forEach { section ->
                 //sections
-                val date = parseDateFromSection(it)
-                it.select("div.lth-section-content > div.lth-evitem")
-                    .forEach {
-                        val link = it.select("div.lth-evitem-title > a")
+                val date = parseDateFromSection(section)
+                section.select("div.lth-section-content > div.lth-evitem")
+                    .forEach { evitem ->
+                        val link = evitem.select("div.lth-evitem-title > a")
                         val linkSeason = link.attr("data-lth-season")
                         val linkEventSetId = link.attr("data-lth-eventsetid")
                         val linkRef = link.attr("data-lth-ref")
                         val url =
                             "https://www.landestheater-linz.at/stuecke/detail?EventSetID=${linkEventSetId}&ref=${linkRef}&spielzeit=${linkSeason}"
-                        events.add(Triple(it, url, date))
+                        events.add(Triple(evitem, url, date))
                     }
             }
 
         val eventUrls = events
-            .map {
-                val link = it.first.select("div.lth-evitem-title > a")
+            .map { event ->
+                val link = event.first.select("div.lth-evitem-title > a")
                 val linkSeason = link.attr("data-lth-season")
                 val linkEventSetId = link.attr("data-lth-eventsetid")
                 val linkRef = link.attr("data-lth-ref")

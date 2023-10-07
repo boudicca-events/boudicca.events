@@ -1,4 +1,4 @@
-package events.boudicca.ical.events.boudicca.ical
+package events.boudicca.ical
 
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest

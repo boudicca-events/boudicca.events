@@ -14,12 +14,11 @@ class IcalResource @Autowired constructor(private val calendarService: CalendarS
         "/calendar.ics",
         produces = [MediaType.APPLICATION_OCTET_STREAM_VALUE],
     )
-    fun getAllEvents(@RequestParam labels: String?): ResponseEntity<ByteArray> {
-        val labelsSeparated = labels?.split(",")
-        val calendarFile = calendarService.getEvents(labelsSeparated)
+    fun getAllEvents(@RequestParam query: String): ResponseEntity<ByteArray> {
+        val calendarFile = calendarService.getEvents(query)
         return ResponseEntity.ok()
-            .header("Content-Disposition", "attachment;filename=$calendarFile")
-            .body(calendarFile.readBytes())
+            .header("Content-Disposition", "attachment;filename=calendar.ics")
+            .body(calendarFile)
 
     }
 }

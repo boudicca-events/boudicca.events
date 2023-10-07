@@ -1,20 +1,16 @@
 package events.boudicca.search.controller
 
-import events.boudicca.search.service.SynchronizationService
 import events.boudicca.search.model.Filters
 import events.boudicca.search.model.QueryDTO
 import events.boudicca.search.model.SearchDTO
 import events.boudicca.search.model.SearchResultDTO
 import events.boudicca.search.service.QueryService
 import events.boudicca.search.service.SearchService
+import events.boudicca.search.service.SynchronizationService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RequestMapping("/")
 @RestController
@@ -25,6 +21,7 @@ class SearchResource @Autowired constructor(
     @Value("\${boudicca.local.mode}") private val localMode: Boolean,
 ) {
 
+    @Deprecated("it is recommended to use the query endpoint", ReplaceWith("/query"), DeprecationLevel.WARNING)
     @PostMapping(
         "search",
         consumes = [MediaType.APPLICATION_JSON_VALUE],

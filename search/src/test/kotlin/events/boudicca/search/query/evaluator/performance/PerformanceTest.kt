@@ -36,6 +36,7 @@ object PerformanceTest {
         println("simple contains took ${time}ms and found $count results")
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun loadTestData(): Pair<Collection<Map<String, String>>, Map<String, TestDataGenerator.Metadata>> {
         val startTime = System.currentTimeMillis()
         val inStream = ObjectInputStream(FileInputStream("testdata.dump"))

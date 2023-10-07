@@ -10,6 +10,7 @@ import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
+@Suppress("UNCHECKED_CAST")
 fun main() {
     val inStream = ObjectInputStream(FileInputStream("testdata.dump"))
     val loadedData = inStream.readObject()

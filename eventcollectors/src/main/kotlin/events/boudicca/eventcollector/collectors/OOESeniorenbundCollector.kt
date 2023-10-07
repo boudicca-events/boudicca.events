@@ -28,16 +28,16 @@ class OOESeniorenbundCollector : TwoStepEventCollector<Pair<Document, String>>("
             .map { Pair(Jsoup.parse(fetcher.fetchUrl(it)), it) }
     }
 
-    override fun parseEvent(pair: Pair<Document, String>): Event {
-        val (event, url) = pair
+    override fun parseEvent(event: Pair<Document, String>): Event {
+        val (eventDoc, url) = event
         val data = mutableMapOf<String, String>()
 
-        val name = event.select("div.title>p").text()
-        val (startDate, endDate) = getDates(event)
-        val description = event.select("div.subtitle>p").text()
+        val name = eventDoc.select("div.title>p").text()
+        val (startDate, endDate) = getDates(eventDoc)
+        val description = eventDoc.select("div.subtitle>p").text()
 
         data[SemanticKeys.URL] = cleanupUrl(url)
-        data[SemanticKeys.LOCATION_NAME] = event.select("div.venue").text() //TODO location name and city here are not seperated at all -.-
+        data[SemanticKeys.LOCATION_NAME] = eventDoc.select("div.venue").text() //TODO location name and city here are not seperated at all -.-
         if (endDate != null) {
             data[SemanticKeys.ENDDATE] = endDate.format(DateTimeFormatter.ISO_DATE_TIME)
         }

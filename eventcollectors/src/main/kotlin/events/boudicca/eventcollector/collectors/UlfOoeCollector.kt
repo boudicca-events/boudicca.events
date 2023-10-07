@@ -42,8 +42,8 @@ class UlfOoeCollector : TwoStepEventCollector<String>("ulfooe") {
             .filter{!it.attr("href").startsWith("http")}) // exclude events from others than ulf
     }
 
-    override fun parseEvent(eventLink: String): Event {
-        val fullEventLink = baseUrl + eventLink
+    override fun parseEvent(event: String): Event {
+        val fullEventLink = baseUrl + event
         val eventSite = Jsoup.parse(fetcher.fetchUrl(fullEventLink))
 
         val name = eventSite.select("h1").text()

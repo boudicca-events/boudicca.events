@@ -30,11 +30,11 @@ class Parser(private val tokens: List<Token>) {
             else -> throw IllegalStateException("unexpected token ${token.getType()} at start of expression at index $i")
         }
         if (i != tokens.size) {
-            val token = tokens[i]
-            when (token.getType()) {
+            val trailingToken = tokens[i]
+            when (trailingToken.getType()) {
                 TokenType.AND, TokenType.OR -> parseBooleanExpression()
                 TokenType.GROUPING_CLOSE -> parseGroupClosed()
-                else -> throw IllegalStateException("unexpected token ${token.getType()} after end of expression at index $i")
+                else -> throw IllegalStateException("unexpected token ${trailingToken.getType()} after end of expression at index $i")
             }
         }
     }

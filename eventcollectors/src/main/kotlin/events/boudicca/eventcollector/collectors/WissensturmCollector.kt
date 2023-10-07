@@ -33,20 +33,20 @@ class WissensturmCollector : TwoStepEventCollector<Pair<String, Document>>("wiss
             .map { Pair(it, Jsoup.parse(fetcher.fetchUrl(it))) }
     }
 
-    override fun parseMultipleEvents(pair: Pair<String, Document>): List<Event> {
-        val (url, event) = pair
+    override fun parseMultipleEvents(event: Pair<String, Document>): List<Event> {
+        val (url, eventDoc) = event
         val data = mutableMapOf<String, String>()
 
-        val name = event.select("div.kw-kurdetails h1").text()
-        val datesAndLocations = parseDatesAndLocations(event)
+        val name = eventDoc.select("div.kw-kurdetails h1").text()
+        val datesAndLocations = parseDatesAndLocations(eventDoc)
 
-        val description = event.select("div.kw-kurdetails div.content-txt:nth-child(2)").text()
+        val description = eventDoc.select("div.kw-kurdetails div.content-txt:nth-child(2)").text()
         if (description.isNotBlank()) {
             data[SemanticKeys.DESCRIPTION] = description
         }
         data[SemanticKeys.URL] = url
 
-        val pictureUrl = event.select("div.kw-kurdetails div.content-txt:nth-child(2) img")
+        val pictureUrl = eventDoc.select("div.kw-kurdetails div.content-txt:nth-child(2) img")
         if (pictureUrl.isNotEmpty()) {
             data[SemanticKeys.PICTUREURL] = pictureUrl.attr("src")
         }

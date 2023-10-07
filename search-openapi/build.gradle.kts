@@ -18,7 +18,7 @@ val openapi by configurations.creating {
 }
 
 val jacksonVersion = "2.15.2"
-val jakartaAnnotationVersion = "1.3.5"
+val jakartaAnnotationVersion = "2.0.0"
 
 dependencies {
 //    openapi(project(mapOf("path" to ":search", "configuration" to "openapi")))

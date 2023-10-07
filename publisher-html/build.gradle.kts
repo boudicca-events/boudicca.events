@@ -6,7 +6,7 @@ plugins {
 	id("io.spring.dependency-management") version "1.1.3"
 	kotlin("jvm")
 	kotlin("plugin.spring")
-	id("com.netflix.nebula.jakartaee-migration") version "0.19.0"
+	id("com.netflix.nebula.jakartaee-migration") version "0.20.0"
 }
 
 java {

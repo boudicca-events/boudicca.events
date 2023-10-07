@@ -8,6 +8,7 @@ import net.fortuna.ical4j.data.CalendarBuilder
 import net.fortuna.ical4j.model.Calendar
 import net.fortuna.ical4j.model.component.VEvent
 import org.jsoup.Jsoup
+import java.net.URI
 import java.net.URL
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -27,8 +28,8 @@ class JkuEventCollector : EventCollector {
 
         val icsUrls = eventUrls
             .flatMap {
-                val document = Jsoup.parse(fetcher.fetchUrl("https://www.jku.at$it"))
-                document.select("a").eachAttr("href")
+                val eventJson = Jsoup.parse(fetcher.fetchUrl("https://www.jku.at$it"))
+                eventJson.select("a").eachAttr("href")
             }
             .filter { it.endsWith(".ics") }
 
@@ -37,30 +38,29 @@ class JkuEventCollector : EventCollector {
 
         icsUrls.forEach {
             val fullUrl = "https://www.jku.at${it}"
-            val url = URL(fullUrl)
+            val url = URI(fullUrl).toURL()
             events.addAll(parseEventFromIcs(url))
         }
 
         return events
     }
 
-    fun parseEventFromIcs(icsUrl: URL): List<Event> {
+    private fun parseEventFromIcs(icsUrl: URL): List<Event> {
         val formatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss'Z'")
         val daylongEventFormatter = DateTimeFormatter.ofPattern("yyyyMMdd")
-        icsUrl.openStream().use {
+        icsUrl.openStream().use { inputStream ->
             val builder = CalendarBuilder()
-            val calendar: Calendar = builder.build(it)
+            val calendar: Calendar = builder.build(inputStream)
             val components = calendar.components.filterIsInstance<VEvent>()
 
-            return components.map {
-                val title = it.summary.value
-                val eventName = title
-                val eventStartDate = if (it.isDaylongEvent()) {
-                    val dateTime = LocalDate.parse(it.startDate.value, daylongEventFormatter)
+            return components.map { vEvent ->
+                val eventName = vEvent.summary.value
+                val eventStartDate = if (vEvent.isDaylongEvent()) {
+                    val dateTime = LocalDate.parse(vEvent.startDate.value, daylongEventFormatter)
                     val zonedDateTime = ZonedDateTime.of(dateTime.atTime(0, 0), ZoneId.of("UTC"))
                     zonedDateTime.toOffsetDateTime()
                 } else {
-                    val dateTime = LocalDateTime.parse(it.startDate.value, formatter)
+                    val dateTime = LocalDateTime.parse(vEvent.startDate.value, formatter)
                     val zonedDateTime = ZonedDateTime.of(dateTime, ZoneId.of("UTC"))
                     zonedDateTime.toOffsetDateTime()
                 }
@@ -68,10 +68,10 @@ class JkuEventCollector : EventCollector {
                 Event(
                     eventName, eventStartDate,
                     mapOf(
-                        SemanticKeys.LOCATION_NAME to it.location.value,
+                        SemanticKeys.LOCATION_NAME to vEvent.location.value,
                         SemanticKeys.TAGS to listOf("JKU", "Universität", "Studieren").toString(),
                         "url.ics" to icsUrl.toString(),
-                        "jku.uid" to it.uid.value
+                        "jku.uid" to vEvent.uid.value
                     )
                 )
             }

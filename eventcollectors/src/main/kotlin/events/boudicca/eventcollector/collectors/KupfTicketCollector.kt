@@ -21,8 +21,8 @@ class KupfTicketCollector : TwoStepEventCollector<JsonObject>("kupfticket") {
     override fun getAllUnparsedEvents(): List<JsonObject> {
         val fetcher = Fetcher()
         val document = Jsoup.parse(fetcher.fetchUrl("https://kupfticket.com/events"))
-        val next_data = document.select("body script#__NEXT_DATA__").first()!!.data()
-        val jsonObject = Parser.default().parse(StringReader(next_data)) as JsonObject
+        val nextData = document.select("body script#__NEXT_DATA__").first()!!.data()
+        val jsonObject = Parser.default().parse(StringReader(nextData)) as JsonObject
 
         val eventSlugs = jsonObject.lookup<String>("props.pageProps.events.edges.node.slug")
 

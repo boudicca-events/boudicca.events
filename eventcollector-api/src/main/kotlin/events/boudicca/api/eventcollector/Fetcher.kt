@@ -6,6 +6,7 @@ import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpRequest.BodyPublishers
 import java.net.http.HttpResponse.BodyHandlers
+import kotlin.math.max
 
 /* how long we want to wait between request as to not overload the target server */
 const val DEFAULT_MIN_WAIT_TIME_IN_MS = 100L

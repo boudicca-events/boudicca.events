@@ -8,6 +8,8 @@ import events.boudicca.search.service.query.evaluator.EvaluatorUtil
 import java.io.FileOutputStream
 import java.io.ObjectOutputStream
 import java.io.Serializable
+import kotlin.math.max
+import kotlin.math.min
 import kotlin.random.Random
 
 const val WANTED_EVENTS = 100_000
@@ -67,7 +69,7 @@ object TestDataGenerator {
      */
     private fun generateMetaData(events: List<Map<String, String>>): Map<String, Metadata> {
         val allFields = events.flatMap { it.keys }.toSet()
-        return allFields.associate { Pair(it, generateMetaData(events, it)) }
+        return allFields.associateWith { generateMetaData(events, it) }
     }
 
     private fun generateMetaData(events: List<Map<String, String>>, field: String): Metadata {
@@ -81,12 +83,12 @@ object TestDataGenerator {
             .forEach {
                 val fieldWords = it
                     .split(" ", "\t", "\n", "\r\n")
-                    .filter { it != null && it.isNotBlank() } //meh, good enough for this
+                    .filter(String::isNotBlank) //meh, good enough for this
 
                 count++
                 words.addAll(fieldWords)
-                min = Math.min(min, fieldWords.size)
-                max = Math.max(max, fieldWords.size)
+                min = min(min, fieldWords.size)
+                max = max(max, fieldWords.size)
             }
         if (field == SemanticKeys.LOCATION_NAME) {
             max = 3

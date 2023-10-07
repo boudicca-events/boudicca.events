@@ -53,10 +53,11 @@ class OOESeniorenbundCollector : TwoStepEventCollector<Pair<Document, String>>("
 
         val sessionIdPattern = Pattern.compile("\\;jsessionid\\=[\\d\\w]+\\?")
         val matcher = sessionIdPattern.matcher(url)
-        if (matcher.find()) {
-            return url.replace(matcher.group(0), "?")
+
+        return if (matcher.find()) {
+            url.replace(matcher.group(0), "?")
         } else {
-            return url
+            url
         }
     }
 

@@ -5,11 +5,12 @@ import com.rometools.rome.io.XmlReader
 import events.boudicca.SemanticKeys
 import events.boudicca.api.eventcollector.Event
 import events.boudicca.api.eventcollector.EventCollector
-import java.net.URL
+import events.boudicca.api.eventcollector.Fetcher
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+
 
 class TechnologiePlauscherlCollector : EventCollector {
     override fun getName(): String {
@@ -17,9 +18,9 @@ class TechnologiePlauscherlCollector : EventCollector {
     }
 
     override fun collectEvents(): List<Event> {
-        val url = URL("https://technologieplauscherl.at/feed")
-        val input = SyndFeedInput()
-        val feed = input.build(XmlReader(url))
+        val url = "https://technologieplauscherl.at/feed"
+        val contentAsInputStream = Fetcher().fetchUrl(url).byteInputStream()
+        val feed = SyndFeedInput().build(XmlReader(contentAsInputStream))
 
         val events = feed.entries.map { entry ->
 

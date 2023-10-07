@@ -6,7 +6,6 @@ import events.boudicca.openapi.api.EventIngestionResourceApi
 import events.boudicca.openapi.model.Event
 import java.io.FileInputStream
 import java.io.ObjectInputStream
-import java.lang.Math.ceil
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -36,7 +35,7 @@ fun main() {
             println(
                 "count=${count}/${testData.size}, " +
                         "took ${currentTimeTaken / 1000}s, " +
-                        "will take ~${ceil(currentTimeTaken / (count.toDouble() / testData.size.toDouble())) / 1000}s"
+                        "will take ~${kotlin.math.ceil(currentTimeTaken / (count.toDouble() / testData.size.toDouble())) / 1000}s"
             )
         }
         val data = event.toMutableMap()

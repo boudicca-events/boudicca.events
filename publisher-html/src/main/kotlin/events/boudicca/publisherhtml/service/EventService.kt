@@ -2,6 +2,15 @@ package events.boudicca.publisherhtml.service
 
 import events.boudicca.EventCategory
 import events.boudicca.SemanticKeys
+import events.boudicca.api.search.BoudiccaQueryBuilder
+import events.boudicca.api.search.BoudiccaQueryBuilder.after
+import events.boudicca.api.search.BoudiccaQueryBuilder.and
+import events.boudicca.api.search.BoudiccaQueryBuilder.before
+import events.boudicca.api.search.BoudiccaQueryBuilder.contains
+import events.boudicca.api.search.BoudiccaQueryBuilder.durationLonger
+import events.boudicca.api.search.BoudiccaQueryBuilder.durationShorter
+import events.boudicca.api.search.BoudiccaQueryBuilder.equals
+import events.boudicca.api.search.BoudiccaQueryBuilder.isQuery
 import events.boudicca.search.openapi.ApiClient
 import events.boudicca.search.openapi.api.SearchResourceApi
 import events.boudicca.search.openapi.model.Event
@@ -21,6 +30,8 @@ import java.util.*
 //we do not want long-running events on our site, so we filter for events short then 30 days
 const val DEFAULT_DURATION_SHORTER_VALUE = 24 * 30
 
+private const val SEARCH_TYPE_ALL = "ALL"
+
 @Service
 class EventService @Autowired constructor(@Value("\${boudicca.search.url}") private val search: String) {
     private val searchApi: SearchResourceApi = createSearchApi()
@@ -28,12 +39,50 @@ class EventService @Autowired constructor(@Value("\${boudicca.search.url}") priv
 
     fun search(searchDTO: SearchDTO): List<Map<String, String?>> {
         val name = searchDTO.name
-        if (name != null && name.startsWith('!')) {
-            return mapEvents(searchApi.queryPost(QueryDTO().query(name.substring(1)).offset(searchDTO.offset)))
+        val query = if (name != null && name.startsWith('!')) {
+            name.substring(1)
         } else {
             setDefaults(searchDTO)
-            return mapEvents(searchApi.searchPost(searchDTO))
+            toQuery(searchDTO)
         }
+        val events = searchApi.queryPost(QueryDTO().query(query).offset(searchDTO.offset))
+        return mapEvents(events)
+    }
+
+    private fun toQuery(searchDTO: SearchDTO): String {
+        val queryParts = mutableListOf<String>()
+        if (!searchDTO.name.isNullOrBlank()) {
+            queryParts.add(contains("*", searchDTO.name!!))
+        }
+        if (!searchDTO.category.isNullOrBlank() && searchDTO.category != SEARCH_TYPE_ALL && BoudiccaQueryBuilder.Category.entries.any { searchDTO.category == it.name }) {
+            queryParts.add(isQuery(BoudiccaQueryBuilder.Category.valueOf(searchDTO.category!!)))
+        }
+        if (!searchDTO.locationCity.isNullOrBlank()) {
+            queryParts.add(equals(SemanticKeys.LOCATION_CITY, searchDTO.locationCity!!))
+        }
+        if (!searchDTO.locationName.isNullOrBlank()) {
+            queryParts.add(equals(SemanticKeys.LOCATION_NAME, searchDTO.locationName!!))
+        }
+        if (searchDTO.fromDate != null) {
+            queryParts.add(after(toLocalDate(searchDTO.fromDate!!)))
+        }
+        if (searchDTO.toDate != null) {
+            queryParts.add(before(toLocalDate(searchDTO.toDate!!)))
+        }
+        if (searchDTO.durationShorter != null) {
+            queryParts.add(durationShorter(searchDTO.durationShorter!!))
+        }
+        if (searchDTO.durationLonger != null) {
+            queryParts.add(durationLonger(searchDTO.durationLonger!!))
+        }
+        for (flag in (searchDTO.flags ?: emptyList()).filter { !it.isNullOrBlank() }) {
+            queryParts.add(equals(flag!!, "true"))
+        }
+        return and(queryParts)
+    }
+
+    private fun toLocalDate(date: OffsetDateTime): LocalDate {
+        return date.atZoneSameInstant(ZoneId.of("Europe/Vienna")).toLocalDate()
     }
 
     fun filters(): Filters {

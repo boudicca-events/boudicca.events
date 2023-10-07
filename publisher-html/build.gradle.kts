@@ -49,6 +49,6 @@ tasks.withType<Jar> {
 
 task<Exec>("imageBuild") {
 	inputs.file("src/main/docker/Dockerfile")
-	dependsOn(tasks.withType<BootJar>())
+	dependsOn(tasks.withType<Assemble>())
 	commandLine("docker", "build", "-t", "boudicca-html", "-f", "src/main/docker/Dockerfile", ".")
 }

@@ -1,5 +1,4 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
     id("org.springframework.boot") version "3.1.4"
@@ -46,6 +45,6 @@ tasks.withType<Test> {
 
 task<Exec>("imageBuild") {
     inputs.file("src/main/docker/Dockerfile")
-    dependsOn(tasks.withType<BootJar>())
+    dependsOn(tasks.findByPath("assemble"))
     commandLine("docker", "build", "-t", "boudicca-ical", "-f", "src/main/docker/Dockerfile", ".")
 }

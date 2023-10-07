@@ -48,7 +48,7 @@ tasks.withType<org.openapitools.generator.gradle.plugin.tasks.GenerateTask> {
 sourceSets {
     main {
         java {
-            srcDir(file("${layout.buildDirectory}/generate-resources/main/src/main/java"))
+            srcDir(file("${layout.buildDirectory.get()}/generate-resources/main/src/main/java"))
         }
     }
 }

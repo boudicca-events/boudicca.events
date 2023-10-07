@@ -39,18 +39,22 @@ class EventService @Autowired constructor(@Value("\${boudicca.search.url}") priv
     private val localDateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
     fun search(searchDTO: SearchDTO): List<Map<String, String?>> {
+        val events = searchApi.queryPost(QueryDTO().query(generateQuery(searchDTO)).offset(searchDTO.offset))
+        return mapEvents(events)
+    }
+
+    fun generateQuery(searchDTO: SearchDTO): String {
         val name = searchDTO.name
         val query = if (name != null && name.startsWith('!')) {
             name.substring(1)
         } else {
             setDefaults(searchDTO)
-            toQuery(searchDTO)
+            buildQuery(searchDTO)
         }
-        val events = searchApi.queryPost(QueryDTO().query(query).offset(searchDTO.offset))
-        return mapEvents(events)
+        return query
     }
 
-    private fun toQuery(searchDTO: SearchDTO): String {
+    private fun buildQuery(searchDTO: SearchDTO): String {
         val queryParts = mutableListOf<String>()
         if (!searchDTO.name.isNullOrBlank()) {
             queryParts.add(contains("*", searchDTO.name!!))
@@ -150,7 +154,7 @@ class EventService @Autowired constructor(@Value("\${boudicca.search.url}") priv
         if (searchDTO.fromDate.isNullOrBlank()) {
             searchDTO.fromDate = LocalDate.now().format(localDateFormatter)
         }
-        if (searchDTO.durationShorter != null) {
+        if (searchDTO.durationShorter == null) {
             searchDTO.durationShorter = DEFAULT_DURATION_SHORTER_VALUE.toDouble()
         }
     }

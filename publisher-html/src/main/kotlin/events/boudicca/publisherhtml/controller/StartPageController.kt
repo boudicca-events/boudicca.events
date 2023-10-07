@@ -35,6 +35,14 @@ class StartPageController @Autowired constructor(private val eventService: Event
         data["filters"] = eventService.filters()
         return ModelAndView("index", data)
     }
+
+    @GetMapping("/generate", produces = ["text/plain"])
+    @ResponseBody
+    fun generateQuery(
+        searchDTO: SearchDTO
+    ): String {
+        return eventService.generateQuery(searchDTO)
+    }
 }
 
 

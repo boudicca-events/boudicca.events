@@ -20,6 +20,11 @@
         }
     }
 
+      @media only screen and (max-width: 970px) { 
+        .header-title {
+            font-size: var(--font-size-medium);
+        }
+      }
 
     .header-left {
         display: flex;
@@ -102,6 +107,9 @@
         font-size: 12px;
         margin-bottom: 2px;
         font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: var(--space-small);
     }
 
     .filter-input-wrapper {
@@ -119,7 +127,7 @@
     .header-date-search {
         display: flex;
         flex: 1;
-        gap: 8px;
+        gap: 12px;
     }
     
 </style>
@@ -127,9 +135,9 @@
     <form id="searchForm">
         <div class="searchform-top">
             <div class="header-left">
-                <img src="/img/logo_small.png" alt="Boudicca Logo - Ein rundes Schwarz auf Weiß Bild. Ein Stilisiertes Logo der Mondkrone von des kelstischen Volkstammes Iceni." />
+                <img src="/img/logo_small.png" alt="Boudicca Logo - Ein rundes Schwarz-auf-Weiß-Bild. Ein stilisiertes Logo der Mondkrone des keltischen Volksstammes Iceni." />
                 <div>
-                    <h1>BOUDICCA.EVENTS</h1>
+                    <h1 class="header-title">BOUDICCA.EVENTS</h1>
                 </div>
             </div>
 

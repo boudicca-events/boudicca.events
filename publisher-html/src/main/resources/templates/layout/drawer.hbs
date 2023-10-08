@@ -58,6 +58,18 @@
         text-align: left;
         width: max-content;
     }
+
+    @media only screen and (max-width: 700px) { 
+        .header-accessibility-filter {
+            flex-direction: column;
+        }
+    }
+
+    .header-accessibility-filter {
+        display: flex;
+        flex: 1;
+        gap: 12px;
+    }
 </style>
 
 <div id="drawer" class="drawer">
@@ -133,7 +145,7 @@
     <fieldset>
         <legend><strong>Accessibility</strong></legend>
         <div class="header-search-filter">
-            <div class="header-date-search">
+            <div class="header-accessibility-filter">
                 <div class="filter-input-wrapper">
                     <label for="accessibility.accessibleEntry" class="filter-label">Barrierefreier Zugang
                         <input type="checkbox" id="accessibility.accessibleEntry" value="accessibility.accessibleEntry" name="flags">

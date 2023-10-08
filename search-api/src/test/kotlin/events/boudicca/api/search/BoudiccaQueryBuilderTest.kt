@@ -51,7 +51,7 @@ class BoudiccaQueryBuilderTest {
             "second"
         )
 
-        assertEquals("(first and second)", query)
+        assertEquals("(first) and (second)", query)
     }
 
     @Test
@@ -72,7 +72,7 @@ class BoudiccaQueryBuilderTest {
             "fourth"
         )
 
-        assertEquals("(first and second and third and fourth)", query)
+        assertEquals("(first) and (second) and (third) and (fourth)", query)
     }
 
     @Test
@@ -82,7 +82,7 @@ class BoudiccaQueryBuilderTest {
             "second"
         )
 
-        assertEquals("(first or second)", query)
+        assertEquals("(first) or (second)", query)
     }
 
     @Test
@@ -103,14 +103,14 @@ class BoudiccaQueryBuilderTest {
             "fourth"
         )
 
-        assertEquals("(first or second or third or fourth)", query)
+        assertEquals("(first) or (second) or (third) or (fourth)", query)
     }
 
     @Test
     fun simpleNot() {
         val query = not("query")
 
-        assertEquals("(not query)", query)
+        assertEquals("not (query)", query)
     }
 
     @Test
@@ -161,7 +161,7 @@ class BoudiccaQueryBuilderTest {
         )
 
         assertEquals(
-            """(not (("field" contains "value" or "field2" contains "value2") and "field3" equals "value3"))""",
+            """not ((("field" contains "value") or ("field2" contains "value2")) and ("field3" equals "value3"))""",
             query
         )
     }

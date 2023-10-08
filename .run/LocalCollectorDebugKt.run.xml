@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="LocalCollectorDebugKt" type="JetRunConfigurationType" nameIsGenerated="true">
     <option name="MAIN_CLASS_NAME" value="events.boudicca.eventcollector.LocalCollectorDebugKt" />
-    <module name="boudicca.eventcollectors.main" />
+    <module name="boudicca.boudicca.events.eventcollectors.main" />
     <shortenClasspath name="NONE" />
     <method v="2">
       <option name="Make" enabled="true" />

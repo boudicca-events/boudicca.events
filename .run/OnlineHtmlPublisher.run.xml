@@ -4,7 +4,7 @@
       <env name="BOUDICCA_SEARCH_URL" value="https://search.boudicca.events" />
     </envs>
     <option name="MAIN_CLASS_NAME" value="events.boudicca.publisherhtml.PublisherHtmlApplicationKt" />
-    <module name="boudicca.publisher-html.main" />
+    <module name="boudicca.boudicca.events.publisher-html.main" />
     <shortenClasspath name="NONE" />
     <method v="2">
       <option name="Make" enabled="true" />

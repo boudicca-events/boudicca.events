@@ -1,5 +1,4 @@
 include("eventcollector-api")
-include("eventcollectors")
 include("publisher-api")
 include("publisher-ical")
 include("publisher-html")
@@ -9,5 +8,6 @@ include("search")
 include("search-openapi")
 include("search-api")
 include("semantic-conventions")
+include("boudicca.events:eventcollectors")
 
 rootProject.name = "boudicca"

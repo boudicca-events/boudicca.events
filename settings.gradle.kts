@@ -9,5 +9,6 @@ include("search-openapi")
 include("search-api")
 include("semantic-conventions")
 include("boudicca.events:eventcollectors")
+include("boudicca.events:publisher-html")
 
 rootProject.name = "boudicca"

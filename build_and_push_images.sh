@@ -4,7 +4,7 @@
 
 docker tag boudicca-eventdb registry.slothyx.com/boudicca-eventdb
 docker tag boudicca-search registry.slothyx.com/boudicca-search
-docker tag boudicca-html registry.slothyx.com/boudicca-html
+docker tag boudicca-events-boudicca-html registry.slothyx.com/boudicca-html
 docker tag boudicca-ical registry.slothyx.com/boudicca-ical
 docker tag boudicca-eventcollectors registry.slothyx.com/boudicca-eventcollectors
 

@@ -1,5 +1,9 @@
-package events.boudicca.publisherhtml.controller
+package events.boudicca.publisherhtml
 
+
+import events.boudicca.publisherhtml.extension.Extension
+import events.boudicca.publisherhtml.extension.HeaderExtension
+import org.springframework.stereotype.Component
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -7,7 +11,7 @@ import org.springframework.web.servlet.ModelAndView
 
 @Controller
 @RequestMapping("/")
-class StaticSitesController {
+class BoudiccaEventsSites {
 
     @GetMapping("/about")
     fun getAbout(): ModelAndView {
@@ -23,6 +27,15 @@ class StaticSitesController {
 }
 
 
-
+@Component
+class BoudiccaEventsExtension : Extension {
+    override fun getHeaders(): List<HeaderExtension> {
+        return listOf(
+            HeaderExtension("Über uns", "/about"),
+            HeaderExtension("Impressum", "/impressum"),
+            HeaderExtension("GitHub", "https://github.com/boudicca-events/boudicca.events"),
+        )
+    }
+}
 
 

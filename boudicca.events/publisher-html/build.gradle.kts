@@ -17,12 +17,7 @@ repositories {
 }
 
 dependencies {
-	api("org.springframework.boot:spring-boot-starter-web")
-	api("com.fasterxml.jackson.module:jackson-module-kotlin")
-	api("org.jetbrains.kotlin:kotlin-reflect")
-	api("com.github.jknack:handlebars:4.3.1")
-	api(project(":search-api"))
-	developmentOnly("org.springframework.boot:spring-boot-devtools")
+	implementation(project(":publisher-html"))
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
@@ -37,8 +32,12 @@ tasks.withType<Test> {
 	useJUnitPlatform()
 }
 
+tasks.named<BootJar>("bootJar") {
+	mainClass.set("events.boudicca.publisherhtml.PublisherHtmlApplicationKt")
+}
+
 task<Exec>("imageBuild") {
 	inputs.file("src/main/docker/Dockerfile")
 	dependsOn(tasks.named("assemble"))
-	commandLine("docker", "build", "-t", "boudicca-html", "-f", "src/main/docker/Dockerfile", ".")
+	commandLine("docker", "build", "-t", "boudicca-events-boudicca-html", "-f", "src/main/docker/Dockerfile", ".")
 }

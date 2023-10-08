@@ -1,6 +1,6 @@
 <div class="header-links">
     <a href="/" target="_self">Events</a>
-    <a href="/about" target="_self">Über uns</a>
-    <a href="/impressum" target="_self">Impressum</a>
-    <a href="https://github.com/boudicca-events/boudicca.events" target="_blank">GitHub</a>
+    {{#each extensionHeaders as |extensionHeader|}}
+        <a href="{{extensionHeader.url}}" target="_self">{{extensionHeader.text}}</a>
+    {{/each}}
 </div>

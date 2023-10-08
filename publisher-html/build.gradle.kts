@@ -6,7 +6,6 @@ plugins {
 	id("io.spring.dependency-management") version "1.1.3"
 	kotlin("jvm")
 	kotlin("plugin.spring")
-	id("com.netflix.nebula.jakartaee-migration") version "0.20.0"
 }
 
 java {
@@ -22,7 +21,6 @@ dependencies {
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("com.github.jknack:handlebars:4.3.1")
-	implementation("com.github.jknack:handlebars-springmvc:4.3.1")
 	implementation(project(":search-api"))
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
@@ -37,10 +35,6 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<Test> {
 	useJUnitPlatform()
-}
-
-jakartaeeMigration {
-	migrate()
 }
 
 tasks.withType<Jar> {

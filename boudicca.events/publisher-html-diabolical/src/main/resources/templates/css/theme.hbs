@@ -1,4 +1,8 @@
 <style>
+    @font-face {
+        font-family: metalFont;
+        src: url(/fonts/MetalMania-Regular.ttf);
+    }
 
     :root {
 
@@ -11,7 +15,7 @@
         --color-icon: #c90808;
 
         /** font family */ 
-        --font-family-open-sans: 'Open Sans', Arial, Helvetica, sans-serif;
+        --font-family-open-sans: metalFont;
 
         /** layout */
         --max-main-width: 970px;
@@ -22,9 +26,9 @@
         /** --max-tablet-width: 970px; */ 
 
         /** font size */
-        --font-size-small: 0.85em;
-        --font-size-medium: 1em;
-        --font-size-large: 1.25em;
+        --font-size-small: 1em;
+        --font-size-medium: 1.25em;
+        --font-size-large: 1.5em;
 
         /** spacing */ 
         --space-small: 4px;
@@ -44,7 +48,7 @@
     }
 
     html { 
-        font-size: 1.125em;
+        font-size: 1.25em;
     }
 
     * {

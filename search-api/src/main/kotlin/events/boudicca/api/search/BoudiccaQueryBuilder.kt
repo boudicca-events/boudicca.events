@@ -32,7 +32,7 @@ object BoudiccaQueryBuilder {
         if (query.isEmpty()) {
             throw IllegalArgumentException("query is not allowed to be empty")
         }
-        return "(not $query)"
+        return "not ($query)"
     }
 
     fun isQuery(category: Category): String {
@@ -83,6 +83,6 @@ object BoudiccaQueryBuilder {
         if (subQueries.any { it.isEmpty() }) {
             throw IllegalArgumentException("subQueries are not allowed to be empty")
         }
-        return "(" + subQueries.joinToString(" $operator ") + ")"
+        return subQueries.joinToString(" $operator ") { "($it)" }
     }
 }

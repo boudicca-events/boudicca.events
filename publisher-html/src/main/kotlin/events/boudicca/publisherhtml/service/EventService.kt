@@ -33,7 +33,10 @@ const val DEFAULT_DURATION_SHORTER_VALUE = 24 * 30
 private const val SEARCH_TYPE_ALL = "ALL"
 
 @Service
-class EventService @Autowired constructor(@Value("\${boudicca.search.url}") private val search: String) {
+class EventService @Autowired constructor(
+    @Value("\${boudicca.search.url}") private val search: String,
+    @Value("\${boudicca.search.additionalFilter:}") private val additionalFilter: String,
+) {
     private val searchApi: SearchResourceApi = createSearchApi()
     private val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy 'um' HH:mm 'Uhr'", Locale.GERMAN)
     private val localDateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
@@ -51,7 +54,11 @@ class EventService @Autowired constructor(@Value("\${boudicca.search.url}") priv
             setDefaults(searchDTO)
             buildQuery(searchDTO)
         }
-        return query
+        return if (additionalFilter.isNotBlank()) {
+            and(query, additionalFilter)
+        } else {
+            query
+        }
     }
 
     private fun buildQuery(searchDTO: SearchDTO): String {

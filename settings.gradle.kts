@@ -10,5 +10,6 @@ include("search-api")
 include("semantic-conventions")
 include("boudicca.events:eventcollectors")
 include("boudicca.events:publisher-html")
+include("boudicca.events:publisher-html-diabolical")
 
 rootProject.name = "boudicca"

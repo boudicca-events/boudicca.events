@@ -37,10 +37,6 @@ tasks.withType<Test> {
 	useJUnitPlatform()
 }
 
-tasks.withType<Jar> {
-	archiveFileName.set("boudicca-html.jar")
-}
-
 task<Exec>("imageBuild") {
 	inputs.file("src/main/docker/Dockerfile")
 	dependsOn(tasks.named("assemble"))

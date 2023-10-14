@@ -18,7 +18,7 @@ class LandestheaterLinzCollector :
     TwoStepEventCollector<Triple<Element, Pair<String, Document>, LocalDate>>("landestheater linz") {
 
     override fun getAllUnparsedEvents(): List<Triple<Element, Pair<String, Document>, LocalDate>> {
-        val fetcher = Fetcher(1000)
+        val fetcher = Fetcher()
         val events = mutableListOf<Triple<Element, String, LocalDate>>()
 
         val document = fetchList(fetcher)

@@ -16,7 +16,7 @@ import java.util.*
 
 class UlfOoeCollector : TwoStepEventCollector<String>("ulfooe") {
 
-    private val fetcher = Fetcher(2000)
+    private val fetcher = Fetcher()
     private val baseUrl = "https://www.ulf-ooe.at/"
 
     override fun getAllUnparsedEvents(): List<String> {

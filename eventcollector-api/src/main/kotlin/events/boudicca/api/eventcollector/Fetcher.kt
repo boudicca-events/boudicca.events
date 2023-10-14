@@ -6,19 +6,15 @@ import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpRequest.BodyPublishers
 import java.net.http.HttpResponse.BodyHandlers
-import kotlin.math.max
 
-/* how long we want to wait between request as to not overload the target server */
-const val DEFAULT_MIN_WAIT_TIME_IN_MS = 100L
+class Fetcher {
 
-class Fetcher(waitTimeInMs: Long = DEFAULT_MIN_WAIT_TIME_IN_MS) {
-
-    private val realWaitTimeInMs = Math.max(DEFAULT_MIN_WAIT_TIME_IN_MS, waitTimeInMs)
     private val newHttpClient = HttpClient.newBuilder()
         .followRedirects(HttpClient.Redirect.NORMAL)
         .build()
 
-    private var lastRequest = 0L
+    private var lastRequestEnd = 0L
+    private var lastRequestDuration = 0L
 
     fun fetchUrl(url: String): String {
         val request = HttpRequest.newBuilder(URI.create(url))
@@ -42,24 +38,37 @@ class Fetcher(waitTimeInMs: Long = DEFAULT_MIN_WAIT_TIME_IN_MS) {
     }
 
     private fun doRequest(request: HttpRequest, url: String): String {
-        val waitTime = lastRequest + realWaitTimeInMs - System.currentTimeMillis()
+        val waitTime = lastRequestEnd + calcWaitTime() - System.currentTimeMillis()
         if (waitTime > 0) {
             Thread.sleep(waitTime)
         }
-        lastRequest = System.currentTimeMillis()
+        val start = System.currentTimeMillis()
         val response = try {
             newHttpClient.send(request, BodyHandlers.ofString())
         } catch (e: Exception) {
             Collections.endHttpCall(-1)
             throw e
         } finally {
-            lastRequest = System.currentTimeMillis()
+            val end = System.currentTimeMillis()
+            lastRequestEnd = end
+            lastRequestDuration = end - start
         }
         Collections.endHttpCall(response.statusCode())
         if (response.statusCode() != 200) {
             throw RuntimeException("request to $url failed with status code ${response.statusCode()}")
         }
         return response.body()
+    }
+
+    private fun calcWaitTime(): Long {
+        if (lastRequestDuration == 0L) {
+            return 0L
+        }
+        val waitTime = (lastRequestDuration.toDouble() * 0.8F).toLong()
+        if (waitTime <= 100L) {
+            return 100L
+        }
+        return waitTime
     }
 
 }

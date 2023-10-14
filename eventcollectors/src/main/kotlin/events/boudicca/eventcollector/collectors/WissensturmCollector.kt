@@ -15,7 +15,7 @@ import java.time.format.DateTimeFormatter
 class WissensturmCollector : TwoStepEventCollector<Pair<String, Document>>("wissensturm") {
 
     override fun getAllUnparsedEvents(): List<Pair<String, Document>> {
-        val fetcher = Fetcher(500)
+        val fetcher = Fetcher()
 
         val eventUrls = mutableListOf<String>()
         var date = LocalDate.now(ZoneId.of("Europe/Vienna"))

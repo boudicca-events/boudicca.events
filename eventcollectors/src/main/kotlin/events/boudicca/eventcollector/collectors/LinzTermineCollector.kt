@@ -16,7 +16,7 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 class LinzTermineCollector : EventCollector {
-    private val fetcher = Fetcher(2000) //server seems really slow...
+    private val fetcher = Fetcher()
     private val LOG = LoggerFactory.getLogger(this::class.java)
 
     override fun getName(): String {
@@ -68,7 +68,10 @@ class LinzTermineCollector : EventCollector {
             }
             val website = eventWebsites[event.url] ?: continue
 
-            val location = locations[event.locationId]
+            var location = locations[event.locationId]
+            while (location?.subOf != null) {
+                location = locations[location.subOf!!]
+            }
             val description = website.select("span.content-description").text()
             val pictureUrl = if (!website.select("div.letterbox > img").isEmpty()) {
                 "https://www.linztermine.at" + website.select("div.letterbox > img").attr("src")
@@ -89,8 +92,6 @@ class LinzTermineCollector : EventCollector {
                             SemanticKeys.URL to event.url,
                             SemanticKeys.LOCATION_NAME to (location?.name
                                 ?: event.locationFallbackName), //they do not include all locations in their location.xml files -.-
-                            SemanticKeys.LOCATION_CITY to (location?.city ?: ""),
-                            SemanticKeys.LOCATION_URL to (location?.url ?: ""),
                         ).filter { it.value.isNotBlank() }
                     )
                 )
@@ -104,7 +105,7 @@ class LinzTermineCollector : EventCollector {
 
         var date = LocalDate.now(ZoneId.of("Europe/Vienna"))
         val links = mutableListOf<String>()
-        for (i in 1..(4 * 6)) {
+        for (i in 1..(4)) {
             links.add(
                 "https://www.linztermine.at/schnittstelle/downloads/events_xml.php?lt_datefrom=" + date.format(
                     DateTimeFormatter.ofPattern("uuuu-MM-dd")
@@ -169,8 +170,7 @@ class LinzTermineCollector : EventCollector {
             Location(
                 it.attr("id").toInt(),
                 it.select("name").text(),
-                it.select("city").text(),
-                it.select("link").text()
+                it.select("subOf").text().toIntOrNull(),
             )
         }.associateBy { it.id }
     }
@@ -182,8 +182,7 @@ class LinzTermineCollector : EventCollector {
     data class Location(
         val id: Int,
         val name: String,
-        val city: String,
-        val url: String
+        val subOf: Int?,
     )
 
     data class Event(

@@ -10,6 +10,7 @@ import events.boudicca.openapi.api.EventIngestionResourceApi
 import org.slf4j.LoggerFactory
 import java.time.Duration
 import java.util.*
+import java.util.concurrent.Executors
 import java.util.function.Consumer
 import java.util.function.Function
 
@@ -34,6 +35,7 @@ class EventCollectorScheduler(
     private val eventCollectors: MutableList<EventCollector> = mutableListOf()
     private val LOG = LoggerFactory.getLogger(this::class.java)
     private var eventCollectorWebUi: EventCollectorWebUi? = null
+    private val executor = Executors.newCachedThreadPool()
 
     fun addEventCollector(eventCollector: EventCollector): EventCollectorScheduler {
         eventCollectors.add(eventCollector)
@@ -70,8 +72,10 @@ class EventCollectorScheduler(
         Collections.startFullCollection()
         try {
             eventCollectors
-                .parallelStream()
-                .forEach { collect(it) }
+                .map {
+                    executor.submit { collect(it) }
+                }
+                .forEach { it.get() }
         } finally {
             Collections.endFullCollection()
         }
@@ -90,7 +94,9 @@ class EventCollectorScheduler(
                 val postProcessedEvents = events.map { postProcess(it, eventCollector.getName()) }
                 val enrichedEvents = enrich(postProcessedEvents)
                 for (event in enrichedEvents) {
-                    eventSink.accept(event)
+                    retry {
+                        eventSink.accept(event)
+                    }
                 }
             } catch (e: ApiException) {
                 LOG.error("could not ingest events, is the core available?", e)
@@ -104,11 +110,26 @@ class EventCollectorScheduler(
 
     private fun enrich(events: List<Event>): List<Event> {
         return try {
-            enricherFunction?.apply(events) ?: events
+            retry {
+                enricherFunction?.apply(events) ?: events
+            }
         } catch (e: Exception) {
-            LOG.error("enricher threw exception, submitting events unenriched", e)
+            LOG.error("enricher threw exception, submitting events un-enriched", e)
             events
         }
+    }
+
+    private fun <T> retry(function: () -> T): T {
+        var lastException: Throwable? = null
+        for (i in 1..5) {
+            try {
+                return function()
+            } catch (e: Exception) {
+                lastException = e
+                LOG.info("exception caught, retrying in 1 minute", e)
+            }
+        }
+        throw lastException!!
     }
 
     private fun postProcess(event: Event, collectorName: String): Event {

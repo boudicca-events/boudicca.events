@@ -18,6 +18,7 @@ public class SemanticKeys {
     public static final String LOCATION_URL = "location.url";
     public static final String LOCATION_COORDINATES = "location.coordinates";
     public static final String LOCATION_CITY = "location.city";
+    public static final String LOCATION_ADDRESS = "location.address";
 
     // accessibility properties
     public static final String ACCESSIBILITY_ACCESSIBLEENTRY = "accessibility.accessibleEntry";

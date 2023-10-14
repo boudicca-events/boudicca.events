@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="LocalEnricher" type="JetRunConfigurationType">
+    <option name="MAIN_CLASS_NAME" value="events.boudicca.enricher.EnricherApplicationKt" />
+    <module name="boudicca.enricher.main" />
+    <shortenClasspath name="NONE" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

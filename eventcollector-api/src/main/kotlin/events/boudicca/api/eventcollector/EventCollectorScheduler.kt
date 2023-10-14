@@ -144,7 +144,7 @@ class EventCollectorScheduler(
 
 }
 
-private fun createBoudiccaEventSink(eventDbUrl: String?): Consumer<Event> {
+fun createBoudiccaEventSink(eventDbUrl: String?): Consumer<Event> {
     if (eventDbUrl.isNullOrBlank()) {
         throw IllegalStateException("you need to specify the boudicca.eventdb.url property!")
     }
@@ -166,7 +166,7 @@ private fun createBoudiccaEventSink(eventDbUrl: String?): Consumer<Event> {
     }
 }
 
-private fun createBoudiccaEnricherFunction(enricherUrl: String?): Function<List<Event>, List<Event>>? {
+fun createBoudiccaEnricherFunction(enricherUrl: String?): Function<List<Event>, List<Event>>? {
     if (enricherUrl.isNullOrBlank()) {
         return null
     }

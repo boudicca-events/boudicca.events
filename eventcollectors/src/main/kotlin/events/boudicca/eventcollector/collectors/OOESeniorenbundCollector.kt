@@ -19,7 +19,7 @@ import java.util.regex.Pattern
 class OOESeniorenbundCollector : TwoStepEventCollector<Pair<Document, String>>("ooesb") {
 
     override fun getAllUnparsedEvents(): List<Pair<Document, String>> {
-        val fetcher = Fetcher(500) //server seems really slow...
+        val fetcher = Fetcher() //server seems really slow...
         val document = Jsoup.parse(fetcher.fetchUrl("https://servicebroker.media-data.at/overview.html?key=QVKSBOOE"))
 
         return document.select("a.link-detail")

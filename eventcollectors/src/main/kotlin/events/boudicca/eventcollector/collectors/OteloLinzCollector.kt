@@ -15,7 +15,7 @@ import java.time.format.DateTimeFormatter
 
 class OteloLinzCollector : TwoStepEventCollector<String>("otelolinz") {
 
-    private val fetcher = Fetcher(2000)
+    private val fetcher = Fetcher()
 
     override fun getAllUnparsedEvents(): List<String> {
         val document = Jsoup.parse(fetcher.fetchUrl("https://www.otelolinz.at/veranstaltungen/"))

@@ -16,7 +16,7 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 class LinzTermineCollector : EventCollector {
-    private val fetcher = Fetcher(2000) //server seems really slow...
+    private val fetcher = Fetcher() //server seems really slow...
     private val LOG = LoggerFactory.getLogger(this::class.java)
 
     override fun getName(): String {

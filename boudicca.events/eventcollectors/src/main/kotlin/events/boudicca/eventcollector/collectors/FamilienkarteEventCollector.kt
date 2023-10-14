@@ -2,18 +2,14 @@ package events.boudicca.eventcollector.collectors
 
 import events.boudicca.SemanticKeys
 import events.boudicca.api.eventcollector.Event
-import events.boudicca.api.eventcollector.EventCollector
 import events.boudicca.api.eventcollector.Fetcher
 import events.boudicca.api.eventcollector.TwoStepEventCollector
-import net.fortuna.ical4j.data.CalendarBuilder
-import net.fortuna.ical4j.model.Calendar
-import net.fortuna.ical4j.model.component.VEvent
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
-import java.net.URI
-import java.net.URL
-import java.time.*
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.OffsetDateTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 class FamilienkarteCollector : TwoStepEventCollector<String>("familienkarte") {

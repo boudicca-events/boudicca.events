@@ -18,7 +18,7 @@ We use certain data types for the properties we expect.
 * `text`: just a simple text/string
 * `date`: [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) Timestamp as text, for example: `2009-06-30T18:30:00+02:00`
 * `url`: A URL as text
-* `coordinates`: ???? TBD
+* `coordinates`: longitude + latitude in Decimal degrees (DD) in the format `<longitute>, <latitude>`
 * `list<?>`: A list of elements, the `?` describes the type of the elements in the list
 * `enum<?>`: Has to be one of the specified distinct values
 * `boolean`: The text "true" or "false"
@@ -54,6 +54,7 @@ We use certain data types for the properties we expect.
 | location.url         | A link to the website of the location         | url         |
 | location.coordinates | Map-coordinates for the location              | coordinates |
 | location.city        | The city of the event                         | text        |
+| location.address     | Full address line for the location            | text        |
 
 ### Accessibility Properties
 

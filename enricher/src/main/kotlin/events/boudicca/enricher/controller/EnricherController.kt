@@ -25,4 +25,9 @@ class EnricherController @Autowired constructor(
         return enricherService.enrich(enrichRequestDTO)
     }
 
+    @PostMapping("forceUpdate")
+    fun forceUpdate() {
+        enricherService.forceUpdate()
+    }
+
 }

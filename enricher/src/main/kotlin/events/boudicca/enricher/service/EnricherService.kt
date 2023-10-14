@@ -3,11 +3,13 @@ package events.boudicca.enricher.service
 import events.boudicca.enricher.model.EnrichRequestDTO
 import events.boudicca.enricher.model.Event
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 
 @Service
 class EnricherService @Autowired constructor(
-    private val enrichers: List<Enricher>
+    private val enrichers: List<Enricher>,
+    private val eventPublisher: ApplicationEventPublisher,
 ) {
 
     fun enrich(enrichRequestDTO: EnrichRequestDTO): List<Event> {
@@ -20,4 +22,10 @@ class EnricherService @Autowired constructor(
         }
     }
 
+    fun forceUpdate() {
+        eventPublisher.publishEvent(ForceUpdateEvent())
+    }
+
 }
+
+class ForceUpdateEvent

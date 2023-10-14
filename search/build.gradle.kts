@@ -41,6 +41,7 @@ tasks.withType<Test> {
 
 task<Exec>("imageBuild") {
     inputs.file("src/main/docker/Dockerfile")
+    inputs.files(tasks.named("bootJar"))
     dependsOn(tasks.named("assemble"))
     commandLine("docker", "build", "-t", "boudicca-search", "-f", "src/main/docker/Dockerfile", ".")
 }

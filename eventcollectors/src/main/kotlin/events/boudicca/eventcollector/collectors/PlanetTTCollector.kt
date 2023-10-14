@@ -7,9 +7,12 @@ import events.boudicca.api.eventcollector.Event
 import events.boudicca.api.eventcollector.Fetcher
 import events.boudicca.api.eventcollector.TwoStepEventCollector
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.slf4j.LoggerFactory
 import java.io.StringReader
+import java.net.URI
+import java.net.URLDecoder
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.OffsetDateTime
@@ -71,7 +74,7 @@ class PlanetTTCollector : TwoStepEventCollector<Element>("planettt") {
         val data = mutableMapOf<String, String>()
 
         val name = fullEvent.select("div.pl-modal-name").text()
-        data[SemanticKeys.URL] = "https://planet.tt/" //TODO this is broken on their site right now -.-
+        data[SemanticKeys.URL] = parseUrl(fullEvent)
         val pictureUrl = fullEvent.select("div.pl-modal-thumbnail img").attr("src")
         if (pictureUrl.isNotBlank()) {
             data[SemanticKeys.PICTUREURL] = pictureUrl
@@ -86,6 +89,18 @@ class PlanetTTCollector : TwoStepEventCollector<Element>("planettt") {
         return Event(name, startDate, data)
     }
 
+    private fun parseUrl(fullEvent: Document): String {
+        val facebookShareUrl = fullEvent.select("input.pl-share-info").attr("data-href")
+        val uriQuery = URI(facebookShareUrl).query
+        for (queryPart in uriQuery.split("&")) {
+            val keyValue = queryPart.split("=", limit = 2)
+            if (keyValue.size == 2 && keyValue[0] == "u") {
+                return URLDecoder.decode(keyValue[1], Charsets.UTF_8)
+            }
+        }
+        return ""
+    }
+
     private fun mapLocation(data: MutableMap<String, String>, event: Element) {
         val location = event.select("div.pl-modal-location").attr("data-location")
         when (location) {
@@ -94,16 +109,19 @@ class PlanetTTCollector : TwoStepEventCollector<Element>("planettt") {
                 data[SemanticKeys.LOCATION_URL] = "https://simmcity.at/"
                 data[SemanticKeys.LOCATION_CITY] = "Wien"
             }
+
             "szene" -> {
                 data[SemanticKeys.LOCATION_NAME] = "Szene"
                 data[SemanticKeys.LOCATION_URL] = "https://szene.wien/"
                 data[SemanticKeys.LOCATION_CITY] = "Wien"
             }
+
             "planet" -> {
                 data[SemanticKeys.LOCATION_NAME] = "Gasometer"
                 data[SemanticKeys.LOCATION_URL] = "https://www.gasometer.at/"
                 data[SemanticKeys.LOCATION_CITY] = "Wien"
             }
+
             else -> {
                 LOG.warn("could not guess location from location: $location")
             }

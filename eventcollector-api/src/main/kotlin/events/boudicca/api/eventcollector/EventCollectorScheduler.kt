@@ -127,6 +127,7 @@ class EventCollectorScheduler(
             } catch (e: Exception) {
                 lastException = e
                 LOG.info("exception caught, retrying in 1 minute", e)
+                Thread.sleep(1000 * 60)
             }
         }
         throw lastException!!

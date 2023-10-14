@@ -26,7 +26,7 @@ object Configuration {
         }
     }
 
-    fun getProperty(name: String): String {
+    fun getProperty(name: String): String? {
         return properties.getProperty(name)
     }
 }

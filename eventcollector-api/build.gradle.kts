@@ -15,6 +15,7 @@ dependencies {
     api("ch.qos.logback:logback-classic:1.4.11")
     api("org.slf4j:slf4j-api:2.0.9")
     api(project(":eventdb-openapi"))
+    api(project(":enricher-openapi"))
 }
 
 java {

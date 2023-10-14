@@ -6,7 +6,7 @@ class EventCollectorDebugger {
 
     fun debug(eventCollector: EventCollector) {
         val collectedEvents = mutableListOf<Event>()
-        val scheduler = EventCollectorScheduler(eventSink = { collectedEvents.add(it) })
+        val scheduler = EventCollectorScheduler(eventSink = { collectedEvents.add(it) }, enricherFunction = null)
             .startWebUi()
             .addEventCollector(eventCollector)
         scheduler.runOnce()

@@ -9,6 +9,7 @@ import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.parser.Parser
 import org.slf4j.LoggerFactory
+import java.net.URLEncoder
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -69,8 +70,8 @@ class LinzTermineCollector : EventCollector {
             val website = eventWebsites[event.url] ?: continue
 
             var location = locations[event.locationId]
-            while (location?.subOf != null) {
-                location = locations[location.subOf!!]
+            while (location?.subOf != null && locations[location.subOf] != null) {
+                location = locations[location.subOf]
             }
             val description = website.select("span.content-description").text()
             val pictureUrl = if (!website.select("div.letterbox > img").isEmpty()) {
@@ -103,13 +104,15 @@ class LinzTermineCollector : EventCollector {
     private fun parseEvents(): List<Event> {
         val formatter = DateTimeFormatter.ofPattern("uuuu-MM-dd kk:mm:ss")
 
-        var date = LocalDate.now(ZoneId.of("Europe/Vienna"))
+        var date = LocalDate.now(ZoneId.of("Europe/Vienna")).atStartOfDay()
         val links = mutableListOf<String>()
-        for (i in 1..(4)) {
+        for (i in 1..(4 * 6)) {
             links.add(
-                "https://www.linztermine.at/schnittstelle/downloads/events_xml.php?lt_datefrom=" + date.format(
-                    DateTimeFormatter.ofPattern("uuuu-MM-dd")
-                )
+                "https://www.linztermine.at/schnittstelle/downloads/events_xml.php?lt_datefrom=" +
+                        URLEncoder.encode(
+                            date.format(DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss")),
+                            Charsets.UTF_8
+                        )
             )
             date = date.plusWeeks(1)
         }
@@ -117,6 +120,7 @@ class LinzTermineCollector : EventCollector {
             try {
                 loadXml(it)
             } catch (e: RuntimeException) {
+                LOG.error("error fetching xml", e)
                 //booooh
                 null
             }
@@ -157,20 +161,11 @@ class LinzTermineCollector : EventCollector {
 
     private fun parseLocations(): Map<Int, Location> {
         val xml = loadXml("https://www.linztermine.at/schnittstelle/downloads/locations_xml.php")
-        return xml.child(0).children().toList().filter {
-            if (it.tagName() == "location") {
-                true
-            } else if (it.tagName() == "site") {
-                //sites are ignored
-                false
-            } else {
-                throw IllegalArgumentException("unknown tag ${it.tagName()}")
-            }
-        }.map {
+        return xml.child(0).children().toList().map {
             Location(
                 it.attr("id").toInt(),
                 it.select("name").text(),
-                it.select("subOf").text().toIntOrNull(),
+                it.select("subof").text().toIntOrNull(),
             )
         }.associateBy { it.id }
     }

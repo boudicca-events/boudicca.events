@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    implementation("org.json:json:20230618")
+    implementation("org.json:json:20231013")
     implementation(project(":enricher-openapi"))
     implementation(project(":eventdb-openapi"))
 }

@@ -20,7 +20,7 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
-    implementation("com.google.api-client:google-api-client:2.0.0") {
+    implementation("com.google.api-client:google-api-client:2.2.0") {
         exclude("commons-logging","commons-logging")
     }
     implementation("com.google.auth:google-auth-library-oauth2-http:1.19.0") {

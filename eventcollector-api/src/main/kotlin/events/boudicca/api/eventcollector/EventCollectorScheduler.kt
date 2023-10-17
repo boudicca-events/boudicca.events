@@ -35,7 +35,7 @@ class EventCollectorScheduler(
     private val eventCollectors: MutableList<EventCollector> = mutableListOf()
     private val LOG = LoggerFactory.getLogger(this::class.java)
     private var eventCollectorWebUi: EventCollectorWebUi? = null
-    private val executor = Executors.newCachedThreadPool()
+    private val executor = Executors.newCachedThreadPool { Thread(it).apply { isDaemon = true } }
 
     fun addEventCollector(eventCollector: EventCollector): EventCollectorScheduler {
         eventCollectors.add(eventCollector)

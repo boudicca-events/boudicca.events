@@ -27,5 +27,6 @@ fun main() {
         .addEventCollector(EnnsEventsCollector())
         .addEventCollector(UlfOoeCollector())
         .addEventCollector(StiftskonzerteCollector())
+        .addEventCollector(GewaexhausCollector())
         .run()
 }

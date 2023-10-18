@@ -24,5 +24,6 @@ fun main() {
 //        .debug(OteloLinzCollector())
 //        .debug(EnnsEventsCollector())
 //        .debug(UlfOoeCollector())
-        .debug(StiftskonzerteCollector())
+//        .debug(StiftskonzerteCollector())
+        .debug(GewaexhausCollector())
 }

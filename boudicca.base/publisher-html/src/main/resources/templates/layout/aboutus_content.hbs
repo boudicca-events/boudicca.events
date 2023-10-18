@@ -27,23 +27,13 @@
         margin-top: 10px;
     }
 
-    .standaloneheader {
-        display: flex;
-        align-items: center;
-        margin-bottom: 24px;
-        gap: 18px;
-    }
-
     @media only screen and (max-width: 700px) {
         h1 > span {
             display: none;
         }
     }
 </style>
-<header class="standaloneheader">
-   <img src="/img/logo_small.png" alt="Boudicca Logo - Ein rundes Schwarz-auf-Weiß-Bild. Ein stilisiertes Logo der Mondkrone des keltischen Volksstammes Iceni." />
-    <h1>ÜBER <span>BOUDICCA.EVENTS</span></h1>
-</header>
+{{> layout/header title="ÜBER BOUDICCA.EVENTS" add-header-searchbar=false }}
 <main class="main">
     <div class="about-content">
         <div>

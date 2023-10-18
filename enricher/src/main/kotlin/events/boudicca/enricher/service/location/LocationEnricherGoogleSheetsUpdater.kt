@@ -42,16 +42,22 @@ class LocationEnricherGoogleSheetsUpdater(private val googleCredentialsPath: Str
             return emptyList()
         }
 
-        val headers = values[0].filterNotNull().map { it.toString() }.filter { it.isNotBlank() }
+        val headers = values[0]
+            .mapIndexed { i, value -> Pair(i, value?.toString()?.trim()) }
 
         val allLocationData = mutableListOf<LocationData>()
         for (row in values.subList(1, values.size)) {
             val locationData = mutableMapOf<String, List<String>>()
 
-            for (i in headers.indices) {
-                val value = row[i] as String?
+            for (header in headers) {
+                if (header.second.isNullOrBlank() || header.first >= row.size) {
+                    continue
+                }
+                val value = row[header.first] as String?
                 if (!value.isNullOrBlank()) {
-                    locationData[headers[i]] = value.split("\n")
+                    locationData[header.second!!] = value.split("\n")
+                        .map { it.trim() }
+                        .filter { it.isNotBlank() }
                 }
             }
             allLocationData.add(locationData)

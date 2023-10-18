@@ -4,7 +4,9 @@
     <body>
         <div class="content">
             {{> layout/header_links}}
-            {{> layout/header title="BOUDICCA.EVENTS" add-header-searchbar=true}}
+            {{#> layout/header title="BOUDICCA.EVENTS"}}
+                {{> layout/header_searchbar}}
+            {{/layout/header}}
             {{> layout/main events}}
             {{> layout/footer}}
         </div>

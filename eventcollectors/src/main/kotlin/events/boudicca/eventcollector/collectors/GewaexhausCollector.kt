@@ -13,7 +13,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 class GewaexhausCollector : TwoStepEventCollector<String>("gewaexhaus") {
-    private val fetcher = Fetcher(2000)
+    private val fetcher = Fetcher()
     private val baseUrl = "https://www.k-plus.at/"
 
     override fun getAllUnparsedEvents(): List<String> {

@@ -1,5 +1,4 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
     id("org.springframework.boot") version "3.1.4"
@@ -21,8 +20,13 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
-    implementation(project(":semantic-conventions"))
-    implementation(project(":eventdb-openapi"))
+    implementation(project(":boudicca.base:semantic-conventions"))
+    implementation("org.mnode.ical4j:ical4j:3.2.13") {
+        exclude("org.codehaus.groovy", "groovy")
+        exclude("org.codehaus.groovy", "groovy-dateutil")
+        exclude("commons-logging", "commons-logging")
+    }
+    implementation(project(":boudicca.base:search-api"))
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
@@ -43,5 +47,5 @@ task<Exec>("imageBuild") {
     inputs.file("src/main/docker/Dockerfile")
     inputs.files(tasks.named("bootJar"))
     dependsOn(tasks.named("assemble"))
-    commandLine("docker", "build", "-t", "boudicca-search", "-f", "src/main/docker/Dockerfile", ".")
+    commandLine("docker", "build", "-t", "boudicca-ical", "-f", "src/main/docker/Dockerfile", ".")
 }

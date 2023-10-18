@@ -14,8 +14,8 @@ repositories {
 
 dependencies {
     implementation("org.json:json:20231013")
-    implementation(project(":enricher-openapi"))
-    implementation(project(":eventdb-openapi"))
+    implementation(project(":boudicca.base:enricher-openapi"))
+    implementation(project(":boudicca.base:eventdb-openapi"))
 }
 
 tasks.withType<KotlinCompile> {

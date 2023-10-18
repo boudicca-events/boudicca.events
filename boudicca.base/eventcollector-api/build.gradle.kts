@@ -10,8 +10,12 @@ repositories {
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
-    api(project(":search-openapi"))
-    testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
+    implementation("org.apache.velocity:velocity-engine-core:2.3")
+    implementation("org.apache.velocity.tools:velocity-tools-generic:3.1")
+    api("ch.qos.logback:logback-classic:1.4.11")
+    api("org.slf4j:slf4j-api:2.0.9")
+    api(project(":boudicca.base:eventdb-openapi"))
+    api(project(":boudicca.base:enricher-openapi"))
 }
 
 java {
@@ -22,8 +26,4 @@ java {
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions.jvmTarget = JavaVersion.VERSION_17.toString()
     kotlinOptions.javaParameters = true
-}
-
-tasks.withType<Test> {
-    useJUnitPlatform()
 }

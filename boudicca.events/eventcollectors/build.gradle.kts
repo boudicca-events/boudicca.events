@@ -8,7 +8,7 @@ repositories {
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
-    implementation(project(":eventcollector-api"))
+    implementation(project(":boudicca.base:eventcollector-api"))
     implementation("org.jsoup:jsoup:1.16.1")
     implementation("org.mnode.ical4j:ical4j:3.2.13") {
         exclude("org.codehaus.groovy", "groovy")

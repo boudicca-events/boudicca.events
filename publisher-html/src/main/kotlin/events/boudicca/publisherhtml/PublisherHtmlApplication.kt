@@ -1,5 +1,6 @@
 package events.boudicca.publisherhtml
 
+import com.github.jknack.handlebars.helper.ConditionalHelpers
 import events.boudicca.publisherhtml.handlebars.HandlebarsViewResolver
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
@@ -14,6 +15,11 @@ class PublisherHtmlApplication {
 	@Bean
 	fun handlebarsViewResolver(): ViewResolver {
 		val viewResolver = HandlebarsViewResolver()
+
+		for(helper in ConditionalHelpers.entries) {
+			viewResolver.registerHelper(helper.name, helper)
+		}
+
 		viewResolver.setPrefix("classpath:/templates")
 		return viewResolver
 	}

@@ -7,6 +7,7 @@ import events.boudicca.api.eventcollector.TwoStepEventCollector
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
+import org.slf4j.LoggerFactory
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.OffsetDateTime
@@ -16,6 +17,7 @@ import java.util.*
 
 class UlfOoeCollector : TwoStepEventCollector<String>("ulfooe") {
 
+    private val LOG = LoggerFactory.getLogger(this::class.java)
     private val fetcher = Fetcher()
     private val baseUrl = "https://www.ulf-ooe.at/"
 
@@ -42,12 +44,19 @@ class UlfOoeCollector : TwoStepEventCollector<String>("ulfooe") {
             .filter{!it.attr("href").startsWith("http")}) // exclude events from others than ulf
     }
 
-    override fun parseEvent(event: String): Event {
+    override fun parseEvent(event: String): Event? {
         val fullEventLink = baseUrl + event
         val eventSite = Jsoup.parse(fetcher.fetchUrl(fullEventLink))
 
         val name = eventSite.select("h1").text()
-        val startDate = parseDate(eventSite)
+
+        var startDate = OffsetDateTime.MIN
+        try {
+            startDate = parseDate(eventSite)
+        } catch (exc: java.time.format.DateTimeParseException) {
+            LOG.info("Error in ${fullEventLink}: can't parse date, might be a multi-day event")
+            return null
+        }
 
         val data = mutableMapOf<String, String>()
 

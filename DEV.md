@@ -11,7 +11,7 @@ After checkout please build the whole project with `gradlew build` to generate a
 
 ### Frontend only setup
 
-If you only want to develop the frontend ([publisher-html](publisher-html)) then you can use the `OnlineHtmlPublisher`
+If you only want to develop the frontend ([publisher-event-html](boudicca.base/publisher-event-html)) then you can use the `OnlineHtmlPublisher`
 run config.
 
 This run configuration starts the frontend which uses the online boudicca.events website as backend.
@@ -34,11 +34,11 @@ After the database is filled up, call http://localhost:8080 to see the applicati
 Most work currently open is creating new `EventCollectors` for collecting new events from new sites. To do this the
 workflow is following:
 
-1. In our [eventcollectors project](eventcollectors/src/main/kotlin/events/boudicca/eventcollector/collectors) create a
+1. In our [eventcollectors project](boudicca.events/eventcollectors/src/main/kotlin/events/boudicca/eventcollector/collectors) create a
    new EventCollector subclass which collects some events.
     1. A good starting point is always to look at existing EventCollectors and copy one of them.
 2. Add your new collector
-   in [LocalCollectorDebug.kt](eventcollectors/src/main/kotlin/events/boudicca/eventcollector/LocalCollectorDebug.kt)
+   in [LocalCollectorDebug.kt](boudicca.events/eventcollectors/src/main/kotlin/events/boudicca/eventcollector/LocalCollectorDebug.kt)
    and run the `LocalCollectorDebugKt` launch config (or class) to dry-run your test.
     1. A dry-run means events will be collected but not ingested somewhere. This is to make sure that the data looks
        sane before acutally sending it to a backend.
@@ -46,7 +46,7 @@ workflow is following:
        easier look at errors and what happened during your collection.
 3. After your dry-run was successful it is time to test it for real.
     1. First, add your new EventCollector to the
-       class [BoudiccaEventCollectors.kt](eventcollectors/src/main/kotlin/events/boudicca/eventcollector/BoudiccaEventCollectors.kt) (
+       class [BoudiccaEventCollectors.kt](boudicca.events/eventcollectors/src/main/kotlin/events/boudicca/eventcollector/BoudiccaEventCollectors.kt) (
        for testing you can/should comment out all other EventCollectors)
     2. Then start your local [Full Setup](#full-setup)
     3. You can follow the collection progress at http://localhost:8083
@@ -56,13 +56,13 @@ workflow is following:
 ### How a EventCollectors works
 
 All EventCollectors are subclasses of the
-interface [EventCollector](eventcollector-api%2Fsrc%2Fmain%2Fkotlin%2Fevents%2Fboudicca%2Fapi%2Feventcollector%2FEventCollector.kt).
+interface [EventCollector](boudicca.base/eventcollector-api/src/main/kotlin/base/boudicca/api/eventcollector/EventCollector.kt).
 In its simplest for the interface has only two methods you need to implement.
 
 1. getName() which returns a simple name for the collector. The convention is all lowercase without any special
    characters nor spaces.
 2. collectEvents() which returns a List
-   of [Events](eventcollector-api%2Fsrc%2Fmain%2Fkotlin%2Fevents%2Fboudicca%2Fapi%2Feventcollector%2FEvent.kt)
+   of [Events](boudicca.base/eventcollector-api/src/main/kotlin/base/boudicca/api/eventcollector/Event.kt)
 
 and this is all you need for EventCollector!
 
@@ -73,7 +73,7 @@ to help you.
 
 #### TwoStepEventCollector
 
-The [TwoStepEventCollector.kt](eventcollector-api%2Fsrc%2Fmain%2Fkotlin%2Fevents%2Fboudicca%2Fapi%2Feventcollector%2FTwoStepEventCollector.kt)
+The [TwoStepEventCollector.kt](boudicca.base/eventcollector-api/src/main/kotlin/base/boudicca/api/eventcollector/TwoStepEventCollector.kt)
 splits the work up into two steps:
 
 1. getAllUnparsedEvents() which collects and returns a list of "unparsed events", whatever this is. This could for
@@ -87,7 +87,7 @@ possible in the getAllUnparsedEvents() methods.
 
 #### Fetcher
 
-The [Fetcher.kt](eventcollector-api%2Fsrc%2Fmain%2Fkotlin%2Fevents%2Fboudicca%2Fapi%2Feventcollector%2FFetcher.kt)
+The [Fetcher.kt](boudicca.base/eventcollector-api/src/main/kotlin/base/boudicca/api/eventcollector/Fetcher.kt)
 utility class allows you to easily fetch websites via http(s). It is highly recommended that you use this fetcher
 because it also provides automatic delays in queries so that we do not overwhelm the server we scrape and it also sets
 the User-Agent to `boudicca.events collector`.

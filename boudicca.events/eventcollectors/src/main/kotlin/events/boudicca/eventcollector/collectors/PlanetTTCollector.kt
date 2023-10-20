@@ -74,16 +74,16 @@ class PlanetTTCollector : TwoStepEventCollector<Element>("planettt") {
         val data = mutableMapOf<String, String>()
 
         val name = fullEvent.select("div.pl-modal-name").text()
-        data[base.boudicca.SemanticKeys.URL] = parseUrl(fullEvent)
+        data[SemanticKeys.URL] = parseUrl(fullEvent)
         val pictureUrl = fullEvent.select("div.pl-modal-thumbnail img").attr("src")
         if (pictureUrl.isNotBlank()) {
-            data[base.boudicca.SemanticKeys.PICTUREURL] = pictureUrl
+            data[SemanticKeys.PICTUREURL] = pictureUrl
         }
-        data[base.boudicca.SemanticKeys.DESCRIPTION] = fullEvent.select("div.pl-modal-desc > p").text() + "\n" +
+        data[SemanticKeys.DESCRIPTION] = fullEvent.select("div.pl-modal-desc > p").text() + "\n" +
                 fullEvent.select("div.pl-modal-desc > div.acts").text()
 
         //TODO you could parse acts from this site
-        data[base.boudicca.SemanticKeys.TYPE] = "concert"
+        data[SemanticKeys.TYPE] = "concert"
         mapLocation(data, fullEvent)
 
         return Event(name, startDate, data)
@@ -105,21 +105,21 @@ class PlanetTTCollector : TwoStepEventCollector<Element>("planettt") {
         val location = event.select("div.pl-modal-location").attr("data-location")
         when (location) {
             "simmcity" -> {
-                data[base.boudicca.SemanticKeys.LOCATION_NAME] = "SiMMCity"
-                data[base.boudicca.SemanticKeys.LOCATION_URL] = "https://simmcity.at/"
-                data[base.boudicca.SemanticKeys.LOCATION_CITY] = "Wien"
+                data[SemanticKeys.LOCATION_NAME] = "SiMMCity"
+                data[SemanticKeys.LOCATION_URL] = "https://simmcity.at/"
+                data[SemanticKeys.LOCATION_CITY] = "Wien"
             }
 
             "szene" -> {
-                data[base.boudicca.SemanticKeys.LOCATION_NAME] = "Szene"
-                data[base.boudicca.SemanticKeys.LOCATION_URL] = "https://szene.wien/"
-                data[base.boudicca.SemanticKeys.LOCATION_CITY] = "Wien"
+                data[SemanticKeys.LOCATION_NAME] = "Szene"
+                data[SemanticKeys.LOCATION_URL] = "https://szene.wien/"
+                data[SemanticKeys.LOCATION_CITY] = "Wien"
             }
 
             "planet" -> {
-                data[base.boudicca.SemanticKeys.LOCATION_NAME] = "Gasometer"
-                data[base.boudicca.SemanticKeys.LOCATION_URL] = "https://www.gasometer.at/"
-                data[base.boudicca.SemanticKeys.LOCATION_CITY] = "Wien"
+                data[SemanticKeys.LOCATION_NAME] = "Gasometer"
+                data[SemanticKeys.LOCATION_URL] = "https://www.gasometer.at/"
+                data[SemanticKeys.LOCATION_CITY] = "Wien"
             }
 
             else -> {

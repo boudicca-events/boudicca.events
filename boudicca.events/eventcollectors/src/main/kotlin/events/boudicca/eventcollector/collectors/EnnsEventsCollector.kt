@@ -26,16 +26,16 @@ class EnnsEventsCollector : TwoStepEventCollector<JsonObject>("ennsevents") {
         val startDate = parseDate(event)
 
         val data = mutableMapOf<String, String>()
-        data[base.boudicca.SemanticKeys.URL] = "https://erlebe.enns.at/events/e/" + event.string("id")
-        data[base.boudicca.SemanticKeys.DESCRIPTION] = (event.string("subtitle") + "\n" + event.string("description")).trim()
+        data[SemanticKeys.URL] = "https://erlebe.enns.at/events/e/" + event.string("id")
+        data[SemanticKeys.DESCRIPTION] = (event.string("subtitle") + "\n" + event.string("description")).trim()
 
         if (event.containsKey("picture")) {
-            data[base.boudicca.SemanticKeys.PICTUREURL] =
+            data[SemanticKeys.PICTUREURL] =
                 "https://erlebe.enns.at/uploads/images/thumbs_square/" + event.string("picture")
         }
 
         if (event.containsKey("website") && !event.string("website").isNullOrBlank()) {
-            data[base.boudicca.SemanticKeys.LOCATION_URL] = event.string("website")!!
+            data[SemanticKeys.LOCATION_URL] = event.string("website")!!
         }
 
         return Event(name, startDate, data)

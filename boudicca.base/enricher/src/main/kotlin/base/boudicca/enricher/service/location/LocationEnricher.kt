@@ -36,7 +36,7 @@ class LocationEnricher @Autowired constructor(
     }
 
     private fun matches(eventData: Map<String, String>, locationData: Map<String, List<String>>): Boolean {
-        for (locationDatumKey in listOf(base.boudicca.SemanticKeys.LOCATION_NAME, base.boudicca.SemanticKeys.LOCATION_ADDRESS)) {
+        for (locationDatumKey in listOf(SemanticKeys.LOCATION_NAME, SemanticKeys.LOCATION_ADDRESS)) {
             val locationDatumValue = locationData[locationDatumKey]
             if (locationDatumValue != null) {
                 val eventDatum = eventData[locationDatumKey]

@@ -90,7 +90,7 @@ object TestDataGenerator {
                 min = min(min, fieldWords.size)
                 max = max(max, fieldWords.size)
             }
-        if (field == base.boudicca.SemanticKeys.LOCATION_NAME) {
+        if (field == SemanticKeys.LOCATION_NAME) {
             max = 3
             words = words.take(5).toMutableSet()
         }

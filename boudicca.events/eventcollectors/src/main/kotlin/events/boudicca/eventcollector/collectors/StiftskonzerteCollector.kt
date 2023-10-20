@@ -27,8 +27,8 @@ class StiftskonzerteCollector : TwoStepEventCollector<String>("stiftskonzerte") 
         val name = eventSite.select("header.entry-header h1").text()
 
         val data = mutableMapOf<String, String>()
-        data[base.boudicca.SemanticKeys.URL] = event
-        data[base.boudicca.SemanticKeys.DESCRIPTION] = eventSite.select("div.entry-flexible-content").text()
+        data[SemanticKeys.URL] = event
+        data[SemanticKeys.DESCRIPTION] = eventSite.select("div.entry-flexible-content").text()
 
         val locationTimeDiv = eventSite.select("div.entry-content div.location")
         locationTimeDiv.select("br").after("\\n")
@@ -40,12 +40,12 @@ class StiftskonzerteCollector : TwoStepEventCollector<String>("stiftskonzerte") 
 
         val city = locationAndTime[1].replace("Stift ", "")
         val location = locationAndTime.subList(1, locationAndTime.lastIndex+1).joinToString(", ")
-        data[base.boudicca.SemanticKeys.LOCATION_CITY] = city
-        data[base.boudicca.SemanticKeys.LOCATION_NAME] = location
+        data[SemanticKeys.LOCATION_CITY] = city
+        data[SemanticKeys.LOCATION_NAME] = location
 
         val img = eventSite.select("div.entry-content img")
         if (!img.isEmpty()) {
-            data[base.boudicca.SemanticKeys.PICTUREURL] = img.first()!!.attr("src")
+            data[SemanticKeys.PICTUREURL] = img.first()!!.attr("src")
         }
 
         return Event(name, startDate, data)

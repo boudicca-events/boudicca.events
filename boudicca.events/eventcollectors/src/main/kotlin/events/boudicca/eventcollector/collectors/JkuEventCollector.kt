@@ -68,8 +68,8 @@ class JkuEventCollector : EventCollector {
                 Event(
                     eventName, eventStartDate,
                     mapOf(
-                        base.boudicca.SemanticKeys.LOCATION_NAME to vEvent.location.value,
-                        base.boudicca.SemanticKeys.TAGS to listOf("JKU", "Universität", "Studieren").toString(),
+                        SemanticKeys.LOCATION_NAME to vEvent.location.value,
+                        SemanticKeys.TAGS to listOf("JKU", "Universität", "Studieren").toString(),
                         "url.ics" to icsUrl.toString(),
                         "jku.uid" to vEvent.uid.value
                     )

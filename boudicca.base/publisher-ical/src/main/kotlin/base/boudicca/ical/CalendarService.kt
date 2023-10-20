@@ -27,8 +27,8 @@ class CalendarService @Autowired constructor(@Value("\${boudicca.search.url}") p
         calendar.properties.add(Version.VERSION_2_0)
 
         events.forEach { event ->
-            val location = event.data?.get(base.boudicca.SemanticKeys.LOCATION_NAME)
-            val endDate = parseEndDate(event.data?.get(base.boudicca.SemanticKeys.ENDDATE))
+            val location = event.data?.get(SemanticKeys.LOCATION_NAME)
+            val endDate = parseEndDate(event.data?.get(SemanticKeys.ENDDATE))
             val calendarEvent = createEvent(
                 event.name, event.startDate, location, endDate, 0
             )

@@ -90,30 +90,30 @@ class QueryTest {
             mapOf(
                 "name" to "event1",
                 "field" to "value1",
-                base.boudicca.SemanticKeys.STARTDATE to "2023-05-26T00:00:00Z",
-                base.boudicca.SemanticKeys.ENDDATE to "2023-05-26T03:00:00Z",
-                base.boudicca.SemanticKeys.TYPE to "konzert"
+                SemanticKeys.STARTDATE to "2023-05-26T00:00:00Z",
+                SemanticKeys.ENDDATE to "2023-05-26T03:00:00Z",
+                SemanticKeys.TYPE to "konzert"
             ),
             mapOf(
                 "name" to "event2",
                 "field" to "value2",
-                base.boudicca.SemanticKeys.STARTDATE to "2023-05-29T00:00:00Z",
-                base.boudicca.SemanticKeys.TYPE to "theater"
+                SemanticKeys.STARTDATE to "2023-05-29T00:00:00Z",
+                SemanticKeys.TYPE to "theater"
             ),
             mapOf(
                 "name" to "somethingelse", "field" to "wuuut",
-                base.boudicca.SemanticKeys.STARTDATE to "2023-05-31T00:00:00Z"
+                SemanticKeys.STARTDATE to "2023-05-31T00:00:00Z"
             ),
             mapOf(
                 "name" to "somethingelse2",
                 "field" to "wuuut",
-                base.boudicca.SemanticKeys.STARTDATE to "2024-05-31T00:00:00Z",
-                base.boudicca.SemanticKeys.TYPE to "konzert"
+                SemanticKeys.STARTDATE to "2024-05-31T00:00:00Z",
+                SemanticKeys.TYPE to "konzert"
             ),
             mapOf(
                 "name" to "somethingelse3",
                 "field" to "this is a\\longer text",
-                base.boudicca.SemanticKeys.STARTDATE to "2024-05-31T00:00:00Z"
+                SemanticKeys.STARTDATE to "2024-05-31T00:00:00Z"
             ),
         )
     }

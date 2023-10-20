@@ -63,10 +63,10 @@ class EventService @Autowired constructor(@Value("\${boudicca.search.url}") priv
             queryParts.add(isQuery(BoudiccaQueryBuilder.Category.valueOf(searchDTO.category!!)))
         }
         if (!searchDTO.locationCity.isNullOrBlank()) {
-            queryParts.add(equals(base.boudicca.SemanticKeys.LOCATION_CITY, searchDTO.locationCity!!))
+            queryParts.add(equals(SemanticKeys.LOCATION_CITY, searchDTO.locationCity!!))
         }
         if (!searchDTO.locationName.isNullOrBlank()) {
-            queryParts.add(equals(base.boudicca.SemanticKeys.LOCATION_NAME, searchDTO.locationName!!))
+            queryParts.add(equals(SemanticKeys.LOCATION_NAME, searchDTO.locationName!!))
         }
         if (!searchDTO.fromDate.isNullOrBlank()) {
             queryParts.add(after(LocalDate.parse(searchDTO.fromDate!!, localDateFormatter)))
@@ -103,12 +103,12 @@ class EventService @Autowired constructor(@Value("\${boudicca.search.url}") priv
     private fun mapEvent(event: Event): Map<String, String?> {
         return mapOf(
             "name" to event.name,
-            "description" to event.data?.get(base.boudicca.SemanticKeys.DESCRIPTION),
-            "url" to event.data?.get(base.boudicca.SemanticKeys.URL),
+            "description" to event.data?.get(SemanticKeys.DESCRIPTION),
+            "url" to event.data?.get(SemanticKeys.URL),
             "startDate" to formatDate(event.startDate),
-            "locationName" to (event.data?.get(base.boudicca.SemanticKeys.LOCATION_NAME) ?: ""),
-            "city" to event.data?.get(base.boudicca.SemanticKeys.LOCATION_CITY),
-            "category" to mapType(event.data?.get(base.boudicca.SemanticKeys.TYPE)),
+            "locationName" to (event.data?.get(SemanticKeys.LOCATION_NAME) ?: ""),
+            "city" to event.data?.get(SemanticKeys.LOCATION_CITY),
+            "category" to mapType(event.data?.get(SemanticKeys.TYPE)),
             "pictureUrl" to URLEncoder.encode(event.data?.get("pictureUrl") ?: "", Charsets.UTF_8),
         )
     }

@@ -41,11 +41,11 @@ class SearchService @Autowired constructor(
     fun onEventsUpdate(event: EventsUpdatedEvent) {
         this.events = Utils.order(event.events)
         locationNames = this.events
-            .mapNotNull { it.data?.get(base.boudicca.SemanticKeys.LOCATION_NAME) }
+            .mapNotNull { it.data?.get(SemanticKeys.LOCATION_NAME) }
             .filter { it.isNotBlank() }
             .toSet()
         locationCities = this.events
-            .mapNotNull { it.data?.get(base.boudicca.SemanticKeys.LOCATION_CITY) }
+            .mapNotNull { it.data?.get(SemanticKeys.LOCATION_CITY) }
             .filter { it.isNotBlank() }
             .toSet()
     }
@@ -59,10 +59,10 @@ class SearchService @Autowired constructor(
             queryParts.add("is " + escape(searchDTO.category))
         }
         if (!searchDTO.locationCity.isNullOrBlank()) {
-            queryParts.add(base.boudicca.SemanticKeys.LOCATION_CITY + " equals " + escape(searchDTO.locationCity))
+            queryParts.add(SemanticKeys.LOCATION_CITY + " equals " + escape(searchDTO.locationCity))
         }
         if (!searchDTO.locationName.isNullOrBlank()) {
-            queryParts.add(base.boudicca.SemanticKeys.LOCATION_NAME + " equals " + escape(searchDTO.locationName))
+            queryParts.add(SemanticKeys.LOCATION_NAME + " equals " + escape(searchDTO.locationName))
         }
         if (searchDTO.fromDate != null) {
             queryParts.add("after " + formatDate(searchDTO.fromDate))

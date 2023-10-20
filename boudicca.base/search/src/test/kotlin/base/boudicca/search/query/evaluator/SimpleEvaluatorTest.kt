@@ -175,12 +175,12 @@ class SimpleEvaluatorTest {
             callEvaluator(
                 IsExpression("MUSIC"),
                 listOf(
-                    mapOf(base.boudicca.SemanticKeys.TYPE to "konzert"),
-                    mapOf(base.boudicca.SemanticKeys.TYPE to "theater"),
+                    mapOf(SemanticKeys.TYPE to "konzert"),
+                    mapOf(SemanticKeys.TYPE to "theater"),
                 )
             )
         assertEquals(1, events.size)
-        assertEquals("konzert", events.first().data!![base.boudicca.SemanticKeys.TYPE])
+        assertEquals("konzert", events.first().data!![SemanticKeys.TYPE])
     }
 
     @Test
@@ -189,12 +189,12 @@ class SimpleEvaluatorTest {
             callEvaluator(
                 IsExpression("muSIC"),
                 listOf(
-                    mapOf(base.boudicca.SemanticKeys.TYPE to "konzert"),
-                    mapOf(base.boudicca.SemanticKeys.TYPE to "theater"),
+                    mapOf(SemanticKeys.TYPE to "konzert"),
+                    mapOf(SemanticKeys.TYPE to "theater"),
                 )
             )
         assertEquals(1, events.size)
-        assertEquals("konzert", events.first().data!![base.boudicca.SemanticKeys.TYPE])
+        assertEquals("konzert", events.first().data!![SemanticKeys.TYPE])
     }
 
     @Test
@@ -203,13 +203,13 @@ class SimpleEvaluatorTest {
             callEvaluator(
                 IsExpression("other"),
                 listOf(
-                    mapOf(base.boudicca.SemanticKeys.TYPE to "konzert"),
-                    mapOf(base.boudicca.SemanticKeys.TYPE to "theater"),
-                    mapOf(base.boudicca.SemanticKeys.TYPE to "whatever"),
+                    mapOf(SemanticKeys.TYPE to "konzert"),
+                    mapOf(SemanticKeys.TYPE to "theater"),
+                    mapOf(SemanticKeys.TYPE to "whatever"),
                 )
             )
         assertEquals(1, events.size)
-        assertEquals("whatever", events.first().data!![base.boudicca.SemanticKeys.TYPE])
+        assertEquals("whatever", events.first().data!![SemanticKeys.TYPE])
     }
 
     @Test
@@ -219,14 +219,14 @@ class SimpleEvaluatorTest {
                 DurationLongerExpression(2.0),
                 listOf(
                     mapOf(
-                        base.boudicca.SemanticKeys.NAME to "event1",
-                        base.boudicca.SemanticKeys.STARTDATE to "2024-05-31T00:00:00Z",
-                        base.boudicca.SemanticKeys.ENDDATE to "2024-05-31T03:00:00Z",
+                        SemanticKeys.NAME to "event1",
+                        SemanticKeys.STARTDATE to "2024-05-31T00:00:00Z",
+                        SemanticKeys.ENDDATE to "2024-05-31T03:00:00Z",
                     ),
                     mapOf(
-                        base.boudicca.SemanticKeys.NAME to "event2",
-                        base.boudicca.SemanticKeys.STARTDATE to "2024-05-31T00:00:00Z",
-                        base.boudicca.SemanticKeys.ENDDATE to "2024-05-31T00:00:00Z",
+                        SemanticKeys.NAME to "event2",
+                        SemanticKeys.STARTDATE to "2024-05-31T00:00:00Z",
+                        SemanticKeys.ENDDATE to "2024-05-31T00:00:00Z",
                     ),
                 )
             )
@@ -241,14 +241,14 @@ class SimpleEvaluatorTest {
                 DurationShorterExpression(2.0),
                 listOf(
                     mapOf(
-                        base.boudicca.SemanticKeys.NAME to "event1",
-                        base.boudicca.SemanticKeys.STARTDATE to "2024-05-31T00:00:00Z",
-                        base.boudicca.SemanticKeys.ENDDATE to "2024-05-31T03:00:00Z",
+                        SemanticKeys.NAME to "event1",
+                        SemanticKeys.STARTDATE to "2024-05-31T00:00:00Z",
+                        SemanticKeys.ENDDATE to "2024-05-31T03:00:00Z",
                     ),
                     mapOf(
-                        base.boudicca.SemanticKeys.NAME to "event2",
-                        base.boudicca.SemanticKeys.STARTDATE to "2024-05-31T00:00:00Z",
-                        base.boudicca.SemanticKeys.ENDDATE to "2024-05-31T00:00:00Z",
+                        SemanticKeys.NAME to "event2",
+                        SemanticKeys.STARTDATE to "2024-05-31T00:00:00Z",
+                        SemanticKeys.ENDDATE to "2024-05-31T00:00:00Z",
                     ),
                 )
             )
@@ -263,7 +263,7 @@ class SimpleEvaluatorTest {
                 DurationLongerExpression(0.0),
                 listOf(
                     mapOf(
-                        base.boudicca.SemanticKeys.NAME to "event1",
+                        SemanticKeys.NAME to "event1",
                     ),
                 )
             )
@@ -284,9 +284,9 @@ class SimpleEvaluatorTest {
             expression,
             events.map {
                 Event(
-                    it.getOrDefault(base.boudicca.SemanticKeys.NAME, "name"),
-                    if (it.containsKey(base.boudicca.SemanticKeys.STARTDATE))
-                        ZonedDateTime.parse(it[base.boudicca.SemanticKeys.STARTDATE]!!, DateTimeFormatter.ISO_DATE_TIME)
+                    it.getOrDefault(SemanticKeys.NAME, "name"),
+                    if (it.containsKey(SemanticKeys.STARTDATE))
+                        ZonedDateTime.parse(it[SemanticKeys.STARTDATE]!!, DateTimeFormatter.ISO_DATE_TIME)
                     else
                         ZonedDateTime.now(),
                     it

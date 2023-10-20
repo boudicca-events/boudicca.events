@@ -84,14 +84,14 @@ class EventService @Autowired constructor(@Value("\${boudicca.store.path}") priv
         val eventKey = EventKey(event)
         val duplicate = events[eventKey]
         //some cheap logging for finding duplicate events between different collectors
-        if (duplicate != null && duplicate.first.data?.get(base.boudicca.SemanticKeys.COLLECTORNAME) != event.data?.get(
-                base.boudicca.SemanticKeys.COLLECTORNAME)) {
+        if (duplicate != null && duplicate.first.data?.get(SemanticKeys.COLLECTORNAME) != event.data?.get(
+                SemanticKeys.COLLECTORNAME)) {
             LOG.warn("event $event will overwrite $duplicate")
         }
 
         events[eventKey] = Pair(event, InternalEventProperties(System.currentTimeMillis()))
-        if (event.data?.containsKey(base.boudicca.SemanticKeys.COLLECTORNAME) == true) {
-            lastSeenCollectors[event.data[base.boudicca.SemanticKeys.COLLECTORNAME]!!] = System.currentTimeMillis()
+        if (event.data?.containsKey(SemanticKeys.COLLECTORNAME) == true) {
+            lastSeenCollectors[event.data[SemanticKeys.COLLECTORNAME]!!] = System.currentTimeMillis()
         }
         needsPersist.set(true)
     }
@@ -102,8 +102,8 @@ class EventService @Autowired constructor(@Value("\${boudicca.store.path}") priv
     fun cleanup() {
         val toRemoveEvents = events.values
             .filter {
-                if (it.first.data?.containsKey(base.boudicca.SemanticKeys.COLLECTORNAME) == true) {
-                    val collectorName = it.first.data!![base.boudicca.SemanticKeys.COLLECTORNAME]!!
+                if (it.first.data?.containsKey(SemanticKeys.COLLECTORNAME) == true) {
+                    val collectorName = it.first.data!![SemanticKeys.COLLECTORNAME]!!
                     it.second.timeAdded + MAX_AGE < (lastSeenCollectors[collectorName] ?: Long.MIN_VALUE)
                 } else {
                     false

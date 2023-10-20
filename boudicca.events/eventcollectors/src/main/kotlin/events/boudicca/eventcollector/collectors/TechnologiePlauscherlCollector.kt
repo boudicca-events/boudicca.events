@@ -38,12 +38,12 @@ class TechnologiePlauscherlCollector : EventCollector {
                 nameString, zonedDateTime.toOffsetDateTime(),
                 mapOf(
 
-                    base.boudicca.SemanticKeys.LOCATION_NAME to locationString,
-                    base.boudicca.SemanticKeys.TAGS to listOf("TechCommunity", "Afterwork", "Socializing", "Networking").toString(),
-                    base.boudicca.SemanticKeys.URL to entry.link,
-                    base.boudicca.SemanticKeys.TYPE to "techmeetup", //TODO not sure if this works well
-                    base.boudicca.SemanticKeys.DESCRIPTION to entry.description.value,
-                    base.boudicca.SemanticKeys.REGISTRATION to "free"
+                    SemanticKeys.LOCATION_NAME to locationString,
+                    SemanticKeys.TAGS to listOf("TechCommunity", "Afterwork", "Socializing", "Networking").toString(),
+                    SemanticKeys.URL to entry.link,
+                    SemanticKeys.TYPE to "techmeetup", //TODO not sure if this works well
+                    SemanticKeys.DESCRIPTION to entry.description.value,
+                    SemanticKeys.REGISTRATION to "free"
                 )
             )
         }

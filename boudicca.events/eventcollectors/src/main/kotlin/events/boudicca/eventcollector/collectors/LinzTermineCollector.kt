@@ -85,13 +85,13 @@ class LinzTermineCollector : EventCollector {
                         event.name,
                         date.first.toOffsetDateTime(),
                         mapOf(
-                            base.boudicca.SemanticKeys.ENDDATE to date.second.format(DateTimeFormatter.ISO_DATE_TIME),
-                            base.boudicca.SemanticKeys.TYPE to (event.type ?: ""),
-                            base.boudicca.SemanticKeys.DESCRIPTION to description,
-                            base.boudicca.SemanticKeys.PICTUREURL to pictureUrl,
-                            base.boudicca.SemanticKeys.REGISTRATION to (if (event.freeOfCharge) "FREE" else "TICKET"),
-                            base.boudicca.SemanticKeys.URL to event.url,
-                            base.boudicca.SemanticKeys.LOCATION_NAME to (location?.name
+                            SemanticKeys.ENDDATE to date.second.format(DateTimeFormatter.ISO_DATE_TIME),
+                            SemanticKeys.TYPE to (event.type ?: ""),
+                            SemanticKeys.DESCRIPTION to description,
+                            SemanticKeys.PICTUREURL to pictureUrl,
+                            SemanticKeys.REGISTRATION to (if (event.freeOfCharge) "FREE" else "TICKET"),
+                            SemanticKeys.URL to event.url,
+                            SemanticKeys.LOCATION_NAME to (location?.name
                                 ?: event.locationFallbackName), //they do not include all locations in their location.xml files -.-
                         ).filter { it.value.isNotBlank() }
                     )

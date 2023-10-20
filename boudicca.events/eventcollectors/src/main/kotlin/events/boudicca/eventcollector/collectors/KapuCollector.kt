@@ -30,23 +30,23 @@ class KapuCollector : TwoStepEventCollector<String>("kapu") {
         val startDate = parseDate(eventSite)
 
         val data = mutableMapOf<String, String>()
-        data[base.boudicca.SemanticKeys.URL] = url
-        data[base.boudicca.SemanticKeys.TYPE] = eventSite.select("article.event > div.container > div.wot").text()
+        data[SemanticKeys.URL] = url
+        data[SemanticKeys.TYPE] = eventSite.select("article.event > div.container > div.wot").text()
 
         var description = eventSite.select("div.textbereich__field-text").text()
         if (description.isBlank()) {
             description = eventSite.select("div.text-bild__field-image-text").text()
         }
-        data[base.boudicca.SemanticKeys.DESCRIPTION] = description
+        data[SemanticKeys.DESCRIPTION] = description
 
-        data[base.boudicca.SemanticKeys.PICTUREURL] = "https://www.kapu.or.at" + eventSite.select("article.event img.media__image").attr("data-src")
+        data[SemanticKeys.PICTUREURL] = "https://www.kapu.or.at" + eventSite.select("article.event img.media__image").attr("data-src")
 
-        data[base.boudicca.SemanticKeys.LOCATION_NAME] = "Kapu"
-        data[base.boudicca.SemanticKeys.LOCATION_URL] = "https://www.kapu.or.at"
-        data[base.boudicca.SemanticKeys.LOCATION_CITY] = "Linz"
-        data[base.boudicca.SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY] = "true"
-        data[base.boudicca.SemanticKeys.ACCESSIBILITY_ACCESSIBLESEATS] = "true"
-        data[base.boudicca.SemanticKeys.ACCESSIBILITY_ACCESSIBLETOILETS] = "true"
+        data[SemanticKeys.LOCATION_NAME] = "Kapu"
+        data[SemanticKeys.LOCATION_URL] = "https://www.kapu.or.at"
+        data[SemanticKeys.LOCATION_CITY] = "Linz"
+        data[SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY] = "true"
+        data[SemanticKeys.ACCESSIBILITY_ACCESSIBLESEATS] = "true"
+        data[SemanticKeys.ACCESSIBILITY_ACCESSIBLETOILETS] = "true"
 
         return Event(name, startDate, data)
     }

@@ -36,13 +36,13 @@ class OOESeniorenbundCollector : TwoStepEventCollector<Pair<Document, String>>("
         val (startDate, endDate) = getDates(eventDoc)
         val description = eventDoc.select("div.subtitle>p").text()
 
-        data[base.boudicca.SemanticKeys.URL] = cleanupUrl(url)
-        data[base.boudicca.SemanticKeys.LOCATION_NAME] = eventDoc.select("div.venue").text() //TODO location name and city here are not seperated at all -.-
+        data[SemanticKeys.URL] = cleanupUrl(url)
+        data[SemanticKeys.LOCATION_NAME] = eventDoc.select("div.venue").text() //TODO location name and city here are not seperated at all -.-
         if (endDate != null) {
-            data[base.boudicca.SemanticKeys.ENDDATE] = endDate.format(DateTimeFormatter.ISO_DATE_TIME)
+            data[SemanticKeys.ENDDATE] = endDate.format(DateTimeFormatter.ISO_DATE_TIME)
         }
         if (description.isNotBlank()) {
-            data[base.boudicca.SemanticKeys.DESCRIPTION] = description
+            data[SemanticKeys.DESCRIPTION] = description
         }
 
         return Event(name, startDate.toOffsetDateTime(), data)

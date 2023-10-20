@@ -77,24 +77,24 @@ class LandestheaterLinzCollector :
     override fun parseEvent(event: Triple<Element, Pair<String, Document>, LocalDate>): Event {
         val (overview, site, date) = event
         val data = mutableMapOf<String, String>()
-        data[base.boudicca.SemanticKeys.URL] = site.first
+        data[SemanticKeys.URL] = site.first
 
         val name = overview.select("div.lth-evitem-title > a").text()
 
         val (startDate, endDate) = parseDates(overview, date)
         if (endDate != null) {
-            data[base.boudicca.SemanticKeys.ENDDATE] = DateTimeFormatter.ISO_DATE_TIME.format(endDate)
+            data[SemanticKeys.ENDDATE] = DateTimeFormatter.ISO_DATE_TIME.format(endDate)
         }
 
-        data[base.boudicca.SemanticKeys.DESCRIPTION] =
+        data[SemanticKeys.DESCRIPTION] =
             site.second.select("div.lth-layout-ctr section > h2").first { it.text() == "Stückinfo" }.parent()!!
                 .select("div.lth-section-content").text()
-        data[base.boudicca.SemanticKeys.PICTUREURL] =
+        data[SemanticKeys.PICTUREURL] =
             "https://www.landestheater-linz.at" + site.second.select("div.lth-slide img").first()!!.attr("src")
 
         val type = overview.select("div.lth-evitem-what > div.lth-evitem-type").text()
         if (type.isNotBlank()) {
-            data[base.boudicca.SemanticKeys.TYPE] = type
+            data[SemanticKeys.TYPE] = type
         }
 
         val locationName =
@@ -106,33 +106,33 @@ class LandestheaterLinzCollector :
 
     private fun insertLocationData(data: MutableMap<String, String>, locationName: String) {
         if (locationName.contains("musiktheater", ignoreCase = true)) {
-            data[base.boudicca.SemanticKeys.LOCATION_NAME] = "Musiktheater"
-            data[base.boudicca.SemanticKeys.LOCATION_URL] = "https://www.landestheater-linz.at/musiktheater"
-            data[base.boudicca.SemanticKeys.LOCATION_CITY] = "Linz"
-            data[base.boudicca.SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY] = "true"
-            data[base.boudicca.SemanticKeys.ACCESSIBILITY_ACCESSIBLESEATS] = "true"
-            data[base.boudicca.SemanticKeys.ACCESSIBILITY_ACCESSIBLETOILETS] = "true"
+            data[SemanticKeys.LOCATION_NAME] = "Musiktheater"
+            data[SemanticKeys.LOCATION_URL] = "https://www.landestheater-linz.at/musiktheater"
+            data[SemanticKeys.LOCATION_CITY] = "Linz"
+            data[SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY] = "true"
+            data[SemanticKeys.ACCESSIBILITY_ACCESSIBLESEATS] = "true"
+            data[SemanticKeys.ACCESSIBILITY_ACCESSIBLETOILETS] = "true"
         } else if (locationName == "Studiobühne") {
-            data[base.boudicca.SemanticKeys.LOCATION_NAME] = "Studiobühne"
+            data[SemanticKeys.LOCATION_NAME] = "Studiobühne"
             //there is no dedicated page for it, but it is in the same building, so....
-            data[base.boudicca.SemanticKeys.LOCATION_URL] = "https://www.landestheater-linz.at/schauspielhaus"
-            data[base.boudicca.SemanticKeys.LOCATION_CITY] = "Linz"
+            data[SemanticKeys.LOCATION_URL] = "https://www.landestheater-linz.at/schauspielhaus"
+            data[SemanticKeys.LOCATION_CITY] = "Linz"
         } else if (locationName == "Schauspielhaus") {
-            data[base.boudicca.SemanticKeys.LOCATION_NAME] = "Schauspielhaus"
-            data[base.boudicca.SemanticKeys.LOCATION_URL] = "https://www.landestheater-linz.at/schauspielhaus"
-            data[base.boudicca.SemanticKeys.LOCATION_CITY] = "Linz"
-            data[base.boudicca.SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY] = "true"
-            data[base.boudicca.SemanticKeys.ACCESSIBILITY_ACCESSIBLESEATS] = "true"
-            data[base.boudicca.SemanticKeys.ACCESSIBILITY_ACCESSIBLETOILETS] = "true"
+            data[SemanticKeys.LOCATION_NAME] = "Schauspielhaus"
+            data[SemanticKeys.LOCATION_URL] = "https://www.landestheater-linz.at/schauspielhaus"
+            data[SemanticKeys.LOCATION_CITY] = "Linz"
+            data[SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY] = "true"
+            data[SemanticKeys.ACCESSIBILITY_ACCESSIBLESEATS] = "true"
+            data[SemanticKeys.ACCESSIBILITY_ACCESSIBLETOILETS] = "true"
         } else if (locationName == "Kammerspiele") {
-            data[base.boudicca.SemanticKeys.LOCATION_NAME] = "Kammerspiele"
-            data[base.boudicca.SemanticKeys.LOCATION_URL] = "https://www.landestheater-linz.at/kammerspiele"
-            data[base.boudicca.SemanticKeys.LOCATION_CITY] = "Linz"
-            data[base.boudicca.SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY] = "true"
-            data[base.boudicca.SemanticKeys.ACCESSIBILITY_ACCESSIBLESEATS] = "true"
-            data[base.boudicca.SemanticKeys.ACCESSIBILITY_ACCESSIBLETOILETS] = "true"
+            data[SemanticKeys.LOCATION_NAME] = "Kammerspiele"
+            data[SemanticKeys.LOCATION_URL] = "https://www.landestheater-linz.at/kammerspiele"
+            data[SemanticKeys.LOCATION_CITY] = "Linz"
+            data[SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY] = "true"
+            data[SemanticKeys.ACCESSIBILITY_ACCESSIBLESEATS] = "true"
+            data[SemanticKeys.ACCESSIBILITY_ACCESSIBLETOILETS] = "true"
         } else if (locationName.isNotBlank()) {
-            data[base.boudicca.SemanticKeys.LOCATION_NAME] = locationName
+            data[SemanticKeys.LOCATION_NAME] = locationName
         }
     }
 

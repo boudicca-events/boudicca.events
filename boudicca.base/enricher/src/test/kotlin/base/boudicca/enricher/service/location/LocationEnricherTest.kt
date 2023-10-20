@@ -23,7 +23,7 @@ class LocationEnricherTest {
         val locationEnricher = createTestEnricher(
             listOf(
                 mapOf(
-                    base.boudicca.SemanticKeys.LOCATION_NAME to listOf("location"),
+                    SemanticKeys.LOCATION_NAME to listOf("location"),
                     "test.data" to listOf("data"),
                 )
             )
@@ -31,7 +31,7 @@ class LocationEnricherTest {
         val enrichedEvent = locationEnricher.enrich(event)
 
         assertEquals(event.name, enrichedEvent.name)
-        assertEquals(event.data!![base.boudicca.SemanticKeys.LOCATION_NAME], enrichedEvent.data!![base.boudicca.SemanticKeys.LOCATION_NAME])
+        assertEquals(event.data!![SemanticKeys.LOCATION_NAME], enrichedEvent.data!![SemanticKeys.LOCATION_NAME])
         assertEquals("data", enrichedEvent.data!!["test.data"])
     }
 
@@ -41,7 +41,7 @@ class LocationEnricherTest {
         val locationEnricher = createTestEnricher(
             listOf(
                 mapOf(
-                    base.boudicca.SemanticKeys.LOCATION_ADDRESS to listOf("address"),
+                    SemanticKeys.LOCATION_ADDRESS to listOf("address"),
                     "test.data" to listOf("data"),
                 )
             )
@@ -49,7 +49,7 @@ class LocationEnricherTest {
         val enrichedEvent = locationEnricher.enrich(event)
 
         assertEquals(event.name, enrichedEvent.name)
-        assertEquals(event.data!![base.boudicca.SemanticKeys.LOCATION_ADDRESS], enrichedEvent.data!![base.boudicca.SemanticKeys.LOCATION_ADDRESS])
+        assertEquals(event.data!![SemanticKeys.LOCATION_ADDRESS], enrichedEvent.data!![SemanticKeys.LOCATION_ADDRESS])
         assertEquals("data", enrichedEvent.data!!["test.data"])
     }
 
@@ -59,8 +59,8 @@ class LocationEnricherTest {
         val locationEnricher = createTestEnricher(
             listOf(
                 mapOf(
-                    base.boudicca.SemanticKeys.LOCATION_NAME to listOf("location2"),
-                    base.boudicca.SemanticKeys.LOCATION_ADDRESS to listOf("address2"),
+                    SemanticKeys.LOCATION_NAME to listOf("location2"),
+                    SemanticKeys.LOCATION_ADDRESS to listOf("address2"),
                     "test.data" to listOf("data"),
                 )
             )
@@ -76,7 +76,7 @@ class LocationEnricherTest {
         val locationEnricher = createTestEnricher(
             listOf(
                 mapOf(
-                    base.boudicca.SemanticKeys.LOCATION_NAME to listOf("location2", "location"),
+                    SemanticKeys.LOCATION_NAME to listOf("location2", "location"),
                     "test.data" to listOf("data"),
                 )
             )
@@ -84,7 +84,7 @@ class LocationEnricherTest {
         val enrichedEvent = locationEnricher.enrich(event)
 
         assertEquals(event.name, enrichedEvent.name)
-        assertEquals("location2", enrichedEvent.data!![base.boudicca.SemanticKeys.LOCATION_NAME])
+        assertEquals("location2", enrichedEvent.data!![SemanticKeys.LOCATION_NAME])
         assertEquals("data", enrichedEvent.data!!["test.data"])
     }
 
@@ -108,8 +108,8 @@ class LocationEnricherTest {
         return Event(
             "test", ZonedDateTime.now(),
             mapOf(
-                base.boudicca.SemanticKeys.LOCATION_NAME to "location",
-                base.boudicca.SemanticKeys.LOCATION_ADDRESS to "address",
+                SemanticKeys.LOCATION_NAME to "location",
+                SemanticKeys.LOCATION_ADDRESS to "address",
             )
         )
     }

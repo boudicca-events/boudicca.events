@@ -32,9 +32,9 @@ class InnovationsHauptplatzCodingWeeksCollector : TwoStepEventCollector<Element>
         val startDate = parseDate(event)
 
         val data = mutableMapOf<String, String>()
-        data[base.boudicca.SemanticKeys.URL] = event.select("a").attr("href")
-        data[base.boudicca.SemanticKeys.TYPE] = "technology"
-        data[base.boudicca.SemanticKeys.PICTUREURL] = "https://innovation.linz.at" + event.select("img").attr("src")
+        data[SemanticKeys.URL] = event.select("a").attr("href")
+        data[SemanticKeys.TYPE] = "technology"
+        data[SemanticKeys.PICTUREURL] = "https://innovation.linz.at" + event.select("img").attr("src")
 
         return Event(name, startDate, data)
     }

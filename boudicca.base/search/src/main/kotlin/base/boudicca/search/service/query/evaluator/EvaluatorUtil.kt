@@ -13,28 +13,28 @@ object EvaluatorUtil {
 
     fun toEvent(event: Map<String, String>): Event {
         val data = event.toMutableMap()
-        val name = event[base.boudicca.SemanticKeys.NAME]!!
-        val startDate = ZonedDateTime.parse(event[base.boudicca.SemanticKeys.STARTDATE]!!, DateTimeFormatter.ISO_DATE_TIME)
-        data.remove(base.boudicca.SemanticKeys.NAME)
-        data.remove(base.boudicca.SemanticKeys.STARTDATE)
+        val name = event[SemanticKeys.NAME]!!
+        val startDate = ZonedDateTime.parse(event[SemanticKeys.STARTDATE]!!, DateTimeFormatter.ISO_DATE_TIME)
+        data.remove(SemanticKeys.NAME)
+        data.remove(SemanticKeys.STARTDATE)
         return Event(name, startDate, data)
     }
 
     fun mapEventToMap(event: Event): Map<String, String> {
         val data = event.data?.toMutableMap() ?: mutableMapOf()
-        data[base.boudicca.SemanticKeys.NAME] = event.name
-        data[base.boudicca.SemanticKeys.STARTDATE] = event.startDate.format(DateTimeFormatter.ISO_DATE_TIME)
+        data[SemanticKeys.NAME] = event.name
+        data[SemanticKeys.STARTDATE] = event.startDate.format(DateTimeFormatter.ISO_DATE_TIME)
         return data
     }
 
 
     fun getDuration(event: Map<String, String>): Double {
-        if (!event.containsKey(base.boudicca.SemanticKeys.STARTDATE) || !event.containsKey(base.boudicca.SemanticKeys.ENDDATE)) {
+        if (!event.containsKey(SemanticKeys.STARTDATE) || !event.containsKey(SemanticKeys.ENDDATE)) {
             return 0.0
         }
         return try {
-            val startDate = OffsetDateTime.parse(event[base.boudicca.SemanticKeys.STARTDATE]!!, DateTimeFormatter.ISO_DATE_TIME)
-            val endDate = OffsetDateTime.parse(event[base.boudicca.SemanticKeys.ENDDATE]!!, DateTimeFormatter.ISO_DATE_TIME)
+            val startDate = OffsetDateTime.parse(event[SemanticKeys.STARTDATE]!!, DateTimeFormatter.ISO_DATE_TIME)
+            val endDate = OffsetDateTime.parse(event[SemanticKeys.ENDDATE]!!, DateTimeFormatter.ISO_DATE_TIME)
             Duration.of(endDate.toEpochSecond() - startDate.toEpochSecond(), ChronoUnit.SECONDS)
                 .toMillis()
                 .toDouble() / 1000.0 / 60.0 / 60.0

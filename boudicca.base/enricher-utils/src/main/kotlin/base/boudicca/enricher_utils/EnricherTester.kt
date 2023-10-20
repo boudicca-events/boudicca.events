@@ -15,7 +15,7 @@ fun main() {
     val events = base.boudicca.enricher_utils.getEvents()
     println("fetch all events took ${System.currentTimeMillis() - startTime}ms")
 
-    val filteredEvents = events.filter { it.data?.get(base.boudicca.SemanticKeys.COLLECTORNAME) == "linz termine" }
+    val filteredEvents = events.filter { it.data?.get(SemanticKeys.COLLECTORNAME) == "linz termine" }
 
     startTime = System.currentTimeMillis()
     val enrichedEvents = base.boudicca.enricher_utils.enrich(filteredEvents)

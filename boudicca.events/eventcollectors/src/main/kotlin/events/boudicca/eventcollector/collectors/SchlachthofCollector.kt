@@ -27,19 +27,19 @@ class SchlachthofCollector : TwoStepEventCollector<Element>("schlachthof") {
         val name = event.select("h2").text().trim()
         val startDate = parseDate(event.select("div.event_list_details>p:nth-child(1)").text())
 
-        data[base.boudicca.SemanticKeys.TYPE] = event.select("h3:nth-child(1)").text()
-        data[base.boudicca.SemanticKeys.DESCRIPTION] = event.select("div.event_list_previewtext").text()
-        data[base.boudicca.SemanticKeys.PICTUREURL] =
+        data[SemanticKeys.TYPE] = event.select("h3:nth-child(1)").text()
+        data[SemanticKeys.DESCRIPTION] = event.select("div.event_list_previewtext").text()
+        data[SemanticKeys.PICTUREURL] =
             "https://www.schlachthofwels.at" + parsePictureUrl(event.select("div.teaserimage").attr("style"))
-        data[base.boudicca.SemanticKeys.URL] =
+        data[SemanticKeys.URL] =
             "https://www.schlachthofwels.at" + event.select("a.block").attr("href")
 
-        data[base.boudicca.SemanticKeys.LOCATION_NAME] = "Alter Schlachthof"
-        data[base.boudicca.SemanticKeys.LOCATION_URL] = "https://www.schlachthofwels.at"
-        data[base.boudicca.SemanticKeys.LOCATION_CITY] = "Wels"
-        data[base.boudicca.SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY] = "true"
-        data[base.boudicca.SemanticKeys.ACCESSIBILITY_ACCESSIBLESEATS] = "true"
-        data[base.boudicca.SemanticKeys.ACCESSIBILITY_ACCESSIBLETOILETS] = "true"
+        data[SemanticKeys.LOCATION_NAME] = "Alter Schlachthof"
+        data[SemanticKeys.LOCATION_URL] = "https://www.schlachthofwels.at"
+        data[SemanticKeys.LOCATION_CITY] = "Wels"
+        data[SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY] = "true"
+        data[SemanticKeys.ACCESSIBILITY_ACCESSIBLESEATS] = "true"
+        data[SemanticKeys.ACCESSIBILITY_ACCESSIBLETOILETS] = "true"
 
         return Event(name, startDate, data)
     }

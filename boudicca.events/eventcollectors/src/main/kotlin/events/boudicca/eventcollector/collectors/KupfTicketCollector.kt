@@ -66,12 +66,12 @@ class KupfTicketCollector : TwoStepEventCollector<JsonObject>("kupfticket") {
         return Event(
             name, startDate,
             mapOf(
-                base.boudicca.SemanticKeys.DESCRIPTION to description,
-                base.boudicca.SemanticKeys.URL to url,
-                base.boudicca.SemanticKeys.LOCATION_NAME to location,
-                base.boudicca.SemanticKeys.LOCATION_URL to locationUrl,
-                base.boudicca.SemanticKeys.PICTUREURL to pictureUrl,
-                base.boudicca.SemanticKeys.ENDDATE to endDate.format(DateTimeFormatter.ISO_DATE_TIME),
+                SemanticKeys.DESCRIPTION to description,
+                SemanticKeys.URL to url,
+                SemanticKeys.LOCATION_NAME to location,
+                SemanticKeys.LOCATION_URL to locationUrl,
+                SemanticKeys.PICTUREURL to pictureUrl,
+                SemanticKeys.ENDDATE to endDate.format(DateTimeFormatter.ISO_DATE_TIME),
             )
         )
     }

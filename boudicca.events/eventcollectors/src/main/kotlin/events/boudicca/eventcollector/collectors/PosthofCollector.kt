@@ -48,17 +48,17 @@ class PosthofCollector : TwoStepEventCollector<Element>("posthof") {
         ).atZone(ZoneId.of("Europe/Vienna"))
 
         mapType(data, event.select("span.news-list-category").text())
-        data[base.boudicca.SemanticKeys.URL] = "https://www.posthof.at/" + event.select("div.h3>a").attr("href")
-        data[base.boudicca.SemanticKeys.DESCRIPTION] = event.select("div.news_text>p").text()
-        data[base.boudicca.SemanticKeys.PICTUREURL] = "https://www.posthof.at/" + event.select("img").attr("src")
+        data[SemanticKeys.URL] = "https://www.posthof.at/" + event.select("div.h3>a").attr("href")
+        data[SemanticKeys.DESCRIPTION] = event.select("div.news_text>p").text()
+        data[SemanticKeys.PICTUREURL] = "https://www.posthof.at/" + event.select("img").attr("src")
 
-        data[base.boudicca.SemanticKeys.REGISTRATION] = "ticket" //are there free events in posthof?
-        data[base.boudicca.SemanticKeys.LOCATION_NAME] = "Posthof"
-        data[base.boudicca.SemanticKeys.LOCATION_URL] = "https://www.posthof.at"
-        data[base.boudicca.SemanticKeys.LOCATION_CITY] = "Linz"
-        data[base.boudicca.SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY] = "true"
-        data[base.boudicca.SemanticKeys.ACCESSIBILITY_ACCESSIBLESEATS] = "true"
-        data[base.boudicca.SemanticKeys.ACCESSIBILITY_ACCESSIBLETOILETS] = "true"
+        data[SemanticKeys.REGISTRATION] = "ticket" //are there free events in posthof?
+        data[SemanticKeys.LOCATION_NAME] = "Posthof"
+        data[SemanticKeys.LOCATION_URL] = "https://www.posthof.at"
+        data[SemanticKeys.LOCATION_CITY] = "Linz"
+        data[SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY] = "true"
+        data[SemanticKeys.ACCESSIBILITY_ACCESSIBLESEATS] = "true"
+        data[SemanticKeys.ACCESSIBILITY_ACCESSIBLETOILETS] = "true"
 
         return Event(name, startDate.toOffsetDateTime(), data)
     }
@@ -67,13 +67,13 @@ class PosthofCollector : TwoStepEventCollector<Element>("posthof") {
         val lowerType = type.lowercase()
         for (knownMusicType in KNOWN_MUSIC_TYPES) {
             if (lowerType.indexOf(knownMusicType) != -1) {
-                data[base.boudicca.SemanticKeys.TYPE] = "concert"
-                data[base.boudicca.SemanticKeys.CONCERT_GENRE] = type
+                data[SemanticKeys.TYPE] = "concert"
+                data[SemanticKeys.CONCERT_GENRE] = type
                 return
             }
         }
         if (type.isNotBlank()) {
-            data[base.boudicca.SemanticKeys.TYPE] = type
+            data[SemanticKeys.TYPE] = type
         }
     }
 

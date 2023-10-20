@@ -35,7 +35,7 @@ class ZuckerfabrikCollector : TwoStepEventCollector<Pair<String, Document>>("zuc
     override fun parseEvent(event: Pair<String, Document>): Event {
         val (url, doc) = event
         val data = mutableMapOf<String, String>()
-        data[base.boudicca.SemanticKeys.URL] = url
+        data[SemanticKeys.URL] = url
 
         var name = doc.select("div#storycontent>h2").text()
 
@@ -44,23 +44,23 @@ class ZuckerfabrikCollector : TwoStepEventCollector<Pair<String, Document>>("zuc
             name += " - " + storycontent[0].text()
         }
         val startDate = parseTypeAndDate(data, storycontent[1])
-        data[base.boudicca.SemanticKeys.DESCRIPTION] = (2 until storycontent.size).joinToString("\n") { storycontent[it].text() }
+        data[SemanticKeys.DESCRIPTION] = (2 until storycontent.size).joinToString("\n") { storycontent[it].text() }
 
         val pictureUrl = doc.select("div#storycontent img").attr("src")
         if (pictureUrl.isNotBlank()) {
-            data[base.boudicca.SemanticKeys.PICTUREURL] = pictureUrl
+            data[SemanticKeys.PICTUREURL] = pictureUrl
         }
 
-        data[base.boudicca.SemanticKeys.LOCATION_NAME] = "Zuckerfabrik"
-        data[base.boudicca.SemanticKeys.LOCATION_URL] = "https://www.zuckerfabrik.at"
-        data[base.boudicca.SemanticKeys.LOCATION_CITY] = "Enns"
+        data[SemanticKeys.LOCATION_NAME] = "Zuckerfabrik"
+        data[SemanticKeys.LOCATION_URL] = "https://www.zuckerfabrik.at"
+        data[SemanticKeys.LOCATION_CITY] = "Enns"
 
         return Event(name, startDate, data)
     }
 
     private fun parseTypeAndDate(data: MutableMap<String, String>, element: Element): OffsetDateTime {
         val split = element.text().split(" am ")
-        data[base.boudicca.SemanticKeys.TYPE] = split[0]
+        data[SemanticKeys.TYPE] = split[0]
         val dateSplit = split[1].split(",").map { it.trim() }
         val date = LocalDate.parse(
             dateSplit[1],
@@ -78,7 +78,7 @@ class ZuckerfabrikCollector : TwoStepEventCollector<Pair<String, Document>>("zuc
         startTime = LocalTime.parse(startTimeString, timeFormatter)
         val startDate = date.atTime(startTime).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
         if (endTime != null) {
-            data[base.boudicca.SemanticKeys.ENDDATE] =
+            data[SemanticKeys.ENDDATE] =
                 date.atTime(startTime).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime().toString()
         }
         return startDate

@@ -45,24 +45,24 @@ class BrucknerhausCollector : TwoStepEventCollector<Element>("brucknerhaus") {
         val data = mutableMapOf<String, String>()
 
         val name = event.select("div.event__name").text()
-        data[base.boudicca.SemanticKeys.URL] = "https://www.brucknerhaus.at" + event.select("a.headline_link").attr("href")
-        data[base.boudicca.SemanticKeys.PICTUREURL] = event.select("div.event__image img").attr("src")
+        data[SemanticKeys.URL] = "https://www.brucknerhaus.at" + event.select("a.headline_link").attr("href")
+        data[SemanticKeys.PICTUREURL] = event.select("div.event__image img").attr("src")
 
         var description = event.select("div.event__teaser p").text()
         if (description.isBlank()) {
             description = event.select("div.event__teaser .fr-view").first()?.children()?.first()?.text() ?: ""
         }
         if (description.isNotBlank()) {
-            data[base.boudicca.SemanticKeys.DESCRIPTION] = description
+            data[SemanticKeys.DESCRIPTION] = description
         }
 
-        data[base.boudicca.SemanticKeys.TYPE] = "concert" //TODO check
-        data[base.boudicca.SemanticKeys.LOCATION_NAME] = "Brucknerhaus" //TODO not all events are there...
-        data[base.boudicca.SemanticKeys.LOCATION_URL] = "https://www.brucknerhaus.at/"
-        data[base.boudicca.SemanticKeys.LOCATION_CITY] = "Linz"
-        data[base.boudicca.SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY] = "true"
-        data[base.boudicca.SemanticKeys.ACCESSIBILITY_ACCESSIBLESEATS] = "true"
-        data[base.boudicca.SemanticKeys.ACCESSIBILITY_ACCESSIBLETOILETS] = "true"
+        data[SemanticKeys.TYPE] = "concert" //TODO check
+        data[SemanticKeys.LOCATION_NAME] = "Brucknerhaus" //TODO not all events are there...
+        data[SemanticKeys.LOCATION_URL] = "https://www.brucknerhaus.at/"
+        data[SemanticKeys.LOCATION_CITY] = "Linz"
+        data[SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY] = "true"
+        data[SemanticKeys.ACCESSIBILITY_ACCESSIBLESEATS] = "true"
+        data[SemanticKeys.ACCESSIBILITY_ACCESSIBLETOILETS] = "true"
 
         return Event(name, startDate, data)
     }

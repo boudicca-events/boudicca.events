@@ -40,8 +40,8 @@ fun main() {
             )
         }
         val data = event.toMutableMap()
-        val name = data.remove(base.boudicca.SemanticKeys.NAME)
-        val startDate = OffsetDateTime.parse(data.remove(base.boudicca.SemanticKeys.STARTDATE), DateTimeFormatter.ISO_DATE_TIME)
+        val name = data.remove(SemanticKeys.NAME)
+        val startDate = OffsetDateTime.parse(data.remove(SemanticKeys.STARTDATE), DateTimeFormatter.ISO_DATE_TIME)
         ingestApi.ingestAddPost(
             Event()
                 .name(name)

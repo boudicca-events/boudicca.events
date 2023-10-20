@@ -32,27 +32,27 @@ class StadtwerkstattCollector : TwoStepEventCollector<String>("stadtwerkstatt") 
         val startDate = parseDate(eventSite)
 
         val data = mutableMapOf<String, String>()
-        data[base.boudicca.SemanticKeys.URL] = event
+        data[SemanticKeys.URL] = event
         val type = eventSite.select("div.genre").text()
         if (type.isNotBlank()) {
-            data[base.boudicca.SemanticKeys.TYPE] = type
+            data[SemanticKeys.TYPE] = type
         }
         val description = eventSite.select("div.event-text").text()
         if (description.isNotBlank()) {
-            data[base.boudicca.SemanticKeys.DESCRIPTION] = description
+            data[SemanticKeys.DESCRIPTION] = description
         }
 
         val img = eventSite.select("div.event-text img")
         if (!img.isEmpty()) {
-            data[base.boudicca.SemanticKeys.PICTUREURL] = img.first()!!.attr("src")
+            data[SemanticKeys.PICTUREURL] = img.first()!!.attr("src")
         }
 
-        data[base.boudicca.SemanticKeys.LOCATION_NAME] = "Stadtwerkstatt"
-        data[base.boudicca.SemanticKeys.LOCATION_URL] = "https://club.stwst.at"
-        data[base.boudicca.SemanticKeys.LOCATION_CITY] = "Linz"
-        data[base.boudicca.SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY] = "true"
-        data[base.boudicca.SemanticKeys.ACCESSIBILITY_ACCESSIBLESEATS] = "true"
-        data[base.boudicca.SemanticKeys.ACCESSIBILITY_ACCESSIBLETOILETS] = "true"
+        data[SemanticKeys.LOCATION_NAME] = "Stadtwerkstatt"
+        data[SemanticKeys.LOCATION_URL] = "https://club.stwst.at"
+        data[SemanticKeys.LOCATION_CITY] = "Linz"
+        data[SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY] = "true"
+        data[SemanticKeys.ACCESSIBILITY_ACCESSIBLESEATS] = "true"
+        data[SemanticKeys.ACCESSIBILITY_ACCESSIBLETOILETS] = "true"
         //TODO could parse lineup
 
         return Event(name, startDate, data)

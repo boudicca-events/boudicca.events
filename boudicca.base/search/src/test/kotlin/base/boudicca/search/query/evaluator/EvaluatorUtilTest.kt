@@ -24,7 +24,7 @@ class EvaluatorUtilTest {
             0.0,
             EvaluatorUtil.getDuration(
                 mapOf(
-                    base.boudicca.SemanticKeys.ENDDATE to "2024-05-31T01:00:00Z",
+                    SemanticKeys.ENDDATE to "2024-05-31T01:00:00Z",
                 )
             )
         )
@@ -36,7 +36,7 @@ class EvaluatorUtilTest {
             0.0,
             EvaluatorUtil.getDuration(
                 mapOf(
-                    base.boudicca.SemanticKeys.STARTDATE to "2024-05-31T01:00:00Z",
+                    SemanticKeys.STARTDATE to "2024-05-31T01:00:00Z",
                 )
             )
         )
@@ -48,8 +48,8 @@ class EvaluatorUtilTest {
             1.0,
             EvaluatorUtil.getDuration(
                 mapOf(
-                    base.boudicca.SemanticKeys.STARTDATE to "2024-05-31T00:00:00Z",
-                    base.boudicca.SemanticKeys.ENDDATE to "2024-05-31T01:00:00Z",
+                    SemanticKeys.STARTDATE to "2024-05-31T00:00:00Z",
+                    SemanticKeys.ENDDATE to "2024-05-31T01:00:00Z",
                 )
             )
         )
@@ -61,8 +61,8 @@ class EvaluatorUtilTest {
             -1.0,
             EvaluatorUtil.getDuration(
                 mapOf(
-                    base.boudicca.SemanticKeys.STARTDATE to "2024-05-31T01:00:00Z",
-                    base.boudicca.SemanticKeys.ENDDATE to "2024-05-31T00:00:00Z",
+                    SemanticKeys.STARTDATE to "2024-05-31T01:00:00Z",
+                    SemanticKeys.ENDDATE to "2024-05-31T00:00:00Z",
                 )
             )
         )
@@ -74,8 +74,8 @@ class EvaluatorUtilTest {
             0.5,
             EvaluatorUtil.getDuration(
                 mapOf(
-                    base.boudicca.SemanticKeys.STARTDATE to "2024-05-31T00:00:00Z",
-                    base.boudicca.SemanticKeys.ENDDATE to "2024-05-31T00:30:00Z",
+                    SemanticKeys.STARTDATE to "2024-05-31T00:00:00Z",
+                    SemanticKeys.ENDDATE to "2024-05-31T00:30:00Z",
                 )
             )
         )

@@ -29,17 +29,17 @@ class GewaexhausCollector : TwoStepEventCollector<String>("gewaexhaus") {
         val startDate = parseDate(eventSite)
 
         val data = mutableMapOf<String, String>()
-        data[base.boudicca.SemanticKeys.URL] = baseUrl + event
-        data[base.boudicca.SemanticKeys.LOCATION_URL] = baseUrl
-        data[base.boudicca.SemanticKeys.LOCATION_NAME] = "Gewäxhaus Ennsdorf"
-        data[base.boudicca.SemanticKeys.LOCATION_CITY] = "Ennsdorf"
+        data[SemanticKeys.URL] = baseUrl + event
+        data[SemanticKeys.LOCATION_URL] = baseUrl
+        data[SemanticKeys.LOCATION_NAME] = "Gewäxhaus Ennsdorf"
+        data[SemanticKeys.LOCATION_CITY] = "Ennsdorf"
 
         val description = eventSite.select("section.css-9s1hn:not(section.hugeTitleFontSize)").text()
-        data[base.boudicca.SemanticKeys.DESCRIPTION] = description
+        data[SemanticKeys.DESCRIPTION] = description
 
         val img = eventSite.select("section.hugeTitleFontSize img")
         if (!img.isEmpty()) {
-            data[base.boudicca.SemanticKeys.PICTUREURL] = img.first()!!.attr("srcset").split(" ")[0]
+            data[SemanticKeys.PICTUREURL] = img.first()!!.attr("srcset").split(" ")[0]
         }
 
         return Event(name, startDate, data)

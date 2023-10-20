@@ -68,7 +68,7 @@ class SimpleEvaluator(rawEvents: Collection<Event>) : Evaluator {
 
             is BeforeExpression -> {
                 try {
-                    if (!event.containsKey(base.boudicca.SemanticKeys.STARTDATE)) {
+                    if (!event.containsKey(SemanticKeys.STARTDATE)) {
                         return false
                     }
                     val startDate = getLocalStartDate(event)
@@ -80,7 +80,7 @@ class SimpleEvaluator(rawEvents: Collection<Event>) : Evaluator {
 
             is AfterExpression -> {
                 try {
-                    if (!event.containsKey(base.boudicca.SemanticKeys.STARTDATE)) {
+                    if (!event.containsKey(SemanticKeys.STARTDATE)) {
                         return false
                     }
                     val startDate = getLocalStartDate(event)
@@ -91,10 +91,10 @@ class SimpleEvaluator(rawEvents: Collection<Event>) : Evaluator {
             }
 
             is IsExpression -> {
-                if (!event.containsKey(base.boudicca.SemanticKeys.TYPE)) {
+                if (!event.containsKey(SemanticKeys.TYPE)) {
                     return false
                 }
-                val category = base.boudicca.EventCategory.getForType(event[base.boudicca.SemanticKeys.TYPE])
+                val category = base.boudicca.EventCategory.getForType(event[SemanticKeys.TYPE])
                 val expressionCategory = expression.getText().uppercase()
                 if (category == null) {
                     return expressionCategory == "OTHER"
@@ -119,7 +119,7 @@ class SimpleEvaluator(rawEvents: Collection<Event>) : Evaluator {
     }
 
     private fun getLocalStartDate(event: Map<String, String>): LocalDate =
-        OffsetDateTime.parse(event[base.boudicca.SemanticKeys.STARTDATE]!!, DateTimeFormatter.ISO_DATE_TIME)
+        OffsetDateTime.parse(event[SemanticKeys.STARTDATE]!!, DateTimeFormatter.ISO_DATE_TIME)
             .atZoneSameInstant(ZoneId.of("Europe/Vienna"))
             .toLocalDate()
 }

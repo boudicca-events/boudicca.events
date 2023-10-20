@@ -142,11 +142,11 @@ class EventCollectorScheduler(
                 LOG.warn("event contains empty field ${entry.key}: $event")
             }
         }
-        if (!event.additionalData.containsKey(base.boudicca.SemanticKeys.COLLECTORNAME)) {
+        if (!event.additionalData.containsKey(SemanticKeys.COLLECTORNAME)) {
             return Event(
                 event.name,
                 event.startDate,
-                event.additionalData.toMutableMap().apply { put(base.boudicca.SemanticKeys.COLLECTORNAME, collectorName) }
+                event.additionalData.toMutableMap().apply { put(SemanticKeys.COLLECTORNAME, collectorName) }
             )
         }
         return event

@@ -2,10 +2,10 @@ package events.boudicca.eventcollector.collectors
 
 import com.rometools.rome.io.SyndFeedInput
 import com.rometools.rome.io.XmlReader
-import events.boudicca.SemanticKeys
-import events.boudicca.api.eventcollector.Event
-import events.boudicca.api.eventcollector.EventCollector
-import events.boudicca.api.eventcollector.Fetcher
+import base.boudicca.SemanticKeys
+import base.boudicca.api.eventcollector.Event
+import base.boudicca.api.eventcollector.EventCollector
+import base.boudicca.api.eventcollector.Fetcher
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -38,12 +38,12 @@ class TechnologiePlauscherlCollector : EventCollector {
                 nameString, zonedDateTime.toOffsetDateTime(),
                 mapOf(
 
-                    SemanticKeys.LOCATION_NAME to locationString,
-                    SemanticKeys.TAGS to listOf("TechCommunity", "Afterwork", "Socializing", "Networking").toString(),
-                    SemanticKeys.URL to entry.link,
-                    SemanticKeys.TYPE to "techmeetup", //TODO not sure if this works well
-                    SemanticKeys.DESCRIPTION to entry.description.value,
-                    SemanticKeys.REGISTRATION to "free"
+                    base.boudicca.SemanticKeys.LOCATION_NAME to locationString,
+                    base.boudicca.SemanticKeys.TAGS to listOf("TechCommunity", "Afterwork", "Socializing", "Networking").toString(),
+                    base.boudicca.SemanticKeys.URL to entry.link,
+                    base.boudicca.SemanticKeys.TYPE to "techmeetup", //TODO not sure if this works well
+                    base.boudicca.SemanticKeys.DESCRIPTION to entry.description.value,
+                    base.boudicca.SemanticKeys.REGISTRATION to "free"
                 )
             )
         }

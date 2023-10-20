@@ -1,9 +1,9 @@
 package events.boudicca.eventcollector.collectors
 
-import events.boudicca.SemanticKeys
-import events.boudicca.api.eventcollector.Event
-import events.boudicca.api.eventcollector.Fetcher
-import events.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.SemanticKeys
+import base.boudicca.api.eventcollector.Event
+import base.boudicca.api.eventcollector.Fetcher
+import base.boudicca.api.eventcollector.TwoStepEventCollector
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.time.LocalDate
@@ -42,32 +42,32 @@ class WissensturmCollector : TwoStepEventCollector<Pair<String, Document>>("wiss
 
         val description = eventDoc.select("div.kw-kurdetails div.content-txt:nth-child(2)").text()
         if (description.isNotBlank()) {
-            data[SemanticKeys.DESCRIPTION] = description
+            data[base.boudicca.SemanticKeys.DESCRIPTION] = description
         }
-        data[SemanticKeys.URL] = url
+        data[base.boudicca.SemanticKeys.URL] = url
 
         val pictureUrl = eventDoc.select("div.kw-kurdetails div.content-txt:nth-child(2) img")
         if (pictureUrl.isNotEmpty()) {
-            data[SemanticKeys.PICTUREURL] = pictureUrl.attr("src")
+            data[base.boudicca.SemanticKeys.PICTUREURL] = pictureUrl.attr("src")
         }
 
         return datesAndLocations
             .filter { it.first != null }
             .map {
                 val dataCopy = data.toMutableMap()
-                dataCopy[SemanticKeys.ENDDATE] = DateTimeFormatter.ISO_DATE_TIME.format(it.second)
+                dataCopy[base.boudicca.SemanticKeys.ENDDATE] = DateTimeFormatter.ISO_DATE_TIME.format(it.second)
                 if (
                     it.third.contains("wissensturm", ignoreCase = true)
                     || it.third.contains("WT;", ignoreCase = false)
                 ) {
-                    dataCopy[SemanticKeys.LOCATION_NAME] = "Wissensturm"
-                    dataCopy[SemanticKeys.LOCATION_URL] = "https://wissensturm.linz.at/"
-                    dataCopy[SemanticKeys.LOCATION_CITY] = "Linz"
-                    dataCopy[SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY] = "true"
-                    dataCopy[SemanticKeys.ACCESSIBILITY_ACCESSIBLESEATS] = "true"
-                    dataCopy[SemanticKeys.ACCESSIBILITY_ACCESSIBLETOILETS] = "true"
+                    dataCopy[base.boudicca.SemanticKeys.LOCATION_NAME] = "Wissensturm"
+                    dataCopy[base.boudicca.SemanticKeys.LOCATION_URL] = "https://wissensturm.linz.at/"
+                    dataCopy[base.boudicca.SemanticKeys.LOCATION_CITY] = "Linz"
+                    dataCopy[base.boudicca.SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY] = "true"
+                    dataCopy[base.boudicca.SemanticKeys.ACCESSIBILITY_ACCESSIBLESEATS] = "true"
+                    dataCopy[base.boudicca.SemanticKeys.ACCESSIBILITY_ACCESSIBLETOILETS] = "true"
                 } else {
-                    dataCopy[SemanticKeys.LOCATION_NAME] = it.third
+                    dataCopy[base.boudicca.SemanticKeys.LOCATION_NAME] = it.third
                 }
                 Event(name, it.first!!, dataCopy)
             }

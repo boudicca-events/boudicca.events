@@ -1,9 +1,9 @@
 package events.boudicca.eventcollector.collectors
 
-import events.boudicca.SemanticKeys
-import events.boudicca.api.eventcollector.Event
-import events.boudicca.api.eventcollector.Fetcher
-import events.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.SemanticKeys
+import base.boudicca.api.eventcollector.Event
+import base.boudicca.api.eventcollector.Fetcher
+import base.boudicca.api.eventcollector.TwoStepEventCollector
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.time.LocalDate
@@ -32,27 +32,27 @@ class StadtwerkstattCollector : TwoStepEventCollector<String>("stadtwerkstatt") 
         val startDate = parseDate(eventSite)
 
         val data = mutableMapOf<String, String>()
-        data[SemanticKeys.URL] = event
+        data[base.boudicca.SemanticKeys.URL] = event
         val type = eventSite.select("div.genre").text()
         if (type.isNotBlank()) {
-            data[SemanticKeys.TYPE] = type
+            data[base.boudicca.SemanticKeys.TYPE] = type
         }
         val description = eventSite.select("div.event-text").text()
         if (description.isNotBlank()) {
-            data[SemanticKeys.DESCRIPTION] = description
+            data[base.boudicca.SemanticKeys.DESCRIPTION] = description
         }
 
         val img = eventSite.select("div.event-text img")
         if (!img.isEmpty()) {
-            data[SemanticKeys.PICTUREURL] = img.first()!!.attr("src")
+            data[base.boudicca.SemanticKeys.PICTUREURL] = img.first()!!.attr("src")
         }
 
-        data[SemanticKeys.LOCATION_NAME] = "Stadtwerkstatt"
-        data[SemanticKeys.LOCATION_URL] = "https://club.stwst.at"
-        data[SemanticKeys.LOCATION_CITY] = "Linz"
-        data[SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY] = "true"
-        data[SemanticKeys.ACCESSIBILITY_ACCESSIBLESEATS] = "true"
-        data[SemanticKeys.ACCESSIBILITY_ACCESSIBLETOILETS] = "true"
+        data[base.boudicca.SemanticKeys.LOCATION_NAME] = "Stadtwerkstatt"
+        data[base.boudicca.SemanticKeys.LOCATION_URL] = "https://club.stwst.at"
+        data[base.boudicca.SemanticKeys.LOCATION_CITY] = "Linz"
+        data[base.boudicca.SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY] = "true"
+        data[base.boudicca.SemanticKeys.ACCESSIBILITY_ACCESSIBLESEATS] = "true"
+        data[base.boudicca.SemanticKeys.ACCESSIBILITY_ACCESSIBLETOILETS] = "true"
         //TODO could parse lineup
 
         return Event(name, startDate, data)

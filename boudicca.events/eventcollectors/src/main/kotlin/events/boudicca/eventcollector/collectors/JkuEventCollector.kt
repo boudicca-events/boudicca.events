@@ -1,9 +1,9 @@
 package events.boudicca.eventcollector.collectors
 
-import events.boudicca.SemanticKeys
-import events.boudicca.api.eventcollector.Event
-import events.boudicca.api.eventcollector.EventCollector
-import events.boudicca.api.eventcollector.Fetcher
+import base.boudicca.SemanticKeys
+import base.boudicca.api.eventcollector.Event
+import base.boudicca.api.eventcollector.EventCollector
+import base.boudicca.api.eventcollector.Fetcher
 import net.fortuna.ical4j.data.CalendarBuilder
 import net.fortuna.ical4j.model.Calendar
 import net.fortuna.ical4j.model.component.VEvent
@@ -68,8 +68,8 @@ class JkuEventCollector : EventCollector {
                 Event(
                     eventName, eventStartDate,
                     mapOf(
-                        SemanticKeys.LOCATION_NAME to vEvent.location.value,
-                        SemanticKeys.TAGS to listOf("JKU", "Universität", "Studieren").toString(),
+                        base.boudicca.SemanticKeys.LOCATION_NAME to vEvent.location.value,
+                        base.boudicca.SemanticKeys.TAGS to listOf("JKU", "Universität", "Studieren").toString(),
                         "url.ics" to icsUrl.toString(),
                         "jku.uid" to vEvent.uid.value
                     )

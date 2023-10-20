@@ -1,9 +1,9 @@
 package events.boudicca.eventcollector.collectors
 
-import events.boudicca.SemanticKeys
-import events.boudicca.api.eventcollector.Event
-import events.boudicca.api.eventcollector.Fetcher
-import events.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.SemanticKeys
+import base.boudicca.api.eventcollector.Event
+import base.boudicca.api.eventcollector.Fetcher
+import base.boudicca.api.eventcollector.TwoStepEventCollector
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.time.LocalDateTime
@@ -27,19 +27,19 @@ class SchlachthofCollector : TwoStepEventCollector<Element>("schlachthof") {
         val name = event.select("h2").text().trim()
         val startDate = parseDate(event.select("div.event_list_details>p:nth-child(1)").text())
 
-        data[SemanticKeys.TYPE] = event.select("h3:nth-child(1)").text()
-        data[SemanticKeys.DESCRIPTION] = event.select("div.event_list_previewtext").text()
-        data[SemanticKeys.PICTUREURL] =
+        data[base.boudicca.SemanticKeys.TYPE] = event.select("h3:nth-child(1)").text()
+        data[base.boudicca.SemanticKeys.DESCRIPTION] = event.select("div.event_list_previewtext").text()
+        data[base.boudicca.SemanticKeys.PICTUREURL] =
             "https://www.schlachthofwels.at" + parsePictureUrl(event.select("div.teaserimage").attr("style"))
-        data[SemanticKeys.URL] =
+        data[base.boudicca.SemanticKeys.URL] =
             "https://www.schlachthofwels.at" + event.select("a.block").attr("href")
 
-        data[SemanticKeys.LOCATION_NAME] = "Alter Schlachthof"
-        data[SemanticKeys.LOCATION_URL] = "https://www.schlachthofwels.at"
-        data[SemanticKeys.LOCATION_CITY] = "Wels"
-        data[SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY] = "true"
-        data[SemanticKeys.ACCESSIBILITY_ACCESSIBLESEATS] = "true"
-        data[SemanticKeys.ACCESSIBILITY_ACCESSIBLETOILETS] = "true"
+        data[base.boudicca.SemanticKeys.LOCATION_NAME] = "Alter Schlachthof"
+        data[base.boudicca.SemanticKeys.LOCATION_URL] = "https://www.schlachthofwels.at"
+        data[base.boudicca.SemanticKeys.LOCATION_CITY] = "Wels"
+        data[base.boudicca.SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY] = "true"
+        data[base.boudicca.SemanticKeys.ACCESSIBILITY_ACCESSIBLESEATS] = "true"
+        data[base.boudicca.SemanticKeys.ACCESSIBILITY_ACCESSIBLETOILETS] = "true"
 
         return Event(name, startDate, data)
     }

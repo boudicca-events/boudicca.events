@@ -1,9 +1,9 @@
 package events.boudicca.eventcollector.collectors
 
-import events.boudicca.SemanticKeys
-import events.boudicca.api.eventcollector.Event
-import events.boudicca.api.eventcollector.Fetcher
-import events.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.SemanticKeys
+import base.boudicca.api.eventcollector.Event
+import base.boudicca.api.eventcollector.Fetcher
+import base.boudicca.api.eventcollector.TwoStepEventCollector
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.time.LocalDate
@@ -33,23 +33,23 @@ class SpinnereiCollector : TwoStepEventCollector<Pair<String, Document>>("spinne
     override fun parseEvent(event: Pair<String, Document>): Event {
         val (url, doc) = event
         val data = mutableMapOf<String, String>()
-        data[SemanticKeys.URL] = url
+        data[base.boudicca.SemanticKeys.URL] = url
 
         var name = doc.select("div.vng-details div.vng-detail-content-titel").text()
         name += " " + doc.select("div.vng-details div.vng-detail-content-untertitel").text()
 
         val startDate = parseTypeAndDate(data, doc.select("div.vng-details div.vng-detail-content-beginn").text())
 
-        data[SemanticKeys.DESCRIPTION] = doc.select("div.vng-detail-content-bodytext").text()
-        data[SemanticKeys.PICTUREURL] =
+        data[base.boudicca.SemanticKeys.DESCRIPTION] = doc.select("div.vng-detail-content-bodytext").text()
+        data[base.boudicca.SemanticKeys.PICTUREURL] =
             "https://spinnerei.kulturpark.at" + parsePictureUrl(doc.select("div.vng-details div.bg-image").attr("style"))
 
-        data[SemanticKeys.LOCATION_NAME] = "Spinnerei"
-        data[SemanticKeys.LOCATION_URL] = "https://spinnerei.kulturpark.at/"
-        data[SemanticKeys.LOCATION_CITY] = "Traun"
-        data[SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY] = "true"
-        data[SemanticKeys.ACCESSIBILITY_ACCESSIBLESEATS] = "true"
-        data[SemanticKeys.ACCESSIBILITY_ACCESSIBLETOILETS] = "true"
+        data[base.boudicca.SemanticKeys.LOCATION_NAME] = "Spinnerei"
+        data[base.boudicca.SemanticKeys.LOCATION_URL] = "https://spinnerei.kulturpark.at/"
+        data[base.boudicca.SemanticKeys.LOCATION_CITY] = "Traun"
+        data[base.boudicca.SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY] = "true"
+        data[base.boudicca.SemanticKeys.ACCESSIBILITY_ACCESSIBLESEATS] = "true"
+        data[base.boudicca.SemanticKeys.ACCESSIBILITY_ACCESSIBLETOILETS] = "true"
 
         return Event(name, startDate, data)
     }
@@ -64,7 +64,7 @@ class SpinnereiCollector : TwoStepEventCollector<Pair<String, Document>>("spinne
         if (split.size != 4) {
             throw IllegalStateException("could not parse type and date from $text")
         }
-        data[SemanticKeys.TYPE] = split[3]
+        data[base.boudicca.SemanticKeys.TYPE] = split[3]
 
         val date = LocalDate.parse(split[1], DateTimeFormatter.ofPattern("dd.MM.uu"))
         val time = LocalTime.parse(split[2], DateTimeFormatter.ofPattern("kk:mm"))

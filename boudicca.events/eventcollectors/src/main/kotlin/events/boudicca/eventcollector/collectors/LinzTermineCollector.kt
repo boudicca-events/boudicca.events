@@ -1,9 +1,9 @@
 package events.boudicca.eventcollector.collectors
 
-import events.boudicca.SemanticKeys
-import events.boudicca.api.eventcollector.Event
-import events.boudicca.api.eventcollector.EventCollector
-import events.boudicca.api.eventcollector.Fetcher
+import base.boudicca.SemanticKeys
+import base.boudicca.api.eventcollector.Event
+import base.boudicca.api.eventcollector.EventCollector
+import base.boudicca.api.eventcollector.Fetcher
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -24,7 +24,7 @@ class LinzTermineCollector : EventCollector {
         return "linz termine"
     }
 
-    override fun collectEvents(): List<events.boudicca.api.eventcollector.Event> {
+    override fun collectEvents(): List<base.boudicca.api.eventcollector.Event> {
         val locations = parseLocations()
         val events = filterEvents(parseEvents())
         val eventWebsites = getEventWebsites(events)
@@ -60,8 +60,8 @@ class LinzTermineCollector : EventCollector {
         eventList: List<Event>,
         locations: Map<Int, Location>,
         eventWebsites: Map<String, Document>
-    ): List<events.boudicca.api.eventcollector.Event> {
-        val mappedEvents = mutableListOf<events.boudicca.api.eventcollector.Event>()
+    ): List<base.boudicca.api.eventcollector.Event> {
+        val mappedEvents = mutableListOf<base.boudicca.api.eventcollector.Event>()
         for (event in eventList) {
             if (event.dates.isEmpty()) {
                 LOG.warn("event does not contain any dates: $event")
@@ -85,13 +85,13 @@ class LinzTermineCollector : EventCollector {
                         event.name,
                         date.first.toOffsetDateTime(),
                         mapOf(
-                            SemanticKeys.ENDDATE to date.second.format(DateTimeFormatter.ISO_DATE_TIME),
-                            SemanticKeys.TYPE to (event.type ?: ""),
-                            SemanticKeys.DESCRIPTION to description,
-                            SemanticKeys.PICTUREURL to pictureUrl,
-                            SemanticKeys.REGISTRATION to (if (event.freeOfCharge) "FREE" else "TICKET"),
-                            SemanticKeys.URL to event.url,
-                            SemanticKeys.LOCATION_NAME to (location?.name
+                            base.boudicca.SemanticKeys.ENDDATE to date.second.format(DateTimeFormatter.ISO_DATE_TIME),
+                            base.boudicca.SemanticKeys.TYPE to (event.type ?: ""),
+                            base.boudicca.SemanticKeys.DESCRIPTION to description,
+                            base.boudicca.SemanticKeys.PICTUREURL to pictureUrl,
+                            base.boudicca.SemanticKeys.REGISTRATION to (if (event.freeOfCharge) "FREE" else "TICKET"),
+                            base.boudicca.SemanticKeys.URL to event.url,
+                            base.boudicca.SemanticKeys.LOCATION_NAME to (location?.name
                                 ?: event.locationFallbackName), //they do not include all locations in their location.xml files -.-
                         ).filter { it.value.isNotBlank() }
                     )

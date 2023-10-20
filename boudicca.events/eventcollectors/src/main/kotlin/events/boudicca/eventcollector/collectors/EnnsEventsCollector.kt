@@ -2,10 +2,10 @@ package events.boudicca.eventcollector.collectors
 
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
-import events.boudicca.SemanticKeys
-import events.boudicca.api.eventcollector.Event
-import events.boudicca.api.eventcollector.Fetcher
-import events.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.SemanticKeys
+import base.boudicca.api.eventcollector.Event
+import base.boudicca.api.eventcollector.Fetcher
+import base.boudicca.api.eventcollector.TwoStepEventCollector
 import java.io.StringReader
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
@@ -26,16 +26,16 @@ class EnnsEventsCollector : TwoStepEventCollector<JsonObject>("ennsevents") {
         val startDate = parseDate(event)
 
         val data = mutableMapOf<String, String>()
-        data[SemanticKeys.URL] = "https://erlebe.enns.at/events/e/" + event.string("id")
-        data[SemanticKeys.DESCRIPTION] = (event.string("subtitle") + "\n" + event.string("description")).trim()
+        data[base.boudicca.SemanticKeys.URL] = "https://erlebe.enns.at/events/e/" + event.string("id")
+        data[base.boudicca.SemanticKeys.DESCRIPTION] = (event.string("subtitle") + "\n" + event.string("description")).trim()
 
         if (event.containsKey("picture")) {
-            data[SemanticKeys.PICTUREURL] =
+            data[base.boudicca.SemanticKeys.PICTUREURL] =
                 "https://erlebe.enns.at/uploads/images/thumbs_square/" + event.string("picture")
         }
 
         if (event.containsKey("website") && !event.string("website").isNullOrBlank()) {
-            data[SemanticKeys.LOCATION_URL] = event.string("website")!!
+            data[base.boudicca.SemanticKeys.LOCATION_URL] = event.string("website")!!
         }
 
         return Event(name, startDate, data)

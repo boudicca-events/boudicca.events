@@ -1,9 +1,9 @@
 package events.boudicca.eventcollector.collectors
 
-import events.boudicca.SemanticKeys
-import events.boudicca.api.eventcollector.Event
-import events.boudicca.api.eventcollector.Fetcher
-import events.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.SemanticKeys
+import base.boudicca.api.eventcollector.Event
+import base.boudicca.api.eventcollector.Fetcher
+import base.boudicca.api.eventcollector.TwoStepEventCollector
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -30,19 +30,19 @@ class OteloLinzCollector : TwoStepEventCollector<String>("otelolinz") {
         val (startDate, endDate) = parseDates(eventSite)
 
         val data = mutableMapOf<String, String>()
-        data[SemanticKeys.URL] = event
+        data[base.boudicca.SemanticKeys.URL] = event
         if (endDate != null) {
-            data[SemanticKeys.ENDDATE] = endDate.format(DateTimeFormatter.ISO_DATE)
+            data[base.boudicca.SemanticKeys.ENDDATE] = endDate.format(DateTimeFormatter.ISO_DATE)
         }
-        data[SemanticKeys.TYPE] = "technology"
-        data[SemanticKeys.DESCRIPTION] = getDescription(eventSite)
+        data[base.boudicca.SemanticKeys.TYPE] = "technology"
+        data[base.boudicca.SemanticKeys.DESCRIPTION] = getDescription(eventSite)
 
         val img = eventSite.select("div.entry-content img")
         if (!img.isEmpty()) {
-            data[SemanticKeys.PICTUREURL] = img.first()!!.attr("src")
+            data[base.boudicca.SemanticKeys.PICTUREURL] = img.first()!!.attr("src")
         }
 
-        data[SemanticKeys.LOCATION_NAME] = eventSite.select("div#em-event-6>p")[1].select("a").text()
+        data[base.boudicca.SemanticKeys.LOCATION_NAME] = eventSite.select("div#em-event-6>p")[1].select("a").text()
 
         return Event(name, startDate, data)
     }

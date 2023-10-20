@@ -1,9 +1,9 @@
 package events.boudicca.eventcollector.collectors
 
-import events.boudicca.SemanticKeys
-import events.boudicca.api.eventcollector.Event
-import events.boudicca.api.eventcollector.Fetcher
-import events.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.SemanticKeys
+import base.boudicca.api.eventcollector.Event
+import base.boudicca.api.eventcollector.Fetcher
+import base.boudicca.api.eventcollector.TwoStepEventCollector
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -60,24 +60,24 @@ class UlfOoeCollector : TwoStepEventCollector<String>("ulfooe") {
 
         val data = mutableMapOf<String, String>()
 
-        data[SemanticKeys.URL] = fullEventLink
-        data[SemanticKeys.DESCRIPTION] = eventSite.select("div.field-text").text()
+        data[base.boudicca.SemanticKeys.URL] = fullEventLink
+        data[base.boudicca.SemanticKeys.DESCRIPTION] = eventSite.select("div.field-text").text()
 
         val locationName = eventSite.select("div.location").not("div.location.link-google-maps").text()
         if (locationName.isNotEmpty()) {
             val regex = """(?<name>.*?)[,|\s]*(?<zip>\d{4}) (?<city>[\w\s]+)""".toRegex()
             val matchResult = regex.find(locationName)
             if (matchResult != null) {
-                data[SemanticKeys.LOCATION_NAME] = matchResult.groups["name"]!!.value.trimEnd()
-                data[SemanticKeys.LOCATION_CITY] = matchResult.groups["city"]!!.value.trimEnd()
+                data[base.boudicca.SemanticKeys.LOCATION_NAME] = matchResult.groups["name"]!!.value.trimEnd()
+                data[base.boudicca.SemanticKeys.LOCATION_CITY] = matchResult.groups["city"]!!.value.trimEnd()
             } else {
-                data[SemanticKeys.LOCATION_NAME] = locationName
+                data[base.boudicca.SemanticKeys.LOCATION_NAME] = locationName
             }
         }
 
         val img = eventSite.select("div.event picture img")
         if (!img.isEmpty()) {
-            data[SemanticKeys.PICTUREURL] = baseUrl + img.first()!!.attr("src")
+            data[base.boudicca.SemanticKeys.PICTUREURL] = baseUrl + img.first()!!.attr("src")
         }
         return Event(name, startDate, data)
     }

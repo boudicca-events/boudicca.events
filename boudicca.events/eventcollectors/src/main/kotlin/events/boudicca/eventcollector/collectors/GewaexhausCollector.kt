@@ -1,9 +1,9 @@
 package events.boudicca.eventcollector.collectors
 
-import events.boudicca.SemanticKeys
-import events.boudicca.api.eventcollector.Event
-import events.boudicca.api.eventcollector.Fetcher
-import events.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.SemanticKeys
+import base.boudicca.api.eventcollector.Event
+import base.boudicca.api.eventcollector.Fetcher
+import base.boudicca.api.eventcollector.TwoStepEventCollector
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.time.LocalDate
@@ -29,17 +29,17 @@ class GewaexhausCollector : TwoStepEventCollector<String>("gewaexhaus") {
         val startDate = parseDate(eventSite)
 
         val data = mutableMapOf<String, String>()
-        data[SemanticKeys.URL] = baseUrl + event
-        data[SemanticKeys.LOCATION_URL] = baseUrl
-        data[SemanticKeys.LOCATION_NAME] = "Gewäxhaus Ennsdorf"
-        data[SemanticKeys.LOCATION_CITY] = "Ennsdorf"
+        data[base.boudicca.SemanticKeys.URL] = baseUrl + event
+        data[base.boudicca.SemanticKeys.LOCATION_URL] = baseUrl
+        data[base.boudicca.SemanticKeys.LOCATION_NAME] = "Gewäxhaus Ennsdorf"
+        data[base.boudicca.SemanticKeys.LOCATION_CITY] = "Ennsdorf"
 
         val description = eventSite.select("section.css-9s1hn:not(section.hugeTitleFontSize)").text()
-        data[SemanticKeys.DESCRIPTION] = description
+        data[base.boudicca.SemanticKeys.DESCRIPTION] = description
 
         val img = eventSite.select("section.hugeTitleFontSize img")
         if (!img.isEmpty()) {
-            data[SemanticKeys.PICTUREURL] = img.first()!!.attr("srcset").split(" ")[0]
+            data[base.boudicca.SemanticKeys.PICTUREURL] = img.first()!!.attr("srcset").split(" ")[0]
         }
 
         return Event(name, startDate, data)

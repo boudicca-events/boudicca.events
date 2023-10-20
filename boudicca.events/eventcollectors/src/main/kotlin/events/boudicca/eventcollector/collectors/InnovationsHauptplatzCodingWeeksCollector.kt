@@ -1,9 +1,9 @@
 package events.boudicca.eventcollector.collectors
 
-import events.boudicca.SemanticKeys
-import events.boudicca.api.eventcollector.Event
-import events.boudicca.api.eventcollector.Fetcher
-import events.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.SemanticKeys
+import base.boudicca.api.eventcollector.Event
+import base.boudicca.api.eventcollector.Fetcher
+import base.boudicca.api.eventcollector.TwoStepEventCollector
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.time.LocalDate
@@ -32,9 +32,9 @@ class InnovationsHauptplatzCodingWeeksCollector : TwoStepEventCollector<Element>
         val startDate = parseDate(event)
 
         val data = mutableMapOf<String, String>()
-        data[SemanticKeys.URL] = event.select("a").attr("href")
-        data[SemanticKeys.TYPE] = "technology"
-        data[SemanticKeys.PICTUREURL] = "https://innovation.linz.at" + event.select("img").attr("src")
+        data[base.boudicca.SemanticKeys.URL] = event.select("a").attr("href")
+        data[base.boudicca.SemanticKeys.TYPE] = "technology"
+        data[base.boudicca.SemanticKeys.PICTUREURL] = "https://innovation.linz.at" + event.select("img").attr("src")
 
         return Event(name, startDate, data)
     }

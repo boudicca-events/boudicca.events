@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="LocalEventDB" type="JetRunConfigurationType">
-    <option name="MAIN_CLASS_NAME" value="events.boudicca.eventdb.EventDBApplicationKt" />
+    <option name="MAIN_CLASS_NAME" value="base.boudicca.eventdb.EventDBApplicationKt" />
     <module name="boudicca.boudicca.base.eventdb.main" />
     <shortenClasspath name="NONE" />
     <option name="VM_PARAMETERS" value="-Dboudicca.store.path=boudicca.store" />

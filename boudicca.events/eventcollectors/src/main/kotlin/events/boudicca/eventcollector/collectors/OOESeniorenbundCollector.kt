@@ -1,9 +1,9 @@
 package events.boudicca.eventcollector.collectors
 
-import events.boudicca.SemanticKeys
-import events.boudicca.api.eventcollector.Event
-import events.boudicca.api.eventcollector.Fetcher
-import events.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.SemanticKeys
+import base.boudicca.api.eventcollector.Event
+import base.boudicca.api.eventcollector.Fetcher
+import base.boudicca.api.eventcollector.TwoStepEventCollector
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.time.LocalDate
@@ -36,13 +36,13 @@ class OOESeniorenbundCollector : TwoStepEventCollector<Pair<Document, String>>("
         val (startDate, endDate) = getDates(eventDoc)
         val description = eventDoc.select("div.subtitle>p").text()
 
-        data[SemanticKeys.URL] = cleanupUrl(url)
-        data[SemanticKeys.LOCATION_NAME] = eventDoc.select("div.venue").text() //TODO location name and city here are not seperated at all -.-
+        data[base.boudicca.SemanticKeys.URL] = cleanupUrl(url)
+        data[base.boudicca.SemanticKeys.LOCATION_NAME] = eventDoc.select("div.venue").text() //TODO location name and city here are not seperated at all -.-
         if (endDate != null) {
-            data[SemanticKeys.ENDDATE] = endDate.format(DateTimeFormatter.ISO_DATE_TIME)
+            data[base.boudicca.SemanticKeys.ENDDATE] = endDate.format(DateTimeFormatter.ISO_DATE_TIME)
         }
         if (description.isNotBlank()) {
-            data[SemanticKeys.DESCRIPTION] = description
+            data[base.boudicca.SemanticKeys.DESCRIPTION] = description
         }
 
         return Event(name, startDate.toOffsetDateTime(), data)

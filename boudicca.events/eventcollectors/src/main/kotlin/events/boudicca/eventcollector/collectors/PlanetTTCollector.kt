@@ -2,10 +2,10 @@ package events.boudicca.eventcollector.collectors
 
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
-import events.boudicca.SemanticKeys
-import events.boudicca.api.eventcollector.Event
-import events.boudicca.api.eventcollector.Fetcher
-import events.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.SemanticKeys
+import base.boudicca.api.eventcollector.Event
+import base.boudicca.api.eventcollector.Fetcher
+import base.boudicca.api.eventcollector.TwoStepEventCollector
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -74,16 +74,16 @@ class PlanetTTCollector : TwoStepEventCollector<Element>("planettt") {
         val data = mutableMapOf<String, String>()
 
         val name = fullEvent.select("div.pl-modal-name").text()
-        data[SemanticKeys.URL] = parseUrl(fullEvent)
+        data[base.boudicca.SemanticKeys.URL] = parseUrl(fullEvent)
         val pictureUrl = fullEvent.select("div.pl-modal-thumbnail img").attr("src")
         if (pictureUrl.isNotBlank()) {
-            data[SemanticKeys.PICTUREURL] = pictureUrl
+            data[base.boudicca.SemanticKeys.PICTUREURL] = pictureUrl
         }
-        data[SemanticKeys.DESCRIPTION] = fullEvent.select("div.pl-modal-desc > p").text() + "\n" +
+        data[base.boudicca.SemanticKeys.DESCRIPTION] = fullEvent.select("div.pl-modal-desc > p").text() + "\n" +
                 fullEvent.select("div.pl-modal-desc > div.acts").text()
 
         //TODO you could parse acts from this site
-        data[SemanticKeys.TYPE] = "concert"
+        data[base.boudicca.SemanticKeys.TYPE] = "concert"
         mapLocation(data, fullEvent)
 
         return Event(name, startDate, data)
@@ -105,21 +105,21 @@ class PlanetTTCollector : TwoStepEventCollector<Element>("planettt") {
         val location = event.select("div.pl-modal-location").attr("data-location")
         when (location) {
             "simmcity" -> {
-                data[SemanticKeys.LOCATION_NAME] = "SiMMCity"
-                data[SemanticKeys.LOCATION_URL] = "https://simmcity.at/"
-                data[SemanticKeys.LOCATION_CITY] = "Wien"
+                data[base.boudicca.SemanticKeys.LOCATION_NAME] = "SiMMCity"
+                data[base.boudicca.SemanticKeys.LOCATION_URL] = "https://simmcity.at/"
+                data[base.boudicca.SemanticKeys.LOCATION_CITY] = "Wien"
             }
 
             "szene" -> {
-                data[SemanticKeys.LOCATION_NAME] = "Szene"
-                data[SemanticKeys.LOCATION_URL] = "https://szene.wien/"
-                data[SemanticKeys.LOCATION_CITY] = "Wien"
+                data[base.boudicca.SemanticKeys.LOCATION_NAME] = "Szene"
+                data[base.boudicca.SemanticKeys.LOCATION_URL] = "https://szene.wien/"
+                data[base.boudicca.SemanticKeys.LOCATION_CITY] = "Wien"
             }
 
             "planet" -> {
-                data[SemanticKeys.LOCATION_NAME] = "Gasometer"
-                data[SemanticKeys.LOCATION_URL] = "https://www.gasometer.at/"
-                data[SemanticKeys.LOCATION_CITY] = "Wien"
+                data[base.boudicca.SemanticKeys.LOCATION_NAME] = "Gasometer"
+                data[base.boudicca.SemanticKeys.LOCATION_URL] = "https://www.gasometer.at/"
+                data[base.boudicca.SemanticKeys.LOCATION_CITY] = "Wien"
             }
 
             else -> {

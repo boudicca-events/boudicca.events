@@ -1,9 +1,9 @@
 package events.boudicca.eventcollector.collectors
 
-import events.boudicca.SemanticKeys
-import events.boudicca.api.eventcollector.Event
-import events.boudicca.api.eventcollector.Fetcher
-import events.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.SemanticKeys
+import base.boudicca.api.eventcollector.Event
+import base.boudicca.api.eventcollector.Fetcher
+import base.boudicca.api.eventcollector.TwoStepEventCollector
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -41,7 +41,7 @@ class UlfOoeCollector : TwoStepEventCollector<String>("ulfooe") {
     private fun parseEventList(document: Document, events: MutableList<Element>) {
         events.addAll(document.select("a.event.event_list_item.event_list_item_link")
             .toList()
-            .filter{!it.attr("href").startsWith("http")}) // exclude events from others than ulf
+            .filter { !it.attr("href").startsWith("http") }) // exclude events from others than ulf
     }
 
     override fun parseEvent(event: String): Event? {
@@ -89,7 +89,7 @@ class UlfOoeCollector : TwoStepEventCollector<String>("ulfooe") {
 
         var time = dtDiv.select("div.time").text()
         var localDateTime = localDate.atStartOfDay()
-        if (time.isNotEmpty()){
+        if (time.isNotEmpty()) {
             time = time.split(" ")[0]
             val localTime = LocalTime.parse(time, DateTimeFormatter.ofPattern("kk:mm"))
             localDateTime = localDate.atTime(localTime)

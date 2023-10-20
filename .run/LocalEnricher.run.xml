@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="LocalEnricher" type="JetRunConfigurationType">
-    <option name="MAIN_CLASS_NAME" value="events.boudicca.enricher.EnricherApplicationKt" />
+    <option name="MAIN_CLASS_NAME" value="base.boudicca.enricher.EnricherApplicationKt" />
     <module name="boudicca.boudicca.base.enricher.main" />
     <shortenClasspath name="NONE" />
     <extension name="net.ashald.envfile">

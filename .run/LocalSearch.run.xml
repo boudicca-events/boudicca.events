@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="LocalSearch" type="JetRunConfigurationType">
-    <option name="MAIN_CLASS_NAME" value="events.boudicca.search.SearchApplicationKt" />
+    <option name="MAIN_CLASS_NAME" value="base.boudicca.search.SearchApplicationKt" />
     <module name="boudicca.boudicca.base.search.main" />
     <shortenClasspath name="NONE" />
     <option name="VM_PARAMETERS" value="-Dboudicca.local.mode=true" />

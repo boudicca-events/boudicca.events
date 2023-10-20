@@ -40,9 +40,9 @@ tasks.withType<org.openapitools.generator.gradle.plugin.tasks.GenerateTask> {
     generatorName.set("java")
     library.set("native")
     additionalProperties.put("supportUrlQuery", "false")
-    invokerPackage.set("events.boudicca.search.openapi")
-    apiPackage.set("events.boudicca.search.openapi.api")
-    modelPackage.set("events.boudicca.search.openapi.model")
+    invokerPackage.set("base.boudicca.search.openapi")
+    apiPackage.set("base.boudicca.search.openapi.api")
+    modelPackage.set("base.boudicca.search.openapi.model")
 }
 
 sourceSets {
@@ -53,6 +53,6 @@ sourceSets {
     }
 }
 
-tasks.named("compileJava"){
+tasks.named("compileJava") {
     dependsOn(tasks.withType<org.openapitools.generator.gradle.plugin.tasks.GenerateTask>())
 }

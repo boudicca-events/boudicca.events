@@ -1,9 +1,9 @@
 package events.boudicca.eventcollector.collectors
 
-import events.boudicca.SemanticKeys
-import events.boudicca.api.eventcollector.Event
-import events.boudicca.api.eventcollector.EventCollector
-import events.boudicca.api.eventcollector.Fetcher
+import base.boudicca.SemanticKeys
+import base.boudicca.api.eventcollector.Event
+import base.boudicca.api.eventcollector.EventCollector
+import base.boudicca.api.eventcollector.Fetcher
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -24,7 +24,7 @@ class LinzTermineCollector : EventCollector {
         return "linz termine"
     }
 
-    override fun collectEvents(): List<events.boudicca.api.eventcollector.Event> {
+    override fun collectEvents(): List<base.boudicca.api.eventcollector.Event> {
         val locations = parseLocations()
         val events = filterEvents(parseEvents())
         val eventWebsites = getEventWebsites(events)
@@ -60,8 +60,8 @@ class LinzTermineCollector : EventCollector {
         eventList: List<Event>,
         locations: Map<Int, Location>,
         eventWebsites: Map<String, Document>
-    ): List<events.boudicca.api.eventcollector.Event> {
-        val mappedEvents = mutableListOf<events.boudicca.api.eventcollector.Event>()
+    ): List<base.boudicca.api.eventcollector.Event> {
+        val mappedEvents = mutableListOf<base.boudicca.api.eventcollector.Event>()
         for (event in eventList) {
             if (event.dates.isEmpty()) {
                 LOG.warn("event does not contain any dates: $event")

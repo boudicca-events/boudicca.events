@@ -1,9 +1,9 @@
 package events.boudicca.eventcollector.collectors
 
-import events.boudicca.SemanticKeys
-import events.boudicca.api.eventcollector.Event
-import events.boudicca.api.eventcollector.Fetcher
-import events.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.SemanticKeys
+import base.boudicca.api.eventcollector.Event
+import base.boudicca.api.eventcollector.Fetcher
+import base.boudicca.api.eventcollector.TwoStepEventCollector
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.time.LocalDate
@@ -42,7 +42,9 @@ class SpinnereiCollector : TwoStepEventCollector<Pair<String, Document>>("spinne
 
         data[SemanticKeys.DESCRIPTION] = doc.select("div.vng-detail-content-bodytext").text()
         data[SemanticKeys.PICTUREURL] =
-            "https://spinnerei.kulturpark.at" + parsePictureUrl(doc.select("div.vng-details div.bg-image").attr("style"))
+            "https://spinnerei.kulturpark.at" + parsePictureUrl(
+                doc.select("div.vng-details div.bg-image").attr("style")
+            )
 
         data[SemanticKeys.LOCATION_NAME] = "Spinnerei"
         data[SemanticKeys.LOCATION_URL] = "https://spinnerei.kulturpark.at/"
@@ -60,7 +62,7 @@ class SpinnereiCollector : TwoStepEventCollector<Pair<String, Document>>("spinne
     }
 
     private fun parseTypeAndDate(data: MutableMap<String, String>, text: String): OffsetDateTime {
-        val split = text.split(' ', ignoreCase = false,  limit = 4)
+        val split = text.split(' ', ignoreCase = false, limit = 4)
         if (split.size != 4) {
             throw IllegalStateException("could not parse type and date from $text")
         }

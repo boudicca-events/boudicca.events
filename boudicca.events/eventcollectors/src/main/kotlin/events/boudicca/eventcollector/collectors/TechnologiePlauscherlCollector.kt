@@ -1,11 +1,11 @@
 package events.boudicca.eventcollector.collectors
 
+import base.boudicca.SemanticKeys
+import base.boudicca.api.eventcollector.Event
+import base.boudicca.api.eventcollector.EventCollector
+import base.boudicca.api.eventcollector.Fetcher
 import com.rometools.rome.io.SyndFeedInput
 import com.rometools.rome.io.XmlReader
-import events.boudicca.SemanticKeys
-import events.boudicca.api.eventcollector.Event
-import events.boudicca.api.eventcollector.EventCollector
-import events.boudicca.api.eventcollector.Fetcher
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime

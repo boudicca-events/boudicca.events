@@ -1,9 +1,9 @@
 package events.boudicca.eventcollector.collectors
 
-import events.boudicca.SemanticKeys
-import events.boudicca.api.eventcollector.Event
-import events.boudicca.api.eventcollector.Fetcher
-import events.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.SemanticKeys
+import base.boudicca.api.eventcollector.Event
+import base.boudicca.api.eventcollector.Fetcher
+import base.boudicca.api.eventcollector.TwoStepEventCollector
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.time.LocalDate
@@ -39,7 +39,7 @@ class StiftskonzerteCollector : TwoStepEventCollector<String>("stiftskonzerte") 
         val startDate = parseDate(eventSite, locationAndTime)
 
         val city = locationAndTime[1].replace("Stift ", "")
-        val location = locationAndTime.subList(1, locationAndTime.lastIndex+1).joinToString(", ")
+        val location = locationAndTime.subList(1, locationAndTime.lastIndex + 1).joinToString(", ")
         data[SemanticKeys.LOCATION_CITY] = city
         data[SemanticKeys.LOCATION_NAME] = location
 

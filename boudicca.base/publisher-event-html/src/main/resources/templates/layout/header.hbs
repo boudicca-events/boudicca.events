@@ -1,0 +1,149 @@
+<style>
+    .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 24px;
+    }
+
+    @media only screen and (max-width: 700px) {
+        .header {
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 24px;
+        }
+
+        #searchForm {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+    }
+
+      @media only screen and (max-width: 970px) { 
+        .header-title {
+            font-size: var(--font-size-medium);
+        }
+      }
+
+    .header-left {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        text-decoration: none;
+    }
+
+    .header-right {
+        display: flex;
+        align-items: center;
+    }
+
+    .search-input {
+        padding: 4px;
+        min-width: 350px;
+        appearance: none;
+        height: 26px;
+        border: none;
+        border-bottom: 1px solid black;
+    }
+
+    .header-search-filter {
+        display: flex;
+
+        > button {
+            display: flex;
+        }
+    }
+
+    #searchForm {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .date-input {
+        appearance: none;
+        min-width: 135px;
+    }
+
+    .header-search {
+        display: flex;
+    }
+
+    .header-search-wrapper {
+        position: relative;
+    }
+
+    #searchButton {
+        display: flex;
+        height: 100%;
+        align-items: center;
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+    }
+
+    #searchButton:focus-visible {
+        outline: auto;
+    }
+
+    @media only screen and (max-width: 700px) { 
+        h1 {
+            display: none;
+        }
+
+        .search-input {
+            min-width: 200px; 
+        }
+    }
+    .searchform-top {
+        display: flex;
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .filter-label {
+        font-size: 12px;
+        margin-bottom: 2px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: var(--space-small);
+    }
+
+    .filter-input-wrapper {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+
+    #filterButton {
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid transparent;
+    }
+
+    .header-date-search {
+        display: flex;
+        flex: 1;
+        gap: 12px;
+    }
+    
+</style>
+<header class="header">
+    <form id="searchForm">
+        <div class="searchform-top">
+            <a href="/" class="header-left">
+                <img src="/img/logo_small.png" alt="Boudicca Logo - Ein rundes Schwarz-auf-Weiß-Bild. Ein stilisiertes Logo der Mondkrone des keltischen Volksstammes Iceni." />
+                <div>
+                    <h1 class="header-title">{{title}}</h1>
+                </div>
+            </a>
+
+            <!--TODO if did not work :( -->
+            {{> @partial-block }}
+        </div>
+    </form>
+</header>

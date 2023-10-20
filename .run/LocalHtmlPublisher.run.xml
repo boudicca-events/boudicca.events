@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="LocalHtmlPublisher" type="JetRunConfigurationType">
-    <option name="MAIN_CLASS_NAME" value="events.boudicca.publisherhtml.PublisherHtmlApplicationKt" />
-    <module name="boudicca.boudicca.base.publisher-html.main" />
+    <option name="MAIN_CLASS_NAME" value="base.boudicca.publisher.event.html.PublisherHtmlApplicationKt" />
+    <module name="boudicca.boudicca.base.publisher-event-html.main" />
     <shortenClasspath name="NONE" />
     <extension name="net.ashald.envfile">
       <option name="IS_ENABLED" value="false" />

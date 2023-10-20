@@ -1,16 +1,19 @@
 # Boudicca HTML
 
 ## Start application
+
 ```
 gradlew bootRun or ./gradlew bootRun
 ```
 
-## Stack  
+## Stack
+
 VanillaJS  
 VanillaCSS  
-Handlebars Java Port  
- 
-## Noteworthy  
+Handlebars Java Port
+
+## Noteworthy
+
 The html client should focus on inline css, keep response time in mind  
 Who needs external packages anyways
 Extract style configuration `theme.hbs` to maintain some kind of style system  

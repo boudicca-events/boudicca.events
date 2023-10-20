@@ -11,7 +11,7 @@ import ch.qos.logback.core.encoder.LayoutWrappingEncoder
 import ch.qos.logback.core.spi.ContextAwareBase
 
 
-class LoggingConfigurator: ContextAwareBase(), Configurator {
+class LoggingConfigurator : ContextAwareBase(), Configurator {
     override fun configure(context: LoggerContext?): Configurator.ExecutionStatus {
         addInfo("Setting up default configuration.")
 

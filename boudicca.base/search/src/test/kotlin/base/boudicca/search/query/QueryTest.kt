@@ -1,10 +1,10 @@
 package base.boudicca.search.query
 
 import base.boudicca.SemanticKeys
-import base.boudicca.search.service.query.evaluator.EvaluatorUtil
-import base.boudicca.search.service.query.evaluator.SimpleEvaluator
 import base.boudicca.search.service.query.PAGE_ALL
 import base.boudicca.search.service.query.QueryParser
+import base.boudicca.search.service.query.evaluator.EvaluatorUtil
+import base.boudicca.search.service.query.evaluator.SimpleEvaluator
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Test

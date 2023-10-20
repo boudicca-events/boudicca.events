@@ -1,11 +1,11 @@
 package base.boudicca.api.eventcollector.logging
 
+import base.boudicca.api.eventcollector.collections.Collections
 import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.encoder.Encoder
 import ch.qos.logback.core.filter.Filter
 import ch.qos.logback.core.spi.FilterReply
-import base.boudicca.api.eventcollector.collections.Collections
 
 class CollectionsFilter(private val encoder: Encoder<ILoggingEvent>) : Filter<ILoggingEvent>() {
     override fun decide(event: ILoggingEvent): FilterReply {

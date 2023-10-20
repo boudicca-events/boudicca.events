@@ -1,6 +1,6 @@
 package base.boudicca.search.model
 
-data class SearchResultDTO (
+data class SearchResultDTO(
     val result: List<Event>,
     val totalResults: Int
 )

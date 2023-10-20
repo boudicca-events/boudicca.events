@@ -1,6 +1,5 @@
 package base.boudicca.search.service
 
-import base.boudicca.EventCategory
 import base.boudicca.SemanticKeys
 import base.boudicca.search.model.*
 import base.boudicca.search.service.util.Utils

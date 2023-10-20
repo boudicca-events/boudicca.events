@@ -30,5 +30,4 @@ public class SemanticKeys {
     public static final String CONCERT_BANDLIST = "concert.bandlist";
 
 
-
 }

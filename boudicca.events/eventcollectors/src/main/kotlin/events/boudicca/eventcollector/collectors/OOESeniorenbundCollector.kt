@@ -37,7 +37,8 @@ class OOESeniorenbundCollector : TwoStepEventCollector<Pair<Document, String>>("
         val description = eventDoc.select("div.subtitle>p").text()
 
         data[SemanticKeys.URL] = cleanupUrl(url)
-        data[SemanticKeys.LOCATION_NAME] = eventDoc.select("div.venue").text() //TODO location name and city here are not seperated at all -.-
+        data[SemanticKeys.LOCATION_NAME] =
+            eventDoc.select("div.venue").text() //TODO location name and city here are not seperated at all -.-
         if (endDate != null) {
             data[SemanticKeys.ENDDATE] = endDate.format(DateTimeFormatter.ISO_DATE_TIME)
         }
@@ -84,8 +85,10 @@ class OOESeniorenbundCollector : TwoStepEventCollector<Pair<Document, String>>("
         if (dateFromTillMatcher.matches()) {
             val localDate = LocalDate.parse(dateFromTillMatcher.group(1), dateFormatter)
             return Pair(
-                localDate.atTime(LocalTime.parse(dateFromTillMatcher.group(2), timeFormatter)).atZone(ZoneId.of("Europe/Vienna")),
-                localDate.atTime(LocalTime.parse(dateFromTillMatcher.group(3), timeFormatter)).atZone(ZoneId.of("Europe/Vienna"))
+                localDate.atTime(LocalTime.parse(dateFromTillMatcher.group(2), timeFormatter))
+                    .atZone(ZoneId.of("Europe/Vienna")),
+                localDate.atTime(LocalTime.parse(dateFromTillMatcher.group(3), timeFormatter))
+                    .atZone(ZoneId.of("Europe/Vienna"))
             )
         } else if (dateFromDateTillMatcher.matches()) {
             val startLocalDate = LocalDate.parse(dateFromDateTillMatcher.group(1), dateFormatter)

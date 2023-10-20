@@ -41,7 +41,7 @@ class UlfOoeCollector : TwoStepEventCollector<String>("ulfooe") {
     private fun parseEventList(document: Document, events: MutableList<Element>) {
         events.addAll(document.select("a.event.event_list_item.event_list_item_link")
             .toList()
-            .filter{!it.attr("href").startsWith("http")}) // exclude events from others than ulf
+            .filter { !it.attr("href").startsWith("http") }) // exclude events from others than ulf
     }
 
     override fun parseEvent(event: String): Event? {
@@ -89,7 +89,7 @@ class UlfOoeCollector : TwoStepEventCollector<String>("ulfooe") {
 
         var time = dtDiv.select("div.time").text()
         var localDateTime = localDate.atStartOfDay()
-        if (time.isNotEmpty()){
+        if (time.isNotEmpty()) {
             time = time.split(" ")[0]
             val localTime = LocalTime.parse(time, DateTimeFormatter.ofPattern("kk:mm"))
             localDateTime = localDate.atTime(localTime)

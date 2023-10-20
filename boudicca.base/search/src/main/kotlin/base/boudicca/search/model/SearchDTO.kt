@@ -5,7 +5,7 @@ import java.time.OffsetDateTime
 data class SearchDTO(
     val name: String? = null,
     val fromDate: OffsetDateTime? = null,
-    val toDate: OffsetDateTime? =null,
+    val toDate: OffsetDateTime? = null,
     val category: String? = null,
     val locationName: String? = null,
     val locationCity: String? = null,

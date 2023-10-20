@@ -53,6 +53,6 @@ sourceSets {
     }
 }
 
-tasks.named("compileJava"){
+tasks.named("compileJava") {
     dependsOn(tasks.withType<org.openapitools.generator.gradle.plugin.tasks.GenerateTask>())
 }

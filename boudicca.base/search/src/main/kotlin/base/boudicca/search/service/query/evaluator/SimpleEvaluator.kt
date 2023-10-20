@@ -1,6 +1,5 @@
 package base.boudicca.search.service.query.evaluator
 
-import base.boudicca.EventCategory
 import base.boudicca.SemanticKeys
 import base.boudicca.search.model.Event
 import base.boudicca.search.model.SearchResultDTO

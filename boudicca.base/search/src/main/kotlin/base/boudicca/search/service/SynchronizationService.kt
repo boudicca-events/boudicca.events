@@ -1,9 +1,9 @@
 package base.boudicca.search.service
 
+import base.boudicca.search.model.Event
 import events.boudicca.openapi.ApiClient
 import events.boudicca.openapi.ApiException
 import events.boudicca.openapi.api.EventPublisherResourceApi
-import base.boudicca.search.model.Event
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value

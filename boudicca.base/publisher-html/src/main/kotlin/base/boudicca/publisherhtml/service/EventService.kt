@@ -1,6 +1,5 @@
 package base.boudicca.publisherhtml.service
 
-import base.boudicca.EventCategory
 import base.boudicca.SemanticKeys
 import base.boudicca.api.search.BoudiccaQueryBuilder
 import base.boudicca.api.search.BoudiccaQueryBuilder.after

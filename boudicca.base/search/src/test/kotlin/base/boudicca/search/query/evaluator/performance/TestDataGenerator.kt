@@ -1,10 +1,10 @@
 package base.boudicca.search.query.evaluator.performance
 
 import base.boudicca.SemanticKeys
-import events.boudicca.openapi.ApiClient
-import events.boudicca.openapi.api.EventPublisherResourceApi
 import base.boudicca.search.model.Event
 import base.boudicca.search.service.query.evaluator.EvaluatorUtil
+import events.boudicca.openapi.ApiClient
+import events.boudicca.openapi.api.EventPublisherResourceApi
 import java.io.FileOutputStream
 import java.io.ObjectOutputStream
 import java.io.Serializable

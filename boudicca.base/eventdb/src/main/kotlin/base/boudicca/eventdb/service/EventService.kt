@@ -1,14 +1,14 @@
 package base.boudicca.eventdb.service
 
+import base.boudicca.SemanticKeys
+import base.boudicca.eventdb.model.Event
+import base.boudicca.eventdb.model.EventKey
+import base.boudicca.eventdb.model.InternalEventProperties
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.DatabindException
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import base.boudicca.SemanticKeys
-import base.boudicca.eventdb.model.Event
-import base.boudicca.eventdb.model.EventKey
-import base.boudicca.eventdb.model.InternalEventProperties
 import jakarta.annotation.PreDestroy
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -85,7 +85,9 @@ class EventService @Autowired constructor(@Value("\${boudicca.store.path}") priv
         val duplicate = events[eventKey]
         //some cheap logging for finding duplicate events between different collectors
         if (duplicate != null && duplicate.first.data?.get(SemanticKeys.COLLECTORNAME) != event.data?.get(
-                SemanticKeys.COLLECTORNAME)) {
+                SemanticKeys.COLLECTORNAME
+            )
+        ) {
             LOG.warn("event $event will overwrite $duplicate")
         }
 

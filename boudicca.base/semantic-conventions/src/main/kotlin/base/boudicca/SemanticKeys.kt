@@ -7,6 +7,7 @@ object SemanticKeys {
     const val ENDDATE = "endDate"
     const val URL = "url"
     const val TYPE = "type"
+    const val CATEGORY = "category"
     const val DESCRIPTION = "description"
     const val TAGS = "tags"
     const val REGISTRATION = "registration"

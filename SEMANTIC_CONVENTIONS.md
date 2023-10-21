@@ -34,6 +34,7 @@ We use certain data types for the properties we expect.
 | endDate       | Time of end for the event                                                                            | date                                 |
 | url           | A link to the website for this event                                                                 | url                                  |
 | type          | The type of event, for example `concert`, `????` more examples please                                | text ??? maybe enum would be better? |
+| category      | The category of an event, for example `MUSIC`, `ART` or `TECH`, see EventCategory enum               | enum\<EventCategory>                 |
 | description   | Text describing this event                                                                           | text                                 |
 | tags          | A list of tags. TODO how to describe?                                                                | list\<text>                          |
 | registration  | If this is a free event, a event which requires registration or a event which requires a paid ticket | enum\<registration>                  |
@@ -45,6 +46,12 @@ We use certain data types for the properties we expect.
 * `free`: a free event which neither requires registration nor a ticket
 * `registration`: an event which requires a free registration
 * `ticket`: a paid event which requires a ticket
+
+#### Category enum values
+
+* `MUSIC`: concerts or other events where the main focus is music
+* `TECH`: event with technology as the focus
+* `ART`: art exhibitions, comedy, theater, ...
 
 ### Location Properties
 

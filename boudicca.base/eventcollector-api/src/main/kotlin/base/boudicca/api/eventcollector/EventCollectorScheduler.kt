@@ -3,15 +3,12 @@ package base.boudicca.api.eventcollector
 import base.boudicca.Event
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.collections.Collections
+import base.boudicca.api.eventdb.ingest.EventDB
 import events.boudicca.enricher.openapi.api.EnricherControllerApi
 import events.boudicca.enricher.openapi.model.EnrichRequestDTO
-import events.boudicca.openapi.ApiClient
-import events.boudicca.openapi.ApiException
-import events.boudicca.openapi.api.EventIngestionResourceApi
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.time.Duration
-import java.util.*
 import java.util.concurrent.Executors
 import java.util.function.Consumer
 import java.util.function.Function
@@ -100,7 +97,7 @@ class EventCollectorScheduler(
                         eventSink.accept(event)
                     }
                 }
-            } catch (e: ApiException) {
+            } catch (e: RuntimeException) {
                 LOG.error("could not ingest events, is the core available?", e)
             }
         } catch (e: Exception) {
@@ -158,21 +155,13 @@ fun createBoudiccaEventSink(eventDbUrl: String?): Consumer<Event> {
     if (eventDbUrl.isNullOrBlank()) {
         throw IllegalStateException("you need to specify the boudicca.eventdb.url property!")
     }
-    val apiClient = ApiClient()
-    apiClient.updateBaseUri(eventDbUrl)
-    apiClient.setRequestInterceptor {
-        it.header(
-            "Authorization",
-            "Basic " + Base64.getEncoder()
-                .encodeToString(
-                    Configuration.getProperty("boudicca.ingest.auth")?.encodeToByteArray()
-                        ?: throw IllegalStateException("you need to specify the boudicca.ingest.auth property!")
-                )
-        )
-    }
-    val ingestionApi = EventIngestionResourceApi(apiClient)
+    val userAndPassword = Configuration.getProperty("boudicca.ingest.auth")
+        ?: throw IllegalStateException("you need to specify the boudicca.ingest.auth property!")
+    val user = userAndPassword.split(":")[0]
+    val password = userAndPassword.split(":")[1]
+    val eventDb = EventDB(eventDbUrl, user, password)
     return Consumer {
-        ingestionApi.ingestAddPost(mapToApiEvent(it))
+        eventDb.ingestEvents(listOf(it))
     }
 }
 
@@ -188,13 +177,6 @@ fun createBoudiccaEnricherFunction(enricherUrl: String?): Function<List<Event>, 
             EnrichRequestDTO().events(events.map { mapToEnricherEvent(it) })
         ).map { mapToEventCollectorEvent(it) }
     }
-}
-
-private fun mapToApiEvent(event: Event): events.boudicca.openapi.model.Event {
-    return events.boudicca.openapi.model.Event()
-        .name(event.name)
-        .startDate(event.startDate)
-        .data(event.data)
 }
 
 private fun mapToEnricherEvent(event: Event): events.boudicca.enricher.openapi.model.Event {

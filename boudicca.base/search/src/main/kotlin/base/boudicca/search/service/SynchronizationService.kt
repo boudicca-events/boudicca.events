@@ -2,7 +2,6 @@ package base.boudicca.search.service
 
 import base.boudicca.api.eventdb.publisher.EventDB
 import base.boudicca.search.model.Event
-import events.boudicca.openapi.ApiException
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -34,7 +33,7 @@ class SynchronizationService @Autowired constructor(
             try {
                 val events = publisherApi.getAllEvents().map { toSearchEvent(it) }.toSet()
                 eventPublisher.publishEvent(EventsUpdatedEvent(events))
-            } catch (e: ApiException) {
+            } catch (e: RuntimeException) {
                 LOG.warn("could not reach eventdb, retrying in 30s", e)
                 //if eventdb is currently down, retry in 30 seconds
                 //this mainly happens when both are deployed at the same time

@@ -1,10 +1,10 @@
 package base.boudicca.enricher_utils
 
 import base.boudicca.SemanticKeys
+import base.boudicca.api.eventdb.publisher.EventDB
 import events.boudicca.enricher.openapi.api.EnricherControllerApi
 import events.boudicca.enricher.openapi.model.EnrichRequestDTO
 import events.boudicca.enricher.openapi.model.Event
-import events.boudicca.openapi.api.EventPublisherResourceApi
 
 private const val EVENTDB_URL = "http://localhost:8081"
 private const val ENRICHER_URL = "http://localhost:8085"
@@ -73,9 +73,5 @@ private fun enrich(originalEvents: List<Event>): List<Event> {
 
 
 fun getEvents(): List<Event> {
-    val apiClient = events.boudicca.openapi.ApiClient()
-    apiClient.updateBaseUri(base.boudicca.enricher_utils.EVENTDB_URL)
-    val eventdbResource = EventPublisherResourceApi(apiClient)
-
-    return eventdbResource.eventsGet().map { Event().name(it.name).startDate(it.startDate).data(it.data) }
+    return EventDB(EVENTDB_URL).getAllEvents().map { Event().name(it.name).startDate(it.startDate).data(it.data) }
 }

@@ -1,7 +1,7 @@
 package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
-import base.boudicca.api.eventcollector.Event
+import base.boudicca.Event
 import base.boudicca.api.eventcollector.EventCollector
 import base.boudicca.api.eventcollector.Fetcher
 import com.rometools.rome.io.SyndFeedInput

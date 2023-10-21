@@ -1,4 +1,4 @@
-package base.boudicca;
+package base.boudicca
 
 import java.time.OffsetDateTime
 

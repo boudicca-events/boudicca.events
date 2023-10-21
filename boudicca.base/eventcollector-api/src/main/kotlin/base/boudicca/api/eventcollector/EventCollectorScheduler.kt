@@ -1,5 +1,6 @@
 package base.boudicca.api.eventcollector
 
+import base.boudicca.Event
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.collections.Collections
 import events.boudicca.enricher.openapi.api.EnricherControllerApi
@@ -124,16 +125,16 @@ class EventCollectorScheduler(
         if (event.name.isBlank()) {
             LOG.warn("event has empty name: $event")
         }
-        for (entry in event.additionalData.entries) {
+        for (entry in event.data.entries) {
             if (entry.value.isBlank()) {
                 LOG.warn("event contains empty field ${entry.key}: $event")
             }
         }
-        if (!event.additionalData.containsKey(SemanticKeys.COLLECTORNAME)) {
+        if (!event.data.containsKey(SemanticKeys.COLLECTORNAME)) {
             return Event(
                 event.name,
                 event.startDate,
-                event.additionalData.toMutableMap().apply { put(SemanticKeys.COLLECTORNAME, collectorName) }
+                event.data.toMutableMap().apply { put(SemanticKeys.COLLECTORNAME, collectorName) }
             )
         }
         return event
@@ -193,14 +194,14 @@ private fun mapToApiEvent(event: Event): events.boudicca.openapi.model.Event {
     return events.boudicca.openapi.model.Event()
         .name(event.name)
         .startDate(event.startDate)
-        .data(event.additionalData)
+        .data(event.data)
 }
 
 private fun mapToEnricherEvent(event: Event): events.boudicca.enricher.openapi.model.Event {
     return events.boudicca.enricher.openapi.model.Event()
         .name(event.name)
         .startDate(event.startDate)
-        .data(event.additionalData)
+        .data(event.data)
 }
 
 private fun mapToEventCollectorEvent(event: events.boudicca.enricher.openapi.model.Event): Event {

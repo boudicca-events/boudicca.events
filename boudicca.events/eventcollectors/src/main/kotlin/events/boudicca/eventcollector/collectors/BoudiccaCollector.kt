@@ -1,9 +1,8 @@
 package events.boudicca.eventcollector.collectors
 
-import base.boudicca.api.eventcollector.Event
+import base.boudicca.Event
 import base.boudicca.api.eventcollector.EventCollector
-import events.boudicca.openapi.ApiClient
-import events.boudicca.openapi.api.EventPublisherResourceApi
+import base.boudicca.api.eventdb.publisher.EventDB
 
 class BoudiccaCollector(private val from: String) : EventCollector {
     override fun getName(): String {
@@ -11,9 +10,6 @@ class BoudiccaCollector(private val from: String) : EventCollector {
     }
 
     override fun collectEvents(): List<Event> {
-        val apiClient = ApiClient()
-        apiClient.updateBaseUri(from)
-        val publisherApi = EventPublisherResourceApi(apiClient)
-        return publisherApi.eventsGet().map { Event(it.name, it.startDate, it.data!!) }
+        return EventDB(from).getAllEvents()
     }
 }

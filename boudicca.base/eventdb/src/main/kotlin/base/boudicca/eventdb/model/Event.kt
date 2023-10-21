@@ -8,12 +8,7 @@ data class Event(
     val data: Map<String, String>? = mapOf()
 )
 
-data class EventKey(
-    val name: String,
-    val startDate: ZonedDateTime,
-) {
-    constructor(event: Event) : this(event.name, event.startDate)
-}
+typealias EntryKey = Map<String, String>
 
 data class InternalEventProperties(
     val timeAdded: Long

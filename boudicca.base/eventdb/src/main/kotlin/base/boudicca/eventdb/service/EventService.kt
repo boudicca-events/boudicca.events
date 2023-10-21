@@ -1,8 +1,9 @@
 package base.boudicca.eventdb.service
 
 import base.boudicca.SemanticKeys
+import base.boudicca.eventdb.BoudiccaEventDbProperties
+import base.boudicca.eventdb.model.EntryKey
 import base.boudicca.eventdb.model.Event
-import base.boudicca.eventdb.model.EventKey
 import base.boudicca.eventdb.model.InternalEventProperties
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.DatabindException
@@ -12,7 +13,6 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import jakarta.annotation.PreDestroy
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.beans.factory.config.ConfigurableBeanFactory
 import org.springframework.context.annotation.Scope
 import org.springframework.scheduling.annotation.Scheduled
@@ -21,6 +21,7 @@ import java.io.IOException
 import java.nio.file.Path
 import java.nio.file.StandardOpenOption
 import java.time.Duration
+import java.time.format.DateTimeFormatter
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
@@ -32,10 +33,12 @@ import kotlin.io.path.writeBytes
 
 @Service
 @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON) //even if this is the default, we REALLY have to make sure there is only one
-class EventService @Autowired constructor(@Value("\${boudicca.store.path}") private val storePath: String) {
+class EventService @Autowired constructor(
+    private val boudiccaEventDbProperties: BoudiccaEventDbProperties
+) {
 
     private val LOG = LoggerFactory.getLogger(this::class.java)
-    private val events = ConcurrentHashMap<EventKey, Pair<Event, InternalEventProperties>>()
+    private val events = ConcurrentHashMap<EntryKey, Pair<Event, InternalEventProperties>>()
     private val lastSeenCollectors = ConcurrentHashMap<String, Long>()
     private val persistLock = ReentrantLock()
     private val needsPersist = AtomicBoolean(false)
@@ -43,8 +46,8 @@ class EventService @Autowired constructor(@Value("\${boudicca.store.path}") priv
         .addModule(KotlinModule.Builder().build()).build()
 
     init {
-        if (storePath.isNotBlank()) {
-            val store = Path.of(storePath)
+        if (!boudiccaEventDbProperties.store.path.isNullOrBlank()) {
+            val store = Path.of(boudiccaEventDbProperties.store.path)
             if (store.exists()) {
                 try {
                     val storeRead = objectMapper.readValue(
@@ -52,7 +55,7 @@ class EventService @Autowired constructor(@Value("\${boudicca.store.path}") priv
                         object : TypeReference<List<Pair<Event, InternalEventProperties>>>() {})
 
                     storeRead.forEach {
-                        events[EventKey(it.first)] = it
+                        events[getEntryKey(it.first)] = it
                     }
 
                     needsPersist.set(false)
@@ -81,7 +84,7 @@ class EventService @Autowired constructor(@Value("\${boudicca.store.path}") priv
     }
 
     fun add(event: Event) {
-        val eventKey = EventKey(event)
+        val eventKey = getEntryKey(event)
         val duplicate = events[eventKey]
         //some cheap logging for finding duplicate events between different collectors
         if (duplicate != null && duplicate.first.data?.get(SemanticKeys.COLLECTORNAME) != event.data?.get(
@@ -114,7 +117,7 @@ class EventService @Autowired constructor(@Value("\${boudicca.store.path}") priv
 
         toRemoveEvents.forEach {
             LOG.debug("removing event because it got too old: {}", it)
-            events.remove(EventKey(it.first))
+            events.remove(getEntryKey(it.first))
             needsPersist.set(true)
         }
     }
@@ -138,7 +141,7 @@ class EventService @Autowired constructor(@Value("\${boudicca.store.path}") priv
     }
 
     fun persist() {
-        if (storePath.isBlank()) {
+        if (boudiccaEventDbProperties.store.path.isNullOrBlank()) {
             return
         }
         persistLock.lock()
@@ -146,7 +149,7 @@ class EventService @Autowired constructor(@Value("\${boudicca.store.path}") priv
             if (needsPersist.get()) {
                 val bytes = objectMapper.writeValueAsBytes(events.values)
                 try {
-                    Path.of(storePath)
+                    Path.of(boudiccaEventDbProperties.store.path)
                         .writeBytes(bytes, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE)
                 } catch (e: IOException) {
                     LOG.error("error persisting store", e)
@@ -156,5 +159,21 @@ class EventService @Autowired constructor(@Value("\${boudicca.store.path}") priv
         } finally {
             persistLock.unlock()
         }
+    }
+
+    private fun getEntryKey(event: Event): EntryKey {
+        val data = event.data?.toMutableMap() ?: mutableMapOf()
+        data[SemanticKeys.NAME] = event.name
+        data[SemanticKeys.STARTDATE] = DateTimeFormatter.ISO_DATE_TIME.format(event.startDate)
+
+        val keys =
+            if (!boudiccaEventDbProperties.entryKeyNames.isNullOrEmpty()) {
+                boudiccaEventDbProperties.entryKeyNames
+            } else {
+                data.keys
+            }
+
+        @Suppress("UNCHECKED_CAST")
+        return keys.map { it to data[it] }.filter { it.second != null }.toMap() as EntryKey
     }
 }

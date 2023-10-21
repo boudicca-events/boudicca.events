@@ -1,7 +1,7 @@
 package events.boudicca.eventcollector.collectors
 
+import base.boudicca.Event
 import base.boudicca.SemanticKeys
-import base.boudicca.api.eventcollector.Event
 import base.boudicca.api.eventcollector.Fetcher
 import base.boudicca.api.eventcollector.TwoStepEventCollector
 import org.jsoup.Jsoup
@@ -50,9 +50,8 @@ class UlfOoeCollector : TwoStepEventCollector<String>("ulfooe") {
 
         val name = eventSite.select("h1").text()
 
-        var startDate = OffsetDateTime.MIN
-        try {
-            startDate = parseDate(eventSite)
+        val startDate = try {
+            parseDate(eventSite)
         } catch (exc: java.time.format.DateTimeParseException) {
             LOG.info("Error in ${fullEventLink}: can't parse date, might be a multi-day event")
             return null

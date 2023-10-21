@@ -3,7 +3,7 @@
     <option name="MAIN_CLASS_NAME" value="base.boudicca.eventdb.EventDBApplicationKt" />
     <module name="boudicca.boudicca.base.eventdb.main" />
     <shortenClasspath name="NONE" />
-    <option name="VM_PARAMETERS" value="-Dboudicca.store.path=boudicca.store" />
+    <option name="VM_PARAMETERS" value="-Dboudicca.store.path=boudicca.store -Dboudicca.entryKeyNames=name,startDate" />
     <extension name="net.ashald.envfile">
       <option name="IS_ENABLED" value="false" />
       <option name="IS_SUBST" value="false" />

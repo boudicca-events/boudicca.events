@@ -1,16 +1,13 @@
 package base.boudicca.api.eventcollector
 
+import base.boudicca.Event
 import base.boudicca.SemanticKeys
+import base.boudicca.api.enricher.Enricher
 import base.boudicca.api.eventcollector.collections.Collections
-import events.boudicca.enricher.openapi.api.EnricherControllerApi
-import events.boudicca.enricher.openapi.model.EnrichRequestDTO
-import events.boudicca.openapi.ApiClient
-import events.boudicca.openapi.ApiException
-import events.boudicca.openapi.api.EventIngestionResourceApi
+import base.boudicca.api.eventdb.ingest.EventDB
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.time.Duration
-import java.util.*
 import java.util.concurrent.Executors
 import java.util.function.Consumer
 import java.util.function.Function
@@ -99,7 +96,7 @@ class EventCollectorScheduler(
                         eventSink.accept(event)
                     }
                 }
-            } catch (e: ApiException) {
+            } catch (e: RuntimeException) {
                 LOG.error("could not ingest events, is the core available?", e)
             }
         } catch (e: Exception) {
@@ -124,16 +121,16 @@ class EventCollectorScheduler(
         if (event.name.isBlank()) {
             LOG.warn("event has empty name: $event")
         }
-        for (entry in event.additionalData.entries) {
+        for (entry in event.data.entries) {
             if (entry.value.isBlank()) {
                 LOG.warn("event contains empty field ${entry.key}: $event")
             }
         }
-        if (!event.additionalData.containsKey(SemanticKeys.COLLECTORNAME)) {
+        if (!event.data.containsKey(SemanticKeys.COLLECTORNAME)) {
             return Event(
                 event.name,
                 event.startDate,
-                event.additionalData.toMutableMap().apply { put(SemanticKeys.COLLECTORNAME, collectorName) }
+                event.data.toMutableMap().apply { put(SemanticKeys.COLLECTORNAME, collectorName) }
             )
         }
         return event
@@ -157,21 +154,13 @@ fun createBoudiccaEventSink(eventDbUrl: String?): Consumer<Event> {
     if (eventDbUrl.isNullOrBlank()) {
         throw IllegalStateException("you need to specify the boudicca.eventdb.url property!")
     }
-    val apiClient = ApiClient()
-    apiClient.updateBaseUri(eventDbUrl)
-    apiClient.setRequestInterceptor {
-        it.header(
-            "Authorization",
-            "Basic " + Base64.getEncoder()
-                .encodeToString(
-                    Configuration.getProperty("boudicca.ingest.auth")?.encodeToByteArray()
-                        ?: throw IllegalStateException("you need to specify the boudicca.ingest.auth property!")
-                )
-        )
-    }
-    val ingestionApi = EventIngestionResourceApi(apiClient)
+    val userAndPassword = Configuration.getProperty("boudicca.ingest.auth")
+        ?: throw IllegalStateException("you need to specify the boudicca.ingest.auth property!")
+    val user = userAndPassword.split(":")[0]
+    val password = userAndPassword.split(":")[1]
+    val eventDb = EventDB(eventDbUrl, user, password)
     return Consumer {
-        ingestionApi.ingestAddPost(mapToApiEvent(it))
+        eventDb.ingestEvents(listOf(it))
     }
 }
 
@@ -179,32 +168,10 @@ fun createBoudiccaEnricherFunction(enricherUrl: String?): Function<List<Event>, 
     if (enricherUrl.isNullOrBlank()) {
         return null
     }
-    val apiClient = events.boudicca.enricher.openapi.ApiClient()
-    apiClient.updateBaseUri(enricherUrl)
-    val enricherApi = EnricherControllerApi(apiClient)
+    val enricher = Enricher(enricherUrl)
     return Function<List<Event>, List<Event>> { events ->
-        enricherApi.enrich(
-            EnrichRequestDTO().events(events.map { mapToEnricherEvent(it) })
-        ).map { mapToEventCollectorEvent(it) }
+        enricher.enrichEvents(events)
     }
-}
-
-private fun mapToApiEvent(event: Event): events.boudicca.openapi.model.Event {
-    return events.boudicca.openapi.model.Event()
-        .name(event.name)
-        .startDate(event.startDate)
-        .data(event.additionalData)
-}
-
-private fun mapToEnricherEvent(event: Event): events.boudicca.enricher.openapi.model.Event {
-    return events.boudicca.enricher.openapi.model.Event()
-        .name(event.name)
-        .startDate(event.startDate)
-        .data(event.additionalData)
-}
-
-private fun mapToEventCollectorEvent(event: events.boudicca.enricher.openapi.model.Event): Event {
-    return Event(event.name, event.startDate, event.data ?: emptyMap())
 }
 
 fun <T> retry(log: Logger, function: () -> T): T {

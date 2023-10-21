@@ -2,8 +2,8 @@ package base.boudicca.eventdb
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition
 import io.swagger.v3.oas.annotations.servers.Server
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Bean
 import org.springframework.scheduling.annotation.EnableScheduling
@@ -23,6 +23,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 )
 @SpringBootApplication
 @EnableScheduling
+@EnableConfigurationProperties(BoudiccaEventDbProperties::class)
 class EventDBApplication : WebMvcConfigurer {
 
     @Bean
@@ -44,10 +45,10 @@ class EventDBApplication : WebMvcConfigurer {
 
     //TODO this really should be done better....
     @Bean
-    fun users(@Value("\${boudicca.ingest.password}") ingestPassword: String): UserDetailsService {
+    fun users(boudiccaEventDbProperties: BoudiccaEventDbProperties): UserDetailsService {
         val ingestUser = User.builder()
             .username("ingest")
-            .password("{noop}" + ingestPassword)
+            .password("{noop}" + boudiccaEventDbProperties.ingest.password)
             .roles("INGEST")
             .build()
         return InMemoryUserDetailsManager(ingestUser)

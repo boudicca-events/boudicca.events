@@ -9,8 +9,9 @@ repositories {
 }
 
 dependencies {
+    api(project(":boudicca.base:semantic-conventions"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
-    api(project(":boudicca.base:search-openapi"))
+    implementation(project(":boudicca.base:search-openapi"))
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
 }
 

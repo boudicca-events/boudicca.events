@@ -1,7 +1,7 @@
 package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
-import base.boudicca.api.eventcollector.Event
+import base.boudicca.Event
 import base.boudicca.api.eventcollector.EventCollector
 import base.boudicca.api.eventcollector.Fetcher
 import org.jsoup.Jsoup
@@ -24,19 +24,19 @@ class LinzTermineCollector : EventCollector {
         return "linz termine"
     }
 
-    override fun collectEvents(): List<base.boudicca.api.eventcollector.Event> {
+    override fun collectEvents(): List<Event> {
         val locations = parseLocations()
         val events = filterEvents(parseEvents())
         val eventWebsites = getEventWebsites(events)
         return mapEvents(events, locations, eventWebsites)
     }
 
-    private fun filterEvents(events: List<Event>): List<Event> {
+    private fun filterEvents(events: List<LinzTermineEvent>): List<LinzTermineEvent> {
         //448552 is the locationId of casino linz, i do not want gambling in my events
         return events.filter { it.locationId != 448552 }
     }
 
-    private fun getEventWebsites(events: List<Event>): Map<String, Document> {
+    private fun getEventWebsites(events: List<LinzTermineEvent>): Map<String, Document> {
         //TODO we may loose some events because either they do not have a linztermine.at link or the linztermine.at link points to a 404... not sure what to do about that
         return events
             .asSequence()
@@ -57,11 +57,11 @@ class LinzTermineCollector : EventCollector {
     }
 
     private fun mapEvents(
-        eventList: List<Event>,
+        eventList: List<LinzTermineEvent>,
         locations: Map<Int, Location>,
         eventWebsites: Map<String, Document>
-    ): List<base.boudicca.api.eventcollector.Event> {
-        val mappedEvents = mutableListOf<base.boudicca.api.eventcollector.Event>()
+    ): List<Event> {
+        val mappedEvents = mutableListOf<Event>()
         for (event in eventList) {
             if (event.dates.isEmpty()) {
                 LOG.warn("event does not contain any dates: $event")
@@ -101,7 +101,7 @@ class LinzTermineCollector : EventCollector {
         return mappedEvents
     }
 
-    private fun parseEvents(): List<Event> {
+    private fun parseEvents(): List<LinzTermineEvent> {
         val formatter = DateTimeFormatter.ofPattern("uuuu-MM-dd kk:mm:ss")
 
         var date = LocalDate.now(ZoneId.of("Europe/Vienna")).atStartOfDay()
@@ -127,7 +127,7 @@ class LinzTermineCollector : EventCollector {
         }.flatMap {
             it.child(0).children().toList()
                 .map {
-                    Event(
+                    LinzTermineEvent(
                         it.attr("id").toInt(),
                         it.select("title").text(),
                         it.select("tags").first()?.child(0)?.text(),
@@ -180,7 +180,7 @@ class LinzTermineCollector : EventCollector {
         val subOf: Int?,
     )
 
-    data class Event(
+    data class LinzTermineEvent(
         val id: Int,
         val name: String,
         val type: String?,

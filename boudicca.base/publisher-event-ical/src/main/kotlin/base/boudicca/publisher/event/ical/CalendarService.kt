@@ -1,10 +1,9 @@
 package base.boudicca.publisher.event.ical
 
+import base.boudicca.Event
 import base.boudicca.SemanticKeys
-import base.boudicca.search.openapi.ApiClient
-import base.boudicca.search.openapi.api.SearchResourceApi
-import base.boudicca.search.openapi.model.Event
-import base.boudicca.search.openapi.model.QueryDTO
+import base.boudicca.api.search.QueryDTO
+import base.boudicca.api.search.Search
 import net.fortuna.ical4j.model.Calendar
 import net.fortuna.ical4j.model.DateTime
 import net.fortuna.ical4j.model.component.VEvent
@@ -26,8 +25,8 @@ class CalendarService @Autowired constructor(@Value("\${boudicca.search.url}") p
         calendar.properties.add(Version.VERSION_2_0)
 
         events.forEach { event ->
-            val location = event.data?.get(SemanticKeys.LOCATION_NAME)
-            val endDate = parseEndDate(event.data?.get(SemanticKeys.ENDDATE))
+            val location = event.data[SemanticKeys.LOCATION_NAME]
+            val endDate = parseEndDate(event.data[SemanticKeys.ENDDATE])
             val calendarEvent = createEvent(
                 event.name, event.startDate, location, endDate, 0
             )
@@ -81,12 +80,7 @@ class CalendarService @Autowired constructor(@Value("\${boudicca.search.url}") p
     }
 
     fun getEvents(query: String): ByteArray {
-        val apiClient = ApiClient()
-        apiClient.updateBaseUri(searchUrl)
-        val searchApi = SearchResourceApi(apiClient)
-
-        val events = searchApi.queryPost(QueryDTO().query(query).size(100))
-
+        val events = Search(searchUrl).searchQuery(QueryDTO(query, 100))
         return createCalendar(events.result)
     }
 }

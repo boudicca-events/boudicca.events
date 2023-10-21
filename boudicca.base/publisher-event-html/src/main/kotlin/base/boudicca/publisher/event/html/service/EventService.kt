@@ -1,5 +1,6 @@
 package base.boudicca.publisher.event.html.service
 
+import base.boudicca.Event
 import base.boudicca.SemanticKeys
 import base.boudicca.api.search.BoudiccaQueryBuilder
 import base.boudicca.api.search.BoudiccaQueryBuilder.after
@@ -10,12 +11,10 @@ import base.boudicca.api.search.BoudiccaQueryBuilder.durationLonger
 import base.boudicca.api.search.BoudiccaQueryBuilder.durationShorter
 import base.boudicca.api.search.BoudiccaQueryBuilder.equals
 import base.boudicca.api.search.BoudiccaQueryBuilder.isQuery
+import base.boudicca.api.search.QueryDTO
+import base.boudicca.api.search.Search
+import base.boudicca.api.search.SearchResultDTO
 import base.boudicca.publisher.event.html.model.SearchDTO
-import base.boudicca.search.openapi.ApiClient
-import base.boudicca.search.openapi.api.SearchResourceApi
-import base.boudicca.search.openapi.model.Event
-import base.boudicca.search.openapi.model.QueryDTO
-import base.boudicca.search.openapi.model.SearchResultDTO
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -32,13 +31,13 @@ const val DEFAULT_DURATION_SHORTER_VALUE = 24 * 30
 private const val SEARCH_TYPE_ALL = "ALL"
 
 @Service
-class EventService @Autowired constructor(@Value("\${boudicca.search.url}") private val search: String) {
-    private val searchApi: SearchResourceApi = createSearchApi()
+class EventService @Autowired constructor(@Value("\${boudicca.search.url}") private val searchUrl: String) {
+    private val search: Search = createSearchApi()
     private val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy 'um' HH:mm 'Uhr'", Locale.GERMAN)
     private val localDateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
     fun search(searchDTO: SearchDTO): List<Map<String, String?>> {
-        val events = searchApi.queryPost(QueryDTO().query(generateQuery(searchDTO)).offset(searchDTO.offset))
+        val events = search.searchQuery(QueryDTO(generateQuery(searchDTO), searchDTO.offset ?: 0))
         return mapEvents(events)
     }
 
@@ -86,7 +85,7 @@ class EventService @Autowired constructor(@Value("\${boudicca.search.url}") priv
     }
 
     fun filters(): Filters {
-        val filters = searchApi.filtersGet()
+        val filters = search.getFilters()
         return Filters(
             filters.categories
                 .map { Pair(it, frontEndName(it)) }
@@ -126,10 +125,8 @@ class EventService @Autowired constructor(@Value("\${boudicca.search.url}") priv
         return formatter.format(startDate.atZoneSameInstant(ZoneId.of("Europe/Vienna")))
     }
 
-    private fun createSearchApi(): SearchResourceApi {
-        val apiClient = ApiClient()
-        apiClient.updateBaseUri(search)
-        return SearchResourceApi(apiClient)
+    private fun createSearchApi(): Search {
+        return Search(searchUrl)
     }
 
     private fun frontEndCategoryName(type: base.boudicca.EventCategory): String {

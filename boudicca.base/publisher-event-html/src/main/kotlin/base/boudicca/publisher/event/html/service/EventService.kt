@@ -108,15 +108,27 @@ class EventService @Autowired constructor(@Value("\${boudicca.search.url}") priv
             "startDate" to formatDate(event.startDate),
             "locationName" to (event.data[SemanticKeys.LOCATION_NAME] ?: ""),
             "city" to event.data[SemanticKeys.LOCATION_CITY],
-            "category" to mapType(event.data[SemanticKeys.TYPE]),
+            "category" to mapCategory(event.data[SemanticKeys.CATEGORY]),
             "pictureUrl" to URLEncoder.encode(event.data["pictureUrl"] ?: "", Charsets.UTF_8),
         )
     }
 
-    private fun mapType(type: String?): String? {
-        val category = EventCategory.getForType(type)
-        if (category != null) {
-            return frontEndCategoryName(category)
+    private fun mapCategory(categoryString: String?): String? {
+        if (categoryString != null) {
+            val category = try {
+                EventCategory.valueOf(categoryString)
+            } catch (e: IllegalArgumentException) {
+                null
+            }
+            if (category != null) {
+                return when (category) {
+                    EventCategory.MUSIC -> "music"
+                    EventCategory.ART -> "miscArt"
+                    EventCategory.TECH -> "tech"
+                    EventCategory.ALL -> "???"
+                    EventCategory.OTHER -> "???"
+                }
+            }
         }
         return null
     }
@@ -127,16 +139,6 @@ class EventService @Autowired constructor(@Value("\${boudicca.search.url}") priv
 
     private fun createSearchApi(): Search {
         return Search(searchUrl)
-    }
-
-    private fun frontEndCategoryName(category: EventCategory): String {
-        return when (category) {
-            EventCategory.MUSIC -> "music"
-            EventCategory.ART -> "miscArt"
-            EventCategory.TECH -> "tech"
-            EventCategory.ALL -> "???"
-            EventCategory.OTHER -> "???"
-        }
     }
 
     private fun frontEndName(category: EventCategory): String {

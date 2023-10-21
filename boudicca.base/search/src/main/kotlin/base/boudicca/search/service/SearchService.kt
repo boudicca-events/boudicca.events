@@ -1,7 +1,11 @@
 package base.boudicca.search.service
 
+import base.boudicca.Event
 import base.boudicca.SemanticKeys
-import base.boudicca.search.model.*
+import base.boudicca.search.model.Filters
+import base.boudicca.search.model.QueryDTO
+import base.boudicca.search.model.SearchDTO
+import base.boudicca.search.model.SearchResultDTO
 import base.boudicca.search.service.util.Utils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.event.EventListener
@@ -29,10 +33,10 @@ class SearchService @Autowired constructor(
 
     fun search(searchDTO: SearchDTO): SearchResultDTO {
         val query = createQuery(searchDTO)
-        if (query.isNotBlank()) {
-            return queryService.query(QueryDTO(query, searchDTO.offset))
+        return if (query.isNotBlank()) {
+            queryService.query(QueryDTO(query, searchDTO.offset))
         } else {
-            return Utils.offset(events, searchDTO.offset)
+            Utils.offset(events, searchDTO.offset)
         }
     }
 
@@ -40,11 +44,11 @@ class SearchService @Autowired constructor(
     fun onEventsUpdate(event: EventsUpdatedEvent) {
         this.events = Utils.order(event.events)
         locationNames = this.events
-            .mapNotNull { it.data?.get(SemanticKeys.LOCATION_NAME) }
+            .mapNotNull { it.data[SemanticKeys.LOCATION_NAME] }
             .filter { it.isNotBlank() }
             .toSet()
         locationCities = this.events
-            .mapNotNull { it.data?.get(SemanticKeys.LOCATION_CITY) }
+            .mapNotNull { it.data[SemanticKeys.LOCATION_CITY] }
             .filter { it.isNotBlank() }
             .toSet()
     }

@@ -1,7 +1,7 @@
 package base.boudicca.search.service
 
+import base.boudicca.Event
 import base.boudicca.api.eventdb.publisher.EventDB
-import base.boudicca.search.model.Event
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -31,7 +31,7 @@ class SynchronizationService @Autowired constructor(
         updateLock.lock()
         try {
             try {
-                val events = publisherApi.getAllEvents().map { toSearchEvent(it) }.toSet()
+                val events = publisherApi.getAllEvents().toSet()
                 eventPublisher.publishEvent(EventsUpdatedEvent(events))
             } catch (e: RuntimeException) {
                 LOG.warn("could not reach eventdb, retrying in 30s", e)
@@ -45,10 +45,6 @@ class SynchronizationService @Autowired constructor(
         } finally {
             updateLock.unlock()
         }
-    }
-
-    private fun toSearchEvent(event: base.boudicca.Event): Event {
-        return Event(event.name, event.startDate.toZonedDateTime(), event.data)
     }
 
     private fun createEventPublisherApi(): EventDB {

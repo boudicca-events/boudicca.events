@@ -1,13 +1,14 @@
 package base.boudicca.api.eventdb.ingest
 
+import base.boudicca.Entry
 import base.boudicca.Event
 import events.boudicca.openapi.ApiClient
-import events.boudicca.openapi.api.EventIngestionResourceApi
+import events.boudicca.openapi.api.IngestionResourceApi
 import java.util.*
 
 class EventDB(eventDbUrl: String, user: String, password: String) {
 
-    private val ingestApi: EventIngestionResourceApi
+    private val ingestApi: IngestionResourceApi
 
     init {
         if (eventDbUrl.isBlank()) {
@@ -30,13 +31,15 @@ class EventDB(eventDbUrl: String, user: String, password: String) {
                     )
             )
         }
-        ingestApi = EventIngestionResourceApi(apiClient)
+        ingestApi = IngestionResourceApi(apiClient)
     }
 
     fun ingestEvents(events: List<Event>) {
-        for (event in events) {
-            ingestApi.ingestAddPost(mapToRemoteEvent(event))
-        }
+        ingestEntries(events.map { Event.toEntry(it) })
+    }
+
+    fun ingestEntries(entries: List<Entry>) {
+        ingestApi.addEntries(entries)
     }
 
     private fun mapToRemoteEvent(event: Event): events.boudicca.openapi.model.Event {

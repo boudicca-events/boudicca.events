@@ -67,5 +67,5 @@ private fun enrich(originalEvents: List<Event>): List<Event> {
 }
 
 fun getEvents(): List<Event> {
-    return EventDB(EVENTDB_URL).getAllEvents()
+    return EventDB(EVENTDB_URL).getAllEvents().toList()
 }

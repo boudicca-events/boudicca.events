@@ -1,12 +1,13 @@
 package base.boudicca.api.eventdb.publisher
 
+import base.boudicca.Entry
 import base.boudicca.Event
 import events.boudicca.openapi.ApiClient
-import events.boudicca.openapi.api.EventPublisherResourceApi
+import events.boudicca.openapi.api.PublisherResourceApi
 
 class EventDB(eventDbUrl: String) {
 
-    private val publisherApi: EventPublisherResourceApi
+    private val publisherApi: PublisherResourceApi
 
     init {
         if (eventDbUrl.isBlank()) {
@@ -14,12 +15,14 @@ class EventDB(eventDbUrl: String) {
         }
         val apiClient = ApiClient()
         apiClient.updateBaseUri(eventDbUrl)
-        publisherApi = EventPublisherResourceApi(apiClient)
+        publisherApi = PublisherResourceApi(apiClient)
     }
 
-    fun getAllEvents(): List<Event> {
-        val events = publisherApi.eventsGet()
+    fun getAllEvents(): Set<Event> {
+        return getAllEntries().mapNotNull { Event.fromEntry(it) }.toSet()
+    }
 
-        return events.map { Event(it.name, it.startDate, it.data ?: emptyMap()) }
+    fun getAllEntries(): Set<Entry> {
+        return publisherApi.all()
     }
 }

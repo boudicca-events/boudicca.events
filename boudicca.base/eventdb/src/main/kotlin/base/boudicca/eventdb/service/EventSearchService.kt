@@ -8,12 +8,13 @@ import org.springframework.stereotype.Service
 
 
 @Service
-class EventSearchService @Autowired constructor(private val eventService: EventService) {
+@Deprecated("this search is superseded by the search service")
+class EventSearchService @Autowired constructor(private val entryService: EntryService) {
 
     fun search(searchDTO: SearchDTO): Set<Event> {
         val fromDate = searchDTO.fromDate
         val toDate = searchDTO.toDate
-        return eventService.list()
+        return entryService.all().asSequence().mapNotNull { Event.fromEntry(it) }
             .filter { e -> fromDate == null || !e.startDate.isBefore(fromDate) }
             .filter { e -> toDate == null || !e.startDate.isAfter(toDate) }
             .filter { e ->
@@ -82,6 +83,13 @@ class EventSearchService @Autowired constructor(private val eventService: EventS
                 }
             }
 
-        return filters.fold(eventService.list()) { events, currentFilter -> events.filter(currentFilter).toSet() }
+        return filters
+            .fold(
+                entryService.all().mapNotNull { Event.fromEntry(it) }.toSet()
+            )
+            { events, currentFilter ->
+                events.filter(currentFilter).toSet()
+            }
+            .toSet()
     }
 }

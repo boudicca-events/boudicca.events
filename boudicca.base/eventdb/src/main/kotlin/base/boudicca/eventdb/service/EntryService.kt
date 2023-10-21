@@ -1,5 +1,6 @@
 package base.boudicca.eventdb.service
 
+import base.boudicca.Entry
 import base.boudicca.Event
 import base.boudicca.SemanticKeys
 import base.boudicca.eventdb.BoudiccaEventDbProperties
@@ -21,7 +22,6 @@ import java.io.IOException
 import java.nio.file.Path
 import java.nio.file.StandardOpenOption
 import java.time.Duration
-import java.time.format.DateTimeFormatter
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
@@ -33,12 +33,12 @@ import kotlin.io.path.writeBytes
 
 @Service
 @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON) //even if this is the default, we REALLY have to make sure there is only one
-class EventService @Autowired constructor(
+class EntryService @Autowired constructor(
     private val boudiccaEventDbProperties: BoudiccaEventDbProperties
 ) {
 
     private val LOG = LoggerFactory.getLogger(this::class.java)
-    private val events = ConcurrentHashMap<EntryKey, Pair<Event, InternalEventProperties>>()
+    private val entries = ConcurrentHashMap<EntryKey, Pair<Entry, InternalEventProperties>>()
     private val lastSeenCollectors = ConcurrentHashMap<String, Long>()
     private val persistLock = ReentrantLock()
     private val needsPersist = AtomicBoolean(false)
@@ -50,26 +50,15 @@ class EventService @Autowired constructor(
             val store = Path.of(boudiccaEventDbProperties.store.path)
             if (store.exists()) {
                 try {
-                    val storeRead = objectMapper.readValue(
-                        store.readBytes(),
-                        object : TypeReference<List<Pair<Event, InternalEventProperties>>>() {})
-
-                    storeRead.forEach {
-                        events[getEntryKey(it.first)] = it
-                    }
-
-                    needsPersist.set(false)
+                    loadStoreV3(store)
                 } catch (e: DatabindException) {
-                    LOG.info("store had wrong format, retrying with old format")
-                    val storeRead = objectMapper.readValue(
-                        store.readBytes(),
-                        object : TypeReference<List<Event>>() {})
-
-                    storeRead.forEach {
-                        add(it)
+                    LOG.info("store had wrong format, retrying with old format v2")
+                    try {
+                        loadStoreV2(store)
+                    } catch (e: DatabindException) {
+                        LOG.info("store had wrong format, retrying with old format v1")
+                        loadStoreV1(store)
                     }
-
-                    needsPersist.set(true) //to write in the new format
                 }
             } else {
                 LOG.info("did not find store to read from")
@@ -79,22 +68,59 @@ class EventService @Autowired constructor(
         }
     }
 
-    fun list(): Set<Event> {
-        return events.values.map { it.first }.toSet()
-    }
+    private fun loadStoreV1(store: Path) {
+        val storeRead = objectMapper.readValue(
+            store.readBytes(),
+            object : TypeReference<List<Event>>() {})
 
-    fun add(event: Event) {
-        val eventKey = getEntryKey(event)
-        val duplicate = events[eventKey]
-        //some cheap logging for finding duplicate events between different collectors
-        if (duplicate != null && duplicate.first.data[SemanticKeys.COLLECTORNAME] != event.data[SemanticKeys.COLLECTORNAME]
-        ) {
-            LOG.warn("event $event will overwrite $duplicate")
+        storeRead.forEach {
+            add(Event.toEntry(it))
         }
 
-        events[eventKey] = Pair(event, InternalEventProperties(System.currentTimeMillis()))
-        if (event.data.containsKey(SemanticKeys.COLLECTORNAME)) {
-            lastSeenCollectors[event.data[SemanticKeys.COLLECTORNAME]!!] = System.currentTimeMillis()
+        needsPersist.set(true) //to write in the new format
+    }
+
+    private fun loadStoreV2(store: Path) {
+        val storeRead = objectMapper.readValue(
+            store.readBytes(),
+            object : TypeReference<List<Pair<Event, InternalEventProperties>>>() {})
+
+        storeRead.forEach {
+            val entry = Event.toEntry(it.first)
+            entries[getEntryKey(entry)] = Pair(entry, it.second)
+        }
+
+        needsPersist.set(true) //to write in the new format
+    }
+
+    private fun loadStoreV3(store: Path) {
+        val storeRead = objectMapper.readValue(
+            store.readBytes(),
+            object : TypeReference<List<Pair<Entry, InternalEventProperties>>>() {})
+
+        storeRead.forEach {
+            entries[getEntryKey(it.first)] = it
+        }
+
+        needsPersist.set(false)
+    }
+
+    fun all(): Set<Entry> {
+        return entries.values.map { it.first }.toSet()
+    }
+
+    fun add(entry: Entry) {
+        val eventKey = getEntryKey(entry)
+        val duplicate = entries[eventKey]
+        //some cheap logging for finding duplicate events between different collectors
+        if (duplicate != null && duplicate.first[SemanticKeys.COLLECTORNAME] != entry[SemanticKeys.COLLECTORNAME]
+        ) {
+            LOG.warn("event $entry will overwrite $duplicate")
+        }
+
+        entries[eventKey] = Pair(entry, InternalEventProperties(System.currentTimeMillis()))
+        if (entry.containsKey(SemanticKeys.COLLECTORNAME)) {
+            lastSeenCollectors[entry[SemanticKeys.COLLECTORNAME]!!] = System.currentTimeMillis()
         }
         needsPersist.set(true)
     }
@@ -103,10 +129,10 @@ class EventService @Autowired constructor(
 
     @Scheduled(fixedRate = 1, timeUnit = TimeUnit.DAYS)
     fun cleanup() {
-        val toRemoveEvents = events.values
+        val toRemoveEvents = entries.values
             .filter {
-                if (it.first.data.containsKey(SemanticKeys.COLLECTORNAME)) {
-                    val collectorName = it.first.data[SemanticKeys.COLLECTORNAME]!!
+                if (it.first.containsKey(SemanticKeys.COLLECTORNAME)) {
+                    val collectorName = it.first[SemanticKeys.COLLECTORNAME]!!
                     it.second.timeAdded + MAX_AGE < (lastSeenCollectors[collectorName] ?: Long.MIN_VALUE)
                 } else {
                     false
@@ -115,7 +141,7 @@ class EventService @Autowired constructor(
 
         toRemoveEvents.forEach {
             LOG.debug("removing event because it got too old: {}", it)
-            events.remove(getEntryKey(it.first))
+            entries.remove(getEntryKey(it.first))
             needsPersist.set(true)
         }
     }
@@ -145,7 +171,7 @@ class EventService @Autowired constructor(
         persistLock.lock()
         try {
             if (needsPersist.get()) {
-                val bytes = objectMapper.writeValueAsBytes(events.values)
+                val bytes = objectMapper.writeValueAsBytes(entries.values)
                 try {
                     Path.of(boudiccaEventDbProperties.store.path)
                         .writeBytes(bytes, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE)
@@ -159,19 +185,15 @@ class EventService @Autowired constructor(
         }
     }
 
-    private fun getEntryKey(event: Event): EntryKey {
-        val data = event.data.toMutableMap()
-        data[SemanticKeys.NAME] = event.name
-        data[SemanticKeys.STARTDATE] = DateTimeFormatter.ISO_DATE_TIME.format(event.startDate)
-
+    private fun getEntryKey(entry: Entry): EntryKey {
         val keys =
             if (!boudiccaEventDbProperties.entryKeyNames.isNullOrEmpty()) {
                 boudiccaEventDbProperties.entryKeyNames
             } else {
-                data.keys
+                entry.keys
             }
 
         @Suppress("UNCHECKED_CAST")
-        return keys.map { it to data[it] }.filter { it.second != null }.toMap() as EntryKey
+        return keys.map { it to entry[it] }.filter { it.second != null }.toMap() as EntryKey
     }
 }

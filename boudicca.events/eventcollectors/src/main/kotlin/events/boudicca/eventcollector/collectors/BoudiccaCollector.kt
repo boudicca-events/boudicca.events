@@ -10,6 +10,6 @@ class BoudiccaCollector(private val from: String) : EventCollector {
     }
 
     override fun collectEvents(): List<Event> {
-        return EventDB(from).getAllEvents()
+        return EventDB(from).getAllEvents().toList()
     }
 }

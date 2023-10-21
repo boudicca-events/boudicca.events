@@ -88,9 +88,11 @@ class EventService @Autowired constructor(@Value("\${boudicca.search.url}") priv
     fun filters(): Filters {
         val filters = searchApi.filtersGet()
         return Filters(
-            filters.categories.map { Pair(it, frontEndName(it)) }.sortedBy { it.second },
-            filters.locationNames.sorted().map { Pair(it, it) },
-            filters.locationCities.sorted().map { Pair(it, it) },
+            filters.categories
+                .map { Pair(it, frontEndName(it)) }
+                .sortedWith(Comparator.comparing({ it.second }, String.CASE_INSENSITIVE_ORDER)),
+            filters.locationNames.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Pair(it, it) },
+            filters.locationCities.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Pair(it, it) },
         )
     }
 

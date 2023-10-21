@@ -7,6 +7,7 @@ import events.boudicca.enricher.openapi.model.EnrichRequestDTO
 import events.boudicca.openapi.ApiClient
 import events.boudicca.openapi.ApiException
 import events.boudicca.openapi.api.EventIngestionResourceApi
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.time.Duration
 import java.util.*
@@ -94,7 +95,7 @@ class EventCollectorScheduler(
                 val postProcessedEvents = events.map { postProcess(it, eventCollector.getName()) }
                 val enrichedEvents = enrich(postProcessedEvents)
                 for (event in enrichedEvents) {
-                    retry {
+                    retry(LOG) {
                         eventSink.accept(event)
                     }
                 }
@@ -110,27 +111,13 @@ class EventCollectorScheduler(
 
     private fun enrich(events: List<Event>): List<Event> {
         return try {
-            retry {
+            retry(LOG) {
                 enricherFunction?.apply(events) ?: events
             }
         } catch (e: Exception) {
             LOG.error("enricher threw exception, submitting events un-enriched", e)
             events
         }
-    }
-
-    private fun <T> retry(function: () -> T): T {
-        var lastException: Throwable? = null
-        for (i in 1..5) {
-            try {
-                return function()
-            } catch (e: Exception) {
-                lastException = e
-                LOG.info("exception caught, retrying in 1 minute", e)
-                Thread.sleep(1000 * 60)
-            }
-        }
-        throw lastException!!
     }
 
     private fun postProcess(event: Event, collectorName: String): Event {
@@ -218,4 +205,18 @@ private fun mapToEnricherEvent(event: Event): events.boudicca.enricher.openapi.m
 
 private fun mapToEventCollectorEvent(event: events.boudicca.enricher.openapi.model.Event): Event {
     return Event(event.name, event.startDate, event.data ?: emptyMap())
+}
+
+fun <T> retry(log: Logger, function: () -> T): T {
+    var lastException: Throwable? = null
+    for (i in 1..5) {
+        try {
+            return function()
+        } catch (e: Exception) {
+            lastException = e
+            log.info("exception caught, retrying in 1 minute", e)
+            Thread.sleep(1000 * 60)
+        }
+    }
+    throw lastException!!
 }

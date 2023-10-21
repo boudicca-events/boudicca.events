@@ -9,6 +9,7 @@ repositories {
 }
 
 dependencies {
+    api(project(":boudicca.base:semantic-conventions"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
     implementation(project(":boudicca.base:eventdb-openapi"))
 }

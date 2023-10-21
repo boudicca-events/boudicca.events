@@ -15,7 +15,7 @@ repositories {
 
 dependencies {
     implementation("org.json:json:20231013")
-    implementation(project(":boudicca.base:enricher-openapi"))
+    implementation(project(":boudicca.base:enricher-api"))
     implementation(project(":boudicca.base:publisher-api"))
 }
 

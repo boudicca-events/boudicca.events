@@ -2,10 +2,9 @@ package base.boudicca.api.eventcollector
 
 import base.boudicca.Event
 import base.boudicca.SemanticKeys
+import base.boudicca.api.enricher.Enricher
 import base.boudicca.api.eventcollector.collections.Collections
 import base.boudicca.api.eventdb.ingest.EventDB
-import events.boudicca.enricher.openapi.api.EnricherControllerApi
-import events.boudicca.enricher.openapi.model.EnrichRequestDTO
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.time.Duration
@@ -169,25 +168,10 @@ fun createBoudiccaEnricherFunction(enricherUrl: String?): Function<List<Event>, 
     if (enricherUrl.isNullOrBlank()) {
         return null
     }
-    val apiClient = events.boudicca.enricher.openapi.ApiClient()
-    apiClient.updateBaseUri(enricherUrl)
-    val enricherApi = EnricherControllerApi(apiClient)
+    val enricher = Enricher(enricherUrl)
     return Function<List<Event>, List<Event>> { events ->
-        enricherApi.enrich(
-            EnrichRequestDTO().events(events.map { mapToEnricherEvent(it) })
-        ).map { mapToEventCollectorEvent(it) }
+        enricher.enrichEvents(events)
     }
-}
-
-private fun mapToEnricherEvent(event: Event): events.boudicca.enricher.openapi.model.Event {
-    return events.boudicca.enricher.openapi.model.Event()
-        .name(event.name)
-        .startDate(event.startDate)
-        .data(event.data)
-}
-
-private fun mapToEventCollectorEvent(event: events.boudicca.enricher.openapi.model.Event): Event {
-    return Event(event.name, event.startDate, event.data ?: emptyMap())
 }
 
 fun <T> retry(log: Logger, function: () -> T): T {

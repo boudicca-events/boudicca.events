@@ -50,9 +50,8 @@ class UlfOoeCollector : TwoStepEventCollector<String>("ulfooe") {
 
         val name = eventSite.select("h1").text()
 
-        var startDate = OffsetDateTime.MIN
-        try {
-            startDate = parseDate(eventSite)
+        val startDate = try {
+            parseDate(eventSite)
         } catch (exc: java.time.format.DateTimeParseException) {
             LOG.info("Error in ${fullEventLink}: can't parse date, might be a multi-day event")
             return null

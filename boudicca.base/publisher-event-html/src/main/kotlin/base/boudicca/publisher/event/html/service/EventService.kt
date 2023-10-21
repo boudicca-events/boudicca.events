@@ -103,13 +103,13 @@ class EventService @Autowired constructor(@Value("\${boudicca.search.url}") priv
     private fun mapEvent(event: Event): Map<String, String?> {
         return mapOf(
             "name" to event.name,
-            "description" to event.data?.get(SemanticKeys.DESCRIPTION),
-            "url" to event.data?.get(SemanticKeys.URL),
+            "description" to event.data[SemanticKeys.DESCRIPTION],
+            "url" to event.data[SemanticKeys.URL],
             "startDate" to formatDate(event.startDate),
-            "locationName" to (event.data?.get(SemanticKeys.LOCATION_NAME) ?: ""),
-            "city" to event.data?.get(SemanticKeys.LOCATION_CITY),
-            "category" to mapType(event.data?.get(SemanticKeys.TYPE)),
-            "pictureUrl" to URLEncoder.encode(event.data?.get("pictureUrl") ?: "", Charsets.UTF_8),
+            "locationName" to (event.data[SemanticKeys.LOCATION_NAME] ?: ""),
+            "city" to event.data[SemanticKeys.LOCATION_CITY],
+            "category" to mapType(event.data[SemanticKeys.TYPE]),
+            "pictureUrl" to URLEncoder.encode(event.data["pictureUrl"] ?: "", Charsets.UTF_8),
         )
     }
 

@@ -1,9 +1,8 @@
 package base.boudicca.search.service
 
+import base.boudicca.api.eventdb.publisher.EventDB
 import base.boudicca.search.model.Event
-import events.boudicca.openapi.ApiClient
 import events.boudicca.openapi.ApiException
-import events.boudicca.openapi.api.EventPublisherResourceApi
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -21,7 +20,7 @@ class SynchronizationService @Autowired constructor(
 
     private val LOG = LoggerFactory.getLogger(this.javaClass)
 
-    private val publisherApi: EventPublisherResourceApi = createEventPublisherApi()
+    private val publisherApi: EventDB = createEventPublisherApi()
     private val updateLock = ReentrantLock()
 
     @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.HOURS)
@@ -33,7 +32,7 @@ class SynchronizationService @Autowired constructor(
         updateLock.lock()
         try {
             try {
-                val events = publisherApi.eventsGet().map { toSearchEvent(it) }.toSet()
+                val events = publisherApi.getAllEvents().map { toSearchEvent(it) }.toSet()
                 eventPublisher.publishEvent(EventsUpdatedEvent(events))
             } catch (e: ApiException) {
                 LOG.warn("could not reach eventdb, retrying in 30s", e)
@@ -49,14 +48,12 @@ class SynchronizationService @Autowired constructor(
         }
     }
 
-    private fun toSearchEvent(event: events.boudicca.openapi.model.Event): Event {
+    private fun toSearchEvent(event: base.boudicca.Event): Event {
         return Event(event.name, event.startDate.toZonedDateTime(), event.data)
     }
 
-    private fun createEventPublisherApi(): EventPublisherResourceApi {
-        val apiClient = ApiClient()
-        apiClient.updateBaseUri(eventDbUrl)
-        return EventPublisherResourceApi(apiClient)
+    private fun createEventPublisherApi(): EventDB {
+        return EventDB(eventDbUrl)
     }
 }
 

@@ -200,16 +200,6 @@ class ParserTest {
     }
 
     @Test
-    fun testIs() {
-        assertEquals(
-            "IS('MUSIC')",
-            callParser(
-                `is`(), text("MUSIC")
-            )
-        )
-    }
-
-    @Test
     fun testDurationShorter() {
         assertEquals(
             "DURATIONSHORTER(-2)",
@@ -227,10 +217,6 @@ class ParserTest {
                 durationLonger(), text("2.6")
             )
         )
-    }
-
-    private fun `is`(): Token {
-        return Token(TokenType.IS, null)
     }
 
     private fun before(): Token {

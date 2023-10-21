@@ -20,7 +20,6 @@ potentially nested) forms. Please note that expressions are case-insensitive:
 | Not              | The child-expression has to be false so that the whole expression is true                    | `not <expression>`              |
 | After            | Filter events starting at or after the given date                                            | `after <date>`                  |
 | Before           | Filter events starting at or before the given date                                           | `before <date>`                 |
-| Is               | Filter events belonging to a certain category                                                | `is <category>`                 |
 | Grouping         | Marker to identify how expression should be grouped                                          | `( <expression> )`              |
 | Duration Longer  | Filter events on their duration in hours (inclusive), events without endDate have 0 duration | `durationLonger <number`        |
 | Duration Shorter | Filter events on their duration in hours (inclusive), events without endDate have 0 duration | `durationShorter <number>`      |
@@ -38,7 +37,6 @@ where
   "any field". Please note that * is a special character and thus the quotes are needed. Also note that the fieldname
   matching is case-sensitive, so the fieldnames `name` and `NAME` are different fields.
 * `<date>` is a `<text>` in the ISO Local Date format `YYYY-MM-DD`, for example `2023-05-27`
-* `<category>` is a `<text>` which value has to be one of `MUSIC`,`TECH`,`ART`,`OTHER`
 
 In contrast to other queries or math there is no operator precedence here, they will be ordered/grouped randomly
 (depending solely on the parser). So make sure to use the grouping `(...)` mechanism!

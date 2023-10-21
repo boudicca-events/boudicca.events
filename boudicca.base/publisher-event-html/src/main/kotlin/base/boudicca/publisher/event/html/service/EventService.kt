@@ -3,7 +3,6 @@ package base.boudicca.publisher.event.html.service
 import base.boudicca.Event
 import base.boudicca.EventCategory
 import base.boudicca.SemanticKeys
-import base.boudicca.api.search.BoudiccaQueryBuilder
 import base.boudicca.api.search.BoudiccaQueryBuilder.after
 import base.boudicca.api.search.BoudiccaQueryBuilder.and
 import base.boudicca.api.search.BoudiccaQueryBuilder.before
@@ -11,7 +10,6 @@ import base.boudicca.api.search.BoudiccaQueryBuilder.contains
 import base.boudicca.api.search.BoudiccaQueryBuilder.durationLonger
 import base.boudicca.api.search.BoudiccaQueryBuilder.durationShorter
 import base.boudicca.api.search.BoudiccaQueryBuilder.equals
-import base.boudicca.api.search.BoudiccaQueryBuilder.isQuery
 import base.boudicca.api.search.QueryDTO
 import base.boudicca.api.search.Search
 import base.boudicca.api.search.SearchResultDTO
@@ -58,8 +56,8 @@ class EventService @Autowired constructor(@Value("\${boudicca.search.url}") priv
         if (!searchDTO.name.isNullOrBlank()) {
             queryParts.add(contains("*", searchDTO.name!!))
         }
-        if (!searchDTO.category.isNullOrBlank() && searchDTO.category != SEARCH_TYPE_ALL && BoudiccaQueryBuilder.Category.entries.any { searchDTO.category == it.name }) {
-            queryParts.add(isQuery(BoudiccaQueryBuilder.Category.valueOf(searchDTO.category!!)))
+        if (!searchDTO.category.isNullOrBlank() && searchDTO.category != SEARCH_TYPE_ALL) {
+            queryParts.add(equals(SemanticKeys.CATEGORY, searchDTO.category!!))
         }
         if (!searchDTO.locationCity.isNullOrBlank()) {
             queryParts.add(equals(SemanticKeys.LOCATION_CITY, searchDTO.locationCity!!))

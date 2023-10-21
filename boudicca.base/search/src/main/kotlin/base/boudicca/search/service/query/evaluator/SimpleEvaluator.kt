@@ -88,18 +88,6 @@ class SimpleEvaluator(rawEvents: Collection<Event>) : Evaluator {
                 }
             }
 
-            is IsExpression -> {
-                if (!event.containsKey(SemanticKeys.TYPE)) {
-                    return false
-                }
-                val category = base.boudicca.EventCategory.getForType(event[SemanticKeys.TYPE])
-                val expressionCategory = expression.getText().uppercase()
-                if (category == null) {
-                    return expressionCategory == "OTHER"
-                }
-                return expressionCategory == category.name
-            }
-
             is DurationLongerExpression -> {
                 val duration = EvaluatorUtil.getDuration(event)
                 return duration >= expression.getNumber().toDouble()

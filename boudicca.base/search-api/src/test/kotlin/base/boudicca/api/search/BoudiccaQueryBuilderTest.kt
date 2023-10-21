@@ -8,7 +8,6 @@ import base.boudicca.api.search.BoudiccaQueryBuilder.durationLonger
 import base.boudicca.api.search.BoudiccaQueryBuilder.durationShorter
 import base.boudicca.api.search.BoudiccaQueryBuilder.equals
 import base.boudicca.api.search.BoudiccaQueryBuilder.escapeText
-import base.boudicca.api.search.BoudiccaQueryBuilder.isQuery
 import base.boudicca.api.search.BoudiccaQueryBuilder.not
 import base.boudicca.api.search.BoudiccaQueryBuilder.or
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -125,13 +124,6 @@ class BoudiccaQueryBuilderTest {
         val query = before(LocalDate.of(2023, 10, 6))
 
         assertEquals("before 2023-10-06", query)
-    }
-
-    @Test
-    fun simpleIs() {
-        val query = isQuery(BoudiccaQueryBuilder.Category.ART)
-
-        assertEquals("is ART", query)
     }
 
     @Test

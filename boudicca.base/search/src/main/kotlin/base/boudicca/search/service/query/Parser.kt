@@ -23,7 +23,7 @@ class Parser(private val tokens: List<Token>) {
             TokenType.TEXT -> parseFieldAndTextExpression()
             TokenType.NOT -> parseNotExpression()
             TokenType.GROUPING_OPEN -> parseGroupOpen()
-            TokenType.BEFORE, TokenType.AFTER, TokenType.IS, TokenType.DURATIONLONGER, TokenType.DURATIONSHORTER -> {
+            TokenType.BEFORE, TokenType.AFTER, TokenType.DURATIONLONGER, TokenType.DURATIONSHORTER -> {
                 parseSingleFieldExpression(token)
             }
 
@@ -47,7 +47,6 @@ class Parser(private val tokens: List<Token>) {
         lastExpression = when (token.getType()) {
             TokenType.BEFORE -> BeforeExpression(textToken.getToken()!!)
             TokenType.AFTER -> AfterExpression(textToken.getToken()!!)
-            TokenType.IS -> IsExpression(textToken.getToken()!!)
             TokenType.DURATIONSHORTER -> DurationShorterExpression(parseNumber(textToken.getToken()!!))
             TokenType.DURATIONLONGER -> DurationLongerExpression(parseNumber(textToken.getToken()!!))
             else -> throw IllegalStateException("unknown token type ${token.getType()}")

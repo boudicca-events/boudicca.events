@@ -9,16 +9,16 @@ import org.springframework.stereotype.Service
 class CategoryEnricher : Enricher {
 
     override fun enrich(e: Event): Event {
-        val type = e.data[SemanticKeys.TYPE]
+        val data = e.data.toMutableMap()
+        data[SemanticKeys.CATEGORY] = EventCategory.OTHER.name
+        val type = data[SemanticKeys.TYPE]
         if (!type.isNullOrBlank()) {
             val category = EventCategory.getForType(type)
             if (category != null) {
-                val data = e.data.toMutableMap()
                 data[SemanticKeys.CATEGORY] = category.name
-                return Event(e.name, e.startDate, data)
             }
         }
-        return e
+        return Event(e.name, e.startDate, data)
     }
 
 }

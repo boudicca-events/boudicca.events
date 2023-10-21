@@ -1,13 +1,12 @@
 package base.boudicca.search.service.query.evaluator
 
+import base.boudicca.Event
 import base.boudicca.SemanticKeys
-import base.boudicca.search.model.Event
 import base.boudicca.search.model.SearchResultDTO
 import base.boudicca.search.service.query.*
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.ZoneId
-import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 import java.util.function.Function
@@ -18,7 +17,7 @@ class SimpleEvaluator(rawEvents: Collection<Event>) : Evaluator {
         .toList()
         .sortedWith(
             Comparator
-                .comparing<Event, ZonedDateTime> { it.startDate }
+                .comparing<Event, OffsetDateTime> { it.startDate }
                 .thenComparing(Function { it.name })
         )
         .map { EvaluatorUtil.mapEventToMap(it) }

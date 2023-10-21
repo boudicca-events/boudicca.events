@@ -1,8 +1,8 @@
 package base.boudicca.search.service.util
 
-import base.boudicca.search.model.Event
+import base.boudicca.Event
 import base.boudicca.search.model.SearchResultDTO
-import java.time.ZonedDateTime
+import java.time.OffsetDateTime
 import java.util.function.Function
 
 object Utils {
@@ -17,7 +17,7 @@ object Utils {
             .toList()
             .sortedWith(
                 Comparator
-                    .comparing<Event?, ZonedDateTime?> { it.startDate }
+                    .comparing<Event?, OffsetDateTime?> { it.startDate }
                     .thenComparing(Function { it.name })
             )
     }

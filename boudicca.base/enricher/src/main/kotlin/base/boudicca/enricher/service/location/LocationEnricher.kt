@@ -1,7 +1,7 @@
 package base.boudicca.enricher.service.location
 
+import base.boudicca.Event
 import base.boudicca.SemanticKeys
-import base.boudicca.enricher.model.Event
 import base.boudicca.enricher.service.Enricher
 import base.boudicca.enricher.service.ForceUpdateEvent
 import org.slf4j.LoggerFactory
@@ -18,13 +18,12 @@ class LocationEnricher @Autowired constructor(
     private val updater: LocationEnricherUpdater
 ) : Enricher {
 
-    private val LOG = LoggerFactory.getLogger(this.javaClass)
     private val updateLock = ReentrantLock()
     private var data = emptyList<LocationData>()
 
     override fun enrich(e: Event): Event {
         for (locationData in data) {
-            if (e.data != null && matches(e.data, locationData)) {
+            if (matches(e.data, locationData)) {
                 val enrichedData = e.data.toMutableMap()
                 for (locationDatum in locationData) {
                     enrichedData[locationDatum.key] = locationDatum.value.first()

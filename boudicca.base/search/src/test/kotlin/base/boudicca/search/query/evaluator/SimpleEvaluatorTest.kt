@@ -1,12 +1,13 @@
 package base.boudicca.search.query.evaluator
 
+import base.boudicca.Event
 import base.boudicca.SemanticKeys
-import base.boudicca.search.model.Event
 import base.boudicca.search.service.query.*
 import base.boudicca.search.service.query.evaluator.SimpleEvaluator
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -180,7 +181,7 @@ class SimpleEvaluatorTest {
                 )
             )
         assertEquals(1, events.size)
-        assertEquals("konzert", events.first().data!![SemanticKeys.TYPE])
+        assertEquals("konzert", events.first().data[SemanticKeys.TYPE])
     }
 
     @Test
@@ -194,7 +195,7 @@ class SimpleEvaluatorTest {
                 )
             )
         assertEquals(1, events.size)
-        assertEquals("konzert", events.first().data!![SemanticKeys.TYPE])
+        assertEquals("konzert", events.first().data[SemanticKeys.TYPE])
     }
 
     @Test
@@ -209,7 +210,7 @@ class SimpleEvaluatorTest {
                 )
             )
         assertEquals(1, events.size)
-        assertEquals("whatever", events.first().data!![SemanticKeys.TYPE])
+        assertEquals("whatever", events.first().data[SemanticKeys.TYPE])
     }
 
     @Test
@@ -286,9 +287,9 @@ class SimpleEvaluatorTest {
                 Event(
                     it.getOrDefault(SemanticKeys.NAME, "name"),
                     if (it.containsKey(SemanticKeys.STARTDATE))
-                        ZonedDateTime.parse(it[SemanticKeys.STARTDATE]!!, DateTimeFormatter.ISO_DATE_TIME)
+                        OffsetDateTime.parse(it[SemanticKeys.STARTDATE]!!, DateTimeFormatter.ISO_DATE_TIME)
                     else
-                        ZonedDateTime.now(),
+                        OffsetDateTime.now(),
                     it
                 )
             })
@@ -313,15 +314,15 @@ class SimpleEvaluatorTest {
     }
 
     private fun event(name: String, vararg data: Pair<String, String>): Event {
-        return Event(name, ZonedDateTime.now(), data.toMap())
+        return Event(name, OffsetDateTime.now(), data.toMap())
     }
 
     private fun event(name: String, startDateAsString: String): Event {
         return Event(name, parseLocalDate(startDateAsString), emptyMap())
     }
 
-    private fun parseLocalDate(startDateAsString: String): ZonedDateTime {
-        return LocalDateTime.parse(startDateAsString, DateTimeFormatter.ISO_LOCAL_DATE_TIME).atZone(ZoneId.of("CET"))
+    private fun parseLocalDate(startDateAsString: String): OffsetDateTime {
+        return LocalDateTime.parse(startDateAsString, DateTimeFormatter.ISO_LOCAL_DATE_TIME).atZone(ZoneId.of("CET")).toOffsetDateTime()
     }
 }
 

@@ -1,7 +1,7 @@
 package base.boudicca.eventdb.controller
 
+import base.boudicca.Event
 import base.boudicca.eventdb.model.ComplexSearchDto
-import base.boudicca.eventdb.model.Event
 import base.boudicca.eventdb.model.SearchDTO
 import base.boudicca.eventdb.service.EventSearchService
 import base.boudicca.eventdb.service.EventService

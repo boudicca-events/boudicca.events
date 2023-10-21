@@ -1,9 +1,9 @@
 package base.boudicca.eventdb.service
 
+import base.boudicca.Event
 import base.boudicca.SemanticKeys
 import base.boudicca.eventdb.BoudiccaEventDbProperties
 import base.boudicca.eventdb.model.EntryKey
-import base.boudicca.eventdb.model.Event
 import base.boudicca.eventdb.model.InternalEventProperties
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.DatabindException
@@ -87,15 +87,13 @@ class EventService @Autowired constructor(
         val eventKey = getEntryKey(event)
         val duplicate = events[eventKey]
         //some cheap logging for finding duplicate events between different collectors
-        if (duplicate != null && duplicate.first.data?.get(SemanticKeys.COLLECTORNAME) != event.data?.get(
-                SemanticKeys.COLLECTORNAME
-            )
+        if (duplicate != null && duplicate.first.data[SemanticKeys.COLLECTORNAME] != event.data[SemanticKeys.COLLECTORNAME]
         ) {
             LOG.warn("event $event will overwrite $duplicate")
         }
 
         events[eventKey] = Pair(event, InternalEventProperties(System.currentTimeMillis()))
-        if (event.data?.containsKey(SemanticKeys.COLLECTORNAME) == true) {
+        if (event.data.containsKey(SemanticKeys.COLLECTORNAME)) {
             lastSeenCollectors[event.data[SemanticKeys.COLLECTORNAME]!!] = System.currentTimeMillis()
         }
         needsPersist.set(true)
@@ -107,8 +105,8 @@ class EventService @Autowired constructor(
     fun cleanup() {
         val toRemoveEvents = events.values
             .filter {
-                if (it.first.data?.containsKey(SemanticKeys.COLLECTORNAME) == true) {
-                    val collectorName = it.first.data!![SemanticKeys.COLLECTORNAME]!!
+                if (it.first.data.containsKey(SemanticKeys.COLLECTORNAME)) {
+                    val collectorName = it.first.data[SemanticKeys.COLLECTORNAME]!!
                     it.second.timeAdded + MAX_AGE < (lastSeenCollectors[collectorName] ?: Long.MIN_VALUE)
                 } else {
                     false
@@ -162,7 +160,7 @@ class EventService @Autowired constructor(
     }
 
     private fun getEntryKey(event: Event): EntryKey {
-        val data = event.data?.toMutableMap() ?: mutableMapOf()
+        val data = event.data.toMutableMap()
         data[SemanticKeys.NAME] = event.name
         data[SemanticKeys.STARTDATE] = DateTimeFormatter.ISO_DATE_TIME.format(event.startDate)
 

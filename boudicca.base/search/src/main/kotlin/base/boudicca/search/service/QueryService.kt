@@ -1,6 +1,6 @@
 package base.boudicca.search.service
 
-import base.boudicca.search.model.Event
+import base.boudicca.Event
 import base.boudicca.search.model.QueryDTO
 import base.boudicca.search.model.SearchResultDTO
 import base.boudicca.search.service.query.Evaluator

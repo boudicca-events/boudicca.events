@@ -1,6 +1,6 @@
 package base.boudicca.enricher.service
 
-import base.boudicca.enricher.model.Event
+import base.boudicca.Event
 import org.springframework.stereotype.Service
 
 @Service

@@ -1,6 +1,6 @@
 package base.boudicca.eventdb.controller
 
-import base.boudicca.eventdb.model.Event
+import base.boudicca.Event
 import base.boudicca.eventdb.service.EventService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType

@@ -1,9 +1,10 @@
 package base.boudicca.enricher.service.location
 
+import base.boudicca.Event
 import base.boudicca.SemanticKeys
-import base.boudicca.enricher.model.Event
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import java.time.OffsetDateTime
 import java.time.ZonedDateTime
 
 class LocationEnricherTest {
@@ -31,8 +32,8 @@ class LocationEnricherTest {
         val enrichedEvent = locationEnricher.enrich(event)
 
         assertEquals(event.name, enrichedEvent.name)
-        assertEquals(event.data!![SemanticKeys.LOCATION_NAME], enrichedEvent.data!![SemanticKeys.LOCATION_NAME])
-        assertEquals("data", enrichedEvent.data!!["test.data"])
+        assertEquals(event.data[SemanticKeys.LOCATION_NAME], enrichedEvent.data[SemanticKeys.LOCATION_NAME])
+        assertEquals("data", enrichedEvent.data["test.data"])
     }
 
     @Test
@@ -49,8 +50,8 @@ class LocationEnricherTest {
         val enrichedEvent = locationEnricher.enrich(event)
 
         assertEquals(event.name, enrichedEvent.name)
-        assertEquals(event.data!![SemanticKeys.LOCATION_ADDRESS], enrichedEvent.data!![SemanticKeys.LOCATION_ADDRESS])
-        assertEquals("data", enrichedEvent.data!!["test.data"])
+        assertEquals(event.data[SemanticKeys.LOCATION_ADDRESS], enrichedEvent.data[SemanticKeys.LOCATION_ADDRESS])
+        assertEquals("data", enrichedEvent.data["test.data"])
     }
 
     @Test
@@ -84,8 +85,8 @@ class LocationEnricherTest {
         val enrichedEvent = locationEnricher.enrich(event)
 
         assertEquals(event.name, enrichedEvent.name)
-        assertEquals("location2", enrichedEvent.data!![SemanticKeys.LOCATION_NAME])
-        assertEquals("data", enrichedEvent.data!!["test.data"])
+        assertEquals("location2", enrichedEvent.data[SemanticKeys.LOCATION_NAME])
+        assertEquals("data", enrichedEvent.data["test.data"])
     }
 
     private fun createTestEnricher(testData: List<LocationData>): LocationEnricher {
@@ -106,7 +107,7 @@ class LocationEnricherTest {
 
     private fun createTestEvent(): Event {
         return Event(
-            "test", ZonedDateTime.now(),
+            "test", OffsetDateTime.now(),
             mapOf(
                 SemanticKeys.LOCATION_NAME to "location",
                 SemanticKeys.LOCATION_ADDRESS to "address",

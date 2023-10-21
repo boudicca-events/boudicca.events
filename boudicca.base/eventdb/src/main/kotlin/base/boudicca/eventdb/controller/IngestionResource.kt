@@ -29,8 +29,19 @@ class IngestionResource @Autowired constructor(private val entryService: EntrySe
         consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE],
     )
-    fun addEntry(@RequestBody event: Entry) {
-        entryService.add(event)
+    fun addEntry(@RequestBody entry: Entry) {
+        entryService.add(entry)
+    }
+
+    @PostMapping(
+        "/entries",
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE],
+    )
+    fun addEntries(@RequestBody entries: List<Entry>) {
+        for (entry in entries) {
+            entryService.add(entry)
+        }
     }
 
 }

@@ -39,9 +39,7 @@ class EventDB(eventDbUrl: String, user: String, password: String) {
     }
 
     fun ingestEntries(entries: List<Entry>) {
-        for (entry in entries) {
-            ingestApi.addEntry(entry)
-        }
+        ingestApi.addEntries(entries)
     }
 
     private fun mapToRemoteEvent(event: Event): events.boudicca.openapi.model.Event {

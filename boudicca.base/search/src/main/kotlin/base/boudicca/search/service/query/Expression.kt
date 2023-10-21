@@ -144,10 +144,6 @@ class AfterExpression(
     text: String,
 ) : DateExpression("AFTER", text)
 
-class IsExpression(
-    text: String,
-) : TextExpression("IS", text)
-
 class DurationShorterExpression(
     duration: Number,
 ) : NumberExpression("DURATIONSHORTER", duration)

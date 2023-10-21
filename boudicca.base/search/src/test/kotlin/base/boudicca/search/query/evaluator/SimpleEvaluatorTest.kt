@@ -171,49 +171,6 @@ class SimpleEvaluatorTest {
     }
 
     @Test
-    fun simpleIsMusic() {
-        val events =
-            callEvaluator(
-                IsExpression("MUSIC"),
-                listOf(
-                    mapOf(SemanticKeys.TYPE to "konzert"),
-                    mapOf(SemanticKeys.TYPE to "theater"),
-                )
-            )
-        assertEquals(1, events.size)
-        assertEquals("konzert", events.first().data[SemanticKeys.TYPE])
-    }
-
-    @Test
-    fun simpleIsMusicIgnoreCase() {
-        val events =
-            callEvaluator(
-                IsExpression("muSIC"),
-                listOf(
-                    mapOf(SemanticKeys.TYPE to "konzert"),
-                    mapOf(SemanticKeys.TYPE to "theater"),
-                )
-            )
-        assertEquals(1, events.size)
-        assertEquals("konzert", events.first().data[SemanticKeys.TYPE])
-    }
-
-    @Test
-    fun simpleIsOther() {
-        val events =
-            callEvaluator(
-                IsExpression("other"),
-                listOf(
-                    mapOf(SemanticKeys.TYPE to "konzert"),
-                    mapOf(SemanticKeys.TYPE to "theater"),
-                    mapOf(SemanticKeys.TYPE to "whatever"),
-                )
-            )
-        assertEquals(1, events.size)
-        assertEquals("whatever", events.first().data[SemanticKeys.TYPE])
-    }
-
-    @Test
     fun durationLonger() {
         val events =
             callEvaluator(

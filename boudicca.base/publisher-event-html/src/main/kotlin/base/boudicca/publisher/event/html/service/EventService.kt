@@ -1,8 +1,8 @@
 package base.boudicca.publisher.event.html.service
 
 import base.boudicca.Event
+import base.boudicca.EventCategory
 import base.boudicca.SemanticKeys
-import base.boudicca.api.search.BoudiccaQueryBuilder
 import base.boudicca.api.search.BoudiccaQueryBuilder.after
 import base.boudicca.api.search.BoudiccaQueryBuilder.and
 import base.boudicca.api.search.BoudiccaQueryBuilder.before
@@ -10,7 +10,6 @@ import base.boudicca.api.search.BoudiccaQueryBuilder.contains
 import base.boudicca.api.search.BoudiccaQueryBuilder.durationLonger
 import base.boudicca.api.search.BoudiccaQueryBuilder.durationShorter
 import base.boudicca.api.search.BoudiccaQueryBuilder.equals
-import base.boudicca.api.search.BoudiccaQueryBuilder.isQuery
 import base.boudicca.api.search.QueryDTO
 import base.boudicca.api.search.Search
 import base.boudicca.api.search.SearchResultDTO
@@ -57,8 +56,8 @@ class EventService @Autowired constructor(@Value("\${boudicca.search.url}") priv
         if (!searchDTO.name.isNullOrBlank()) {
             queryParts.add(contains("*", searchDTO.name!!))
         }
-        if (!searchDTO.category.isNullOrBlank() && searchDTO.category != SEARCH_TYPE_ALL && BoudiccaQueryBuilder.Category.entries.any { searchDTO.category == it.name }) {
-            queryParts.add(isQuery(BoudiccaQueryBuilder.Category.valueOf(searchDTO.category!!)))
+        if (!searchDTO.category.isNullOrBlank() && searchDTO.category != SEARCH_TYPE_ALL) {
+            queryParts.add(equals(SemanticKeys.CATEGORY, searchDTO.category!!))
         }
         if (!searchDTO.locationCity.isNullOrBlank()) {
             queryParts.add(equals(SemanticKeys.LOCATION_CITY, searchDTO.locationCity!!))
@@ -87,8 +86,8 @@ class EventService @Autowired constructor(@Value("\${boudicca.search.url}") priv
     fun filters(): Filters {
         val filters = search.getFilters()
         return Filters(
-            filters.categories
-                .map { Pair(it, frontEndName(it)) }
+            EventCategory.entries
+                .map { Pair(it.name, frontEndName(it)) }
                 .sortedWith(Comparator.comparing({ it.second }, String.CASE_INSENSITIVE_ORDER)),
             filters.locationNames.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Pair(it, it) },
             filters.locationCities.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Pair(it, it) },
@@ -96,7 +95,6 @@ class EventService @Autowired constructor(@Value("\${boudicca.search.url}") priv
     }
 
     private fun mapEvents(result: SearchResultDTO): List<Map<String, String?>> {
-        //TODO @patzi: result contains result.totalResults, do something with it
         return result.result.map { mapEvent(it) }
     }
 
@@ -108,15 +106,27 @@ class EventService @Autowired constructor(@Value("\${boudicca.search.url}") priv
             "startDate" to formatDate(event.startDate),
             "locationName" to (event.data[SemanticKeys.LOCATION_NAME] ?: ""),
             "city" to event.data[SemanticKeys.LOCATION_CITY],
-            "category" to mapType(event.data[SemanticKeys.TYPE]),
+            "category" to mapCategory(event.data[SemanticKeys.CATEGORY]),
             "pictureUrl" to URLEncoder.encode(event.data["pictureUrl"] ?: "", Charsets.UTF_8),
         )
     }
 
-    private fun mapType(type: String?): String? {
-        val category = base.boudicca.EventCategory.getForType(type)
-        if (category != null) {
-            return frontEndCategoryName(category)
+    private fun mapCategory(categoryString: String?): String? {
+        if (categoryString != null) {
+            val category = try {
+                EventCategory.valueOf(categoryString)
+            } catch (e: IllegalArgumentException) {
+                null
+            }
+            if (category != null) {
+                return when (category) {
+                    EventCategory.MUSIC -> "music"
+                    EventCategory.ART -> "miscArt"
+                    EventCategory.TECH -> "tech"
+                    EventCategory.ALL -> "???"
+                    EventCategory.OTHER -> "???"
+                }
+            }
         }
         return null
     }
@@ -129,21 +139,13 @@ class EventService @Autowired constructor(@Value("\${boudicca.search.url}") priv
         return Search(searchUrl)
     }
 
-    private fun frontEndCategoryName(type: base.boudicca.EventCategory): String {
-        return when (type) {
-            base.boudicca.EventCategory.MUSIC -> "music"
-            base.boudicca.EventCategory.ART -> "miscArt"
-            base.boudicca.EventCategory.TECH -> "tech"
-        }
-    }
-
-    private fun frontEndName(type: String): String {
-        return when (type) {
-            "MUSIC" -> "Musik"
-            "ART" -> "Kunst"
-            "TECH" -> "Technologie"
-            "ALL" -> "Alle"
-            "OTHER" -> "Andere"
+    private fun frontEndName(category: EventCategory): String {
+        return when (category) {
+            EventCategory.MUSIC -> "Musik"
+            EventCategory.ART -> "Kunst"
+            EventCategory.TECH -> "Technologie"
+            EventCategory.ALL -> "Alle"
+            EventCategory.OTHER -> "Andere"
             else -> "???"
         }
     }

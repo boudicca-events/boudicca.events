@@ -57,14 +57,6 @@ class QueryTest {
     }
 
     @Test
-    fun queryWithIs() {
-        val events =
-            evaluateQuery("is music and name contains event")
-        assertEquals(1, events.size)
-        assertEquals("event1", events.first()["name"])
-    }
-
-    @Test
     fun queryWithDurationLonger() {
         val events =
             evaluateQuery("durationlonger 2")

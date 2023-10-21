@@ -195,13 +195,6 @@ class LexerTest {
     }
 
     @Test
-    fun testIsOperator() {
-        val tokens = callLexer("is")
-        assertEquals(1, tokens.size)
-        assertEquals(TokenType.IS, tokens[0].getType())
-    }
-
-    @Test
     fun testDurationLongerOperator() {
         val tokens = callLexer("durationLonger")
         assertEquals(1, tokens.size)

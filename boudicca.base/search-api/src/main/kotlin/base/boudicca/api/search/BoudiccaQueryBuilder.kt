@@ -5,13 +5,6 @@ import java.time.format.DateTimeFormatter
 
 object BoudiccaQueryBuilder {
 
-    enum class Category {
-        MUSIC,
-        TECH,
-        ART,
-        OTHER
-    }
-
     fun and(subQueries: Iterable<String>): String {
         return booleanMultiQuery(subQueries, "and")
     }
@@ -33,10 +26,6 @@ object BoudiccaQueryBuilder {
             throw IllegalArgumentException("query is not allowed to be empty")
         }
         return "not ($query)"
-    }
-
-    fun isQuery(category: Category): String {
-        return "is ${category.name}"
     }
 
     fun after(localDate: LocalDate): String {

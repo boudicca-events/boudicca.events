@@ -59,7 +59,7 @@ class SearchService @Autowired constructor(
             queryParts.add("\"*\" contains " + escape(searchDTO.name))
         }
         if (!searchDTO.category.isNullOrBlank() && searchDTO.category != SEARCH_TYPE_ALL) {
-            queryParts.add("is " + escape(searchDTO.category))
+            queryParts.add(SemanticKeys.CATEGORY + " equals " + escape(searchDTO.category))
         }
         if (!searchDTO.locationCity.isNullOrBlank()) {
             queryParts.add(SemanticKeys.LOCATION_CITY + " equals " + escape(searchDTO.locationCity))
@@ -105,6 +105,7 @@ class SearchService @Autowired constructor(
         )
     }
 
+    @Deprecated("do use the enum directly")
     private fun getCategories(): Set<String> {
         val categories = base.boudicca.EventCategory.entries.map(base.boudicca.EventCategory::name).toMutableSet()
         categories.add(SEARCH_TYPE_ALL)

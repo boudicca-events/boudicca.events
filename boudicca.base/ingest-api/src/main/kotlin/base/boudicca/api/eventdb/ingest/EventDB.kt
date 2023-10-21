@@ -42,10 +42,4 @@ class EventDB(eventDbUrl: String, user: String, password: String) {
         ingestApi.addEntries(entries)
     }
 
-    private fun mapToRemoteEvent(event: Event): events.boudicca.openapi.model.Event {
-        return events.boudicca.openapi.model.Event()
-            .name(event.name)
-            .startDate(event.startDate)
-            .data(event.data)
-    }
 }

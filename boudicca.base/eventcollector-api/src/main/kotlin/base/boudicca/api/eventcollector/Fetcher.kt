@@ -1,6 +1,7 @@
 package base.boudicca.api.eventcollector
 
 import base.boudicca.api.eventcollector.collections.Collections
+import org.slf4j.LoggerFactory
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -9,6 +10,7 @@ import java.net.http.HttpResponse.BodyHandlers
 
 class Fetcher {
 
+    private val LOG = LoggerFactory.getLogger(this::class.java)
     private val newHttpClient = HttpClient.newBuilder()
         .followRedirects(HttpClient.Redirect.NORMAL)
         .build()
@@ -42,9 +44,12 @@ class Fetcher {
         if (waitTime > 0) {
             Thread.sleep(waitTime)
         }
-        val start = System.currentTimeMillis()
+        var start = 0L
         val response = try {
-            newHttpClient.send(request, BodyHandlers.ofString())
+            retry(LOG) {
+                start = System.currentTimeMillis()
+                newHttpClient.send(request, BodyHandlers.ofString())
+            }
         } catch (e: Exception) {
             Collections.endHttpCall(-1)
             throw e

@@ -28,7 +28,7 @@ class Search(enricherUrl: String) {
     }
 
     private fun mapToFiltersDTO(filtersGet: Filters): FiltersDTO {
-        return FiltersDTO(filtersGet.categories, filtersGet.locationNames, filtersGet.locationCities)
+        return FiltersDTO(filtersGet.locationNames, filtersGet.locationCities)
     }
 
     private fun mapSearchResultDto(searchResultDTO: base.boudicca.search.openapi.model.SearchResultDTO): SearchResultDTO {

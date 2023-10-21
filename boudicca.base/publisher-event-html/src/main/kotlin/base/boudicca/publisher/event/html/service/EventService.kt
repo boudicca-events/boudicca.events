@@ -1,6 +1,7 @@
 package base.boudicca.publisher.event.html.service
 
 import base.boudicca.Event
+import base.boudicca.EventCategory
 import base.boudicca.SemanticKeys
 import base.boudicca.api.search.BoudiccaQueryBuilder
 import base.boudicca.api.search.BoudiccaQueryBuilder.after
@@ -87,8 +88,8 @@ class EventService @Autowired constructor(@Value("\${boudicca.search.url}") priv
     fun filters(): Filters {
         val filters = search.getFilters()
         return Filters(
-            filters.categories
-                .map { Pair(it, frontEndName(it)) }
+            EventCategory.entries
+                .map { Pair(it.name, frontEndName(it)) }
                 .sortedWith(Comparator.comparing({ it.second }, String.CASE_INSENSITIVE_ORDER)),
             filters.locationNames.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Pair(it, it) },
             filters.locationCities.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Pair(it, it) },
@@ -96,7 +97,6 @@ class EventService @Autowired constructor(@Value("\${boudicca.search.url}") priv
     }
 
     private fun mapEvents(result: SearchResultDTO): List<Map<String, String?>> {
-        //TODO @patzi: result contains result.totalResults, do something with it
         return result.result.map { mapEvent(it) }
     }
 
@@ -114,7 +114,7 @@ class EventService @Autowired constructor(@Value("\${boudicca.search.url}") priv
     }
 
     private fun mapType(type: String?): String? {
-        val category = base.boudicca.EventCategory.getForType(type)
+        val category = EventCategory.getForType(type)
         if (category != null) {
             return frontEndCategoryName(category)
         }
@@ -129,21 +129,23 @@ class EventService @Autowired constructor(@Value("\${boudicca.search.url}") priv
         return Search(searchUrl)
     }
 
-    private fun frontEndCategoryName(type: base.boudicca.EventCategory): String {
-        return when (type) {
-            base.boudicca.EventCategory.MUSIC -> "music"
-            base.boudicca.EventCategory.ART -> "miscArt"
-            base.boudicca.EventCategory.TECH -> "tech"
+    private fun frontEndCategoryName(category: EventCategory): String {
+        return when (category) {
+            EventCategory.MUSIC -> "music"
+            EventCategory.ART -> "miscArt"
+            EventCategory.TECH -> "tech"
+            EventCategory.ALL -> "???"
+            EventCategory.OTHER -> "???"
         }
     }
 
-    private fun frontEndName(type: String): String {
-        return when (type) {
-            "MUSIC" -> "Musik"
-            "ART" -> "Kunst"
-            "TECH" -> "Technologie"
-            "ALL" -> "Alle"
-            "OTHER" -> "Andere"
+    private fun frontEndName(category: EventCategory): String {
+        return when (category) {
+            EventCategory.MUSIC -> "Musik"
+            EventCategory.ART -> "Kunst"
+            EventCategory.TECH -> "Technologie"
+            EventCategory.ALL -> "Alle"
+            EventCategory.OTHER -> "Andere"
             else -> "???"
         }
     }

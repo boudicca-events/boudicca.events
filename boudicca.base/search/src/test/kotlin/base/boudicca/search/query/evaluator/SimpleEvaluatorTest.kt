@@ -1,6 +1,6 @@
 package base.boudicca.search.query.evaluator
 
-import base.boudicca.Event
+import base.boudicca.Entry
 import base.boudicca.SemanticKeys
 import base.boudicca.search.service.query.*
 import base.boudicca.search.service.query.evaluator.SimpleEvaluator
@@ -17,7 +17,7 @@ class SimpleEvaluatorTest {
     fun simpleEquals() {
         val events = callEvaluator(EqualsExpression("name", "event1"))
         assertEquals(1, events.size)
-        assertEquals("event1", events.first().name)
+        assertEquals("event1", events.first()["name"])
     }
 
     @Test
@@ -118,39 +118,39 @@ class SimpleEvaluatorTest {
     @Test
     fun simpleBefore() {
         val events =
-            callEvaluatorWithEvents(
-                BeforeExpression("startDate","2023-05-27"),
+            callEvaluator(
+                BeforeExpression("startDate", "2023-05-27"),
                 listOf(
-                    event("event1", "2023-05-25T00:00:00"),
-                    event("event2", "2023-05-29T00:00:00"),
+                    entry("event1", "2023-05-25T00:00:00"),
+                    entry("event2", "2023-05-29T00:00:00"),
                 )
             )
         assertEquals(1, events.size)
-        assertEquals(parseLocalDate("2023-05-25T00:00:00"), events.first().startDate)
+        assertEquals("2023-05-25T00:00:00+02:00", events.first()["startDate"])
     }
 
     @Test
     fun simpleAfter() {
         val events =
-            callEvaluatorWithEvents(
-                AfterExpression("startDate","2023-05-27"),
+            callEvaluator(
+                AfterExpression("startDate", "2023-05-27"),
                 listOf(
-                    event("event1", "2023-05-25T00:00:00"),
-                    event("event2", "2023-05-29T00:00:00"),
+                    entry("event1", "2023-05-25T00:00:00"),
+                    entry("event2", "2023-05-29T00:00:00"),
                 )
             )
         assertEquals(1, events.size)
-        assertEquals(parseLocalDate("2023-05-29T00:00:00"), events.first().startDate)
+        assertEquals("2023-05-29T00:00:00+02:00", events.first()["startDate"])
     }
 
     @Test
     fun simpleAfterInclusiveToday() {
         val events =
-            callEvaluatorWithEvents(
-                AfterExpression("startDate","2023-05-25"),
+            callEvaluator(
+                AfterExpression("startDate", "2023-05-25"),
                 listOf(
-                    event("event1", "2023-05-25T00:00:00"),
-                    event("event2", "2023-05-29T00:00:00"),
+                    entry("event1", "2023-05-25T00:00:00"),
+                    entry("event2", "2023-05-29T00:00:00"),
                 )
             )
         assertEquals(2, events.size)
@@ -159,11 +159,11 @@ class SimpleEvaluatorTest {
     @Test
     fun simpleBeforeInclusiveToday() {
         val events =
-            callEvaluatorWithEvents(
-                BeforeExpression("startDate","2023-05-29"),
+            callEvaluator(
+                BeforeExpression("startDate", "2023-05-29"),
                 listOf(
-                    event("event1", "2023-05-25T00:00:00"),
-                    event("event2", "2023-05-29T00:00:00"),
+                    entry("event1", "2023-05-25T00:00:00"),
+                    entry("event2", "2023-05-29T00:00:00"),
                 )
             )
         assertEquals(2, events.size)
@@ -188,7 +188,7 @@ class SimpleEvaluatorTest {
                 )
             )
         assertEquals(1, events.size)
-        assertEquals("event1", events.first().name)
+        assertEquals("event1", events.first()["name"])
     }
 
     @Test
@@ -210,7 +210,7 @@ class SimpleEvaluatorTest {
                 )
             )
         assertEquals(1, events.size)
-        assertEquals("event2", events.first().name)
+        assertEquals("event2", events.first()["name"])
     }
 
     @Test
@@ -225,56 +225,38 @@ class SimpleEvaluatorTest {
                 )
             )
         assertEquals(1, events.size)
-        assertEquals("event1", events.first().name)
+        assertEquals("event1", events.first()["name"])
     }
 
 
-    private fun callEvaluator(expression: Expression): Collection<Event> {
-        return callEvaluatorWithEvents(expression, testData())
+    private fun callEvaluator(expression: Expression): Collection<Entry> {
+        return callEvaluator(expression, testData())
     }
 
     private fun callEvaluator(
         expression: Expression,
-        events: Collection<Map<String, String>>
-    ): List<Event> {
-        return callEvaluatorWithEvents(
-            expression,
-            events.map {
-                Event(
-                    it.getOrDefault(SemanticKeys.NAME, "name"),
-                    if (it.containsKey(SemanticKeys.STARTDATE))
-                        OffsetDateTime.parse(it[SemanticKeys.STARTDATE]!!, DateTimeFormatter.ISO_DATE_TIME)
-                    else
-                        OffsetDateTime.now(),
-                    it
-                )
-            })
-    }
-
-    private fun callEvaluatorWithEvents(
-        expression: Expression,
-        events: Collection<Event>
-    ): List<Event> {
-        return SimpleEvaluator(events)
+        entries: Collection<Entry>
+    ): List<Entry> {
+        return SimpleEvaluator(entries)
             .evaluate(expression, PAGE_ALL)
             .result
     }
 
-    private fun testData(): Collection<Event> {
+    private fun testData(): Collection<Entry> {
         return listOf(
-            event("event1", "field" to "value1"),
-            event("event2", "field" to "value2"),
-            event("somethingelse", "field" to "wuuut"),
-            event("somethingelse2", "field" to "wuuut"),
+            entry("name" to "event1", "field" to "value1"),
+            entry("name" to "event2", "field" to "value2"),
+            entry("name" to "somethingelse", "field" to "wuuut"),
+            entry("name" to "somethingelse2", "field" to "wuuut"),
         )
     }
 
-    private fun event(name: String, vararg data: Pair<String, String>): Event {
-        return Event(name, OffsetDateTime.now(), data.toMap())
+    private fun entry(name: String, startDate: String): Entry {
+        return entry("name" to name, "startDate" to DateTimeFormatter.ISO_DATE_TIME.format(parseLocalDate(startDate)))
     }
 
-    private fun event(name: String, startDateAsString: String): Event {
-        return Event(name, parseLocalDate(startDateAsString), emptyMap())
+    private fun entry(vararg data: Pair<String, String>): Entry {
+        return data.toMap()
     }
 
     private fun parseLocalDate(startDateAsString: String): OffsetDateTime {

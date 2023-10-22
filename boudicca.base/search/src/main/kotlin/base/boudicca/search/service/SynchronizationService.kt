@@ -1,10 +1,10 @@
 package base.boudicca.search.service
 
-import base.boudicca.Event
+import base.boudicca.Entry
 import base.boudicca.api.eventdb.publisher.EventDB
+import base.boudicca.search.BoudiccaSearchProperties
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
@@ -14,7 +14,7 @@ import java.util.concurrent.locks.ReentrantLock
 @Service
 class SynchronizationService @Autowired constructor(
     private val eventPublisher: ApplicationEventPublisher,
-    @Value("\${boudicca.eventdb.url}") private val eventDbUrl: String,
+    private val boudiccaSearchProperties: BoudiccaSearchProperties
 ) {
 
     private val LOG = LoggerFactory.getLogger(this.javaClass)
@@ -31,8 +31,8 @@ class SynchronizationService @Autowired constructor(
         updateLock.lock()
         try {
             try {
-                val events = publisherApi.getAllEvents().toSet()
-                eventPublisher.publishEvent(EventsUpdatedEvent(events))
+                val entries = publisherApi.getAllEntries().toSet()
+                eventPublisher.publishEvent(EntriesUpdatedEvent(entries))
             } catch (e: RuntimeException) {
                 LOG.warn("could not reach eventdb, retrying in 30s", e)
                 //if eventdb is currently down, retry in 30 seconds
@@ -48,8 +48,8 @@ class SynchronizationService @Autowired constructor(
     }
 
     private fun createEventPublisherApi(): EventDB {
-        return EventDB(eventDbUrl)
+        return EventDB(boudiccaSearchProperties.eventDB.url)
     }
 }
 
-data class EventsUpdatedEvent(val events: Set<Event>)
+data class EntriesUpdatedEvent(val entries: Set<Entry>)

@@ -124,7 +124,7 @@ class EventService @Autowired constructor(@Value("\${boudicca.search.url}") priv
                     EventCategory.ART -> "miscArt"
                     EventCategory.TECH -> "tech"
                     EventCategory.ALL -> "???"
-                    EventCategory.OTHER -> "???"
+                    EventCategory.OTHER -> null
                 }
             }
         }

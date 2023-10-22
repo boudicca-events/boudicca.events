@@ -72,10 +72,10 @@ class EventService @Autowired constructor(@Value("\${boudicca.search.url}") priv
             queryParts.add(before(LocalDate.parse(searchDTO.toDate!!, localDateFormatter)))
         }
         if (searchDTO.durationShorter != null) {
-            queryParts.add(durationShorter(searchDTO.durationShorter!!))
+            queryParts.add(durationShorter(SemanticKeys.STARTDATE, SemanticKeys.ENDDATE, searchDTO.durationShorter!!))
         }
         if (searchDTO.durationLonger != null) {
-            queryParts.add(durationLonger(searchDTO.durationLonger!!))
+            queryParts.add(durationLonger(SemanticKeys.STARTDATE, SemanticKeys.ENDDATE, searchDTO.durationLonger!!))
         }
         for (flag in (searchDTO.flags ?: emptyList()).filter { !it.isNullOrBlank() }) {
             queryParts.add(equals(flag!!, "true"))

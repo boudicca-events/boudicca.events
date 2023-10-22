@@ -23,9 +23,8 @@ class Parser(private val tokens: List<Token>) {
             TokenType.TEXT -> parseFieldAndTextExpression()
             TokenType.NOT -> parseNotExpression()
             TokenType.GROUPING_OPEN -> parseGroupOpen()
-            TokenType.BEFORE, TokenType.AFTER, TokenType.DURATIONLONGER, TokenType.DURATIONSHORTER -> {
-                parseSingleFieldExpression(token)
-            }
+            TokenType.BEFORE, TokenType.AFTER -> parseSingleFieldExpression(token)
+            TokenType.DURATION -> parseDurationExpression(token)
 
             else -> throw IllegalStateException("unexpected token ${token.getType()} at start of expression at index $i")
         }
@@ -39,6 +38,22 @@ class Parser(private val tokens: List<Token>) {
         }
     }
 
+    private fun parseDurationExpression(token: Token) {
+        if (i + 4 >= tokens.size) {
+            throw IllegalStateException("expecting duration query, found end of query")
+        }
+        val startDateField = getText(i + 1)
+        val endDateField = getText(i + 2)
+        val shorterOrLonger = tokens[i + 3]
+        val duration = parseNumber(getText(i + 4).getToken()!!)
+        lastExpression = when (shorterOrLonger.getType()) {
+            TokenType.LONGER -> DurationLongerExpression(startDateField.getToken()!!, endDateField.getToken()!!, duration)
+            TokenType.SHORTER -> DurationShorterExpression(startDateField.getToken()!!, endDateField.getToken()!!, duration)
+            else -> throw IllegalStateException("unknown token type ${token.getType()}")
+        }
+        i += 5
+    }
+
     private fun parseSingleFieldExpression(token: Token) {
         if (i + 1 >= tokens.size) {
             throw IllegalStateException("expecting date, found end of query")
@@ -47,15 +62,17 @@ class Parser(private val tokens: List<Token>) {
         lastExpression = when (token.getType()) {
             TokenType.BEFORE -> BeforeExpression(textToken.getToken()!!)
             TokenType.AFTER -> AfterExpression(textToken.getToken()!!)
-            TokenType.DURATIONSHORTER -> DurationShorterExpression(parseNumber(textToken.getToken()!!))
-            TokenType.DURATIONLONGER -> DurationLongerExpression(parseNumber(textToken.getToken()!!))
             else -> throw IllegalStateException("unknown token type ${token.getType()}")
         }
         i += 2
     }
 
     private fun parseNumber(token: String): Number {
-        return BigDecimal(token)
+        try {
+            return BigDecimal(token)
+        } catch (e: NumberFormatException) {
+            throw IllegalStateException("error parsing expected number", e)
+        }
     }
 
     private fun parseGroupOpen() {

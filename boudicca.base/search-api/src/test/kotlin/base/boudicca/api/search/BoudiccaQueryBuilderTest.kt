@@ -128,16 +128,16 @@ class BoudiccaQueryBuilderTest {
 
     @Test
     fun simpleDurationLonger() {
-        val query = durationLonger(5.0)
+        val query = durationLonger("startDate", "endDate", 5.0)
 
-        assertEquals("durationLonger 5.0", query)
+        assertEquals("duration \"startDate\" \"endDate\" longer 5.0", query)
     }
 
     @Test
     fun simpleDurationShorter() {
-        val query = durationShorter(5.0)
+        val query = durationShorter("startDate", "endDate", 5.0)
 
-        assertEquals("durationShorter 5.0", query)
+        assertEquals("duration \"startDate\" \"endDate\" shorter 5.0", query)
     }
 
     @Test

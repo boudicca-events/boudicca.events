@@ -89,13 +89,15 @@ class SimpleEvaluator(rawEvents: Collection<Event>) : Evaluator {
             }
 
             is DurationLongerExpression -> {
-                val duration = EvaluatorUtil.getDuration(event)
-                return duration >= expression.getNumber().toDouble()
+                val duration =
+                    EvaluatorUtil.getDuration(expression.getStartDateField(), expression.getEndDateField(), event)
+                return duration >= expression.getDuration().toDouble()
             }
 
             is DurationShorterExpression -> {
-                val duration = EvaluatorUtil.getDuration(event)
-                return duration <= expression.getNumber().toDouble()
+                val duration =
+                    EvaluatorUtil.getDuration(expression.getStartDateField(), expression.getEndDateField(), event)
+                return duration <= expression.getDuration().toDouble()
             }
 
             else -> {

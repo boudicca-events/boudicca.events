@@ -74,10 +74,16 @@ class SearchService @Autowired constructor(
             queryParts.add("before " + formatDate(searchDTO.toDate))
         }
         if (searchDTO.durationShorter != null) {
-            queryParts.add("durationShorter " + formatNumber(searchDTO.durationShorter))
+            queryParts.add(
+                "duration ${escape(SemanticKeys.STARTDATE)} ${escape(SemanticKeys.ENDDATE)} shorter "
+                        + formatNumber(searchDTO.durationShorter)
+            )
         }
         if (searchDTO.durationLonger != null) {
-            queryParts.add("durationLonger " + formatNumber(searchDTO.durationLonger))
+            queryParts.add(
+                "duration ${escape(SemanticKeys.STARTDATE)} ${escape(SemanticKeys.ENDDATE)} longer "
+                        + formatNumber(searchDTO.durationLonger)
+            )
         }
         for (flag in (searchDTO.flags ?: emptyList()).filter { !it.isNullOrBlank() }) {
             queryParts.add(escape(flag!!) + " equals \"true\"")

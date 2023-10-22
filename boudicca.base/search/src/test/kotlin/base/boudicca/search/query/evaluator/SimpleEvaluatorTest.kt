@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.time.ZoneId
-import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 class SimpleEvaluatorTest {
@@ -174,7 +173,7 @@ class SimpleEvaluatorTest {
     fun durationLonger() {
         val events =
             callEvaluator(
-                DurationLongerExpression(2.0),
+                DurationLongerExpression("startDate", "endDate", 2.0),
                 listOf(
                     mapOf(
                         SemanticKeys.NAME to "event1",
@@ -196,7 +195,7 @@ class SimpleEvaluatorTest {
     fun durationShorter() {
         val events =
             callEvaluator(
-                DurationShorterExpression(2.0),
+                DurationShorterExpression("startDate", "endDate", 2.0),
                 listOf(
                     mapOf(
                         SemanticKeys.NAME to "event1",
@@ -218,7 +217,7 @@ class SimpleEvaluatorTest {
     fun durationZero() {
         val events =
             callEvaluator(
-                DurationLongerExpression(0.0),
+                DurationLongerExpression("startDate", "endDate", 0.0),
                 listOf(
                     mapOf(
                         SemanticKeys.NAME to "event1",
@@ -279,7 +278,8 @@ class SimpleEvaluatorTest {
     }
 
     private fun parseLocalDate(startDateAsString: String): OffsetDateTime {
-        return LocalDateTime.parse(startDateAsString, DateTimeFormatter.ISO_LOCAL_DATE_TIME).atZone(ZoneId.of("CET")).toOffsetDateTime()
+        return LocalDateTime.parse(startDateAsString, DateTimeFormatter.ISO_LOCAL_DATE_TIME).atZone(ZoneId.of("CET"))
+            .toOffsetDateTime()
     }
 }
 

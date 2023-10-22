@@ -50,12 +50,12 @@ object BoudiccaQueryBuilder {
         return escapeText(field) + " contains " + escapeText(value)
     }
 
-    fun durationLonger(hours: Double): String {
-        return "durationLonger $hours"
+    fun durationLonger(startDateField: String, endDateField: String, hours: Double): String {
+        return "duration ${escapeText(startDateField)} ${escapeText(endDateField)} longer $hours"
     }
 
-    fun durationShorter(hours: Double): String {
-        return "durationShorter $hours"
+    fun durationShorter(startDateField: String, endDateField: String, hours: Double): String {
+        return "duration ${escapeText(startDateField)} ${escapeText(endDateField)} shorter $hours"
     }
 
     fun escapeText(text: String): String {

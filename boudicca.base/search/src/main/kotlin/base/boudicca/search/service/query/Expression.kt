@@ -1,5 +1,6 @@
 package base.boudicca.search.service.query
 
+import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
@@ -74,20 +75,6 @@ abstract class TextExpression(
     }
 }
 
-abstract class NumberExpression(
-    private val name: String,
-    private val number: Number,
-) : Expression {
-
-    fun getNumber(): Number {
-        return number
-    }
-
-    override fun toString(): String {
-        return "$name($number)"
-    }
-}
-
 abstract class DateExpression(
     private val name: String,
     dateText: String,
@@ -109,6 +96,30 @@ abstract class DateExpression(
 
     override fun toString(): String {
         return "$name('${date.format(DateTimeFormatter.ISO_LOCAL_DATE)}')"
+    }
+}
+
+abstract class AbstractDurationExpression(
+    private val name: String,
+    private val startDateField: String,
+    private val endDateField: String,
+    private val duration: Number,
+) : Expression {
+
+    fun getStartDateField(): String {
+        return startDateField
+    }
+
+    fun getEndDateField(): String {
+        return endDateField
+    }
+
+    fun getDuration(): Number {
+        return duration
+    }
+
+    override fun toString(): String {
+        return "$name('${startDateField}','${endDateField}',${duration})"
     }
 }
 
@@ -145,9 +156,13 @@ class AfterExpression(
 ) : DateExpression("AFTER", text)
 
 class DurationShorterExpression(
+    startDateField: String,
+    endDateField: String,
     duration: Number,
-) : NumberExpression("DURATIONSHORTER", duration)
+) : AbstractDurationExpression("DURATIONSHORTER", startDateField, endDateField, duration)
 
 class DurationLongerExpression(
+    startDateField: String,
+    endDateField: String,
     duration: Number,
-) : NumberExpression("DURATIONLONGER", duration)
+) : AbstractDurationExpression("DURATIONLONGER", startDateField, endDateField, duration)

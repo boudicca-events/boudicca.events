@@ -47,5 +47,5 @@ task<Exec>("imageBuild") {
     inputs.file("src/main/docker/Dockerfile")
     inputs.files(tasks.named("bootJar"))
     dependsOn(tasks.named("assemble"))
-    commandLine("docker", "build", "-t", "boudicca-enricher", "-f", "src/main/docker/Dockerfile", ".")
+    commandLine("docker", "build", "-t", "localhost/boudicca-enricher", "-f", "src/main/docker/Dockerfile", ".")
 }

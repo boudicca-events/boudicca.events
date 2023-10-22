@@ -2,7 +2,6 @@ package events.boudicca.publisherhtml.service
 
 import events.boudicca.EventCategory
 import events.boudicca.SemanticKeys
-import events.boudicca.api.search.BoudiccaQueryBuilder
 import events.boudicca.api.search.BoudiccaQueryBuilder.after
 import events.boudicca.api.search.BoudiccaQueryBuilder.and
 import events.boudicca.api.search.BoudiccaQueryBuilder.before
@@ -10,7 +9,6 @@ import events.boudicca.api.search.BoudiccaQueryBuilder.contains
 import events.boudicca.api.search.BoudiccaQueryBuilder.durationLonger
 import events.boudicca.api.search.BoudiccaQueryBuilder.durationShorter
 import events.boudicca.api.search.BoudiccaQueryBuilder.equals
-import events.boudicca.api.search.BoudiccaQueryBuilder.isQuery
 import events.boudicca.publisherhtml.model.SearchDTO
 import events.boudicca.search.openapi.ApiClient
 import events.boudicca.search.openapi.api.SearchResourceApi
@@ -66,8 +64,8 @@ class EventService @Autowired constructor(
         if (!searchDTO.name.isNullOrBlank()) {
             queryParts.add(contains("*", searchDTO.name!!))
         }
-        if (!searchDTO.category.isNullOrBlank() && searchDTO.category != SEARCH_TYPE_ALL && BoudiccaQueryBuilder.Category.entries.any { searchDTO.category == it.name }) {
-            queryParts.add(isQuery(BoudiccaQueryBuilder.Category.valueOf(searchDTO.category!!)))
+        if (!searchDTO.category.isNullOrBlank() && searchDTO.category != SEARCH_TYPE_ALL) {
+            queryParts.add(equals("category", searchDTO.category!!))
         }
         if (!searchDTO.locationCity.isNullOrBlank()) {
             queryParts.add(equals(SemanticKeys.LOCATION_CITY, searchDTO.locationCity!!))
@@ -76,16 +74,16 @@ class EventService @Autowired constructor(
             queryParts.add(equals(SemanticKeys.LOCATION_NAME, searchDTO.locationName!!))
         }
         if (!searchDTO.fromDate.isNullOrBlank()) {
-            queryParts.add(after(LocalDate.parse(searchDTO.fromDate!!, localDateFormatter)))
+            queryParts.add(after(SemanticKeys.STARTDATE, LocalDate.parse(searchDTO.fromDate!!, localDateFormatter)))
         }
         if (!searchDTO.toDate.isNullOrBlank()) {
-            queryParts.add(before(LocalDate.parse(searchDTO.toDate!!, localDateFormatter)))
+            queryParts.add(before(SemanticKeys.STARTDATE, LocalDate.parse(searchDTO.toDate!!, localDateFormatter)))
         }
         if (searchDTO.durationShorter != null) {
-            queryParts.add(durationShorter(searchDTO.durationShorter!!))
+            queryParts.add(durationShorter(SemanticKeys.STARTDATE, SemanticKeys.ENDDATE, searchDTO.durationShorter!!))
         }
         if (searchDTO.durationLonger != null) {
-            queryParts.add(durationLonger(searchDTO.durationLonger!!))
+            queryParts.add(durationLonger(SemanticKeys.STARTDATE, SemanticKeys.ENDDATE, searchDTO.durationLonger!!))
         }
         for (flag in (searchDTO.flags ?: emptyList()).filter { !it.isNullOrBlank() }) {
             queryParts.add(equals(flag!!, "true"))

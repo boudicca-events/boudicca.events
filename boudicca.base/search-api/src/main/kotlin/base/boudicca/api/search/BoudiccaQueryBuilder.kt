@@ -1,4 +1,4 @@
-package events.boudicca.api.search
+package base.boudicca.api.search
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter

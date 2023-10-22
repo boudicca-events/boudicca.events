@@ -52,8 +52,9 @@ class Lexer(private val query: String) {
             "contains" -> tokens.add(Token(TokenType.CONTAINS, null))
             "before" -> tokens.add(Token(TokenType.BEFORE, null))
             "after" -> tokens.add(Token(TokenType.AFTER, null))
-            "durationlonger" -> tokens.add(Token(TokenType.DURATIONLONGER, null))
-            "durationshorter" -> tokens.add(Token(TokenType.DURATIONSHORTER, null))
+            "duration" -> tokens.add(Token(TokenType.DURATION, null))
+            "longer" -> tokens.add(Token(TokenType.LONGER, null))
+            "shorter" -> tokens.add(Token(TokenType.SHORTER, null))
             else -> tokens.add(Token(TokenType.TEXT, token))
         }
         i = tokenEnd

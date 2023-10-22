@@ -25,6 +25,7 @@ enum class TokenType {
     AFTER,
     GROUPING_OPEN,
     GROUPING_CLOSE,
-    DURATIONLONGER,
-    DURATIONSHORTER,
+    DURATION,
+    LONGER,
+    SHORTER,
 }

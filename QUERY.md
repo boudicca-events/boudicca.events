@@ -11,18 +11,17 @@ Queries can look like `name contains Bandname or name contains Bandname2`
 A query is always UTF-8 encoded text and every query is exactly one `expression`, where expressions can take multiple (
 potentially nested) forms. Please note that expressions are case-insensitive:
 
-| Expression Name  | Meaning                                                                                      | Format                          |
-|------------------|----------------------------------------------------------------------------------------------|---------------------------------|
-| Equals           | If a field exactly (but case-insensitive) equals the text value                              | `<fieldname> equals <text>`     |
-| Contains         | If a field contains (case-insensitive) the text value                                        | `<fieldname> contains <text>`   |
-| And              | Both child-expressions have to be true so that the whole expression is true                  | `<expression> and <expression>` |
-| Or               | At least one child-expression has to be true so that the whole expression is true            | `<expression> or <expression>`  |
-| Not              | The child-expression has to be false so that the whole expression is true                    | `not <expression>`              |
-| After            | Filter events starting at or after the given date                                            | `after <date>`                  |
-| Before           | Filter events starting at or before the given date                                           | `before <date>`                 |
-| Grouping         | Marker to identify how expression should be grouped                                          | `( <expression> )`              |
-| Duration Longer  | Filter events on their duration in hours (inclusive), events without endDate have 0 duration | `durationLonger <number`        |
-| Duration Shorter | Filter events on their duration in hours (inclusive), events without endDate have 0 duration | `durationShorter <number>`      |
+| Expression Name | Meaning                                                                                                                                                  | Format                                                                              |
+|-----------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------|
+| Equals          | If a field exactly (but case-insensitive) equals the text value                                                                                          | `<fieldname> equals <text>`                                                         |
+| Contains        | If a field contains (case-insensitive) the text value                                                                                                    | `<fieldname> contains <text>`                                                       |
+| And             | Both child-expressions have to be true so that the whole expression is true                                                                              | `<expression> and <expression>`                                                     |
+| Or              | At least one child-expression has to be true so that the whole expression is true                                                                        | `<expression> or <expression>`                                                      |
+| Not             | The child-expression has to be false so that the whole expression is true                                                                                | `not <expression>`                                                                  |
+| After           | Filter events starting at or after the given date                                                                                                        | `<dateFieldname> after <date>`                                                      |
+| Before          | Filter events starting at or before the given date                                                                                                       | `<dateFieldname> before <date>`                                                     |
+| Grouping        | Marker to identify how expression should be grouped                                                                                                      | `( <expression> )`                                                                  |
+| Duration        | Filter events on their duration in hours (inclusive), events without startDate or endDate have 0 duration. You an filter for longer or shorter duration. | `duration <fieldname of startDate> <fieldname of endDate> longer\|shorter <number>` |
 
 where
 
@@ -53,7 +52,8 @@ In contrast to other queries or math there is no operator precedence here, they 
 * Search for any event in Wien but not in
   Gasometer: `location.city equals Wien and (not location.name equals Gasometer)`
 * Search for any event while I am in Vienna on
-  holiday: `location.city equals Wien and after 2023-05-27 and before 2023-05-31`
+  holiday: `location.city equals Wien and startDate after 2023-05-27 and startDate before 2023-05-31`
+* Search for events with a duration of 2 hours or less: `duration "startDate" "endDate" shorter 2`
 
 See our [Semantic Conventions](SEMANTIC_CONVENTIONS.md) to find common field names.
 

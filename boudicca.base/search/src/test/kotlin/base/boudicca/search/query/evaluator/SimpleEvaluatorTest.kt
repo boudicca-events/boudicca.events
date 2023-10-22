@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.time.ZoneId
-import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 class SimpleEvaluatorTest {
@@ -120,7 +119,7 @@ class SimpleEvaluatorTest {
     fun simpleBefore() {
         val events =
             callEvaluatorWithEvents(
-                BeforeExpression("2023-05-27"),
+                BeforeExpression("startDate","2023-05-27"),
                 listOf(
                     event("event1", "2023-05-25T00:00:00"),
                     event("event2", "2023-05-29T00:00:00"),
@@ -134,7 +133,7 @@ class SimpleEvaluatorTest {
     fun simpleAfter() {
         val events =
             callEvaluatorWithEvents(
-                AfterExpression("2023-05-27"),
+                AfterExpression("startDate","2023-05-27"),
                 listOf(
                     event("event1", "2023-05-25T00:00:00"),
                     event("event2", "2023-05-29T00:00:00"),
@@ -148,7 +147,7 @@ class SimpleEvaluatorTest {
     fun simpleAfterInclusiveToday() {
         val events =
             callEvaluatorWithEvents(
-                AfterExpression("2023-05-25"),
+                AfterExpression("startDate","2023-05-25"),
                 listOf(
                     event("event1", "2023-05-25T00:00:00"),
                     event("event2", "2023-05-29T00:00:00"),
@@ -161,7 +160,7 @@ class SimpleEvaluatorTest {
     fun simpleBeforeInclusiveToday() {
         val events =
             callEvaluatorWithEvents(
-                BeforeExpression("2023-05-29"),
+                BeforeExpression("startDate","2023-05-29"),
                 listOf(
                     event("event1", "2023-05-25T00:00:00"),
                     event("event2", "2023-05-29T00:00:00"),
@@ -174,7 +173,7 @@ class SimpleEvaluatorTest {
     fun durationLonger() {
         val events =
             callEvaluator(
-                DurationLongerExpression(2.0),
+                DurationLongerExpression("startDate", "endDate", 2.0),
                 listOf(
                     mapOf(
                         SemanticKeys.NAME to "event1",
@@ -196,7 +195,7 @@ class SimpleEvaluatorTest {
     fun durationShorter() {
         val events =
             callEvaluator(
-                DurationShorterExpression(2.0),
+                DurationShorterExpression("startDate", "endDate", 2.0),
                 listOf(
                     mapOf(
                         SemanticKeys.NAME to "event1",
@@ -218,7 +217,7 @@ class SimpleEvaluatorTest {
     fun durationZero() {
         val events =
             callEvaluator(
-                DurationLongerExpression(0.0),
+                DurationLongerExpression("startDate", "endDate", 0.0),
                 listOf(
                     mapOf(
                         SemanticKeys.NAME to "event1",
@@ -279,7 +278,8 @@ class SimpleEvaluatorTest {
     }
 
     private fun parseLocalDate(startDateAsString: String): OffsetDateTime {
-        return LocalDateTime.parse(startDateAsString, DateTimeFormatter.ISO_LOCAL_DATE_TIME).atZone(ZoneId.of("CET")).toOffsetDateTime()
+        return LocalDateTime.parse(startDateAsString, DateTimeFormatter.ISO_LOCAL_DATE_TIME).atZone(ZoneId.of("CET"))
+            .toOffsetDateTime()
     }
 }
 

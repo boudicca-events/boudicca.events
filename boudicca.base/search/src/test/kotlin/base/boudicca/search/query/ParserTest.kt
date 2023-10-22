@@ -182,9 +182,9 @@ class ParserTest {
     @Test
     fun testBefore() {
         assertEquals(
-            "BEFORE('2023-05-27')",
+            "BEFORE('startDate','2023-05-27')",
             callParser(
-                before(), text("2023-05-27")
+                text("startDate"), before(), text("2023-05-27")
             )
         )
     }
@@ -192,9 +192,9 @@ class ParserTest {
     @Test
     fun testAfter() {
         assertEquals(
-            "AFTER('2023-05-27')",
+            "AFTER('startDate','2023-05-27')",
             callParser(
-                after(), text("2023-05-27")
+                text("startDate"), after(), text("2023-05-27")
             )
         )
     }
@@ -202,9 +202,9 @@ class ParserTest {
     @Test
     fun testDurationShorter() {
         assertEquals(
-            "DURATIONSHORTER(-2)",
+            "DURATIONSHORTER('startDate','endDate',-2)",
             callParser(
-                durationShorter(), text("-2")
+                duration(), text("startDate"), text("endDate"), shorter(), text("-2")
             )
         )
     }
@@ -212,9 +212,9 @@ class ParserTest {
     @Test
     fun testDurationLonger() {
         assertEquals(
-            "DURATIONLONGER(2.6)",
+            "DURATIONLONGER('startDate','endDate',2.6)",
             callParser(
-                durationLonger(), text("2.6")
+                duration(), text("startDate"), text("endDate"), longer(), text("2.6")
             )
         )
     }
@@ -259,12 +259,16 @@ class ParserTest {
         return Token(TokenType.TEXT, s)
     }
 
-    private fun durationShorter(): Token {
-        return Token(TokenType.DURATIONSHORTER, null)
+    private fun duration(): Token {
+        return Token(TokenType.DURATION, null)
     }
 
-    private fun durationLonger(): Token {
-        return Token(TokenType.DURATIONLONGER, null)
+    private fun shorter(): Token {
+        return Token(TokenType.SHORTER, null)
+    }
+
+    private fun longer(): Token {
+        return Token(TokenType.LONGER, null)
     }
 
     private fun callParser(vararg tokens: Token): String {

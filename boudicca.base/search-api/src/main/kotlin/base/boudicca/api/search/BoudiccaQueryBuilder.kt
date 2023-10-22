@@ -28,12 +28,12 @@ object BoudiccaQueryBuilder {
         return "not ($query)"
     }
 
-    fun after(localDate: LocalDate): String {
-        return "after " + DateTimeFormatter.ISO_LOCAL_DATE.format(localDate)
+    fun after(dateFieldName: String, localDate: LocalDate): String {
+        return escapeText(dateFieldName) + " after " + DateTimeFormatter.ISO_LOCAL_DATE.format(localDate)
     }
 
-    fun before(localDate: LocalDate): String {
-        return "before " + DateTimeFormatter.ISO_LOCAL_DATE.format(localDate)
+    fun before(dateFieldName: String, localDate: LocalDate): String {
+        return escapeText(dateFieldName) + " before " + DateTimeFormatter.ISO_LOCAL_DATE.format(localDate)
     }
 
     fun equals(field: String, value: String): String {
@@ -50,12 +50,12 @@ object BoudiccaQueryBuilder {
         return escapeText(field) + " contains " + escapeText(value)
     }
 
-    fun durationLonger(hours: Double): String {
-        return "durationLonger $hours"
+    fun durationLonger(startDateField: String, endDateField: String, hours: Double): String {
+        return "duration ${escapeText(startDateField)} ${escapeText(endDateField)} longer $hours"
     }
 
-    fun durationShorter(hours: Double): String {
-        return "durationShorter $hours"
+    fun durationShorter(startDateField: String, endDateField: String, hours: Double): String {
+        return "duration ${escapeText(startDateField)} ${escapeText(endDateField)} shorter $hours"
     }
 
     fun escapeText(text: String): String {

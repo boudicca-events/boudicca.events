@@ -12,6 +12,7 @@ class EvaluatorUtilTest {
         Assertions.assertEquals(
             0.0,
             EvaluatorUtil.getDuration(
+                "startDate", "endDate",
                 mapOf(
                 )
             )
@@ -23,6 +24,7 @@ class EvaluatorUtilTest {
         Assertions.assertEquals(
             0.0,
             EvaluatorUtil.getDuration(
+                "startDate", "endDate",
                 mapOf(
                     SemanticKeys.ENDDATE to "2024-05-31T01:00:00Z",
                 )
@@ -35,6 +37,7 @@ class EvaluatorUtilTest {
         Assertions.assertEquals(
             0.0,
             EvaluatorUtil.getDuration(
+                "startDate", "endDate",
                 mapOf(
                     SemanticKeys.STARTDATE to "2024-05-31T01:00:00Z",
                 )
@@ -47,6 +50,7 @@ class EvaluatorUtilTest {
         Assertions.assertEquals(
             1.0,
             EvaluatorUtil.getDuration(
+                "startDate", "endDate",
                 mapOf(
                     SemanticKeys.STARTDATE to "2024-05-31T00:00:00Z",
                     SemanticKeys.ENDDATE to "2024-05-31T01:00:00Z",
@@ -60,6 +64,7 @@ class EvaluatorUtilTest {
         Assertions.assertEquals(
             -1.0,
             EvaluatorUtil.getDuration(
+                "startDate", "endDate",
                 mapOf(
                     SemanticKeys.STARTDATE to "2024-05-31T01:00:00Z",
                     SemanticKeys.ENDDATE to "2024-05-31T00:00:00Z",
@@ -73,6 +78,7 @@ class EvaluatorUtilTest {
         Assertions.assertEquals(
             0.5,
             EvaluatorUtil.getDuration(
+                "startDate", "endDate",
                 mapOf(
                     SemanticKeys.STARTDATE to "2024-05-31T00:00:00Z",
                     SemanticKeys.ENDDATE to "2024-05-31T00:30:00Z",

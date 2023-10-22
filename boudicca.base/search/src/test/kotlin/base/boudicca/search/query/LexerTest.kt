@@ -195,17 +195,22 @@ class LexerTest {
     }
 
     @Test
-    fun testDurationLongerOperator() {
-        val tokens = callLexer("durationLonger")
+    fun testDurationOperator() {
+        val tokens = callLexer("duration")
         assertEquals(1, tokens.size)
-        assertEquals(TokenType.DURATIONLONGER, tokens[0].getType())
+        assertEquals(TokenType.DURATION, tokens[0].getType())
     }
-
     @Test
-    fun testDurationShorterOperator() {
-        val tokens = callLexer("durationShorter")
+    fun testShorterKeyword() {
+        val tokens = callLexer("shorter")
         assertEquals(1, tokens.size)
-        assertEquals(TokenType.DURATIONSHORTER, tokens[0].getType())
+        assertEquals(TokenType.SHORTER, tokens[0].getType())
+    }
+    @Test
+    fun testLongerKeyword() {
+        val tokens = callLexer("longer")
+        assertEquals(1, tokens.size)
+        assertEquals(TokenType.LONGER, tokens[0].getType())
     }
 
     private fun callLexer(query: String): List<Token> {

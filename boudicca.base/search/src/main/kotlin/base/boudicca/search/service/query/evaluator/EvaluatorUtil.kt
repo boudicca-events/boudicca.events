@@ -27,13 +27,13 @@ object EvaluatorUtil {
     }
 
 
-    fun getDuration(event: Map<String, String>): Double {
-        if (!event.containsKey(SemanticKeys.STARTDATE) || !event.containsKey(SemanticKeys.ENDDATE)) {
+    fun getDuration(startDateField: String, endDateField: String, event: Map<String, String>): Double {
+        if (!event.containsKey(startDateField) || !event.containsKey(endDateField)) {
             return 0.0
         }
         return try {
-            val startDate = OffsetDateTime.parse(event[SemanticKeys.STARTDATE]!!, DateTimeFormatter.ISO_DATE_TIME)
-            val endDate = OffsetDateTime.parse(event[SemanticKeys.ENDDATE]!!, DateTimeFormatter.ISO_DATE_TIME)
+            val startDate = OffsetDateTime.parse(event[startDateField]!!, DateTimeFormatter.ISO_DATE_TIME)
+            val endDate = OffsetDateTime.parse(event[endDateField]!!, DateTimeFormatter.ISO_DATE_TIME)
             Duration.of(endDate.toEpochSecond() - startDate.toEpochSecond(), ChronoUnit.SECONDS)
                 .toMillis()
                 .toDouble() / 1000.0 / 60.0 / 60.0

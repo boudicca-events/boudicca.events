@@ -1,34 +1,28 @@
 package base.boudicca.search.service.query.evaluator
 
-import base.boudicca.Event
-import base.boudicca.search.model.SearchResultDTO
+import base.boudicca.Entry
+import base.boudicca.search.model.ResultDTO
 import base.boudicca.search.service.query.*
+import base.boudicca.search.service.util.Utils
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
-import java.util.function.Function
 
-class SimpleEvaluator(rawEvents: Collection<Event>) : Evaluator {
+class SimpleEvaluator(rawEntries: Collection<Entry>) : Evaluator {
 
-    private val events = rawEvents
-        .toList()
-        .sortedWith(
-            Comparator
-                .comparing<Event, OffsetDateTime> { it.startDate }
-                .thenComparing(Function { it.name })
+    private val events = Utils.order(rawEntries)
+
+    override fun evaluate(expression: Expression, page: Page): ResultDTO {
+        val results = events.filter { matchesExpression(expression, it) }
+        return ResultDTO(
+            results
+                .drop(page.offset)
+                .take(page.size)
+                .toList(),
+            results.size
         )
-        .map { EvaluatorUtil.mapEventToMap(it) }
-
-    override fun evaluate(expression: Expression, page: Page): SearchResultDTO {
-        val results = events
-            .filter { matchesExpression(expression, it) }
-        return SearchResultDTO(results
-            .drop(page.offset)
-            .take(page.size)
-            .map { EvaluatorUtil.toEvent(it) }
-            .toList(), results.size)
     }
 
     private fun matchesExpression(expression: Expression, event: Map<String, String>): Boolean {
@@ -111,4 +105,5 @@ class SimpleEvaluator(rawEvents: Collection<Event>) : Evaluator {
         OffsetDateTime.parse(dateText, DateTimeFormatter.ISO_DATE_TIME)
             .atZoneSameInstant(ZoneId.of("Europe/Vienna"))
             .toLocalDate()
+
 }

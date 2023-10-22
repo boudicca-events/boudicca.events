@@ -72,9 +72,9 @@ class QueryTest {
     }
 
     private fun evaluateQuery(string: String): Collection<Map<String, String>> {
-        return SimpleEvaluator(testData()
-            .map { EvaluatorUtil.toEvent(it) }).evaluate(QueryParser.parseQuery(string), PAGE_ALL)
-            .result.map { EvaluatorUtil.mapEventToMap(it) }
+        return SimpleEvaluator(testData())
+            .evaluate(QueryParser.parseQuery(string), PAGE_ALL)
+            .result
     }
 
     private fun testData(): Collection<Map<String, String>> {

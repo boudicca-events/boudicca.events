@@ -19,20 +19,30 @@ class Search(enricherUrl: String) {
         searchApi = SearchResourceApi(apiClient)
     }
 
+    @Deprecated("use query Events")
     fun searchQuery(queryDTO: QueryDTO): SearchResultDTO {
-        return mapSearchResultDto(searchApi.queryPost(mapQueryDto(queryDTO)))
+        return queryEvents(queryDTO)
+    }
+
+    fun queryEvents(queryDTO: QueryDTO): SearchResultDTO {
+        val entries = queryEntries(queryDTO)
+        return SearchResultDTO(entries.result.mapNotNull { Event.fromEntry(it) }, entries.totalResults)
+    }
+
+    fun queryEntries(queryDTO: QueryDTO): ResultDTO {
+        return mapResultDto(searchApi.queryEntries(mapQueryDto(queryDTO)))
     }
 
     fun getFilters(): FiltersDTO {
-        return mapToFiltersDTO(searchApi.filtersGet())
+        return mapToFiltersDTO(searchApi.filters())
     }
 
     private fun mapToFiltersDTO(filtersGet: Filters): FiltersDTO {
         return FiltersDTO(filtersGet.locationNames, filtersGet.locationCities)
     }
 
-    private fun mapSearchResultDto(searchResultDTO: base.boudicca.search.openapi.model.SearchResultDTO): SearchResultDTO {
-        return SearchResultDTO(searchResultDTO.result.map { toEvent(it) }, searchResultDTO.totalResults ?: -1)
+    private fun mapResultDto(resultDTO: base.boudicca.search.openapi.model.ResultDTO): ResultDTO {
+        return ResultDTO(resultDTO.result, resultDTO.totalResults)
     }
 
     private fun mapQueryDto(queryDTO: QueryDTO): base.boudicca.search.openapi.model.QueryDTO {
@@ -40,16 +50,5 @@ class Search(enricherUrl: String) {
             .query(queryDTO.query)
             .offset(queryDTO.offset)
             .size(queryDTO.size)
-    }
-
-    private fun toEvent(enricherEvent: base.boudicca.search.openapi.model.Event): Event {
-        return Event(enricherEvent.name, enricherEvent.startDate, enricherEvent.data ?: mapOf())
-    }
-
-    private fun mapToEnricherEvent(event: Event): base.boudicca.search.openapi.model.Event {
-        return base.boudicca.search.openapi.model.Event()
-            .name(event.name)
-            .startDate(event.startDate)
-            .data(event.data)
     }
 }

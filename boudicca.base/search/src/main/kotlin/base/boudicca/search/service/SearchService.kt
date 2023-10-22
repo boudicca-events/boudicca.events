@@ -1,11 +1,11 @@
 package base.boudicca.search.service
 
-import base.boudicca.Event
+import base.boudicca.Entry
 import base.boudicca.SemanticKeys
 import base.boudicca.search.model.Filters
 import base.boudicca.search.model.QueryDTO
+import base.boudicca.search.model.ResultDTO
 import base.boudicca.search.model.SearchDTO
-import base.boudicca.search.model.SearchResultDTO
 import base.boudicca.search.service.util.Utils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.event.EventListener
@@ -23,7 +23,7 @@ class SearchService @Autowired constructor(
 ) {
 
     @Volatile
-    private var events = emptyList<Event>()
+    private var entries = emptyList<Entry>()
 
     @Volatile
     private var locationNames = emptySet<String>()
@@ -31,24 +31,25 @@ class SearchService @Autowired constructor(
     @Volatile
     private var locationCities = emptySet<String>()
 
-    fun search(searchDTO: SearchDTO): SearchResultDTO {
+    @Deprecated("use queries instead")
+    fun search(searchDTO: SearchDTO): ResultDTO {
         val query = createQuery(searchDTO)
         return if (query.isNotBlank()) {
             queryService.query(QueryDTO(query, searchDTO.offset))
         } else {
-            Utils.offset(events, searchDTO.offset)
+            Utils.offset(entries, searchDTO.offset, searchDTO.size)
         }
     }
 
     @EventListener
-    fun onEventsUpdate(event: EventsUpdatedEvent) {
-        this.events = Utils.order(event.events)
-        locationNames = this.events
-            .mapNotNull { it.data[SemanticKeys.LOCATION_NAME] }
+    fun onEventsUpdate(event: EntriesUpdatedEvent) {
+        this.entries = Utils.order(event.entries)
+        locationNames = this.entries
+            .mapNotNull { it[SemanticKeys.LOCATION_NAME] }
             .filter { it.isNotBlank() }
             .toSet()
-        locationCities = this.events
-            .mapNotNull { it.data[SemanticKeys.LOCATION_CITY] }
+        locationCities = this.entries
+            .mapNotNull { it[SemanticKeys.LOCATION_CITY] }
             .filter { it.isNotBlank() }
             .toSet()
     }

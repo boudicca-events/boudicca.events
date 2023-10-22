@@ -1,8 +1,8 @@
 package base.boudicca.search.service
 
-import base.boudicca.Event
+import base.boudicca.Entry
 import base.boudicca.search.model.QueryDTO
-import base.boudicca.search.model.SearchResultDTO
+import base.boudicca.search.model.ResultDTO
 import base.boudicca.search.service.query.Evaluator
 import base.boudicca.search.service.query.Page
 import base.boudicca.search.service.query.QueryParser
@@ -16,26 +16,26 @@ import org.springframework.stereotype.Service
 class QueryService {
 
     @Volatile
-    private var events = emptyList<Event>()
+    private var entries = emptyList<Entry>()
 
     @Volatile
     private var evaluator: Evaluator = NoopEvaluator()
 
-    fun query(queryDTO: QueryDTO): SearchResultDTO {
+    fun query(queryDTO: QueryDTO): ResultDTO {
         if (queryDTO.query == null) {
-            return Utils.offset(Utils.order(events), queryDTO.offset)
+            return Utils.offset(entries, queryDTO.offset, queryDTO.size)
         }
 
         return evaluateQuery(queryDTO.query, Page(queryDTO.offset ?: 0, queryDTO.size ?: 30))
     }
 
     @EventListener
-    fun onEventsUpdate(event: EventsUpdatedEvent) {
-        this.events = Utils.order(event.events)
-        this.evaluator = SimpleEvaluator(event.events)
+    fun onEventsUpdate(event: EntriesUpdatedEvent) {
+        this.entries = Utils.order(event.entries)
+        this.evaluator = SimpleEvaluator(event.entries)
     }
 
-    private fun evaluateQuery(query: String, page: Page): SearchResultDTO {
+    private fun evaluateQuery(query: String, page: Page): ResultDTO {
         val expression = QueryParser.parseQuery(query)
         return evaluator.evaluate(expression, page)
     }

@@ -3,7 +3,7 @@
     <option name="MAIN_CLASS_NAME" value="base.boudicca.search.SearchApplicationKt" />
     <module name="boudicca.boudicca.base.search.main" />
     <shortenClasspath name="NONE" />
-    <option name="VM_PARAMETERS" value="-Dboudicca.local.mode=true" />
+    <option name="VM_PARAMETERS" value="-Dboudicca.localMode=true" />
     <extension name="net.ashald.envfile">
       <option name="IS_ENABLED" value="false" />
       <option name="IS_SUBST" value="false" />

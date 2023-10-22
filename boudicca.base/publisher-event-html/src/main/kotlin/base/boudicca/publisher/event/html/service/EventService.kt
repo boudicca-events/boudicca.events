@@ -36,7 +36,7 @@ class EventService @Autowired constructor(@Value("\${boudicca.search.url}") priv
     private val localDateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
     fun search(searchDTO: SearchDTO): List<Map<String, String?>> {
-        val events = search.searchQuery(QueryDTO(generateQuery(searchDTO), searchDTO.offset ?: 0))
+        val events = search.queryEvents(QueryDTO(generateQuery(searchDTO), searchDTO.offset ?: 0))
         return mapEvents(events)
     }
 

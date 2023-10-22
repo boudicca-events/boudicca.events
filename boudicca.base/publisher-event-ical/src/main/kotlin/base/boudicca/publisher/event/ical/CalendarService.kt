@@ -80,7 +80,7 @@ class CalendarService @Autowired constructor(@Value("\${boudicca.search.url}") p
     }
 
     fun getEvents(query: String): ByteArray {
-        val events = Search(searchUrl).searchQuery(QueryDTO(query, 100))
+        val events = Search(searchUrl).queryEvents(QueryDTO(query, 100))
         return createCalendar(events.result)
     }
 }

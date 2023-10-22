@@ -68,10 +68,10 @@ class SearchService @Autowired constructor(
             queryParts.add(SemanticKeys.LOCATION_NAME + " equals " + escape(searchDTO.locationName))
         }
         if (searchDTO.fromDate != null) {
-            queryParts.add("after " + formatDate(searchDTO.fromDate))
+            queryParts.add(SemanticKeys.STARTDATE + " after " + formatDate(searchDTO.fromDate))
         }
         if (searchDTO.toDate != null) {
-            queryParts.add("before " + formatDate(searchDTO.toDate))
+            queryParts.add(SemanticKeys.STARTDATE + " before " + formatDate(searchDTO.toDate))
         }
         if (searchDTO.durationShorter != null) {
             queryParts.add(

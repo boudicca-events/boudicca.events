@@ -1,6 +1,5 @@
 package base.boudicca.search.service.query
 
-import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
@@ -61,24 +60,11 @@ abstract class FieldAndTextExpression(
     }
 }
 
-abstract class TextExpression(
-    private val name: String,
-    private val text: String,
-) : Expression {
-
-    fun getText(): String {
-        return text
-    }
-
-    override fun toString(): String {
-        return "$name('$text')"
-    }
-}
-
 abstract class DateExpression(
     private val name: String,
+    dateFieldName: String,
     dateText: String,
-) : TextExpression(name, dateText) {
+) : FieldAndTextExpression(name, dateFieldName, dateText) {
 
     private val date: LocalDate
 
@@ -95,7 +81,7 @@ abstract class DateExpression(
     }
 
     override fun toString(): String {
-        return "$name('${date.format(DateTimeFormatter.ISO_LOCAL_DATE)}')"
+        return "$name('${getFieldName()}','${date.format(DateTimeFormatter.ISO_LOCAL_DATE)}')"
     }
 }
 
@@ -148,12 +134,14 @@ class EqualsExpression(
 ) : FieldAndTextExpression("EQUALS", fieldName, text)
 
 class BeforeExpression(
-    text: String,
-) : DateExpression("BEFORE", text)
+    dateFieldName: String,
+    dateText: String,
+) : DateExpression("BEFORE", dateFieldName, dateText)
 
 class AfterExpression(
-    text: String,
-) : DateExpression("AFTER", text)
+    dateFieldName: String,
+    dateText: String,
+) : DateExpression("AFTER", dateFieldName, dateText)
 
 class DurationShorterExpression(
     startDateField: String,

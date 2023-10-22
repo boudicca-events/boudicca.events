@@ -20,10 +20,9 @@ class Parser(private val tokens: List<Token>) {
         }
         val token = tokens[i]
         when (token.getType()) {
-            TokenType.TEXT -> parseFieldAndTextExpression()
+            TokenType.TEXT, TokenType.BEFORE, TokenType.AFTER -> parseFieldAndTextExpression()
             TokenType.NOT -> parseNotExpression()
             TokenType.GROUPING_OPEN -> parseGroupOpen()
-            TokenType.BEFORE, TokenType.AFTER -> parseSingleFieldExpression(token)
             TokenType.DURATION -> parseDurationExpression(token)
 
             else -> throw IllegalStateException("unexpected token ${token.getType()} at start of expression at index $i")
@@ -47,24 +46,21 @@ class Parser(private val tokens: List<Token>) {
         val shorterOrLonger = tokens[i + 3]
         val duration = parseNumber(getText(i + 4).getToken()!!)
         lastExpression = when (shorterOrLonger.getType()) {
-            TokenType.LONGER -> DurationLongerExpression(startDateField.getToken()!!, endDateField.getToken()!!, duration)
-            TokenType.SHORTER -> DurationShorterExpression(startDateField.getToken()!!, endDateField.getToken()!!, duration)
+            TokenType.LONGER -> DurationLongerExpression(
+                startDateField.getToken()!!,
+                endDateField.getToken()!!,
+                duration
+            )
+
+            TokenType.SHORTER -> DurationShorterExpression(
+                startDateField.getToken()!!,
+                endDateField.getToken()!!,
+                duration
+            )
+
             else -> throw IllegalStateException("unknown token type ${token.getType()}")
         }
         i += 5
-    }
-
-    private fun parseSingleFieldExpression(token: Token) {
-        if (i + 1 >= tokens.size) {
-            throw IllegalStateException("expecting date, found end of query")
-        }
-        val textToken = getText(i + 1)
-        lastExpression = when (token.getType()) {
-            TokenType.BEFORE -> BeforeExpression(textToken.getToken()!!)
-            TokenType.AFTER -> AfterExpression(textToken.getToken()!!)
-            else -> throw IllegalStateException("unknown token type ${token.getType()}")
-        }
-        i += 2
     }
 
     private fun parseNumber(token: String): Number {
@@ -112,23 +108,17 @@ class Parser(private val tokens: List<Token>) {
             throw IllegalStateException("trying to parse text expression and needing 3 arguments, but there are not enough at index $i")
         }
         val fieldName = getText(i)
-        val expression = getFieldAndTextExpression(i + 1)
+        val expression = tokens[i + 1]
         val text = getText(i + 2)
 
         lastExpression = when (expression.getType()) {
             TokenType.CONTAINS -> ContainsExpression(fieldName.getToken()!!, text.getToken()!!)
             TokenType.EQUALS -> EqualsExpression(fieldName.getToken()!!, text.getToken()!!)
+            TokenType.AFTER -> AfterExpression(fieldName.getToken()!!, text.getToken()!!)
+            TokenType.BEFORE -> BeforeExpression(fieldName.getToken()!!, text.getToken()!!)
             else -> throw IllegalStateException("unknown token type ${expression.getType()}")
         }
         i += 3
-    }
-
-    private fun getFieldAndTextExpression(i: Int): Token {
-        val token = tokens[i]
-        if (token.getType() != TokenType.CONTAINS && token.getType() != TokenType.EQUALS) {
-            throw IllegalStateException("expecting text expression token at index $i but was ${token.getType()}")
-        }
-        return token
     }
 
     private fun getText(i: Int): Token {

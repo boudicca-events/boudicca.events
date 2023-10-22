@@ -28,12 +28,12 @@ object BoudiccaQueryBuilder {
         return "not ($query)"
     }
 
-    fun after(localDate: LocalDate): String {
-        return "after " + DateTimeFormatter.ISO_LOCAL_DATE.format(localDate)
+    fun after(dateFieldName: String, localDate: LocalDate): String {
+        return escapeText(dateFieldName) + " after " + DateTimeFormatter.ISO_LOCAL_DATE.format(localDate)
     }
 
-    fun before(localDate: LocalDate): String {
-        return "before " + DateTimeFormatter.ISO_LOCAL_DATE.format(localDate)
+    fun before(dateFieldName: String, localDate: LocalDate): String {
+        return escapeText(dateFieldName) + " before " + DateTimeFormatter.ISO_LOCAL_DATE.format(localDate)
     }
 
     fun equals(field: String, value: String): String {

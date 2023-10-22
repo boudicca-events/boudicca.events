@@ -1,7 +1,6 @@
 package base.boudicca.search.service.query.evaluator
 
 import base.boudicca.Event
-import base.boudicca.SemanticKeys
 import base.boudicca.search.model.SearchResultDTO
 import base.boudicca.search.service.query.*
 import java.time.LocalDate
@@ -66,10 +65,11 @@ class SimpleEvaluator(rawEvents: Collection<Event>) : Evaluator {
 
             is BeforeExpression -> {
                 try {
-                    if (!event.containsKey(SemanticKeys.STARTDATE)) {
+                    val dateFieldName = expression.getFieldName()
+                    if (!event.containsKey(dateFieldName)) {
                         return false
                     }
-                    val startDate = getLocalStartDate(event)
+                    val startDate = getLocalStartDate(event[dateFieldName]!!)
                     return startDate.isEqual(expression.getDate()) || startDate.isBefore(expression.getDate())
                 } catch (e: DateTimeParseException) {
                     return false
@@ -78,10 +78,11 @@ class SimpleEvaluator(rawEvents: Collection<Event>) : Evaluator {
 
             is AfterExpression -> {
                 try {
-                    if (!event.containsKey(SemanticKeys.STARTDATE)) {
+                    val dateFieldName = expression.getFieldName()
+                    if (!event.containsKey(dateFieldName)) {
                         return false
                     }
-                    val startDate = getLocalStartDate(event)
+                    val startDate = getLocalStartDate(event[dateFieldName]!!)
                     return startDate.isEqual(expression.getDate()) || startDate.isAfter(expression.getDate())
                 } catch (e: DateTimeParseException) {
                     return false
@@ -106,8 +107,8 @@ class SimpleEvaluator(rawEvents: Collection<Event>) : Evaluator {
         }
     }
 
-    private fun getLocalStartDate(event: Map<String, String>): LocalDate =
-        OffsetDateTime.parse(event[SemanticKeys.STARTDATE]!!, DateTimeFormatter.ISO_DATE_TIME)
+    private fun getLocalStartDate(dateText: String): LocalDate =
+        OffsetDateTime.parse(dateText, DateTimeFormatter.ISO_DATE_TIME)
             .atZoneSameInstant(ZoneId.of("Europe/Vienna"))
             .toLocalDate()
 }

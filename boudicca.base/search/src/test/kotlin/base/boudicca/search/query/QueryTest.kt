@@ -51,7 +51,7 @@ class QueryTest {
     @Test
     fun queryWithTimeLimits() {
         val events =
-            evaluateQuery("after 2023-05-27 and before 2023-05-30")
+            evaluateQuery("startDate after 2023-05-27 and startDate before 2023-05-30")
         assertEquals(1, events.size)
         assertEquals("event2", events.first()["name"])
     }

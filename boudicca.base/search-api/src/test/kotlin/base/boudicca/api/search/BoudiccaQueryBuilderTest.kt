@@ -114,16 +114,16 @@ class BoudiccaQueryBuilderTest {
 
     @Test
     fun simpleAfter() {
-        val query = after(LocalDate.of(2023, 10, 6))
+        val query = after("startDate",LocalDate.of(2023, 10, 6))
 
-        assertEquals("after 2023-10-06", query)
+        assertEquals("\"startDate\" after 2023-10-06", query)
     }
 
     @Test
     fun simpleBefore() {
-        val query = before(LocalDate.of(2023, 10, 6))
+        val query = before("startDate", LocalDate.of(2023, 10, 6))
 
-        assertEquals("before 2023-10-06", query)
+        assertEquals("\"startDate\" before 2023-10-06", query)
     }
 
     @Test

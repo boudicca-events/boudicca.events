@@ -182,9 +182,9 @@ class ParserTest {
     @Test
     fun testBefore() {
         assertEquals(
-            "BEFORE('2023-05-27')",
+            "BEFORE('startDate','2023-05-27')",
             callParser(
-                before(), text("2023-05-27")
+                text("startDate"), before(), text("2023-05-27")
             )
         )
     }
@@ -192,9 +192,9 @@ class ParserTest {
     @Test
     fun testAfter() {
         assertEquals(
-            "AFTER('2023-05-27')",
+            "AFTER('startDate','2023-05-27')",
             callParser(
-                after(), text("2023-05-27")
+                text("startDate"), after(), text("2023-05-27")
             )
         )
     }

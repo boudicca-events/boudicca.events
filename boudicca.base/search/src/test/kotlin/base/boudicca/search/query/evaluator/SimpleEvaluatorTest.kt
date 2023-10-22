@@ -119,7 +119,7 @@ class SimpleEvaluatorTest {
     fun simpleBefore() {
         val events =
             callEvaluatorWithEvents(
-                BeforeExpression("2023-05-27"),
+                BeforeExpression("startDate","2023-05-27"),
                 listOf(
                     event("event1", "2023-05-25T00:00:00"),
                     event("event2", "2023-05-29T00:00:00"),
@@ -133,7 +133,7 @@ class SimpleEvaluatorTest {
     fun simpleAfter() {
         val events =
             callEvaluatorWithEvents(
-                AfterExpression("2023-05-27"),
+                AfterExpression("startDate","2023-05-27"),
                 listOf(
                     event("event1", "2023-05-25T00:00:00"),
                     event("event2", "2023-05-29T00:00:00"),
@@ -147,7 +147,7 @@ class SimpleEvaluatorTest {
     fun simpleAfterInclusiveToday() {
         val events =
             callEvaluatorWithEvents(
-                AfterExpression("2023-05-25"),
+                AfterExpression("startDate","2023-05-25"),
                 listOf(
                     event("event1", "2023-05-25T00:00:00"),
                     event("event2", "2023-05-29T00:00:00"),
@@ -160,7 +160,7 @@ class SimpleEvaluatorTest {
     fun simpleBeforeInclusiveToday() {
         val events =
             callEvaluatorWithEvents(
-                BeforeExpression("2023-05-29"),
+                BeforeExpression("startDate","2023-05-29"),
                 listOf(
                     event("event1", "2023-05-25T00:00:00"),
                     event("event2", "2023-05-29T00:00:00"),

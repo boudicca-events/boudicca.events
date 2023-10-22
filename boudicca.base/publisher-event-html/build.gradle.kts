@@ -8,7 +8,6 @@ plugins {
 java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(17))
-        vendor.set(JvmVendorSpec.ADOPTIUM)
     }
 }
 
@@ -38,5 +37,5 @@ task<Exec>("imageBuild") {
     inputs.file("src/main/docker/Dockerfile")
     inputs.files(tasks.named("bootJar"))
     dependsOn(tasks.named("assemble"))
-    commandLine("docker", "build", "-t", "boudicca-html", "-f", "src/main/docker/Dockerfile", ".")
+    commandLine("docker", "build", "-t", "localhost/boudicca-html", "-f", "src/main/docker/Dockerfile", ".")
 }

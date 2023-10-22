@@ -25,5 +25,6 @@ fun main() {
 //        .debug(EnnsEventsCollector())
 //        .debug(UlfOoeCollector())
 //        .debug(StiftskonzerteCollector())
-        .debug(GewaexhausCollector())
+//        .debug(GewaexhausCollector())
+        .debug(OehJkuCollector())
 }

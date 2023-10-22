@@ -28,5 +28,6 @@ fun main() {
         .addEventCollector(UlfOoeCollector())
         .addEventCollector(StiftskonzerteCollector())
         .addEventCollector(GewaexhausCollector())
+        .addEventCollector(OehJkuCollector())
         .run()
 }

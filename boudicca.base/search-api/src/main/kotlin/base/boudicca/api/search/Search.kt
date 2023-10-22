@@ -2,6 +2,7 @@ package base.boudicca.api.search
 
 import base.boudicca.Event
 import base.boudicca.search.openapi.ApiClient
+import base.boudicca.search.openapi.ApiException
 import base.boudicca.search.openapi.api.SearchResourceApi
 import base.boudicca.search.openapi.model.Filters
 
@@ -30,11 +31,19 @@ class Search(enricherUrl: String) {
     }
 
     fun queryEntries(queryDTO: QueryDTO): ResultDTO {
-        return mapResultDto(searchApi.queryEntries(mapQueryDto(queryDTO)))
+        try {
+            return mapResultDto(searchApi.queryEntries(mapQueryDto(queryDTO)))
+        } catch (e: ApiException) {
+            throw SearchException("could not reach eventdb", e)
+        }
     }
 
     fun getFilters(): FiltersDTO {
-        return mapToFiltersDTO(searchApi.filters())
+        try {
+            return mapToFiltersDTO(searchApi.filters())
+        } catch (e: ApiException) {
+            throw SearchException("could not reach eventdb", e)
+        }
     }
 
     private fun mapToFiltersDTO(filtersGet: Filters): FiltersDTO {
@@ -52,3 +61,5 @@ class Search(enricherUrl: String) {
             .size(queryDTO.size)
     }
 }
+
+class SearchException(msg: String, e: ApiException) : RuntimeException(msg, e)

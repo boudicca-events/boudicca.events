@@ -2,6 +2,7 @@ package base.boudicca.api.enricher
 
 import base.boudicca.Event
 import events.boudicca.enricher.openapi.ApiClient
+import events.boudicca.enricher.openapi.ApiException
 import events.boudicca.enricher.openapi.api.EnricherControllerApi
 import events.boudicca.enricher.openapi.model.EnrichRequestDTO
 
@@ -20,7 +21,12 @@ class Enricher(enricherUrl: String) {
     }
 
     fun enrichEvents(events: List<Event>): List<Event> {
-        return enricherApi.enrich(EnrichRequestDTO().events(events.map { mapToEnricherEvent(it) })).map { toEvent(it) }
+        try {
+            return enricherApi.enrich(EnrichRequestDTO().events(events.map { mapToEnricherEvent(it) }))
+                .map { toEvent(it) }
+        } catch (e: ApiException) {
+            throw EnricherException("could not reach eventdb", e)
+        }
     }
 
     private fun toEvent(enricherEvent: events.boudicca.enricher.openapi.model.Event): Event {
@@ -34,3 +40,5 @@ class Enricher(enricherUrl: String) {
             .data(event.data)
     }
 }
+
+class EnricherException(msg: String, e: ApiException) : RuntimeException(msg, e)

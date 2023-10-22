@@ -3,6 +3,7 @@ package base.boudicca.api.eventdb.publisher
 import base.boudicca.Entry
 import base.boudicca.Event
 import events.boudicca.openapi.ApiClient
+import events.boudicca.openapi.ApiException
 import events.boudicca.openapi.api.PublisherResourceApi
 
 class EventDB(eventDbUrl: String) {
@@ -23,6 +24,12 @@ class EventDB(eventDbUrl: String) {
     }
 
     fun getAllEntries(): Set<Entry> {
-        return publisherApi.all()
+        try {
+            return publisherApi.all()
+        } catch (e: ApiException) {
+            throw EventDBException("could not reach eventdb", e)
+        }
     }
 }
+
+class EventDBException(msg: String, e: ApiException) : RuntimeException(msg ,e)

@@ -3,6 +3,7 @@ package base.boudicca.api.eventdb.ingest
 import base.boudicca.Entry
 import base.boudicca.Event
 import events.boudicca.openapi.ApiClient
+import events.boudicca.openapi.ApiException
 import events.boudicca.openapi.api.IngestionResourceApi
 import java.util.*
 
@@ -39,7 +40,13 @@ class EventDB(eventDbUrl: String, user: String, password: String) {
     }
 
     fun ingestEntries(entries: List<Entry>) {
-        ingestApi.addEntries(entries)
+        try {
+            ingestApi.addEntries(entries)
+        } catch (e: ApiException) {
+            throw EventDBException("could not reach eventdb", e)
+        }
     }
 
 }
+
+class EventDBException(msg: String, e: ApiException) : RuntimeException(msg ,e)

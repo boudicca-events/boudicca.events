@@ -5,21 +5,18 @@ plugins {
 
 repositories {
     mavenCentral()
-    mavenLocal()
+}
+
+kotlin {
+    jvmToolchain(17)
+    compilerOptions {
+        javaParameters = true
+    }
 }
 
 dependencies {
     api(project(":boudicca.base:semantic-conventions"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
+    implementation(project(":boudicca.base:boudicca-api"))
     implementation(project(":boudicca.base:eventdb-openapi"))
-}
-
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
-    }
-}
-
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions.javaParameters = true
 }

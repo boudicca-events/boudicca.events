@@ -5,7 +5,13 @@ plugins {
 
 repositories {
     mavenCentral()
-    mavenLocal()
+}
+
+kotlin {
+    jvmToolchain(17)
+    compilerOptions {
+        javaParameters = true
+    }
 }
 
 dependencies {
@@ -14,12 +20,3 @@ dependencies {
     implementation(project(":boudicca.base:enricher-openapi"))
 }
 
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
-    }
-}
-
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions.javaParameters = true
-}

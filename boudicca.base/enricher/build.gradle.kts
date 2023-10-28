@@ -1,18 +1,19 @@
 plugins {
-    id("org.springframework.boot") version "3.1.5"
-    id("io.spring.dependency-management") version "1.1.3"
+    id("org.springframework.boot")
+    id("io.spring.dependency-management")
     kotlin("jvm")
     kotlin("plugin.spring")
 }
 
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
-    }
-}
-
 repositories {
     mavenCentral()
+}
+
+kotlin {
+    jvmToolchain(17)
+    compilerOptions {
+        javaParameters = true
+    }
 }
 
 dependencies {
@@ -33,10 +34,6 @@ dependencies {
     implementation(project(":boudicca.base:semantic-conventions"))
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-}
-
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions.javaParameters = true
 }
 
 tasks.withType<Test> {

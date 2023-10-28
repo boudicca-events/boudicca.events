@@ -5,14 +5,15 @@ plugins {
     kotlin("plugin.spring")
 }
 
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
-    }
-}
-
 repositories {
     mavenCentral()
+}
+
+kotlin {
+    jvmToolchain(17)
+    compilerOptions {
+        javaParameters = true
+    }
 }
 
 dependencies {
@@ -21,14 +22,11 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
+    implementation(project(":boudicca.base:boudicca-api"))
     implementation(project(":boudicca.base:semantic-conventions"))
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
-}
-
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions.javaParameters = true
 }
 
 tasks.withType<Test> {

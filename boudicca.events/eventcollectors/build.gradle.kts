@@ -6,10 +6,17 @@ repositories {
     mavenCentral()
 }
 
+kotlin {
+    jvmToolchain(17)
+    compilerOptions {
+        javaParameters = true
+    }
+}
+
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
-    implementation(project(":boudicca.base:eventcollector-api"))
-    implementation(project(":boudicca.base:publisher-api"))
+    implementation(project(":boudicca.base:eventcollector-client"))
+    implementation(project(":boudicca.base:publisher-client"))
     implementation("org.jsoup:jsoup:1.16.2")
     implementation("org.mnode.ical4j:ical4j:3.2.13") {
         exclude("org.codehaus.groovy", "groovy")
@@ -17,16 +24,6 @@ dependencies {
     }
     implementation("com.rometools:rome:2.1.0")
     implementation("com.beust:klaxon:5.6")
-}
-
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
-    }
-}
-
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions.javaParameters = true
 }
 
 task<Exec>("imageBuild") {

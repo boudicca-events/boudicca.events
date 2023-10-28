@@ -5,14 +5,15 @@ plugins {
     kotlin("plugin.spring")
 }
 
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
-    }
-}
-
 repositories {
     mavenCentral()
+}
+
+kotlin {
+    jvmToolchain(17)
+    compilerOptions {
+        javaParameters = true
+    }
 }
 
 dependencies {
@@ -26,14 +27,10 @@ dependencies {
         exclude("org.codehaus.groovy", "groovy-dateutil")
         exclude("commons-logging", "commons-logging")
     }
-    implementation(project(":boudicca.base:search-api"))
+    implementation(project(":boudicca.base:search-client"))
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
-}
-
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions.javaParameters = true
 }
 
 tasks.withType<Test> {

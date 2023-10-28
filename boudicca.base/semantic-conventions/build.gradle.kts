@@ -7,16 +7,14 @@ repositories {
 }
 
 dependencies {
+    implementation(project(":boudicca.base:boudicca-api"))
 }
 
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(11))
+kotlin {
+    jvmToolchain(17)
+    compilerOptions {
+        javaParameters = true
     }
-}
-
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions.javaParameters = true
 }
 
 //TODO rename?

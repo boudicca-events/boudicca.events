@@ -1,7 +1,7 @@
 package base.boudicca.publisher.event.html.service
 
-import base.boudicca.Event
-import base.boudicca.EventCategory
+import base.boudicca.model.Event
+import base.boudicca.model.EventCategory
 import base.boudicca.SemanticKeys
 import base.boudicca.api.search.BoudiccaQueryBuilder.after
 import base.boudicca.api.search.BoudiccaQueryBuilder.and

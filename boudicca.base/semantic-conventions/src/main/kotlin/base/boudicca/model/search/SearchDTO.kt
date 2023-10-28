@@ -1,4 +1,4 @@
-package base.boudicca.eventdb.model
+package base.boudicca.model.search
 
 import java.time.OffsetDateTime
 

@@ -1,6 +1,6 @@
 package base.boudicca.api.eventcollector
 
-import base.boudicca.Event
+import base.boudicca.model.Event
 import base.boudicca.api.eventcollector.collections.Collections
 
 class EventCollectorDebugger {

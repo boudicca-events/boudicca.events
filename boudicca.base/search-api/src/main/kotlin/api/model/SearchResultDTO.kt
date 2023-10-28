@@ -1,6 +1,6 @@
 package base.boudicca.search.model
 
-import base.boudicca.Event
+import base.boudicca.model.Event
 
 @Deprecated("use ResultDTO")
 data class SearchResultDTO(

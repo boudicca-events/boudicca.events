@@ -1,6 +1,6 @@
 package base.boudicca.enricher.service
 
-import base.boudicca.Event
+import base.boudicca.model.Event
 
 
 interface Enricher {

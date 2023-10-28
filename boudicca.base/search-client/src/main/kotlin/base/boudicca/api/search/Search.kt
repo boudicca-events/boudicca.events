@@ -1,6 +1,6 @@
 package base.boudicca.api.search
 
-import base.boudicca.Event
+import base.boudicca.model.Event
 import base.boudicca.search.openapi.ApiClient
 import base.boudicca.search.openapi.ApiException
 import base.boudicca.search.openapi.api.SearchResourceApi

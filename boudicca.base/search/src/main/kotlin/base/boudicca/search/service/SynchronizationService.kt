@@ -1,6 +1,6 @@
 package base.boudicca.search.service
 
-import base.boudicca.Entry
+import base.boudicca.model.Entry
 import base.boudicca.api.eventdb.publisher.EventDB
 import base.boudicca.api.eventdb.publisher.EventDBException
 import base.boudicca.search.BoudiccaSearchProperties

@@ -1,4 +1,4 @@
-package base.boudicca
+package base.boudicca.model
 
 import java.util.*
 

@@ -1,6 +1,6 @@
 package base.boudicca.publisher.event.ical
 
-import base.boudicca.Event
+import base.boudicca.model.Event
 import base.boudicca.SemanticKeys
 import base.boudicca.api.search.QueryDTO
 import base.boudicca.api.search.Search

@@ -1,6 +1,6 @@
 package base.boudicca.api.enricher
 
-import base.boudicca.Event
+import base.boudicca.model.Event
 import events.boudicca.enricher.openapi.ApiClient
 import events.boudicca.enricher.openapi.ApiException
 import events.boudicca.enricher.openapi.api.EnricherControllerApi

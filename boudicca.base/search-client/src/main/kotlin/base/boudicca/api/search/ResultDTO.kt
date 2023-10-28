@@ -1,6 +1,6 @@
 package base.boudicca.api.search
 
-import base.boudicca.Entry
+import base.boudicca.model.Entry
 
 data class ResultDTO(
     val result: List<Entry>,

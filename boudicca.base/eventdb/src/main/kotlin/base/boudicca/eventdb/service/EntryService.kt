@@ -1,7 +1,7 @@
 package base.boudicca.eventdb.service
 
-import base.boudicca.Entry
-import base.boudicca.Event
+import base.boudicca.model.Entry
+import base.boudicca.model.Event
 import base.boudicca.SemanticKeys
 import base.boudicca.eventdb.BoudiccaEventDbProperties
 import base.boudicca.eventdb.model.EntryKey

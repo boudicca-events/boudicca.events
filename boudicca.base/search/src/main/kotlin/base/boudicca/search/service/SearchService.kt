@@ -1,7 +1,8 @@
 package base.boudicca.search.service
 
-import base.boudicca.Entry
+import base.boudicca.model.Entry
 import base.boudicca.SemanticKeys
+import base.boudicca.model.EventCategory
 import base.boudicca.search.model.Filters
 import base.boudicca.search.model.QueryDTO
 import base.boudicca.search.model.ResultDTO
@@ -56,34 +57,42 @@ class SearchService @Autowired constructor(
 
     private fun createQuery(searchDTO: SearchDTO): String {
         val queryParts = mutableListOf<String>()
-        if (!searchDTO.name.isNullOrBlank()) {
-            queryParts.add("\"*\" contains " + escape(searchDTO.name))
+        val name = searchDTO.name
+        if (!name.isNullOrBlank()) {
+            queryParts.add("\"*\" contains " + escape(name))
         }
-        if (!searchDTO.category.isNullOrBlank() && searchDTO.category != SEARCH_TYPE_ALL) {
-            queryParts.add(SemanticKeys.CATEGORY + " equals " + escape(searchDTO.category))
+        val category = searchDTO.category
+        if (!category.isNullOrBlank() && category != SEARCH_TYPE_ALL) {
+            queryParts.add(SemanticKeys.CATEGORY + " equals " + escape(category))
         }
-        if (!searchDTO.locationCity.isNullOrBlank()) {
-            queryParts.add(SemanticKeys.LOCATION_CITY + " equals " + escape(searchDTO.locationCity))
+        val locationCity = searchDTO.locationCity
+        if (!locationCity.isNullOrBlank()) {
+            queryParts.add(SemanticKeys.LOCATION_CITY + " equals " + escape(locationCity))
         }
-        if (!searchDTO.locationName.isNullOrBlank()) {
-            queryParts.add(SemanticKeys.LOCATION_NAME + " equals " + escape(searchDTO.locationName))
+        val locationName = searchDTO.locationName
+        if (!locationName.isNullOrBlank()) {
+            queryParts.add(SemanticKeys.LOCATION_NAME + " equals " + escape(locationName))
         }
-        if (searchDTO.fromDate != null) {
-            queryParts.add(SemanticKeys.STARTDATE + " after " + formatDate(searchDTO.fromDate))
+        val fromDate = searchDTO.fromDate
+        if (fromDate != null) {
+            queryParts.add(SemanticKeys.STARTDATE + " after " + formatDate(fromDate))
         }
-        if (searchDTO.toDate != null) {
-            queryParts.add(SemanticKeys.STARTDATE + " before " + formatDate(searchDTO.toDate))
+        val toDate = searchDTO.toDate
+        if (toDate != null) {
+            queryParts.add(SemanticKeys.STARTDATE + " before " + formatDate(toDate))
         }
-        if (searchDTO.durationShorter != null) {
+        val durationShorter = searchDTO.durationShorter
+        if (durationShorter != null) {
             queryParts.add(
                 "duration ${escape(SemanticKeys.STARTDATE)} ${escape(SemanticKeys.ENDDATE)} shorter "
-                        + formatNumber(searchDTO.durationShorter)
+                        + formatNumber(durationShorter)
             )
         }
-        if (searchDTO.durationLonger != null) {
+        val durationLonger = searchDTO.durationLonger
+        if (durationLonger != null) {
             queryParts.add(
                 "duration ${escape(SemanticKeys.STARTDATE)} ${escape(SemanticKeys.ENDDATE)} longer "
-                        + formatNumber(searchDTO.durationLonger)
+                        + formatNumber(durationLonger)
             )
         }
         for (flag in (searchDTO.flags ?: emptyList()).filter { !it.isNullOrBlank() }) {
@@ -114,7 +123,7 @@ class SearchService @Autowired constructor(
 
     @Deprecated("do use the enum directly")
     private fun getCategories(): Set<String> {
-        val categories = base.boudicca.EventCategory.entries.map(base.boudicca.EventCategory::name).toMutableSet()
+        val categories = EventCategory.entries.map(EventCategory::name).toMutableSet()
         categories.add(SEARCH_TYPE_ALL)
         categories.add(SEARCH_TYPE_OTHER)
         return categories.toSet()

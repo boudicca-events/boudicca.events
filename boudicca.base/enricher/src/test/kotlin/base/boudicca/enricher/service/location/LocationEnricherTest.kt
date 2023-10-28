@@ -1,6 +1,6 @@
 package base.boudicca.enricher.service.location
 
-import base.boudicca.Event
+import base.boudicca.model.Event
 import base.boudicca.SemanticKeys
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test

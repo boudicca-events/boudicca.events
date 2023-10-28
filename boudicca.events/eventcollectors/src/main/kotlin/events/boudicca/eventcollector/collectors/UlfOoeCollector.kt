@@ -1,6 +1,6 @@
 package events.boudicca.eventcollector.collectors
 
-import base.boudicca.Event
+import base.boudicca.model.Event
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.Fetcher
 import base.boudicca.api.eventcollector.TwoStepEventCollector

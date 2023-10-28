@@ -1,6 +1,6 @@
 package base.boudicca.enricher.controller
 
-import base.boudicca.Event
+import base.boudicca.model.Event
 import base.boudicca.enricher.model.EnrichRequestDTO
 import base.boudicca.enricher.service.EnricherService
 import org.springframework.beans.factory.annotation.Autowired

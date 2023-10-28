@@ -1,6 +1,6 @@
 package base.boudicca.api.eventcollector
 
-import base.boudicca.Event
+import base.boudicca.model.Event
 import org.slf4j.LoggerFactory
 
 abstract class TwoStepEventCollector<T>(private val name: String) : EventCollector {

@@ -1,8 +1,8 @@
 package base.boudicca.eventdb.service
 
-import base.boudicca.Event
-import base.boudicca.eventdb.model.ComplexSearchDto
-import base.boudicca.eventdb.model.SearchDTO
+import base.boudicca.model.Event
+import base.boudicca.model.search.ComplexSearchDto
+import base.boudicca.model.search.SearchDTO
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -19,8 +19,9 @@ class EventSearchService @Autowired constructor(private val entryService: EntryS
             .filter { e -> toDate == null || !e.startDate.isAfter(toDate) }
             .filter { e ->
                 val data = e.data
-                searchDTO.name == null || e.name.lowercase().contains(searchDTO.name.lowercase())
-                        || (data.values.any { it.lowercase().contains(searchDTO.name.lowercase()) })
+                val name = searchDTO.name
+                name == null || e.name.lowercase().contains(name.lowercase())
+                        || (data.values.any { it.lowercase().contains(name.lowercase()) })
             }
             .toSet()
     }
@@ -28,57 +29,67 @@ class EventSearchService @Autowired constructor(private val entryService: EntryS
     @Suppress("CyclomaticComplexMethod", "LongMethod")
     fun searchBy(searchDto: ComplexSearchDto): Set<Event> {
         val filters = mutableSetOf<(Event) -> Boolean>()
-        if (!searchDto.anyKeyExactMatch.isNullOrEmpty())
-            filters.add { event -> searchDto.anyKeyExactMatch.any { key -> event.data.containsKey(key) } }
-        if (!searchDto.allKeyExactMatch.isNullOrEmpty())
-            filters.add { event -> searchDto.allKeyExactMatch.all { key -> event.data.containsKey(key) } }
-        if (!searchDto.anyKeyOrValueContains.isNullOrEmpty())
+        val anyKeyExactMatch = searchDto.anyKeyExactMatch
+        if (!anyKeyExactMatch.isNullOrEmpty())
+            filters.add { event -> anyKeyExactMatch.any { key -> event.data.containsKey(key) } }
+        val allKeyExactMatch = searchDto.allKeyExactMatch
+        if (!allKeyExactMatch.isNullOrEmpty())
+            filters.add { event -> allKeyExactMatch.all { key -> event.data.containsKey(key) } }
+        val anyKeyOrValueContains = searchDto.anyKeyOrValueContains
+        if (!anyKeyOrValueContains.isNullOrEmpty())
             filters.add { event ->
-                searchDto.anyKeyOrValueContains.any {
+                anyKeyOrValueContains.any {
                     event.data.keys.any { key -> key.contains(it.lowercase()) } ||
                             event.data.values.any { value -> value.contains(it.lowercase()) }
                 }
             }
-        if (!searchDto.allKeyOrValueContains.isNullOrEmpty())
+        val allKeyOrValueContains = searchDto.allKeyOrValueContains
+        if (!allKeyOrValueContains.isNullOrEmpty())
             filters.add { event ->
-                searchDto.allKeyOrValueContains.all {
+                allKeyOrValueContains.all {
                     event.data.keys.any { key -> key.contains(it.lowercase()) } ||
                             event.data.values.any { value -> value.contains(it.lowercase()) }
                 }
             }
-        if (!searchDto.anyKeyOrValueExactMatch.isNullOrEmpty())
+        val anyKeyOrValueExactMatch = searchDto.anyKeyOrValueExactMatch
+        if (!anyKeyOrValueExactMatch.isNullOrEmpty())
             filters.add { event ->
-                searchDto.anyKeyOrValueExactMatch.any {
+                anyKeyOrValueExactMatch.any {
                     event.data.containsKey(it.lowercase()) || event.data.containsValue(it.lowercase())
                 }
             }
-        if (!searchDto.allKeyOrValueExactMatch.isNullOrEmpty())
+        val allKeyOrValueExactMatch = searchDto.allKeyOrValueExactMatch
+        if (!allKeyOrValueExactMatch.isNullOrEmpty())
             filters.add { event ->
-                searchDto.allKeyOrValueExactMatch.all {
+                allKeyOrValueExactMatch.all {
                     event.data.containsKey(it.lowercase()) || event.data.containsValue(it.lowercase())
                 }
             }
-        if (!searchDto.anyValueForKeyContains.isNullOrEmpty())
+        val anyValueForKeyContains = searchDto.anyValueForKeyContains
+        if (!anyValueForKeyContains.isNullOrEmpty())
             filters.add { event ->
-                searchDto.anyValueForKeyContains.any { (key, value) ->
+                anyValueForKeyContains.any { (key, value) ->
                     event.data[key]?.lowercase()?.contains(value) ?: false
                 }
             }
-        if (!searchDto.allValueForKeyContains.isNullOrEmpty())
+        val allValueForKeyContains = searchDto.allValueForKeyContains
+        if (!allValueForKeyContains.isNullOrEmpty())
             filters.add { event ->
-                searchDto.allValueForKeyContains.all { (key, value) ->
+                allValueForKeyContains.all { (key, value) ->
                     event.data[key]?.lowercase()?.contains(value) ?: false
                 }
             }
-        if (!searchDto.anyValueForKeyExactMatch.isNullOrEmpty())
+        val anyValueForKeyExactMatch = searchDto.anyValueForKeyExactMatch
+        if (!anyValueForKeyExactMatch.isNullOrEmpty())
             filters.add { event ->
-                searchDto.anyValueForKeyExactMatch.any { (key, value) ->
+                anyValueForKeyExactMatch.any { (key, value) ->
                     event.data[key]?.lowercase()?.equals(value) ?: false
                 }
             }
-        if (!searchDto.allValueForKeyExactMatch.isNullOrEmpty())
+        val allValueForKeyExactMatch = searchDto.allValueForKeyExactMatch
+        if (!allValueForKeyExactMatch.isNullOrEmpty())
             filters.add { event ->
-                searchDto.allValueForKeyExactMatch.all { (key, value) ->
+                allValueForKeyExactMatch.all { (key, value) ->
                     event.data[key]?.lowercase()?.equals(value) ?: false
                 }
             }

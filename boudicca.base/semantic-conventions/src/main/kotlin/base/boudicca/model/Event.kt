@@ -1,5 +1,7 @@
-package base.boudicca
+package base.boudicca.model
 
+import base.boudicca.SemanticKeys
+import base.boudicca.model.Entry
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException

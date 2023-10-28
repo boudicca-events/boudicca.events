@@ -1,6 +1,6 @@
 package base.boudicca.search.query.evaluator
 
-import base.boudicca.Entry
+import base.boudicca.model.Entry
 import base.boudicca.SemanticKeys
 import base.boudicca.search.service.query.*
 import base.boudicca.search.service.query.evaluator.SimpleEvaluator

@@ -1,6 +1,5 @@
 plugins {
     kotlin("jvm")
-    kotlin("plugin.allopen")
 }
 
 repositories {
@@ -16,7 +15,6 @@ kotlin {
 
 dependencies {
     api(project(":boudicca.base:semantic-conventions"))
-    implementation("org.jetbrains.kotlin:kotlin-stdlib")
     implementation(project(":boudicca.base:enricher-openapi"))
 }
 

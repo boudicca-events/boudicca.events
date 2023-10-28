@@ -1,7 +1,7 @@
 package base.boudicca.api.eventdb.publisher
 
-import base.boudicca.Entry
-import base.boudicca.Event
+import base.boudicca.model.Entry
+import base.boudicca.model.Event
 import events.boudicca.openapi.ApiClient
 import events.boudicca.openapi.ApiException
 import events.boudicca.openapi.api.PublisherResourceApi

@@ -1,7 +1,7 @@
 package base.boudicca.enricher.service
 
-import base.boudicca.Event
-import base.boudicca.EventCategory
+import base.boudicca.model.Event
+import base.boudicca.model.EventCategory
 import base.boudicca.SemanticKeys
 import org.springframework.stereotype.Service
 

@@ -108,6 +108,9 @@ class EventService @Autowired constructor(@Value("\${boudicca.search.url}") priv
             "city" to event.data[SemanticKeys.LOCATION_CITY],
             "category" to mapCategory(event.data[SemanticKeys.CATEGORY]),
             "pictureUrl" to URLEncoder.encode(event.data["pictureUrl"] ?: "", Charsets.UTF_8),
+            "accessibleEntry" to event.data[SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY],
+            "accessibleSeats" to event.data[SemanticKeys.ACCESSIBILITY_ACCESSIBLESEATS],
+            "accessibleToilets" to event.data[SemanticKeys.ACCESSIBILITY_ACCESSIBLETOILETS],
         )
     }
 

@@ -1,4 +1,4 @@
-FROM docker.io/openjdk:17-alpine
+FROM docker.io/eclipse-temurin:17-alpine
 
 EXPOSE 8080
 

@@ -65,11 +65,13 @@ We use certain data types for the properties we expect.
 
 ### Accessibility Properties
 
-| Key                             | Meaning                                                    | Format  |
-|---------------------------------|------------------------------------------------------------|---------|
-| accessibility.accessibleEntry   | If the entry/exit is accessible                            | boolean |
-| accessibility.accessibleSeats   | If there are wheelchair places available on the event hall | boolean |
-| accessibility.accessibleToilets | If there are accessible toilets available                  | boolean |
+| Key                                   | Meaning                                                    | Format  |
+|---------------------------------------|------------------------------------------------------------|---------|
+| accessibility.accessibleEntry         | If the entry/exit is accessible                            | boolean |
+| accessibility.accessibleSeats         | If there are wheelchair places available on the event hall | boolean |
+| accessibility.accessibleToilets       | If there are accessible toilets available                  | boolean |
+| accessibility.accessibleAktivpassLinz | If the Aktivpass Linz may be applicable                    | boolean |
+| accessibility.accessibleKulturpass    | If the Kulturpass may be applicable                        | boolean |
 
 ### Concert(/Music?) Properties
 

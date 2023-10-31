@@ -108,10 +108,27 @@ class EventService @Autowired constructor(@Value("\${boudicca.search.url}") priv
             "city" to event.data[SemanticKeys.LOCATION_CITY],
             "category" to mapCategory(event.data[SemanticKeys.CATEGORY]),
             "pictureUrl" to URLEncoder.encode(event.data["pictureUrl"] ?: "", Charsets.UTF_8),
-            "accessibleEntry" to event.data[SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY],
-            "accessibleSeats" to event.data[SemanticKeys.ACCESSIBILITY_ACCESSIBLESEATS],
-            "accessibleToilets" to event.data[SemanticKeys.ACCESSIBILITY_ACCESSIBLETOILETS],
+            "accessibilityProperties" to getAllAccessibilityValues(event).joinToString(", "),
         )
+    }
+
+    private fun getAllAccessibilityValues(event: Event): List<String> {
+        val list = mutableListOf<String>()
+        for (property in event.data) {
+            if (property.key.startsWith("accessibility.") && property.value.equals("true", true)) {
+                list.add(
+                    when (property.key) {
+                        SemanticKeys.ACCESSIBILITY_ACCESSIBLETOILETS -> "Barrierefreie Toiletten"
+                        SemanticKeys.ACCESSIBILITY_ACCESSIBLESEATS -> "Rollstuhlplatz"
+                        SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY -> "Barrierefreier Zugang"
+                        SemanticKeys.ACCESSIBILITY_AKTIVPASSLINZ -> "Aktivpass möglich"
+                        SemanticKeys.ACCESSIBILITY_KULTURPASS -> "Kulturpass möglich"
+                        else -> property.key
+                    }
+                )
+            }
+        }
+        return list.sortedWith(String.CASE_INSENSITIVE_ORDER)
     }
 
     private fun mapCategory(categoryString: String?): String? {

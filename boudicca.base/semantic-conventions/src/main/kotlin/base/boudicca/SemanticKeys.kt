@@ -25,6 +25,8 @@ object SemanticKeys {
     const val ACCESSIBILITY_ACCESSIBLEENTRY = "accessibility.accessibleEntry"
     const val ACCESSIBILITY_ACCESSIBLESEATS = "accessibility.accessibleSeats"
     const val ACCESSIBILITY_ACCESSIBLETOILETS = "accessibility.accessibleToilets"
+    const val ACCESSIBILITY_AKTIVPASSLINZ = "accessibility.accessibleAktivpassLinz"
+    const val ACCESSIBILITY_KULTURPASS = "accessibility.accessibleKulturpass"
 
     // concert properties
     const val CONCERT_GENRE = "concert.genre"

@@ -1,4 +1,4 @@
-package api
+package base.boudicca.search.api
 
 import base.boudicca.search.model.QueryDTO
 import base.boudicca.search.model.ResultDTO

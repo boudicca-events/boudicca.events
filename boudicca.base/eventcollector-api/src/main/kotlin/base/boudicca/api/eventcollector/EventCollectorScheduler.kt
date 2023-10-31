@@ -14,21 +14,10 @@ import java.util.function.Function
 
 class EventCollectorScheduler(
     private val interval: Duration = Duration.ofHours(24),
-    private val eventSink: Consumer<Event> = createBoudiccaEventSink(Configuration.getProperty("boudicca.eventdb.url")),
+    private val eventSink: Consumer<List<Event>> = createBoudiccaEventSink(Configuration.getProperty("boudicca.eventdb.url")),
     private val enricherFunction: Function<List<Event>, List<Event>>? =
         createBoudiccaEnricherFunction(Configuration.getProperty("boudicca.enricher.url"))
 ) : AutoCloseable {
-
-    constructor(
-        interval: Duration = Duration.ofHours(24),
-        eventDbUrl: String,
-    ) : this(interval, createBoudiccaEventSink(eventDbUrl), null)
-
-    constructor(
-        interval: Duration = Duration.ofHours(24),
-        eventDbUrl: String,
-        enricherUrl: String?
-    ) : this(interval, createBoudiccaEventSink(eventDbUrl), createBoudiccaEnricherFunction(enricherUrl))
 
     private val eventCollectors: MutableList<EventCollector> = mutableListOf()
     private val LOG = LoggerFactory.getLogger(this::class.java)
@@ -91,10 +80,8 @@ class EventCollectorScheduler(
             try {
                 val postProcessedEvents = events.map { postProcess(it, eventCollector.getName()) }
                 val enrichedEvents = enrich(postProcessedEvents)
-                for (event in enrichedEvents) {
-                    retry(LOG) {
-                        eventSink.accept(event)
-                    }
+                retry(LOG) {
+                    eventSink.accept(enrichedEvents)
                 }
             } catch (e: RuntimeException) {
                 LOG.error("could not ingest events, is the core available?", e)
@@ -150,7 +137,7 @@ class EventCollectorScheduler(
 
 }
 
-fun createBoudiccaEventSink(eventDbUrl: String?): Consumer<Event> {
+fun createBoudiccaEventSink(eventDbUrl: String?): Consumer<List<Event>> {
     if (eventDbUrl.isNullOrBlank()) {
         throw IllegalStateException("you need to specify the boudicca.eventdb.url property!")
     }
@@ -160,7 +147,7 @@ fun createBoudiccaEventSink(eventDbUrl: String?): Consumer<Event> {
     val password = userAndPassword.split(":")[1]
     val eventDb = EventDB(eventDbUrl, user, password)
     return Consumer {
-        eventDb.ingestEvents(listOf(it))
+        eventDb.ingestEvents(it)
     }
 }
 

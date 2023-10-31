@@ -1,5 +1,6 @@
 package base.boudicca.eventdb.controller
 
+import base.boudicca.eventdb.api.publisher.PublisherApi
 import base.boudicca.model.Entry
 import base.boudicca.eventdb.service.EntryService
 import org.springframework.beans.factory.annotation.Autowired

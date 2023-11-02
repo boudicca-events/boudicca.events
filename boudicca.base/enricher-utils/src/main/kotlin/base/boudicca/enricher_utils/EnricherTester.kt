@@ -1,6 +1,6 @@
 package base.boudicca.enricher_utils
 
-import base.boudicca.Event
+import base.boudicca.model.Event
 import base.boudicca.SemanticKeys
 import base.boudicca.api.enricher.Enricher
 import base.boudicca.api.eventdb.publisher.EventDB

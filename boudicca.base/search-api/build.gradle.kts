@@ -1,30 +1,24 @@
 plugins {
     kotlin("jvm")
-    kotlin("plugin.allopen")
+}
+
+description = "Boudicca Search API"
+version = "0.0.1"
+
+kotlin {
+    jvmToolchain(17)
+    compilerOptions {
+        javaParameters = true
+    }
 }
 
 repositories {
     mavenCentral()
-    mavenLocal()
 }
 
 dependencies {
-    api(project(":boudicca.base:semantic-conventions"))
-    implementation("org.jetbrains.kotlin:kotlin-stdlib")
-    implementation(project(":boudicca.base:search-openapi"))
-    testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
-}
-
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
-    }
-}
-
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions.javaParameters = true
-}
-
-tasks.withType<Test> {
-    useJUnitPlatform()
+    implementation(project(":boudicca.base:semantic-conventions"))
+    implementation("io.swagger:swagger-annotations:1.6.12")
+    implementation("org.springframework:spring-web:6.0.13")
+    implementation("org.springframework:spring-context:6.0.13")
 }

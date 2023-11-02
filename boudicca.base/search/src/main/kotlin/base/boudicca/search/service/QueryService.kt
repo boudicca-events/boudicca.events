@@ -1,6 +1,6 @@
 package base.boudicca.search.service
 
-import base.boudicca.Entry
+import base.boudicca.model.Entry
 import base.boudicca.search.model.QueryDTO
 import base.boudicca.search.model.ResultDTO
 import base.boudicca.search.service.query.Evaluator
@@ -22,11 +22,9 @@ class QueryService {
     private var evaluator: Evaluator = NoopEvaluator()
 
     fun query(queryDTO: QueryDTO): ResultDTO {
-        if (queryDTO.query == null) {
-            return Utils.offset(entries, queryDTO.offset, queryDTO.size)
-        }
+        val query = queryDTO.query ?: return Utils.offset(entries, queryDTO.offset, queryDTO.size)
 
-        return evaluateQuery(queryDTO.query, Page(queryDTO.offset ?: 0, queryDTO.size ?: 30))
+        return evaluateQuery(query, Page(queryDTO.offset ?: 0, queryDTO.size ?: 30))
     }
 
     @EventListener

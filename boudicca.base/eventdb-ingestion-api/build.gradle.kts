@@ -1,6 +1,5 @@
 plugins {
     kotlin("jvm")
-    id("io.cloudflight.autoconfigure.swagger-api-configure")
 }
 
 description = "Boudicca EventDB Ingestion API"

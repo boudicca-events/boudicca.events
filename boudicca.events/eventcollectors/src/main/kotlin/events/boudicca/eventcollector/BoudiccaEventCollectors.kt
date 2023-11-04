@@ -29,5 +29,6 @@ fun main() {
         .addEventCollector(GewaexhausCollector())
         .addEventCollector(OehJkuCollector())
         .addEventCollector(ArenaWienCollector())
+        .addEventCollector(ViperRoomCollector())
         .run()
 }

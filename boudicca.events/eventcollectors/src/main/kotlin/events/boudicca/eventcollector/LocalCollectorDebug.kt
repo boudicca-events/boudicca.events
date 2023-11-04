@@ -27,5 +27,6 @@ fun main() {
 //        .debug(StiftskonzerteCollector())
 //        .debug(GewaexhausCollector())
 //        .debug(OehJkuCollector())
-        .debug(ArenaWienCollector())
+//        .debug(ArenaWienCollector())
+        .debug(ViperRoomCollector())
 }

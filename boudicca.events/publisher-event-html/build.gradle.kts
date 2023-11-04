@@ -1,4 +1,5 @@
 import org.springframework.boot.gradle.tasks.bundling.BootJar
+import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
     id("org.springframework.boot")
@@ -24,7 +25,11 @@ dependencies {
 }
 
 tasks.named<BootJar>("bootJar") {
-    mainClass.set("events.boudicca.publisherhtml.PublisherHtmlApplicationKt")
+    mainClass.set("base.boudicca.publisher.event.html.PublisherHtmlApplicationKt")
+}
+
+tasks.named<BootRun>("bootRun") {
+    mainClass.set("base.boudicca.publisher.event.html.PublisherHtmlApplicationKt")
 }
 
 tasks.withType<Test> {

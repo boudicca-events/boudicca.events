@@ -14,7 +14,7 @@ fun main() {
     val events = getEvents()
     println("fetch all events took ${System.currentTimeMillis() - startTime}ms")
 
-    val filteredEvents = events.filter { it.data[SemanticKeys.COLLECTORNAME] == "linz termine" }
+    val filteredEvents = events//.filter { it.data[SemanticKeys.COLLECTORNAME] == "posthof" }
 
     startTime = System.currentTimeMillis()
     val enrichedEvents = enrich(filteredEvents)

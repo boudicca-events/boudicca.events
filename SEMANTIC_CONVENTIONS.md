@@ -19,7 +19,8 @@ We use certain data types for the properties we expect.
 * `date`: [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) Timestamp as text, for example: `2009-06-30T18:30:00+02:00`
 * `url`: A URL as text
 * `coordinates`: longitude + latitude in Decimal degrees (DD) in the format `<longitute>, <latitude>`
-* `list<?>`: A list of elements, the `?` describes the type of the elements in the list
+* `list<?>`: A list of elements, the `?` describes the type of the elements in the list. Currently elements in a list
+  are seperated by a newline, but this will probably change sometime
 * `enum<?>`: Has to be one of the specified distinct values
 * `boolean`: The text "true" or "false"
 
@@ -75,10 +76,10 @@ We use certain data types for the properties we expect.
 
 ### Concert(/Music?) Properties
 
-| Key              | Meaning                                        | Format     |
-|------------------|------------------------------------------------|------------|
-| concert.genre    | Genre of the concert                           | text       |
-| concert.bandlist | List of all bands playing (main act + support) | list<text> |
+| Key              | Meaning                   | Format     |
+|------------------|---------------------------|------------|
+| concert.genre    | Genre of the concert      | text       |
+| concert.bandlist | List of all bands playing | list<text> |
 
 ### Internal Properties
 

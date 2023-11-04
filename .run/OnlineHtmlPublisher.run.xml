@@ -4,7 +4,7 @@
       <env name="BOUDICCA_SEARCH_URL" value="https://search.boudicca.events" />
     </envs>
     <option name="MAIN_CLASS_NAME" value="base.boudicca.publisher.event.html.PublisherHtmlApplicationKt" />
-    <module name="boudicca.boudicca.base.publisher-event-html.main" />
+    <module name="boudicca.boudicca.events.publisher-event-html.main" />
     <shortenClasspath name="NONE" />
     <extension name="net.ashald.envfile">
       <option name="IS_ENABLED" value="false" />

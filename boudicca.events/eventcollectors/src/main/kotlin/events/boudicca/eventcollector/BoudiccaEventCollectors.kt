@@ -29,5 +29,6 @@ fun main() {
         .addEventCollector(StiftskonzerteCollector())
         .addEventCollector(GewaexhausCollector())
         .addEventCollector(OehJkuCollector())
+        .addEventCollector(ArenaWienCollector())
         .run()
 }

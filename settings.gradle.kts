@@ -21,5 +21,6 @@ include("boudicca.base:search-client")
 include("boudicca.base:semantic-conventions")
 
 include("boudicca.events:eventcollectors")
+include("boudicca.events:publisher-event-html")
 
 rootProject.name = "boudicca"

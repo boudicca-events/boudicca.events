@@ -4,7 +4,6 @@ import base.boudicca.api.eventcollector.EventCollectorScheduler
 import events.boudicca.eventcollector.collectors.*
 
 fun main() {
-    Thread.sleep(10000) // let eventdb startup first when both are deployed.... we should do a better thing here
     EventCollectorScheduler()
         .startWebUi()
         .addEventCollector(LinzTermineCollector())
@@ -29,5 +28,7 @@ fun main() {
         .addEventCollector(StiftskonzerteCollector())
         .addEventCollector(GewaexhausCollector())
         .addEventCollector(OehJkuCollector())
+        .addEventCollector(ArenaWienCollector())
+        .addEventCollector(ViperRoomCollector())
         .run()
 }

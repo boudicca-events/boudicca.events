@@ -26,5 +26,7 @@ fun main() {
 //        .debug(UlfOoeCollector())
 //        .debug(StiftskonzerteCollector())
 //        .debug(GewaexhausCollector())
-        .debug(OehJkuCollector())
+//        .debug(OehJkuCollector())
+//        .debug(ArenaWienCollector())
+        .debug(ViperRoomCollector())
 }

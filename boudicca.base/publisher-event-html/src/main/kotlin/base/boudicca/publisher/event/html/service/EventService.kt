@@ -78,6 +78,9 @@ class EventService @Autowired constructor(@Value("\${boudicca.search.url}") priv
         for (flag in (searchDTO.flags ?: emptyList()).filter { !it.isNullOrBlank() }) {
             queryParts.add(equals(flag!!, "true"))
         }
+        if (!searchDTO.bandName.isNullOrBlank()) {
+            queryParts.add(contains(SemanticKeys.CONCERT_BANDLIST, searchDTO.bandName!!))
+        }
         return and(queryParts)
     }
 
@@ -87,6 +90,7 @@ class EventService @Autowired constructor(@Value("\${boudicca.search.url}") priv
                 listOf(
                     FilterQueryEntryDTO(SemanticKeys.LOCATION_NAME),
                     FilterQueryEntryDTO(SemanticKeys.LOCATION_CITY),
+                    FilterQueryEntryDTO(SemanticKeys.CONCERT_BANDLIST, true),
                 )
             )
         )
@@ -96,6 +100,7 @@ class EventService @Autowired constructor(@Value("\${boudicca.search.url}") priv
                 .sortedWith(Comparator.comparing({ it.second }, String.CASE_INSENSITIVE_ORDER)),
             filters[SemanticKeys.LOCATION_NAME]!!.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Pair(it, it) },
             filters[SemanticKeys.LOCATION_CITY]!!.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Pair(it, it) },
+            filters[SemanticKeys.CONCERT_BANDLIST]!!.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Pair(it, it) },
         )
     }
 
@@ -188,6 +193,7 @@ class EventService @Autowired constructor(@Value("\${boudicca.search.url}") priv
         val categories: List<Pair<String, String>>,
         val locationNames: List<Pair<String, String>>,
         val locationCities: List<Pair<String, String>>,
+        val bandNames: List<Pair<String, String>>,
     )
 }
 

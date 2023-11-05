@@ -3,12 +3,13 @@ package base.boudicca.api.search
 import base.boudicca.model.Event
 import base.boudicca.search.openapi.ApiClient
 import base.boudicca.search.openapi.ApiException
-import base.boudicca.search.openapi.api.SearchResourceApi
+import base.boudicca.search.openapi.api.SearchControllerApi
+import base.boudicca.search.openapi.model.FilterQueryEntryDTO
 import base.boudicca.search.openapi.model.Filters
 
 class Search(enricherUrl: String) {
 
-    private val searchApi: SearchResourceApi
+    private val searchApi: SearchControllerApi
 
     init {
         if (enricherUrl.isBlank()) {
@@ -17,7 +18,7 @@ class Search(enricherUrl: String) {
         val apiClient = ApiClient()
         apiClient.updateBaseUri(enricherUrl)
 
-        searchApi = SearchResourceApi(apiClient)
+        searchApi = SearchControllerApi(apiClient)
     }
 
     @Deprecated("use query Events")
@@ -38,12 +39,26 @@ class Search(enricherUrl: String) {
         }
     }
 
+    @Deprecated("use getFiltersFor method")
     fun getFilters(): FiltersDTO {
         try {
             return mapToFiltersDTO(searchApi.filters())
         } catch (e: ApiException) {
             throw SearchException("could not reach eventdb", e)
         }
+    }
+
+    fun getFiltersFor(filterQueryDTO: FilterQueryDTO): FilterResultDTO {
+        try {
+            return searchApi.filtersFor(mapFilterQueryDTOToApi(filterQueryDTO))
+        } catch (e: ApiException) {
+            throw SearchException("could not reach eventdb", e)
+        }
+    }
+
+    private fun mapFilterQueryDTOToApi(filterQueryDTO: FilterQueryDTO): base.boudicca.search.openapi.model.FilterQueryDTO {
+        return base.boudicca.search.openapi.model.FilterQueryDTO()
+            .entries(filterQueryDTO.entries.map { FilterQueryEntryDTO().name(it.name).multiline(it.multiline) })
     }
 
     private fun mapToFiltersDTO(filtersGet: Filters): FiltersDTO {

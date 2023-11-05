@@ -7,6 +7,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const filterSearchButton = document.getElementById("filterSearchButton");
   const resetSearchFormButton = document.getElementById("resetSearchForm");
   const loadMoreButton = document.getElementById("loadMoreButton");
+  const categorySelect = document.getElementById("category");
+  const bandNameSelect = document.getElementById("bandName");
+  const musicFieldSet = document.getElementById("musicFieldSet");
 
   loadMoreButton.addEventListener("click", () => {
     onLoadMoreSearch();
@@ -125,4 +128,16 @@ document.addEventListener("DOMContentLoaded", () => {
   hydrateFormValues();
 
   searchForm.addEventListener("submit", onSearch);
+
+  const onCategoryChange = () => {
+    let category = categorySelect.value;
+    if (category === "MUSIC") {
+      musicFieldSet.classList.remove("hidden");
+    } else {
+      bandNameSelect.selectedIndex = 0;
+      musicFieldSet.classList.add("hidden");
+    }
+  };
+  categorySelect.addEventListener("change", onCategoryChange);
+  onCategoryChange();
 });

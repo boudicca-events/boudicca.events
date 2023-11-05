@@ -13,6 +13,7 @@ data class SearchDTO(
     @RequestParam("flags", required = false) var flags: List<String?>?,
     @RequestParam("durationShorter", required = false) var durationShorter: Double?,
     @RequestParam("durationLonger", required = false) var durationLonger: Double?,
+    @RequestParam("bandName", required = false) var bandName: String?,
 ) {
-    constructor() : this(null, null, null, null, null, null, null, null, null, null)
+    constructor() : this(null, null, null, null, null, null, null, null, null, null, null)
 }

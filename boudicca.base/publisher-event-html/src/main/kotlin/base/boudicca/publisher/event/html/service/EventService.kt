@@ -1,8 +1,7 @@
 package base.boudicca.publisher.event.html.service
 
-import base.boudicca.model.Event
-import base.boudicca.model.EventCategory
 import base.boudicca.SemanticKeys
+import base.boudicca.api.search.*
 import base.boudicca.api.search.BoudiccaQueryBuilder.after
 import base.boudicca.api.search.BoudiccaQueryBuilder.and
 import base.boudicca.api.search.BoudiccaQueryBuilder.before
@@ -10,9 +9,8 @@ import base.boudicca.api.search.BoudiccaQueryBuilder.contains
 import base.boudicca.api.search.BoudiccaQueryBuilder.durationLonger
 import base.boudicca.api.search.BoudiccaQueryBuilder.durationShorter
 import base.boudicca.api.search.BoudiccaQueryBuilder.equals
-import base.boudicca.api.search.QueryDTO
-import base.boudicca.api.search.Search
-import base.boudicca.api.search.SearchResultDTO
+import base.boudicca.model.Event
+import base.boudicca.model.EventCategory
 import base.boudicca.publisher.event.html.model.SearchDTO
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -80,17 +78,29 @@ class EventService @Autowired constructor(@Value("\${boudicca.search.url}") priv
         for (flag in (searchDTO.flags ?: emptyList()).filter { !it.isNullOrBlank() }) {
             queryParts.add(equals(flag!!, "true"))
         }
+        if (!searchDTO.bandName.isNullOrBlank()) {
+            queryParts.add(contains(SemanticKeys.CONCERT_BANDLIST, searchDTO.bandName!!))
+        }
         return and(queryParts)
     }
 
     fun filters(): Filters {
-        val filters = search.getFilters()
+        val filters = search.getFiltersFor(
+            FilterQueryDTO(
+                listOf(
+                    FilterQueryEntryDTO(SemanticKeys.LOCATION_NAME),
+                    FilterQueryEntryDTO(SemanticKeys.LOCATION_CITY),
+                    FilterQueryEntryDTO(SemanticKeys.CONCERT_BANDLIST, true),
+                )
+            )
+        )
         return Filters(
             EventCategory.entries
                 .map { Pair(it.name, frontEndName(it)) }
                 .sortedWith(Comparator.comparing({ it.second }, String.CASE_INSENSITIVE_ORDER)),
-            filters.locationNames.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Pair(it, it) },
-            filters.locationCities.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Pair(it, it) },
+            filters[SemanticKeys.LOCATION_NAME]!!.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Pair(it, it) },
+            filters[SemanticKeys.LOCATION_CITY]!!.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Pair(it, it) },
+            filters[SemanticKeys.CONCERT_BANDLIST]!!.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Pair(it, it) },
         )
     }
 
@@ -183,6 +193,7 @@ class EventService @Autowired constructor(@Value("\${boudicca.search.url}") priv
         val categories: List<Pair<String, String>>,
         val locationNames: List<Pair<String, String>>,
         val locationCities: List<Pair<String, String>>,
+        val bandNames: List<Pair<String, String>>,
     )
 }
 

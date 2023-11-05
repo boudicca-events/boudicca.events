@@ -34,6 +34,13 @@ class SearchController @Autowired constructor(
         return searchService.filters()
     }
 
+    override fun filtersFor(@RequestBody filterQueryDTO: FilterQueryDTO): FilterResultDTO {
+        if (boudiccaSearchProperties.localMode) {
+            synchronizationService.update()
+        }
+        return searchService.filtersFor(filterQueryDTO)
+    }
+
     @Deprecated("it is recommended to use the query endpoint", ReplaceWith("/queryEntries"), DeprecationLevel.WARNING)
     override fun query(@RequestBody queryDTO: QueryDTO): SearchResultDTO {
         if (boudiccaSearchProperties.localMode) {

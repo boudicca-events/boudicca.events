@@ -1,12 +1,9 @@
 package base.boudicca.search.service
 
-import base.boudicca.model.Entry
 import base.boudicca.SemanticKeys
+import base.boudicca.model.Entry
 import base.boudicca.model.EventCategory
-import base.boudicca.search.model.Filters
-import base.boudicca.search.model.QueryDTO
-import base.boudicca.search.model.ResultDTO
-import base.boudicca.search.model.SearchDTO
+import base.boudicca.search.model.*
 import base.boudicca.search.service.util.Utils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.event.EventListener
@@ -14,6 +11,7 @@ import org.springframework.stereotype.Service
 import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.util.concurrent.ConcurrentHashMap
 
 private const val SEARCH_TYPE_ALL = "ALL"
 private const val SEARCH_TYPE_OTHER = "OTHER"
@@ -25,12 +23,7 @@ class SearchService @Autowired constructor(
 
     @Volatile
     private var entries = emptyList<Entry>()
-
-    @Volatile
-    private var locationNames = emptySet<String>()
-
-    @Volatile
-    private var locationCities = emptySet<String>()
+    private val cache = ConcurrentHashMap<String, List<String>>()
 
     @Deprecated("use queries instead")
     fun search(searchDTO: SearchDTO): ResultDTO {
@@ -45,14 +38,7 @@ class SearchService @Autowired constructor(
     @EventListener
     fun onEventsUpdate(event: EntriesUpdatedEvent) {
         this.entries = Utils.order(event.entries)
-        locationNames = this.entries
-            .mapNotNull { it[SemanticKeys.LOCATION_NAME] }
-            .filter { it.isNotBlank() }
-            .toSet()
-        locationCities = this.entries
-            .mapNotNull { it[SemanticKeys.LOCATION_CITY] }
-            .filter { it.isNotBlank() }
-            .toSet()
+        this.cache.clear()
     }
 
     private fun createQuery(searchDTO: SearchDTO): String {
@@ -113,11 +99,19 @@ class SearchService @Autowired constructor(
         return "\"" + name.replace("\\", "\\\\").replace("\"", "\\\"") + "\""
     }
 
+    @Deprecated("use filtersFor method")
     fun filters(): Filters {
+        val filterQueryDTO = FilterQueryDTO(
+            listOf(
+                FilterQueryEntryDTO(SemanticKeys.LOCATION_NAME),
+                FilterQueryEntryDTO(SemanticKeys.LOCATION_CITY)
+            )
+        )
+        val result = filtersFor(filterQueryDTO)
         return Filters(
             getCategories(),
-            getLocationNames(),
-            getLocationCities(),
+            result[SemanticKeys.LOCATION_NAME]!!.toSet(),
+            result[SemanticKeys.LOCATION_CITY]!!.toSet(),
         )
     }
 
@@ -129,12 +123,38 @@ class SearchService @Autowired constructor(
         return categories.toSet()
     }
 
-    private fun getLocationNames(): Set<String> {
-        return locationNames
+    fun filtersFor(filterQueryDTO: FilterQueryDTO): FilterResultDTO {
+        val result = mutableMapOf<String, List<String>>()
+
+        for (entry in filterQueryDTO.entries) {
+            var cacheEntry = cache[entry.name]
+            if (cacheEntry == null) {
+                cacheEntry = getFilterValuesFor(entry)
+                cache[entry.name] = cacheEntry
+            }
+            result[entry.name] = cacheEntry
+        }
+
+        return result
     }
 
-    private fun getLocationCities(): Set<String> {
-        return locationCities
+    private fun getFilterValuesFor(entry: FilterQueryEntryDTO): List<String> {
+        val result = mutableSetOf<String>()
+
+        for (e in entries) {
+            if (e.containsKey(entry.name)) {
+                val value = e[entry.name]!!
+                if (entry.multiline) {
+                    for (line in value.split("\n")) {
+                        result.add(line)
+                    }
+                } else {
+                    result.add(value)
+                }
+            }
+        }
+
+        return result.toList()
     }
 
 }

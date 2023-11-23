@@ -6,7 +6,7 @@ description = "Boudicca EventDB Ingestion API"
 version = "0.0.1"
 
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain(rootProject.ext["jvmVersion"] as Int)
     compilerOptions {
         javaParameters = true
     }

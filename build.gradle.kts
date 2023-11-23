@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "1.9.20" apply false
+    kotlin("jvm") version "1.9.21" apply false
     kotlin("plugin.allopen") version "1.9.20" apply false
     kotlin("plugin.spring") version "1.9.21" apply false
     id("org.springframework.boot") version "3.2.0" apply false

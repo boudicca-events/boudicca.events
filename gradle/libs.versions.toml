@@ -1,0 +1,25 @@
+[versions]
+kotlin = "1.9.20"
+kotlinx-serialization = "1.6.0"
+maven-artifact = "3.5.0"
+jupiter = "5.10.0"
+assertj = "3.22.0"
+jackson = "2.14.2"
+clf-platform-spring = "0.9.3"
+
+[libraries]
+cloudflight-platform-spring-bom = { module = "io.cloudflight.platform.spring:platform-spring-bom", version.ref = "clf-platform-spring" }
+cloudflight-platform-spring-test-bom = { module = "io.cloudflight.platform.spring:platform-spring-test-bom", version.ref = "clf-platform-spring" }
+
+# IMPORTANT: do not update, see https://github.com/gigaSproule/swagger-gradle-plugin/issues/186
+swagger-gradle-plugin = { module = "com.benjaminsproule:swagger-gradle-plugin", version = "1.0.8" }
+swagger-codegen-plugin = { module = "gradle.plugin.org.hidetake:gradle-swagger-generator-plugin", version = "2.19.1" }
+
+junit-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "jupiter" }
+junit-params = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "jupiter" }
+junit-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "jupiter" }
+
+assertj-core = { module = "org.assertj:assertj-core", version.ref = "assertj" }
+
+[bundles]
+testImplementationDependencies = ["junit-api", "junit-params", "assertj-core"]

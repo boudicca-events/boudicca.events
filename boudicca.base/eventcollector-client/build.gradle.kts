@@ -9,7 +9,7 @@ repositories {
 }
 
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain(rootProject.ext["jvmVersion"] as Int)
     compilerOptions {
         javaParameters = true
     }

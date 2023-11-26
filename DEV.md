@@ -4,6 +4,7 @@
 
 We use Intellij Idea for which launch configs are found in the [.run](.run) folder.
 You should be able to use other IDEs since our build is a simple multiproject Gradle build.
+Please note that we require Java 21 to run.
 
 ### First step
 

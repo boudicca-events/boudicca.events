@@ -1,4 +1,4 @@
-FROM docker.io/openjdk:17-alpine
+FROM docker.io/eclipse-temurin:21-alpine
 
 COPY build/libs/boudicca-eventcollectors.jar /opt/boudicca-eventcollectors/
 WORKDIR /opt/boudicca-eventcollectors/

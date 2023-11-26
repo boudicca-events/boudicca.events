@@ -1,9 +1,9 @@
 package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
-import base.boudicca.model.Event
 import base.boudicca.api.eventcollector.EventCollector
 import base.boudicca.api.eventcollector.Fetcher
+import base.boudicca.model.Event
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -139,11 +139,20 @@ class LinzTermineCollector : EventCollector {
                         },
                         it.attr("freeofcharge") == "1",
                         findLink(it),
-                        it.select("location").attr("id").toInt(),
+                        findLocationId(it),
                         it.select("location").text()
                     )
                 }
         }.distinctBy { it.id }
+    }
+
+    private fun findLocationId(event: Element): Int? {
+        val idAttr = event.select("location").attr("id")
+        return if (!idAttr.isNullOrBlank()) {
+            idAttr.toInt()
+        } else {
+            null
+        }
     }
 
     private fun findLink(event: Element): String {
@@ -187,7 +196,7 @@ class LinzTermineCollector : EventCollector {
         val dates: List<Pair<ZonedDateTime, ZonedDateTime>>,
         val freeOfCharge: Boolean,
         val url: String,
-        val locationId: Int,
+        val locationId: Int?,
         val locationFallbackName: String,
     )
 }

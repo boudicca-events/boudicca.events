@@ -2,10 +2,12 @@ package base.boudicca.api.eventcollector
 
 import base.boudicca.model.Event
 import base.boudicca.api.eventcollector.collections.Collections
+import base.boudicca.api.eventcollector.logging.CollectionsFilter
 
 class EventCollectorDebugger {
 
     fun debug(eventCollector: EventCollector) {
+        CollectionsFilter.alsoLog = true
         val collectedEvents = mutableListOf<Event>()
         val scheduler = EventCollectorScheduler(eventSink = { collectedEvents.addAll(it) }, enricherFunction = null)
             .startWebUi()

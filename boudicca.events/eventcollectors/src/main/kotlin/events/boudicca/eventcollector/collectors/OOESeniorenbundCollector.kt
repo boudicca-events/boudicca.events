@@ -1,9 +1,9 @@
 package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
-import base.boudicca.model.Event
 import base.boudicca.api.eventcollector.Fetcher
 import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.model.Event
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.time.LocalDate
@@ -28,23 +28,25 @@ class OOESeniorenbundCollector : TwoStepEventCollector<Pair<Document, String>>("
             .map { Pair(Jsoup.parse(fetcher.fetchUrl(it)), it) }
     }
 
-    override fun parseEvent(event: Pair<Document, String>): Event {
+    override fun parseMultipleEvents(event: Pair<Document, String>): List<Event> {
         val (eventDoc, url) = event
         val data = mutableMapOf<String, String>()
 
         val name = eventDoc.select("div.title>p").text()
-        val (startDate, endDate) = getDates(eventDoc)
-        val description = eventDoc.select("div.subtitle>p").text()
+        val dates = getDates(eventDoc)
+        return dates.map {
+            val (startDate, endDate) = it
+            val description = eventDoc.select("div.subtitle>p").text()
 
-        data[SemanticKeys.URL] = cleanupUrl(url)
-        data[SemanticKeys.LOCATION_NAME] =
-            eventDoc.select("div.venue").text() //TODO location name and city here are not seperated at all -.-
-        if (endDate != null) {
-            data[SemanticKeys.ENDDATE] = endDate.format(DateTimeFormatter.ISO_DATE_TIME)
+            data[SemanticKeys.URL] = cleanupUrl(url)
+            data[SemanticKeys.LOCATION_NAME] =
+                eventDoc.select("div.venue").text() //TODO location name and city here are not seperated at all -.-
+            if (endDate != null) {
+                data[SemanticKeys.ENDDATE] = endDate.format(DateTimeFormatter.ISO_DATE_TIME)
+            }
+            data[SemanticKeys.DESCRIPTION] = description
+            Event(name, startDate.toOffsetDateTime(), data)
         }
-        data[SemanticKeys.DESCRIPTION] = description
-
-        return Event(name, startDate.toOffsetDateTime(), data)
     }
 
     private fun cleanupUrl(url: String): String {
@@ -60,9 +62,12 @@ class OOESeniorenbundCollector : TwoStepEventCollector<Pair<Document, String>>("
         }
     }
 
-    private fun getDates(event: Document): Pair<ZonedDateTime, ZonedDateTime?> {
-        val dateString = event.select("div.date>p").text()
+    private fun getDates(event: Document): List<Pair<ZonedDateTime, ZonedDateTime?>> {
+        return event.select("div.date>p").toList()
+            .map { getSingleDates(it.text()) }
+    }
 
+    private fun getSingleDates(dateString: String?): Pair<ZonedDateTime, ZonedDateTime?> {
         val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.uuuu")
         val timeFormatter = DateTimeFormatter.ofPattern("kk:mm")
 

@@ -9,7 +9,7 @@ data class FullCollection(
     var startTime: Long,
     var endTime: Long,
     val singleCollections: MutableList<SingleCollection>,
-    val logLines: MutableList<Pair<Boolean, ByteArray>>,
+    val logLines: MutableList<Pair<LogLevel, ByteArray>>,
 ) {
     constructor() : this(
         UUID.randomUUID(),
@@ -31,7 +31,7 @@ data class SingleCollection(
     var collector: EventCollector?,
     var totalEventsCollected: Int?,
     val httpCalls: MutableList<HttpCall>,
-    val logLines: MutableList<Pair<Boolean, ByteArray>>,
+    val logLines: MutableList<Pair<LogLevel, ByteArray>>,
 ) {
     constructor() : this(UUID.randomUUID(), 0, 0, null, null, mutableListOf(), mutableListOf())
 
@@ -56,4 +56,10 @@ data class HttpCall(
     var responseCode: Int,
 ) {
     constructor() : this(0, 0, null, null, 0)
+}
+
+enum class LogLevel {
+    INFO,
+    WARNING,
+    ERROR
 }

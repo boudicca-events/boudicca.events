@@ -1,10 +1,10 @@
 package base.boudicca.api.eventcollector
 
-import base.boudicca.model.Event
 import base.boudicca.SemanticKeys
 import base.boudicca.api.enricher.Enricher
 import base.boudicca.api.eventcollector.collections.Collections
 import base.boudicca.api.eventdb.ingest.EventDB
+import base.boudicca.model.Event
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.time.Duration
@@ -74,9 +74,7 @@ class EventCollectorScheduler(
         try {
             val events = eventCollector.collectEvents()
             Collections.getCurrentSingleCollection()!!.totalEventsCollected = events.size
-            if (events.isEmpty()) {
-                LOG.warn("collector collected 0 events!")
-            }
+            validateCollection(eventCollector, events)
             try {
                 val postProcessedEvents = events.map { postProcess(it, eventCollector.getName()) }
                 val enrichedEvents = enrich(postProcessedEvents)
@@ -93,6 +91,28 @@ class EventCollectorScheduler(
         }
     }
 
+    private fun validateCollection(eventCollector: EventCollector, events: List<Event>) {
+        if (events.isEmpty()) {
+            LOG.warn("collector collected 0 events!")
+        }
+        val nonBlankFields = mutableSetOf<String>()
+        val allFields = mutableSetOf<String>()
+        for (event in events) {
+            if (event.name.isBlank()) {
+                LOG.warn("event has empty name: $event")
+            }
+            for (entry in event.data.entries) {
+                allFields.add(entry.key)
+                if (entry.value.isNotBlank()) {
+                    nonBlankFields.add(entry.key)
+                }
+            }
+        }
+        for (field in allFields.minus(nonBlankFields)) {
+            LOG.warn("eventcollector ${eventCollector.getName()} has blank values for all events for field $field")
+        }
+    }
+
     private fun enrich(events: List<Event>): List<Event> {
         return try {
             retry(LOG) {
@@ -105,14 +125,6 @@ class EventCollectorScheduler(
     }
 
     private fun postProcess(event: Event, collectorName: String): Event {
-        if (event.name.isBlank()) {
-            LOG.warn("event has empty name: $event")
-        }
-        for (entry in event.data.entries) {
-            if (entry.value.isBlank()) {
-                LOG.warn("event contains empty field ${entry.key}: $event")
-            }
-        }
         if (!event.data.containsKey(SemanticKeys.COLLECTORNAME)) {
             return Event(
                 event.name,

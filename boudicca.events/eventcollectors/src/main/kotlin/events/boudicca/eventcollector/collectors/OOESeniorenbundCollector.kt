@@ -42,9 +42,7 @@ class OOESeniorenbundCollector : TwoStepEventCollector<Pair<Document, String>>("
         if (endDate != null) {
             data[SemanticKeys.ENDDATE] = endDate.format(DateTimeFormatter.ISO_DATE_TIME)
         }
-        if (description.isNotBlank()) {
-            data[SemanticKeys.DESCRIPTION] = description
-        }
+        data[SemanticKeys.DESCRIPTION] = description
 
         return Event(name, startDate.toOffsetDateTime(), data)
     }

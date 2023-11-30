@@ -93,9 +93,7 @@ class LandestheaterLinzCollector :
             "https://www.landestheater-linz.at" + site.second.select("div.lth-slide img").first()!!.attr("src")
 
         val type = overview.select("div.lth-evitem-what > div.lth-evitem-type").text()
-        if (type.isNotBlank()) {
-            data[SemanticKeys.TYPE] = type
-        }
+        data[SemanticKeys.TYPE] = type
 
         val locationName =
             site.second.select("div.lth-layout-ctr > div > div > span > span").get(1).text().substring(11).trim()

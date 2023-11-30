@@ -34,13 +34,9 @@ class StadtwerkstattCollector : TwoStepEventCollector<String>("stadtwerkstatt") 
         val data = mutableMapOf<String, String>()
         data[SemanticKeys.URL] = event
         val type = eventSite.select("div.genre").text()
-        if (type.isNotBlank()) {
-            data[SemanticKeys.TYPE] = type
-        }
+        data[SemanticKeys.TYPE] = type
         val description = eventSite.select("div.event-text").text()
-        if (description.isNotBlank()) {
-            data[SemanticKeys.DESCRIPTION] = description
-        }
+        data[SemanticKeys.DESCRIPTION] = description
 
         val img = eventSite.select("div.event-text img")
         if (!img.isEmpty()) {

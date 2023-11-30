@@ -1,9 +1,7 @@
 package base.boudicca.api.eventcollector
 
+import base.boudicca.api.eventcollector.collections.*
 import base.boudicca.api.eventcollector.collections.Collections
-import base.boudicca.api.eventcollector.collections.FullCollection
-import base.boudicca.api.eventcollector.collections.HttpCall
-import base.boudicca.api.eventcollector.collections.SingleCollection
 import com.sun.net.httpserver.HttpExchange
 import com.sun.net.httpserver.HttpServer
 import org.apache.velocity.VelocityContext
@@ -143,7 +141,11 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
             "errorsCount" to fullCollection.singleCollections
                 .flatMap { it.logLines }
                 .union(fullCollection.logLines)
-                .count { it.first }.toString(),
+                .count { it.first == LogLevel.ERROR }.toString(),
+            "warningsCount" to fullCollection.singleCollections
+                .flatMap { it.logLines }
+                .union(fullCollection.logLines)
+                .count { it.first == LogLevel.WARNING }.toString(),
             "totalEventsCollected" to fullCollection.singleCollections
                 .sumOf { it.totalEventsCollected ?: 0 },
             "singleCollections" to
@@ -167,7 +169,8 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
                 "name" to EscapeTool().html(it.collector!!.getName()),
                 "duration" to formatDuration(it.startTime, it.endTime),
                 "startEndTime" to formatStartEndTime(it.startTime, it.endTime),
-                "errorsCount" to it.logLines.count { it.first }.toString(),
+                "errorsCount" to it.logLines.count { it.first == LogLevel.ERROR }.toString(),
+                "warningsCount" to it.logLines.count { it.first == LogLevel.WARNING }.toString(),
                 "totalEventsCollected" to (it.totalEventsCollected ?: "-").toString(),
             )
         } else {
@@ -177,6 +180,7 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
                 "duration" to "-",
                 "startEndTime" to "-",
                 "errorsCount" to "-",
+                "warningsCount" to "-",
                 "totalEventsCollected" to "-",
             )
         }
@@ -255,7 +259,7 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
         }
     }
 
-    private fun formatLogLines(logLines: List<Pair<Boolean, ByteArray>>): String? =
+    private fun formatLogLines(logLines: List<Pair<LogLevel, ByteArray>>): String? =
         EscapeTool().html(logLines.joinToString("\n") { String(it.second) })
 
     private fun setupStaticFolder(prefix: String) {

@@ -28,9 +28,7 @@ class EnnsEventsCollector : TwoStepEventCollector<JsonObject>("ennsevents") {
         val data = mutableMapOf<String, String>()
         data[SemanticKeys.URL] = "https://erlebe.enns.at/events/e/" + event.string("id")
         val description = (event.string("subtitle") + "\n" + event.string("description")).trim()
-        if (description.isNotBlank()) {
-            data[SemanticKeys.DESCRIPTION] = description
-        }
+        data[SemanticKeys.DESCRIPTION] = description
 
         if (event.containsKey("picture")) {
             data[SemanticKeys.PICTUREURL] =

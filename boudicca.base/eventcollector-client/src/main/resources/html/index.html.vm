@@ -29,7 +29,7 @@
     <tbody>
         #foreach( $fullCollection in $fullCollections)
         <tr>
-            <td>#if( $fullCollection.errorsCount > 0)⚠#end
+            <td>#if( $fullCollection.errorsCount > 0)☠#else #if( $fullCollection.warningsCount > 0)⚠#end #end
                 #if( $fullCollection.id )<a href="fullCollection?id=$fullCollection.id">$fullCollection.startEndTime</a>#else $fullCollection.startEndTime #end</td>
             <td>$fullCollection.duration</td>
         </tr>

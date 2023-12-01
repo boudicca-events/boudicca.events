@@ -5,7 +5,6 @@ import base.boudicca.SemanticKeys
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.time.OffsetDateTime
-import java.time.ZonedDateTime
 
 class LocationEnricherTest {
 

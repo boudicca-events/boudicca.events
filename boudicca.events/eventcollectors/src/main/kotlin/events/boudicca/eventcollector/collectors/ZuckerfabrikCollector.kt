@@ -1,12 +1,13 @@
 package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
-import base.boudicca.model.Event
 import base.boudicca.api.eventcollector.Fetcher
 import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.model.Event
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
+import org.jsoup.select.Elements
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.OffsetDateTime
@@ -43,8 +44,10 @@ class ZuckerfabrikCollector : TwoStepEventCollector<Pair<String, Document>>("zuc
         if (storycontent[0].text().isNotBlank()) {
             name += " - " + storycontent[0].text()
         }
-        val startDate = parseTypeAndDate(data, storycontent[1])
-        data[SemanticKeys.DESCRIPTION] = (2 until storycontent.size).joinToString("\n") { storycontent[it].text() }
+        val dateIndex = findDateIndex(storycontent)
+        val startDate = parseTypeAndDate(data, storycontent[dateIndex])
+        data[SemanticKeys.DESCRIPTION] =
+            ((dateIndex + 1) until storycontent.size).joinToString("\n") { storycontent[it].text() }
 
         val pictureUrl = doc.select("div#storycontent img").attr("src")
         if (pictureUrl.isNotBlank()) {
@@ -56,6 +59,15 @@ class ZuckerfabrikCollector : TwoStepEventCollector<Pair<String, Document>>("zuc
         data[SemanticKeys.LOCATION_CITY] = "Enns"
 
         return Event(name, startDate, data)
+    }
+
+    private fun findDateIndex(storycontent: Elements): Int {
+        for (i in 1 until storycontent.size) {
+            if (storycontent[i].text().contains(" am ")) {
+                return i
+            }
+        }
+        throw IllegalStateException("could not find date index in: $storycontent")
     }
 
     private fun parseTypeAndDate(data: MutableMap<String, String>, element: Element): OffsetDateTime {
@@ -79,7 +91,9 @@ class ZuckerfabrikCollector : TwoStepEventCollector<Pair<String, Document>>("zuc
         val startDate = date.atTime(startTime).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
         if (endTime != null) {
             data[SemanticKeys.ENDDATE] =
-                date.atTime(startTime).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime().toString()
+                DateTimeFormatter.ISO_DATE_TIME.format(
+                    date.atTime(startTime).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
+                )
         }
         return startDate
     }

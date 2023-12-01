@@ -8,8 +8,8 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.time.LocalDate
 import java.time.LocalTime
+import java.time.OffsetDateTime
 import java.time.ZoneId
-import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.regex.Pattern
 
@@ -45,7 +45,7 @@ class OOESeniorenbundCollector : TwoStepEventCollector<Pair<Document, String>>("
                 data[SemanticKeys.ENDDATE] = endDate.format(DateTimeFormatter.ISO_DATE_TIME)
             }
             data[SemanticKeys.DESCRIPTION] = description
-            Event(name, startDate.toOffsetDateTime(), data)
+            Event(name, startDate, data)
         }
     }
 
@@ -62,12 +62,12 @@ class OOESeniorenbundCollector : TwoStepEventCollector<Pair<Document, String>>("
         }
     }
 
-    private fun getDates(event: Document): List<Pair<ZonedDateTime, ZonedDateTime?>> {
+    private fun getDates(event: Document): List<Pair<OffsetDateTime, OffsetDateTime?>> {
         return event.select("div.date>p").toList()
             .map { getSingleDates(it.text()) }
     }
 
-    private fun getSingleDates(dateString: String?): Pair<ZonedDateTime, ZonedDateTime?> {
+    private fun getSingleDates(dateString: String?): Pair<OffsetDateTime, OffsetDateTime?> {
         val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.uuuu")
         val timeFormatter = DateTimeFormatter.ofPattern("kk:mm")
 
@@ -89,29 +89,30 @@ class OOESeniorenbundCollector : TwoStepEventCollector<Pair<Document, String>>("
             val localDate = LocalDate.parse(dateFromTillMatcher.group(1), dateFormatter)
             return Pair(
                 localDate.atTime(LocalTime.parse(dateFromTillMatcher.group(2), timeFormatter))
-                    .atZone(ZoneId.of("Europe/Vienna")),
+                    .atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime(),
                 localDate.atTime(LocalTime.parse(dateFromTillMatcher.group(3), timeFormatter))
-                    .atZone(ZoneId.of("Europe/Vienna"))
+                    .atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
             )
         } else if (dateFromDateTillMatcher.matches()) {
             val startLocalDate = LocalDate.parse(dateFromDateTillMatcher.group(1), dateFormatter)
             val endLocalDate = LocalDate.parse(dateFromDateTillMatcher.group(3), dateFormatter)
             return Pair(
                 startLocalDate.atTime(LocalTime.parse(dateFromDateTillMatcher.group(2), timeFormatter))
-                    .atZone(ZoneId.of("Europe/Vienna")),
+                    .atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime(),
                 endLocalDate.atTime(LocalTime.parse(dateFromDateTillMatcher.group(4), timeFormatter))
-                    .atZone(ZoneId.of("Europe/Vienna"))
+                    .atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
             )
         } else if (dateFromDateTillWithoutTimeMatcher.matches()) {
             val startLocalDate = LocalDate.parse(dateFromDateTillWithoutTimeMatcher.group(1), dateFormatter)
             val endLocalDate = LocalDate.parse(dateFromDateTillWithoutTimeMatcher.group(2), dateFormatter)
             return Pair(
-                startLocalDate.atTime(0, 0, 0).atZone(ZoneId.of("Europe/Vienna")),
-                endLocalDate.atTime(0, 0, 0).atZone(ZoneId.of("Europe/Vienna"))
+                startLocalDate.atTime(0, 0, 0).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime(),
+                endLocalDate.atTime(0, 0, 0).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
             )
         } else {
             return Pair(
-                LocalDate.parse(dateString, dateFormatter).atTime(0, 0, 0).atZone(ZoneId.of("Europe/Vienna")),
+                LocalDate.parse(dateString, dateFormatter).atTime(0, 0, 0).atZone(ZoneId.of("Europe/Vienna"))
+                    .toOffsetDateTime(),
                 null
             )
         }

@@ -40,7 +40,8 @@ class TechnologiePlauscherlCollector : EventCollector {
                     SemanticKeys.URL to entry.link,
                     SemanticKeys.TYPE to "techmeetup", //TODO not sure if this works well
                     SemanticKeys.DESCRIPTION to entry.description.value,
-                    SemanticKeys.REGISTRATION to "free"
+                    SemanticKeys.REGISTRATION to "free",
+                    SemanticKeys.SOURCES to entry.link,
                 )
             )
         }

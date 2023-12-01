@@ -41,6 +41,7 @@ We use certain data types for the properties we expect.
 | registration  | If this is a free event, a event which requires registration or a event which requires a paid ticket | enum\<registration>                  |
 | pictureUrl    | Url to a picture to be shown                                                                         | url                                  |
 | collectorName | Name of the collector which collected this event                                                     | text                                 |
+| sources       | A list of all sources, line by line. This should include all URLs or other sources used.             | list\<text>                          |
 
 #### Registration enum values
 

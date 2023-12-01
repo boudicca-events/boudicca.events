@@ -1,8 +1,8 @@
 package events.boudicca.eventcollector.collectors
 
-import base.boudicca.model.Event
 import base.boudicca.api.eventcollector.EventCollector
 import base.boudicca.api.eventdb.publisher.EventDB
+import base.boudicca.model.Event
 
 class BoudiccaCollector(private val from: String) : EventCollector {
     override fun getName(): String {

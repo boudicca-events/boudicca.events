@@ -57,6 +57,7 @@ class ZuckerfabrikCollector : TwoStepEventCollector<Pair<String, Document>>("zuc
         data[SemanticKeys.LOCATION_NAME] = "Zuckerfabrik"
         data[SemanticKeys.LOCATION_URL] = "https://www.zuckerfabrik.at"
         data[SemanticKeys.LOCATION_CITY] = "Enns"
+        data[SemanticKeys.SOURCES] = data[SemanticKeys.URL]!!
 
         return Event(name, startDate, data)
     }

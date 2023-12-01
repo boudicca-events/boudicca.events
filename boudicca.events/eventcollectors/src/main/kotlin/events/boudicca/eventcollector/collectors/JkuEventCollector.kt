@@ -1,9 +1,9 @@
 package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
-import base.boudicca.model.Event
 import base.boudicca.api.eventcollector.EventCollector
 import base.boudicca.api.eventcollector.Fetcher
+import base.boudicca.model.Event
 import net.fortuna.ical4j.data.CalendarBuilder
 import net.fortuna.ical4j.model.Calendar
 import net.fortuna.ical4j.model.component.VEvent
@@ -13,7 +13,6 @@ import java.net.URL
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
-import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 class JkuEventCollector : EventCollector {
@@ -56,14 +55,10 @@ class JkuEventCollector : EventCollector {
             return components.map { vEvent ->
                 val eventName = vEvent.summary.value
                 val eventStartDate = if (vEvent.isDaylongEvent()) {
-                    val dateTime = LocalDate.parse(vEvent.startDate.value, daylongEventFormatter)
-                    val zonedDateTime = ZonedDateTime.of(dateTime.atTime(0, 0), ZoneId.of("UTC"))
-                    zonedDateTime.toOffsetDateTime()
+                    LocalDate.parse(vEvent.startDate.value, daylongEventFormatter).atTime(0, 0)
                 } else {
-                    val dateTime = LocalDateTime.parse(vEvent.startDate.value, formatter)
-                    val zonedDateTime = ZonedDateTime.of(dateTime, ZoneId.of("UTC"))
-                    zonedDateTime.toOffsetDateTime()
-                }
+                    LocalDateTime.parse(vEvent.startDate.value, formatter)
+                }.atZone(ZoneId.of("UTC")).toOffsetDateTime()
 
                 Event(
                     eventName, eventStartDate,

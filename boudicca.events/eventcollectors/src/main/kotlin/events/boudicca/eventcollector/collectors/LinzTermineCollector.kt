@@ -12,8 +12,8 @@ import org.slf4j.LoggerFactory
 import java.net.URLEncoder
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.time.ZoneId
-import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 class LinzTermineCollector : EventCollector {
@@ -83,7 +83,7 @@ class LinzTermineCollector : EventCollector {
                 mappedEvents.add(
                     Event(
                         event.name,
-                        date.first.toOffsetDateTime(),
+                        date.first,
                         mapOf(
                             SemanticKeys.ENDDATE to date.second.format(DateTimeFormatter.ISO_DATE_TIME),
                             SemanticKeys.TYPE to (event.type ?: ""),
@@ -133,8 +133,10 @@ class LinzTermineCollector : EventCollector {
                         it.select("tags").first()?.child(0)?.text(),
                         it.select("date").map {
                             Pair(
-                                LocalDateTime.parse(it.attr("dFrom"), formatter).atZone(ZoneId.of("Europe/Vienna")),
-                                LocalDateTime.parse(it.attr("dTo"), formatter).atZone(ZoneId.of("Europe/Vienna")),
+                                LocalDateTime.parse(it.attr("dFrom"), formatter).atZone(ZoneId.of("Europe/Vienna"))
+                                    .toOffsetDateTime(),
+                                LocalDateTime.parse(it.attr("dTo"), formatter).atZone(ZoneId.of("Europe/Vienna"))
+                                    .toOffsetDateTime(),
                             )
                         },
                         it.attr("freeofcharge") == "1",
@@ -193,7 +195,7 @@ class LinzTermineCollector : EventCollector {
         val id: Int,
         val name: String,
         val type: String?,
-        val dates: List<Pair<ZonedDateTime, ZonedDateTime>>,
+        val dates: List<Pair<OffsetDateTime, OffsetDateTime>>,
         val freeOfCharge: Boolean,
         val url: String,
         val locationId: Int?,

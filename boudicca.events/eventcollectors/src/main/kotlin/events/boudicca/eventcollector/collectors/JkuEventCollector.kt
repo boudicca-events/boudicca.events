@@ -16,13 +16,15 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 class JkuEventCollector : EventCollector {
+    private val baseUrl = "https://www.jku.at/studium/studieninteressierte/messen-events/"
+
     override fun getName(): String {
         return "jku"
     }
 
     override fun collectEvents(): List<Event> {
         val fetcher = Fetcher()
-        val document = Jsoup.parse(fetcher.fetchUrl("https://www.jku.at/studium/studieninteressierte/messen-events/"))
+        val document = Jsoup.parse(fetcher.fetchUrl(baseUrl))
         val eventUrls = document.select("div.news_list_item a").eachAttr("href")
 
         val icsUrls = eventUrls
@@ -66,7 +68,8 @@ class JkuEventCollector : EventCollector {
                         SemanticKeys.LOCATION_NAME to vEvent.location.value,
                         SemanticKeys.TAGS to listOf("JKU", "Universität", "Studieren").toString(),
                         "url.ics" to icsUrl.toString(),
-                        "jku.uid" to vEvent.uid.value
+                        "jku.uid" to vEvent.uid.value,
+                        SemanticKeys.SOURCES to icsUrl.toString() + "\n" + baseUrl
                     )
                 )
             }

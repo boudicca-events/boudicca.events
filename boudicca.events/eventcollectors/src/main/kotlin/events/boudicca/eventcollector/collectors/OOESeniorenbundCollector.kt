@@ -19,7 +19,7 @@ import java.util.regex.Pattern
 class OOESeniorenbundCollector : TwoStepEventCollector<Pair<Document, String>>("ooesb") {
 
     override fun getAllUnparsedEvents(): List<Pair<Document, String>> {
-        val fetcher = Fetcher() //server seems really slow...
+        val fetcher = Fetcher()
         val document = Jsoup.parse(fetcher.fetchUrl("https://servicebroker.media-data.at/overview.html?key=QVKSBOOE"))
 
         return document.select("a.link-detail")
@@ -45,6 +45,7 @@ class OOESeniorenbundCollector : TwoStepEventCollector<Pair<Document, String>>("
                 data[SemanticKeys.ENDDATE] = endDate.format(DateTimeFormatter.ISO_DATE_TIME)
             }
             data[SemanticKeys.DESCRIPTION] = description
+            data[SemanticKeys.SOURCES] = data[SemanticKeys.URL]!!
             Event(name, startDate, data)
         }
     }

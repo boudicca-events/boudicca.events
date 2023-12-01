@@ -101,6 +101,9 @@ class EventCollectorScheduler(
             if (event.name.isBlank()) {
                 LOG.warn("event has empty name: $event")
             }
+            if (event.data[SemanticKeys.SOURCES].isNullOrBlank()) {
+                LOG.error("event has no sources: $event")
+            }
             for (entry in event.data.entries) {
                 allFields.add(entry.key)
                 if (entry.value.isNotBlank()) {

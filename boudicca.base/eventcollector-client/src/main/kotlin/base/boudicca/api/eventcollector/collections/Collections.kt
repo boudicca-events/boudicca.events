@@ -79,7 +79,7 @@ object Collections {
     }
 
     fun getAllPastCollections(): List<FullCollection> {
-        return pastFullCollections
+        return pastFullCollections.toList()
     }
 
     fun getCurrentFullCollection(): FullCollection? {

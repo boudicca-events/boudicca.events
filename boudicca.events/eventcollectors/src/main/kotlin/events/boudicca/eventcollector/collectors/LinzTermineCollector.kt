@@ -19,6 +19,8 @@ import java.time.format.DateTimeFormatter
 class LinzTermineCollector : EventCollector {
     private val fetcher = Fetcher()
     private val LOG = LoggerFactory.getLogger(this::class.java)
+    private val eventsBaseUrl = "https://www.linztermine.at/schnittstelle/downloads/events_xml.php"
+    private val locationBaseUrl = "https://www.linztermine.at/schnittstelle/downloads/locations_xml.php"
 
     override fun getName(): String {
         return "linz termine"
@@ -93,6 +95,7 @@ class LinzTermineCollector : EventCollector {
                             SemanticKeys.URL to event.url,
                             SemanticKeys.LOCATION_NAME to (location?.name
                                 ?: event.locationFallbackName), //they do not include all locations in their location.xml files -.-
+                            SemanticKeys.SOURCES to event.url + "\n" + eventsBaseUrl + "\n" + locationBaseUrl
                         ).filter { it.value.isNotBlank() }
                     )
                 )
@@ -108,7 +111,7 @@ class LinzTermineCollector : EventCollector {
         val links = mutableListOf<String>()
         for (i in 1..(4 * 6)) {
             links.add(
-                "https://www.linztermine.at/schnittstelle/downloads/events_xml.php?lt_datefrom=" +
+                "$eventsBaseUrl?lt_datefrom=" +
                         URLEncoder.encode(
                             date.format(DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss")),
                             Charsets.UTF_8
@@ -171,7 +174,7 @@ class LinzTermineCollector : EventCollector {
     }
 
     private fun parseLocations(): Map<Int, Location> {
-        val xml = loadXml("https://www.linztermine.at/schnittstelle/downloads/locations_xml.php")
+        val xml = loadXml(locationBaseUrl)
         return xml.child(0).children().toList().map {
             Location(
                 it.attr("id").toInt(),

@@ -43,6 +43,16 @@ class StartPageController @Autowired constructor(private val eventService: Event
     ): String {
         return eventService.generateQuery(searchDTO)
     }
+
+    @GetMapping("/sources")
+    @ResponseBody
+    fun sources(
+        searchDTO: SearchDTO
+    ): ModelAndView {
+        val data: MutableMap<String, Any> = HashMap()
+        data["sources"] = eventService.getSources()
+        return ModelAndView("sources", data)
+    }
 }
 
 

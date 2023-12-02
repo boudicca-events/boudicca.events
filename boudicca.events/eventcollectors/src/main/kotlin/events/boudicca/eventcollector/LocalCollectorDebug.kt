@@ -29,5 +29,6 @@ fun main() {
 //        .debug(OehJkuCollector())
 //        .debug(ArenaWienCollector())
 //        .debug(ViperRoomCollector())
-        .debug(CafeTraxlmayrCollector())
+//        .debug(CafeTraxlmayrCollector())
+        .debug(BurgClamCollector())
 }

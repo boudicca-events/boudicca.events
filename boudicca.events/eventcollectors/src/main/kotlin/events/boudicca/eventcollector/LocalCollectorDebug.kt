@@ -30,5 +30,6 @@ fun main() {
 //        .debug(ArenaWienCollector())
 //        .debug(ViperRoomCollector())
 //        .debug(CafeTraxlmayrCollector())
-        .debug(BurgClamCollector())
+//        .debug(BurgClamCollector())
+        .debug(StadthalleWienCollector())
 }

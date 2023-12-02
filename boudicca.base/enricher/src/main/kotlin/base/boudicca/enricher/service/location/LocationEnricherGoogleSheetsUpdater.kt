@@ -8,10 +8,6 @@ import com.google.api.services.sheets.v4.model.ValueRange
 import com.google.auth.http.HttpCredentialsAdapter
 import com.google.auth.oauth2.GoogleCredentials
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
 import java.io.FileInputStream
 
 class LocationEnricherGoogleSheetsUpdater(
@@ -66,17 +62,5 @@ class LocationEnricherGoogleSheetsUpdater(
         }
 
         return allLocationData
-    }
-}
-
-@Configuration
-@ConditionalOnProperty("boudicca.enricher.location.googleCredentialsPath", "boudicca.enricher.location.spreadsheetId")
-class LocationEnricherGoogleSheetsUpdaterConfiguration {
-    @Bean
-    fun googleUpdater(
-        @Value("\${boudicca.enricher.location.googleCredentialsPath:}") googleCredentialsPath: String,
-        @Value("\${boudicca.enricher.location.spreadsheetId:}") spreadsheetId: String
-    ): LocationEnricherUpdater {
-        return LocationEnricherGoogleSheetsUpdater(googleCredentialsPath, spreadsheetId)
     }
 }

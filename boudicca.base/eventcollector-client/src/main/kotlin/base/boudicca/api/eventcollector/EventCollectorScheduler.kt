@@ -177,6 +177,10 @@ fun createBoudiccaEnricherFunction(enricherUrl: String?): Function<List<Event>, 
 }
 
 fun <T> retry(log: Logger, function: () -> T): T {
+    return retry(log, { Thread.sleep(it) }, function)
+}
+
+fun <T> retry(log: Logger, sleeper: Consumer<Long>, function: () -> T): T {
     var lastException: Throwable? = null
     for (i in 1..5) {
         try {
@@ -184,7 +188,7 @@ fun <T> retry(log: Logger, function: () -> T): T {
         } catch (e: Exception) {
             lastException = e
             log.info("exception caught, retrying in 1 minute", e)
-            Thread.sleep(1000 * 60)
+            sleeper.accept(1000 * 60)
         }
     }
     throw lastException!!

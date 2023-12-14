@@ -47,8 +47,13 @@ class Fetcher {
         var start = 0L
         val response = try {
             retry(LOG) {
+                Collections.resetHttpTiming()
                 start = System.currentTimeMillis()
-                newHttpClient.send(request, BodyHandlers.ofString())
+                val tryResponse = newHttpClient.send(request, BodyHandlers.ofString())
+                if (tryResponse.statusCode() != 200) {
+                    throw RuntimeException("request to $url failed with status code ${tryResponse.statusCode()}")
+                }
+                tryResponse
             }
         } catch (e: Exception) {
             Collections.endHttpCall(-1)
@@ -59,9 +64,6 @@ class Fetcher {
             lastRequestDuration = end - start
         }
         Collections.endHttpCall(response.statusCode())
-        if (response.statusCode() != 200) {
-            throw RuntimeException("request to $url failed with status code ${response.statusCode()}")
-        }
         return response.body()
     }
 

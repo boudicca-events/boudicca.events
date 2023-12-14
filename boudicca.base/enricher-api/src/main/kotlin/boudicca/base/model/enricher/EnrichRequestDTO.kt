@@ -1,4 +1,4 @@
-package base.boudicca.enricher.model
+package boudicca.base.model.enricher
 
 import base.boudicca.model.Event
 

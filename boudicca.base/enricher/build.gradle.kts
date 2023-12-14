@@ -31,6 +31,7 @@ dependencies {
         exclude("commons-logging", "commons-logging")
     }
 
+    implementation(project(":boudicca.base:enricher-api"))
     implementation(project(":boudicca.base:semantic-conventions"))
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     testImplementation("org.springframework.boot:spring-boot-starter-test")

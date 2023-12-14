@@ -1,9 +1,12 @@
 plugins {
     kotlin("jvm")
+    kotlin("kapt")
+    id("io.cloudflight.autoconfigure.swagger-api-configure")
 }
 
 description = "Boudicca EventDB Ingestion API"
 version = "0.0.1"
+group = "base.boudicca.eventdb.ingestion"
 
 kotlin {
     jvmToolchain(rootProject.ext["jvmVersion"] as Int)
@@ -18,7 +21,7 @@ repositories {
 
 dependencies {
     implementation(project(":boudicca.base:semantic-conventions"))
-    implementation("io.swagger:swagger-annotations:1.6.12")
-    implementation("org.springframework:spring-web:6.1.1")
-    implementation("org.springframework:spring-context:6.1.1")
+    implementation(platform(libs.cloudflight.platform.spring.bom))
+    implementation("io.swagger:swagger-annotations")
+    implementation("org.springframework:spring-web")
 }

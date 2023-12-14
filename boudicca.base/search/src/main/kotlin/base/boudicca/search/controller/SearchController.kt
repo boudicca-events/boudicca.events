@@ -1,6 +1,6 @@
 package base.boudicca.search.controller
 
-import base.boudicca.search.api.SearchApi
+import base.boudicca.api.search.SearchApi
 import base.boudicca.model.Event
 import base.boudicca.search.BoudiccaSearchProperties
 import base.boudicca.search.model.*

@@ -1,5 +1,6 @@
 package base.boudicca.eventdb.controller
 
+import base.boudicca.eventdb.ingestion.api.IngestionApi
 import base.boudicca.model.Entry
 import base.boudicca.model.Event
 import base.boudicca.eventdb.service.EntryService

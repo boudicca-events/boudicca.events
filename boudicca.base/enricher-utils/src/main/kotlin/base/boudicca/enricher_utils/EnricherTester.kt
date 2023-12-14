@@ -1,9 +1,8 @@
 package base.boudicca.enricher_utils
 
-import base.boudicca.model.Event
-import base.boudicca.SemanticKeys
 import base.boudicca.api.enricher.Enricher
 import base.boudicca.api.eventdb.publisher.EventDB
+import base.boudicca.model.Event
 
 private const val EVENTDB_URL = "http://localhost:8081"
 private const val ENRICHER_URL = "http://localhost:8085"

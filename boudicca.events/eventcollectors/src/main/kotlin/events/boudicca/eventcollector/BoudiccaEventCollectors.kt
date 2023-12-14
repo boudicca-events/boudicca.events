@@ -30,5 +30,9 @@ fun main() {
         .addEventCollector(OehJkuCollector())
         .addEventCollector(ArenaWienCollector())
         .addEventCollector(ViperRoomCollector())
+        .addEventCollector(CafeTraxlmayrCollector())
+        .addEventCollector(BurgClamCollector())
+        .addEventCollector(StadthalleWienCollector())
+        .addEventCollector(MuseumArbeitsweltCollector())
         .run()
 }

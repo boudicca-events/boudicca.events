@@ -13,6 +13,7 @@ object SemanticKeys {
     const val REGISTRATION = "registration"
     const val PICTUREURL = "pictureUrl"
     const val COLLECTORNAME = "collectorName"
+    const val SOURCES = "sources"
 
     // location properties
     const val LOCATION_NAME = "location.name"

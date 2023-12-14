@@ -1,9 +1,9 @@
 package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
-import base.boudicca.model.Event
 import base.boudicca.api.eventcollector.Fetcher
 import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.model.Event
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.time.LocalDate
@@ -41,6 +41,7 @@ class GewaexhausCollector : TwoStepEventCollector<String>("gewaexhaus") {
         if (!img.isEmpty()) {
             data[SemanticKeys.PICTUREURL] = img.first()!!.attr("srcset").split(" ")[0]
         }
+        data[SemanticKeys.SOURCES] = data[SemanticKeys.URL]!!
 
         return Event(name, startDate, data)
     }

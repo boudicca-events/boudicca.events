@@ -15,6 +15,7 @@ import base.boudicca.publisher.event.html.model.SearchDTO
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
+import java.net.URI
 import java.net.URLEncoder
 import java.time.LocalDate
 import java.time.OffsetDateTime
@@ -104,6 +105,14 @@ class EventService @Autowired constructor(@Value("\${boudicca.search.url}") priv
         )
     }
 
+    fun getSources(): List<String> {
+        val allSources = search.getFiltersFor(FilterQueryDTO(listOf(FilterQueryEntryDTO(SemanticKeys.SOURCES, true))))
+        return allSources[SemanticKeys.SOURCES]!!
+            .map { normalize(it) }
+            .distinct()
+            .sortedBy { it }
+    }
+
     private fun mapEvents(result: SearchResultDTO): List<Map<String, String?>> {
         return result.result.map { mapEvent(it) }
     }
@@ -186,6 +195,20 @@ class EventService @Autowired constructor(@Value("\${boudicca.search.url}") priv
         }
         if (searchDTO.durationShorter == null) {
             searchDTO.durationShorter = DEFAULT_DURATION_SHORTER_VALUE.toDouble()
+        }
+    }
+
+    private fun normalize(value: String): String {
+        return if (value.startsWith("http")) {
+            //treat as url
+            try {
+                URI.create(value).normalize().host
+            } catch (e: IllegalArgumentException) {
+                //hm, no url?
+                value
+            }
+        } else {
+            value
         }
     }
 

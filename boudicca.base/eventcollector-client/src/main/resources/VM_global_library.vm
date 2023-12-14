@@ -25,7 +25,7 @@
     <tbody>
         #foreach( $singleCollection in $singleCollections)
         <tr>
-            <td>#if( $singleCollection.errorsCount != "-" && $singleCollection.errorsCount > 0)⚠#end
+            <td>#if( $singleCollection.errorsCount != "-" && $singleCollection.errorsCount > 0)☠#else #if( $singleCollection.warningsCount != "-" && $singleCollection.warningsCount > 0)⚠#end #end
                 #if( $singleCollection.id )<a href="singleCollection?id=$singleCollection.id">$singleCollection.name</a>#else $singleCollection.name #end</td>
             <td>$singleCollection.duration</td>
             <td>$singleCollection.startEndTime</td>

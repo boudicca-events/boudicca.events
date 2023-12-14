@@ -1,9 +1,9 @@
 package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
-import base.boudicca.model.Event
 import base.boudicca.api.eventcollector.Fetcher
 import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.model.Event
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.time.LocalDate
@@ -14,9 +14,10 @@ import java.time.format.DateTimeFormatter
 class InnovationsHauptplatzCodingWeeksCollector : TwoStepEventCollector<Element>("innovationshauptplatzcodingweeks") {
 
     private val fetcher = Fetcher()
+    private val baseUrl = "https://innovation.linz.at/de/aktuelle-projekte/coding-weeks/"
 
     override fun getAllUnparsedEvents(): List<Element> {
-        val document = Jsoup.parse(fetcher.fetchUrl("https://innovation.linz.at/de/aktuelle-projekte/coding-weeks/"))
+        val document = Jsoup.parse(fetcher.fetchUrl(baseUrl))
         return document.select("div#listView div.event")
             .asSequence()
             .map { it.parent()!! }
@@ -35,6 +36,7 @@ class InnovationsHauptplatzCodingWeeksCollector : TwoStepEventCollector<Element>
         data[SemanticKeys.URL] = event.select("a").attr("href")
         data[SemanticKeys.TYPE] = "technology"
         data[SemanticKeys.PICTUREURL] = "https://innovation.linz.at" + event.select("img").attr("src")
+        data[SemanticKeys.SOURCES] = baseUrl
 
         return Event(name, startDate, data)
     }

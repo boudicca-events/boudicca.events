@@ -1,9 +1,9 @@
 package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
-import base.boudicca.model.Event
 import base.boudicca.api.eventcollector.Fetcher
 import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.model.Event
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -93,13 +93,12 @@ class LandestheaterLinzCollector :
             "https://www.landestheater-linz.at" + site.second.select("div.lth-slide img").first()!!.attr("src")
 
         val type = overview.select("div.lth-evitem-what > div.lth-evitem-type").text()
-        if (type.isNotBlank()) {
-            data[SemanticKeys.TYPE] = type
-        }
+        data[SemanticKeys.TYPE] = type
 
         val locationName =
             site.second.select("div.lth-layout-ctr > div > div > span > span").get(1).text().substring(11).trim()
         insertLocationData(data, locationName)
+        data[SemanticKeys.SOURCES] = data[SemanticKeys.URL]!!
 
         return Event(name, startDate, data)
     }

@@ -1,9 +1,9 @@
 package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
-import base.boudicca.model.Event
 import base.boudicca.api.eventcollector.Fetcher
 import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.model.Event
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
 import java.io.StringReader
@@ -28,9 +28,7 @@ class EnnsEventsCollector : TwoStepEventCollector<JsonObject>("ennsevents") {
         val data = mutableMapOf<String, String>()
         data[SemanticKeys.URL] = "https://erlebe.enns.at/events/e/" + event.string("id")
         val description = (event.string("subtitle") + "\n" + event.string("description")).trim()
-        if (description.isNotBlank()) {
-            data[SemanticKeys.DESCRIPTION] = description
-        }
+        data[SemanticKeys.DESCRIPTION] = description
 
         if (event.containsKey("picture")) {
             data[SemanticKeys.PICTUREURL] =
@@ -40,6 +38,7 @@ class EnnsEventsCollector : TwoStepEventCollector<JsonObject>("ennsevents") {
         if (event.containsKey("website") && !event.string("website").isNullOrBlank()) {
             data[SemanticKeys.LOCATION_URL] = event.string("website")!!
         }
+        data[SemanticKeys.SOURCES] = data[SemanticKeys.URL]!!
 
         return Event(name, startDate, data)
     }

@@ -51,6 +51,7 @@ class ArenaWienCollector : TwoStepEventCollector<ArenaWienCollector.HalfEvent>("
         }
 
         data[SemanticKeys.LOCATION_NAME] = "Arena Wien"
+        data[SemanticKeys.SOURCES] = data[SemanticKeys.URL]!!
 
         return Event(event.title!!, startDate, data)
     }

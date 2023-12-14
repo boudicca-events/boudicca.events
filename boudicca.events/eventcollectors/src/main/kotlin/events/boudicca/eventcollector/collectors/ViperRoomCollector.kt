@@ -52,6 +52,7 @@ class ViperRoomCollector : TwoStepEventCollector<String>("viperroom") {
         }
 
         data[SemanticKeys.LOCATION_NAME] = "Viper Room"
+        data[SemanticKeys.SOURCES] = data[SemanticKeys.URL]!!
 
         return Event(name, startDate, data)
     }

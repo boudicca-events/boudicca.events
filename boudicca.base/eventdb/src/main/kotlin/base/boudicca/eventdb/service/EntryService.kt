@@ -111,12 +111,6 @@ class EntryService @Autowired constructor(
 
     fun add(entry: Entry) {
         val eventKey = getEntryKey(entry)
-        val duplicate = entries[eventKey]
-        //some cheap logging for finding duplicate events between different collectors
-        if (duplicate != null && duplicate.first[SemanticKeys.COLLECTORNAME] != entry[SemanticKeys.COLLECTORNAME]
-        ) {
-            LOG.warn("event $entry will overwrite $duplicate")
-        }
 
         entries[eventKey] = Pair(entry, InternalEventProperties(System.currentTimeMillis()))
         if (entry.containsKey(SemanticKeys.COLLECTORNAME)) {

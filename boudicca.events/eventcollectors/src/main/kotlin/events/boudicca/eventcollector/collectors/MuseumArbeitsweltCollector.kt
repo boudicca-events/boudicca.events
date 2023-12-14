@@ -1,7 +1,7 @@
 package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
-import base.boudicca.Event
+import base.boudicca.model.Event
 import base.boudicca.api.eventcollector.Fetcher
 import base.boudicca.api.eventcollector.TwoStepEventCollector
 import org.jsoup.Jsoup
@@ -9,20 +9,23 @@ import java.time.*
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-class MuseumArbeitsweltCollector : TwoStepEventCollector<String>("museumArbeitswelt") {
+class MuseumArbeitsweltCollector : TwoStepEventCollector<Pair<String, String>>("museumArbeitswelt") {
     private val fetcher = Fetcher()
 
-    override fun getAllUnparsedEvents(): List<String> {
+    override fun getAllUnparsedEvents(): List<Pair<String, String>> {
+        val events = mutableListOf<Pair<String, String>>()
         val document = Jsoup.parse(fetcher.fetchUrl("https://museumarbeitswelt.at/kalender/"))
-        return document.select("div.ecs-event")
-            .map { it.select("a.act-view-more").attr("href") + "dateOfEvent:" +
-                    it.select("div.decm-show-detail-center").text() } // TODO: please fix this mess
+        document.select("div.ecs-event").forEach() {
+            events.add(Pair(
+                it.select("a.act-view-more").attr("href"),
+                it.select("div.decm-show-detail-center").text()
+            ))
+        }
+        return events
     }
 
-    override fun parseEvent(event: String): Event {
-        val eventAndDateSplit = event.split("dateOfEvent:")
-        val eventUrl = eventAndDateSplit[0]
-        val dateToParse = eventAndDateSplit[1]
+    override fun parseEvent(event: Pair<String, String>): Event {
+        val (eventUrl, dateToParse) = event
         val eventSite = Jsoup.parse(fetcher.fetchUrl(eventUrl))
 
         val name = eventSite.select("h1.entry-title").text()
@@ -41,6 +44,7 @@ class MuseumArbeitsweltCollector : TwoStepEventCollector<String>("museumArbeitsw
         data[SemanticKeys.LOCATION_NAME] = "Museum Arbeitswelt"
         data[SemanticKeys.LOCATION_URL] = "https://museumarbeitswelt.at/"
         data[SemanticKeys.LOCATION_CITY] = "Steyr"
+        data[SemanticKeys.SOURCES] = data[SemanticKeys.URL]!!
 
         return Event(name, startDate, data)
     }

@@ -2,6 +2,7 @@ include("boudicca.base")
 include("boudicca.events")
 
 include("boudicca.base:enricher")
+include("boudicca.base:enricher-api")
 include("boudicca.base:enricher-client")
 include("boudicca.base:enricher-openapi")
 include("boudicca.base:enricher-utils")

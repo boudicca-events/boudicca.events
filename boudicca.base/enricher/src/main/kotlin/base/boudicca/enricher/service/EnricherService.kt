@@ -1,7 +1,7 @@
 package base.boudicca.enricher.service
 
 import base.boudicca.model.Event
-import base.boudicca.enricher.model.EnrichRequestDTO
+import boudicca.base.model.enricher.EnrichRequestDTO
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service

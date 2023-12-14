@@ -96,3 +96,17 @@ the User-Agent to `boudicca.events collector`.
 #### Collections diagnostic data
 
 TODO
+
+## Automatic Generation of openapi.yaml files
+
+OpenApi files are automatically generated using the autoconfigure plugin from cloudflight.
+
+This plugin assumes a few things:
+
+All api definitions have to be located in a package called
+
+<group-id>.api
+
+models are expected in a package called
+
+<group-id>.model

@@ -1,4 +1,4 @@
-package base.boudicca.search.api
+package base.boudicca.api.search
 
 import base.boudicca.search.model.*
 import org.springframework.http.MediaType

@@ -4,9 +4,8 @@ plugins {
     id("io.cloudflight.autoconfigure.swagger-api-configure")
 }
 
-description = "Boudicca EventDB Publisher API"
+description = "Boudicca Enricher API"
 version = "0.0.1"
-group = "base.boudicca.eventdb.publisher"
 
 kotlin {
     jvmToolchain(rootProject.ext["jvmVersion"] as Int)

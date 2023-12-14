@@ -34,5 +34,6 @@ fun main() {
         .addEventCollector(BurgClamCollector())
         .addEventCollector(StadthalleWienCollector())
         .addEventCollector(MuseumArbeitsweltCollector())
+        .addEventCollector(OKHVoecklabruckCollector())
         .run()
 }

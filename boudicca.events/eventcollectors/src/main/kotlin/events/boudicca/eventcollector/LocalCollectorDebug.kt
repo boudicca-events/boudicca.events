@@ -32,5 +32,6 @@ fun main() {
 //        .debug(CafeTraxlmayrCollector())
 //        .debug(BurgClamCollector())
 //        .debug(StadthalleWienCollector())
-        .debug(MuseumArbeitsweltCollector())
+//        .debug(MuseumArbeitsweltCollector())
+        .debug(OKHVoecklabruckCollector())
 }

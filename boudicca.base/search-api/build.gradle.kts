@@ -2,6 +2,7 @@ plugins {
     kotlin("jvm")
     kotlin("kapt")
     id("io.cloudflight.autoconfigure.swagger-api-configure")
+    `maven-publish`
 }
 
 description = "Boudicca Search API"

@@ -2,10 +2,12 @@ plugins {
     kotlin("jvm")
     kotlin("kapt")
     id("io.cloudflight.autoconfigure.swagger-api-configure")
+    `maven-publish`
 }
 
 description = "Boudicca Search API"
 version = "0.0.1"
+group = "base.boudicca"
 
 kotlin {
     jvmToolchain(rootProject.ext["jvmVersion"] as Int)

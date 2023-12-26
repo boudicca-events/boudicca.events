@@ -1,11 +1,13 @@
 package base.boudicca.api.search
 
 import base.boudicca.search.model.*
+import io.swagger.annotations.Api
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 
+@Api("SearchApi")
 interface SearchApi {
     @PostMapping(
         "search",

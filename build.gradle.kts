@@ -1,6 +1,6 @@
 plugins {
     kotlin("jvm") version "1.9.21"
-    kotlin("kapt") version "1.9.21"
+    kotlin("kapt") version "1.9.22"
     id("io.cloudflight.autoconfigure.swagger-api-configure") version "1.1.0" apply false
     kotlin("plugin.allopen") version "1.9.21" apply false
     kotlin("plugin.spring") version "1.9.21" apply false

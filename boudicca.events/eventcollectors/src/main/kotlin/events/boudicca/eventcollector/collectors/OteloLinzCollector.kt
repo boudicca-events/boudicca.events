@@ -85,11 +85,19 @@ class OteloLinzCollector : TwoStepEventCollector<String>("otelolinz") {
         val startAndEndTimes = startAndEndTimeText.split(" - ")
 
         val localStartTime = LocalTime.parse(startAndEndTimes[0].trim(), DateTimeFormatter.ofPattern("kk:mm"))
-        val localEndTime = LocalTime.parse(startAndEndTimes[1].trim(), DateTimeFormatter.ofPattern("kk:mm"))
+        val localEndTime = if (startAndEndTimes.size > 1) {
+            LocalTime.parse(startAndEndTimes[1].trim(), DateTimeFormatter.ofPattern("kk:mm"))
+        } else {
+            null
+        }
 
         return Pair(
             localDate.atTime(localStartTime).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime(),
-            localDate.atTime(localEndTime).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime(),
+            if (localEndTime != null) {
+                localDate.atTime(localEndTime).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
+            } else {
+                null
+            }
         )
     }
 

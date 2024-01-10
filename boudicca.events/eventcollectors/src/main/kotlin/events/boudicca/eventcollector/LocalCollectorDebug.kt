@@ -20,8 +20,7 @@ fun main() {
 //        .debug(LandestheaterLinzCollector())
 //        .debug(KapuCollector())
 //        .debug(StadtwerkstattCollector())
-//        .debug(InnovationsHauptplatzCodingWeeksCollector())
-//        .debug(OteloLinzCollector())
+        .debug(OteloLinzCollector())
 //        .debug(EnnsEventsCollector())
 //        .debug(UlfOoeCollector())
 //        .debug(StiftskonzerteCollector())
@@ -33,5 +32,5 @@ fun main() {
 //        .debug(BurgClamCollector())
 //        .debug(StadthalleWienCollector())
 //        .debug(MuseumArbeitsweltCollector())
-        .debug(OKHVoecklabruckCollector())
+//        .debug(OKHVoecklabruckCollector())
 }

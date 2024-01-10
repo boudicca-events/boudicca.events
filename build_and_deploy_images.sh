@@ -2,4 +2,4 @@
 
 ./gradlew imageBuild
 
-./push_images.sh
+./deploy_images.sh

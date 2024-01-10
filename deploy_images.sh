@@ -3,9 +3,9 @@
 docker tag localhost/boudicca-eventdb registry.slothyx.com/boudicca-eventdb
 docker tag localhost/boudicca-enricher registry.slothyx.com/boudicca-enricher
 docker tag localhost/boudicca-search registry.slothyx.com/boudicca-search
-docker tag localhost/boudicca-html registry.slothyx.com/boudicca-html
-docker tag localhost/boudicca-ical registry.slothyx.com/boudicca-ical
-docker tag localhost/boudicca-eventcollectors registry.slothyx.com/boudicca-eventcollectors
+docker tag localhost/boudicca-events-publisher-event-html registry.slothyx.com/boudicca-html
+docker tag localhost/boudicca-publisher-event-ical registry.slothyx.com/boudicca-ical
+docker tag localhost/boudicca-events-eventcollectors registry.slothyx.com/boudicca-eventcollectors
 
 echo "pushing eventdb"
 docker push registry.slothyx.com/boudicca-eventdb

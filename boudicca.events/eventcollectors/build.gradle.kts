@@ -30,7 +30,7 @@ task<Exec>("imageBuild") {
     inputs.file("src/main/docker/Dockerfile")
     inputs.files(tasks.named("jar"))
     dependsOn(tasks.named("assemble"))
-    commandLine("docker", "build", "-t", "localhost/boudicca-eventcollectors", "-f", "src/main/docker/Dockerfile", ".")
+    commandLine("docker", "build", "-t", "localhost/boudicca-events-eventcollectors", "-f", "src/main/docker/Dockerfile", ".")
 }
 
 tasks.withType<Jar> {

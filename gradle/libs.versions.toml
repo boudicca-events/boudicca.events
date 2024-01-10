@@ -4,7 +4,7 @@ kotlinx-serialization = "1.6.0"
 maven-artifact = "3.5.0"
 jupiter = "5.10.0"
 jackson = "2.16.0"
-clf-platform-spring = "2.1.5"
+clf-platform-spring = "2.2.0"
 
 [libraries]
 cloudflight-platform-spring-bom = { module = "io.cloudflight.platform.spring:platform-spring-bom", version.ref = "clf-platform-spring" }

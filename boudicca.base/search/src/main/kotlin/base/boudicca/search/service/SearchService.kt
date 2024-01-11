@@ -1,9 +1,9 @@
 package base.boudicca.search.service
 
 import base.boudicca.SemanticKeys
+import base.boudicca.api.search.model.*
 import base.boudicca.model.Entry
 import base.boudicca.model.EventCategory
-import base.boudicca.search.model.*
 import base.boudicca.search.service.util.Utils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.event.EventListener

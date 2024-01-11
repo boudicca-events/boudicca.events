@@ -1,6 +1,6 @@
 package base.boudicca.api.search
 
-import base.boudicca.search.model.*
+import base.boudicca.api.search.model.*
 import io.swagger.annotations.Api
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
@@ -26,7 +26,7 @@ interface SearchApi {
         consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE],
     )
-    fun filtersFor(filterQueryDTO: FilterQueryDTO): FilterResultDTO
+    fun filtersFor(@RequestBody filterQueryDTO: FilterQueryDTO): FilterResultDTO
 
     @PostMapping(
         "query",
@@ -41,5 +41,5 @@ interface SearchApi {
         consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE],
     )
-    fun queryEntries(queryDTO: QueryDTO): ResultDTO
+    fun queryEntries(@RequestBody queryDTO: QueryDTO): ResultDTO
 }

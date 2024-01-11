@@ -1,3 +1,3 @@
-package base.boudicca.search.model
+package base.boudicca.api.search.model
 
 typealias FilterResultDTO = Map<String, List<String>>

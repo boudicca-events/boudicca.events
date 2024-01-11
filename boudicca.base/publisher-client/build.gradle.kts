@@ -1,11 +1,10 @@
 plugins {
     kotlin("jvm")
     kotlin("plugin.allopen")
+    `maven-publish`
 }
 
-repositories {
-    mavenCentral()
-}
+
 
 kotlin {
     jvmToolchain(rootProject.ext["jvmVersion"] as Int)

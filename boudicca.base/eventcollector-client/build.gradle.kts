@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm")
     kotlin("plugin.allopen")
+    `maven-publish`
 }
 
 repositories {
@@ -28,4 +29,12 @@ dependencies {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("eventcollector-client") {
+            from(components["java"])
+        }
+    }
 }

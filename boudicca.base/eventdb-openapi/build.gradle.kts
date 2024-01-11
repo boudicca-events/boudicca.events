@@ -1,11 +1,10 @@
 plugins {
     id("org.openapi.generator") version "7.1.0"
     `java-library`
+    `maven-publish`
 }
 
-repositories {
-    mavenCentral()
-}
+
 
 java {
     toolchain {
@@ -56,4 +55,12 @@ sourceSets {
 
 tasks.named("compileJava") {
     dependsOn(tasks.withType<org.openapitools.generator.gradle.plugin.tasks.GenerateTask>())
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("eventdb-openapi") {
+            from(components["java"])
+        }
+    }
 }

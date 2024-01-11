@@ -2,11 +2,11 @@ plugins {
     kotlin("jvm")
     kotlin("kapt")
     id("io.cloudflight.autoconfigure.swagger-api-configure")
+    `maven-publish`
 }
 
 description = "Boudicca EventDB Ingestion API"
-version = "0.0.1"
-group = "base.boudicca.eventdb.ingestion"
+group = "base.boudicca.eventdb.ingestion" // it's necessary to set group here manually otherwise swagger will mix the APIs up
 
 kotlin {
     jvmToolchain(rootProject.ext["jvmVersion"] as Int)
@@ -15,9 +15,7 @@ kotlin {
     }
 }
 
-repositories {
-    mavenCentral()
-}
+
 
 dependencies {
     implementation(project(":boudicca.base:semantic-conventions"))

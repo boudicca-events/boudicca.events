@@ -1,11 +1,10 @@
 plugins {
     kotlin("jvm")
     kotlin("plugin.allopen")
+    `maven-publish`
 }
 
-repositories {
-    mavenCentral()
-}
+
 
 kotlin {
     jvmToolchain(rootProject.ext["jvmVersion"] as Int)
@@ -19,4 +18,12 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
     implementation(project(":boudicca.base:semantic-conventions"))
     implementation(project(":boudicca.base:eventdb-openapi"))
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("enricher-client") {
+            from(components["java"])
+        }
+    }
 }

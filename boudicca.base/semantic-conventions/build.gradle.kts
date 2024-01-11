@@ -1,10 +1,11 @@
 plugins {
     kotlin("jvm")
+    `maven-publish`
 }
 
-repositories {
-    mavenCentral()
-}
+// TODO: rename this package to common-model or something
+
+
 
 kotlin {
     jvmToolchain(rootProject.ext["jvmVersion"] as Int)
@@ -13,4 +14,10 @@ kotlin {
     }
 }
 
-//TODO rename?
+publishing {
+    publications {
+        create<MavenPublication>("semantic-conventions") {
+            from(components["java"])
+        }
+    }
+}

@@ -1,8 +1,8 @@
 package base.boudicca.search.service
 
 import base.boudicca.model.Entry
-import base.boudicca.search.model.QueryDTO
-import base.boudicca.search.model.ResultDTO
+import base.boudicca.api.search.model.QueryDTO
+import base.boudicca.api.search.model.ResultDTO
 import base.boudicca.search.service.query.Evaluator
 import base.boudicca.search.service.query.Page
 import base.boudicca.search.service.query.QueryParser

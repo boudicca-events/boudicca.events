@@ -1,6 +1,6 @@
 package base.boudicca.search.service.query
 
-import base.boudicca.search.model.ResultDTO
+import base.boudicca.api.search.model.ResultDTO
 
 @FunctionalInterface
 interface Evaluator {

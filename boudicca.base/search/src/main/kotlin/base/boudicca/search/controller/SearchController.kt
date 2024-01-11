@@ -1,9 +1,9 @@
 package base.boudicca.search.controller
 
 import base.boudicca.api.search.SearchApi
+import base.boudicca.api.search.model.*
 import base.boudicca.model.Event
 import base.boudicca.search.BoudiccaSearchProperties
-import base.boudicca.search.model.*
 import base.boudicca.search.service.QueryService
 import base.boudicca.search.service.SearchService
 import base.boudicca.search.service.SynchronizationService

@@ -1,9 +1,9 @@
+import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
+
 plugins {
     id("org.openapi.generator") version "7.1.0"
     `java-library`
 }
-
-
 
 java {
     toolchain {
@@ -20,7 +20,6 @@ val jacksonVersion = "2.16.0"
 val jakartaAnnotationVersion = "1.3.5"
 
 dependencies {
-//    openapi(project(mapOf("path" to ":search", "configuration" to "openapi")))
     openapi(files("src/main/resources/api-docs.json"))
 
     implementation("com.google.code.findbugs:jsr305:3.0.2")
@@ -33,25 +32,44 @@ dependencies {
     api(project(":boudicca.base:semantic-conventions"))
 }
 
-tasks.withType<org.openapitools.generator.gradle.plugin.tasks.GenerateTask> {
+tasks.withType<GenerateTask> {
     inputs.files(openapi)
     inputSpec.set(openapi.files.first().path)
+}
+
+tasks.register<GenerateTask>("generateJavaClient") {
+    inputs.files(openapi)
+    inputSpec.set(openapi.files.first().path)
+    outputDir.set("${layout.buildDirectory}/generated/java")
     generatorName.set("java")
     library.set("native")
     additionalProperties.put("supportUrlQuery", "false")
-    invokerPackage.set("base.boudicca.search.openapi")
-    apiPackage.set("base.boudicca.search.openapi.api")
-    modelPackage.set("base.boudicca.search.openapi.model")
+    invokerPackage.set("events.boudicca.openapi")
+    apiPackage.set("events.boudicca.openapi.api")
+    modelPackage.set("events.boudicca.openapi.model")
+}
+
+tasks.register<GenerateTask>("generateTypescriptClient") {
+    inputs.files(openapi)
+    inputSpec.set(openapi.files.first().path)
+    outputDir.set("${layout.buildDirectory}/generated/typescript")
+    generatorName.set("typescript-axios")
+    configOptions.putAll(
+        mapOf(
+            "npmName" to "@boudicca/search-api-client",
+            "npmVersion" to "${project.version}",
+        )
+    )
 }
 
 sourceSets {
     main {
         java {
-            srcDir(file("${layout.buildDirectory.get()}/generate-resources/main/src/main/java"))
+            srcDir(file("${layout.buildDirectory.get()}/generated/java/src/main/java"))
         }
     }
 }
 
 tasks.named("compileJava") {
-    dependsOn(tasks.withType<org.openapitools.generator.gradle.plugin.tasks.GenerateTask>())
+    dependsOn(tasks.withType<GenerateTask>())
 }

@@ -9,9 +9,7 @@ kotlin {
     }
 }
 
-repositories {
-    mavenCentral()
-}
+
 
 dependencies {
     implementation("org.json:json:20231013")

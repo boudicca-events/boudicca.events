@@ -1,4 +1,4 @@
-package base.boudicca.search.model
+package base.boudicca.api.search.model
 
 data class FilterQueryDTO(
     val entries: List<FilterQueryEntryDTO>

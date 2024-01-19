@@ -1,10 +1,9 @@
 plugins {
     kotlin("jvm")
+    `maven-publish`
 }
 
-repositories {
-    mavenCentral()
-}
+
 
 kotlin {
     jvmToolchain(rootProject.ext["jvmVersion"] as Int)
@@ -18,3 +17,10 @@ dependencies {
     implementation(project(":boudicca.base:enricher-openapi"))
 }
 
+publishing {
+    publications {
+        create<MavenPublication>("enricher-client") {
+            from(components["java"])
+        }
+    }
+}

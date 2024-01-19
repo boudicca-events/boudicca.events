@@ -3,9 +3,7 @@ plugins {
     kotlin("plugin.allopen")
 }
 
-repositories {
-    mavenCentral()
-}
+
 
 dependencies {
     api(project(":boudicca.base:semantic-conventions"))

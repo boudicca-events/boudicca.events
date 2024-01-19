@@ -5,9 +5,7 @@ plugins {
     kotlin("plugin.spring")
 }
 
-repositories {
-    mavenCentral()
-}
+
 
 kotlin {
     jvmToolchain(rootProject.ext["jvmVersion"] as Int)

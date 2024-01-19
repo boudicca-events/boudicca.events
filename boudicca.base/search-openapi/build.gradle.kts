@@ -3,9 +3,7 @@ plugins {
     `java-library`
 }
 
-repositories {
-    mavenCentral()
-}
+
 
 java {
     toolchain {

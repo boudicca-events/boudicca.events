@@ -2,7 +2,7 @@ package base.boudicca.search.service.util
 
 import base.boudicca.model.Entry
 import base.boudicca.SemanticKeys
-import base.boudicca.search.model.ResultDTO
+import base.boudicca.api.search.model.ResultDTO
 import java.time.Instant
 import java.time.OffsetDateTime
 import java.time.ZoneId

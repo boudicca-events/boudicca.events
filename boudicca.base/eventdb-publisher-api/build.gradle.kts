@@ -5,8 +5,7 @@ plugins {
 }
 
 description = "Boudicca EventDB Publisher API"
-version = "0.0.1"
-group = "base.boudicca.eventdb.publisher"
+group = "base.boudicca.eventdb.publisher"  // it's necessary to set group here manually otherwise swagger will mix the APIs up
 
 kotlin {
     jvmToolchain(rootProject.ext["jvmVersion"] as Int)
@@ -15,9 +14,7 @@ kotlin {
     }
 }
 
-repositories {
-    mavenCentral()
-}
+
 
 dependencies {
     implementation(project(":boudicca.base:semantic-conventions"))

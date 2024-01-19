@@ -3,8 +3,6 @@ plugins {
     kotlin("plugin.allopen")
 }
 
-
-
 dependencies {
     api(project(":boudicca.base:semantic-conventions"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib")

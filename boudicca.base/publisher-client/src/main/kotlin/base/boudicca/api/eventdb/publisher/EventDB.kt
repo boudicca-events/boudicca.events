@@ -1,10 +1,10 @@
 package base.boudicca.api.eventdb.publisher
 
+import base.boudicca.eventdb.openapi.api.PublisherResourceApi
 import base.boudicca.model.Entry
 import base.boudicca.model.Event
-import events.boudicca.openapi.ApiClient
-import events.boudicca.openapi.ApiException
-import events.boudicca.openapi.api.PublisherResourceApi
+import base.boudicca.openapi.ApiClient
+import base.boudicca.openapi.ApiException
 
 class EventDB(eventDbUrl: String) {
 

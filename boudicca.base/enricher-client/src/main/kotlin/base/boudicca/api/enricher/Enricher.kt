@@ -1,10 +1,11 @@
 package base.boudicca.api.enricher
 
+import base.boudicca.enricher.openapi.api.EnricherControllerApi
+import base.boudicca.enricher.openapi.model.EnrichRequestDTO
 import base.boudicca.model.Event
-import events.boudicca.enricher.openapi.ApiClient
-import events.boudicca.enricher.openapi.ApiException
-import events.boudicca.enricher.openapi.api.EnricherControllerApi
-import events.boudicca.enricher.openapi.model.EnrichRequestDTO
+import base.boudicca.openapi.ApiClient
+import base.boudicca.openapi.ApiException
+import base.boudicca.enricher.openapi.model.Event as EnricherOpenApiEvent
 
 class Enricher(enricherUrl: String) {
 
@@ -29,12 +30,12 @@ class Enricher(enricherUrl: String) {
         }
     }
 
-    private fun toEvent(enricherEvent: events.boudicca.enricher.openapi.model.Event): Event {
+    private fun toEvent(enricherEvent: EnricherOpenApiEvent): Event {
         return Event(enricherEvent.name, enricherEvent.startDate, enricherEvent.data ?: mapOf())
     }
 
-    private fun mapToEnricherEvent(event: Event): events.boudicca.enricher.openapi.model.Event {
-        return events.boudicca.enricher.openapi.model.Event()
+    private fun mapToEnricherEvent(event: Event): EnricherOpenApiEvent {
+        return EnricherOpenApiEvent()
             .name(event.name)
             .startDate(event.startDate)
             .data(event.data)

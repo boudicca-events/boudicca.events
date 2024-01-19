@@ -1,7 +1,7 @@
 import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 
 plugins {
-    id("org.openapi.generator") version "7.1.0"
+    id("org.openapi.generator") version "7.2.0"
     `java-library`
     `maven-publish`
 }
@@ -76,7 +76,7 @@ openApiValidate {
 sourceSets {
     main {
         java {
-            srcDir(file(layout.buildDirectory.dir("/generated/java").get().toString()))
+            srcDir(file(layout.buildDirectory.dir("/generated/java/src/main/java").get().toString()))
         }
     }
 }

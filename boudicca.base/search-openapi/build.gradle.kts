@@ -48,8 +48,8 @@ tasks.register<GenerateTask>("generateJavaClient") {
     generateApiTests.set(false)
     generateModelTests.set(false)
     invokerPackage.set("base.boudicca.openapi")
-    apiPackage.set("base.boudicca.openapi.api")
-    modelPackage.set("base.boudicca.openapi.model")
+    apiPackage.set("base.boudicca.search.openapi.api")
+    modelPackage.set("base.boudicca.search.openapi.model")
 }
 
 tasks.register<GenerateTask>("generateTypescriptClient") {
@@ -69,7 +69,7 @@ tasks.register<GenerateTask>("generateTypescriptClient") {
 sourceSets {
     main {
         java {
-            srcDir(file(layout.buildDirectory.dir("/generated/java").get().toString()))
+            srcDir(file(layout.buildDirectory.dir("/generated/java/src/main/java").get().toString()))
         }
     }
 }

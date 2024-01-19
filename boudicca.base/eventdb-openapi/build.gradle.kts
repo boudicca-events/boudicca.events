@@ -48,8 +48,8 @@ tasks.register<GenerateTask>("generateJavaClient") {
     generateModelTests.set(false)
     additionalProperties.put("supportUrlQuery", "false")
     invokerPackage.set("base.boudicca.openapi")
-    apiPackage.set("base.boudicca.eventdb.api")
-    modelPackage.set("base.boudicca.eventdb.model")
+    apiPackage.set("base.boudicca.eventdb.openapi.api")
+    modelPackage.set("base.boudicca.eventdb.openapi.model")
 }
 
 tasks.register<GenerateTask>("generateTypescriptClient") {
@@ -69,7 +69,7 @@ tasks.register<GenerateTask>("generateTypescriptClient") {
 sourceSets {
     main {
         java {
-            srcDir(file(layout.buildDirectory.dir("/generated/java").get().toString()))
+            srcDir(file(layout.buildDirectory.dir("/generated/java/src/main/java").get().toString()))
         }
     }
 }

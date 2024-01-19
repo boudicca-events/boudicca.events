@@ -1,11 +1,12 @@
 package base.boudicca.api.search
 
 import base.boudicca.model.Event
-import base.boudicca.search.openapi.ApiClient
-import base.boudicca.search.openapi.ApiException
+import base.boudicca.openapi.ApiClient
+import base.boudicca.openapi.ApiException
 import base.boudicca.search.openapi.api.SearchControllerApi
 import base.boudicca.search.openapi.model.FilterQueryEntryDTO
 import base.boudicca.search.openapi.model.Filters
+import base.boudicca.search.openapi.model.FilterQueryDTO as SearchOpenapiFilterQueryDTO
 
 class Search(enricherUrl: String) {
 
@@ -56,8 +57,8 @@ class Search(enricherUrl: String) {
         }
     }
 
-    private fun mapFilterQueryDTOToApi(filterQueryDTO: FilterQueryDTO): base.boudicca.search.openapi.model.FilterQueryDTO {
-        return base.boudicca.search.openapi.model.FilterQueryDTO()
+    private fun mapFilterQueryDTOToApi(filterQueryDTO: FilterQueryDTO): SearchOpenapiFilterQueryDTO {
+        return SearchOpenapiFilterQueryDTO()
             .entries(filterQueryDTO.entries.map { FilterQueryEntryDTO().name(it.name).multiline(it.multiline) })
     }
 

@@ -4,8 +4,6 @@ plugins {
     `maven-publish`
 }
 
-
-
 kotlin {
     jvmToolchain(rootProject.ext["jvmVersion"] as Int)
     compilerOptions {

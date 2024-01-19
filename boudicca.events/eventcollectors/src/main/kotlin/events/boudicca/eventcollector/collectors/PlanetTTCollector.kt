@@ -1,9 +1,9 @@
 package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
-import base.boudicca.Event
 import base.boudicca.api.eventcollector.Fetcher
 import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.model.Event
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
 import org.jsoup.Jsoup
@@ -85,6 +85,7 @@ class PlanetTTCollector : TwoStepEventCollector<Element>("planettt") {
         //TODO you could parse acts from this site
         data[SemanticKeys.TYPE] = "concert"
         mapLocation(data, fullEvent)
+        data[SemanticKeys.SOURCES] = data[SemanticKeys.URL]!!
 
         return Event(name, startDate, data)
     }

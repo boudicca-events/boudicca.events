@@ -1,8 +1,7 @@
 package base.boudicca.publisher.event.html.service
 
-import base.boudicca.Event
-import base.boudicca.EventCategory
 import base.boudicca.SemanticKeys
+import base.boudicca.api.search.*
 import base.boudicca.api.search.BoudiccaQueryBuilder.after
 import base.boudicca.api.search.BoudiccaQueryBuilder.and
 import base.boudicca.api.search.BoudiccaQueryBuilder.before
@@ -10,13 +9,13 @@ import base.boudicca.api.search.BoudiccaQueryBuilder.contains
 import base.boudicca.api.search.BoudiccaQueryBuilder.durationLonger
 import base.boudicca.api.search.BoudiccaQueryBuilder.durationShorter
 import base.boudicca.api.search.BoudiccaQueryBuilder.equals
-import base.boudicca.api.search.QueryDTO
-import base.boudicca.api.search.Search
-import base.boudicca.api.search.SearchResultDTO
+import base.boudicca.model.Event
+import base.boudicca.model.EventCategory
 import base.boudicca.publisher.event.html.model.SearchDTO
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
+import java.net.URI
 import java.net.URLEncoder
 import java.time.LocalDate
 import java.time.OffsetDateTime
@@ -80,18 +79,38 @@ class EventService @Autowired constructor(@Value("\${boudicca.search.url}") priv
         for (flag in (searchDTO.flags ?: emptyList()).filter { !it.isNullOrBlank() }) {
             queryParts.add(equals(flag!!, "true"))
         }
+        if (!searchDTO.bandName.isNullOrBlank()) {
+            queryParts.add(contains(SemanticKeys.CONCERT_BANDLIST, searchDTO.bandName!!))
+        }
         return and(queryParts)
     }
 
     fun filters(): Filters {
-        val filters = search.getFilters()
+        val filters = search.getFiltersFor(
+            FilterQueryDTO(
+                listOf(
+                    FilterQueryEntryDTO(SemanticKeys.LOCATION_NAME),
+                    FilterQueryEntryDTO(SemanticKeys.LOCATION_CITY),
+                    FilterQueryEntryDTO(SemanticKeys.CONCERT_BANDLIST, true),
+                )
+            )
+        )
         return Filters(
             EventCategory.entries
                 .map { Pair(it.name, frontEndName(it)) }
                 .sortedWith(Comparator.comparing({ it.second }, String.CASE_INSENSITIVE_ORDER)),
-            filters.locationNames.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Pair(it, it) },
-            filters.locationCities.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Pair(it, it) },
+            filters[SemanticKeys.LOCATION_NAME]!!.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Pair(it, it) },
+            filters[SemanticKeys.LOCATION_CITY]!!.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Pair(it, it) },
+            filters[SemanticKeys.CONCERT_BANDLIST]!!.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Pair(it, it) },
         )
+    }
+
+    fun getSources(): List<String> {
+        val allSources = search.getFiltersFor(FilterQueryDTO(listOf(FilterQueryEntryDTO(SemanticKeys.SOURCES, true))))
+        return allSources[SemanticKeys.SOURCES]!!
+            .map { normalize(it) }
+            .distinct()
+            .sortedBy { it }
     }
 
     private fun mapEvents(result: SearchResultDTO): List<Map<String, String?>> {
@@ -108,7 +127,27 @@ class EventService @Autowired constructor(@Value("\${boudicca.search.url}") priv
             "city" to event.data[SemanticKeys.LOCATION_CITY],
             "category" to mapCategory(event.data[SemanticKeys.CATEGORY]),
             "pictureUrl" to URLEncoder.encode(event.data["pictureUrl"] ?: "", Charsets.UTF_8),
+            "accessibilityProperties" to getAllAccessibilityValues(event).joinToString(", "),
         )
+    }
+
+    private fun getAllAccessibilityValues(event: Event): List<String> {
+        val list = mutableListOf<String>()
+        for (property in event.data) {
+            if (property.key.startsWith("accessibility.") && property.value.equals("true", true)) {
+                list.add(
+                    when (property.key) {
+                        SemanticKeys.ACCESSIBILITY_ACCESSIBLETOILETS -> "Barrierefreie Toiletten"
+                        SemanticKeys.ACCESSIBILITY_ACCESSIBLESEATS -> "Rollstuhlplatz"
+                        SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY -> "Barrierefreier Zugang"
+                        SemanticKeys.ACCESSIBILITY_AKTIVPASSLINZ -> "Aktivpass möglich"
+                        SemanticKeys.ACCESSIBILITY_KULTURPASS -> "Kulturpass möglich"
+                        else -> property.key
+                    }
+                )
+            }
+        }
+        return list.sortedWith(String.CASE_INSENSITIVE_ORDER)
     }
 
     private fun mapCategory(categoryString: String?): String? {
@@ -159,10 +198,25 @@ class EventService @Autowired constructor(@Value("\${boudicca.search.url}") priv
         }
     }
 
+    private fun normalize(value: String): String {
+        return if (value.startsWith("http")) {
+            //treat as url
+            try {
+                URI.create(value).normalize().host
+            } catch (e: IllegalArgumentException) {
+                //hm, no url?
+                value
+            }
+        } else {
+            value
+        }
+    }
+
     data class Filters(
         val categories: List<Pair<String, String>>,
         val locationNames: List<Pair<String, String>>,
         val locationCities: List<Pair<String, String>>,
+        val bandNames: List<Pair<String, String>>,
     )
 }
 

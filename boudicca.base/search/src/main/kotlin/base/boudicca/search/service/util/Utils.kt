@@ -1,6 +1,6 @@
 package base.boudicca.search.service.util
 
-import base.boudicca.Entry
+import base.boudicca.model.Entry
 import base.boudicca.SemanticKeys
 import base.boudicca.search.model.ResultDTO
 import java.time.Instant

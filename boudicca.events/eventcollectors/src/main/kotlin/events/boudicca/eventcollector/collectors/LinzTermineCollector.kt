@@ -1,9 +1,9 @@
 package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
-import base.boudicca.Event
 import base.boudicca.api.eventcollector.EventCollector
 import base.boudicca.api.eventcollector.Fetcher
+import base.boudicca.model.Event
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -12,13 +12,15 @@ import org.slf4j.LoggerFactory
 import java.net.URLEncoder
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.time.ZoneId
-import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 class LinzTermineCollector : EventCollector {
     private val fetcher = Fetcher()
     private val LOG = LoggerFactory.getLogger(this::class.java)
+    private val eventsBaseUrl = "https://www.linztermine.at/schnittstelle/downloads/events_xml.php"
+    private val locationBaseUrl = "https://www.linztermine.at/schnittstelle/downloads/locations_xml.php"
 
     override fun getName(): String {
         return "linz termine"
@@ -83,7 +85,7 @@ class LinzTermineCollector : EventCollector {
                 mappedEvents.add(
                     Event(
                         event.name,
-                        date.first.toOffsetDateTime(),
+                        date.first,
                         mapOf(
                             SemanticKeys.ENDDATE to date.second.format(DateTimeFormatter.ISO_DATE_TIME),
                             SemanticKeys.TYPE to (event.type ?: ""),
@@ -93,6 +95,7 @@ class LinzTermineCollector : EventCollector {
                             SemanticKeys.URL to event.url,
                             SemanticKeys.LOCATION_NAME to (location?.name
                                 ?: event.locationFallbackName), //they do not include all locations in their location.xml files -.-
+                            SemanticKeys.SOURCES to event.url + "\n" + eventsBaseUrl + "\n" + locationBaseUrl
                         ).filter { it.value.isNotBlank() }
                     )
                 )
@@ -108,7 +111,7 @@ class LinzTermineCollector : EventCollector {
         val links = mutableListOf<String>()
         for (i in 1..(4 * 6)) {
             links.add(
-                "https://www.linztermine.at/schnittstelle/downloads/events_xml.php?lt_datefrom=" +
+                "$eventsBaseUrl?lt_datefrom=" +
                         URLEncoder.encode(
                             date.format(DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss")),
                             Charsets.UTF_8
@@ -133,17 +136,28 @@ class LinzTermineCollector : EventCollector {
                         it.select("tags").first()?.child(0)?.text(),
                         it.select("date").map {
                             Pair(
-                                LocalDateTime.parse(it.attr("dFrom"), formatter).atZone(ZoneId.of("Europe/Vienna")),
-                                LocalDateTime.parse(it.attr("dTo"), formatter).atZone(ZoneId.of("Europe/Vienna")),
+                                LocalDateTime.parse(it.attr("dFrom"), formatter).atZone(ZoneId.of("Europe/Vienna"))
+                                    .toOffsetDateTime(),
+                                LocalDateTime.parse(it.attr("dTo"), formatter).atZone(ZoneId.of("Europe/Vienna"))
+                                    .toOffsetDateTime(),
                             )
                         },
                         it.attr("freeofcharge") == "1",
                         findLink(it),
-                        it.select("location").attr("id").toInt(),
+                        findLocationId(it),
                         it.select("location").text()
                     )
                 }
         }.distinctBy { it.id }
+    }
+
+    private fun findLocationId(event: Element): Int? {
+        val idAttr = event.select("location").attr("id")
+        return if (!idAttr.isNullOrBlank()) {
+            idAttr.toInt()
+        } else {
+            null
+        }
     }
 
     private fun findLink(event: Element): String {
@@ -160,7 +174,7 @@ class LinzTermineCollector : EventCollector {
     }
 
     private fun parseLocations(): Map<Int, Location> {
-        val xml = loadXml("https://www.linztermine.at/schnittstelle/downloads/locations_xml.php")
+        val xml = loadXml(locationBaseUrl)
         return xml.child(0).children().toList().map {
             Location(
                 it.attr("id").toInt(),
@@ -184,10 +198,10 @@ class LinzTermineCollector : EventCollector {
         val id: Int,
         val name: String,
         val type: String?,
-        val dates: List<Pair<ZonedDateTime, ZonedDateTime>>,
+        val dates: List<Pair<OffsetDateTime, OffsetDateTime>>,
         val freeOfCharge: Boolean,
         val url: String,
-        val locationId: Int,
+        val locationId: Int?,
         val locationFallbackName: String,
     )
 }

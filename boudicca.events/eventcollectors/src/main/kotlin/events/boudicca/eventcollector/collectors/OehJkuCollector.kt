@@ -1,9 +1,9 @@
 package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
-import base.boudicca.Event
 import base.boudicca.api.eventcollector.Fetcher
 import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.model.Event
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.time.LocalDate
@@ -45,6 +45,7 @@ class OehJkuCollector : TwoStepEventCollector<String>("oehjku") {
             data[SemanticKeys.LOCATION_URL] = "https://www.jku.at/"
             data[SemanticKeys.LOCATION_CITY] = "Linz"
         }
+        data[SemanticKeys.SOURCES] = data[SemanticKeys.URL]!!
 
         return Event(name, startDate, data)
     }

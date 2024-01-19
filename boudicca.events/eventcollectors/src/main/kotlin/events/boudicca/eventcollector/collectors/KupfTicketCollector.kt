@@ -1,9 +1,9 @@
 package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
-import base.boudicca.Event
 import base.boudicca.api.eventcollector.Fetcher
 import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.model.Event
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
 import com.beust.klaxon.lookup
@@ -72,6 +72,7 @@ class KupfTicketCollector : TwoStepEventCollector<JsonObject>("kupfticket") {
                 SemanticKeys.LOCATION_URL to locationUrl,
                 SemanticKeys.PICTUREURL to pictureUrl,
                 SemanticKeys.ENDDATE to endDate.format(DateTimeFormatter.ISO_DATE_TIME),
+                SemanticKeys.SOURCES to url,
             )
         )
     }

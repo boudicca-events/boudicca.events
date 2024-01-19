@@ -1,11 +1,13 @@
 package base.boudicca.enricher.service
 
-import base.boudicca.Event
-import base.boudicca.EventCategory
+import base.boudicca.model.Event
+import base.boudicca.model.EventCategory
 import base.boudicca.SemanticKeys
+import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Service
 
 @Service
+@Order(0)
 class CategoryEnricher : Enricher {
 
     override fun enrich(e: Event): Event {

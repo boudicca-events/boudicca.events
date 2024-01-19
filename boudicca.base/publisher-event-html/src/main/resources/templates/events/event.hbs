@@ -12,6 +12,15 @@
                     Zur Eventseite
                 </a>
             {{/if}}
+
+            {{#if event.accessibilityProperties}}
+                <div class="accessibility-details">
+                    <svg height="24px" width="24px" viewBox="0 0 122.88 122.88">
+                        <title>{{event.accessibilityProperties}}</title>
+                        <use xlink:href="#accessibility"></use>
+                    </svg>
+                </div>
+            {{/if}}
         </div>
         
         <div class="event-description">

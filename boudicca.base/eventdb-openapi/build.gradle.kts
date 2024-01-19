@@ -1,5 +1,5 @@
 plugins {
-    id("org.openapi.generator") version "7.0.1"
+    id("org.openapi.generator") version "7.1.0"
     `java-library`
 }
 
@@ -9,7 +9,7 @@ repositories {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
+        languageVersion.set(JavaLanguageVersion.of(rootProject.ext["jvmVersion"] as Int))
     }
 }
 
@@ -18,7 +18,7 @@ val openapi by configurations.creating {
     isCanBeResolved = true
 }
 
-val jacksonVersion = "2.15.3"
+val jacksonVersion = "2.16.0"
 val jakartaAnnotationVersion = "1.3.5"
 
 dependencies {

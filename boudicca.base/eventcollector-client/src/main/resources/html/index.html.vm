@@ -1,0 +1,41 @@
+#header()
+
+<h1>Boudicca EventCollectors WebUI</h1>
+
+<h2>Current Full Collection</h2>
+
+#if( $hasOngoingFullCollection )
+
+    <p>Full Collection is currently running for ${fullCollection.duration}, started on ${fullCollection.startEndTime}, has collected ${fullCollection.totalEventsCollected} events so far and currently has $fullCollection.errorsCount errors</p>
+
+    #singleCollectionsTable($fullCollection.singleCollections)
+
+    <h3>Log lines</h3>
+    <pre>$log</pre>
+
+#else
+    <p>No Full Collection ongoing</p>
+#end
+
+<h2>Past Full Collections</h2>
+
+<table>
+    <thead>
+    <tr>
+        <td>Start/End Time</td>
+        <td>Duration</td>
+    </tr>
+    </thead>
+    <tbody>
+        #foreach( $fullCollection in $fullCollections)
+        <tr>
+            <td>#if( $fullCollection.errorsCount > 0)☠#else #if( $fullCollection.warningsCount > 0)⚠#end #end
+                #if( $fullCollection.id )<a href="fullCollection?id=$fullCollection.id">$fullCollection.startEndTime</a>#else $fullCollection.startEndTime #end</td>
+            <td>$fullCollection.duration</td>
+        </tr>
+        #end
+    </tbody>
+</table>
+
+
+#footer()

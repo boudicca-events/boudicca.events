@@ -1,9 +1,9 @@
 package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
-import base.boudicca.Event
 import base.boudicca.api.eventcollector.Fetcher
 import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.model.Event
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.time.LocalDate
@@ -63,12 +63,10 @@ class WissensturmCollector : TwoStepEventCollector<Pair<String, Document>>("wiss
                     dataCopy[SemanticKeys.LOCATION_NAME] = "Wissensturm"
                     dataCopy[SemanticKeys.LOCATION_URL] = "https://wissensturm.linz.at/"
                     dataCopy[SemanticKeys.LOCATION_CITY] = "Linz"
-                    dataCopy[SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY] = "true"
-                    dataCopy[SemanticKeys.ACCESSIBILITY_ACCESSIBLESEATS] = "true"
-                    dataCopy[SemanticKeys.ACCESSIBILITY_ACCESSIBLETOILETS] = "true"
                 } else {
                     dataCopy[SemanticKeys.LOCATION_NAME] = it.third
                 }
+                dataCopy[SemanticKeys.SOURCES] = data[SemanticKeys.URL]!!
                 Event(name, it.first!!, dataCopy)
             }
     }

@@ -6,12 +6,19 @@ repositories {
     mavenCentral()
 }
 
+kotlin {
+    jvmToolchain(rootProject.ext["jvmVersion"] as Int)
+    compilerOptions {
+        javaParameters = true
+    }
+}
+
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
-    implementation(project(":boudicca.base:eventcollector-api"))
-    implementation(project(":boudicca.base:publisher-api"))
-    implementation("org.jsoup:jsoup:1.16.2")
-    implementation("org.mnode.ical4j:ical4j:3.2.13") {
+    implementation(project(":boudicca.base:eventcollector-client"))
+    implementation(project(":boudicca.base:publisher-client"))
+    implementation("org.jsoup:jsoup:1.17.1")
+    implementation("org.mnode.ical4j:ical4j:3.2.14") {
         exclude("org.codehaus.groovy", "groovy")
         exclude("org.codehaus.groovy", "groovy-dateutil")
     }
@@ -19,21 +26,11 @@ dependencies {
     implementation("com.beust:klaxon:5.6")
 }
 
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
-    }
-}
-
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions.javaParameters = true
-}
-
 task<Exec>("imageBuild") {
     inputs.file("src/main/docker/Dockerfile")
     inputs.files(tasks.named("jar"))
     dependsOn(tasks.named("assemble"))
-    commandLine("docker", "build", "-t", "localhost/boudicca-eventcollectors", "-f", "src/main/docker/Dockerfile", ".")
+    commandLine("docker", "build", "-t", "localhost/boudicca-events-eventcollectors", "-f", "src/main/docker/Dockerfile", ".")
 }
 
 tasks.withType<Jar> {

@@ -1,10 +1,9 @@
 package base.boudicca.enricher.service.location
 
-import base.boudicca.Event
 import base.boudicca.SemanticKeys
 import base.boudicca.enricher.service.Enricher
 import base.boudicca.enricher.service.ForceUpdateEvent
-import org.slf4j.LoggerFactory
+import base.boudicca.model.Event
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.event.EventListener
 import org.springframework.scheduling.annotation.Scheduled

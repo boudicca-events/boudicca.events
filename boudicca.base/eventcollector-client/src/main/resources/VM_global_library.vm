@@ -1,0 +1,36 @@
+#macro( header )
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Boudicca EventCollectors WebUI</title>
+</head>
+<body>
+#end
+
+#macro( footer )
+</body>
+</html>
+#end
+
+#macro( singleCollectionsTable $singleCollections )
+<h3>Single Collections</h3>
+<table>
+    <thead>
+    <tr>
+        <td>Collector Name</td>
+        <td>Duration</td>
+        <td>Start/End Time</td>
+    </tr>
+    </thead>
+    <tbody>
+        #foreach( $singleCollection in $singleCollections)
+        <tr>
+            <td>#if( $singleCollection.errorsCount != "-" && $singleCollection.errorsCount > 0)☠#else #if( $singleCollection.warningsCount != "-" && $singleCollection.warningsCount > 0)⚠#end #end
+                #if( $singleCollection.id )<a href="singleCollection?id=$singleCollection.id">$singleCollection.name</a>#else $singleCollection.name #end</td>
+            <td>$singleCollection.duration</td>
+            <td>$singleCollection.startEndTime</td>
+        </tr>
+        #end
+    </tbody>
+</table>
+#end

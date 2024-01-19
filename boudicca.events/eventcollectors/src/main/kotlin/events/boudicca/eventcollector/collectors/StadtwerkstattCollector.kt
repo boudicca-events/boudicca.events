@@ -1,9 +1,9 @@
 package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
-import base.boudicca.Event
 import base.boudicca.api.eventcollector.Fetcher
 import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.model.Event
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.time.LocalDate
@@ -34,13 +34,9 @@ class StadtwerkstattCollector : TwoStepEventCollector<String>("stadtwerkstatt") 
         val data = mutableMapOf<String, String>()
         data[SemanticKeys.URL] = event
         val type = eventSite.select("div.genre").text()
-        if (type.isNotBlank()) {
-            data[SemanticKeys.TYPE] = type
-        }
+        data[SemanticKeys.TYPE] = type
         val description = eventSite.select("div.event-text").text()
-        if (description.isNotBlank()) {
-            data[SemanticKeys.DESCRIPTION] = description
-        }
+        data[SemanticKeys.DESCRIPTION] = description
 
         val img = eventSite.select("div.event-text img")
         if (!img.isEmpty()) {
@@ -50,9 +46,7 @@ class StadtwerkstattCollector : TwoStepEventCollector<String>("stadtwerkstatt") 
         data[SemanticKeys.LOCATION_NAME] = "Stadtwerkstatt"
         data[SemanticKeys.LOCATION_URL] = "https://club.stwst.at"
         data[SemanticKeys.LOCATION_CITY] = "Linz"
-        data[SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY] = "true"
-        data[SemanticKeys.ACCESSIBILITY_ACCESSIBLESEATS] = "true"
-        data[SemanticKeys.ACCESSIBILITY_ACCESSIBLETOILETS] = "true"
+        data[SemanticKeys.SOURCES] = data[SemanticKeys.URL]!!
         //TODO could parse lineup
 
         return Event(name, startDate, data)

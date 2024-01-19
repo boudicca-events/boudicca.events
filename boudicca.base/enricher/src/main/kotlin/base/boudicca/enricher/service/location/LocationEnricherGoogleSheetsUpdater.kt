@@ -8,17 +8,15 @@ import com.google.api.services.sheets.v4.model.ValueRange
 import com.google.auth.http.HttpCredentialsAdapter
 import com.google.auth.oauth2.GoogleCredentials
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
 import java.io.FileInputStream
 
-class LocationEnricherGoogleSheetsUpdater(private val googleCredentialsPath: String) : LocationEnricherUpdater {
+class LocationEnricherGoogleSheetsUpdater(
+    private val googleCredentialsPath: String,
+    private val spreadsheetId: String,
+) : LocationEnricherUpdater {
     private val LOG = LoggerFactory.getLogger(this.javaClass)
     private val JSON_FACTORY = GsonFactory.getDefaultInstance()
     private val HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport()
-    private val spreadsheetId = "1yYOE5gRR6gjNBim7hwEe3__fXoRAMtREkYbs-lsn7uM"
     private val range = "LocationData!A1:Z"
     private val credentials = createCredentials()
     private val service = Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, HttpCredentialsAdapter(credentials))
@@ -64,14 +62,5 @@ class LocationEnricherGoogleSheetsUpdater(private val googleCredentialsPath: Str
         }
 
         return allLocationData
-    }
-}
-
-@Configuration
-@ConditionalOnProperty("boudicca.enricher.location.googleCredentialsPath")
-class LocationEnricherGoogleSheetsUpdaterConfiguration {
-    @Bean
-    fun googleUpdater(@Value("\${boudicca.enricher.location.googleCredentialsPath:}") googleCredentialsPath: String): LocationEnricherUpdater {
-        return LocationEnricherGoogleSheetsUpdater(googleCredentialsPath)
     }
 }

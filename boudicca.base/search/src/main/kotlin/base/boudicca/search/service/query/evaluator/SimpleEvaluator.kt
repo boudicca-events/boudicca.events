@@ -1,6 +1,6 @@
 package base.boudicca.search.service.query.evaluator
 
-import base.boudicca.Entry
+import base.boudicca.model.Entry
 import base.boudicca.search.model.ResultDTO
 import base.boudicca.search.service.query.*
 import base.boudicca.search.service.util.Utils

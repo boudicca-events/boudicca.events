@@ -6,17 +6,11 @@ repositories {
     mavenCentral()
 }
 
-dependencies {
-}
-
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(11))
+kotlin {
+    jvmToolchain(rootProject.ext["jvmVersion"] as Int)
+    compilerOptions {
+        javaParameters = true
     }
-}
-
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions.javaParameters = true
 }
 
 //TODO rename?

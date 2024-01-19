@@ -19,7 +19,8 @@ We use certain data types for the properties we expect.
 * `date`: [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) Timestamp as text, for example: `2009-06-30T18:30:00+02:00`
 * `url`: A URL as text
 * `coordinates`: longitude + latitude in Decimal degrees (DD) in the format `<longitute>, <latitude>`
-* `list<?>`: A list of elements, the `?` describes the type of the elements in the list
+* `list<?>`: A list of elements, the `?` describes the type of the elements in the list. Currently elements in a list
+  are seperated by a newline, but this will probably change sometime
 * `enum<?>`: Has to be one of the specified distinct values
 * `boolean`: The text "true" or "false"
 
@@ -40,6 +41,7 @@ We use certain data types for the properties we expect.
 | registration  | If this is a free event, a event which requires registration or a event which requires a paid ticket | enum\<registration>                  |
 | pictureUrl    | Url to a picture to be shown                                                                         | url                                  |
 | collectorName | Name of the collector which collected this event                                                     | text                                 |
+| sources       | A list of all sources, line by line. This should include all URLs or other sources used.             | list\<text>                          |
 
 #### Registration enum values
 
@@ -65,18 +67,20 @@ We use certain data types for the properties we expect.
 
 ### Accessibility Properties
 
-| Key                             | Meaning                                                    | Format  |
-|---------------------------------|------------------------------------------------------------|---------|
-| accessibility.accessibleEntry   | If the entry/exit is accessible                            | boolean |
-| accessibility.accessibleSeats   | If there are wheelchair places available on the event hall | boolean |
-| accessibility.accessibleToilets | If there are accessible toilets available                  | boolean |
+| Key                                   | Meaning                                                    | Format  |
+|---------------------------------------|------------------------------------------------------------|---------|
+| accessibility.accessibleEntry         | If the entry/exit is accessible                            | boolean |
+| accessibility.accessibleSeats         | If there are wheelchair places available on the event hall | boolean |
+| accessibility.accessibleToilets       | If there are accessible toilets available                  | boolean |
+| accessibility.accessibleAktivpassLinz | If the Aktivpass Linz may be applicable                    | boolean |
+| accessibility.accessibleKulturpass    | If the Kulturpass may be applicable                        | boolean |
 
 ### Concert(/Music?) Properties
 
-| Key              | Meaning                                        | Format     |
-|------------------|------------------------------------------------|------------|
-| concert.genre    | Genre of the concert                           | text       |
-| concert.bandlist | List of all bands playing (main act + support) | list<text> |
+| Key              | Meaning                   | Format     |
+|------------------|---------------------------|------------|
+| concert.genre    | Genre of the concert      | text       |
+| concert.bandlist | List of all bands playing | list<text> |
 
 ### Internal Properties
 

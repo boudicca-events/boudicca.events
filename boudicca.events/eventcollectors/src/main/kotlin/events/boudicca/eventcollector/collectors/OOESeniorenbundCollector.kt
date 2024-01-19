@@ -1,15 +1,15 @@
 package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
-import base.boudicca.Event
 import base.boudicca.api.eventcollector.Fetcher
 import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.model.Event
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.time.LocalDate
 import java.time.LocalTime
+import java.time.OffsetDateTime
 import java.time.ZoneId
-import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.regex.Pattern
 
@@ -19,7 +19,7 @@ import java.util.regex.Pattern
 class OOESeniorenbundCollector : TwoStepEventCollector<Pair<Document, String>>("ooesb") {
 
     override fun getAllUnparsedEvents(): List<Pair<Document, String>> {
-        val fetcher = Fetcher() //server seems really slow...
+        val fetcher = Fetcher()
         val document = Jsoup.parse(fetcher.fetchUrl("https://servicebroker.media-data.at/overview.html?key=QVKSBOOE"))
 
         return document.select("a.link-detail")
@@ -28,25 +28,26 @@ class OOESeniorenbundCollector : TwoStepEventCollector<Pair<Document, String>>("
             .map { Pair(Jsoup.parse(fetcher.fetchUrl(it)), it) }
     }
 
-    override fun parseEvent(event: Pair<Document, String>): Event {
+    override fun parseMultipleEvents(event: Pair<Document, String>): List<Event> {
         val (eventDoc, url) = event
         val data = mutableMapOf<String, String>()
 
         val name = eventDoc.select("div.title>p").text()
-        val (startDate, endDate) = getDates(eventDoc)
-        val description = eventDoc.select("div.subtitle>p").text()
+        val dates = getDates(eventDoc)
+        return dates.map {
+            val (startDate, endDate) = it
+            val description = eventDoc.select("div.subtitle>p").text()
 
-        data[SemanticKeys.URL] = cleanupUrl(url)
-        data[SemanticKeys.LOCATION_NAME] =
-            eventDoc.select("div.venue").text() //TODO location name and city here are not seperated at all -.-
-        if (endDate != null) {
-            data[SemanticKeys.ENDDATE] = endDate.format(DateTimeFormatter.ISO_DATE_TIME)
-        }
-        if (description.isNotBlank()) {
+            data[SemanticKeys.URL] = cleanupUrl(url)
+            data[SemanticKeys.LOCATION_NAME] =
+                eventDoc.select("div.venue").text() //TODO location name and city here are not seperated at all -.-
+            if (endDate != null) {
+                data[SemanticKeys.ENDDATE] = endDate.format(DateTimeFormatter.ISO_DATE_TIME)
+            }
             data[SemanticKeys.DESCRIPTION] = description
+            data[SemanticKeys.SOURCES] = data[SemanticKeys.URL]!!
+            Event(name, startDate, data)
         }
-
-        return Event(name, startDate.toOffsetDateTime(), data)
     }
 
     private fun cleanupUrl(url: String): String {
@@ -62,9 +63,12 @@ class OOESeniorenbundCollector : TwoStepEventCollector<Pair<Document, String>>("
         }
     }
 
-    private fun getDates(event: Document): Pair<ZonedDateTime, ZonedDateTime?> {
-        val dateString = event.select("div.date>p").text()
+    private fun getDates(event: Document): List<Pair<OffsetDateTime, OffsetDateTime?>> {
+        return event.select("div.date>p").toList()
+            .map { getSingleDates(it.text()) }
+    }
 
+    private fun getSingleDates(dateString: String?): Pair<OffsetDateTime, OffsetDateTime?> {
         val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.uuuu")
         val timeFormatter = DateTimeFormatter.ofPattern("kk:mm")
 
@@ -86,29 +90,30 @@ class OOESeniorenbundCollector : TwoStepEventCollector<Pair<Document, String>>("
             val localDate = LocalDate.parse(dateFromTillMatcher.group(1), dateFormatter)
             return Pair(
                 localDate.atTime(LocalTime.parse(dateFromTillMatcher.group(2), timeFormatter))
-                    .atZone(ZoneId.of("Europe/Vienna")),
+                    .atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime(),
                 localDate.atTime(LocalTime.parse(dateFromTillMatcher.group(3), timeFormatter))
-                    .atZone(ZoneId.of("Europe/Vienna"))
+                    .atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
             )
         } else if (dateFromDateTillMatcher.matches()) {
             val startLocalDate = LocalDate.parse(dateFromDateTillMatcher.group(1), dateFormatter)
             val endLocalDate = LocalDate.parse(dateFromDateTillMatcher.group(3), dateFormatter)
             return Pair(
                 startLocalDate.atTime(LocalTime.parse(dateFromDateTillMatcher.group(2), timeFormatter))
-                    .atZone(ZoneId.of("Europe/Vienna")),
+                    .atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime(),
                 endLocalDate.atTime(LocalTime.parse(dateFromDateTillMatcher.group(4), timeFormatter))
-                    .atZone(ZoneId.of("Europe/Vienna"))
+                    .atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
             )
         } else if (dateFromDateTillWithoutTimeMatcher.matches()) {
             val startLocalDate = LocalDate.parse(dateFromDateTillWithoutTimeMatcher.group(1), dateFormatter)
             val endLocalDate = LocalDate.parse(dateFromDateTillWithoutTimeMatcher.group(2), dateFormatter)
             return Pair(
-                startLocalDate.atTime(0, 0, 0).atZone(ZoneId.of("Europe/Vienna")),
-                endLocalDate.atTime(0, 0, 0).atZone(ZoneId.of("Europe/Vienna"))
+                startLocalDate.atTime(0, 0, 0).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime(),
+                endLocalDate.atTime(0, 0, 0).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
             )
         } else {
             return Pair(
-                LocalDate.parse(dateString, dateFormatter).atTime(0, 0, 0).atZone(ZoneId.of("Europe/Vienna")),
+                LocalDate.parse(dateString, dateFormatter).atTime(0, 0, 0).atZone(ZoneId.of("Europe/Vienna"))
+                    .toOffsetDateTime(),
                 null
             )
         }

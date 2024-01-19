@@ -16,6 +16,10 @@
         box-shadow: 1px 0px 10px 11px #87878724;
     }
 
+    .hidden {
+        display: none;
+    }
+
     @media only screen and (max-width: 700px) {
         .drawer {
             width: 100vw;
@@ -142,6 +146,23 @@
         </div>
     </fieldset>
 
+    <fieldset id="musicFieldSet">
+        <legend><strong>Musik</strong></legend>
+        <div class="header-search-filter">
+            <div class="header-date-search">
+                <div class="filter-input-wrapper">
+                    <label for="bandName" class="filter-label">Bandname</label>
+                    <select name="bandName" id="bandName">
+                        <option value="">Beliebig</option>
+                        {{#each filters.bandNames as |bandName|}}
+                            <option value="{{bandName.first}}">{{bandName.second}}</option>
+                        {{/each}}
+                    </select>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+
     <fieldset>
         <legend><strong>Accessibility</strong></legend>
         <div class="header-search-filter">
@@ -159,6 +180,16 @@
                 <div class="filter-input-wrapper">
                     <label for="accessibility.accessibleToilets" class="filter-label">Barrierefreie Toiletten
                         <input type="checkbox" id="accessibility.accessibleToilets" value="accessibility.accessibleToilets" name="flags">
+                    </label>
+                </div>
+                <div class="filter-input-wrapper">
+                    <label for="accessibility.accessibleAktivpassLinz" class="filter-label">Aktivpass möglich
+                        <input type="checkbox" id="accessibility.accessibleAktivpassLinz" value="accessibility.accessibleAktivpassLinz" name="flags">
+                    </label>
+                </div>
+                <div class="filter-input-wrapper">
+                    <label for="accessibility.accessibleKulturpass" class="filter-label">Kulturpass möglich
+                        <input type="checkbox" id="accessibility.accessibleKulturpass" value="accessibility.accessibleKulturpass" name="flags">
                     </label>
                 </div>
             </div>

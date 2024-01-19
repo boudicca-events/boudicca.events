@@ -1,5 +1,5 @@
 plugins {
-    id("org.openapi.generator") version "7.1.0"
+    id("org.openapi.generator") version "7.2.0"
     `java-library`
 }
 
@@ -16,7 +16,7 @@ val openapi by configurations.creating {
     isCanBeResolved = true
 }
 
-val jacksonVersion = "2.16.0"
+val jacksonVersion = "2.16.1"
 val jakartaAnnotationVersion = "1.3.5"
 
 dependencies {

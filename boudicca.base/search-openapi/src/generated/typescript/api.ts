@@ -14,7 +14,7 @@
 
 
 import type { Configuration } from './configuration';
-import type { AxiosPromise, AxiosInstance, AxiosRequestConfig } from 'axios';
+import type { AxiosPromise, AxiosInstance, RawAxiosRequestConfig } from 'axios';
 import globalAxios from 'axios';
 // Some imports not used depending on template conditions
 // @ts-ignore
@@ -254,7 +254,7 @@ export const SearchControllerApiAxiosParamCreator = function (configuration?: Co
          * @deprecated
          * @throws {RequiredError}
          */
-        filters: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        filters: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/filters`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -284,7 +284,7 @@ export const SearchControllerApiAxiosParamCreator = function (configuration?: Co
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        filtersFor: async (filterQueryDTO: FilterQueryDTO, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        filtersFor: async (filterQueryDTO: FilterQueryDTO, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'filterQueryDTO' is not null or undefined
             assertParamExists('filtersFor', 'filterQueryDTO', filterQueryDTO)
             const localVarPath = `/filtersFor`;
@@ -320,7 +320,7 @@ export const SearchControllerApiAxiosParamCreator = function (configuration?: Co
          * @deprecated
          * @throws {RequiredError}
          */
-        query: async (queryDTO: QueryDTO, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        query: async (queryDTO: QueryDTO, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'queryDTO' is not null or undefined
             assertParamExists('query', 'queryDTO', queryDTO)
             const localVarPath = `/query`;
@@ -355,7 +355,7 @@ export const SearchControllerApiAxiosParamCreator = function (configuration?: Co
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        queryEntries: async (queryDTO: QueryDTO, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        queryEntries: async (queryDTO: QueryDTO, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'queryDTO' is not null or undefined
             assertParamExists('queryEntries', 'queryDTO', queryDTO)
             const localVarPath = `/queryEntries`;
@@ -391,7 +391,7 @@ export const SearchControllerApiAxiosParamCreator = function (configuration?: Co
          * @deprecated
          * @throws {RequiredError}
          */
-        search: async (searchDTO: SearchDTO, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        search: async (searchDTO: SearchDTO, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'searchDTO' is not null or undefined
             assertParamExists('search', 'searchDTO', searchDTO)
             const localVarPath = `/search`;
@@ -436,7 +436,7 @@ export const SearchControllerApiFp = function(configuration?: Configuration) {
          * @deprecated
          * @throws {RequiredError}
          */
-        async filters(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Filters>> {
+        async filters(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Filters>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.filters(options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['SearchControllerApi.filters']?.[index]?.url;
@@ -448,7 +448,7 @@ export const SearchControllerApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async filtersFor(filterQueryDTO: FilterQueryDTO, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<{ [key: string]: Array<string>; }>> {
+        async filtersFor(filterQueryDTO: FilterQueryDTO, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<{ [key: string]: Array<string>; }>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.filtersFor(filterQueryDTO, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['SearchControllerApi.filtersFor']?.[index]?.url;
@@ -461,7 +461,7 @@ export const SearchControllerApiFp = function(configuration?: Configuration) {
          * @deprecated
          * @throws {RequiredError}
          */
-        async query(queryDTO: QueryDTO, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<SearchResultDTO>> {
+        async query(queryDTO: QueryDTO, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<SearchResultDTO>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.query(queryDTO, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['SearchControllerApi.query']?.[index]?.url;
@@ -473,7 +473,7 @@ export const SearchControllerApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async queryEntries(queryDTO: QueryDTO, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ResultDTO>> {
+        async queryEntries(queryDTO: QueryDTO, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ResultDTO>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.queryEntries(queryDTO, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['SearchControllerApi.queryEntries']?.[index]?.url;
@@ -486,7 +486,7 @@ export const SearchControllerApiFp = function(configuration?: Configuration) {
          * @deprecated
          * @throws {RequiredError}
          */
-        async search(searchDTO: SearchDTO, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<SearchResultDTO>> {
+        async search(searchDTO: SearchDTO, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<SearchResultDTO>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.search(searchDTO, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['SearchControllerApi.search']?.[index]?.url;
@@ -566,7 +566,7 @@ export class SearchControllerApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof SearchControllerApi
      */
-    public filters(options?: AxiosRequestConfig) {
+    public filters(options?: RawAxiosRequestConfig) {
         return SearchControllerApiFp(this.configuration).filters(options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -577,7 +577,7 @@ export class SearchControllerApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof SearchControllerApi
      */
-    public filtersFor(filterQueryDTO: FilterQueryDTO, options?: AxiosRequestConfig) {
+    public filtersFor(filterQueryDTO: FilterQueryDTO, options?: RawAxiosRequestConfig) {
         return SearchControllerApiFp(this.configuration).filtersFor(filterQueryDTO, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -589,7 +589,7 @@ export class SearchControllerApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof SearchControllerApi
      */
-    public query(queryDTO: QueryDTO, options?: AxiosRequestConfig) {
+    public query(queryDTO: QueryDTO, options?: RawAxiosRequestConfig) {
         return SearchControllerApiFp(this.configuration).query(queryDTO, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -600,7 +600,7 @@ export class SearchControllerApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof SearchControllerApi
      */
-    public queryEntries(queryDTO: QueryDTO, options?: AxiosRequestConfig) {
+    public queryEntries(queryDTO: QueryDTO, options?: RawAxiosRequestConfig) {
         return SearchControllerApiFp(this.configuration).queryEntries(queryDTO, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -612,7 +612,7 @@ export class SearchControllerApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof SearchControllerApi
      */
-    public search(searchDTO: SearchDTO, options?: AxiosRequestConfig) {
+    public search(searchDTO: SearchDTO, options?: RawAxiosRequestConfig) {
         return SearchControllerApiFp(this.configuration).search(searchDTO, options).then((request) => request(this.axios, this.basePath));
     }
 }

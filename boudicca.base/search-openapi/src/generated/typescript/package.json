@@ -1,6 +1,6 @@
 {
   "name": "@boudicca/search-api-client",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "OpenAPI client for @boudicca/search-api-client",
   "author": "boudicca.events Contributors",
   "repository": {
@@ -12,17 +12,19 @@
     "typescript",
     "openapi-client",
     "openapi-generator",
-    "@boudicca/enricher-api-client"
+    "@boudicca/search-api-client"
   ],
   "license": "GPLv3",
   "main": "./dist/index.js",
   "typings": "./dist/index.d.ts",
+  "module": "./dist/esm/index.js",
+  "sideEffects": false,
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && tsc -p tsconfig.esm.json",
     "prepare": "npm run build"
   },
   "dependencies": {
-    "axios": "^0.27.2"
+    "axios": "^1.6.1"
   },
   "devDependencies": {
     "@types/node": "^12.11.5",

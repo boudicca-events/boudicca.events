@@ -41,24 +41,27 @@ tasks.withType<GenerateTask> {
 tasks.register<GenerateTask>("generateJavaClient") {
     inputs.files(openapi)
     inputSpec.set(openapi.files.first().path)
-    outputDir.set("${layout.buildDirectory}/generated/java")
+    outputDir.set(layout.buildDirectory.dir("/generated/java").get().toString())
     generatorName.set("java")
     library.set("native")
+    generateApiTests.set(false)
+    generateModelTests.set(false)
     additionalProperties.put("supportUrlQuery", "false")
-    invokerPackage.set("events.boudicca.openapi")
-    apiPackage.set("events.boudicca.openapi.api")
-    modelPackage.set("events.boudicca.openapi.model")
+    invokerPackage.set("base.boudicca.openapi")
+    apiPackage.set("base.boudicca.eventdb.api")
+    modelPackage.set("base.boudicca.eventdb.model")
 }
 
 tasks.register<GenerateTask>("generateTypescriptClient") {
     inputs.files(openapi)
     inputSpec.set(openapi.files.first().path)
-    outputDir.set("${layout.buildDirectory}/generated/typescript")
+    outputDir.set(layout.buildDirectory.dir("/generated/typescript").get().toString())
     generatorName.set("typescript-axios")
     configOptions.putAll(
         mapOf(
             "npmName" to "@boudicca/eventdb-api-client",
             "npmVersion" to "${project.version}",
+            "supportsES6" to "true",
         )
     )
 }
@@ -66,7 +69,7 @@ tasks.register<GenerateTask>("generateTypescriptClient") {
 sourceSets {
     main {
         java {
-            srcDir(file("${layout.buildDirectory.get()}/generate-resources/main/src/main/java"))
+            srcDir(file(layout.buildDirectory.dir("/generated/java").get().toString()))
         }
     }
 }
@@ -77,7 +80,7 @@ tasks.named("compileJava") {
 
 publishing {
     publications {
-        create<MavenPublication>("eventdb-openapi") {
+        create<MavenPublication>("eventdb-client") {
             from(components["java"])
         }
     }

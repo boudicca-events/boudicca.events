@@ -41,24 +41,30 @@ tasks.withType<GenerateTask> {
 tasks.register<GenerateTask>("generateJavaClient") {
     inputs.files(openapi)
     inputSpec.set(openapi.files.first().path)
-    outputDir.set("${layout.buildDirectory}/generated/java")
+    outputDir.set(layout.buildDirectory.dir("/generated/java").get().toString())
     generatorName.set("java")
     library.set("native")
-    additionalProperties.put("supportUrlQuery", "false")
-    invokerPackage.set("events.boudicca.openapi")
-    apiPackage.set("events.boudicca.openapi.api")
-    modelPackage.set("events.boudicca.openapi.model")
+    additionalProperties.putAll(mapOf(
+        "supportUrlQuery" to "false",
+        )
+    )
+    generateApiTests.set(false)
+    generateModelTests.set(false)
+    invokerPackage.set("base.boudicca.openapi")
+    apiPackage.set("base.boudicca.enricher.openapi.api")
+    modelPackage.set("base.boudicca.enricher.openapi.model")
 }
 
 tasks.register<GenerateTask>("generateTypescriptClient") {
     inputs.files(openapi)
     inputSpec.set(openapi.files.first().path)
-    outputDir.set("${layout.buildDirectory}/generated/typescript")
+    outputDir.set(layout.buildDirectory.dir("/generated/typescript").get().toString())
     generatorName.set("typescript-axios")
     configOptions.putAll(
         mapOf(
             "npmName" to "@boudicca/enricher-api-client",
             "npmVersion" to "${project.version}",
+            "supportsES6" to "true",
         )
     )
 }
@@ -70,13 +76,13 @@ openApiValidate {
 sourceSets {
     main {
         java {
-            srcDir(file("${layout.buildDirectory.get()}/generated/java/src/main/java"))
+            srcDir(file(layout.buildDirectory.dir("/generated/java").get().toString()))
         }
     }
 }
 
 tasks.named("compileJava") {
-    dependsOn(tasks.withType<GenerateTask>())
+    dependsOn(tasks.named<GenerateTask>("generateJavaClient"))
 }
 
 publishing {

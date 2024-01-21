@@ -6,7 +6,7 @@ import base.boudicca.model.Event
 import base.boudicca.openapi.ApiClient
 import base.boudicca.openapi.ApiException
 
-class EventDB(eventDbUrl: String) {
+class EventDB(private val eventDbUrl: String) {
 
     private val publisherApi: PublisherResourceApi
 
@@ -27,7 +27,7 @@ class EventDB(eventDbUrl: String) {
         try {
             return publisherApi.all()
         } catch (e: ApiException) {
-            throw EventDBException("could not reach eventdb", e)
+            throw EventDBException("could not reach eventdb: $eventDbUrl", e)
         }
     }
 }

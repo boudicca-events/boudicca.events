@@ -8,16 +8,16 @@ import base.boudicca.search.openapi.model.FilterQueryEntryDTO
 import base.boudicca.search.openapi.model.Filters
 import base.boudicca.search.openapi.model.FilterQueryDTO as SearchOpenapiFilterQueryDTO
 
-class Search(enricherUrl: String) {
+class Search(private val searchUrl: String) {
 
     private val searchApi: SearchControllerApi
 
     init {
-        if (enricherUrl.isBlank()) {
-            throw IllegalStateException("you need to pass an eventDbUrl!")
+        if (searchUrl.isBlank()) {
+            throw IllegalStateException("you need to pass an searchUrl!")
         }
         val apiClient = ApiClient()
-        apiClient.updateBaseUri(enricherUrl)
+        apiClient.updateBaseUri(searchUrl)
 
         searchApi = SearchControllerApi(apiClient)
     }
@@ -36,7 +36,7 @@ class Search(enricherUrl: String) {
         try {
             return mapResultDto(searchApi.queryEntries(mapQueryDto(queryDTO)))
         } catch (e: ApiException) {
-            throw SearchException("could not reach eventdb", e)
+            throw SearchException("could not reach search: $searchUrl", e)
         }
     }
 
@@ -45,7 +45,7 @@ class Search(enricherUrl: String) {
         try {
             return mapToFiltersDTO(searchApi.filters())
         } catch (e: ApiException) {
-            throw SearchException("could not reach eventdb", e)
+            throw SearchException("could not reach search: $searchUrl", e)
         }
     }
 
@@ -53,7 +53,7 @@ class Search(enricherUrl: String) {
         try {
             return searchApi.filtersFor(mapFilterQueryDTOToApi(filterQueryDTO))
         } catch (e: ApiException) {
-            throw SearchException("could not reach eventdb", e)
+            throw SearchException("could not reach search: $searchUrl", e)
         }
     }
 

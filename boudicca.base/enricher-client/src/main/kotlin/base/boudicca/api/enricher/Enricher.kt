@@ -7,13 +7,13 @@ import base.boudicca.openapi.ApiClient
 import base.boudicca.openapi.ApiException
 import base.boudicca.enricher.openapi.model.Event as EnricherOpenApiEvent
 
-class Enricher(enricherUrl: String) {
+class Enricher(private val enricherUrl: String) {
 
     private val enricherApi: EnricherControllerApi
 
     init {
         if (enricherUrl.isBlank()) {
-            throw IllegalStateException("you need to pass an eventDbUrl!")
+            throw IllegalStateException("you need to pass an enricherUrl!")
         }
         val apiClient = ApiClient()
         apiClient.updateBaseUri(enricherUrl)
@@ -26,7 +26,7 @@ class Enricher(enricherUrl: String) {
             return enricherApi.enrich(EnrichRequestDTO().events(events.map { mapToEnricherEvent(it) }))
                 .map { toEvent(it) }
         } catch (e: ApiException) {
-            throw EnricherException("could not reach eventdb", e)
+            throw EnricherException("could not reach enricher: $enricherUrl", e)
         }
     }
 

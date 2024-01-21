@@ -7,7 +7,7 @@ import base.boudicca.openapi.ApiClient
 import base.boudicca.openapi.ApiException
 import java.util.*
 
-class EventDB(eventDbUrl: String, user: String, password: String) {
+class EventDB(private val eventDbUrl: String, user: String, password: String) {
 
     private val ingestApi: IngestionResourceApi
 
@@ -43,7 +43,7 @@ class EventDB(eventDbUrl: String, user: String, password: String) {
         try {
             ingestApi.addEntries(entries)
         } catch (e: ApiException) {
-            throw EventDBException("could not reach eventdb", e)
+            throw EventDBException("could not reach eventdb: $eventDbUrl", e)
         }
     }
 

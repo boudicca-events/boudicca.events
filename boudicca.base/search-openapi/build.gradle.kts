@@ -41,7 +41,7 @@ tasks.withType<GenerateTask> {
 tasks.register<GenerateTask>("generateJavaClient") {
     inputs.files(openapi)
     inputSpec.set(openapi.files.first().path)
-    outputDir.set(layout.buildDirectory.dir("/generated/java").get().toString())
+    outputDir.set(layout.buildDirectory.dir("generated/java").get().toString())
     generatorName.set("java")
     library.set("native")
     additionalProperties.put("supportUrlQuery", "false")
@@ -69,7 +69,7 @@ tasks.register<GenerateTask>("generateTypescriptClient") {
 sourceSets {
     main {
         java {
-            srcDir(file(layout.buildDirectory.dir("/generated/java/src/main/java").get().toString()))
+            srcDir(file(layout.buildDirectory.dir("generated/java/src/main/java").get().toString()))
         }
     }
 }

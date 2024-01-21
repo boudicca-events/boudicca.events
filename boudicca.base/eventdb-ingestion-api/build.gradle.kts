@@ -15,8 +15,6 @@ kotlin {
     }
 }
 
-
-
 dependencies {
     implementation(project(":boudicca.base:semantic-conventions"))
     implementation(platform(libs.cloudflight.platform.spring.bom))

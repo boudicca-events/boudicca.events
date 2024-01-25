@@ -1,18 +1,10 @@
 plugins {
-    kotlin("jvm")
+    id("boudicca-base")
     `maven-publish`
 }
 
 // TODO: rename this package to common-model or something
 
-
-
-kotlin {
-    jvmToolchain(rootProject.ext["jvmVersion"] as Int)
-    compilerOptions {
-        javaParameters = true
-    }
-}
 
 publishing {
     publications {

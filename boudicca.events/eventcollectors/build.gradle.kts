@@ -1,17 +1,8 @@
 plugins {
-    kotlin("jvm")
+    id("boudicca-base")
 }
 
-repositories {
-    mavenCentral()
-}
-
-kotlin {
-    jvmToolchain(rootProject.ext["jvmVersion"] as Int)
-    compilerOptions {
-        javaParameters = true
-    }
-}
+group = "events.boudicca"
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib")

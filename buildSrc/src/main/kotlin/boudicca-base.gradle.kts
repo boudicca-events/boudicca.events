@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm")
+    id("boudicca-base")
 }
 
 group = "base.boudicca"
@@ -9,13 +9,6 @@ description = "Boudicca Events"
 repositories {
     mavenCentral()
     mavenLocal()
-}
-
-kotlin {
-    jvmToolchain(rootProject.ext["jvmVersion"] as Int)
-    compilerOptions {
-        javaParameters = true
-    }
 }
 
 tasks.withType<Test> {

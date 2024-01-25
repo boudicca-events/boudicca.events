@@ -1,7 +1,7 @@
 plugins {
     kotlin("kapt")
     id("io.cloudflight.autoconfigure.swagger-api-configure")
-    id("boudicca-base")
+    id("boudicca-kotlin")
 }
 
 dependencies {

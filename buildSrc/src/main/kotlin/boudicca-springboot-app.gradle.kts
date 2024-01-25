@@ -1,5 +1,5 @@
 plugins {
-    id("boudicca-base")
+    id("boudicca-kotlin")
 
     id("org.springframework.boot")
     id("io.spring.dependency-management")

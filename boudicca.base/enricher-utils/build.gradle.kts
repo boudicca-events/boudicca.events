@@ -1,5 +1,5 @@
 plugins {
-    id("boudicca-base")
+    id("boudicca-kotlin")
 }
 
 dependencies {

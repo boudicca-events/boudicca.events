@@ -48,6 +48,7 @@ tasks.register<GenerateTask>("generateTypescriptClient") {
     inputSpec.set(openapi.files.first().path)
     outputDir.set(layout.buildDirectory.dir("generated/typescript").get().toString())
     generatorName.set("typescript-axios")
+    templateDir.set(project.rootDir.resolve("typescript_generator_overrides").path)
     configOptions.putAll(
         mapOf(
             "npmName" to "@boudicca/search-api-client",

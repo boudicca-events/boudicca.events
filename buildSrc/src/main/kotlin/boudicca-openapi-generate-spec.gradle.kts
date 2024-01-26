@@ -4,9 +4,9 @@ plugins {
     id("boudicca-kotlin")
 }
 
+val versionCatalog = versionCatalogs.named("libs")
 dependencies {
     implementation(project(":boudicca.base:semantic-conventions"))
-    implementation(platform(versionCatalogs.find("libs").get().findLibrary("cloudflight.platform.spring.bom").get()))
-    implementation("io.swagger:swagger-annotations")
-    implementation("org.springframework:spring-web")
+    implementation(platform(versionCatalog.findLibrary("cloudflight.platform.spring.bom").get()))
+    implementation(versionCatalog.findBundle("openapi-generate-spec").get())
 }

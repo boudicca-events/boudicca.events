@@ -12,20 +12,12 @@ val openapi by configurations.creating {
     isCanBeResolved = true
 }
 
-val jacksonVersion = "2.16.1"
-val jakartaAnnotationVersion = "1.3.5"
-
+val versionCatalog = versionCatalogs.named("libs")
 dependencies {
     openapi(files("src/main/resources/api-docs.json"))
-
-    implementation("com.google.code.findbugs:jsr305:3.0.2")
-    implementation("com.fasterxml.jackson.core:jackson-core:$jacksonVersion")
-    implementation("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")
-    implementation("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
-    implementation("org.openapitools:jackson-databind-nullable:0.2.6")
-    implementation("jakarta.annotation:jakarta.annotation-api:$jakartaAnnotationVersion")
     api(project(":boudicca.base:semantic-conventions"))
+
+    implementation(versionCatalog.findBundle("openapi-generate-client").get())
 }
 
 val openApiPackageName = project.name.substring(0, project.name.lastIndexOf("-"))

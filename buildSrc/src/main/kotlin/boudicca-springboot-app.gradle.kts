@@ -6,19 +6,17 @@ plugins {
     kotlin("plugin.spring")
 }
 
+val versionCatalog = versionCatalogs.named("libs")
 dependencies {
-    api("org.springframework.boot:spring-boot-starter-web")
-    api("com.fasterxml.jackson.module:jackson-module-kotlin")
-    api("org.jetbrains.kotlin:kotlin-reflect")
-    api("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0")
+    api(versionCatalog.findBundle("springboot-app").get())
 
-    developmentOnly("org.springframework.boot:spring-boot-devtools")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    developmentOnly(versionCatalog.findLibrary("spring-boot-devtools").get())
+    testImplementation(versionCatalog.findLibrary("spring-boot-starter-test").get())
 }
 
 task<Exec>("imageBuild") {
     inputs.file("src/main/docker/Dockerfile")
-    inputs.files(tasks.named("bootJar")) //TODO
+    inputs.files(tasks.named("bootJar")) //TODO extract to own plugin
     dependsOn(tasks.named("assemble"))
     commandLine("docker", "build", "-t", "localhost/boudicca-${project.name}", "-f", "src/main/docker/Dockerfile", ".")
 }

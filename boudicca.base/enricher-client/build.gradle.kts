@@ -1,15 +1,6 @@
 plugins {
-    kotlin("jvm")
+    id("boudicca-kotlin")
     `maven-publish`
-}
-
-
-
-kotlin {
-    jvmToolchain(rootProject.ext["jvmVersion"] as Int)
-    compilerOptions {
-        javaParameters = true
-    }
 }
 
 dependencies {

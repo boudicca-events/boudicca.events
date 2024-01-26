@@ -3,13 +3,58 @@ kotlin = "1.9.20"
 kotlinx-serialization = "1.6.0"
 maven-artifact = "3.5.0"
 jupiter = "5.10.0"
-jackson = "2.16.0"
+jackson = "2.16.1"
+jakarta-annotation = "1.3.5"
 clf-platform-spring = "2.2.0"
+swagger-codegen-plugin = "2.19.1"
+# IMPORTANT: do not update, see https://github.com/gigaSproule/swagger-gradle-plugin/issues/186
+swagger-gradle-plugin = "1.0.8"
+findbugs = "3.0.2"
+jackson-databind-nullable = "0.2.6"
+spring-openapi-starter = "2.3.0"
+io-cloudflight-autoconfigure-swagger-api-configure-gradle-plugin = "1.1.1"
+org-springframework-boot-gradle-plugin = "3.2.1"
+io-spring-dependency-management-gradle-plugin = "1.1.4"
+org-openapi-generator-gradle-plugin = "7.2.0"
 
 [libraries]
 cloudflight-platform-spring-bom = { module = "io.cloudflight.platform.spring:platform-spring-bom", version.ref = "clf-platform-spring" }
 cloudflight-platform-spring-test-bom = { module = "io.cloudflight.platform.spring:platform-spring-test-bom", version.ref = "clf-platform-spring" }
 
-# IMPORTANT: do not update, see https://github.com/gigaSproule/swagger-gradle-plugin/issues/186
-swagger-gradle-plugin = { module = "com.benjaminsproule:swagger-gradle-plugin", version = "1.0.8" }
-swagger-codegen-plugin = { module = "gradle.plugin.org.hidetake:gradle-swagger-generator-plugin", version = "2.19.1" }
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
+
+swagger-gradle-plugin = { module = "com.benjaminsproule:swagger-gradle-plugin", version.ref = "swagger-gradle-plugin" }
+swagger-codegen-plugin = { module = "gradle.plugin.org.hidetake:gradle-swagger-generator-plugin", version.ref = "swagger-codegen-plugin" }
+swagger-annotations = { module = "io.swagger:swagger-annotations" }
+
+spring-web = { module = "org.springframework:spring-web" }
+spring-boot-starter-web = { module = "org.springframework.boot:spring-boot-starter-web" }
+spring-openapi-starter = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref = "spring-openapi-starter" }
+spring-boot-devtools = { module = "org.springframework.boot:spring-boot-devtools" }
+spring-boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test" }
+
+findbugs = { module = "com.google.code.findbugs:jsr305", version.ref = "findbugs" }
+
+jackson-core = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "jackson" }
+jackson-annotations = { module = "com.fasterxml.jackson.core:jackson-annotations", version.ref = "jackson" }
+jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson" }
+jackson-databind-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version.ref = "jackson" }
+jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin" }
+
+jackson-databind-nullable = { module = "org.openapitools:jackson-databind-nullable", version.ref = "jackson-databind-nullable" }
+
+jakarta-annotation = { module = "jakarta.annotation:jakarta.annotation-api", version.ref = "jakarta-annotation" }
+
+io-cloudflight-autoconfigure-swagger-api-configure-gradle-plugin = { module = "io.cloudflight.autoconfigure.swagger-api-configure:io.cloudflight.autoconfigure.swagger-api-configure.gradle.plugin", version.ref = "io-cloudflight-autoconfigure-swagger-api-configure-gradle-plugin" }
+org-jetbrains-kotlin-jvm-gradle-plugin = { module = "org.jetbrains.kotlin.jvm:org.jetbrains.kotlin.jvm.gradle.plugin", version.ref = "kotlin" }
+org-jetbrains-kotlin-plugin-spring-gradle-plugin = { module = "org.jetbrains.kotlin.plugin.spring:org.jetbrains.kotlin.plugin.spring.gradle.plugin", version.ref = "kotlin" }
+org-springframework-boot-gradle-plugin = { module = "org.springframework.boot:org.springframework.boot.gradle.plugin", version.ref = "org-springframework-boot-gradle-plugin" }
+io-spring-dependency-management-gradle-plugin = { module = "io.spring.dependency-management:io.spring.dependency-management.gradle.plugin", version.ref = "io-spring-dependency-management-gradle-plugin" }
+org-openapi-generator-gradle-plugin = { module = "org.openapi.generator:org.openapi.generator.gradle.plugin", version.ref = "org-openapi-generator-gradle-plugin" }
+
+[bundles]
+openapi-generate-spec = ["spring-web", "swagger-annotations"]
+openapi-generate-client = ["findbugs", "jackson-core", "jackson-annotations", "jackson-databind", "jackson-databind-jsr310", "jackson-databind-nullable", "jakarta-annotation"]
+springboot-app = ["spring-boot-starter-web", "spring-openapi-starter", "kotlin-reflect", "jackson-module-kotlin"]
+boudicca-plugins = ["io-cloudflight-autoconfigure-swagger-api-configure-gradle-plugin", "org-jetbrains-kotlin-jvm-gradle-plugin", "org-jetbrains-kotlin-plugin-spring-gradle-plugin", "org-springframework-boot-gradle-plugin", "io-spring-dependency-management-gradle-plugin", "org-openapi-generator-gradle-plugin"]
+

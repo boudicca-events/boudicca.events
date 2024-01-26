@@ -1,15 +1,6 @@
 plugins {
-    kotlin("jvm")
+    id("boudicca-kotlin")
 }
-
-kotlin {
-    jvmToolchain(rootProject.ext["jvmVersion"] as Int)
-    compilerOptions {
-        javaParameters = true
-    }
-}
-
-
 
 dependencies {
     implementation("org.json:json:20231013")

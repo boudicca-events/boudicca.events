@@ -8,7 +8,7 @@ import base.boudicca.search.openapi.model.FilterQueryEntryDTO
 import base.boudicca.search.openapi.model.Filters
 import base.boudicca.search.openapi.model.FilterQueryDTO as SearchOpenapiFilterQueryDTO
 
-class Search(private val searchUrl: String) {
+class SearchClient(private val searchUrl: String) {
 
     private val searchApi: SearchApi
 

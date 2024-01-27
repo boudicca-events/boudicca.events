@@ -7,7 +7,7 @@ import base.boudicca.openapi.ApiClient
 import base.boudicca.openapi.ApiException
 import base.boudicca.enricher.openapi.model.Event as EnricherOpenApiEvent
 
-class Enricher(private val enricherUrl: String) {
+class EnricherClient(private val enricherUrl: String) {
 
     private val enricherApi: EnricherApi
 

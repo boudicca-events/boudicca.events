@@ -6,7 +6,7 @@ import base.boudicca.model.Event
 import base.boudicca.openapi.ApiClient
 import base.boudicca.openapi.ApiException
 
-class EventDB(private val eventDbUrl: String) {
+class EventDbPublisherClient(private val eventDbUrl: String) {
 
     private val publisherApi: PublisherApi
 

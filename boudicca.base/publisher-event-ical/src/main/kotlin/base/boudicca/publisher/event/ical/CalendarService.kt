@@ -3,7 +3,7 @@ package base.boudicca.publisher.event.ical
 import base.boudicca.model.Event
 import base.boudicca.SemanticKeys
 import base.boudicca.api.search.QueryDTO
-import base.boudicca.api.search.Search
+import base.boudicca.api.search.SearchClient
 import net.fortuna.ical4j.model.Calendar
 import net.fortuna.ical4j.model.DateTime
 import net.fortuna.ical4j.model.component.VEvent
@@ -16,6 +16,8 @@ import java.time.format.DateTimeFormatter
 
 @Service
 class CalendarService @Autowired constructor(@Value("\${boudicca.search.url}") private val searchUrl: String) {
+
+    private val searchClient = SearchClient(searchUrl)
 
     fun createCalendar(events: List<Event>): ByteArray {
         // create the calendar
@@ -80,7 +82,7 @@ class CalendarService @Autowired constructor(@Value("\${boudicca.search.url}") p
     }
 
     fun getEvents(query: String): ByteArray {
-        val events = Search(searchUrl).queryEvents(QueryDTO(query, 100))
+        val events = searchClient.queryEvents(QueryDTO(query, 100))
         return createCalendar(events.result)
     }
 }

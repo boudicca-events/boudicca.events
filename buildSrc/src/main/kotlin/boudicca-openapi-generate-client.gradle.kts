@@ -10,11 +10,13 @@ plugins {
 val openapi by configurations.creating {
     isCanBeConsumed = false
     isCanBeResolved = true
+    attributes {
+        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements::class.java, "openapiSpec"))
+    }
 }
 
 val versionCatalog = versionCatalogs.named("libs")
 dependencies {
-    openapi(files("src/main/resources/api-docs.json"))
     api(project(":boudicca.base:semantic-conventions"))
 
     implementation(versionCatalog.findBundle("openapi-generate-client").get())
@@ -23,7 +25,7 @@ dependencies {
 val openApiPackageName = project.name.substring(0, project.name.lastIndexOf("-"))
 tasks.register<GenerateTask>("generateJavaClient") {
     inputs.files(openapi)
-    inputSpec.set(openapi.files.first().path)
+    inputSpec.set(getInputSpecProvider())
     outputDir.set(layout.buildDirectory.dir("generated/java").get().toString())
     generatorName.set("java")
     library.set("native")
@@ -37,7 +39,7 @@ tasks.register<GenerateTask>("generateJavaClient") {
 
 tasks.register<GenerateTask>("generateTypescriptClient") {
     inputs.files(openapi)
-    inputSpec.set(openapi.files.first().path)
+    inputSpec.set(getInputSpecProvider())
     outputDir.set(layout.buildDirectory.dir("generated/typescript").get().toString())
     generatorName.set("typescript-axios")
     templateDir.set(project.rootDir.resolve("typescript_generator_overrides").path)
@@ -64,4 +66,10 @@ tasks.named("compileJava") {
 
 tasks.named("sourcesJar") {
     inputs.files(tasks.named("generateJavaClient"))
+}
+
+fun getInputSpecProvider(): Provider<String> {
+    return provider {
+        openapi.files.firstOrNull()?.path
+    }
 }

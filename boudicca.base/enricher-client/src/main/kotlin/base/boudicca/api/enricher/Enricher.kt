@@ -1,6 +1,6 @@
 package base.boudicca.api.enricher
 
-import base.boudicca.enricher.openapi.api.EnricherControllerApi
+import base.boudicca.enricher.openapi.api.EnricherApi
 import base.boudicca.enricher.openapi.model.EnrichRequestDTO
 import base.boudicca.model.Event
 import base.boudicca.openapi.ApiClient
@@ -9,7 +9,7 @@ import base.boudicca.enricher.openapi.model.Event as EnricherOpenApiEvent
 
 class Enricher(private val enricherUrl: String) {
 
-    private val enricherApi: EnricherControllerApi
+    private val enricherApi: EnricherApi
 
     init {
         if (enricherUrl.isBlank()) {
@@ -18,7 +18,7 @@ class Enricher(private val enricherUrl: String) {
         val apiClient = ApiClient()
         apiClient.updateBaseUri(enricherUrl)
 
-        enricherApi = EnricherControllerApi(apiClient)
+        enricherApi = EnricherApi(apiClient)
     }
 
     fun enrichEvents(events: List<Event>): List<Event> {
@@ -31,7 +31,7 @@ class Enricher(private val enricherUrl: String) {
     }
 
     private fun toEvent(enricherEvent: EnricherOpenApiEvent): Event {
-        return Event(enricherEvent.name, enricherEvent.startDate, enricherEvent.data ?: mapOf())
+        return Event(enricherEvent.name!!, enricherEvent.startDate!!, enricherEvent.data ?: mapOf())
     }
 
     private fun mapToEnricherEvent(event: Event): EnricherOpenApiEvent {

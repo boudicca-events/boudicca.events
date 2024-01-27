@@ -1,14 +1,11 @@
 package base.boudicca.enricher.controller
 
-import boudicca.base.model.enricher.EnrichRequestDTO
+import base.boudicca.api.enricher.EnricherApi
+import base.boudicca.api.enricher.model.EnrichRequestDTO
 import base.boudicca.enricher.service.EnricherService
 import base.boudicca.model.Event
-import boudicca.base.api.enricher.EnricherApi
 import org.springframework.http.MediaType
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/")
@@ -21,6 +18,7 @@ class EnricherController(
         consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE],
     )
+    @ResponseBody
     override fun enrich(@RequestBody enrichRequestDTO: EnrichRequestDTO): List<Event> {
         return enricherService.enrich(enrichRequestDTO)
     }

@@ -8,6 +8,7 @@ import base.boudicca.search.service.QueryService
 import base.boudicca.search.service.SearchService
 import base.boudicca.search.service.SynchronizationService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -18,6 +19,12 @@ class SearchController @Autowired constructor(
     private val boudiccaSearchProperties: BoudiccaSearchProperties
 ) : SearchApi {
 
+    @PostMapping(
+        "search",
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE],
+    )
+    @ResponseBody
     @Deprecated("it is recommended to use the query endpoint", ReplaceWith("/query"), DeprecationLevel.WARNING)
     override fun search(@RequestBody searchDTO: SearchDTO): SearchResultDTO {
         if (boudiccaSearchProperties.localMode) {
@@ -27,6 +34,9 @@ class SearchController @Autowired constructor(
         return SearchResultDTO(result.result.mapNotNull { Event.fromEntry(it) }, result.totalResults)
     }
 
+    @GetMapping("filters")
+    @ResponseBody
+    @Deprecated("use /filtersFor endpoint")
     override fun filters(): Filters {
         if (boudiccaSearchProperties.localMode) {
             synchronizationService.update()
@@ -34,6 +44,12 @@ class SearchController @Autowired constructor(
         return searchService.filters()
     }
 
+    @PostMapping(
+        "filtersFor",
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE],
+    )
+    @ResponseBody
     override fun filtersFor(@RequestBody filterQueryDTO: FilterQueryDTO): FilterResultDTO {
         if (boudiccaSearchProperties.localMode) {
             synchronizationService.update()
@@ -41,6 +57,12 @@ class SearchController @Autowired constructor(
         return searchService.filtersFor(filterQueryDTO)
     }
 
+    @PostMapping(
+        "query",
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE],
+    )
+    @ResponseBody
     @Deprecated("it is recommended to use the query endpoint", ReplaceWith("/queryEntries"), DeprecationLevel.WARNING)
     override fun query(@RequestBody queryDTO: QueryDTO): SearchResultDTO {
         if (boudiccaSearchProperties.localMode) {
@@ -50,6 +72,12 @@ class SearchController @Autowired constructor(
         return SearchResultDTO(result.result.mapNotNull { Event.fromEntry(it) }, result.totalResults)
     }
 
+    @PostMapping(
+        "queryEntries",
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE],
+    )
+    @ResponseBody
     override fun queryEntries(@RequestBody queryDTO: QueryDTO): ResultDTO {
         if (boudiccaSearchProperties.localMode) {
             synchronizationService.update()

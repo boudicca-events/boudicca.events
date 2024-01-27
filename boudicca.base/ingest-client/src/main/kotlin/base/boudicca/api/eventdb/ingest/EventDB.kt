@@ -1,6 +1,6 @@
 package base.boudicca.api.eventdb.ingest
 
-import base.boudicca.eventdb.openapi.api.IngestionResourceApi
+import base.boudicca.eventdb.openapi.api.IngestionApi
 import base.boudicca.model.Entry
 import base.boudicca.model.Event
 import base.boudicca.openapi.ApiClient
@@ -9,7 +9,7 @@ import java.util.*
 
 class EventDB(private val eventDbUrl: String, user: String, password: String) {
 
-    private val ingestApi: IngestionResourceApi
+    private val ingestApi: IngestionApi
 
     init {
         if (eventDbUrl.isBlank()) {
@@ -32,7 +32,7 @@ class EventDB(private val eventDbUrl: String, user: String, password: String) {
                     )
             )
         }
-        ingestApi = IngestionResourceApi(apiClient)
+        ingestApi = IngestionApi(apiClient)
     }
 
     fun ingestEvents(events: List<Event>) {

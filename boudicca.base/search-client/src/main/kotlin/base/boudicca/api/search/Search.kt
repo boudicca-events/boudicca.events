@@ -3,14 +3,14 @@ package base.boudicca.api.search
 import base.boudicca.model.Event
 import base.boudicca.openapi.ApiClient
 import base.boudicca.openapi.ApiException
-import base.boudicca.search.openapi.api.SearchControllerApi
+import base.boudicca.search.openapi.api.SearchApi
 import base.boudicca.search.openapi.model.FilterQueryEntryDTO
 import base.boudicca.search.openapi.model.Filters
 import base.boudicca.search.openapi.model.FilterQueryDTO as SearchOpenapiFilterQueryDTO
 
 class Search(private val searchUrl: String) {
 
-    private val searchApi: SearchControllerApi
+    private val searchApi: SearchApi
 
     init {
         if (searchUrl.isBlank()) {
@@ -19,7 +19,7 @@ class Search(private val searchUrl: String) {
         val apiClient = ApiClient()
         apiClient.updateBaseUri(searchUrl)
 
-        searchApi = SearchControllerApi(apiClient)
+        searchApi = SearchApi(apiClient)
     }
 
     @Deprecated("use query Events")
@@ -63,11 +63,11 @@ class Search(private val searchUrl: String) {
     }
 
     private fun mapToFiltersDTO(filtersGet: Filters): FiltersDTO {
-        return FiltersDTO(filtersGet.locationNames, filtersGet.locationCities)
+        return FiltersDTO(filtersGet.locationNames!!, filtersGet.locationCities!!)
     }
 
     private fun mapResultDto(resultDTO: base.boudicca.search.openapi.model.ResultDTO): ResultDTO {
-        return ResultDTO(resultDTO.result, resultDTO.totalResults)
+        return ResultDTO(resultDTO.result!!, resultDTO.totalResults!!)
     }
 
     private fun mapQueryDto(queryDTO: QueryDTO): base.boudicca.search.openapi.model.QueryDTO {

@@ -12,21 +12,6 @@ import javax.ws.rs.Path
 @OpenAPIDefinition
 @Path("/ingest")
 interface IngestionApi {
-    @Operation(
-        responses = [
-            ApiResponse(
-                responseCode = "200",
-                description = "adds an event to the eventdb",
-                useReturnTypeSchema = true
-            )
-        ],
-        tags = ["ingestion"]
-    )
-    @POST
-    @Path("add")
-    @Consumes("application/json")
-    @Deprecated("use newer endpoint /ingest/entry")
-    fun add(event: Event)
 
     @Operation(
         responses = [

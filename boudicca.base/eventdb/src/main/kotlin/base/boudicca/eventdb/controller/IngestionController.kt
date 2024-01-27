@@ -16,16 +16,6 @@ import org.springframework.web.bind.annotation.RestController
 class IngestionController @Autowired constructor(private val entryService: EntryService) : IngestionApi {
 
     @PostMapping(
-        "/add",
-        consumes = [MediaType.APPLICATION_JSON_VALUE],
-        produces = [MediaType.APPLICATION_JSON_VALUE],
-    )
-    @Deprecated("use newer endpoint /ingest/entry")
-    override fun add(@RequestBody event: Event) {
-        entryService.add(Event.toEntry(event))
-    }
-
-    @PostMapping(
         "/entry",
         consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE],

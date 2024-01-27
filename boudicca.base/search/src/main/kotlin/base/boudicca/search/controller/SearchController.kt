@@ -2,10 +2,9 @@ package base.boudicca.search.controller
 
 import base.boudicca.api.search.SearchApi
 import base.boudicca.api.search.model.*
-import base.boudicca.model.Event
 import base.boudicca.search.BoudiccaSearchProperties
 import base.boudicca.search.service.QueryService
-import base.boudicca.search.service.SearchService
+import base.boudicca.search.service.FilersService
 import base.boudicca.search.service.SynchronizationService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
@@ -13,36 +12,11 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 class SearchController @Autowired constructor(
-    private val searchService: SearchService,
+    private val filersService: FilersService,
     private val queryService: QueryService,
     private val synchronizationService: SynchronizationService,
     private val boudiccaSearchProperties: BoudiccaSearchProperties
 ) : SearchApi {
-
-    @PostMapping(
-        "search",
-        consumes = [MediaType.APPLICATION_JSON_VALUE],
-        produces = [MediaType.APPLICATION_JSON_VALUE],
-    )
-    @ResponseBody
-    @Deprecated("it is recommended to use the query endpoint", ReplaceWith("/query"), DeprecationLevel.WARNING)
-    override fun search(@RequestBody searchDTO: SearchDTO): SearchResultDTO {
-        if (boudiccaSearchProperties.localMode) {
-            synchronizationService.update()
-        }
-        val result = searchService.search(searchDTO)
-        return SearchResultDTO(result.result.mapNotNull { Event.fromEntry(it) }, result.totalResults)
-    }
-
-    @GetMapping("filters")
-    @ResponseBody
-    @Deprecated("use /filtersFor endpoint")
-    override fun filters(): Filters {
-        if (boudiccaSearchProperties.localMode) {
-            synchronizationService.update()
-        }
-        return searchService.filters()
-    }
 
     @PostMapping(
         "filtersFor",
@@ -54,22 +28,7 @@ class SearchController @Autowired constructor(
         if (boudiccaSearchProperties.localMode) {
             synchronizationService.update()
         }
-        return searchService.filtersFor(filterQueryDTO)
-    }
-
-    @PostMapping(
-        "query",
-        consumes = [MediaType.APPLICATION_JSON_VALUE],
-        produces = [MediaType.APPLICATION_JSON_VALUE],
-    )
-    @ResponseBody
-    @Deprecated("it is recommended to use the query endpoint", ReplaceWith("/queryEntries"), DeprecationLevel.WARNING)
-    override fun query(@RequestBody queryDTO: QueryDTO): SearchResultDTO {
-        if (boudiccaSearchProperties.localMode) {
-            synchronizationService.update()
-        }
-        val result = queryService.query(queryDTO)
-        return SearchResultDTO(result.result.mapNotNull { Event.fromEntry(it) }, result.totalResults)
+        return filersService.filtersFor(filterQueryDTO)
     }
 
     @PostMapping(

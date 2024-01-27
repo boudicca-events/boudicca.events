@@ -45,6 +45,7 @@ org-openapi-generator-gradle-plugin = { module = "org.openapi.generator:org.open
 
 #following bundles are applied by the plugins with the same name
 openapi-generate-spec = ["swagger-annotations", "javax-jaxrs"]
+#TODO test if those dependencies are really necessary
 openapi-generate-client = ["findbugs", "jackson-core", "jackson-annotations", "jackson-databind", "jackson-databind-jsr310", "jackson-databind-nullable", "jakarta-annotation"]
 springboot-app = ["spring-boot-starter-web", "spring-openapi-starter", "kotlin-reflect", "jackson-module-kotlin"]
 

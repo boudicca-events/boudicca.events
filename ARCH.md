@@ -12,7 +12,7 @@ There are three big groups of services interacting to make boudicca.events work:
 
 ### EventCollectors
 
-The EventCollectors job is to gather event data, enrich them, and then send them to the EventDB.
+The EventCollectors job is to gather event data, enrich them by calling the Enrichers (see below), and then send them to the EventDB.
 
 ### The Core
 
@@ -30,15 +30,15 @@ The Search service is a service which provides search functionality on the Event
 ### Publishers
 
 Publishers are services which make the data of boudicca.events accessible to users. This can take many forms, for
-example our website is the so-called html-publisher. There can be other publishers as well, for different publishers for
+example our website is the so-called html-publisher. There can be other publishers as well, for different mediums, for
 different formats as ical, RSS, PDF, ... or for different purposes (prefiltered event data for only music, ... for
 example)
 
 ### Enrichers
 
 Enrichers, as their name suggests, can be used by event collectors to enrich their event information. For example there
-could be a central database of locations with accessibility assesments or additional information like geo coordinates etc.
+could be a central database of locations with accessibility data or additional information like geo coordinates etc.
 
-Another use case might be to look up the artists of an even in an online database and link it.
+Another use case might be to look up the artists of an event in an online database and link it.
 
-Enrichers can be optionally used to 'refactor' repeating lookup tasks out from collectors, but are optional to use.
+Enrichers can optionally be used to extract repeating lookup tasks out from collectors.

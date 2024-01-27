@@ -30,12 +30,12 @@ private const val SEARCH_TYPE_ALL = "ALL"
 
 @Service
 class EventService @Autowired constructor(@Value("\${boudicca.search.url}") private val searchUrl: String) {
-    private val search: Search = createSearchApi()
+    private val searchClient: SearchClient = createSearchClient()
     private val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy 'um' HH:mm 'Uhr'", Locale.GERMAN)
     private val localDateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
     fun search(searchDTO: SearchDTO): List<Map<String, String?>> {
-        val events = search.queryEvents(QueryDTO(generateQuery(searchDTO), searchDTO.offset ?: 0))
+        val events = searchClient.queryEvents(QueryDTO(generateQuery(searchDTO), searchDTO.offset ?: 0))
         return mapEvents(events)
     }
 
@@ -86,7 +86,7 @@ class EventService @Autowired constructor(@Value("\${boudicca.search.url}") priv
     }
 
     fun filters(): Filters {
-        val filters = search.getFiltersFor(
+        val filters = searchClient.getFiltersFor(
             FilterQueryDTO(
                 listOf(
                     FilterQueryEntryDTO(SemanticKeys.LOCATION_NAME),
@@ -106,7 +106,7 @@ class EventService @Autowired constructor(@Value("\${boudicca.search.url}") priv
     }
 
     fun getSources(): List<String> {
-        val allSources = search.getFiltersFor(FilterQueryDTO(listOf(FilterQueryEntryDTO(SemanticKeys.SOURCES, true))))
+        val allSources = searchClient.getFiltersFor(FilterQueryDTO(listOf(FilterQueryEntryDTO(SemanticKeys.SOURCES, true))))
         return allSources[SemanticKeys.SOURCES]!!
             .map { normalize(it) }
             .distinct()
@@ -174,8 +174,8 @@ class EventService @Autowired constructor(@Value("\${boudicca.search.url}") priv
         return formatter.format(startDate.atZoneSameInstant(ZoneId.of("Europe/Vienna")))
     }
 
-    private fun createSearchApi(): Search {
-        return Search(searchUrl)
+    private fun createSearchClient(): SearchClient {
+        return SearchClient(searchUrl)
     }
 
     private fun frontEndName(category: EventCategory): String {

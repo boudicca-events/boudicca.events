@@ -1,7 +1,7 @@
 package base.boudicca.enricher_utils
 
-import base.boudicca.api.enricher.Enricher
-import base.boudicca.api.eventdb.publisher.EventDB
+import base.boudicca.api.enricher.EnricherClient
+import base.boudicca.api.eventdb.publisher.EventDbPublisherClient
 import base.boudicca.model.Event
 
 private const val EVENTDB_URL = "http://localhost:8081"
@@ -62,9 +62,9 @@ fun printValues(key: String, oldValue: String?, newValue: String?) {
 }
 
 private fun enrich(originalEvents: List<Event>): List<Event> {
-    return Enricher(ENRICHER_URL).enrichEvents(originalEvents)
+    return EnricherClient(ENRICHER_URL).enrichEvents(originalEvents)
 }
 
 fun getEvents(): List<Event> {
-    return EventDB(EVENTDB_URL).getAllEvents().toList()
+    return EventDbPublisherClient(EVENTDB_URL).getAllEvents().toList()
 }

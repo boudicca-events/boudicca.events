@@ -1,7 +1,7 @@
 package events.boudicca.eventcollector.collectors
 
 import base.boudicca.api.eventcollector.EventCollector
-import base.boudicca.api.eventdb.publisher.EventDB
+import base.boudicca.api.eventdb.publisher.EventDbPublisherClient
 import base.boudicca.model.Event
 
 class BoudiccaCollector(private val from: String) : EventCollector {
@@ -10,6 +10,6 @@ class BoudiccaCollector(private val from: String) : EventCollector {
     }
 
     override fun collectEvents(): List<Event> {
-        return EventDB(from).getAllEvents().toList()
+        return EventDbPublisherClient(from).getAllEvents().toList()
     }
 }

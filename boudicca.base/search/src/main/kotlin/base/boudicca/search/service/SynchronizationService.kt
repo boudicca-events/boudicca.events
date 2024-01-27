@@ -1,7 +1,7 @@
 package base.boudicca.search.service
 
 import base.boudicca.model.Entry
-import base.boudicca.api.eventdb.publisher.EventDB
+import base.boudicca.api.eventdb.publisher.EventDbPublisherClient
 import base.boudicca.api.eventdb.publisher.EventDBException
 import base.boudicca.search.BoudiccaSearchProperties
 import org.slf4j.LoggerFactory
@@ -20,7 +20,7 @@ class SynchronizationService @Autowired constructor(
 
     private val LOG = LoggerFactory.getLogger(this.javaClass)
 
-    private val publisherApi: EventDB = createEventPublisherApi()
+    private val publisherApi: EventDbPublisherClient = createEventPublisherApi()
     private val updateLock = ReentrantLock()
 
     @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.HOURS)
@@ -48,8 +48,8 @@ class SynchronizationService @Autowired constructor(
         }
     }
 
-    private fun createEventPublisherApi(): EventDB {
-        return EventDB(boudiccaSearchProperties.eventDB.url)
+    private fun createEventPublisherApi(): EventDbPublisherClient {
+        return EventDbPublisherClient(boudiccaSearchProperties.eventDB.url)
     }
 }
 

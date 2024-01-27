@@ -1,9 +1,9 @@
 package base.boudicca.api.eventcollector
 
 import base.boudicca.SemanticKeys
-import base.boudicca.api.enricher.Enricher
+import base.boudicca.api.enricher.EnricherClient
 import base.boudicca.api.eventcollector.collections.Collections
-import base.boudicca.api.eventdb.ingest.EventDB
+import base.boudicca.api.eventdb.ingest.EventDbIngestClient
 import base.boudicca.model.Event
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -160,7 +160,7 @@ fun createBoudiccaEventSink(eventDbUrl: String?): Consumer<List<Event>> {
         ?: throw IllegalStateException("you need to specify the boudicca.ingest.auth property!")
     val user = userAndPassword.split(":")[0]
     val password = userAndPassword.split(":")[1]
-    val eventDb = EventDB(eventDbUrl, user, password)
+    val eventDb = EventDbIngestClient(eventDbUrl, user, password)
     return Consumer {
         eventDb.ingestEvents(it)
     }
@@ -170,7 +170,7 @@ fun createBoudiccaEnricherFunction(enricherUrl: String?): Function<List<Event>, 
     if (enricherUrl.isNullOrBlank()) {
         return null
     }
-    val enricher = Enricher(enricherUrl)
+    val enricher = EnricherClient(enricherUrl)
     return Function<List<Event>, List<Event>> { events ->
         enricher.enrichEvents(events)
     }

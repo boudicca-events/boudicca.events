@@ -7,7 +7,7 @@ import base.boudicca.openapi.ApiClient
 import base.boudicca.openapi.ApiException
 import java.util.*
 
-class EventDB(private val eventDbUrl: String, user: String, password: String) {
+class EventDbIngestClient(private val eventDbUrl: String, user: String, password: String) {
 
     private val ingestApi: IngestionApi
 

@@ -5,10 +5,9 @@ import base.boudicca.openapi.ApiClient
 import base.boudicca.openapi.ApiException
 import base.boudicca.search.openapi.api.SearchApi
 import base.boudicca.search.openapi.model.FilterQueryEntryDTO
-import base.boudicca.search.openapi.model.Filters
 import base.boudicca.search.openapi.model.FilterQueryDTO as SearchOpenapiFilterQueryDTO
 
-class Search(private val searchUrl: String) {
+class SearchClient(private val searchUrl: String) {
 
     private val searchApi: SearchApi
 
@@ -22,11 +21,6 @@ class Search(private val searchUrl: String) {
         searchApi = SearchApi(apiClient)
     }
 
-    @Deprecated("use query Events")
-    fun searchQuery(queryDTO: QueryDTO): SearchResultDTO {
-        return queryEvents(queryDTO)
-    }
-
     fun queryEvents(queryDTO: QueryDTO): SearchResultDTO {
         val entries = queryEntries(queryDTO)
         return SearchResultDTO(entries.result.mapNotNull { Event.fromEntry(it) }, entries.totalResults)
@@ -35,15 +29,6 @@ class Search(private val searchUrl: String) {
     fun queryEntries(queryDTO: QueryDTO): ResultDTO {
         try {
             return mapResultDto(searchApi.queryEntries(mapQueryDto(queryDTO)))
-        } catch (e: ApiException) {
-            throw SearchException("could not reach search: $searchUrl", e)
-        }
-    }
-
-    @Deprecated("use getFiltersFor method")
-    fun getFilters(): FiltersDTO {
-        try {
-            return mapToFiltersDTO(searchApi.filters())
         } catch (e: ApiException) {
             throw SearchException("could not reach search: $searchUrl", e)
         }
@@ -60,10 +45,6 @@ class Search(private val searchUrl: String) {
     private fun mapFilterQueryDTOToApi(filterQueryDTO: FilterQueryDTO): SearchOpenapiFilterQueryDTO {
         return SearchOpenapiFilterQueryDTO()
             .entries(filterQueryDTO.entries.map { FilterQueryEntryDTO().name(it.name).multiline(it.multiline) })
-    }
-
-    private fun mapToFiltersDTO(filtersGet: Filters): FiltersDTO {
-        return FiltersDTO(filtersGet.locationNames!!, filtersGet.locationCities!!)
     }
 
     private fun mapResultDto(resultDTO: base.boudicca.search.openapi.model.ResultDTO): ResultDTO {

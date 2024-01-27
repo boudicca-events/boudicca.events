@@ -1,6 +1,6 @@
 plugins {
     id("boudicca-kotlin")
-    `maven-publish`
+    id("boudicca-publish")
 }
 
 dependencies {

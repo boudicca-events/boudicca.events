@@ -3,7 +3,7 @@ plugins {
 }
 
 group = "base.boudicca"
-version = "0.1.0-SNAPSHOT"
+version = rootProject.version
 description = "Boudicca Events"
 
 repositories {

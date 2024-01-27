@@ -2,6 +2,7 @@ plugins {
     kotlin("kapt")
     id("io.cloudflight.autoconfigure.swagger-api-configure")
     id("boudicca-kotlin")
+    id("boudicca-publish")
 }
 
 val versionCatalog = versionCatalogs.named("libs")

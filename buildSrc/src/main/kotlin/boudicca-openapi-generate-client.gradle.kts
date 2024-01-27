@@ -4,7 +4,7 @@ import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 plugins {
     id("boudicca-java-library")
     id("org.openapi.generator")
-    `maven-publish`
+    id("boudicca-publish")
 }
 
 val openapi by configurations.creating {
@@ -60,4 +60,8 @@ sourceSets {
 
 tasks.named("compileJava") {
     dependsOn(tasks.named<GenerateTask>("generateJavaClient"))
+}
+
+tasks.named("sourcesJar") {
+    inputs.files(tasks.named("generateJavaClient"))
 }

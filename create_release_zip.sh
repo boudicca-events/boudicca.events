@@ -13,4 +13,6 @@ set -e
 find build/release_repo -name "maven-metadata.*" -delete
 
 #zip it
-zip -r release.zip build/release_repo/*
+cd build/release_repo/
+zip -r ../../release.zip *
+cd ../..

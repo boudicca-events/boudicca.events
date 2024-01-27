@@ -1,3 +1,8 @@
+/**
+ * base plugin which will apply default repos, group, version, ...
+ * does not apply java or kotlin
+ */
+
 plugins {
     id("boudicca-base")
 }

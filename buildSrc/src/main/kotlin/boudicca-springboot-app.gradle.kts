@@ -1,3 +1,7 @@
+/**
+ * default spring boot application with docker "imageBuild" task
+ */
+
 plugins {
     id("boudicca-kotlin")
 

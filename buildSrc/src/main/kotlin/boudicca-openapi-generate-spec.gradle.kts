@@ -39,9 +39,20 @@ val generateOpenApiSpecTask = tasks.named<ResolveTask>("resolve") {
     }
 }
 
+val openapiSpecFile = project.layout.buildDirectory.file("generated/openapi/${project.name}.json")
 artifacts {
-    add("openapiSpec", project.layout.buildDirectory.file("generated/openapi/${project.name}.json")) {
+    add("openapiSpec", openapiSpecFile) {
         builtBy(generateOpenApiSpecTask)
+    }
+}
+
+publishing {
+    publications {
+        named<MavenPublication>(project.name) {
+            artifact(mapOf("source" to openapiSpecFile, "classifier" to "openapi")) {
+                builtBy(generateOpenApiSpecTask)
+            }
+        }
     }
 }
 

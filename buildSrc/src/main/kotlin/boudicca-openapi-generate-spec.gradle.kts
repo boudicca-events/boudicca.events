@@ -1,5 +1,17 @@
 import io.swagger.v3.plugins.gradle.tasks.ResolveTask
 
+/**
+ * this plugin creates an openapi.json-spec by scanning all interfaces in the package "base.boudicca.api.*"
+ * also publishes the interface classes as a jar and the generated openapi.json with classifier "openapi"
+ * also exposes the generated openapi spec file in the "openapiSpec" configuration to be consumed by other projects.
+ * this configuration has the attribute LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE set to "openapiSpec"
+ *
+ * this plugin also registers the extension property "generateSpec" where you can set the title and description which will be merged into the openapi.json file
+ *
+ * please note that interfaces have to have the @OpenAPIDefinition annotation but is NOT allowed to set the info property in that annotation.
+ * if you need additional info properties you have to extend GenerateSpecExtension and add it in the template "openapi_defaults/openapi.yaml" with a placeholder which should be replaced in the "updateOpenApiFile()" method here
+ */
+
 plugins {
     kotlin("kapt")
     id("boudicca-kotlin")

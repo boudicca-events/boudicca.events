@@ -1,3 +1,7 @@
+/**
+ * plugin for applying the correct kotlin version
+ */
+
 plugins {
     id("boudicca-base")
     kotlin("jvm")

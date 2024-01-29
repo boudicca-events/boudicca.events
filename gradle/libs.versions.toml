@@ -42,8 +42,13 @@ io-spring-dependency-management-gradle-plugin = { module = "io.spring.dependency
 org-openapi-generator-gradle-plugin = { module = "org.openapi.generator:org.openapi.generator.gradle.plugin", version.ref = "org-openapi-generator-gradle-plugin" }
 
 [bundles]
+
+#following bundles are applied by the plugins with the same name
 openapi-generate-spec = ["swagger-annotations", "javax-jaxrs"]
+#TODO test if those dependencies are really necessary
 openapi-generate-client = ["findbugs", "jackson-core", "jackson-annotations", "jackson-databind", "jackson-databind-jsr310", "jackson-databind-nullable", "jakarta-annotation"]
 springboot-app = ["spring-boot-starter-web", "spring-openapi-starter", "kotlin-reflect", "jackson-module-kotlin"]
+
+#all third-party plugins applied by our boudicca-* plugins
 boudicca-plugins = ["org-jetbrains-kotlin-jvm-gradle-plugin", "org-jetbrains-kotlin-plugin-spring-gradle-plugin", "org-springframework-boot-gradle-plugin", "io-spring-dependency-management-gradle-plugin", "org-openapi-generator-gradle-plugin", "io-swagger-core-v3-swagger-gradle-plugin"]
 

@@ -1,6 +1,11 @@
 import org.gradle.kotlin.dsl.*
 import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 
+/**
+ * this plugin generates a java client, users of this plugin have to add a project dependency with the configuration "openapi" on a project with the "boudicca-openapi-generate-spec" plugin applied
+ * this plugin also publishes the client which was generated
+ */
+
 plugins {
     id("boudicca-java-library")
     id("org.openapi.generator")

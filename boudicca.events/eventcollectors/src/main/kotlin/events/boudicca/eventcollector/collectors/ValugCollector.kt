@@ -29,19 +29,13 @@ class ValugCollector : TwoStepEventCollector<VEvent>("valug") {
         return calendar.components.filterIsInstance<VEvent>()
     }
 
-    override fun parseEvent(event: VEvent): Event? {
+    override fun parseEvent(event: VEvent): Event {
         val eventName = event.summary.value
         val formatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss")
         // get by city name to account for daylight saving time
         val viennaZoneId = TimeZone.getTimeZone("Europe/Vienna").toZoneId()
         val eventStartDate = LocalDateTime.parse(event.startDate.value, formatter)
             .atZone(viennaZoneId).toOffsetDateTime()
-        val now = LocalDateTime.now().atZone(viennaZoneId).toOffsetDateTime()
-
-        if (eventStartDate.isBefore(now)) {
-            return null
-        }
-
         val eventEndDate = LocalDateTime.parse(event.startDate.value, formatter)
             .atZone(TimeZone.getTimeZone("Europe/Vienna").toZoneId()).toOffsetDateTime()
 

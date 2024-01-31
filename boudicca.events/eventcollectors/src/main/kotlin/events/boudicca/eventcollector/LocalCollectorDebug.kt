@@ -20,7 +20,7 @@ fun main() {
 //        .debug(LandestheaterLinzCollector())
 //        .debug(KapuCollector())
 //        .debug(StadtwerkstattCollector())
-        .debug(OteloLinzCollector())
+//        .debug(OteloLinzCollector())
 //        .debug(EnnsEventsCollector())
 //        .debug(UlfOoeCollector())
 //        .debug(StiftskonzerteCollector())
@@ -33,4 +33,5 @@ fun main() {
 //        .debug(StadthalleWienCollector())
 //        .debug(MuseumArbeitsweltCollector())
 //        .debug(OKHVoecklabruckCollector())
+        .debug(ValugCollector())
 }

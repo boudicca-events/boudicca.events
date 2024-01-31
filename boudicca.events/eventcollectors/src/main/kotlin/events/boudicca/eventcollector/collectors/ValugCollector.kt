@@ -51,12 +51,6 @@ class ValugCollector : TwoStepEventCollector<VEvent>("valug") {
                 put(SemanticKeys.ENDDATE, eventEndDate.format(DateTimeFormatter.ISO_DATE_TIME))
                 if (event.location != null) {
                     put(SemanticKeys.LOCATION_NAME, event.location.value)
-                    if (event.location.value.contains("VALUG-Klubraum")) {
-                        put(SemanticKeys.LOCATION_CITY, "Wels")
-                        put(SemanticKeys.LOCATION_URL, "https://valug.at/pages/Klubraum/")
-                        put(SemanticKeys.LOCATION_ADDRESS, "Dragonerstraße 22, 4600 Wels")
-                        put(SemanticKeys.LOCATION_COORDINATES, "14.01715, 48.15849")
-                    }
                 }
                 if (event.description != null) {
                     put(SemanticKeys.DESCRIPTION, event.description.value)

@@ -29,6 +29,9 @@ dependencies {
 
 val openApiPackageName = project.name.substring(0, project.name.lastIndexOf("-"))
 tasks.register<GenerateTask>("generateJavaClient") {
+    doFirst {
+        delete(layout.buildDirectory.dir("generated/java").get())
+    }
     inputs.files(openapi)
     inputSpec.set(getInputSpecProvider())
     outputDir.set(layout.buildDirectory.dir("generated/java").get().toString())
@@ -43,6 +46,9 @@ tasks.register<GenerateTask>("generateJavaClient") {
 }
 
 tasks.register<GenerateTask>("generateTypescriptClient") {
+    doFirst {
+        delete(layout.buildDirectory.dir("generated/typescript").get())
+    }
     inputs.files(openapi)
     inputSpec.set(getInputSpecProvider())
     outputDir.set(layout.buildDirectory.dir("generated/typescript").get().toString())

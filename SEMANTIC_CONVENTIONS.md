@@ -18,8 +18,8 @@ We use certain data types for the properties we expect.
 * `text`: just a simple text/string
 * `date`: [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) Timestamp as text, for example: `2009-06-30T18:30:00+02:00`
 * `url`: A URL as text
-* `coordinates`: longitude + latitude in Decimal degrees (DD) in the format `<longitute>, <latitude>`
-* `list<?>`: A list of elements, the `?` describes the type of the elements in the list. Currently elements in a list
+* `coordinates`: longitude + latitude in Decimal degrees (DD) in the format `<latitude>, <longitute>`
+* `list<?>`: A list of elements, the `?` describes the type of the elements in the list. Currently, elements in a list
   are seperated by a newline, but this will probably change sometime
 * `enum<?>`: Has to be one of the specified distinct values
 * `boolean`: The text "true" or "false"

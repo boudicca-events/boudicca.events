@@ -4,6 +4,7 @@ on: workflow_dispatch
 
 permissions:
   contents: read
+  packages: write
 
 concurrency: prod
 
@@ -30,9 +31,9 @@ jobs:
       - name: Login to Docker Registry
         uses: docker/login-action@v3
         with:
-          registry: 'registry.slothyx.com'
-          username: ${{ secrets.DOCKERREGISTRY_USERNAME }}
-          password: ${{ secrets.DOCKERREGISTRY_TOKEN }}
+          registry: 'ghcr.io'
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       - name: Tag And Push Docker Images
         run: ./deploy_images.sh
       - name: triggering deploy

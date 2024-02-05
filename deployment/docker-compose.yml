@@ -1,0 +1,86 @@
+version: '3'
+services:
+  traefik:
+    image: traefik:v2.10
+    command:
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
+      - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
+      #- "--certificatesresolvers.myresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+      - "--certificatesresolvers.myresolver.acme.email=${BOUDICCA_LETSENCRYPT_EMAIL}"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /letsencrypt
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: always
+  boudicca-eventdb:
+    image: ${BOUDICCA_EVENTDB_IMAGE}
+    restart: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.boudicca-eventdb.rule=Host(`eventdb.${BOUDICCA_BASE_HOST}`)"
+      - "traefik.http.routers.boudicca-eventdb.entrypoints=websecure"
+      - "traefik.http.routers.boudicca-eventdb.tls.certresolver=myresolver"
+    volumes:
+      - /etc/boudicca/application-eventdb.properties:/opt/boudicca-eventdb/application.properties:ro
+      - /opt/boudicca/data/:/boudicca:rw
+  boudicca-search:
+    image: ${BOUDICCA_SEARCH_IMAGE}
+    restart: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.boudicca-search.rule=Host(`search.${BOUDICCA_BASE_HOST}`)"
+      - "traefik.http.routers.boudicca-search.entrypoints=websecure"
+      - "traefik.http.routers.boudicca-search.tls.certresolver=myresolver"
+    volumes:
+      - /etc/boudicca/application-search.properties:/opt/boudicca-search/application.properties:ro
+  boudicca-enricher:
+    image: ${BOUDICCA_ENRICHER_IMAGE}
+    restart: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.boudicca-enricher.rule=Host(`enricher.${BOUDICCA_BASE_HOST}`)"
+      - "traefik.http.routers.boudicca-enricher.entrypoints=websecure"
+      - "traefik.http.routers.boudicca-enricher.tls.certresolver=myresolver"
+    volumes:
+      - /etc/boudicca/application-enricher.properties:/opt/boudicca-enricher/application.properties:ro
+      - /etc/boudicca/googleCredentials.json:/opt/boudicca-enricher/googleCredentials.json:ro
+      - /opt/boudicca/data/:/boudicca:ro
+  boudicca-eventcollectors:
+    image: ${BOUDICCA_EVENTCOLLECTORS_IMAGE}
+    restart: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.boudicca-eventcollectors.rule=Host(`collectors.${BOUDICCA_BASE_HOST}`)"
+      - "traefik.http.routers.boudicca-eventcollectors.entrypoints=websecure"
+      - "traefik.http.routers.boudicca-eventcollectors.tls.certresolver=myresolver"
+    volumes:
+      - /etc/boudicca/application-eventcollectors.properties:/opt/boudicca-eventcollectors/application.properties:ro
+  boudicca-html:
+    image: ${BOUDICCA_PUBLISHER_HTML_IMAGE}
+    restart: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.boudicca-html.rule=Host(`${BOUDICCA_BASE_HOST}`) || Host(`www.${BOUDICCA_BASE_HOST}`)"
+      - "traefik.http.routers.boudicca-html.entrypoints=websecure"
+      - "traefik.http.routers.boudicca-html.tls.certresolver=myresolver"
+    volumes:
+      - /etc/boudicca/application-html.properties:/opt/boudicca-html/application.properties:ro
+  boudicca-ical:
+    image: ${BOUDICCA_PUBLISHER_ICAL_IMAGE}
+    restart: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.boudicca-ical.rule=Host(`ical.${BOUDICCA_BASE_HOST}`)"
+      - "traefik.http.routers.boudicca-ical.entrypoints=websecure"
+      - "traefik.http.routers.boudicca-ical.tls.certresolver=myresolver"
+    volumes:
+      - /etc/boudicca/application-ical.properties:/opt/boudicca-ical/application.properties:ro

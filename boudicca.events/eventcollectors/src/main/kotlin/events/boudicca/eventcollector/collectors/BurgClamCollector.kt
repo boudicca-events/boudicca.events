@@ -27,7 +27,11 @@ class BurgClamCollector : TwoStepEventCollector<String>("burgclam") {
 
         val headLines = eventSite.select("h3.av-special-heading-tag")
 
-        val startDate = parseDate(headLines[0].text())
+        var dateText = headLines[0].text()
+        if (dateText == "SOLD OUT") {
+            dateText = eventSite.select("div.av-subheading.av-subheading_below")[0].text()
+        }
+        val startDate = parseDate(dateText)
 
         val name = if (headLines.size >= 2) {
             headLines[1].text()

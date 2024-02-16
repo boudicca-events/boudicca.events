@@ -50,7 +50,7 @@ class MuseumArbeitsweltCollector : TwoStepEventCollector<Pair<String, String>>("
     }
 
     private fun parseDate(dateToParse: String): OffsetDateTime {
-        val localDateTime = LocalDateTime.parse(dateToParse,
+        val localDateTime = LocalDateTime.parse(dateToParse.replace("All Day Event","00.00"),
             DateTimeFormatter.ofPattern("d. MMMM uuuu k.mm", Locale.GERMAN))
         return localDateTime.atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
     }

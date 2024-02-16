@@ -6,6 +6,7 @@ import base.boudicca.api.eventcollector.TwoStepEventCollector
 import base.boudicca.model.Event
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
+import org.jsoup.nodes.TextNode
 import org.slf4j.LoggerFactory
 import java.time.LocalDate
 import java.time.LocalTime
@@ -47,8 +48,11 @@ class CafeTraxlmayrCollector : TwoStepEventCollector<Element>("cafetraxlmayr") {
             parseConcert(title, event, data)
         } else if (title == "Die nächsten Lesungen im Café Traxlmayr") {
             parseLesungen(event, data)
+        } else if (title.contains("Sammelausstellung")) {
+            //ignore
+            emptyList()
         } else {
-            LOG.info("cannot parse event: $event")
+            LOG.error("unknown event format: $event")
             emptyList()
         }
     }
@@ -72,28 +76,33 @@ class CafeTraxlmayrCollector : TwoStepEventCollector<Element>("cafetraxlmayr") {
         var currentDescription = ""
         var currentDate: OffsetDateTime? = null
 
-        for (line in event.select(".modal-body p ").eachText().filter { it.isNotBlank() }) {
-            if (line.contains("_______")) {
-                val currentData = data.toMutableMap()
-                currentData[SemanticKeys.DESCRIPTION] = currentDescription
-                lesungen.add(Event(currentName!!, currentDate!!, currentData))
-                currentName = null
-                currentDescription = ""
-                currentDate = null
-            } else {
-                if (currentName == null) {
-                    currentName = line
-                }
-                currentDescription += line + "\n"
-                if (line.contains("Uhr")) {
-                    currentDate = parseDate(line)
+        event.select(".modal-body").traverse { node, depth ->
+            if (node is TextNode && node.text().isNotBlank()) {
+                val text = node.text()
+                if (text.contains("_______")) {
+                    val currentData = data.toMutableMap()
+                    currentData[SemanticKeys.DESCRIPTION] = currentDescription
+                    lesungen.add(Event(currentName!!, currentDate!!, currentData))
+                    currentName = null
+                    currentDescription = ""
+                    currentDate = null
+                } else {
+                    if (currentName == null) {
+                        currentName = text
+                    }
+                    currentDescription += text
+                    if (text.contains("Uhr")) {
+                        currentDate = parseDate(text)
+                    }
                 }
             }
         }
 
-        val currentData = data.toMutableMap()
-        currentData[SemanticKeys.DESCRIPTION] = currentDescription
-        lesungen.add(Event(currentName!!, currentDate!!, currentData))
+        if (currentName != null && currentDate != null) {
+            val currentData = data.toMutableMap()
+            currentData[SemanticKeys.DESCRIPTION] = currentDescription
+            lesungen.add(Event(currentName!!, currentDate!!, currentData))
+        }
 
         return lesungen
     }

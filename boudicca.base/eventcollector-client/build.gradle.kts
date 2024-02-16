@@ -24,7 +24,7 @@ dependencies {
     api("org.slf4j:slf4j-api:2.0.12")
     implementation(project(":boudicca.base:ingest-client"))
     implementation(project(":boudicca.base:enricher-client"))
-    testImplementation("org.junit.jupiter:junit-jupiter:5.10.1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
 }
 
 tasks.withType<Test> {

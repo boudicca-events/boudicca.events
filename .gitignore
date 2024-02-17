@@ -38,3 +38,5 @@ testdata.dump
 /boudicca.store
 /publisher-html/overrides_static/
 /publisher-html/overrides/
+
+/boudicca.base/enricher-utils/data/

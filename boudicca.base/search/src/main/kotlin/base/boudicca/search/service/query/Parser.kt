@@ -117,12 +117,11 @@ class Parser(private val tokens: List<Token>) {
         return expression
     }
 
+
     private fun checkNumber(): Number {
-        try {
-            return BigDecimal(checkText())
-        } catch (e: NumberFormatException) {
-            throw IllegalStateException("error parsing expected number", e)
-        }
+        check(TokenType.NUMBER)
+        val token = tokens[i - 1]
+        return token.getNumber()!!
     }
 
     private fun checkText(): String {

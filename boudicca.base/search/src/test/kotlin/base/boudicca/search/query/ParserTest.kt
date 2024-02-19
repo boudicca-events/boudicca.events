@@ -6,6 +6,7 @@ import base.boudicca.search.service.query.TokenType
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.math.BigDecimal
 
 class ParserTest {
 
@@ -204,7 +205,7 @@ class ParserTest {
         assertEquals(
             "DURATIONSHORTER('startDate','endDate',-2)",
             callParser(
-                duration(), text("startDate"), text("endDate"), shorter(), text("-2")
+                duration(), text("startDate"), text("endDate"), shorter(), number("-2")
             )
         )
     }
@@ -214,7 +215,7 @@ class ParserTest {
         assertEquals(
             "DURATIONLONGER('startDate','endDate',2.6)",
             callParser(
-                duration(), text("startDate"), text("endDate"), longer(), text("2.6")
+                duration(), text("startDate"), text("endDate"), longer(), number("2.6")
             )
         )
     }
@@ -257,6 +258,10 @@ class ParserTest {
 
     private fun text(s: String): Token {
         return Token(TokenType.TEXT, s)
+    }
+
+    private fun number(number: String): Token {
+        return Token(TokenType.NUMBER, null, BigDecimal(number))
     }
 
     private fun duration(): Token {

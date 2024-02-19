@@ -1,5 +1,7 @@
 package base.boudicca.search.service.query
 
+import java.math.BigDecimal
+
 
 class Lexer(private val query: String) {
 
@@ -18,6 +20,8 @@ class Lexer(private val query: String) {
             } else if (c == ')') {
                 tokens.add(Token(TokenType.GROUPING_CLOSE, null))
                 i++
+            } else if (c == '-' || c.isDigit()) {
+                readNumber()
             } else if (!c.isWhitespace()) {
                 readToken()
             } else {
@@ -26,6 +30,27 @@ class Lexer(private val query: String) {
         }
 
         return tokens
+    }
+
+    private fun readNumber() {
+        var tokenEnd = i + 1
+        while (tokenEnd < query.length) {
+            val c = query[tokenEnd]
+            if (c == '(' || c == ')' || c.isWhitespace()) {
+                break
+            }
+            if (!(c.isDigit() || c == '.')) {
+                throw IllegalStateException("invalid character $c found while parsing number")
+            }
+            tokenEnd++
+        }
+        val token = query.substring(i, tokenEnd)
+        try {
+            tokens.add(Token(TokenType.NUMBER, null, BigDecimal(token)))
+        } catch (e: NumberFormatException) {
+            throw IllegalStateException("error parsing number $token", e)
+        }
+        i = tokenEnd
     }
 
     private fun readToken() {

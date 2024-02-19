@@ -6,6 +6,7 @@ import base.boudicca.search.service.query.TokenType
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.math.BigDecimal
 
 class LexerTest {
 
@@ -156,6 +157,12 @@ class LexerTest {
         assertThrows<IllegalStateException> {
             callLexer(""" invalidtoken """)
         }
+        assertThrows<IllegalStateException> {
+            callLexer(""" 5invalidnumber """)
+        }
+        assertThrows<IllegalStateException> {
+            callLexer(""" -5invalidnumber """)
+        }
     }
 
     @Test
@@ -204,6 +211,30 @@ class LexerTest {
         val tokens = callLexer(""" longer """)
         assertEquals(1, tokens.size)
         assertEquals(TokenType.LONGER, tokens[0].getType())
+    }
+
+    @Test
+    fun testSimpleNumber() {
+        val tokens = callLexer(""" 2 """)
+        assertEquals(1, tokens.size)
+        assertEquals(TokenType.NUMBER, tokens[0].getType())
+        assertEquals(BigDecimal(2), tokens[0].getNumber())
+    }
+
+    @Test
+    fun testNegativeNumber() {
+        val tokens = callLexer(""" -2 """)
+        assertEquals(1, tokens.size)
+        assertEquals(TokenType.NUMBER, tokens[0].getType())
+        assertEquals(BigDecimal(-2), tokens[0].getNumber())
+    }
+
+    @Test
+    fun testFractalNumber() {
+        val tokens = callLexer(""" -2.5 """)
+        assertEquals(1, tokens.size)
+        assertEquals(TokenType.NUMBER, tokens[0].getType())
+        assertEquals(BigDecimal(-2.5), tokens[0].getNumber())
     }
 
     private fun callLexer(query: String): List<Token> {

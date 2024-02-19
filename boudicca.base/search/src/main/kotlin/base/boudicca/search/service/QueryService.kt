@@ -1,10 +1,11 @@
 package base.boudicca.search.service
 
-import base.boudicca.model.Entry
 import base.boudicca.api.search.model.QueryDTO
 import base.boudicca.api.search.model.ResultDTO
+import base.boudicca.model.Entry
 import base.boudicca.search.service.query.Evaluator
 import base.boudicca.search.service.query.Page
+import base.boudicca.search.service.query.QueryException
 import base.boudicca.search.service.query.QueryParser
 import base.boudicca.search.service.query.evaluator.NoopEvaluator
 import base.boudicca.search.service.query.evaluator.SimpleEvaluator
@@ -21,6 +22,7 @@ class QueryService {
     @Volatile
     private var evaluator: Evaluator = NoopEvaluator()
 
+    @Throws(QueryException::class)
     fun query(queryDTO: QueryDTO): ResultDTO {
         val query = queryDTO.query ?: return Utils.offset(entries, queryDTO.offset, queryDTO.size)
 
@@ -34,7 +36,11 @@ class QueryService {
     }
 
     private fun evaluateQuery(query: String, page: Page): ResultDTO {
-        val expression = QueryParser.parseQuery(query)
-        return evaluator.evaluate(expression, page)
+        return try {
+            val expression = QueryParser.parseQuery(query)
+            evaluator.evaluate(expression, page)
+        } catch (e: QueryException) {
+            ResultDTO(emptyList(), 0, e.message)
+        }
     }
 }

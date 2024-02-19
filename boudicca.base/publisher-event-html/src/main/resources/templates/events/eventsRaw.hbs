@@ -1,3 +1,7 @@
-{{#each events as |event|}}
-    {{> events/event event}}
-{{/each}}
+{{#if error }}
+    <span>An error occurred: {{error}}</span>
+{{else}}
+    {{#each events as |event|}}
+        {{> events/event event}}
+    {{/each}}
+{{/if}}

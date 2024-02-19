@@ -4,5 +4,6 @@ import base.boudicca.model.Event
 
 data class SearchResultDTO(
     val result: List<Event>,
-    val totalResults: Int
+    val totalResults: Int,
+    val error: String?
 )

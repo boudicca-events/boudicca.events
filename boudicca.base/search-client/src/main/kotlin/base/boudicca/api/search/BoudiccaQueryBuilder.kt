@@ -29,11 +29,11 @@ object BoudiccaQueryBuilder {
     }
 
     fun after(dateFieldName: String, localDate: LocalDate): String {
-        return escapeText(dateFieldName) + " after " + DateTimeFormatter.ISO_LOCAL_DATE.format(localDate)
+        return escapeText(dateFieldName) + " after " + escapeText(DateTimeFormatter.ISO_LOCAL_DATE.format(localDate))
     }
 
     fun before(dateFieldName: String, localDate: LocalDate): String {
-        return escapeText(dateFieldName) + " before " + DateTimeFormatter.ISO_LOCAL_DATE.format(localDate)
+        return escapeText(dateFieldName) + " before " + escapeText(DateTimeFormatter.ISO_LOCAL_DATE.format(localDate))
     }
 
     fun equals(field: String, value: String): String {

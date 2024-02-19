@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service
 import java.util.concurrent.ConcurrentHashMap
 
 @Service
-class FilersService {
+class FiltersService {
 
     @Volatile
     private var entries = emptyList<Entry>()

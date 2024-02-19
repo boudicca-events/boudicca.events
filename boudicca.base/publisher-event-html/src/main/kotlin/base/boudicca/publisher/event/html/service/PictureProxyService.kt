@@ -1,5 +1,6 @@
 package base.boudicca.publisher.event.html.service
 
+import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import java.awt.image.BufferedImage
@@ -20,6 +21,8 @@ import kotlin.math.max
 @Service
 class PictureProxyService {
 
+    private val LOG = LoggerFactory.getLogger(this::class.java)
+
     private val cache = ConcurrentHashMap<String, CacheEntry>()
 
     private val httpClient = HttpClient.newBuilder()
@@ -38,13 +41,20 @@ class PictureProxyService {
         val response = httpClient.send(request, BodyHandlers.ofByteArray())
 
         val optional = if (response.statusCode() != 200) {
+            LOG.warn("response code is invalid ${response.statusCode()} for $url")
             Optional.empty()
         } else {
             val body = response.body()
             if (body.isEmpty()) {
+                LOG.warn("empty body for $url")
                 Optional.empty()
             } else {
-                Optional.of(resize(body))
+                try {
+                    Optional.of(resize(body))
+                } catch (e: RuntimeException) {
+                    LOG.warn("error resizing image $url", e)
+                    Optional.empty()
+                }
             }
         }
 

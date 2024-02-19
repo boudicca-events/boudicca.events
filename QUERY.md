@@ -4,7 +4,7 @@
 
 The Boudicca Query Language is a simple query language for making custom queries/filters where our normal search is
 insufficient.
-Queries can look like `name contains Bandname or name contains Bandname2`
+Queries can look like `"name" contains "Bandname" or "name" contains "Bandname2"`
 
 ## Syntax
 
@@ -25,39 +25,34 @@ potentially nested) forms. Please note that expressions are case-insensitive:
 
 where
 
-* `<text>` is an arbitrary string, but if that string matches a keyword or contains special characters (
-  space, (, ), \, ", ...) it has to be surrounded by quotes. Quotes and backslashes in the quote-escaped text have to be
-  escaped by a preceding backslash. Special characters which are allowed without quote-escaping are the dot '.' and the
-  minus '-'.
-  This is because a lot of field-names contain a dot (like `location.name`) and dates contain -, and these exceptions
-  makes it easier to write queries for them.
+* `<text>` is an arbitrary string surrounded by quotes. Quotes and backslashes in the quote-escaped text have to be
+  escaped by a preceding backslash.
 * `<number>` is a integer or decimal value, can be positive or negative, for example `2`, `-5`, `-2.5`
 * `<fieldname>` is a `<text>` matching a field of an event to be queried. There is the special field `"*"` which means
-  "any field". Please note that * is a special character and thus the quotes are needed. Also note that the fieldname
-  matching is case-sensitive, so the fieldnames `name` and `NAME` are different fields.
-* `<date>` is a `<text>` in the ISO Local Date format `YYYY-MM-DD`, for example `2023-05-27`
+  "any field". Please note that the fieldname matching is case-sensitive, so the fieldnames `"name"` and `"NAME"` are different fields.
+* `<date>` is a `<text>` in the ISO Local Date format `"YYYY-MM-DD"`, for example `"2023-05-27"`
 
-In contrast to other queries or math there is no operator precedence here, they will be ordered/grouped randomly
-(depending solely on the parser). So make sure to use the grouping `(...)` mechanism!
+The operator precedence is with the lowest starting: `or` -> `and` -> `not`, so not is the strongest binding one.
+You can use the grouping `(...)` mechanism to circumvent the order.
 
 ## Examples
 
-* Search for any event containing the text "technology" in the name: `name contains technology`
-* Search for any event NOT containing the text "technology" in the name: `not name contains technology`
+* Search for any event containing the text "technology" in the name: `"name" contains "technology"`
+* Search for any event NOT containing the text "technology" in the name: `not "name" contains "technology"`
 * Search for any event containing the text "technology" in any field (like when you search on our
-  website): `"*" contains technology`
-* Search for any event in either Linz or Enns: `location.city equals Linz or location.city equals Enns`
+  website): `"*" contains "technology"`
+* Search for any event in either Linz or Enns: `"location.city" equals "Linz" or "location.city" equals "Enns"`
 * Search for any event containing `a "longer" sentence` in the
-  description: `description contains "a \"longer\" sentence"`
+  description: `"description" contains "a \"longer\" sentence"`
 * Search for any event in Wien but not in
-  Gasometer: `location.city equals Wien and (not location.name equals Gasometer)`
+  Gasometer: `"location.city" equals "Wien" and (not "location.name" equals "Gasometer")`
 * Search for any event while I am in Vienna on
-  holiday: `location.city equals Wien and startDate after 2023-05-27 and startDate before 2023-05-31`
+  holiday: `"location.city" equals "Wien" and "startDate" after "2023-05-27" and "startDate" before "2023-05-31"`
 * Search for events with a duration of 2 hours or less: `duration "startDate" "endDate" shorter 2`
 
 See our [Semantic Conventions](SEMANTIC_CONVENTIONS.md) to find common field names.
 
-## Architecture of _insert name here_
+## Architecture of the Boudicca Query Language
 
 Using queries is a three-step process: Lexing, Parsing, Evaluation
 
@@ -66,7 +61,7 @@ Using queries is a three-step process: Lexing, Parsing, Evaluation
 The Lexer is responsible for taking the query-string and breaking it up into a list of tokens. This means the handling
 for escaping text and recognizing keywords happens here.
 
-For example the query `name equals "BigBand Blues"` will result in the three
+For example the query `"name" equals "BigBand Blues"` will result in the three
 tokens: `text("name"), equals, text("BigBand Blues")`
 
 ### Parsing

@@ -55,7 +55,7 @@ class Lexer(private val query: String) {
             "duration" -> tokens.add(Token(TokenType.DURATION, null))
             "longer" -> tokens.add(Token(TokenType.LONGER, null))
             "shorter" -> tokens.add(Token(TokenType.SHORTER, null))
-            else -> tokens.add(Token(TokenType.TEXT, token))
+            else -> throw IllegalStateException("unknown keyword: $token")
         }
         i = tokenEnd
     }

@@ -11,12 +11,12 @@ class LexerTest {
 
     @Test
     fun testEmpty() {
-        callLexer("").isEmpty()
+        callLexer("""  """).isEmpty()
     }
 
     @Test
     fun singleTextToken() {
-        val tokens = callLexer("text")
+        val tokens = callLexer(""" "text" """)
         assertEquals(1, tokens.size)
         assertEquals(tokens[0].getType(), TokenType.TEXT)
         assertEquals(tokens[0].getToken(), "text")
@@ -24,7 +24,7 @@ class LexerTest {
 
     @Test
     fun singleTextTokenWithNumber() {
-        val tokens = callLexer("1text")
+        val tokens = callLexer(""" "1text" """)
         assertEquals(1, tokens.size)
         assertEquals(tokens[0].getType(), TokenType.TEXT)
         assertEquals(tokens[0].getToken(), "1text")
@@ -32,7 +32,7 @@ class LexerTest {
 
     @Test
     fun twoTextTokens() {
-        val tokens = callLexer("first second")
+        val tokens = callLexer(""" "first" "second" """)
         assertEquals(2, tokens.size)
         assertEquals(tokens[0].getType(), TokenType.TEXT)
         assertEquals(tokens[0].getToken(), "first")
@@ -42,7 +42,7 @@ class LexerTest {
 
     @Test
     fun testAndToken() {
-        val tokens = callLexer("and AND aNd")
+        val tokens = callLexer(""" and AND aNd """)
         assertEquals(3, tokens.size)
         assertEquals(TokenType.AND, tokens[0].getType())
         assertEquals(TokenType.AND, tokens[1].getType())
@@ -51,7 +51,7 @@ class LexerTest {
 
     @Test
     fun testOrToken() {
-        val tokens = callLexer("or OR oR")
+        val tokens = callLexer(""" or OR oR """)
         assertEquals(3, tokens.size)
         assertEquals(TokenType.OR, tokens[0].getType())
         assertEquals(TokenType.OR, tokens[1].getType())
@@ -60,7 +60,7 @@ class LexerTest {
 
     @Test
     fun testNotToken() {
-        val tokens = callLexer("not NOT nOT")
+        val tokens = callLexer(""" not NOT nOT """)
         assertEquals(3, tokens.size)
         assertEquals(TokenType.NOT, tokens[0].getType())
         assertEquals(TokenType.NOT, tokens[1].getType())
@@ -69,7 +69,7 @@ class LexerTest {
 
     @Test
     fun testEqualsToken() {
-        val tokens = callLexer("equals EQUALS equals")
+        val tokens = callLexer(""" equals EQUALS equals """)
         assertEquals(3, tokens.size)
         assertEquals(TokenType.EQUALS, tokens[0].getType())
         assertEquals(TokenType.EQUALS, tokens[1].getType())
@@ -78,7 +78,7 @@ class LexerTest {
 
     @Test
     fun testContainsToken() {
-        val tokens = callLexer("contains CONTAINS ConTAIns")
+        val tokens = callLexer(""" contains CONTAINS ConTAIns """)
         assertEquals(3, tokens.size)
         assertEquals(TokenType.CONTAINS, tokens[0].getType())
         assertEquals(TokenType.CONTAINS, tokens[1].getType())
@@ -87,7 +87,7 @@ class LexerTest {
 
     @Test
     fun testGroupingToken() {
-        val tokens = callLexer("( )")
+        val tokens = callLexer(""" ( ) """)
         assertEquals(2, tokens.size)
         assertEquals(TokenType.GROUPING_OPEN, tokens[0].getType())
         assertEquals(TokenType.GROUPING_CLOSE, tokens[1].getType())
@@ -95,7 +95,7 @@ class LexerTest {
 
     @Test
     fun testSimpleEscapedText() {
-        val tokens = callLexer("\"text\"")
+        val tokens = callLexer(""" "text" """)
         assertEquals(1, tokens.size)
         assertEquals(TokenType.TEXT, tokens[0].getType())
         assertEquals("text", tokens[0].getToken())
@@ -103,7 +103,7 @@ class LexerTest {
 
     @Test
     fun testEscapedTextWithSpecialChars() {
-        val tokens = callLexer("\"text with space and 123 and ?!§$ and 😘\"")
+        val tokens = callLexer(""" "text with space and 123 and ?!§$ and 😘" """)
         assertEquals(1, tokens.size)
         assertEquals(TokenType.TEXT, tokens[0].getType())
         assertEquals("text with space and 123 and ?!§$ and 😘", tokens[0].getToken())
@@ -111,7 +111,7 @@ class LexerTest {
 
     @Test
     fun testEscapedTextWithEscapedChars() {
-        val tokens = callLexer("\"text with \\\" and \\\\ \"")
+        val tokens = callLexer(""" "text with \" and \\ " """)
         assertEquals(1, tokens.size)
         assertEquals(TokenType.TEXT, tokens[0].getType())
         assertEquals("text with \" and \\ ", tokens[0].getToken())
@@ -119,7 +119,7 @@ class LexerTest {
 
     @Test
     fun testEscapedOperator() {
-        val tokens = callLexer("\"and\"")
+        val tokens = callLexer(""" "and" """)
         assertEquals(1, tokens.size)
         assertEquals(TokenType.TEXT, tokens[0].getType())
         assertEquals("and", tokens[0].getToken())
@@ -127,48 +127,41 @@ class LexerTest {
 
     @Test
     fun testAfterOperator() {
-        val tokens = callLexer("after")
+        val tokens = callLexer(""" after """)
         assertEquals(1, tokens.size)
         assertEquals(TokenType.AFTER, tokens[0].getType())
     }
 
     @Test
     fun testBeforeOperator() {
-        val tokens = callLexer("before")
+        val tokens = callLexer(""" before """)
         assertEquals(1, tokens.size)
         assertEquals(TokenType.BEFORE, tokens[0].getType())
     }
 
     @Test
-    fun testSpecialAllowedCharacters() {
-        val tokens = callLexer("text.dot text-minus")
-        assertEquals(2, tokens.size)
-        assertEquals(TokenType.TEXT, tokens[0].getType())
-        assertEquals("text.dot", tokens[0].getToken())
-        assertEquals(TokenType.TEXT, tokens[1].getType())
-        assertEquals("text-minus", tokens[1].getToken())
-    }
-
-    @Test
     fun testVariousErrors() {
         assertThrows<IllegalStateException> {
-            callLexer("textwith!init")
+            callLexer(""" textwith!init """)
         }
         assertThrows<IllegalStateException> {
-            callLexer("\"unclosed quotes")
+            callLexer(""" \"unclosed quotes """)
         }
         assertThrows<IllegalStateException> {
-            callLexer("\"escaped end\\")
+            callLexer(""" \"escaped end\\ """)
         }
         assertThrows<IllegalStateException> {
-            callLexer("\"wrongly escaped \\a \"")
+            callLexer(""" "wrongly escaped \a " """)
+        }
+        assertThrows<IllegalStateException> {
+            callLexer(""" invalidtoken """)
         }
     }
 
     @Test
     fun testLongMixedQuery() {
         val tokens =
-            callLexer("(field contains \"and\") and ( \"field2\" equals \"long text\" ) or not field contains text")
+            callLexer(""" ("field" contains "and") and ( "field2" equals "long text" ) or not "field" contains "text" """)
         assertEquals(16, tokens.size)
         assertEquals(TokenType.GROUPING_OPEN, tokens[0].getType())
         assertEquals(TokenType.TEXT, tokens[1].getType())
@@ -196,19 +189,19 @@ class LexerTest {
 
     @Test
     fun testDurationOperator() {
-        val tokens = callLexer("duration")
+        val tokens = callLexer(""" duration """)
         assertEquals(1, tokens.size)
         assertEquals(TokenType.DURATION, tokens[0].getType())
     }
     @Test
     fun testShorterKeyword() {
-        val tokens = callLexer("shorter")
+        val tokens = callLexer(""" shorter """)
         assertEquals(1, tokens.size)
         assertEquals(TokenType.SHORTER, tokens[0].getType())
     }
     @Test
     fun testLongerKeyword() {
-        val tokens = callLexer("longer")
+        val tokens = callLexer(""" longer """)
         assertEquals(1, tokens.size)
         assertEquals(TokenType.LONGER, tokens[0].getType())
     }

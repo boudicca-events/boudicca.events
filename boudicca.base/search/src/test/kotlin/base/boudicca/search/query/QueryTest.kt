@@ -21,21 +21,21 @@ class QueryTest {
 
     @Test
     fun simpleEquals() {
-        val events = evaluateQuery("name equals event1")
+        val events = evaluateQuery(""" "name" equals "event1" """)
         assertEquals(1, events.size)
         assertEquals("event1", events.first()["name"])
     }
 
     @Test
     fun simpleAnd() {
-        val events = evaluateQuery("name contains event and field contains 2")
+        val events = evaluateQuery(""" "name" contains "event" and "field" contains "2" """)
         assertEquals(1, events.size)
         assertEquals("event2", events.first()["name"])
     }
 
     @Test
     fun simpleGrouping() {
-        val events = evaluateQuery("(name contains event) and (field contains 2)")
+        val events = evaluateQuery(""" ("name" contains "event") and ("field" contains "2") """)
         assertEquals(1, events.size)
         assertEquals("event2", events.first()["name"])
     }
@@ -43,7 +43,7 @@ class QueryTest {
     @Test
     fun bigQuery() {
         val events =
-            evaluateQuery("((not name contains event) or ( field contains 2) ) and field contains \"a\\\\longer\"")
+            evaluateQuery(""" ((not "name" contains "event") or ( "field" contains "2") ) and "field" contains "a\\longer" """)
         assertEquals(1, events.size)
         assertEquals("somethingelse3", events.first()["name"])
     }
@@ -51,7 +51,7 @@ class QueryTest {
     @Test
     fun queryWithTimeLimits() {
         val events =
-            evaluateQuery("startDate after 2023-05-27 and startDate before 2023-05-30")
+            evaluateQuery(""" "startDate" after "2023-05-27" and "startDate" before "2023-05-30" """)
         assertEquals(1, events.size)
         assertEquals("event2", events.first()["name"])
     }
@@ -59,7 +59,7 @@ class QueryTest {
     @Test
     fun queryWithDurationLonger() {
         val events =
-            evaluateQuery("duration startDate endDate longer 2")
+            evaluateQuery(""" duration "startDate" "endDate" longer 2 """)
         assertEquals(1, events.size)
         assertEquals("event1", events.first()["name"])
     }
@@ -67,7 +67,7 @@ class QueryTest {
     @Test
     fun queryWithDurationShorter() {
         val events =
-            evaluateQuery("duration startDate endDate shorter 2")
+            evaluateQuery(""" duration "startDate" "endDate" shorter 2 """)
         assertFalse(events.map { it["name"] }.contains("event1"))
     }
 

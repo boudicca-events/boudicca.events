@@ -2,9 +2,7 @@ package events.boudicca.publisherhtml.service
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.search.*
-import base.boudicca.api.search.BoudiccaQueryBuilder.after
 import base.boudicca.api.search.BoudiccaQueryBuilder.and
-import base.boudicca.api.search.BoudiccaQueryBuilder.before
 import base.boudicca.api.search.BoudiccaQueryBuilder.contains
 import base.boudicca.api.search.BoudiccaQueryBuilder.durationLonger
 import base.boudicca.api.search.BoudiccaQueryBuilder.durationShorter
@@ -86,6 +84,16 @@ class EventService @Autowired constructor(
             queryParts.add(equals(flag!!, "true"))
         }
         return and(queryParts)
+    }
+
+    // workaround until next update..
+    fun after(dateFieldName: String, localDate: LocalDate): String {
+        return BoudiccaQueryBuilder.escapeText(dateFieldName) + " after " +BoudiccaQueryBuilder.escapeText(DateTimeFormatter.ISO_LOCAL_DATE.format(localDate))
+    }
+
+    // workaround until next update..
+    fun before(dateFieldName: String, localDate: LocalDate): String {
+        return BoudiccaQueryBuilder.escapeText(dateFieldName) + " before " + BoudiccaQueryBuilder.escapeText(DateTimeFormatter.ISO_LOCAL_DATE.format(localDate))
     }
 
     fun filters(): Filters {

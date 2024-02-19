@@ -2,6 +2,7 @@ package base.boudicca.publisher.event.html.controller
 
 import base.boudicca.publisher.event.html.model.SearchDTO
 import base.boudicca.publisher.event.html.service.EventService
+import base.boudicca.publisher.event.html.util.SearchUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
@@ -19,7 +20,7 @@ class StartPageController @Autowired constructor(private val eventService: Event
     fun getIndex(): ModelAndView {
         val data: MutableMap<String, Any> = HashMap()
         data["title"] = PAGE_TITLE
-        data["events"] = eventService.search(SearchDTO())
+        SearchUtils.searchAndAddToModel(eventService, SearchDTO(), data)
         data["filters"] = eventService.filters()
         return ModelAndView("index", data)
     }
@@ -31,7 +32,7 @@ class StartPageController @Autowired constructor(private val eventService: Event
     ): ModelAndView {
         val data: MutableMap<String, Any> = HashMap()
         data["title"] = PAGE_TITLE
-        data["events"] = eventService.search(searchDTO)
+        SearchUtils.searchAndAddToModel(eventService, searchDTO, data)
         data["filters"] = eventService.filters()
         return ModelAndView("index", data)
     }

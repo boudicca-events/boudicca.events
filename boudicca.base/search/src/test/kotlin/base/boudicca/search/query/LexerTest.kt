@@ -1,6 +1,7 @@
 package base.boudicca.search.query
 
 import base.boudicca.search.service.query.Lexer
+import base.boudicca.search.service.query.QueryException
 import base.boudicca.search.service.query.Token
 import base.boudicca.search.service.query.TokenType
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -142,31 +143,31 @@ class LexerTest {
 
     @Test
     fun testVariousErrors() {
-        assertThrows<IllegalStateException> {
+        assertThrows<QueryException> {
             callLexer(""" textwith!init """)
         }
-        assertThrows<IllegalStateException> {
+        assertThrows<QueryException> {
             callLexer(""" \"unclosed quotes """)
         }
-        assertThrows<IllegalStateException> {
+        assertThrows<QueryException> {
             callLexer(""" \"escaped end\\ """)
         }
-        assertThrows<IllegalStateException> {
+        assertThrows<QueryException> {
             callLexer(""" "wrongly escaped \a " """)
         }
-        assertThrows<IllegalStateException> {
+        assertThrows<QueryException> {
             callLexer(""" invalidtoken """)
         }
-        assertThrows<IllegalStateException> {
+        assertThrows<QueryException> {
             callLexer(""" 5invalidnumber """)
         }
-        assertThrows<IllegalStateException> {
+        assertThrows<QueryException> {
             callLexer(""" -5invalidnumber """)
         }
-        assertThrows<IllegalStateException> {
+        assertThrows<QueryException> {
             callLexer(""" & """)
         }
-        assertThrows<IllegalStateException> {
+        assertThrows<QueryException> {
             callLexer(""" a&nd """)
         }
     }

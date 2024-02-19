@@ -96,7 +96,7 @@ class SimpleEvaluator(rawEntries: Collection<Entry>) : Evaluator {
             }
 
             else -> {
-                throw IllegalStateException("unknown expression kind $expression")
+                throw QueryException("unknown expression kind $expression")
             }
         }
     }

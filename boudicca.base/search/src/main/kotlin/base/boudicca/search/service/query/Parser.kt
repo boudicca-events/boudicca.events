@@ -5,7 +5,7 @@ class Parser(private val tokens: List<Token>) {
 
     fun parse(): Expression {
         val expression = parseExpression()
-        check(null)
+        check(null) //check eof
         return expression
     }
 
@@ -58,7 +58,7 @@ class Parser(private val tokens: List<Token>) {
                 return parseDuration()
             }
 
-            else -> throw IllegalStateException("invalid token ${getCurrentTokenType()}")
+            else -> throw QueryException("invalid token ${getCurrentTokenType()}")
         }
     }
 
@@ -77,7 +77,7 @@ class Parser(private val tokens: List<Token>) {
                 return DurationShorterExpression(startField, endField, checkNumber())
             }
 
-            else -> throw IllegalStateException("invalid duration mode ${getCurrentTokenType()}, expected longer or shorter")
+            else -> throw QueryException("invalid duration mode ${getCurrentTokenType()}, expected longer or shorter")
         }
     }
 
@@ -104,7 +104,7 @@ class Parser(private val tokens: List<Token>) {
                 return AfterExpression(firstText, checkText())
             }
 
-            else -> throw IllegalStateException("invalid token ${getCurrentTokenType()} following after text token")
+            else -> throw QueryException("invalid token ${getCurrentTokenType()} following after text token")
         }
     }
 
@@ -131,7 +131,7 @@ class Parser(private val tokens: List<Token>) {
     private fun check(tokenType: TokenType?) {
         val currentTokenType = getCurrentTokenType()
         if (currentTokenType != tokenType) {
-            throw IllegalStateException("did expect token ${tokenType ?: "eof"} but got token ${currentTokenType ?: "eof"}")
+            throw QueryException("did expect token ${tokenType ?: "eof"} but got token ${currentTokenType ?: "eof"}")
         }
         i++
     }

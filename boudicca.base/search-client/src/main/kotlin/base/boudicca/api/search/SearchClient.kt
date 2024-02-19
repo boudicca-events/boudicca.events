@@ -23,7 +23,7 @@ class SearchClient(private val searchUrl: String) {
 
     fun queryEvents(queryDTO: QueryDTO): SearchResultDTO {
         val entries = queryEntries(queryDTO)
-        return SearchResultDTO(entries.result.mapNotNull { Event.fromEntry(it) }, entries.totalResults)
+        return SearchResultDTO(entries.result.mapNotNull { Event.fromEntry(it) }, entries.totalResults, entries.error)
     }
 
     fun queryEntries(queryDTO: QueryDTO): ResultDTO {
@@ -48,7 +48,7 @@ class SearchClient(private val searchUrl: String) {
     }
 
     private fun mapResultDto(resultDTO: base.boudicca.search.openapi.model.ResultDTO): ResultDTO {
-        return ResultDTO(resultDTO.result!!, resultDTO.totalResults!!)
+        return ResultDTO(resultDTO.result!!, resultDTO.totalResults!!, resultDTO.error)
     }
 
     private fun mapQueryDto(queryDTO: QueryDTO): base.boudicca.search.openapi.model.QueryDTO {

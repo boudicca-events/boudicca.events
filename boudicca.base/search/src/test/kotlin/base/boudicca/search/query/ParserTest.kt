@@ -1,6 +1,7 @@
 package base.boudicca.search.query
 
 import base.boudicca.search.service.query.Parser
+import base.boudicca.search.service.query.QueryException
 import base.boudicca.search.service.query.Token
 import base.boudicca.search.service.query.TokenType
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -130,51 +131,51 @@ class ParserTest {
 
     @Test
     fun testVariousErrors() {
-        assertThrows<IllegalStateException> {
+        assertThrows<QueryException> {
             //non closed group
             callParser(grOpen(), text("field"), equals(), text("text"))
         }
-        assertThrows<IllegalStateException> {
+        assertThrows<QueryException> {
             //non closed group
             callParser(grOpen(), grOpen(), text("field"), equals(), text("text"), grClose())
         }
-        assertThrows<IllegalStateException> {
+        assertThrows<QueryException> {
             //too many closing group
             callParser(grOpen(), text("field"), equals(), text("text"), grClose(), grClose())
         }
-        assertThrows<IllegalStateException> {
+        assertThrows<QueryException> {
             //illegal place for closing group
             callParser(grOpen(), text("field"), grClose(), equals(), text("text"))
         }
-        assertThrows<IllegalStateException> {
+        assertThrows<QueryException> {
             //empty group is illegal
             callParser(grOpen(), grClose())
         }
-        assertThrows<IllegalStateException> {
+        assertThrows<QueryException> {
             //invalid place for opening group
             callParser(text("field"), grOpen(), equals(), text("text"), grClose())
         }
-        assertThrows<IllegalStateException> {
+        assertThrows<QueryException> {
             //not enough tokens
             callParser(text("field"), equals())
         }
-        assertThrows<IllegalStateException> {
+        assertThrows<QueryException> {
             //wrong middle token type
             callParser(text("field"), text("equals"), text("text"))
         }
-        assertThrows<IllegalStateException> {
+        assertThrows<QueryException> {
             //boolean operator without second expression
             callParser(text("field"), equals(), text("text"), and())
         }
-        assertThrows<IllegalStateException> {
+        assertThrows<QueryException> {
             //boolean operator without first expression
             callParser(and(), text("field"), equals(), text("text"))
         }
-        assertThrows<IllegalStateException> {
+        assertThrows<QueryException> {
             //after operator needs parameter
             callParser(after())
         }
-        assertThrows<IllegalStateException> {
+        assertThrows<QueryException> {
             //wrong date format
             callParser(after(), text("27-5-2023"))
         }

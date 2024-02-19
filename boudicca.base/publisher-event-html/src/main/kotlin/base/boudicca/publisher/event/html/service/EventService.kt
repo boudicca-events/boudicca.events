@@ -34,6 +34,7 @@ class EventService @Autowired constructor(@Value("\${boudicca.search.url}") priv
     private val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy 'um' HH:mm 'Uhr'", Locale.GERMAN)
     private val localDateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
+    @Throws(EventServiceException::class)
     fun search(searchDTO: SearchDTO): List<Map<String, String?>> {
         val events = searchClient.queryEvents(QueryDTO(generateQuery(searchDTO), searchDTO.offset ?: 0))
         return mapEvents(events)
@@ -106,7 +107,8 @@ class EventService @Autowired constructor(@Value("\${boudicca.search.url}") priv
     }
 
     fun getSources(): List<String> {
-        val allSources = searchClient.getFiltersFor(FilterQueryDTO(listOf(FilterQueryEntryDTO(SemanticKeys.SOURCES, true))))
+        val allSources =
+            searchClient.getFiltersFor(FilterQueryDTO(listOf(FilterQueryEntryDTO(SemanticKeys.SOURCES, true))))
         return allSources[SemanticKeys.SOURCES]!!
             .map { normalize(it) }
             .distinct()
@@ -114,6 +116,9 @@ class EventService @Autowired constructor(@Value("\${boudicca.search.url}") priv
     }
 
     private fun mapEvents(result: SearchResultDTO): List<Map<String, String?>> {
+        if (result.error != null) {
+            throw EventServiceException("error executing query search: " + result.error, null, true)
+        }
         return result.result.map { mapEvent(it) }
     }
 

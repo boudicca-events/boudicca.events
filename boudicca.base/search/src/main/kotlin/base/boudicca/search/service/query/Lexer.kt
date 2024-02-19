@@ -27,7 +27,7 @@ class Lexer(private val query: String) {
             } else if (c.isWhitespace()) {
                 i++
             } else {
-                throw IllegalStateException("invalid character $c at index $i")
+                throw QueryException("invalid character $c at index $i")
             }
         }
 
@@ -42,7 +42,7 @@ class Lexer(private val query: String) {
                 break
             }
             if (!(c.isDigit() || c == '.')) {
-                throw IllegalStateException("invalid character $c found while parsing number")
+                throw QueryException("invalid character $c found while parsing number")
             }
             tokenEnd++
         }
@@ -50,7 +50,7 @@ class Lexer(private val query: String) {
         try {
             tokens.add(Token(TokenType.NUMBER, null, BigDecimal(token)))
         } catch (e: NumberFormatException) {
-            throw IllegalStateException("error parsing number $token", e)
+            throw QueryException("error parsing number $token", e)
         }
         i = tokenEnd
     }
@@ -63,12 +63,12 @@ class Lexer(private val query: String) {
                 break
             }
             if (!c.isLetter()) {
-                throw IllegalStateException("unexpected non-letter character in keyword token: $c at index: $i")
+                throw QueryException("unexpected non-letter character in keyword token: $c at index: $i")
             }
             tokenEnd++
         }
         if (tokenEnd == i) {
-            throw IllegalStateException("how did i find an empty text token at place: $i ?")
+            throw QueryException("how did i find an empty text token at place: $i ?")
         }
         val token = query.substring(i, tokenEnd)
         when (token.lowercase()) {
@@ -82,7 +82,7 @@ class Lexer(private val query: String) {
             "duration" -> tokens.add(Token(TokenType.DURATION, null))
             "longer" -> tokens.add(Token(TokenType.LONGER, null))
             "shorter" -> tokens.add(Token(TokenType.SHORTER, null))
-            else -> throw IllegalStateException("unknown keyword: $token")
+            else -> throw QueryException("unknown keyword: $token (did you forget to quote your text?)")
         }
         i = tokenEnd
     }
@@ -92,17 +92,17 @@ class Lexer(private val query: String) {
         i++
         while (true) {
             if (i == query.length) {
-                throw IllegalStateException("not-closed escaped text literal starting at: ${this.i}")
+                throw QueryException("not-closed escaped text literal starting at: ${this.i}")
             }
             val c = query[i]
             if (c == '\\') {
                 i++
                 if (i == query.length) {
-                    throw IllegalStateException("you cannot escape the end of the query!")
+                    throw QueryException("you cannot escape the end of the query!")
                 }
                 val escapedC = query[i]
                 if (escapedC != '\\' && escapedC != '"') {
-                    throw IllegalStateException("unknown escaped character: $escapedC")
+                    throw QueryException("unknown escaped character: $escapedC")
                 }
             }
             if (c == '"') {

@@ -2,6 +2,7 @@ package base.boudicca.search.query
 
 import base.boudicca.SemanticKeys
 import base.boudicca.search.service.query.PAGE_ALL
+import base.boudicca.search.service.query.QueryException
 import base.boudicca.search.service.query.QueryParser
 import base.boudicca.search.service.query.evaluator.EvaluatorUtil
 import base.boudicca.search.service.query.evaluator.SimpleEvaluator
@@ -14,7 +15,7 @@ class QueryTest {
 
     @Test
     fun emptyQuery() {
-        assertThrows<IllegalStateException> {
+        assertThrows<QueryException> {
             evaluateQuery("")
         }
     }

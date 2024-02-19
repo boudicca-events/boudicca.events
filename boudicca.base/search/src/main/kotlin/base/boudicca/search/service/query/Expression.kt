@@ -72,7 +72,7 @@ abstract class DateExpression(
         try {
             date = LocalDate.parse(dateText, DateTimeFormatter.ISO_LOCAL_DATE)
         } catch (e: DateTimeParseException) {
-            throw IllegalStateException("date in wrong format $dateText")
+            throw QueryException("date in wrong format $dateText")
         }
     }
 

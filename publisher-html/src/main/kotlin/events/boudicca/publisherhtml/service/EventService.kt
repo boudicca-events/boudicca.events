@@ -1,20 +1,17 @@
 package events.boudicca.publisherhtml.service
 
-import events.boudicca.EventCategory
-import events.boudicca.SemanticKeys
-import events.boudicca.api.search.BoudiccaQueryBuilder.after
-import events.boudicca.api.search.BoudiccaQueryBuilder.and
-import events.boudicca.api.search.BoudiccaQueryBuilder.before
-import events.boudicca.api.search.BoudiccaQueryBuilder.contains
-import events.boudicca.api.search.BoudiccaQueryBuilder.durationLonger
-import events.boudicca.api.search.BoudiccaQueryBuilder.durationShorter
-import events.boudicca.api.search.BoudiccaQueryBuilder.equals
+import base.boudicca.SemanticKeys
+import base.boudicca.api.search.*
+import base.boudicca.api.search.BoudiccaQueryBuilder.after
+import base.boudicca.api.search.BoudiccaQueryBuilder.and
+import base.boudicca.api.search.BoudiccaQueryBuilder.before
+import base.boudicca.api.search.BoudiccaQueryBuilder.contains
+import base.boudicca.api.search.BoudiccaQueryBuilder.durationLonger
+import base.boudicca.api.search.BoudiccaQueryBuilder.durationShorter
+import base.boudicca.api.search.BoudiccaQueryBuilder.equals
+import base.boudicca.model.Event
+import base.boudicca.model.EventCategory
 import events.boudicca.publisherhtml.model.SearchDTO
-import events.boudicca.search.openapi.ApiClient
-import events.boudicca.search.openapi.api.SearchResourceApi
-import events.boudicca.search.openapi.model.Event
-import events.boudicca.search.openapi.model.QueryDTO
-import events.boudicca.search.openapi.model.SearchResultDTO
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -35,12 +32,12 @@ class EventService @Autowired constructor(
     @Value("\${boudicca.search.url}") private val search: String,
     @Value("\${boudicca.search.additionalFilter:}") private val additionalFilter: String,
 ) {
-    private val searchApi: SearchResourceApi = createSearchApi()
+    private val searchClient: SearchClient = SearchClient(search)
     private val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy 'um' HH:mm 'Uhr'", Locale.GERMAN)
     private val localDateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
     fun search(searchDTO: SearchDTO): List<Map<String, String?>> {
-        val events = searchApi.queryPost(QueryDTO().query(generateQuery(searchDTO)).offset(searchDTO.offset))
+        val events = searchClient.queryEvents(QueryDTO(generateQuery(searchDTO), searchDTO.offset ?: 0))
         return mapEvents(events)
     }
 
@@ -92,11 +89,21 @@ class EventService @Autowired constructor(
     }
 
     fun filters(): Filters {
-        val filters = searchApi.filtersGet()
+        val filters = searchClient.getFiltersFor(
+            FilterQueryDTO(
+                listOf(
+                    FilterQueryEntryDTO(SemanticKeys.LOCATION_NAME),
+                    FilterQueryEntryDTO(SemanticKeys.LOCATION_CITY),
+                    FilterQueryEntryDTO(SemanticKeys.CONCERT_BANDLIST, true),
+                )
+            )
+        )
         return Filters(
-            filters.categories.map { Pair(it, frontEndName(it)) }.sortedBy { it.second },
-            filters.locationNames.sorted().map { Pair(it, it) },
-            filters.locationCities.sorted().map { Pair(it, it) },
+            EventCategory.entries
+                .map { Pair(it.name, frontEndName(it)) }
+                .sortedWith(Comparator.comparing({ it.second }, String.CASE_INSENSITIVE_ORDER)),
+            filters[SemanticKeys.LOCATION_NAME]!!.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Pair(it, it) },
+            filters[SemanticKeys.LOCATION_CITY]!!.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Pair(it, it) },
         )
     }
 
@@ -130,27 +137,22 @@ class EventService @Autowired constructor(
         return formatter.format(startDate.atZoneSameInstant(ZoneId.of("Europe/Vienna")))
     }
 
-    private fun createSearchApi(): SearchResourceApi {
-        val apiClient = ApiClient()
-        apiClient.updateBaseUri(search)
-        return SearchResourceApi(apiClient)
-    }
-
     private fun frontEndCategoryName(type: EventCategory): String {
         return when (type) {
             EventCategory.MUSIC -> "music"
             EventCategory.ART -> "miscArt"
             EventCategory.TECH -> "tech"
+            else -> "other"
         }
     }
 
-    private fun frontEndName(type: String): String {
-        return when (type) {
-            "MUSIC" -> "Musik"
-            "ART" -> "Kunst"
-            "TECH" -> "Technologie"
-            "ALL" -> "Alle"
-            "OTHER" -> "Andere"
+    private fun frontEndName(category: EventCategory): String {
+        return when (category) {
+            EventCategory.MUSIC -> "Musik"
+            EventCategory.ART -> "Kunst"
+            EventCategory.TECH -> "Technologie"
+            EventCategory.ALL -> "Alle"
+            EventCategory.OTHER -> "Andere"
             else -> "???"
         }
     }

@@ -9,7 +9,7 @@ plugins {
 }
 
 java {
-	sourceCompatibility = JavaVersion.VERSION_17
+	sourceCompatibility = JavaVersion.VERSION_21
 }
 
 repositories {
@@ -21,7 +21,7 @@ dependencies {
 	api("com.fasterxml.jackson.module:jackson-module-kotlin")
 	api("org.jetbrains.kotlin:kotlin-reflect")
 	api("com.github.jknack:handlebars:4.3.1")
-	api(project(":search-api"))
+	api("events.boudicca:search-client:0.2.0")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
@@ -29,7 +29,7 @@ dependencies {
 tasks.withType<KotlinCompile> {
 	kotlinOptions {
 		freeCompilerArgs = listOf("-Xjsr305=strict")
-		jvmTarget = "17"
+		jvmTarget = "21"
 	}
 }
 

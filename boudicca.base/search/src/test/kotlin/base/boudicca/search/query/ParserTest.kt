@@ -62,13 +62,13 @@ class ParserTest {
     @Test
     fun testNotOrEquals() {
         assertEquals(
-            "NOT(OR(EQUALS('field','text'),EQUALS('field2','text2')))",
+            "OR(NOT(EQUALS('field','text')),EQUALS('field2','text2'))",
             callParser(
                 not(), text("field"), equals(), text("text"), or(), text("field2"), equals(), text("text2")
             )
         )
         assertEquals(
-            "NOT(OR(EQUALS('field','text'),NOT(EQUALS('field2','text2'))))",
+            "OR(NOT(EQUALS('field','text')),NOT(EQUALS('field2','text2')))",
             callParser(
                 not(), text("field"), equals(), text("text"), or(), not(), text("field2"), equals(), text("text2")
             )

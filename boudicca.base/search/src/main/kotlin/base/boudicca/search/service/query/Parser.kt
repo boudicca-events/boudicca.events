@@ -4,128 +4,145 @@ import java.math.BigDecimal
 
 class Parser(private val tokens: List<Token>) {
     private var i = 0
-    private var groupDepth = 0
-    private var lastExpression: Expression? = null
+
     fun parse(): Expression {
-        parseExpression()
-        if (groupDepth > 0) {
-            throw IllegalStateException("not all groups are closed!")
-        }
-        return lastExpression ?: throw IllegalStateException("could not parse any expressions?")
+        val expression = parseExpression()
+        check(null)
+        return expression
     }
 
-    private fun parseExpression() {
-        if (i == tokens.size) {
-            throw IllegalStateException("expecting expression but encountered end of tokens")
-        }
-        val token = tokens[i]
-        when (token.getType()) {
-            TokenType.TEXT, TokenType.BEFORE, TokenType.AFTER -> parseFieldAndTextExpression()
-            TokenType.NOT -> parseNotExpression()
-            TokenType.GROUPING_OPEN -> parseGroupOpen()
-            TokenType.DURATION -> parseDurationExpression(token)
+    //Expression = AndExpression { or AndExpression }
+    private fun parseExpression(): Expression {
+        var expression = parseAndExpression()
 
-            else -> throw IllegalStateException("unexpected token ${token.getType()} at start of expression at index $i")
+        while (getCurrentTokenType() == TokenType.OR) {
+            i++
+            expression = OrExpression(expression, parseAndExpression())
         }
-        if (i != tokens.size) {
-            val trailingToken = tokens[i]
-            when (trailingToken.getType()) {
-                TokenType.AND, TokenType.OR -> parseBooleanExpression()
-                TokenType.GROUPING_CLOSE -> parseGroupClosed()
-                else -> throw IllegalStateException("unexpected token ${trailingToken.getType()} after end of expression at index $i")
+
+        return expression
+    }
+
+    //AndExpression = NotExpression { and NotExpression }
+    private fun parseAndExpression(): Expression {
+        var expression = parseNotExpression()
+
+        while (getCurrentTokenType() == TokenType.AND) {
+            i++
+            expression = AndExpression(expression, parseNotExpression())
+        }
+
+        return expression
+    }
+
+    //NotExpression = [ not ] FieldExpression
+    private fun parseNotExpression(): Expression {
+        if (getCurrentTokenType() == TokenType.NOT) {
+            i++
+            return NotExpression(parseFieldExpression())
+        } else {
+            return parseFieldExpression()
+        }
+    }
+
+    //FieldExpression = grouping_open Expression grouping_close |  <all other terminal operators>
+    private fun parseFieldExpression(): Expression {
+        when (getCurrentTokenType()) {
+            TokenType.GROUPING_OPEN -> {
+                return parseGrouping()
             }
+
+            TokenType.TEXT -> {
+                return parseTextExpression()
+            }
+
+            TokenType.DURATION -> {
+                return parseDuration()
+            }
+
+            else -> throw IllegalStateException("invalid token ${getCurrentTokenType()}")
         }
     }
 
-    private fun parseDurationExpression(token: Token) {
-        if (i + 4 >= tokens.size) {
-            throw IllegalStateException("expecting duration query, found end of query")
-        }
-        val startDateField = getText(i + 1)
-        val endDateField = getText(i + 2)
-        val shorterOrLonger = tokens[i + 3]
-        val duration = parseNumber(getText(i + 4).getToken()!!)
-        lastExpression = when (shorterOrLonger.getType()) {
-            TokenType.LONGER -> DurationLongerExpression(
-                startDateField.getToken()!!,
-                endDateField.getToken()!!,
-                duration
-            )
+    private fun parseDuration(): AbstractDurationExpression {
+        i++
+        val startField = checkText()
+        val endField = checkText()
+        when (getCurrentTokenType()) {
+            TokenType.LONGER -> {
+                i++
+                return DurationLongerExpression(startField, endField, checkNumber())
+            }
 
-            TokenType.SHORTER -> DurationShorterExpression(
-                startDateField.getToken()!!,
-                endDateField.getToken()!!,
-                duration
-            )
+            TokenType.SHORTER -> {
+                i++
+                return DurationShorterExpression(startField, endField, checkNumber())
+            }
 
-            else -> throw IllegalStateException("unknown token type ${token.getType()}")
+            else -> throw IllegalStateException("invalid duration mode ${getCurrentTokenType()}, expected longer or shorter")
         }
-        i += 5
     }
 
-    private fun parseNumber(token: String): Number {
+    private fun parseTextExpression(): FieldAndTextExpression {
+        val firstText = checkText()
+        when (getCurrentTokenType()) {
+            TokenType.CONTAINS -> {
+                i++
+                return ContainsExpression(firstText, checkText())
+            }
+
+            TokenType.EQUALS -> {
+                i++
+                return EqualsExpression(firstText, checkText())
+            }
+
+            TokenType.BEFORE -> {
+                i++
+                return BeforeExpression(firstText, checkText())
+            }
+
+            TokenType.AFTER -> {
+                i++
+                return AfterExpression(firstText, checkText())
+            }
+
+            else -> throw IllegalStateException("invalid token ${getCurrentTokenType()} following after text token")
+        }
+    }
+
+    private fun parseGrouping(): Expression {
+        i++
+        val expression = parseExpression()
+        check(TokenType.GROUPING_CLOSE)
+        return expression
+    }
+
+    private fun checkNumber(): Number {
         try {
-            return BigDecimal(token)
+            return BigDecimal(checkText())
         } catch (e: NumberFormatException) {
             throw IllegalStateException("error parsing expected number", e)
         }
     }
 
-    private fun parseGroupOpen() {
-        groupDepth++
-        i++
-        parseExpression()
+    private fun checkText(): String {
+        check(TokenType.TEXT)
+        val token = tokens[i - 1]
+        return token.getToken()!!
     }
 
-    private fun parseGroupClosed() {
-        groupDepth--
-        if (groupDepth < 0) {
-            throw IllegalStateException("closing non-existing group at index $i")
+    private fun check(tokenType: TokenType?) {
+        val currentTokenType = getCurrentTokenType()
+        if (currentTokenType != tokenType) {
+            throw IllegalStateException("did expect token ${tokenType ?: "eof"} but got token ${currentTokenType ?: "eof"}")
         }
         i++
     }
 
-    private fun parseBooleanExpression() {
-        val token = tokens[i]
-        val savedLastExpression = this.lastExpression!!
-        i++
-        parseExpression()
-        lastExpression = when (token.getType()) {
-            TokenType.AND -> AndExpression(savedLastExpression, lastExpression!!)
-            TokenType.OR -> OrExpression(savedLastExpression, lastExpression!!)
-            else -> throw IllegalStateException("unknown token type ${token.getType()}")
+    private fun getCurrentTokenType(): TokenType? {
+        if (i >= tokens.size) {
+            return null
         }
-    }
-
-    private fun parseNotExpression() {
-        i++
-        parseExpression()
-        lastExpression = NotExpression(lastExpression!!)
-    }
-
-    private fun parseFieldAndTextExpression() {
-        if (i + 2 >= tokens.size) {
-            throw IllegalStateException("trying to parse text expression and needing 3 arguments, but there are not enough at index $i")
-        }
-        val fieldName = getText(i)
-        val expression = tokens[i + 1]
-        val text = getText(i + 2)
-
-        lastExpression = when (expression.getType()) {
-            TokenType.CONTAINS -> ContainsExpression(fieldName.getToken()!!, text.getToken()!!)
-            TokenType.EQUALS -> EqualsExpression(fieldName.getToken()!!, text.getToken()!!)
-            TokenType.AFTER -> AfterExpression(fieldName.getToken()!!, text.getToken()!!)
-            TokenType.BEFORE -> BeforeExpression(fieldName.getToken()!!, text.getToken()!!)
-            else -> throw IllegalStateException("unknown token type ${expression.getType()}")
-        }
-        i += 3
-    }
-
-    private fun getText(i: Int): Token {
-        val token = tokens[i]
-        if (token.getType() != TokenType.TEXT) {
-            throw IllegalStateException("expecting text token at index $i but was ${token.getType()}")
-        }
-        return token
+        return tokens[i].getType()
     }
 }

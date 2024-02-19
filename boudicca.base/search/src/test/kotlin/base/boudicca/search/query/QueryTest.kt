@@ -59,7 +59,7 @@ class QueryTest {
     @Test
     fun queryWithDurationLonger() {
         val events =
-            evaluateQuery(""" duration "startDate" "endDate" longer 2 """)
+            evaluateQuery(""" duration "startDate" "endDate" longer "2" """)
         assertEquals(1, events.size)
         assertEquals("event1", events.first()["name"])
     }
@@ -67,7 +67,7 @@ class QueryTest {
     @Test
     fun queryWithDurationShorter() {
         val events =
-            evaluateQuery(""" duration "startDate" "endDate" shorter 2 """)
+            evaluateQuery(""" duration "startDate" "endDate" shorter "2" """)
         assertFalse(events.map { it["name"] }.contains("event1"))
     }
 

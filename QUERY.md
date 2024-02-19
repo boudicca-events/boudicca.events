@@ -31,7 +31,7 @@ where
 * `<fieldname>` is a `<text>` matching a field of an event to be queried. There is the special field `"*"` which means
   "any field". Please note that the fieldname matching is case-sensitive, so the fieldnames `"name"` and `"NAME"` are different fields.
 * `<date>` is a `<text>` in the ISO Local Date format `"YYYY-MM-DD"`, for example `"2023-05-27"`
-* `<dateFieldname>` is a `<fieldname>` which fields contain `<date>`
+* `<dateFieldname>` is a `<fieldname>` which field contains `<date>`
 
 The operator precedence is with the lowest starting: `or` -> `and` -> `not`, so not is the strongest binding one.
 You can use the grouping `(...)` mechanism to circumvent the order.

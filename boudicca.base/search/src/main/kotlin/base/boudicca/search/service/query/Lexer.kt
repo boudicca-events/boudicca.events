@@ -22,10 +22,12 @@ class Lexer(private val query: String) {
                 i++
             } else if (c == '-' || c.isDigit()) {
                 readNumber()
-            } else if (!c.isWhitespace()) {
+            } else if (c.isLetter()) {
                 readToken()
-            } else {
+            } else if (c.isWhitespace()) {
                 i++
+            } else {
+                throw IllegalStateException("invalid character $c at index $i")
             }
         }
 
@@ -60,8 +62,8 @@ class Lexer(private val query: String) {
             if (c.isWhitespace() || c == '(' || c == ')') {
                 break
             }
-            if (!c.isLetterOrDigit() && c != '.' && c != '-') {
-                throw IllegalStateException("unexpected non-letter character in text token: $c at index: $i")
+            if (!c.isLetter()) {
+                throw IllegalStateException("unexpected non-letter character in keyword token: $c at index: $i")
             }
             tokenEnd++
         }

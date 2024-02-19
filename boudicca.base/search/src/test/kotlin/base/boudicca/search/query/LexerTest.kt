@@ -163,6 +163,12 @@ class LexerTest {
         assertThrows<IllegalStateException> {
             callLexer(""" -5invalidnumber """)
         }
+        assertThrows<IllegalStateException> {
+            callLexer(""" & """)
+        }
+        assertThrows<IllegalStateException> {
+            callLexer(""" a&nd """)
+        }
     }
 
     @Test

@@ -29,7 +29,7 @@ class SearchClient(private val searchUrl: String) {
     fun queryEntries(queryDTO: QueryDTO): ResultDTO {
         try {
             return mapResultDto(searchApi.queryEntries(mapQueryDto(queryDTO)))
-        } catch (e: ApiException) {
+        } catch (e: Exception) {
             throw SearchException("could not reach search: $searchUrl", e)
         }
     }
@@ -37,7 +37,7 @@ class SearchClient(private val searchUrl: String) {
     fun getFiltersFor(filterQueryDTO: FilterQueryDTO): FilterResultDTO {
         try {
             return searchApi.filtersFor(mapFilterQueryDTOToApi(filterQueryDTO))
-        } catch (e: ApiException) {
+        } catch (e: Exception) {
             throw SearchException("could not reach search: $searchUrl", e)
         }
     }
@@ -59,4 +59,4 @@ class SearchClient(private val searchUrl: String) {
     }
 }
 
-class SearchException(msg: String, e: ApiException) : RuntimeException(msg, e)
+class SearchException(msg: String, t: Throwable) : RuntimeException(msg, t)

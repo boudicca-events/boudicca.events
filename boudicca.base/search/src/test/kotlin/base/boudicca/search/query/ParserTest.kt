@@ -220,6 +220,16 @@ class ParserTest {
         )
     }
 
+    @Test
+    fun testOperatorPrecedence() {
+        assertEquals(
+            "OR(AND(NOT(CONTAINS('field','text')),CONTAINS('field','text')),CONTAINS('field','text'))",
+            callParser(
+                not(), text("field"), contains(), text("text"), and(),text("field"), contains(), text("text"), or(), text("field"), contains(), text("text")
+            )
+        )
+    }
+
     private fun before(): Token {
         return Token(TokenType.BEFORE, null)
     }

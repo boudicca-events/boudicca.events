@@ -1,7 +1,5 @@
 package base.boudicca.search.service.query
 
-import java.math.BigDecimal
-
 class Parser(private val tokens: List<Token>) {
     private var i = 0
 

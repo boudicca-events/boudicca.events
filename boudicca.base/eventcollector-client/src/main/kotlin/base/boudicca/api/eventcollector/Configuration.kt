@@ -27,6 +27,20 @@ object Configuration {
     }
 
     fun getProperty(name: String): String? {
+        var property = System.getProperty(name)
+        if (property != null) {
+            return property
+        }
+        property = System.getenv(toEnvName(name))
+        if (property != null) {
+            return property
+        }
         return properties.getProperty(name)
+    }
+
+    private fun toEnvName(name: String): String {
+        return name
+            .split('.')
+            .joinToString("_") { it.uppercase() }
     }
 }

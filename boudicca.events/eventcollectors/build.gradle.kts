@@ -9,7 +9,7 @@ dependencies {
     implementation(project(":boudicca.base:eventcollector-client"))
     implementation(project(":boudicca.base:publisher-client"))
     implementation("org.jsoup:jsoup:1.17.2")
-    implementation("org.mnode.ical4j:ical4j:3.2.15") {
+    implementation("org.mnode.ical4j:ical4j:3.2.16") {
         exclude("org.codehaus.groovy", "groovy")
         exclude("org.codehaus.groovy", "groovy-dateutil")
     }

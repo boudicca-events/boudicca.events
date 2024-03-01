@@ -6,7 +6,6 @@ import base.boudicca.api.eventcollector.TwoStepEventCollector
 import base.boudicca.model.Event
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
-import org.jsoup.nodes.TextNode
 import org.slf4j.LoggerFactory
 import java.time.LocalDate
 import java.time.LocalTime
@@ -48,7 +47,7 @@ class CafeTraxlmayrCollector : TwoStepEventCollector<Element>("cafetraxlmayr") {
             parseConcert(title, event, data)
         } else if (title == "Die nächsten Lesungen im Café Traxlmayr") {
             parseLesungen(event, data)
-        } else if (title.contains("Sammelausstellung")) {
+        } else if (title.contains("aktuelle Ausstellung im Café Traxlmayr")) {
             //ignore
             emptyList()
         } else {
@@ -57,57 +56,52 @@ class CafeTraxlmayrCollector : TwoStepEventCollector<Element>("cafetraxlmayr") {
         }
     }
 
-    private fun parseConcert(title: String, event: Element, data: MutableMap<String, String>): List<Event?> {
+    private fun parseConcert(title: String, event: Element, data: MutableMap<String, String>): List<Event> {
         val split = title.split(" | ")
         val name = split[0].trim()
         val bodyLines = event.select(".modal-body p strong").textNodes()
 
         val fullDateText = bodyLines.first { it.text().contains("Uhr") }
 
-        val startDate = parseDate(fullDateText.text().trim())
+        val startDate = parseDateForConcert(fullDateText.text().trim())
 
         data[SemanticKeys.DESCRIPTION] = event.select(".modal-body").text()
         return listOf(Event(name, startDate, data))
     }
 
-    private fun parseLesungen(event: Element, data: MutableMap<String, String>): List<Event?> {
-        val lesungen = mutableListOf<Event>()
-        var currentName: String? = null
-        var currentDescription = ""
-        var currentDate: OffsetDateTime? = null
-
-        event.select(".modal-body").traverse { node, depth ->
-            if (node is TextNode && node.text().isNotBlank()) {
-                val text = node.text()
-                if (text.contains("_______")) {
-                    val currentData = data.toMutableMap()
-                    currentData[SemanticKeys.DESCRIPTION] = currentDescription
-                    lesungen.add(Event(currentName!!, currentDate!!, currentData))
-                    currentName = null
-                    currentDescription = ""
-                    currentDate = null
+    private fun parseLesungen(event: Element, data: MutableMap<String, String>): List<Event> {
+        return event.select(".modal-body div")
+            .eachText()
+            .mapNotNull {
+                if (!it.contains("Uhr")) {
+                    null
                 } else {
-                    if (currentName == null) {
-                        currentName = text
-                    }
-                    currentDescription += text
-                    if (text.contains("Uhr")) {
-                        currentDate = parseDate(text)
-                    }
+                    val dateTimeSplit = it.split(": ")
+                    val startDate = parseDateForLesung(dateTimeSplit[0])
+                    val name = dateTimeSplit[1]
+                    Event(name, startDate, data)
                 }
             }
-        }
-
-        if (currentName != null && currentDate != null) {
-            val currentData = data.toMutableMap()
-            currentData[SemanticKeys.DESCRIPTION] = currentDescription
-            lesungen.add(Event(currentName!!, currentDate!!, currentData))
-        }
-
-        return lesungen
     }
 
-    private fun parseDate(fullDateText: String): OffsetDateTime {
+    private fun parseDateForLesung(fullDateText: String): OffsetDateTime {
+        val split = fullDateText.split(',')
+        val dateText = split[0].trim()
+        val timeText = split[1].trim()
+
+        val date = LocalDate.parse(
+            dateText,
+            DateTimeFormatter.ofPattern("d.MM.uu").withLocale(Locale.GERMAN)
+        )
+        val time = LocalTime.parse(
+            timeText.replace(".", ":"),
+            DateTimeFormatter.ofPattern("kk:mm 'Uhr'").withLocale(Locale.GERMAN)
+        )
+
+        return date.atTime(time).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
+    }
+
+    private fun parseDateForConcert(fullDateText: String): OffsetDateTime {
         val split = fullDateText.split(',', '|')
         val dateText = split[1].trim()
         val timeText = split[2].trim()

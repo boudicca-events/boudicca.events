@@ -20,6 +20,10 @@ class StiftskonzerteCollector : TwoStepEventCollector<String>("stiftskonzerte") 
         val document = Jsoup.parse(fetcher.fetchUrl("https://www.stiftskonzerte.at/programm-und-karten/"))
         return document.select("div.entry-footer-links a").not("a.open-modal")
             .map { it.attr("href") }
+            .filter {
+                //this is not an event but some ticket information thingy
+                it != "https://www.stiftskonzerte.at/programm-und-karten/mitglieder-vvk-ooe-stiftskonzerte-2024/"
+            }
     }
 
     override fun parseEvent(event: String): Event {

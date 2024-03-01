@@ -88,6 +88,9 @@ class ZuckerfabrikCollector : TwoStepEventCollector<Pair<String, Document>>("zuc
             startTimeString = timeSplit[0]
             endTime = LocalTime.parse(timeSplit[1], timeFormatter)
         }
+        if (startTimeString.endsWith(" Uhr")) {
+            startTimeString = startTimeString.substring(0, startTimeString.length - 4)
+        }
         startTime = LocalTime.parse(startTimeString, timeFormatter)
         val startDate = date.atTime(startTime).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
         if (endTime != null) {

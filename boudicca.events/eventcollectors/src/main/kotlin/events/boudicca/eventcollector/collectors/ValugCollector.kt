@@ -8,8 +8,8 @@ import base.boudicca.model.EventCategory
 import net.fortuna.ical4j.data.CalendarBuilder
 import net.fortuna.ical4j.model.Calendar
 import net.fortuna.ical4j.model.component.VEvent
+import org.slf4j.LoggerFactory
 import java.io.StringReader
-import java.net.URI
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -18,6 +18,9 @@ import java.util.*
  * VorAlpen Linux User Group
  */
 class ValugCollector : TwoStepEventCollector<VEvent>("valug") {
+
+    private val LOG = LoggerFactory.getLogger(this::class.java)
+
     private val fetcher = Fetcher()
     private val baseUrl = "https://valug.at/"
     private val icsUrl = "${baseUrl}events/index.ics"
@@ -29,20 +32,21 @@ class ValugCollector : TwoStepEventCollector<VEvent>("valug") {
         return calendar.components.filterIsInstance<VEvent>()
     }
 
-    override fun parseEvent(event: VEvent): Event {
+    override fun parseEvent(event: VEvent): Event? {
+        if (event.startDate == null) {
+            LOG.warn("event with uid ${event.uid.value} and url ${event.url?.value} has no startDate!")
+            return null
+        }
         val eventName = event.summary.value
         val formatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss")
         // get by city name to account for daylight saving time
         val viennaZoneId = TimeZone.getTimeZone("Europe/Vienna").toZoneId()
         val eventStartDate = LocalDateTime.parse(event.startDate.value, formatter)
             .atZone(viennaZoneId).toOffsetDateTime()
-        val eventEndDate = LocalDateTime.parse(event.startDate.value, formatter)
-            .atZone(TimeZone.getTimeZone("Europe/Vienna").toZoneId()).toOffsetDateTime()
 
         return Event(
             eventName, eventStartDate,
             buildMap {
-                put(SemanticKeys.ENDDATE, eventEndDate.format(DateTimeFormatter.ISO_DATE_TIME))
                 if (event.location != null) {
                     put(SemanticKeys.LOCATION_NAME, event.location.value)
                 }

@@ -25,7 +25,6 @@ fun main() {
         .addEventCollector(EnnsEventsCollector())
         .addEventCollector(UlfOoeCollector())
         .addEventCollector(StiftskonzerteCollector())
-        .addEventCollector(GewaexhausCollector())
         .addEventCollector(OehJkuCollector())
         .addEventCollector(ArenaWienCollector())
         .addEventCollector(ViperRoomCollector())

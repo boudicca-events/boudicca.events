@@ -133,8 +133,8 @@ class PlanetTTCollector : TwoStepEventCollector<Element>("planettt") {
         val date = event.select("span.date").text().split(',', ignoreCase = false, limit = 2)[1].trim()
         val time = event.select("span.start").text().split(':', ignoreCase = false, limit = 2)[1].trim()
 
-        return LocalDate.parse(date, DateTimeFormatter.ofPattern("dd. MMMM uuuu", Locale.ENGLISH))
-            .atTime(LocalTime.parse(time, DateTimeFormatter.ofPattern("kk:mm", Locale.ENGLISH)))
+        return LocalDate.parse(date, DateTimeFormatter.ofPattern("dd. MMMM uuuu", Locale.GERMAN))
+            .atTime(LocalTime.parse(time, DateTimeFormatter.ofPattern("kk:mm", Locale.GERMAN)))
             .atZone(ZoneId.of("Europe/Vienna"))
             .toOffsetDateTime()
     }

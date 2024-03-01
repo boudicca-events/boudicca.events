@@ -24,7 +24,6 @@ fun main() {
 //        .debug(EnnsEventsCollector())
 //        .debug(UlfOoeCollector())
 //        .debug(StiftskonzerteCollector())
-//        .debug(GewaexhausCollector())
 //        .debug(OehJkuCollector())
 //        .debug(ArenaWienCollector())
 //        .debug(ViperRoomCollector())

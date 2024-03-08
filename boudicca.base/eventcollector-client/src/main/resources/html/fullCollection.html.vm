@@ -7,8 +7,8 @@
 
 <p>Start/End Time: $fullCollection.startEndTime</p>
 <p>Duration: $fullCollection.duration</p>
-<p>Errors: $fullCollection.errorsCount</p>
-<p>Warnings: $fullCollection.warningsCount</p>
+<p>Errors: $fullCollection.errorCount</p>
+<p>Warnings: $fullCollection.warningCount</p>
 <p>Total Events Collected: $fullCollection.totalEventsCollected</p>
 
 #singleCollectionsTable($fullCollection.singleCollections)

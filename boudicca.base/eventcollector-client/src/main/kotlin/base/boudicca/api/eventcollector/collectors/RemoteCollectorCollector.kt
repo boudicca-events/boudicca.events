@@ -3,6 +3,7 @@ package base.boudicca.api.eventcollector.collectors
 import base.boudicca.api.eventcollector.EventCollector
 import base.boudicca.api.eventcollector.collections.Collections
 import base.boudicca.api.remotecollector.RemoteCollectorClient
+import base.boudicca.api.remotecollector.model.HttpCall
 import base.boudicca.model.Event
 
 class RemoteCollectorCollector(private val url: String, private val name: String? = null) : EventCollector {
@@ -21,8 +22,25 @@ class RemoteCollectorCollector(private val url: String, private val name: String
             throw e
         }
 
-        //TODO use returned meta information somehow
+        val currentSingleCollection = Collections.getCurrentSingleCollection()
+        if (currentSingleCollection != null) {
+            currentSingleCollection.logLines.addAll(eventCollection.logLines ?: emptyList())
+            currentSingleCollection.httpCalls.addAll(
+                eventCollection.httpCalls?.map { toCollectionsHttpCall(it) } ?: emptyList())
+            currentSingleCollection.errorCount = eventCollection.errorCount ?: 0
+            currentSingleCollection.warningCount = eventCollection.warningCount ?: 0
+        }
 
         return eventCollection.events
+    }
+
+    private fun toCollectionsHttpCall(httpCall: HttpCall): base.boudicca.api.eventcollector.collections.HttpCall {
+        return base.boudicca.api.eventcollector.collections.HttpCall(
+            httpCall.startTime.toInstant().toEpochMilli(),
+            httpCall.endTime.toInstant().toEpochMilli(),
+            httpCall.url,
+            httpCall.postParams,
+            httpCall.responseCode
+        )
     }
 }

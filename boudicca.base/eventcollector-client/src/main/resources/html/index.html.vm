@@ -6,7 +6,7 @@
 
 #if( $hasOngoingFullCollection )
 
-    <p>Full Collection is currently running for ${fullCollection.duration}, started on ${fullCollection.startEndTime}, has collected ${fullCollection.totalEventsCollected} events so far and currently has $fullCollection.errorsCount errors</p>
+    <p>Full Collection is currently running for ${fullCollection.duration}, started on ${fullCollection.startEndTime}, has collected ${fullCollection.totalEventsCollected} events so far and currently has $fullCollection.errorCount errors</p>
 
     #singleCollectionsTable($fullCollection.singleCollections)
 
@@ -29,7 +29,7 @@
     <tbody>
         #foreach( $fullCollection in $fullCollections)
         <tr>
-            <td>#if( $fullCollection.errorsCount > 0)☠#else #if( $fullCollection.warningsCount > 0)⚠#end #end
+            <td>#if( $fullCollection.errorCount > 0)☠#else #if( $fullCollection.warningCount > 0)⚠#end #end
                 #if( $fullCollection.id )<a href="fullCollection?id=$fullCollection.id">$fullCollection.startEndTime</a>#else $fullCollection.startEndTime #end</td>
             <td>$fullCollection.duration</td>
         </tr>

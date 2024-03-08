@@ -10,5 +10,5 @@ fun main() {
         .runOnce()
     Collections.getAllPastCollections()[0].logLines +
             Collections.getAllPastCollections()[0].singleCollections.flatMap { it.logLines }
-                .forEach { println(String(it.second)) }
+                .forEach { println(it) }
 }

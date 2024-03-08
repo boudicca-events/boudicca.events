@@ -2,7 +2,7 @@ package events.boudicca.eventcollector
 
 import base.boudicca.api.eventcollector.EventCollectorScheduler
 import base.boudicca.api.eventcollector.collections.Collections
-import events.boudicca.eventcollector.collectors.BoudiccaCollector
+import base.boudicca.api.eventcollector.collectors.BoudiccaCollector
 
 fun main() {
     EventCollectorScheduler()

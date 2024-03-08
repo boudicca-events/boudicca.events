@@ -140,8 +140,8 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
             "id" to fullCollection.id.toString(),
             "duration" to formatDuration(fullCollection.startTime, fullCollection.endTime),
             "startEndTime" to formatStartEndTime(fullCollection.startTime, fullCollection.endTime),
-            "errorCount" to fullCollection.singleCollections.sumOf { it.errorCount } + fullCollection.errorCount,
-            "warningCount" to fullCollection.singleCollections.sumOf { it.warningCount } + fullCollection.warningCount,
+            "errorCount" to fullCollection.getTotalErrorCount(),
+            "warningCount" to fullCollection.getTotalWarningCount(),
             "totalEventsCollected" to fullCollection.singleCollections.sumOf { it.totalEventsCollected },
             "singleCollections" to
                     scheduler.getCollectors()

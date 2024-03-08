@@ -26,11 +26,11 @@ class EventCollectorDebugger {
         val fullCollection = Collections.getAllPastCollections()[0]
         println(fullCollection)
         println("debugger collected ${collectedEvents.size} events")
-        val errorCount = fullCollection.errorCount + fullCollection.singleCollections.sumOf { it.errorCount }
+        val errorCount = fullCollection.getTotalErrorCount()
         if (errorCount != 0) {
             println("found $errorCount errors!")
         }
-        val warningCount = fullCollection.warningCount + fullCollection.singleCollections.sumOf { it.warningCount }
+        val warningCount = fullCollection.getTotalWarningCount()
         if (warningCount != 0) {
             println("found $warningCount warnings!")
         }

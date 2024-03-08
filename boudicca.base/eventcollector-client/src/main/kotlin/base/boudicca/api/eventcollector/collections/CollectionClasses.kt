@@ -26,6 +26,27 @@ data class FullCollection(
         return "FullCollection(\nid=$id, \nstartTime=$startTime, \nendTime=$endTime, \nsingleCollections=$singleCollections, \nlogLines=$logLines, \nerrorCount=$errorCount, \nwarningCount=$warningCount)"
     }
 
+    /**
+     * gets the error count for this full collection + each single collection
+     */
+    fun getTotalErrorCount(): Int {
+        return errorCount + singleCollections.sumOf { it.errorCount }
+    }
+
+    /**
+     * gets the warning count for this full collection + each single collection
+     */
+    fun getTotalWarningCount(): Int {
+        return warningCount + singleCollections.sumOf { it.warningCount }
+    }
+
+    /**
+     * gets all log lines for this full collection + each single collection. please note that those loglines are not sorted by time but by single-/fullcollection
+     */
+    fun getAllLogLines(): List<String> {
+        return logLines + singleCollections.flatMap { it.logLines }
+    }
+
 }
 
 data class SingleCollection(

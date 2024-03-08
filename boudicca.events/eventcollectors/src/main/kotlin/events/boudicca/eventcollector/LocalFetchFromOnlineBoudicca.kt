@@ -8,7 +8,5 @@ fun main() {
     EventCollectorScheduler()
         .addEventCollector(BoudiccaCollector("https://eventdb.boudicca.events"))
         .runOnce()
-    Collections.getAllPastCollections()[0].logLines +
-            Collections.getAllPastCollections()[0].singleCollections.flatMap { it.logLines }
-                .forEach { println(it) }
+    Collections.getAllPastCollections()[0].getAllLogLines().forEach { println(it) }
 }

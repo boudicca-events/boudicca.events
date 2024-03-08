@@ -231,6 +231,16 @@ class ParserTest {
         )
     }
 
+    @Test
+    fun testHasField() {
+        assertEquals(
+            "HASFIELD('field')",
+            callParser(
+                hasField(), text("field")
+            )
+        )
+    }
+
     private fun before(): Token {
         return Token(TokenType.BEFORE, null)
     }
@@ -285,6 +295,10 @@ class ParserTest {
 
     private fun longer(): Token {
         return Token(TokenType.LONGER, null)
+    }
+
+    private fun hasField(): Token {
+        return Token(TokenType.HAS_FIELD, null)
     }
 
     private fun callParser(vararg tokens: Token): String {

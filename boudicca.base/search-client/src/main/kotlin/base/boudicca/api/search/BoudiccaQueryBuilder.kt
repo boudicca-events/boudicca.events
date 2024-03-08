@@ -58,6 +58,10 @@ object BoudiccaQueryBuilder {
         return "duration ${escapeText(startDateField)} ${escapeText(endDateField)} shorter $hours"
     }
 
+    fun hasField(field: String): String {
+        return "hasField ${escapeText(field)}"
+    }
+
     fun escapeText(text: String): String {
         return "\"" + text.replace("\\", "\\\\").replace("\"", "\\\"") + "\""
     }

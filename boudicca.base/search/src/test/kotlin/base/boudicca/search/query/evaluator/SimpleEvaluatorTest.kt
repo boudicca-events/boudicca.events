@@ -228,6 +228,25 @@ class SimpleEvaluatorTest {
         assertEquals("event1", events.first()["name"])
     }
 
+    @Test
+    fun hasField() {
+        val events =
+            callEvaluator(
+                HasFieldExpression("recurrence"),
+                listOf(
+                    mapOf(
+                        SemanticKeys.NAME to "event1",
+                    ),
+                    mapOf(
+                        SemanticKeys.NAME to "event2",
+                        SemanticKeys.RECURRENCE to "yes",
+                    ),
+                )
+            )
+        assertEquals(1, events.size)
+        assertEquals("event2", events.first()["name"])
+    }
+
 
     private fun callEvaluator(expression: Expression): Collection<Entry> {
         return callEvaluator(expression, testData())

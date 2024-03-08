@@ -60,6 +60,20 @@ abstract class FieldAndTextExpression(
     }
 }
 
+abstract class FieldExpression(
+    private val name: String,
+    private val fieldName: String,
+) : Expression {
+
+    fun getFieldName(): String {
+        return fieldName
+    }
+
+    override fun toString(): String {
+        return "$name('$fieldName')"
+    }
+}
+
 abstract class DateExpression(
     private val name: String,
     dateFieldName: String,
@@ -154,3 +168,7 @@ class DurationLongerExpression(
     endDateField: String,
     duration: Number,
 ) : AbstractDurationExpression("DURATIONLONGER", startDateField, endDateField, duration)
+
+class HasFieldExpression(
+    fieldName: String,
+) : FieldExpression("HASFIELD", fieldName)

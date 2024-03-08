@@ -72,6 +72,14 @@ class QueryTest {
         assertFalse(events.map { it["name"] }.contains("event1"))
     }
 
+    @Test
+    fun queryWithHasField() {
+        val events =
+            evaluateQuery(""" hasField "recurrence" """)
+        assertEquals(1, events.size)
+        assertEquals("event2", events.first()["name"])
+    }
+
     private fun evaluateQuery(string: String): Collection<Map<String, String>> {
         return SimpleEvaluator(testData())
             .evaluate(QueryParser.parseQuery(string), PAGE_ALL)
@@ -91,7 +99,8 @@ class QueryTest {
                 "name" to "event2",
                 "field" to "value2",
                 SemanticKeys.STARTDATE to "2023-05-29T00:00:00Z",
-                SemanticKeys.TYPE to "theater"
+                SemanticKeys.TYPE to "theater",
+                SemanticKeys.RECURRENCE to "yes"
             ),
             mapOf(
                 "name" to "somethingelse", "field" to "wuuut",

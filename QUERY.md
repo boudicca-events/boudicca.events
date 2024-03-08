@@ -22,6 +22,7 @@ potentially nested) forms. Please note that expressions are case-insensitive:
 | Before          | Filter events starting at or before the given date                                                                                                       | `<dateFieldname> before <date>`                                                     |
 | Grouping        | Marker to identify how expression should be grouped                                                                                                      | `( <expression> )`                                                                  |
 | Duration        | Filter events on their duration in hours (inclusive), events without startDate or endDate have 0 duration. You an filter for longer or shorter duration. | `duration <fieldname of startDate> <fieldname of endDate> longer\|shorter <number>` |
+| HasField        | Checks that the event has this field set, and it is not the empty string.                                                                                | `hasField <fieldname>`                                                              |
 
 where
 

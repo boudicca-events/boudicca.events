@@ -34,4 +34,5 @@ enum class TokenType {
     DURATION,
     LONGER,
     SHORTER,
+    HAS_FIELD,
 }

@@ -82,6 +82,7 @@ class Lexer(private val query: String) {
             "duration" -> tokens.add(Token(TokenType.DURATION, null))
             "longer" -> tokens.add(Token(TokenType.LONGER, null))
             "shorter" -> tokens.add(Token(TokenType.SHORTER, null))
+            "hasfield" -> tokens.add(Token(TokenType.HAS_FIELD, null))
             else -> throw QueryException("unknown keyword: $token (did you forget to quote your text?)")
         }
         i = tokenEnd

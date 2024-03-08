@@ -28,20 +28,21 @@ We use certain data types for the properties we expect.
 
 **Events have only two required properties: `name` and `startDate`**
 
-| Key           | Meaning                                                                                              | Format                               |
-|---------------|------------------------------------------------------------------------------------------------------|--------------------------------------|
-| name          | The name of the event                                                                                | text                                 |
-| startDate     | Time of start for the event                                                                          | date                                 |
-| endDate       | Time of end for the event                                                                            | date                                 |
-| url           | A link to the website for this event                                                                 | url                                  |
-| type          | The type of event, for example `concert`, `????` more examples please                                | text ??? maybe enum would be better? |
-| category      | The category of an event, for example `MUSIC`, `ART` or `TECH`, see EventCategory enum               | enum\<EventCategory>                 |
-| description   | Text describing this event                                                                           | text                                 |
-| tags          | A list of tags. TODO how to describe?                                                                | list\<text>                          |
-| registration  | If this is a free event, a event which requires registration or a event which requires a paid ticket | enum\<registration>                  |
-| pictureUrl    | Url to a picture to be shown                                                                         | url                                  |
-| collectorName | Name of the collector which collected this event                                                     | text                                 |
-| sources       | A list of all sources, line by line. This should include all URLs or other sources used.             | list\<text>                          |
+| Key           | Meaning                                                                                                                                                    | Format                               |
+|---------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------|
+| name          | The name of the event                                                                                                                                      | text                                 |
+| startDate     | Time of start for the event                                                                                                                                | date                                 |
+| endDate       | Time of end for the event                                                                                                                                  | date                                 |
+| url           | A link to the website for this event                                                                                                                       | url                                  |
+| type          | The type of event, for example `concert`, `????` more examples please                                                                                      | text ??? maybe enum would be better? |
+| category      | The category of an event, for example `MUSIC`, `ART` or `TECH`, see EventCategory enum                                                                     | enum\<EventCategory>                 |
+| description   | Text describing this event                                                                                                                                 | text                                 |
+| tags          | A list of tags. TODO how to describe?                                                                                                                      | list\<text>                          |
+| registration  | If this is a free event, a event which requires registration or a event which requires a paid ticket                                                       | enum\<Registration>                  |
+| pictureUrl    | Url to a picture to be shown                                                                                                                               | url                                  |
+| collectorName | Name of the collector which collected this event                                                                                                           | text                                 |
+| sources       | A list of all sources, line by line. This should include all URLs or other sources used.                                                                   | list\<text>                          |
+| recurrence    | If an event happens multiple times you can set this value to a human-readable description of the recurrence. If not set it means this is a one-time event. | text                                 |
 
 #### Registration enum values
 

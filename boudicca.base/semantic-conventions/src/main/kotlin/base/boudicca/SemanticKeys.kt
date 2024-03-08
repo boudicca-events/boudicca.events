@@ -14,6 +14,7 @@ object SemanticKeys {
     const val PICTUREURL = "pictureUrl"
     const val COLLECTORNAME = "collectorName"
     const val SOURCES = "sources"
+    const val RECURRENCE = "recurrence"
 
     // location properties
     const val LOCATION_NAME = "location.name"

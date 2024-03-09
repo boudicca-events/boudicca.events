@@ -1,8 +1,8 @@
 package events.boudicca.eventcollector
 
 import base.boudicca.api.eventcollector.EventCollectorDebugger
-import events.boudicca.eventcollector.collectors.*
 import base.boudicca.api.eventcollector.fetcher.FileBackedFetcherCache
+import events.boudicca.eventcollector.collectors.AlpenverreinCollector
 import java.io.File
 
 fun main() {
@@ -37,5 +37,6 @@ fun main() {
 //        .debug(StadthalleWienCollector())
 //        .debug(MuseumArbeitsweltCollector())
 //        .debug(OKHVoecklabruckCollector())
-        .debug(ValugCollector())
+//        .debug(ValugCollector())
+        .debug(AlpenverreinCollector())
 }

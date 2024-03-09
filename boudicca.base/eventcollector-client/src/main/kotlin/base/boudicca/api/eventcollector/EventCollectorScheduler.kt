@@ -3,6 +3,7 @@ package base.boudicca.api.eventcollector
 import base.boudicca.SemanticKeys
 import base.boudicca.api.enricher.EnricherClient
 import base.boudicca.api.eventcollector.collections.Collections
+import base.boudicca.api.eventcollector.util.retry
 import base.boudicca.api.eventdb.ingest.EventDbIngestClient
 import base.boudicca.model.Event
 import org.slf4j.Logger
@@ -174,22 +175,4 @@ fun createBoudiccaEnricherFunction(enricherUrl: String?): Function<List<Event>, 
     return Function<List<Event>, List<Event>> { events ->
         enricher.enrichEvents(events)
     }
-}
-
-fun <T> retry(log: Logger, function: () -> T): T {
-    return retry(log, { Thread.sleep(it) }, function)
-}
-
-fun <T> retry(log: Logger, sleeper: Consumer<Long>, function: () -> T): T {
-    var lastException: Throwable? = null
-    for (i in 1..5) {
-        try {
-            return function()
-        } catch (e: Exception) {
-            lastException = e
-            log.info("exception caught, retrying in 1 minute", e)
-            sleeper.accept(1000 * 60)
-        }
-    }
-    throw lastException!!
 }

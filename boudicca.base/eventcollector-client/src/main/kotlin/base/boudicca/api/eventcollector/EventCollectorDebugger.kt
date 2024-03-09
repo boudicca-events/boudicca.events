@@ -2,10 +2,16 @@ package base.boudicca.api.eventcollector
 
 import base.boudicca.api.eventcollector.collections.Collections
 import base.boudicca.api.eventcollector.collections.LogLevel
+import base.boudicca.api.eventcollector.fetcher.FetcherCache
 import base.boudicca.api.eventcollector.logging.CollectionsFilter
 import base.boudicca.model.Event
 
 class EventCollectorDebugger {
+
+    fun setFetcherCache(fetcherCache: FetcherCache): EventCollectorDebugger {
+        Fetcher.fetcherCache = fetcherCache
+        return this
+    }
 
     fun debug(eventCollector: EventCollector) {
         CollectionsFilter.alsoLog = true

@@ -1,6 +1,11 @@
 package base.boudicca.api.eventcollector
 
 import base.boudicca.api.eventcollector.collections.Collections
+import base.boudicca.api.eventcollector.fetcher.FetcherCache
+import base.boudicca.api.eventcollector.fetcher.HttpClientWrapper
+import base.boudicca.api.eventcollector.fetcher.NoopFetcherCache
+import base.boudicca.api.eventcollector.util.Sleeper
+import base.boudicca.api.eventcollector.util.retry
 import org.slf4j.LoggerFactory
 import java.net.URI
 import java.net.http.HttpClient
@@ -9,14 +14,24 @@ import java.net.http.HttpRequest.BodyPublishers
 import java.net.http.HttpResponse.BodyHandlers
 import java.time.Clock
 import java.util.concurrent.Callable
-import java.util.function.Consumer
 
 class Fetcher(
     private val clock: Clock,
-    private val sleeper: Consumer<Long>,
-    private val httpClient: HttpClientWrapper
+    private val sleeper: Sleeper,
+    private val httpClient: HttpClientWrapper,
+    private val manualSetDelay: Long? = null
 ) {
-    constructor() : this(Clock.systemDefaultZone(), { Thread.sleep(it) }, createHttpClientWrapper())
+    companion object {
+        @Volatile
+        var fetcherCache: FetcherCache = NoopFetcherCache
+    }
+
+    constructor(manualSetDelay: Long? = null) : this(
+        Clock.systemDefaultZone(),
+        Sleeper { ms -> Thread.sleep(ms) },
+        createHttpClientWrapper(),
+        manualSetDelay
+    )
 
     private val LOG = LoggerFactory.getLogger(this::class.java)
 
@@ -24,20 +39,28 @@ class Fetcher(
     private var lastRequestDuration = 0L
 
     fun fetchUrl(url: String): String {
+        if (fetcherCache.containsEntry(url)) {
+            return fetcherCache.getEntry(url)
+        }
         Collections.startHttpCall(url)
-        return doRequest(url) { httpClient.doGet(url) }
+        val response = doRequest(url) { httpClient.doGet(url) }
+        fetcherCache.putEntry(url, response)
+        return response
     }
 
     fun fetchUrlPost(url: String, contentType: String, content: ByteArray): String {
+        val cacheKey = "$url|${String(content)}"
+        if (fetcherCache.containsEntry(cacheKey)) {
+            return fetcherCache.getEntry(cacheKey)
+        }
         Collections.startHttpCall(url, String(content)) //TODO what if this is not string content?
-        return doRequest(url) { httpClient.doPost(url, contentType, content) }
+        val response = doRequest(url) { httpClient.doPost(url, contentType, content) }
+        fetcherCache.putEntry(cacheKey, response)
+        return response
     }
 
     private fun doRequest(url: String, request: Callable<Pair<Int, String>>): String {
-        val waitTime = lastRequestEnd + calcWaitTime() - clock.millis()
-        if (waitTime > 0) {
-            sleeper.accept(waitTime)
-        }
+        doSleep()
         var start = 0L
         val response = try {
             retry(LOG, sleeper) {
@@ -59,6 +82,17 @@ class Fetcher(
         }
         Collections.endHttpCall(response.first)
         return response.second
+    }
+
+    private fun doSleep() {
+        if (manualSetDelay != null) {
+            sleeper.sleep(manualSetDelay)
+        } else {
+            val waitTime = lastRequestEnd + calcWaitTime() - clock.millis()
+            if (waitTime > 0) {
+                sleeper.sleep(waitTime)
+            }
+        }
     }
 
     private fun calcWaitTime(): Long {
@@ -106,7 +140,3 @@ private fun createHttpClientWrapper(): HttpClientWrapper {
     }
 }
 
-interface HttpClientWrapper {
-    fun doGet(url: String): Pair<Int, String>
-    fun doPost(url: String, contentType: String, content: ByteArray): Pair<Int, String>
-}

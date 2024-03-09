@@ -1,5 +1,8 @@
 package base.boudicca.api.eventcollector
 
+import base.boudicca.api.eventcollector.fetcher.HttpClientWrapper
+import base.boudicca.api.eventcollector.fetcher.InMemoryFetcherCache
+import base.boudicca.api.eventcollector.fetcher.NoopFetcherCache
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -52,6 +55,7 @@ class FetcherTest {
     fun setup() {
         httpClientWrapper.callback = Callable { throw IllegalStateException("not initialized") }
         instantSource.setMillis(0)
+        Fetcher.fetcherCache = NoopFetcherCache
     }
 
     @Test
@@ -128,5 +132,50 @@ class FetcherTest {
         }
         val response = fetcher.fetchUrl("url")
         assertEquals("OK", response)
+    }
+
+    @Test
+    fun testManualSetDelay() {
+        val customFetcher = Fetcher(
+            instantSource.withZone(ZoneId.systemDefault()),
+            { instantSource.setMillis(instantSource.millis() + it) },
+            httpClientWrapper,
+            6789
+        )
+        httpClientWrapper.callback = Callable {
+            Pair(200, "OK")
+        }
+        assertEquals(0, instantSource.millis())
+        customFetcher.fetchUrl("url")
+        assertEquals(6789, instantSource.millis())
+    }
+
+    @Test
+    fun testNoCache() {
+        var count = 0
+        httpClientWrapper.callback = Callable {
+            count++
+            Pair(200, "OK")
+        }
+        assertEquals(0, count)
+        fetcher.fetchUrl("url")
+        assertEquals(1, count)
+        fetcher.fetchUrl("url")
+        assertEquals(2, count)
+    }
+
+    @Test
+    fun testCache() {
+        var count = 0
+        Fetcher.fetcherCache = InMemoryFetcherCache
+        httpClientWrapper.callback = Callable {
+            count++
+            Pair(200, "OK")
+        }
+        assertEquals(0, count)
+        fetcher.fetchUrl("url")
+        assertEquals(1, count)
+        fetcher.fetchUrl("url")
+        assertEquals(1, count)
     }
 }

@@ -1,10 +1,15 @@
 package events.boudicca.eventcollector
 
 import base.boudicca.api.eventcollector.EventCollectorDebugger
-import events.boudicca.eventcollector.collectors.*
+import base.boudicca.api.eventcollector.fetcher.FileBackedFetcherCache
+import events.boudicca.eventcollector.collectors.AlpenverreinCollector
+import java.io.File
 
 fun main() {
     EventCollectorDebugger()
+        // this debugger caches all fetcher calls locally to avoid spamming the server when developing.
+        // if there are problems with old data or something like that just delete the file and restart the debugger
+        .setFetcherCache(FileBackedFetcherCache(File("./fetcher.cache")))
 //        .debug(TechnologiePlauscherlCollector())
 //        .debug(JkuEventCollector())
 //        .debug(PosthofCollector())
@@ -32,5 +37,6 @@ fun main() {
 //        .debug(StadthalleWienCollector())
 //        .debug(MuseumArbeitsweltCollector())
 //        .debug(OKHVoecklabruckCollector())
-        .debug(ValugCollector())
+//        .debug(ValugCollector())
+        .debug(AlpenverreinCollector())
 }

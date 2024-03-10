@@ -90,6 +90,10 @@ object Collections {
         return pastFullCollections.toList()
     }
 
+    fun getLastFullCollection(): FullCollection {
+        return pastFullCollections.last()
+    }
+
     fun getCurrentFullCollection(): FullCollection? {
         return currentFullCollection.get()
     }

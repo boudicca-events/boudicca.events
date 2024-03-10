@@ -6,6 +6,10 @@ import base.boudicca.api.remotecollector.RemoteCollectorClient
 import base.boudicca.api.remotecollector.model.HttpCall
 import base.boudicca.model.Event
 
+/**
+ * EventCollector implementation which will collect events from a remote EventCollector via HTTP.
+ * see the RemoteCollectorApi interface for a http interface description
+ */
 class RemoteCollectorCollector(private val url: String, private val name: String? = null) : EventCollector {
     override fun getName(): String {
         return name ?: "remote collector: $url"

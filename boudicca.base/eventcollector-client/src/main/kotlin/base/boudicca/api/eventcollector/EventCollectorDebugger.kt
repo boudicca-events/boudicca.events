@@ -23,7 +23,7 @@ class EventCollectorDebugger {
         collectedEvents.forEach {
             println(it)
         }
-        val fullCollection = Collections.getAllPastCollections()[0]
+        val fullCollection = Collections.getLastFullCollection()
         println(fullCollection)
         println("debugger collected ${collectedEvents.size} events")
         val errorCount = fullCollection.getTotalErrorCount()

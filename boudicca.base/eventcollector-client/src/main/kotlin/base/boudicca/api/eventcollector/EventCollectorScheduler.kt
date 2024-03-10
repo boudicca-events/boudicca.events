@@ -50,7 +50,7 @@ class EventCollectorScheduler(
     }
 
     fun runOnce() {
-        getEventCollectorCoordinator().runOnce()
+        getEventCollectorCoordinator().getEventCollectionRunner().run()
     }
 
     fun getCollectors(): List<EventCollector> {

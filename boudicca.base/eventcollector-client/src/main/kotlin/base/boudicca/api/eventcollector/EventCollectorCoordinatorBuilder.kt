@@ -40,11 +40,11 @@ class EventCollectorCoordinatorBuilder {
     }
 
     fun build(): EventCollectorCoordinator {
+        val finalEventCollectors = eventCollectors.toList()
         return EventCollectorCoordinator(
-            eventCollectors.toList(), // make a copy to make it basically immutable
             interval,
-            eventSink,
-            enricherFunction,
+            finalEventCollectors, // make a copy to make it basically immutable
+            EventCollectionRunner(finalEventCollectors, eventSink, enricherFunction)
         )
     }
 

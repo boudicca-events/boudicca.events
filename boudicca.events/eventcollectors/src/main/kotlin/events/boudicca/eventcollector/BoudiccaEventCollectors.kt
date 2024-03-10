@@ -1,11 +1,10 @@
 package events.boudicca.eventcollector
 
-import base.boudicca.api.eventcollector.EventCollectorScheduler
+import base.boudicca.api.eventcollector.EventCollectorCoordinatorBuilder
 import events.boudicca.eventcollector.collectors.*
 
 fun main() {
-    EventCollectorScheduler()
-        .startWebUi()
+    val eventCollectorCoordinator = EventCollectorCoordinatorBuilder()
         .addEventCollector(LinzTermineCollector())
         .addEventCollector(PosthofCollector())
         .addEventCollector(JkuEventCollector())
@@ -35,5 +34,8 @@ fun main() {
         .addEventCollector(OKHVoecklabruckCollector())
         .addEventCollector(ValugCollector())
         .addEventCollector(AlpenverreinCollector())
-        .run()
+        .build()
+
+    eventCollectorCoordinator.startWebUi()
+    eventCollectorCoordinator.run()
 }

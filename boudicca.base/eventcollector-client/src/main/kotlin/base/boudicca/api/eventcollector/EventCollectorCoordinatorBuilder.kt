@@ -37,10 +37,10 @@ class EventCollectorCoordinatorBuilder {
     }
 
     fun build(): EventCollectorCoordinator {
-        val finalEventCollectors = eventCollectors.toList()
+        val finalEventCollectors = eventCollectors.toList() // make a copy to make it basically immutable
         return EventCollectorCoordinator(
             interval,
-            finalEventCollectors, // make a copy to make it basically immutable
+            finalEventCollectors,
             EventCollectionRunner(
                 finalEventCollectors,
                 runnerIngestionInterface ?: RunnerIngestionInterface.createFromConfiguration(),

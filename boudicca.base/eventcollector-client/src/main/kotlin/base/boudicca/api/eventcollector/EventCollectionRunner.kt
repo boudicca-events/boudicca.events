@@ -17,8 +17,7 @@ class EventCollectionRunner(
 ) {
 
     private val LOG = LoggerFactory.getLogger(this::class.java)
-    private val executor =
-        Executors.newCachedThreadPool { Thread(it).apply { isDaemon = true } } //TODO change to virtualthreads
+    private val executor = Executors.newVirtualThreadPerTaskExecutor()
 
     /**
      * executes a full collection for all configured eventcollectors

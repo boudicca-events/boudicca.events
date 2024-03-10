@@ -38,9 +38,8 @@ object Collections {
         if (currentSingleCollections.get() != null) {
             LOG.error("a current single collection is already set, this seems like a bug")
         }
-        val singleCollection = SingleCollection()
+        val singleCollection = SingleCollection(collector.getName())
         singleCollection.startTime = System.currentTimeMillis()
-        singleCollection.collector = collector
         currentFullCollection.get()?.singleCollections?.add(singleCollection)
         currentSingleCollections.set(singleCollection)
     }
@@ -89,6 +88,10 @@ object Collections {
 
     fun getAllPastCollections(): List<FullCollection> {
         return pastFullCollections.toList()
+    }
+
+    fun getLastFullCollection(): FullCollection {
+        return pastFullCollections.last()
     }
 
     fun getCurrentFullCollection(): FullCollection? {

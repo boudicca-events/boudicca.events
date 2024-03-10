@@ -8,8 +8,8 @@
 <p>Collector: $singleCollection.name</p>
 <p>Duration: $singleCollection.duration</p>
 <p>Start/End Time: $singleCollection.startEndTime</p>
-<p>Errors: $singleCollection.errorsCount</p>
-<p>Warnings: $singleCollection.warningsCount</p>
+<p>Errors: $singleCollection.errorCount</p>
+<p>Warnings: $singleCollection.warningCount</p>
 <p>Total Events Collected: $singleCollection.totalEventsCollected</p>
 
 <h3>Http Calls</h3>

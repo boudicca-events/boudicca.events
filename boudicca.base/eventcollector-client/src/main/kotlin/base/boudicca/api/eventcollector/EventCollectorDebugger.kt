@@ -1,7 +1,6 @@
 package base.boudicca.api.eventcollector
 
 import base.boudicca.api.eventcollector.collections.Collections
-import base.boudicca.api.eventcollector.collections.LogLevel
 import base.boudicca.api.eventcollector.fetcher.FetcherCache
 import base.boudicca.api.eventcollector.logging.CollectionsFilter
 import base.boudicca.model.Event
@@ -24,19 +23,14 @@ class EventCollectorDebugger {
         collectedEvents.forEach {
             println(it)
         }
-        println(Collections.getAllPastCollections()[0])
+        val fullCollection = Collections.getLastFullCollection()
+        println(fullCollection)
         println("debugger collected ${collectedEvents.size} events")
-        val errorCount =
-            Collections.getAllPastCollections()[0].logLines
-                .union(Collections.getAllPastCollections()[0].singleCollections.flatMap { it.logLines })
-                .count { it.first == LogLevel.ERROR }
+        val errorCount = fullCollection.getTotalErrorCount()
         if (errorCount != 0) {
             println("found $errorCount errors!")
         }
-        val warningCount =
-            Collections.getAllPastCollections()[0].logLines
-                .union(Collections.getAllPastCollections()[0].singleCollections.flatMap { it.logLines })
-                .count { it.first == LogLevel.WARNING }
+        val warningCount = fullCollection.getTotalWarningCount()
         if (warningCount != 0) {
             println("found $warningCount warnings!")
         }

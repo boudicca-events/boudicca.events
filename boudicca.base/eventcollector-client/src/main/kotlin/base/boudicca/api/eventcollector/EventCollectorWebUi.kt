@@ -1,7 +1,9 @@
 package base.boudicca.api.eventcollector
 
-import base.boudicca.api.eventcollector.collections.*
 import base.boudicca.api.eventcollector.collections.Collections
+import base.boudicca.api.eventcollector.collections.FullCollection
+import base.boudicca.api.eventcollector.collections.HttpCall
+import base.boudicca.api.eventcollector.collections.SingleCollection
 import com.sun.net.httpserver.HttpExchange
 import com.sun.net.httpserver.HttpServer
 import org.apache.velocity.VelocityContext
@@ -132,22 +134,15 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
     }
 
     private fun mapFullCollectionToFrontEnd(fullCollection: FullCollection): Map<String, *> {
-        val singleCollections = fullCollection.singleCollections.associateBy { it.collector!!.getName() }
+        val singleCollections = fullCollection.singleCollections.associateBy { it.collectorName }
 
         return mapOf(
             "id" to fullCollection.id.toString(),
             "duration" to formatDuration(fullCollection.startTime, fullCollection.endTime),
             "startEndTime" to formatStartEndTime(fullCollection.startTime, fullCollection.endTime),
-            "errorsCount" to fullCollection.singleCollections
-                .flatMap { it.logLines }
-                .union(fullCollection.logLines)
-                .count { it.first == LogLevel.ERROR }.toString(),
-            "warningsCount" to fullCollection.singleCollections
-                .flatMap { it.logLines }
-                .union(fullCollection.logLines)
-                .count { it.first == LogLevel.WARNING }.toString(),
-            "totalEventsCollected" to fullCollection.singleCollections
-                .sumOf { it.totalEventsCollected ?: 0 },
+            "errorCount" to fullCollection.getTotalErrorCount(),
+            "warningCount" to fullCollection.getTotalWarningCount(),
+            "totalEventsCollected" to fullCollection.singleCollections.sumOf { it.totalEventsCollected },
             "singleCollections" to
                     scheduler.getCollectors()
                         .map { it.getName() }
@@ -159,19 +154,19 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
     }
 
     private fun mapSingleCollectionToFrontend(it: SingleCollection): Map<String, String?> {
-        return mapSingleCollectionToFrontend(it.collector!!.getName(), it)
+        return mapSingleCollectionToFrontend(it.collectorName, it)
     }
 
     private fun mapSingleCollectionToFrontend(name: String, it: SingleCollection?): Map<String, String?> {
         if (it != null) {
             return mapOf(
                 "id" to it.id.toString(),
-                "name" to EscapeTool().html(it.collector!!.getName()),
+                "name" to EscapeTool().html(it.collectorName),
                 "duration" to formatDuration(it.startTime, it.endTime),
                 "startEndTime" to formatStartEndTime(it.startTime, it.endTime),
-                "errorsCount" to it.logLines.count { it.first == LogLevel.ERROR }.toString(),
-                "warningsCount" to it.logLines.count { it.first == LogLevel.WARNING }.toString(),
-                "totalEventsCollected" to (it.totalEventsCollected ?: "-").toString(),
+                "errorCount" to it.errorCount.toString(),
+                "warningCount" to it.warningCount.toString(),
+                "totalEventsCollected" to (it.totalEventsCollected).toString(),
             )
         } else {
             return mapOf(
@@ -179,8 +174,8 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
                 "name" to name,
                 "duration" to "-",
                 "startEndTime" to "-",
-                "errorsCount" to "-",
-                "warningsCount" to "-",
+                "errorCount" to "-",
+                "warningCount" to "-",
                 "totalEventsCollected" to "-",
             )
         }
@@ -259,8 +254,8 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
         }
     }
 
-    private fun formatLogLines(logLines: List<Pair<LogLevel, ByteArray>>): String? =
-        EscapeTool().html(logLines.joinToString("\n") { String(it.second) })
+    private fun formatLogLines(logLines: List<String>): String? =
+        EscapeTool().html(logLines.joinToString("\n"))
 
     private fun setupStaticFolder(prefix: String) {
         server.createContext(prefix) {

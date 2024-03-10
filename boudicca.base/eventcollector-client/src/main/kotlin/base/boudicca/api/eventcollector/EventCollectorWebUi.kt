@@ -20,7 +20,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorScheduler) {
+class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorCoordinator) {
 
     private val server: HttpServer
     private val ve: VelocityEngine = VelocityEngine()

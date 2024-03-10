@@ -2,23 +2,23 @@ package base.boudicca.api.eventcollector
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.collections.Collections
+import base.boudicca.api.eventcollector.runner.RunnerEnricherInterface
+import base.boudicca.api.eventcollector.runner.RunnerIngestionInterface
 import base.boudicca.api.eventcollector.util.retry
 import base.boudicca.model.Event
 import org.slf4j.LoggerFactory
-import java.time.Duration
 import java.util.concurrent.Executors
-import java.util.function.Consumer
-import java.util.function.Function
 
 
 class EventCollectionRunner(
     private val eventCollectors: List<EventCollector>,
-    private val eventSink: Consumer<List<Event>>,
-    private val enricherFunction: Function<List<Event>, List<Event>>?,
+    private val ingestionInterface: RunnerIngestionInterface,
+    private val enricherInterface: RunnerEnricherInterface,
 ) {
 
     private val LOG = LoggerFactory.getLogger(this::class.java)
-    private val executor = Executors.newCachedThreadPool { Thread(it).apply { isDaemon = true } } //TODO change to virtualthreads
+    private val executor =
+        Executors.newCachedThreadPool { Thread(it).apply { isDaemon = true } } //TODO change to virtualthreads
 
     /**
      * executes a full collection for all configured eventcollectors
@@ -48,7 +48,7 @@ class EventCollectionRunner(
                 val postProcessedEvents = events.map { postProcess(it, eventCollector.getName()) }
                 val enrichedEvents = enrich(postProcessedEvents)
                 retry(LOG) {
-                    eventSink.accept(enrichedEvents)
+                    ingestionInterface.ingestEvents(enrichedEvents)
                 }
             } catch (e: RuntimeException) {
                 LOG.error("could not ingest events, is the core available?", e)
@@ -88,7 +88,7 @@ class EventCollectionRunner(
     private fun enrich(events: List<Event>): List<Event> {
         return try {
             retry(LOG) {
-                enricherFunction?.apply(events) ?: events
+                enricherInterface.enrichEvents(events)
             }
         } catch (e: Exception) {
             LOG.error("enricher threw exception, submitting events un-enriched", e)

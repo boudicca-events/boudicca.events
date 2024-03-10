@@ -23,7 +23,7 @@ class EventCollectorCoordinator(
         }
         synchronized(this) {
             if (eventCollectorWebUi == null) {
-                eventCollectorWebUi = EventCollectorWebUi(realPort, this)
+                eventCollectorWebUi = EventCollectorWebUi(realPort, eventCollectors)
                 eventCollectorWebUi!!.start()
             }
         }

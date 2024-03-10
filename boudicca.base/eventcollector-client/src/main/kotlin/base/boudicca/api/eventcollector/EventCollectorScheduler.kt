@@ -1,5 +1,7 @@
 package base.boudicca.api.eventcollector
 
+import base.boudicca.api.eventcollector.runner.RunnerEnricherInterface
+import base.boudicca.api.eventcollector.runner.RunnerIngestionInterface
 import base.boudicca.model.Event
 import java.time.Duration
 import java.util.function.Consumer
@@ -32,10 +34,22 @@ class EventCollectorScheduler(
         if (eventCollectorCoordinator == null) {
             builder.setCollectionInterval(interval)
             if (eventSink != null) {
-                builder.setEventSink(eventSink)
+                builder.setRunnerIngestionInterface(
+                    object : RunnerIngestionInterface {
+                        override fun ingestEvents(events: List<Event>) {
+                            eventSink.accept(events)
+                        }
+                    }
+                )
             }
             if (enricherFunction != null) {
-                builder.setEnricherFunction(enricherFunction)
+                builder.setRunnerEnricherInterface(
+                    object : RunnerEnricherInterface {
+                        override fun enrichEvents(events: List<Event>): List<Event> {
+                            return enricherFunction.apply(events)
+                        }
+                    }
+                )
             }
             eventCollectorCoordinator = builder.build()
             if (shouldStartWebUi) {

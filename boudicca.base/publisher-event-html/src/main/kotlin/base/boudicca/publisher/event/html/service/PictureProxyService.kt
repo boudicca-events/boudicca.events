@@ -13,8 +13,7 @@ import java.net.http.HttpResponse.BodyHandlers
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.*
-import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.TimeUnit
+import java.util.concurrent.*
 import javax.imageio.ImageIO
 import kotlin.math.max
 
@@ -23,18 +22,38 @@ class PictureProxyService {
 
     private val LOG = LoggerFactory.getLogger(this::class.java)
 
-    private val cache = ConcurrentHashMap<String, CacheEntry>()
+    private val idToImageCache = ConcurrentHashMap<UUID, Future<CacheEntry>>()
+    private val urlToIdCacheEntry = ConcurrentHashMap<String, UUID>()
+
+    private val executorService = Executors.newVirtualThreadPerTaskExecutor()
 
     private val httpClient = HttpClient.newBuilder()
         .followRedirects(HttpClient.Redirect.NORMAL)
         .build()
 
-    fun getPicture(url: String): Optional<ByteArray> {
-        val cached = cache[url]
-        if (cached != null) {
-            return cached.optionalPicture
+    fun submitPicture(url: String): UUID {
+        val cachedUUID = urlToIdCacheEntry[url]
+        if (cachedUUID != null && idToImageCache.containsKey(cachedUUID)) {
+            checkForRefresh(url, cachedUUID)
+            return cachedUUID
         }
 
+        return triggerRefresh(url, UUID.randomUUID())
+    }
+
+    fun getPicture(uuid: UUID): Optional<ByteArray> {
+        return idToImageCache[uuid]?.get()?.optionalPicture ?: Optional.empty()
+    }
+
+    private fun triggerRefresh(url: String, uuid: UUID): UUID {
+        idToImageCache[uuid] = executorService.submit(Callable {
+            fetchAndResizeUrl(url)
+        })
+        urlToIdCacheEntry[url] = uuid
+        return uuid
+    }
+
+    private fun fetchAndResizeUrl(url: String): CacheEntry {
         val request = HttpRequest.newBuilder().GET()
             .uri(URI.create(url))
             .build()
@@ -58,9 +77,14 @@ class PictureProxyService {
             }
         }
 
-        cache[url] = CacheEntry(optional)
+        return CacheEntry(optional)
+    }
 
-        return optional
+    private fun checkForRefresh(url: String, uuid: UUID) {
+        val entry = idToImageCache[uuid]
+        if (entry == null || (entry.isDone && shouldRefresh(entry.get().dateAdded))) {
+            triggerRefresh(url, uuid)
+        }
     }
 
     private fun resize(picture: ByteArray): ByteArray {
@@ -93,17 +117,28 @@ class PictureProxyService {
 
     @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.HOURS)
     fun cleanUp() {
-        val iterator = cache.iterator()
-        while (iterator.hasNext()) {
-            val entry = iterator.next()
-            if (isTooOld(entry.value.dateAdded)) {
-                iterator.remove()
+        val idToImageIterator = idToImageCache.iterator()
+        while (idToImageIterator.hasNext()) {
+            val entry = idToImageIterator.next()
+            if (entry.value.isDone && shouldEvict(entry.value.get().dateAdded)) {
+                idToImageIterator.remove()
+            }
+        }
+        val urlToIdIterator = urlToIdCacheEntry.iterator()
+        while (urlToIdIterator.hasNext()) {
+            val entry = urlToIdIterator.next()
+            if (!idToImageCache.containsKey(entry.value)) {
+                urlToIdIterator.remove()
             }
         }
     }
 
-    private fun isTooOld(dateAdded: Instant): Boolean {
+    private fun shouldEvict(dateAdded: Instant): Boolean {
         return dateAdded.isBefore(Instant.now().minus(1, ChronoUnit.DAYS))
+    }
+
+    private fun shouldRefresh(dateAdded: Instant): Boolean {
+        return dateAdded.isBefore(Instant.now().minus(22, ChronoUnit.HOURS))
     }
 
 

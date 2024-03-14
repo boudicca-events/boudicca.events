@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.net.URI
-import java.net.URLEncoder
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.ZoneId
@@ -32,7 +31,10 @@ const val DEFAULT_DURATION_SHORTER_VALUE = 24 * 30
 private const val SEARCH_TYPE_ALL = "ALL"
 
 @Service
-class EventService @Autowired constructor(@Value("\${boudicca.search.url}") private val searchUrl: String) {
+class EventService @Autowired constructor(
+    private val pictureProxyService: PictureProxyService,
+    @Value("\${boudicca.search.url}") private val searchUrl: String,
+) {
     private val searchClient: SearchClient = createSearchClient()
     private val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy 'um' HH:mm 'Uhr'", Locale.GERMAN)
     private val localDateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
@@ -142,7 +144,11 @@ class EventService @Autowired constructor(@Value("\${boudicca.search.url}") priv
             "locationName" to (event.data[SemanticKeys.LOCATION_NAME] ?: ""),
             "city" to event.data[SemanticKeys.LOCATION_CITY],
             "category" to mapCategory(event.data[SemanticKeys.CATEGORY]),
-            "pictureUrl" to URLEncoder.encode(event.data["pictureUrl"] ?: "", Charsets.UTF_8),
+            "pictureUuid" to
+                    if (!event.data["pictureUrl"].isNullOrEmpty())
+                        pictureProxyService.submitPicture(event.data["pictureUrl"]!!).toString()
+                    else
+                        "",
             "accessibilityProperties" to getAllAccessibilityValues(event).joinToString(", "),
         )
     }

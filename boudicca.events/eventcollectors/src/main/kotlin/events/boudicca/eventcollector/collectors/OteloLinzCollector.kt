@@ -32,7 +32,7 @@ class OteloLinzCollector : TwoStepEventCollector<String>("otelolinz") {
         val data = mutableMapOf<String, String>()
         data[SemanticKeys.URL] = event
         if (endDate != null) {
-            data[SemanticKeys.ENDDATE] = endDate.format(DateTimeFormatter.ISO_DATE)
+            data[SemanticKeys.ENDDATE] = endDate.format(DateTimeFormatter.ISO_DATE_TIME)
         }
         data[SemanticKeys.TYPE] = "technology"
         data[SemanticKeys.DESCRIPTION] = getDescription(eventSite)

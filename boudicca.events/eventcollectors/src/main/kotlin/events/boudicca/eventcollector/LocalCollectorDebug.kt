@@ -2,7 +2,7 @@ package events.boudicca.eventcollector
 
 import base.boudicca.api.eventcollector.EventCollectorDebugger
 import base.boudicca.api.eventcollector.fetcher.FileBackedFetcherCache
-import events.boudicca.eventcollector.collectors.AlpenverreinCollector
+import events.boudicca.eventcollector.collectors.*
 import java.io.File
 
 fun main() {

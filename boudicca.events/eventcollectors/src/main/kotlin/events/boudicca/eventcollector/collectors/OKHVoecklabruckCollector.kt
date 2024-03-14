@@ -95,7 +95,7 @@ class OKHVoecklabruckCollector : TwoStepEventCollector<Pair<String, String>>("ok
 
 
         val time = if (fullDateTime.size > 1 && fullDateTime[1].text().isNotBlank()) fullDateTime[1].text()
-            .split("Beginn: ")[1].split(" Uhr")[0] else "00:00"
+            .split("Beginn: ", "Einlass: ")[1].split(" Uhr")[0] else "00:00"
         val localTime = LocalTime.parse(time, DateTimeFormatter.ofPattern("kk:mm"))
 
 

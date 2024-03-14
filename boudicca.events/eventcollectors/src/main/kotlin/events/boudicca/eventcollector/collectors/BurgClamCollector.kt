@@ -57,8 +57,14 @@ class BurgClamCollector : TwoStepEventCollector<String>("burgclam") {
     }
 
     private fun parseDate(dateText: String): OffsetDateTime {
+        var fixedDateText = dateText.replace("Jänner", "Januar")
+            .replace("JULI", "Juli") //why the heck is this case sensititve
+        if (fixedDateText.contains(", ")) {
+            fixedDateText = fixedDateText.split(", ")[1]
+        }
+
         val date = LocalDate.parse(
-            dateText.replace("Jänner", "Januar"),
+            fixedDateText,
             DateTimeFormatter.ofPattern("d. LLLL uuuu").withLocale(Locale.GERMAN)
         )
 

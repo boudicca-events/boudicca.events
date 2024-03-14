@@ -9,13 +9,19 @@ object SemanticKeys {
     const val TYPE = "type"
     const val CATEGORY = "category"
     const val DESCRIPTION = "description"
-    const val TAGS = "tags"
-    const val REGISTRATION = "registration"
-    const val PICTUREURL = "pictureUrl"
-    const val COLLECTORNAME = "collectorName"
-    const val SOURCES = "sources"
+    const val DESCRIPTION_MARKDOWN = "description.markdown"
     const val RECURRENCE_TYPE = "recurrence.type"
     const val RECURRENCE_INTERVAL = "recurrence.interval"
+    const val TAGS = "tags"
+    const val REGISTRATION = "registration"
+    @Deprecated("use pictures.json instead")
+    const val PICTUREURL = "pictureUrl"
+    const val PICTURES_JSON = "pictures.json"
+    const val COLLECTORNAME = "collectorName"
+    const val SOURCES = "sources"
+    const val SOURCE_EVENT_PAGE = "source.event.page"
+    const val SOURCE_EVENT_LIST = "source.event.list"
+    const val SOURCE_EVENT_DETAILS = "source.event.details"
 
     // location properties
     const val LOCATION_NAME = "location.name"
@@ -34,4 +40,10 @@ object SemanticKeys {
     // concert properties
     const val CONCERT_GENRE = "concert.genre"
     const val CONCERT_BANDLIST = "concert.bandlist"
+
+    object Image {
+        const val URL = "url"
+        const val ALT_TEXT = "altText"
+        const val COPYRIGHT = "copyright"
+    }
 }

@@ -15,7 +15,7 @@ whole JSON-document should be encoded in UTF-8.
 
 We use certain data types for the properties we expect.
 
-* `text`: just a simple text/string
+* `text`: just a simple text/string*
 * `date`: [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) Timestamp as text, for example: `2009-06-30T18:30:00+02:00`
 * `url`: A URL as text
 * `coordinates`: longitude + latitude in Decimal degrees (DD) in the format `<latitude>, <longitute>`
@@ -28,20 +28,34 @@ We use certain data types for the properties we expect.
 
 **Events have only two required properties: `name` and `startDate`**
 
-| Key                 | Meaning                                                                                              | Format                               |
-|---------------------|------------------------------------------------------------------------------------------------------|--------------------------------------|
-| name                | The name of the event                                                                                | text                                 |
-| startDate           | Time of start for the event                                                                          | date                                 |
-| endDate             | Time of end for the event                                                                            | date                                 |
-| url                 | A link to the website for this event                                                                 | url                                  |
-| type                | The type of event, for example `concert`, `????` more examples please                                | text ??? maybe enum would be better? |
-| category            | The category of an event, for example `MUSIC`, `ART` or `TECH`, see EventCategory enum               | enum\<EventCategory>                 |
-| description         | Text describing this event                                                                           | text                                 |
-| tags                | A list of tags. TODO how to describe?                                                                | list\<text>                          |
-| registration        | If this is a free event, a event which requires registration or a event which requires a paid ticket | enum\<Registration>                  |
-| pictureUrl          | Url to a picture to be shown                                                                         | url                                  |
-| collectorName       | Name of the collector which collected this event                                                     | text                                 |
-| sources             | A list of all sources, line by line. This should include all URLs or other sources used.             | list\<text>                          |
+| Key                  | Meaning                                                                                              | Format                               | Usage       |
+|----------------------|------------------------------------------------------------------------------------------------------|--------------------------------------|-------------|
+| name                 | The name of the event                                                                                | text                                 | MANDATORY   |
+| startDate            | Time of start for the event                                                                          | date                                 | MANDATORY   |
+| endDate              | Time of end for the event                                                                            | date                                 | OPTIONAL    |
+| url                  | A link to the specific event page for this event. Same as source.event.page.                         | url                                  | RECOMMENDED |
+| type                 | The type of event, for example `concert`, `????` more examples please                                | text ??? maybe enum would be better? | RECOMMENDED |           
+| category             | The category of an event, for example `MUSIC`, `ART` or `TECH`, see EventCategory enum               | enum\<EventCategory>                 | RECOMMENDED |
+| description          | Text describing this event                                                                           | text                                 | RECOMMENDED |
+| description.markdown | Text describing this event, but formatted with markdown.                                             | text                                 | OPTIONAL    |
+| recurrence.type      | Describing how often an event happens. Once, rarely or very often.                                   | enum\<RecurrenceType>                | RECOMMENDED |
+| recurrence.interval  | Describing the interval with which the event recurs                                                  | text                                 | OPTIONAL    |
+| tags                 | A list of tags. TODO how to describe?                                                                | list\<text>                          | RECOMMENDED |
+| registration         | If this is a free event, a event which requires registration or a event which requires a paid ticket | enum\<Registration>                  | OPTIONAL    |
+| pictureUrl           | Url to a picture to be shown                                                                         | url                                  | DEPRECATED  |
+| pictures.json        | A json array of pictures for the event. The first picture should be the featured one.                | json\<image>                         | OPTIONAL    |
+| collectorName        | Name of the collector which collected this event                                                     | text                                 | MANDATORY   |
+| sources              | A list of all sources, line by line. This should include all URLs or other sources used.             | list\<text>                          | RECOMMENDED |
+| source.event.page    | the url of the page where the event was sourced from                                                 | url                                  | RECOMMENDED |
+| source.event.list    | an url to a list of events on the page where the event was sourced from (if available)               | url                                  | OPTIONAL    |
+| source.event.details | an url that leads to the details of the specific event on the page where the event was sourced from  | url                                  | RECOMMENDED |
+
+#### Usage explanation
+
+`MANDATORY`: This field is required for proper operation of boudicca.
+`RECOMMENDED`: This field is not required, but it is one of the core features enabling event sorting and filtering for publishers.
+`OPTIONAL`: This field can be used if the information is available.
+`DEPRECATED`: This field should no longer be used.
 | recurrence.type     | Describing how often an event happens. Once, rarely or very often.                                   | enum\<RecurrenceType>                |
 | recurrence.interval | Describing the interval with which the event recurs                                                  | text                                 |
 
@@ -51,12 +65,71 @@ We use certain data types for the properties we expect.
 * `registration`: an event which requires a free registration
 * `ticket`: a paid event which requires a ticket
 
+#### type
+
+type is an open field, so any value is permitted, but this is a list of common/known types:
+
+- concert
+- theatre
+- meetup
+- museum
+- museum_railway
+- model_railway
+- guided_tour
+- workshop
+- ...
+
 #### Category enum values
 
 * `MUSIC`: concerts or other events where the main focus is music
 * `TECH`: event with technology as the focus
 * `ART`: art exhibitions, comedy, theater, ...
 * `SPORT`: everything to do with sports, either watching them or actively participate
+
+#### RecurrenceType enum values
+
+* `REGULARLY`: events that happen about once a week or more often over the period of multiple months
+* `RARELY`: events that occur about once a month throughout the year
+* `ONCE`: events that occur once a year or more rarely (e.g. Christmas/Easter specials). When the same event is repeated
+  e.g. 3 times (for example so that more people can register), but only once a year, it should still be tagged as ONCE.
+
+Examples:
+
+* There is a special event with oldtimers on a museum railway that takes 2 days, but only happens once per year.
+    * should be tagged as ONCE
+* There is a special event with oldtimers on a museum railway that takes 2 days, but only happens once per year.
+    * should be tagged as ONCE
+* during Summer from June to September every Thursday there is a special train
+    * should be tagged as REGULARLY
+* a specific meetup happens about once per month or every two months
+    * should be tagged as RARELY
+
+#### tags values
+
+tags is an open field, so any value is permitted, but this is a list of common/known tags:
+
+- ...
+- TODO
+
+#### Image json
+
+```json
+[
+  {
+    "url": "string",
+    "altText": "string",
+    "copyright": "string"
+  },
+  ...
+]
+```
+
+* `url`: the url where the image can be found
+* `altText`: text describing the image contents for blind users
+* `copyright`: copyright notice that can be displayed in publishers (if the copyright is unknown the event source can be
+  put here)
+
+Note: while only the url is really required it is HIGHLY RECOMMENDED to also set the other fields
 
 ### Location Properties
 

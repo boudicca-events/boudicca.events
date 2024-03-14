@@ -11,6 +11,7 @@ import base.boudicca.api.search.BoudiccaQueryBuilder.durationShorter
 import base.boudicca.api.search.BoudiccaQueryBuilder.equals
 import base.boudicca.api.search.BoudiccaQueryBuilder.hasField
 import base.boudicca.api.search.BoudiccaQueryBuilder.not
+import base.boudicca.api.search.BoudiccaQueryBuilder.or
 import base.boudicca.model.Event
 import base.boudicca.model.EventCategory
 import base.boudicca.publisher.event.html.model.SearchDTO
@@ -85,8 +86,13 @@ class EventService @Autowired constructor(@Value("\${boudicca.search.url}") priv
         if (!searchDTO.bandName.isNullOrBlank()) {
             queryParts.add(contains(SemanticKeys.CONCERT_BANDLIST, searchDTO.bandName!!))
         }
-        if (searchDTO.recurrence != true) {
-            queryParts.add(not(hasField(SemanticKeys.RECURRENCE)))
+        if (searchDTO.includeRecurring != true) {
+            queryParts.add(
+                or(
+                    not(hasField(SemanticKeys.RECURRENCE_TYPE)),
+                    equals(SemanticKeys.RECURRENCE_TYPE, "ONCE")
+                )
+            )
         }
         return and(queryParts)
     }

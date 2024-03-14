@@ -14,7 +14,7 @@ data class SearchDTO(
     @RequestParam("durationShorter", required = false) var durationShorter: Double?,
     @RequestParam("durationLonger", required = false) var durationLonger: Double?,
     @RequestParam("bandName", required = false) var bandName: String?,
-    @RequestParam("recurrence", required = false) var recurrence: Boolean?,
+    @RequestParam("includeRecurring", required = false) var includeRecurring: Boolean?,
 ) {
     constructor() : this(null, null, null, null, null, null, null, null, null, null, null, null)
 }

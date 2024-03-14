@@ -16,17 +16,17 @@ class RecurrenceEnricherTest {
                 Event("group 1", OffsetDateTime.now().plusDays(1), mapOf()),
                 Event("group 1", OffsetDateTime.now().plusDays(2), mapOf()),
                 Event("group 1", OffsetDateTime.now().plusDays(3), mapOf()),
-                Event("group 1", OffsetDateTime.now().plusDays(4), mapOf(SemanticKeys.RECURRENCE to "something")),
+                Event("group 1", OffsetDateTime.now().plusDays(4), mapOf(SemanticKeys.RECURRENCE_TYPE to "something")),
                 //group 2 should NOT be detected as recurring
                 Event("group 2", OffsetDateTime.now().plusDays(5), mapOf()),
-                Event("group 2", OffsetDateTime.now().plusDays(6), mapOf(SemanticKeys.RECURRENCE to "something")),
+                Event("group 2", OffsetDateTime.now().plusDays(6), mapOf(SemanticKeys.RECURRENCE_TYPE to "something")),
             )
         )
-        assertEquals("recurring", enriched[0].data[SemanticKeys.RECURRENCE])
-        assertEquals("recurring", enriched[1].data[SemanticKeys.RECURRENCE])
-        assertEquals("recurring", enriched[2].data[SemanticKeys.RECURRENCE])
-        assertEquals("something", enriched[3].data[SemanticKeys.RECURRENCE])
-        assertEquals(null, enriched[4].data[SemanticKeys.RECURRENCE])
-        assertEquals("something", enriched[5].data[SemanticKeys.RECURRENCE])
+        assertEquals("REGULARLY", enriched[0].data[SemanticKeys.RECURRENCE_TYPE])
+        assertEquals("REGULARLY", enriched[1].data[SemanticKeys.RECURRENCE_TYPE])
+        assertEquals("REGULARLY", enriched[2].data[SemanticKeys.RECURRENCE_TYPE])
+        assertEquals("something", enriched[3].data[SemanticKeys.RECURRENCE_TYPE])
+        assertEquals(null, enriched[4].data[SemanticKeys.RECURRENCE_TYPE])
+        assertEquals("something", enriched[5].data[SemanticKeys.RECURRENCE_TYPE])
     }
 }

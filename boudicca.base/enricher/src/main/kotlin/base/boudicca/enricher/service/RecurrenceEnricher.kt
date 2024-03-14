@@ -26,11 +26,11 @@ class RecurrenceEnricher : Enricher {
 
     private fun addRecurrence(event: Event): Event {
         //honor existing recurrence value
-        if (event.data.containsKey(SemanticKeys.RECURRENCE)) {
+        if (event.data.containsKey(SemanticKeys.RECURRENCE_TYPE)) {
             return event
         }
         val data = event.data.toMutableMap()
-        data[SemanticKeys.RECURRENCE] = "recurring"
+        data[SemanticKeys.RECURRENCE_TYPE] = "REGULARLY"
         return Event(event.name, event.startDate, data)
     }
 

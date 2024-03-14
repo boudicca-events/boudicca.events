@@ -232,14 +232,14 @@ class SimpleEvaluatorTest {
     fun hasField() {
         val events =
             callEvaluator(
-                HasFieldExpression("recurrence"),
+                HasFieldExpression("recurrence.type"),
                 listOf(
                     mapOf(
                         SemanticKeys.NAME to "event1",
                     ),
                     mapOf(
                         SemanticKeys.NAME to "event2",
-                        SemanticKeys.RECURRENCE to "yes",
+                        SemanticKeys.RECURRENCE_TYPE to "REGULARLY",
                     ),
                 )
             )

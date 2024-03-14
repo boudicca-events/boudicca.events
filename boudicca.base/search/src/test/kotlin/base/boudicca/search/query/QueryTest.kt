@@ -75,7 +75,7 @@ class QueryTest {
     @Test
     fun queryWithHasField() {
         val events =
-            evaluateQuery(""" hasField "recurrence" """)
+            evaluateQuery(""" hasField "recurrence.type" """)
         assertEquals(1, events.size)
         assertEquals("event2", events.first()["name"])
     }
@@ -100,7 +100,7 @@ class QueryTest {
                 "field" to "value2",
                 SemanticKeys.STARTDATE to "2023-05-29T00:00:00Z",
                 SemanticKeys.TYPE to "theater",
-                SemanticKeys.RECURRENCE to "yes"
+                SemanticKeys.RECURRENCE_TYPE to "REGULARLY"
             ),
             mapOf(
                 "name" to "somethingelse", "field" to "wuuut",

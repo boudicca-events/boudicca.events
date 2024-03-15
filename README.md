@@ -29,3 +29,7 @@ TODO
 ## Local development setup with IntelliJ
 
 If you want to help us with developing Boudicca or fix a bug, see our [Developing](docs/DEV.md) guide
+
+## Technical descriptions of our Services
+
+If you need more in-depth understanding of our services and their code please see: [Tech](docs/tech/TECH.md)   

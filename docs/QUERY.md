@@ -52,7 +52,7 @@ You can use the grouping `(...)` mechanism to circumvent the order.
   holiday: `"location.city" equals "Wien" and "startDate" after "2023-05-27" and "startDate" before "2023-05-31"`
 * Search for events with a duration of 2 hours or less: `duration "startDate" "endDate" shorter 2`
 
-See our [Semantic Conventions](SEMANTIC_CONVENTIONS.md) to find common field names.
+See our [Semantic Conventions](../SEMANTIC_CONVENTIONS.md) to find common field names.
 
 ## Architecture of the Boudicca Query Language
 

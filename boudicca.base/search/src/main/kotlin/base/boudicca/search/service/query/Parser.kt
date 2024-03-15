@@ -58,6 +58,10 @@ class Parser(private val tokens: List<Token>) {
                 return parseDuration()
             }
 
+            TokenType.HAS_FIELD -> {
+                return parseHasField()
+            }
+
             else -> throw QueryException("invalid token ${getCurrentTokenType()}")
         }
     }
@@ -106,6 +110,12 @@ class Parser(private val tokens: List<Token>) {
 
             else -> throw QueryException("invalid token ${getCurrentTokenType()} following after text token")
         }
+    }
+
+    private fun parseHasField(): HasFieldExpression {
+        i++
+        val field = checkText()
+        return HasFieldExpression(field)
     }
 
     private fun parseGrouping(): Expression {

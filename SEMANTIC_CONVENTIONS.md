@@ -28,20 +28,22 @@ We use certain data types for the properties we expect.
 
 **Events have only two required properties: `name` and `startDate`**
 
-| Key           | Meaning                                                                                              | Format                               |
-|---------------|------------------------------------------------------------------------------------------------------|--------------------------------------|
-| name          | The name of the event                                                                                | text                                 |
-| startDate     | Time of start for the event                                                                          | date                                 |
-| endDate       | Time of end for the event                                                                            | date                                 |
-| url           | A link to the website for this event                                                                 | url                                  |
-| type          | The type of event, for example `concert`, `????` more examples please                                | text ??? maybe enum would be better? |
-| category      | The category of an event, for example `MUSIC`, `ART` or `TECH`, see EventCategory enum               | enum\<EventCategory>                 |
-| description   | Text describing this event                                                                           | text                                 |
-| tags          | A list of tags. TODO how to describe?                                                                | list\<text>                          |
-| registration  | If this is a free event, a event which requires registration or a event which requires a paid ticket | enum\<registration>                  |
-| pictureUrl    | Url to a picture to be shown                                                                         | url                                  |
-| collectorName | Name of the collector which collected this event                                                     | text                                 |
-| sources       | A list of all sources, line by line. This should include all URLs or other sources used.             | list\<text>                          |
+| Key                 | Meaning                                                                                              | Format                               |
+|---------------------|------------------------------------------------------------------------------------------------------|--------------------------------------|
+| name                | The name of the event                                                                                | text                                 |
+| startDate           | Time of start for the event                                                                          | date                                 |
+| endDate             | Time of end for the event                                                                            | date                                 |
+| url                 | A link to the website for this event                                                                 | url                                  |
+| type                | The type of event, for example `concert`, `????` more examples please                                | text ??? maybe enum would be better? |
+| category            | The category of an event, for example `MUSIC`, `ART` or `TECH`, see EventCategory enum               | enum\<EventCategory>                 |
+| description         | Text describing this event                                                                           | text                                 |
+| tags                | A list of tags. TODO how to describe?                                                                | list\<text>                          |
+| registration        | If this is a free event, a event which requires registration or a event which requires a paid ticket | enum\<Registration>                  |
+| pictureUrl          | Url to a picture to be shown                                                                         | url                                  |
+| collectorName       | Name of the collector which collected this event                                                     | text                                 |
+| sources             | A list of all sources, line by line. This should include all URLs or other sources used.             | list\<text>                          |
+| recurrence.type     | Describing how often an event happens. Once, rarely or very often.                                   | enum\<RecurrenceType>                |
+| recurrence.interval | Describing the interval with which the event recurs                                                  | text                                 |
 
 #### Registration enum values
 
@@ -81,6 +83,24 @@ We use certain data types for the properties we expect.
 |------------------|---------------------------|------------|
 | concert.genre    | Genre of the concert      | text       |
 | concert.bandlist | List of all bands playing | list<text> |
+
+#### RecurrenceType enum values
+
+* `REGULARLY`: events that happen about once a week or more often over the period of multiple months
+* `RARELY`: events that occur about once a month throughout the year
+* `ONCE`: events that occur once a year or more rarely (e.g. Christmas/Easter specials). When the same event is repeated
+  e.g. 3 times (for example so that more people can register), but only once a year, it should still be tagged as ONCE.
+
+Examples:
+
+* There is a special event with oldtimers on a museum railway that takes 2 days, but only happens once per year.
+  * should be tagged as ONCE
+* There is a special event with oldtimers on a museum railway that takes 2 days, but only happens once per year.
+  * should be tagged as ONCE
+* during Summer from June to September every Thursday there is a special train
+  * should be tagged as REGULARLY
+* a specific meetup happens about once per month or every two months
+  * should be tagged as RARELY
 
 ### Internal Properties
 

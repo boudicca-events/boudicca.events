@@ -95,6 +95,10 @@ class SimpleEvaluator(rawEntries: Collection<Entry>) : Evaluator {
                 return duration <= expression.getDuration().toDouble()
             }
 
+            is HasFieldExpression -> {
+                return event.containsKey(expression.getFieldName()) && event[expression.getFieldName()]!!.isNotEmpty()
+            }
+
             else -> {
                 throw QueryException("unknown expression kind $expression")
             }

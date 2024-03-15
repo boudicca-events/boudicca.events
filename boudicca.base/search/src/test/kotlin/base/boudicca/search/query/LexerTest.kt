@@ -244,6 +244,13 @@ class LexerTest {
         assertEquals(BigDecimal(-2.5), tokens[0].getNumber())
     }
 
+    @Test
+    fun testHasFieldKeyword() {
+        val tokens = callLexer(""" hasField """)
+        assertEquals(1, tokens.size)
+        assertEquals(TokenType.HAS_FIELD, tokens[0].getType())
+    }
+
     private fun callLexer(query: String): List<Token> {
         return Lexer(query).lex()
     }

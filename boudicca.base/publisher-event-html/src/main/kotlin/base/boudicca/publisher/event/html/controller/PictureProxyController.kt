@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseBody
+import java.util.UUID
 
 @Controller
 @RequestMapping("/")
@@ -22,9 +23,9 @@ class PictureProxyController @Autowired constructor(
     )
     @ResponseBody
     fun getAbout(
-        @RequestParam("url") url: String,
+        @RequestParam("uuid") uuid: UUID,
     ): ResponseEntity<ByteArray> {
-        return ResponseEntity.of(pictureProxyService.getPicture(url))
+        return ResponseEntity.of(pictureProxyService.getPicture(uuid))
     }
 
 }

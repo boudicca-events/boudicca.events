@@ -99,7 +99,7 @@ class Fetcher(
         if (lastRequestDuration == 0L) {
             return 0L
         }
-        val waitTime = (lastRequestDuration.toDouble() * 0.8F).toLong()
+        val waitTime = (lastRequestDuration.toDouble() * 1.5F).toLong()
         if (waitTime <= 100L) {
             return 100L
         }

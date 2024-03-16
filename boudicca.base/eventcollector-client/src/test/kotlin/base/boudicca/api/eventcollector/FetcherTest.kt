@@ -90,8 +90,8 @@ class FetcherTest {
         fetcher.fetchUrl("url")
         assertEquals(100, instantSource.millis())
         fetcher.fetchUrl("url")
-        //100 waittime + 100 for the call
-        assertEquals(300, instantSource.millis())
+        //150 waittime + 100 for the call
+        assertEquals(350, instantSource.millis())
     }
 
     @Test
@@ -108,7 +108,7 @@ class FetcherTest {
     }
 
     @Test
-    fun test80PercentMSWait() {
+    fun test150PercentMSWait() {
         httpClientWrapper.callback = Callable {
             instantSource.addMillis(1000)
             Pair(200, "OK")
@@ -116,8 +116,8 @@ class FetcherTest {
         fetcher.fetchUrl("url")
         assertEquals(1000, instantSource.millis())
         fetcher.fetchUrl("url")
-        //800 waittime + 1000 for the call
-        assertEquals(2800, instantSource.millis())
+        //1500 waittime + 1000 for the call
+        assertEquals(3500, instantSource.millis())
     }
 
     @Test

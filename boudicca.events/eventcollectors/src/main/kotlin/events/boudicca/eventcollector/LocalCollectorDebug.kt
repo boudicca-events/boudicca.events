@@ -10,6 +10,12 @@ fun main() {
         // this debugger caches all fetcher calls locally to avoid spamming the server when developing.
         // if there are problems with old data or something like that just delete the file and restart the debugger
         .setFetcherCache(FileBackedFetcherCache(File("./fetcher.cache")))
+        //enable one of the two lines to also use the online or local enricher
+//        .enableEnricher("https://enricher.boudicca.events")
+//        .enableEnricher("http://localhost:8085")
+        //enable this line to ingest the collected events into the local eventdb (this uses the configuration from the application.properties)
+//        .enableIngestion()
+
 //        .debug(TechnologiePlauscherlCollector())
 //        .debug(JkuEventCollector())
 //        .debug(PosthofCollector())

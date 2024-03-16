@@ -20,7 +20,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorScheduler) {
+class EventCollectorWebUi(port: Int, private val eventCollectors: List<EventCollector>) {
 
     private val server: HttpServer
     private val ve: VelocityEngine = VelocityEngine()
@@ -144,7 +144,7 @@ class EventCollectorWebUi(port: Int, private val scheduler: EventCollectorSchedu
             "warningCount" to fullCollection.getTotalWarningCount(),
             "totalEventsCollected" to fullCollection.singleCollections.sumOf { it.totalEventsCollected },
             "singleCollections" to
-                    scheduler.getCollectors()
+                    eventCollectors
                         .map { it.getName() }
                         .sorted()
                         .map {

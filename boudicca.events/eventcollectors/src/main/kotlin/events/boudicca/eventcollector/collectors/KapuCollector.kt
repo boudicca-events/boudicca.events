@@ -39,8 +39,11 @@ class KapuCollector : TwoStepEventCollector<String>("kapu") {
         }
         data[SemanticKeys.DESCRIPTION] = description
 
-        data[SemanticKeys.PICTUREURL] =
-            "https://www.kapu.or.at" + eventSite.select("article.event img.media__image").attr("data-src")
+        val imgSrc = eventSite.select("article.event img.media__element").attr("data-src")
+        if (imgSrc.isNotBlank()) {
+            data[SemanticKeys.PICTUREURL] =
+                "https://www.kapu.or.at$imgSrc"
+        }
 
         data[SemanticKeys.LOCATION_NAME] = "Kapu"
         data[SemanticKeys.LOCATION_URL] = "https://www.kapu.or.at"

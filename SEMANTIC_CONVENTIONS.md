@@ -56,6 +56,7 @@ We use certain data types for the properties we expect.
 * `MUSIC`: concerts or other events where the main focus is music
 * `TECH`: event with technology as the focus
 * `ART`: art exhibitions, comedy, theater, ...
+* `SPORT`: everything to do with sports, either watching them or actively participate
 
 ### Location Properties
 

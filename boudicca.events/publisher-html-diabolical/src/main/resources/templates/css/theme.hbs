@@ -1,0 +1,124 @@
+<style>
+    @font-face {
+        font-family: metalFont;
+        src: url(/fonts/MetalMania-Regular.ttf);
+    }
+
+    :root {
+
+        /** colors */ 
+        --color-white: black;
+        --color-main: rgb(50, 50, 50);
+        --color-main-yellow: #332f0e;
+        --color-main-red: #3f0505;
+        --color-main-green: #043804;
+        --color-icon: #c90808;
+
+        /** font family */ 
+        --font-family-open-sans: metalFont;
+
+        /** layout */
+        --max-main-width: 970px;
+        
+        /** responsive breakpoints */
+        /** https://bholmes.dev/blog/alternative-to-css-variable-media-queries/ */ 
+        /** --max-mobile-width: 700px; */ 
+        /** --max-tablet-width: 970px; */ 
+
+        /** font size */
+        --font-size-small: 1em;
+        --font-size-medium: 1.25em;
+        --font-size-large: 1.5em;
+
+        /** spacing */ 
+        --space-small: 4px;
+        --space-medium: 8px;
+        --space-large: 16px;
+        --space-xlarge: 32px;
+        --space-xxlarge: 128px;
+
+        /** events **/
+        --anchor-to-eventpage-border-color: black;
+        --anchor-to-eventpage-background-color: var(--color-main);
+
+        --input-background-color: var(--color-main);
+        --font-color: #c90808;
+
+        --color-filterSearchButton: var(--color-main);
+    }
+
+    html { 
+        font-size: 1.25em;
+    }
+
+    * {
+        font-family: var(--font-family-open-sans);
+        box-sizing: border-box;
+        color: var(--font-color);
+    }
+
+    p {
+        margin: 0;
+    }
+
+    button {
+        outline: none;
+        border: none;
+        appearance: none;
+        background-color: transparent;
+        cursor: pointer;
+    }
+
+    .svgsprite {
+        position: absolute;
+        width: 0;
+    }
+
+    svg {
+        color: var(--color-icon);
+    }
+
+    .visible-hidden {
+        position: absolute;
+        position: absolute !important;
+        width: 1px !important;
+        height: 1px !important;
+        padding: 0 !important;
+        margin: -1px !important;
+        overflow: hidden !important;
+        clip: rect(0,0,0,0) !important;
+        white-space: nowrap !important;
+        border: 0 !important;
+    }
+
+    legend {
+        margin: 0;
+        padding: 0;
+    }
+
+    input, select {
+        font-size: var(--font-size-small);
+        border: 1px solid;
+        padding: 8px 12px;
+        background-color: var(--input-background-color);
+    }
+
+    input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+    }
+
+    select {
+        width: 100%;
+    }
+
+    input:focus-visible, button:focus-visible, select:focus-visible {
+        outline: 2px solid;
+        outline-offset: 1px;
+    }
+
+    a {
+        color: black;
+    }
+
+</style>

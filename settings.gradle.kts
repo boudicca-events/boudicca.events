@@ -27,5 +27,6 @@ include("boudicca.base:remote-collector")
 
 include("boudicca.events:eventcollectors")
 include("boudicca.events:publisher-event-html")
+include("boudicca.events:publisher-html-diabolical")
 
 rootProject.name = "boudicca"

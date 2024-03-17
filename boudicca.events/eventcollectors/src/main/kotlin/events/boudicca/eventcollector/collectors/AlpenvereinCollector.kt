@@ -12,7 +12,7 @@ import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
-class AlpenverreinCollector : TwoStepEventCollector<String>("alpenverrein") {
+class AlpenvereinCollector : TwoStepEventCollector<String>("alpenverein") {
 
     private val fetcher = Fetcher(12 * 1000) //they have a crawl-delay of 12 seconds...
 
@@ -122,10 +122,11 @@ class AlpenverreinCollector : TwoStepEventCollector<String>("alpenverrein") {
     }
 
     private fun normalizeUrl(url: String): String {
-        return if (url.startsWith("https://")) {
-            url
+        val secureUrl = url.replace("http://", "https://")
+        return if (secureUrl.startsWith("https://")) {
+            secureUrl
         } else {
-            "https://www.alpenverein.at$url"
+            "https://www.alpenverein.at$secureUrl"
         }
     }
 

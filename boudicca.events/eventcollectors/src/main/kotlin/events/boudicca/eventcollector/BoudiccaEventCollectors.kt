@@ -33,7 +33,7 @@ fun main() {
         .addEventCollector(MuseumArbeitsweltCollector())
         .addEventCollector(OKHVoecklabruckCollector())
         .addEventCollector(ValugCollector())
-        .addEventCollector(AlpenverreinCollector())
+        .addEventCollector(AlpenvereinCollector())
         .build()
 
     eventCollectorCoordinator.startWebUi()

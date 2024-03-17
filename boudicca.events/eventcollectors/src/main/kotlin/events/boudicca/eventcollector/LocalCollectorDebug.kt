@@ -44,5 +44,5 @@ fun main() {
 //        .debug(MuseumArbeitsweltCollector())
 //        .debug(OKHVoecklabruckCollector())
 //        .debug(ValugCollector())
-        .debug(AlpenverreinCollector())
+        .debug(AlpenvereinCollector())
 }

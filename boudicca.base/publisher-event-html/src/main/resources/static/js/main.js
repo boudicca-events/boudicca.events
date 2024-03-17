@@ -8,8 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const resetSearchFormButton = document.getElementById("resetSearchForm");
   const loadMoreButton = document.getElementById("loadMoreButton");
   const categorySelect = document.getElementById("category");
-  const bandNameSelect = document.getElementById("bandName");
-  const musicFieldSet = document.getElementById("musicFieldSet");
+  const categoryFieldSets = document.querySelectorAll("[data-category-wanted]");
 
   loadMoreButton.addEventListener("click", () => {
     onLoadMoreSearch();
@@ -131,11 +130,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const onCategoryChange = () => {
     let category = categorySelect.value;
-    if (category === "MUSIC") {
-      musicFieldSet.classList.remove("hidden");
-    } else {
-      bandNameSelect.selectedIndex = 0;
-      musicFieldSet.classList.add("hidden");
+    for (fieldSet of categoryFieldSets) {
+      if (fieldSet.dataset["categoryWanted"] === category) {
+        fieldSet.classList.remove("hidden");
+      } else {
+        for (select of fieldSet.querySelectorAll("select")) {
+          select.selectedIndex = 0;
+        }
+        for (input of fieldSet.querySelectorAll("input")) {
+          input.value = "";
+        }
+        fieldSet.classList.add("hidden");
+      }
     }
   };
   categorySelect.addEventListener("change", onCategoryChange);

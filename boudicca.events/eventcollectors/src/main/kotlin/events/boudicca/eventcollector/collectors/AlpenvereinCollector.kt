@@ -46,6 +46,7 @@ class AlpenvereinCollector : TwoStepEventCollector<String>("alpenverein") {
         data[SemanticKeys.URL] = event
         data[SemanticKeys.SOURCES] = event
         data[SemanticKeys.TYPE] = "sport"
+        data["sport.participation"] = "active"
         data[SemanticKeys.DESCRIPTION] = eventSite.select("div.elementBoxSheet div.elementText").text()
 
         if (endDate != null) {

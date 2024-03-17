@@ -81,6 +81,8 @@ class LinzTermineCollector : EventCollector {
             } else {
                 ""
             }
+            val additionalProperties = mapAdditionalProperties(event)
+
             for (date in event.dates) {
                 mappedEvents.add(
                     Event(
@@ -88,7 +90,7 @@ class LinzTermineCollector : EventCollector {
                         date.first,
                         mapOf(
                             SemanticKeys.ENDDATE to date.second.format(DateTimeFormatter.ISO_DATE_TIME),
-                            SemanticKeys.TYPE to (event.type ?: ""),
+                            SemanticKeys.TYPE to mapEventType(event.type),
                             SemanticKeys.DESCRIPTION to description,
                             SemanticKeys.PICTUREURL to pictureUrl,
                             SemanticKeys.REGISTRATION to (if (event.freeOfCharge) "FREE" else "TICKET"),
@@ -96,12 +98,25 @@ class LinzTermineCollector : EventCollector {
                             SemanticKeys.LOCATION_NAME to (location?.name
                                 ?: event.locationFallbackName), //they do not include all locations in their location.xml files -.-
                             SemanticKeys.SOURCES to event.url + "\n" + eventsBaseUrl + "\n" + locationBaseUrl
-                        ).filter { it.value.isNotBlank() }
+                        ).plus(additionalProperties).filter { it.value.isNotBlank() }
                     )
                 )
             }
         }
         return mappedEvents
+    }
+
+    private fun mapAdditionalProperties(event: LinzTermineEvent): Map<String, String> {
+        val additionalProperties = mutableMapOf<String, String>()
+
+        if (event.type?.first == 401) {
+            additionalProperties["sport.participation"] = "watch"
+        }
+        if (event.type?.first == 402) {
+            additionalProperties["sport.participation"] = "active"
+        }
+
+        return additionalProperties
     }
 
     private fun parseEvents(): List<LinzTermineEvent> {
@@ -133,7 +148,7 @@ class LinzTermineCollector : EventCollector {
                     LinzTermineEvent(
                         it.attr("id").toInt(),
                         it.select("title").text(),
-                        it.select("tags").first()?.child(0)?.text(),
+                        findTag(it),
                         it.select("date").map {
                             Pair(
                                 LocalDateTime.parse(it.attr("dFrom"), formatter).atZone(ZoneId.of("Europe/Vienna"))
@@ -149,6 +164,15 @@ class LinzTermineCollector : EventCollector {
                     )
                 }
         }.distinctBy { it.id }
+    }
+
+    private fun findTag(event: Element): Pair<Int, String>? {
+        val tagElement = event.select("tags").first()?.child(0)
+        return if (tagElement != null) {
+            Pair(tagElement.attr("id").toInt(), tagElement.text())
+        } else {
+            null
+        }
     }
 
     private fun findLocationId(event: Element): Int? {
@@ -184,6 +208,16 @@ class LinzTermineCollector : EventCollector {
         }.associateBy { it.id }
     }
 
+    private fun mapEventType(eventType: Pair<Int, String>?): String {
+        if (eventType == null) {
+            return ""
+        }
+        if (eventType.first == 401 || eventType.first == 402) {
+            return "sport"
+        }
+        return eventType.second
+    }
+
     private fun loadXml(s: String): Document {
         return Jsoup.parse(fetcher.fetchUrl(s), Parser.xmlParser())
     }
@@ -197,7 +231,7 @@ class LinzTermineCollector : EventCollector {
     data class LinzTermineEvent(
         val id: Int,
         val name: String,
-        val type: String?,
+        val type: Pair<Int, String>?,
         val dates: List<Pair<OffsetDateTime, OffsetDateTime>>,
         val freeOfCharge: Boolean,
         val url: String,

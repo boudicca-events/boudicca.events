@@ -24,10 +24,12 @@ enum class EventCategory(val types: Set<String>) {
             "museen",
             "museum",
             "ausstellung",
-            "musical"
+            "musical",
+            "brauchtum",
         )
     ),
-    TECH(setOf("techmeetup", "technology", "technologie"));
+    TECH(setOf("techmeetup", "technology", "technologie")),
+    SPORT(setOf("sport", "football", "soccer"));
 
     companion object {
         fun getForType(type: String?): EventCategory? {

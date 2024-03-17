@@ -151,7 +151,7 @@
         </div>
     </fieldset>
 
-    <fieldset id="musicFieldSet">
+    <fieldset data-category-wanted="MUSIC">
         <legend><strong>Musik</strong></legend>
         <div class="header-search-filter">
             <div class="header-date-search">
@@ -162,6 +162,22 @@
                         {{#each filters.bandNames as |bandName|}}
                             <option value="{{bandName.first}}">{{bandName.second}}</option>
                         {{/each}}
+                    </select>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+
+    <fieldset data-category-wanted="SPORT">
+        <legend><strong>Sport</strong></legend>
+        <div class="header-search-filter">
+            <div class="header-date-search">
+                <div class="filter-input-wrapper">
+                    <label for="sportParticipation" class="filter-label">Teilnahme</label>
+                    <select name="sportParticipation" id="sportParticipation">
+                        <option value="">Beliebig</option>
+                        <option value="active">Zum Mitmachen</option>
+                        <option value="watch">Zum Zuschauen</option>
                     </select>
                 </div>
             </div>

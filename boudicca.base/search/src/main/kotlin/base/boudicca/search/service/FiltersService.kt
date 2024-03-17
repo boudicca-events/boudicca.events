@@ -4,7 +4,6 @@ import base.boudicca.api.search.model.FilterQueryDTO
 import base.boudicca.api.search.model.FilterQueryEntryDTO
 import base.boudicca.api.search.model.FilterResultDTO
 import base.boudicca.model.Entry
-import base.boudicca.search.service.util.Utils
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Service
 import java.util.concurrent.ConcurrentHashMap
@@ -18,7 +17,7 @@ class FiltersService {
 
     @EventListener
     fun onEventsUpdate(event: EntriesUpdatedEvent) {
-        this.entries = Utils.order(event.entries)
+        this.entries = event.entries.toList()
         this.cache.clear()
     }
 

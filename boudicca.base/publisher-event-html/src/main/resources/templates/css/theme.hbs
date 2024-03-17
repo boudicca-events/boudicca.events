@@ -8,6 +8,7 @@
         --color-main-yellow: #ffee5b;
         --color-main-red: #f78989;
         --color-main-green: #aafbaa;
+        --color-icon: inherit;
 
         /** font family */ 
         --font-family-open-sans: 'Open Sans', Arial, Helvetica, sans-serif;
@@ -31,6 +32,14 @@
         --space-large: 16px;
         --space-xlarge: 32px;
         --space-xxlarge: 128px;
+        /** events **/
+        --anchor-to-eventpage-border-color: black;
+        --anchor-to-eventpage-background-color: white;
+
+        --input-background-color: inherit;
+        --font-color: inherit;
+
+        --color-filterSearchButton: black;
     }
 
     html { 
@@ -40,6 +49,7 @@
     * {
         font-family: var(--font-family-open-sans);
         box-sizing: border-box;
+        color: var(--font-color);
     }
 
     p {
@@ -57,6 +67,10 @@
     .svgsprite {
         position: absolute;
         width: 0;
+    }
+
+    svg {
+        color: var(--color-icon);
     }
 
     .visible-hidden {
@@ -81,6 +95,7 @@
         font-size: var(--font-size-small);
         border: 1px solid;
         padding: 8px 12px;
+        background-color: var(--input-background-color);
     }
 
     input[type="checkbox"] {

@@ -12,7 +12,7 @@ import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
-class AlpenverreinCollector : TwoStepEventCollector<String>("alpenverrein") {
+class AlpenvereinCollector : TwoStepEventCollector<String>("alpenverein") {
 
     private val fetcher = Fetcher(12 * 1000) //they have a crawl-delay of 12 seconds...
 

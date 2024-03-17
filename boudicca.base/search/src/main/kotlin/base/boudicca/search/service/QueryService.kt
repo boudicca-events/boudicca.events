@@ -3,13 +3,13 @@ package base.boudicca.search.service
 import base.boudicca.api.search.model.QueryDTO
 import base.boudicca.api.search.model.ResultDTO
 import base.boudicca.model.Entry
-import base.boudicca.search.service.query.Evaluator
-import base.boudicca.search.service.query.Page
-import base.boudicca.search.service.query.QueryException
-import base.boudicca.search.service.query.QueryParser
-import base.boudicca.search.service.query.evaluator.NoopEvaluator
-import base.boudicca.search.service.query.evaluator.SimpleEvaluator
-import base.boudicca.search.service.util.Utils
+import base.boudicca.query.QueryException
+import base.boudicca.query.BoudiccaQueryRunner
+import base.boudicca.query.Utils
+import base.boudicca.query.evaluator.Evaluator
+import base.boudicca.query.evaluator.NoopEvaluator
+import base.boudicca.query.evaluator.Page
+import base.boudicca.query.evaluator.SimpleEvaluator
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Service
 
@@ -24,7 +24,8 @@ class QueryService {
 
     @Throws(QueryException::class)
     fun query(queryDTO: QueryDTO): ResultDTO {
-        val query = queryDTO.query ?: return Utils.offset(entries, queryDTO.offset, queryDTO.size)
+        val query =
+            queryDTO.query ?: return ResultDTO(Utils.offset(entries, queryDTO.offset, queryDTO.size), entries.size)
 
         return evaluateQuery(query, Page(queryDTO.offset ?: 0, queryDTO.size ?: 30))
     }
@@ -37,8 +38,9 @@ class QueryService {
 
     private fun evaluateQuery(query: String, page: Page): ResultDTO {
         return try {
-            val expression = QueryParser.parseQuery(query)
-            evaluator.evaluate(expression, page)
+            val expression = BoudiccaQueryRunner.parseQuery(query)
+            val queryResult = evaluator.evaluate(expression, page)
+            ResultDTO(queryResult.result, queryResult.totalResults, queryResult.error)
         } catch (e: QueryException) {
             ResultDTO(emptyList(), 0, e.message)
         }

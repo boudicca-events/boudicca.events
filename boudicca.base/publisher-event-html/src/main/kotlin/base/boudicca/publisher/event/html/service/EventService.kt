@@ -2,16 +2,16 @@ package base.boudicca.publisher.event.html.service
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.search.*
-import base.boudicca.api.search.BoudiccaQueryBuilder.after
-import base.boudicca.api.search.BoudiccaQueryBuilder.and
-import base.boudicca.api.search.BoudiccaQueryBuilder.before
-import base.boudicca.api.search.BoudiccaQueryBuilder.contains
-import base.boudicca.api.search.BoudiccaQueryBuilder.durationLonger
-import base.boudicca.api.search.BoudiccaQueryBuilder.durationShorter
-import base.boudicca.api.search.BoudiccaQueryBuilder.equals
-import base.boudicca.api.search.BoudiccaQueryBuilder.hasField
-import base.boudicca.api.search.BoudiccaQueryBuilder.not
-import base.boudicca.api.search.BoudiccaQueryBuilder.or
+import base.boudicca.query.BoudiccaQueryBuilder.after
+import base.boudicca.query.BoudiccaQueryBuilder.and
+import base.boudicca.query.BoudiccaQueryBuilder.before
+import base.boudicca.query.BoudiccaQueryBuilder.contains
+import base.boudicca.query.BoudiccaQueryBuilder.durationLonger
+import base.boudicca.query.BoudiccaQueryBuilder.durationShorter
+import base.boudicca.query.BoudiccaQueryBuilder.equals
+import base.boudicca.query.BoudiccaQueryBuilder.hasField
+import base.boudicca.query.BoudiccaQueryBuilder.not
+import base.boudicca.query.BoudiccaQueryBuilder.or
 import base.boudicca.model.Event
 import base.boudicca.model.EventCategory
 import base.boudicca.publisher.event.html.model.SearchDTO

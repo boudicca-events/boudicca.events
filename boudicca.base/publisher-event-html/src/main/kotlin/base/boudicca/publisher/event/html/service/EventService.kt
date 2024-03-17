@@ -34,6 +34,7 @@ private const val SEARCH_TYPE_ALL = "ALL"
 class EventService @Autowired constructor(
     private val pictureProxyService: PictureProxyService,
     @Value("\${boudicca.search.url}") private val searchUrl: String,
+    @Value("\${boudicca.search.additionalFilter:}") private val additionalFilter: String,
 ) {
     private val searchClient: SearchClient = createSearchClient()
     private val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy 'um' HH:mm 'Uhr'", Locale.GERMAN)
@@ -95,6 +96,9 @@ class EventService @Autowired constructor(
                     equals(SemanticKeys.RECURRENCE_TYPE, "ONCE")
                 )
             )
+        }
+        if (additionalFilter.isNotBlank()) {
+            queryParts.add(additionalFilter)
         }
         return and(queryParts)
     }

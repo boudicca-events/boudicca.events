@@ -122,10 +122,11 @@ class AlpenvereinCollector : TwoStepEventCollector<String>("alpenverein") {
     }
 
     private fun normalizeUrl(url: String): String {
-        return if (url.startsWith("https://")) {
-            url
+        val secureUrl = url.replace("http://", "https://")
+        return if (secureUrl.startsWith("https://")) {
+            secureUrl
         } else {
-            "https://www.alpenverein.at$url"
+            "https://www.alpenverein.at$secureUrl"
         }
     }
 

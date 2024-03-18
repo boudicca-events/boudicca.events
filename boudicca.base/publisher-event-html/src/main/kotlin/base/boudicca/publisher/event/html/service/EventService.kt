@@ -100,6 +100,9 @@ class EventService @Autowired constructor(
         if (additionalFilter.isNotBlank()) {
             queryParts.add(additionalFilter)
         }
+        if (!searchDTO.sportParticipation.isNullOrBlank()) {
+            queryParts.add(equals("sport.participation", searchDTO.sportParticipation!!))
+        }
         return and(queryParts)
     }
 
@@ -188,6 +191,7 @@ class EventService @Autowired constructor(
                     EventCategory.MUSIC -> "music"
                     EventCategory.ART -> "miscArt"
                     EventCategory.TECH -> "tech"
+                    EventCategory.SPORT -> "sport"
                     EventCategory.ALL -> "???"
                     EventCategory.OTHER -> null
                 }
@@ -209,6 +213,7 @@ class EventService @Autowired constructor(
             EventCategory.MUSIC -> "Musik"
             EventCategory.ART -> "Kunst"
             EventCategory.TECH -> "Technologie"
+            EventCategory.SPORT -> "Sport"
             EventCategory.ALL -> "Alle"
             EventCategory.OTHER -> "Andere"
             else -> "???"

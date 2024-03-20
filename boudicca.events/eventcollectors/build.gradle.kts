@@ -8,7 +8,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
     implementation(project(":boudicca.base:eventcollector-client"))
     implementation("org.jsoup:jsoup:1.17.2")
-    implementation("org.mnode.ical4j:ical4j:3.2.16") {
+    implementation("org.mnode.ical4j:ical4j:3.2.17") {
         exclude("org.codehaus.groovy", "groovy")
         exclude("org.codehaus.groovy", "groovy-dateutil")
     }

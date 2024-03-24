@@ -1,6 +1,7 @@
 package events.boudicca.eventcollector
 
 import base.boudicca.api.eventcollector.EventCollectorDebugger
+import base.boudicca.api.eventcollector.collectors.BoudiccaCollector
 import base.boudicca.api.eventcollector.fetcher.FileBackedFetcherCache
 import events.boudicca.eventcollector.collectors.*
 import java.io.File
@@ -14,7 +15,7 @@ fun main() {
 //        .enableEnricher("https://enricher.boudicca.events")
 //        .enableEnricher("http://localhost:8085")
         //enable this line to ingest the collected events into the local eventdb (this uses the configuration from the application.properties)
-//        .enableIngestion()
+        .enableIngestion()
 
 //        .debug(TechnologiePlauscherlCollector())
 //        .debug(JkuEventCollector())
@@ -44,5 +45,7 @@ fun main() {
 //        .debug(MuseumArbeitsweltCollector())
 //        .debug(OKHVoecklabruckCollector())
 //        .debug(ValugCollector())
-        .debug(AlpenvereinCollector())
+//        .debug(AlpenvereinCollector())
+        .debug(BoudiccaCollector("https://museumsbahn-events.at", "museumsbahnen"))
+
 }

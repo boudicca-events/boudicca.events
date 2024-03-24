@@ -54,30 +54,35 @@ class PictureProxyService {
     }
 
     private fun fetchAndResizeUrl(url: String): CacheEntry {
-        val request = HttpRequest.newBuilder().GET()
-            .uri(URI.create(url))
-            .build()
-        val response = httpClient.send(request, BodyHandlers.ofByteArray())
+        try {
+            val request = HttpRequest.newBuilder().GET()
+                .uri(URI.create(url))
+                .build()
+            val response = httpClient.send(request, BodyHandlers.ofByteArray())
 
-        val optional = if (response.statusCode() != 200) {
-            LOG.warn("response code is invalid ${response.statusCode()} for $url")
-            Optional.empty()
-        } else {
-            val body = response.body()
-            if (body.isEmpty()) {
-                LOG.warn("empty body for $url")
+            val optional = if (response.statusCode() != 200) {
+                LOG.warn("response code is invalid ${response.statusCode()} for $url")
                 Optional.empty()
             } else {
-                try {
-                    Optional.of(resize(body))
-                } catch (e: RuntimeException) {
-                    LOG.warn("error resizing image $url", e)
+                val body = response.body()
+                if (body.isEmpty()) {
+                    LOG.warn("empty body for $url")
                     Optional.empty()
+                } else {
+                    try {
+                        Optional.of(resize(body))
+                    } catch (e: RuntimeException) {
+                        LOG.warn("error resizing image $url", e)
+                        Optional.empty()
+                    }
                 }
             }
-        }
 
-        return CacheEntry(optional)
+            return CacheEntry(optional)
+        } catch (e: Exception) {
+            LOG.error("got exception while trying to fetch and resize the image with url $url", e)
+            return CacheEntry(Optional.empty())
+        }
     }
 
     private fun checkForRefresh(url: String, uuid: UUID) {

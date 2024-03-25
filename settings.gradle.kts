@@ -1,3 +1,6 @@
+plugins {
+  id("org.gradle.toolchains.foojay-resolver-convention") version "0.5.0"
+}
 include("boudicca.base")
 include("boudicca.events")
 
@@ -30,3 +33,5 @@ include("boudicca.events:eventcollectors")
 include("boudicca.events:publisher-event-html")
 
 rootProject.name = "boudicca"
+include("boudicca.base:publisher-event-html-a11ytests")
+findProject(":boudicca.base:publisher-event-html-a11ytests")?.name = "publisher-event-html-a11ytests"

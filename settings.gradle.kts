@@ -1,6 +1,3 @@
-plugins {
-  id("org.gradle.toolchains.foojay-resolver-convention") version "0.5.0"
-}
 include("boudicca.base")
 include("boudicca.events")
 
@@ -17,6 +14,7 @@ include("boudicca.base:eventdb-openapi")
 include("boudicca.base:publisher-client")
 include("boudicca.base:publisher-event-ical")
 include("boudicca.base:publisher-event-html")
+include("boudicca.base:publisher-event-html-a11ytests")
 include("boudicca.base:search")
 include("boudicca.base:search-openapi")
 include("boudicca.base:search-api")
@@ -31,7 +29,3 @@ include("boudicca.base:remote-collector")
 
 include("boudicca.events:eventcollectors")
 include("boudicca.events:publisher-event-html")
-
-rootProject.name = "boudicca"
-include("boudicca.base:publisher-event-html-a11ytests")
-findProject(":boudicca.base:publisher-event-html-a11ytests")?.name = "publisher-event-html-a11ytests"

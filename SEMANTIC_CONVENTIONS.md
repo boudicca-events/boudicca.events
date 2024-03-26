@@ -22,38 +22,39 @@ We use certain data types for the properties we expect.
 * `list<?>`: A list of elements, the `?` describes the type of the elements in the list. Currently, elements in a list
   are seperated by a newline, but this will probably change sometime
 * `enum<?>`: Has to be one of the specified distinct values
+  * Note: publishers have to be able to handle also a value that was not specified
 * `boolean`: The text "true" or "false"
 
 ### General Properties
 
 **Events have only two required properties: `name` and `startDate`**
 
-| Key                  | Meaning                                                                                              | Format                               | Usage       |
-|----------------------|------------------------------------------------------------------------------------------------------|--------------------------------------|-------------|
-| name                 | The name of the event                                                                                | text                                 | MANDATORY   |
-| startDate            | Time of start for the event                                                                          | date                                 | MANDATORY   |
-| endDate              | Time of end for the event                                                                            | date                                 | OPTIONAL    |
-| url                  | A link to the specific event page for this event. Same as source.event.page.                         | url                                  | RECOMMENDED |
-| type                 | The type of event, for example `concert`, `????` more examples please                                | text ??? maybe enum would be better? | RECOMMENDED |           
-| category             | The category of an event, for example `MUSIC`, `ART` or `TECH`, see EventCategory enum               | enum\<EventCategory>                 | RECOMMENDED |
-| description          | Text describing this event                                                                           | text                                 | RECOMMENDED |
-| description.markdown | Text describing this event, but formatted with markdown.                                             | text                                 | OPTIONAL    |
-| recurrence.type      | Describing how often an event happens. Once, rarely or very often.                                   | enum\<RecurrenceType>                | RECOMMENDED |
-| recurrence.interval  | Describing the interval with which the event recurs                                                  | text                                 | OPTIONAL    |
-| tags                 | A list of tags. TODO how to describe?                                                                | list\<text>                          | RECOMMENDED |
-| registration         | If this is a free event, a event which requires registration or a event which requires a paid ticket | enum\<Registration>                  | OPTIONAL    |
-| pictureUrl           | Url to a picture to be shown                                                                         | url                                  | DEPRECATED  |
-| pictures.json        | A json array of pictures for the event. The first picture should be the featured one.                | json\<image>                         | OPTIONAL    |
-| collectorName        | Name of the collector which collected this event                                                     | text                                 | MANDATORY   |
-| sources              | A list of all sources, line by line. This should include all URLs or other sources used.             | list\<text>                          | RECOMMENDED |
-| source.event.page    | the url of the page where the event was sourced from                                                 | url                                  | RECOMMENDED |
-| source.event.list    | an url to a list of events on the page where the event was sourced from (if available)               | url                                  | OPTIONAL    |
-| source.event.details | an url that leads to the details of the specific event on the page where the event was sourced from  | url                                  | RECOMMENDED |
+| Key                           | Meaning                                                                                                                               | Format                               | Usage       |
+|-------------------------------|---------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------|-------------|
+| name                          | The name of the event                                                                                                                 | text                                 | MANDATORY   |
+| startDate                     | Time of start for the event                                                                                                           | date                                 | MANDATORY   |
+| endDate                       | Time of end for the event                                                                                                             | date                                 | OPTIONAL    |
+| url                           | A link to the specific source page for this event. If the user wants to see more details about the event, he should find them here    | url                                  | RECOMMENDED |
+| type                          | The type of event, for example `concert`, `????` more examples please                                                                 | text ??? maybe enum would be better? | RECOMMENDED |           
+| category                      | The category of an event, for example `MUSIC`, `ART` or `TECH`, see EventCategory enum                                                | enum\<EventCategory>                 | RECOMMENDED |
+| description                   | Text describing this event                                                                                                            | text                                 | RECOMMENDED |
+| description.markdown          | Text describing this event, but formatted with markdown.                                                                              | text                                 | OPTIONAL    |
+| recurrence.type               | Describing how often an event happens. Once, rarely or very often.                                                                    | enum\<RecurrenceType>                | RECOMMENDED |
+| recurrence.interval           | Describing the interval with which the event recurs                                                                                   | text                                 | OPTIONAL    |
+| tags                          | A list of tags. TODO how to describe?                                                                                                 | list\<text>                          | RECOMMENDED |
+| registration                  | If this is a free event, a event which requires registration or a event which requires a paid ticket                                  | enum\<Registration>                  | OPTIONAL    |
+| pictureUrl                    | Url to a picture to be shown                                                                                                          | url                                  | RECOMMENDED |
+| pictureAltText                | Alt text for the picture                                                                                                              | text                                 | RECOMMENDED |
+| pictureCopyright              | Copyright attribution to be shown                                                                                                     | text                                 | OPTIONAL    |
+| collectorName                 | Name of the collector which collected this event                                                                                      | text                                 | OPTIONAL    |
+| sources                       | A list of all sources that were used to gather info for this event, line by line. This should include all URLs or other sources used. | list\<text>                          | RECOMMENDED |
+| additionalEventsFromSourceUrl | an url to page on the event source website where other events can be found (e.g. Termine or Veranstaltungen pages) (if available)     | url                                  | OPTIONAL    |
 
 #### Usage explanation
 
 `MANDATORY`: This field is required for proper operation of boudicca.
-`RECOMMENDED`: This field is not required, but it is one of the core features enabling event sorting and filtering for publishers.
+`RECOMMENDED`: This field is not required, but it is one of the core features enabling event sorting and filtering for
+publishers.
 `OPTIONAL`: This field can be used if the information is available.
 `DEPRECATED`: This field should no longer be used.
 | recurrence.type     | Describing how often an event happens. Once, rarely or very often.                                   | enum\<RecurrenceType>                |
@@ -63,6 +64,7 @@ We use certain data types for the properties we expect.
 
 * `free`: a free event which neither requires registration nor a ticket
 * `registration`: an event which requires a free registration
+* `pre-sales-only`: an event which can only be entered when buying a ticket in advance
 * `ticket`: a paid event which requires a ticket
 
 #### type
@@ -110,26 +112,6 @@ tags is an open field, so any value is permitted, but this is a list of common/k
 
 - ...
 - TODO
-
-#### Image json
-
-```json
-[
-  {
-    "url": "string",
-    "altText": "string",
-    "copyright": "string"
-  },
-  ...
-]
-```
-
-* `url`: the url where the image can be found
-* `altText`: text describing the image contents for blind users
-* `copyright`: copyright notice that can be displayed in publishers (if the copyright is unknown the event source can be
-  put here)
-
-Note: while only the url is really required it is HIGHLY RECOMMENDED to also set the other fields
 
 ### Location Properties
 

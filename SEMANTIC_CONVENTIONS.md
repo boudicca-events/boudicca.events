@@ -15,7 +15,7 @@ whole JSON-document should be encoded in UTF-8.
 
 We use certain data types for the properties we expect.
 
-* `text`: just a simple text/string*
+* `text`: just a simple text/string
 * `date`: [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) Timestamp as text, for example: `2009-06-30T18:30:00+02:00`
 * `url`: A URL as text
 * `coordinates`: longitude + latitude in Decimal degrees (DD) in the format `<latitude>, <longitute>`

@@ -56,7 +56,7 @@ tasks.register<GenerateTask>("generateTypescriptClient") {
     templateDir.set(project.rootDir.resolve("typescript_generator_overrides").path)
     configOptions.putAll(
         mapOf(
-            "npmName" to "@boudicca/search-api-client",
+            "npmName" to "@boudicca/${openApiPackageName}",
             "npmVersion" to "${project.version}",
             "supportsES6" to "true",
         )

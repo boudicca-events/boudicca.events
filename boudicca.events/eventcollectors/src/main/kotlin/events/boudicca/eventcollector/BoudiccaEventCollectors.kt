@@ -1,6 +1,7 @@
 package events.boudicca.eventcollector
 
 import base.boudicca.api.eventcollector.EventCollectorCoordinatorBuilder
+import base.boudicca.api.eventcollector.collectors.BoudiccaCollector
 import events.boudicca.eventcollector.collectors.*
 
 fun main() {
@@ -34,6 +35,7 @@ fun main() {
         .addEventCollector(OKHVoecklabruckCollector())
         .addEventCollector(ValugCollector())
         .addEventCollector(AlpenvereinCollector())
+        .addEventCollector(BoudiccaCollector("https://museumsbahn-events.at", "museumsbahnen"))
         .build()
 
     eventCollectorCoordinator.startWebUi()

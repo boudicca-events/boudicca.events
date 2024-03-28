@@ -3,10 +3,10 @@ package base.boudicca.api.eventcollector.debugger
 import base.boudicca.model.Event
 
 class CustomValidation(
-    val validationFunction: (event: Event, verbose: Boolean) -> ValidationResult,
-    val severity: ValidationSeverity,
+    private val validationFunction: (event: Event, verbose: Boolean, severity: ValidationSeverity) -> ValidationResult,
+    private val severity: ValidationSeverity,
 ) : EventCollectorValidation {
     override fun validate(event: Event, verbose: Boolean): ValidationResult {
-        return validationFunction(event, verbose)
+        return validationFunction(event, verbose, severity)
     }
 }

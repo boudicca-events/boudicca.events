@@ -1,9 +1,12 @@
 package base.boudicca.api.eventcollector.debugger.color
 
 /**
- * library is only available in jcenter https://github.com/ziggy42/kolor/issues/15
+ * this code is licensed under apache-2 license from https://github.com/ziggy42/kolor
+ * because the package is only published to jcenter https://github.com/ziggy42/kolor/issues/15
  * until it becomes available in mvcentral we have to copy the important parts.
- *
+ */
+
+/**
  * Object to add color information to strings
  * @author Andrea Pivetta
  */

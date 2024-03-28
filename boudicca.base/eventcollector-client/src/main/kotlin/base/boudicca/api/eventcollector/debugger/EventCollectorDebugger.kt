@@ -1,6 +1,8 @@
-package base.boudicca.api.eventcollector
+package base.boudicca.api.eventcollector.debugger
 
+import base.boudicca.SemanticKeys
 import base.boudicca.api.enricher.EnricherClient
+import base.boudicca.api.eventcollector.*
 import base.boudicca.api.eventcollector.collections.Collections
 import base.boudicca.api.eventcollector.fetcher.FetcherCache
 import base.boudicca.api.eventcollector.logging.CollectionsFilter
@@ -8,10 +10,11 @@ import base.boudicca.api.eventcollector.runner.*
 import base.boudicca.api.eventdb.ingest.EventDbIngestClient
 import base.boudicca.model.Event
 
-class EventCollectorDebugger {
+class EventCollectorDebugger(val verbose: Boolean = true, val keepOpen: Boolean = true) {
 
     private var runnerIngestionInterface: RunnerIngestionInterface? = null
     private var runnerEnricherInterface: RunnerEnricherInterface? = null
+    private val allEvents = mutableListOf<Event>()
 
     fun setFetcherCache(fetcherCache: FetcherCache): EventCollectorDebugger {
         Fetcher.fetcherCache = fetcherCache
@@ -52,7 +55,7 @@ class EventCollectorDebugger {
         return this
     }
 
-    fun debug(eventCollector: EventCollector) {
+    fun debug(eventCollector: EventCollector): EventCollectorDebugger {
         CollectionsFilter.alsoLog = true
         val eventCollectorAsList = listOf(eventCollector)
         val collectedEvents = mutableListOf<Event>()
@@ -73,9 +76,12 @@ class EventCollectorDebugger {
         )
         runner.run()
 
-        collectedEvents.forEach {
-            println(it)
+        if (verbose) {
+            collectedEvents.forEach {
+                println(it)
+            }
         }
+        allEvents.addAll(collectedEvents)
         val fullCollection = Collections.getLastFullCollection()
         println(fullCollection)
         println("debugger collected ${collectedEvents.size} events")
@@ -88,8 +94,33 @@ class EventCollectorDebugger {
             println("found $warningCount warnings!")
         }
 
-        readlnOrNull()
+        if (keepOpen) {
+            readlnOrNull()
+        }
         eventCollectorWebUi.stop()
+
+        return this
+    }
+
+    fun validate(
+        validations: List<EventCollectorValidation>
+    ): EventCollectorDebugger {
+        allEvents.forEach { event ->
+            println("=========================================================================")
+            println("${event.data.get(SemanticKeys.COLLECTORNAME)} - ${event.startDate} ${event.name}")
+            validations.forEach { validation ->
+
+            }
+            println()
+            println()
+        }
+        return this
+    }
+
+    fun clearEvents(): EventCollectorDebugger {
+        allEvents.clear()
+        return this
     }
 
 }
+

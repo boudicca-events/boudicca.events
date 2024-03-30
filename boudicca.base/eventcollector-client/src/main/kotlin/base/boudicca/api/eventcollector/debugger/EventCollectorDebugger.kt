@@ -113,7 +113,7 @@ class EventCollectorDebugger(val verboseDebugging: Boolean = true,
         allEvents.forEach { event ->
             println("=========================================================================")
             println("${event.data.get(SemanticKeys.COLLECTORNAME)} - ${event.startDate} ${event.name}")
-            val highestSeverity = validations.maxOfOrNull { validation ->
+            val highestSeverity = validations.minOfOrNull { validation ->
                 validation.validate(event, verboseValidation)
             }
             if (highestSeverity == ValidationResult.Error) {

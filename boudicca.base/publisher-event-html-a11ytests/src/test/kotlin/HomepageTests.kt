@@ -14,11 +14,11 @@ class HomepageTests {
     val context: BrowserContext = browser.newContext()
     val page: Page = context.newPage()
 
-    // it should point to localhost
-    page.navigate("https://boudicca.events/")
+    // TODO: add a config to run the OnlineHtmlPublisher in advance
+    page.navigate("http://localhost:8080/")
 
     val accessibilityScanResults: AxeResults = AxeBuilder(page).analyze()
 
-    assertEquals( listOf<Any>(), accessibilityScanResults.violations)
+    assertEquals(listOf<Any>(), accessibilityScanResults.violations)
   }
 }

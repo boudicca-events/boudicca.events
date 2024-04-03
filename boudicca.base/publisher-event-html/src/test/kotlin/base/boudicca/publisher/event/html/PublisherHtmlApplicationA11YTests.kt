@@ -29,7 +29,7 @@ class PublisherHtmlApplicationA11YTests {
     val context: BrowserContext = browser.newContext()
     val page: Page = context.newPage()
 
-    page.navigate("http://localhost:$port/");
+    page.navigate("http://localhost:$port/")
 
     val accessibilityScanResults: AxeResults = AxeBuilder(page).analyze()
 

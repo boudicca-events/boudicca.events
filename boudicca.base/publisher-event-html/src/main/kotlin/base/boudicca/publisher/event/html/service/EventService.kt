@@ -15,6 +15,7 @@ import base.boudicca.query.BoudiccaQueryBuilder.or
 import base.boudicca.model.Event
 import base.boudicca.model.EventCategory
 import base.boudicca.publisher.event.html.model.SearchDTO
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -36,12 +37,14 @@ class EventService @Autowired constructor(
     private val caller: SearchServiceCaller,
     @Value("\${boudicca.search.additionalFilter:}") private val additionalFilter: String,
 ) {
+    private val LOG = LoggerFactory.getLogger(this.javaClass)
     private val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy 'um' HH:mm 'Uhr'", Locale.GERMAN)
     private val localDateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
     @Throws(EventServiceException::class)
     fun search(searchDTO: SearchDTO): List<Map<String, String?>> {
-        val events = caller.queryEvents(QueryDTO(generateQuery(searchDTO), searchDTO.offset ?: 0))
+        val events = caller.search(QueryDTO(generateQuery(searchDTO), searchDTO.offset ?: 0))
+        LOG.error("events data in search fn: $events")
         return mapEvents(events)
     }
 

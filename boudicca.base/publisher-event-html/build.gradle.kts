@@ -10,4 +10,5 @@ dependencies {
     api("com.deque.html.axe-core:playwright:4.8.2")
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
 }

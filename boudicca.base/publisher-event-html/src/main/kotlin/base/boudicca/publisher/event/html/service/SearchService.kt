@@ -11,7 +11,7 @@ class SearchService @Autowired constructor(
 ): SearchServiceCaller {
   private val client: SearchClient = createSearchClient(searchUrl)
 
-  override fun queryEvents(queryDTO: QueryDTO): SearchResultDTO {
+  override fun search(queryDTO: QueryDTO): SearchResultDTO {
     return client.queryEvents(queryDTO)
   }
 

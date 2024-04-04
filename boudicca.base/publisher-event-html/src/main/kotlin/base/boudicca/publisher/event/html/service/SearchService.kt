@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service
 class SearchService @Autowired constructor(
   @Value("\${boudicca.search.url}") private val searchUrl: String,
 ): SearchServiceCaller {
-  var client: SearchClient = createSearchClient(searchUrl)
+  private val client: SearchClient = createSearchClient(searchUrl)
 
   override fun queryEvents(queryDTO: QueryDTO): SearchResultDTO {
     return client.queryEvents(queryDTO)

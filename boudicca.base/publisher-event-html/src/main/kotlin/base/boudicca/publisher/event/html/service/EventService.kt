@@ -156,6 +156,7 @@ class EventService @Autowired constructor(
                         pictureProxyService.submitPicture(event.data["pictureUrl"]!!).toString()
                     else
                         "",
+            "pictureAltText" to (event.data[SemanticKeys.PICTUREALTTEXT] ?: ""),
             "accessibilityProperties" to getAllAccessibilityValues(event).joinToString(", "),
         )
     }

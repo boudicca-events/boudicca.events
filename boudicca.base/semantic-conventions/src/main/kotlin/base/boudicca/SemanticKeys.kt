@@ -12,6 +12,7 @@ object SemanticKeys {
     const val TAGS = "tags"
     const val REGISTRATION = "registration"
     const val PICTUREURL = "pictureUrl"
+    const val PICTUREALTTEXT = "pictureAltText"
     const val COLLECTORNAME = "collectorName"
     const val SOURCES = "sources"
     const val RECURRENCE_TYPE = "recurrence.type"

@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
 @Service
-class SearchService @Autowired constructor(
+class SearchServiceCallerImpl @Autowired constructor(
   @Value("\${boudicca.search.url}") private val searchUrl: String,
 ): SearchServiceCaller {
   private val client: SearchClient = createSearchClient(searchUrl)

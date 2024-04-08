@@ -1,7 +1,7 @@
 <div class="event">
         <div class="event-image {{#if event.category}}event-image-{{event.category}}{{/if}}">
             {{#if event.pictureUuid}}
-                <img src="/picture?uuid={{event.pictureUuid}}" style="height:100px;max-height:250px;max-width:300px;" />
+                <img src="/picture?uuid={{event.pictureUuid}}" style="height:100px;max-height:250px;max-width:300px;" alt="{{#if event.pictureAltText}}{{event.pictureAltText}}{{else}}Event Bild{{/if}}" aria-label="Event Bild" aria-labelledby="image" />
             {{else}}
                 <svg title="Event Bild" viewBox="0 0 512 512" height="100px" >
                     <use xlink:href="#{{#if event.category}}{{event.category}}{{else}}image{{/if}}"></use>

@@ -10,9 +10,14 @@ import com.microsoft.playwright.Browser
 import com.microsoft.playwright.BrowserContext
 import com.microsoft.playwright.Page
 import com.microsoft.playwright.Playwright
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.boot.test.web.server.LocalServerPort
@@ -26,23 +31,49 @@ import java.time.OffsetDateTime
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @ExtendWith(SpringExtension::class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Tag("playwright")
 class PublisherHtmlApplicationA11YTests {
+  // TODO: generalize the class to have before and after hooks
+  // TODO: run the test in headed mode on local
+  // TODO: have the test report on a github
+  // TODO: find a way to keep the mock data in
 
   @LocalServerPort
   private val port = 0
 
   var playwright: Playwright = Playwright.create()
 
+  lateinit var browser: Browser
+  lateinit var context: BrowserContext
+  lateinit var page: Page
+
   @MockBean
   lateinit var searchServiceCaller: SearchServiceCaller
 
+  @BeforeAll
+  fun launchBrowser() {
+    browser = playwright.chromium().launch()
+  }
+
+  @BeforeEach
+  fun createContextAndPage() {
+    context = browser.newContext()
+    page = context.newPage()
+  }
+
+  @AfterAll
+  fun closeBrowser() {
+    playwright.close()
+  }
+
+  @AfterEach
+  fun closeContext() {
+    context.close()
+  }
+
   @Test
   fun shouldNotHaveAutomaticallyDetectableAccessibilityIssues() {
-    val browser: Browser = playwright.chromium().launch()
-    val context: BrowserContext = browser.newContext()
-    val page: Page = context.newPage()
-
     whenever(searchServiceCaller!!.search(any())).thenReturn(
       SearchResultDTO(
         listOf(

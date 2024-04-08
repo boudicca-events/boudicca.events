@@ -15,7 +15,6 @@ import base.boudicca.query.BoudiccaQueryBuilder.or
 import base.boudicca.model.Event
 import base.boudicca.model.EventCategory
 import base.boudicca.publisher.event.html.model.SearchDTO
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service

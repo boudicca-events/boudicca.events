@@ -37,14 +37,12 @@ class EventService @Autowired constructor(
     private val caller: SearchServiceCaller,
     @Value("\${boudicca.search.additionalFilter:}") private val additionalFilter: String,
 ) {
-    private val LOG = LoggerFactory.getLogger(this.javaClass)
     private val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy 'um' HH:mm 'Uhr'", Locale.GERMAN)
     private val localDateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
     @Throws(EventServiceException::class)
     fun search(searchDTO: SearchDTO): List<Map<String, String?>> {
         val events = caller.search(QueryDTO(generateQuery(searchDTO), searchDTO.offset ?: 0))
-        LOG.error("events data in search fn: $events")
         return mapEvents(events)
     }
 

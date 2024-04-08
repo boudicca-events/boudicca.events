@@ -1,6 +1,6 @@
 package events.boudicca.eventcollector
 
-import base.boudicca.api.eventcollector.EventCollectorDebugger
+import base.boudicca.api.eventcollector.debugger.EventCollectorDebugger
 import base.boudicca.api.eventcollector.fetcher.FileBackedFetcherCache
 import events.boudicca.eventcollector.collectors.*
 import java.io.File

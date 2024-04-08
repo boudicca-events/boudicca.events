@@ -8,6 +8,7 @@ import com.deque.html.axecore.playwright.AxeBuilder
 import com.deque.html.axecore.results.AxeResults
 import com.microsoft.playwright.Browser
 import com.microsoft.playwright.BrowserContext
+import com.microsoft.playwright.BrowserType.LaunchOptions
 import com.microsoft.playwright.Page
 import com.microsoft.playwright.Playwright
 import org.junit.jupiter.api.*
@@ -27,13 +28,10 @@ import java.time.OffsetDateTime
 import java.util.*
 import java.util.stream.Stream
 
-
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @ExtendWith(SpringExtension::class)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Tag("playwright")
-class PublisherHtmlApplicationA11YTests {
-  // TODO: generalize the class to have before and after hooks
+class PublisherHtmlApplicationA11YTests: E2ETestFixture() {
   // TODO: run the test in headed mode on local
   // TODO: have the test report on a github
   // TODO: find a way to keep the mock data in
@@ -41,35 +39,8 @@ class PublisherHtmlApplicationA11YTests {
   @LocalServerPort
   private val port = 0
 
-  var playwright: Playwright = Playwright.create()
-
-  lateinit var browser: Browser
-  lateinit var context: BrowserContext
-  lateinit var page: Page
-
   @MockBean
   lateinit var searchServiceCaller: SearchServiceCaller
-
-  @BeforeAll
-  fun launchBrowser() {
-    browser = playwright.chromium().launch()
-  }
-
-  @BeforeEach
-  fun createContextAndPage() {
-    context = browser.newContext()
-    page = context.newPage()
-  }
-
-  @AfterAll
-  fun closeBrowser() {
-    playwright.close()
-  }
-
-  @AfterEach
-  fun closeContext() {
-    context.close()
-  }
 
   @ParameterizedTest
   @MethodSource("testData")

@@ -39,13 +39,11 @@ class PublisherHtmlApplicationA11YTests: E2ETestFixture() {
     events: List<Event>,
     filters: Map<String, List<String>>
   ) {
-    whenever(searchServiceCaller!!.search(any())).thenReturn(SearchResultDTO(events, 1, null))
-    whenever(searchServiceCaller!!.getFiltersFor(any())).thenReturn(filters)
+    setupSearchServiceCaller(events, filters)
 
     page.navigate("http://localhost:$port/")
 
     val accessibilityScanResults: AxeResults = AxeBuilder(page).analyze()
-
     assertEquals(listOf<Any>(), accessibilityScanResults.violations)
   }
 
@@ -55,8 +53,7 @@ class PublisherHtmlApplicationA11YTests: E2ETestFixture() {
     events: List<Event>,
     filters: Map<String, List<String>>
   ) {
-    whenever(searchServiceCaller!!.search(any())).thenReturn(SearchResultDTO(events, 1, null))
-    whenever(searchServiceCaller!!.getFiltersFor(any())).thenReturn(filters)
+    setupSearchServiceCaller(events, filters)
 
     page.navigate("http://localhost:$port/")
 
@@ -72,5 +69,10 @@ class PublisherHtmlApplicationA11YTests: E2ETestFixture() {
       .analyze()
 
     assertEquals(listOf<Any>(), accessibilityScanResults.violations)
+  }
+
+  private fun setupSearchServiceCaller(events: List<Event>, filters: Map<String, List<String>>) {
+    whenever(searchServiceCaller!!.search(any())).thenReturn(SearchResultDTO(events, 1, null))
+    whenever(searchServiceCaller!!.getFiltersFor(any())).thenReturn(filters)
   }
 }

@@ -14,8 +14,8 @@ class IcalResource @Autowired constructor(private val calendarService: CalendarS
         "/calendar.ics",
         produces = [MediaType.APPLICATION_OCTET_STREAM_VALUE],
     )
-    fun getAllEvents(@RequestParam query: String): ResponseEntity<ByteArray> {
-        val calendarFile = calendarService.getEvents(query)
+    fun getAllEvents(@RequestParam(required = false) query: String?): ResponseEntity<ByteArray> {
+        val calendarFile = calendarService.getEvents(query ?: "")
         return ResponseEntity.ok()
             .header("Content-Disposition", "attachment;filename=calendar.ics")
             .body(calendarFile)

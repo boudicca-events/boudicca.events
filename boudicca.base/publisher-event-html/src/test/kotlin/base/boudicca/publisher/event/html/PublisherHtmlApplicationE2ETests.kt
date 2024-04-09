@@ -109,6 +109,12 @@ class PublisherHtmlApplicationE2ETests: E2ETestFixture() {
     assert(eventSize == 30) { "Expected 30 events, but found $eventSize events." }
   }
 
+  // TODO: test filters
+  // TODO: test event link "zur eventseite"
+  // TODO: test event with correct image
+  // TODO: test event with accessibility icon
+  // TODO: test "mehr laden"
+
   private fun setupSearchServiceCaller(events: List<Event>, filters: Map<String, List<String>>) {
     whenever(searchServiceCaller!!.search(any())).thenReturn(SearchResultDTO(events, 1, null))
     whenever(searchServiceCaller!!.getFiltersFor(any())).thenReturn(filters)

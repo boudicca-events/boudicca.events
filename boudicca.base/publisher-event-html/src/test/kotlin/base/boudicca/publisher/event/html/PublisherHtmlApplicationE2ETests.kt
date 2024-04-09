@@ -41,7 +41,7 @@ class PublisherHtmlApplicationE2ETests: E2ETestFixture() {
     setupSearchServiceCaller(events, filters)
 
     page.navigate("http://localhost:$port/")
-    assertThat(page).hasTitle("Boudicca");
+    assertThat(page).hasTitle("Boudicca")
   }
 
   @ParameterizedTest

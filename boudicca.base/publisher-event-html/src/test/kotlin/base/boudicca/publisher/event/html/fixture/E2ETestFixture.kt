@@ -1,4 +1,4 @@
-package base.boudicca.publisher.event.html
+package base.boudicca.publisher.event.html.fixture
 
 import com.microsoft.playwright.*
 import org.junit.jupiter.api.*

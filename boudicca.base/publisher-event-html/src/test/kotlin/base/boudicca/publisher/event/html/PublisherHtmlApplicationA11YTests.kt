@@ -2,6 +2,7 @@ package base.boudicca.publisher.event.html
 
 import base.boudicca.api.search.SearchResultDTO
 import base.boudicca.model.Event
+import base.boudicca.publisher.event.html.fixture.E2ETestFixture
 import base.boudicca.publisher.event.html.service.SearchServiceCaller
 import com.deque.html.axecore.playwright.AxeBuilder
 import com.deque.html.axecore.results.AxeResults

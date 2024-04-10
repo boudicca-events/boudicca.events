@@ -111,13 +111,11 @@ class PublisherHtmlApplicationE2ETests: E2ETestFixture() {
 
     page.navigate("http://localhost:$port/")
 
-    assertTrue(page.locator(".anchor-to-eventpage").textContent() == "https://www.event.page.at/")
+    assertTrue(page.locator(".anchor-to-eventpage").getAttribute("href") == "https://www.event.page.at/")
   }
 
   // TODO: test filters
-  // TODO: test event link "zur eventseite"
   // TODO: test event with correct image
-  // TODO: test event with accessibility icon
   // TODO: test "mehr laden"
 
   private fun setupSearchServiceCaller(events: List<Event>, filters: Map<String, List<String>>) {

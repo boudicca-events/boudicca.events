@@ -1,11 +1,13 @@
 package base.boudicca.publisher.event.html
 
+import base.boudicca.api.search.QueryDTO
 import base.boudicca.api.search.SearchResultDTO
 import base.boudicca.model.Event
 import base.boudicca.publisher.event.html.fixture.E2ETestFixture
 import base.boudicca.publisher.event.html.service.SearchServiceCaller
 import base.boudicca.publisher.event.html.testdata.E2EGeneralTestData
 import base.boudicca.publisher.event.html.testdata.E2ESingleEventTestData
+import base.boudicca.publisher.event.html.testdata.ListOfEventWithDifferentNameToBeSearchable
 import base.boudicca.publisher.event.html.testdata.SingleEventWithA11YInformation
 import com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -19,6 +21,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import java.time.OffsetDateTime
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -114,12 +117,49 @@ class PublisherHtmlApplicationE2ETests: E2ETestFixture() {
     assertTrue(page.locator(".anchor-to-eventpage").getAttribute("href") == "https://www.event.page.at/")
   }
 
+  @ParameterizedTest
+  @ArgumentsSource(ListOfEventWithDifferentNameToBeSearchable::class)
+  fun shouldBeAbleToSearchBetweenEvents(
+    events: List<Event>,
+    filters: Map<String, List<String>>
+  ) {
+    whenever(searchServiceCaller!!.search(any())).then {
+      val queryArgument = it.arguments.first() as QueryDTO
+      if (queryArgument.query.contains("Cultural")) {
+        SearchResultDTO(
+          listOf(
+            Event("Cultural Event at Posthof", OffsetDateTime.now(), mapOf())
+          ),
+          1,
+          null
+        )
+      } else {
+        SearchResultDTO(
+          events,
+          events.size,
+          null
+        )
+      }
+    }
+    whenever(searchServiceCaller!!.getFiltersFor(any())).thenReturn(filters)
+
+    page.navigate("http://localhost:$port")
+
+    page.getByTestId("search-field").fill("Cultural")
+    page.getByTestId("search-field").press("Enter")
+
+    val events = page.querySelectorAll(".event")
+    val eventSize = events.size
+
+    assertTrue(eventSize == 1) { "Expected 1 event, but found $eventSize events." }
+  }
+
   // TODO: test filters
   // TODO: test event with correct image
   // TODO: test "mehr laden"
 
   private fun setupSearchServiceCaller(events: List<Event>, filters: Map<String, List<String>>) {
-    whenever(searchServiceCaller!!.search(any())).thenReturn(SearchResultDTO(events, 1, null))
+    whenever(searchServiceCaller!!.search(any())).thenReturn(SearchResultDTO(events, events.size, null))
     whenever(searchServiceCaller!!.getFiltersFor(any())).thenReturn(filters)
   }
 }

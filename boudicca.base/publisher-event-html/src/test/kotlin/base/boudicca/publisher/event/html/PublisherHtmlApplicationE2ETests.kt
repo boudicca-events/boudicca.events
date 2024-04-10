@@ -6,9 +6,7 @@ import base.boudicca.publisher.event.html.fixture.E2ETestFixture
 import base.boudicca.publisher.event.html.service.SearchServiceCaller
 import base.boudicca.publisher.event.html.testdata.E2EGeneralTestData
 import base.boudicca.publisher.event.html.testdata.E2ESingleEventTestData
-import base.boudicca.publisher.event.html.testdata.E2ESingleEventWithoutURL
 import base.boudicca.publisher.event.html.testdata.SingleEventWithA11YInformation
-import base.boudicca.publisher.event.html.util.SnapshotHandler.SnapshotHandler
 import com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Tag
@@ -101,6 +99,19 @@ class PublisherHtmlApplicationE2ETests: E2ETestFixture() {
     val eventSize = events.size
 
     assertTrue(eventSize == 30) { "Expected 30 events, but found $eventSize events." }
+  }
+
+  @ParameterizedTest
+  @ArgumentsSource(E2ESingleEventTestData::class)
+  fun shouldHaveEventUrl(
+    events: List<Event>,
+    filters: Map<String, List<String>>
+  ) {
+    setupSearchServiceCaller(events, filters)
+
+    page.navigate("http://localhost:$port/")
+
+    assertTrue(page.locator(".anchor-to-eventpage").textContent() == "https://www.event.page.at/")
   }
 
   // TODO: test filters

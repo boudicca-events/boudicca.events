@@ -7,6 +7,7 @@ import base.boudicca.publisher.event.html.service.SearchServiceCaller
 import base.boudicca.publisher.event.html.testdata.E2EGeneralTestData
 import base.boudicca.publisher.event.html.testdata.E2ESingleEventTestData
 import base.boudicca.publisher.event.html.testdata.E2ESingleEventWithoutURL
+import base.boudicca.publisher.event.html.testdata.SingleEventWithA11YInformation
 import base.boudicca.publisher.event.html.util.SnapshotHandler.SnapshotHandler
 import com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -74,24 +75,16 @@ class PublisherHtmlApplicationE2ETests: E2ETestFixture() {
   }
 
   @ParameterizedTest
-  @ArgumentsSource(E2ESingleEventWithoutURL::class)
-  fun eventImageShouldBeCorrect(
+  @ArgumentsSource(SingleEventWithA11YInformation::class)
+  fun shouldDisplayA11YIconWhenTheEventIsAccessible(
     events: List<Event>,
     filters: Map<String, List<String>>
   ) {
     setupSearchServiceCaller(events, filters)
 
-    val snapshotHandler = SnapshotHandler("eventImageShouldBeCorrect.snapshot", "snapshot")
-
     page.navigate("http://localhost:$port/")
 
-    val image = page.locator(".event-image").innerHTML()
-
-    if (!snapshotHandler.exists()) {
-      snapshotHandler.save(image)
-    } else {
-      assertTrue(image == snapshotHandler.read())
-    }
+    assertThat(page.locator(".accessibility-details")).isVisible()
   }
 
   @ParameterizedTest

@@ -9,6 +9,7 @@ import base.boudicca.publisher.event.html.testdata.E2ESingleEventTestData
 import base.boudicca.publisher.event.html.testdata.E2ESingleEventWithoutURL
 import base.boudicca.publisher.event.html.util.SnapshotHandler.SnapshotHandler
 import com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
@@ -89,7 +90,7 @@ class PublisherHtmlApplicationE2ETests: E2ETestFixture() {
     if (!snapshotHandler.exists()) {
       snapshotHandler.save(image)
     } else {
-      assert(image == snapshotHandler.read())
+      assertTrue(image == snapshotHandler.read())
     }
   }
 
@@ -106,7 +107,7 @@ class PublisherHtmlApplicationE2ETests: E2ETestFixture() {
     val events = page.querySelectorAll(".event")
     val eventSize = events.size
 
-    assert(eventSize == 30) { "Expected 30 events, but found $eventSize events." }
+    assertTrue(eventSize == 30) { "Expected 30 events, but found $eventSize events." }
   }
 
   // TODO: test filters

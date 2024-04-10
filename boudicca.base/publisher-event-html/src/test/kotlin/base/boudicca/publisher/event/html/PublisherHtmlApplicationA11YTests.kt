@@ -25,7 +25,7 @@ import org.junit.jupiter.params.provider.ArgumentsSource
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @ExtendWith(SpringExtension::class)
 @Tag("playwright")
-class PublisherHtmlApplicationA11YTests: E2ETestFixture() {
+class PublisherHtmlApplicationA11YTests : E2ETestFixture() {
 
   @LocalServerPort
   private val port = 0

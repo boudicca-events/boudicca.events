@@ -191,11 +191,9 @@ class PublisherHtmlApplicationE2ETests: E2ETestFixture() {
     page.locator("[name='locationCity']").selectOption("Linz")
     page.locator("button[id='filterSearchButton']").click()
 
-    val drawer = page.waitForSelector("#drawer")
-
-    drawer.waitForElementState(ElementState.HIDDEN)
-
-    assertTrue(drawer.isHidden == true)
+    page.waitForFunction(
+      "() => !document.querySelector('#drawer').classList.contains('drawer-open')"
+    )
 
     val events = page.querySelectorAll(".event")
     val eventSize = events.size

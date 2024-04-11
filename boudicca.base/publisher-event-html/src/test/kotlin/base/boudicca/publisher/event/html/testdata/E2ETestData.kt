@@ -157,3 +157,63 @@ class ListOfEventWithDifferentNameToBeSearchable : ArgumentsProvider {
     return data
   }
 }
+
+class ListOfFilterableEvents : ArgumentsProvider {
+  override fun provideArguments(p0: ExtensionContext?): Stream<out Arguments> {
+    return Stream.of(
+      Arguments.of(
+        listOf(
+          Event("Musical Event In Innenstadt", OffsetDateTime.now(), musicalEventData()),
+          Event("Sport Event at JKU", OffsetDateTime.now(), sportEventData()),
+          Event("Cultural Event at Posthof", OffsetDateTime.now(), culturalEventData())
+        ),
+        mapOf(
+          SemanticKeys.LOCATION_NAME to listOf("Theater", "Cinema", "Sport Complex"),
+          SemanticKeys.LOCATION_CITY to listOf("Linz", "Graz", "Wien"),
+          SemanticKeys.CONCERT_BANDLIST to listOf("Imagine Dragons", "Beatles", "Metallica")
+        )
+      )
+    )
+  }
+
+  private fun musicalEventData(): Map<String, String> {
+    val data = mutableMapOf<String, String>()
+    val URL = "https://www.event.page.at/musical-event"
+
+    data[SemanticKeys.URL] = URL
+    data[SemanticKeys.DESCRIPTION] = "long description of musical event"
+    data[SemanticKeys.LOCATION_NAME] = "Theater"
+    data[SemanticKeys.LOCATION_URL] = "https://www.event.page.at/theater"
+    data[SemanticKeys.LOCATION_CITY] = "Linz"
+    data[SemanticKeys.SOURCES] = URL
+    data[SemanticKeys.CONCERT_BANDLIST] = "Imagine Dragons"
+
+    return data
+  }
+
+  private fun sportEventData(): Map<String, String> {
+    val data = mutableMapOf<String, String>()
+    val URL = "https://www.event.page.at/sport-event"
+
+    data[SemanticKeys.DESCRIPTION] = "long description of a cinema"
+    data[SemanticKeys.LOCATION_NAME] = "Cinema"
+    data[SemanticKeys.LOCATION_URL] = "https://www.event.page.at/cinema"
+    data[SemanticKeys.LOCATION_CITY] = "Graz"
+    data[SemanticKeys.SOURCES] = URL
+
+    return data
+  }
+
+  private fun culturalEventData(): Map<String, String> {
+    val data = mutableMapOf<String, String>()
+    val URL = "https://www.event.page.at/cultural-event"
+
+    data[SemanticKeys.DESCRIPTION] = "long description of a sport complex"
+    data[SemanticKeys.LOCATION_NAME] = "Sport Complex"
+    data[SemanticKeys.LOCATION_URL] = "https://www.event.page.at/sport"
+    data[SemanticKeys.LOCATION_CITY] = "Wien"
+    data[SemanticKeys.SOURCES] = URL
+
+    return data
+  }
+}

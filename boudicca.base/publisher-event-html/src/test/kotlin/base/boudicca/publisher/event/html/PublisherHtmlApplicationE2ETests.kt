@@ -5,10 +5,7 @@ import base.boudicca.api.search.SearchResultDTO
 import base.boudicca.model.Event
 import base.boudicca.publisher.event.html.fixture.E2ETestFixture
 import base.boudicca.publisher.event.html.service.SearchServiceCaller
-import base.boudicca.publisher.event.html.testdata.E2EGeneralTestData
-import base.boudicca.publisher.event.html.testdata.E2ESingleEventTestData
-import base.boudicca.publisher.event.html.testdata.ListOfEventWithDifferentNameToBeSearchable
-import base.boudicca.publisher.event.html.testdata.SingleEventWithA11YInformation
+import base.boudicca.publisher.event.html.testdata.*
 import com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Tag
@@ -152,10 +149,49 @@ class PublisherHtmlApplicationE2ETests: E2ETestFixture() {
     val eventSize = events.size
 
     assertTrue(eventSize == 1) { "Expected 1 event, but found $eventSize events." }
+    assertThat(page.locator(".event")).containsText("Cultural")
+  }
+
+  @ParameterizedTest
+  @ArgumentsSource(ListOfFilterableEvents::class)
+  fun shouldBeAbleToFilterEvents(
+    events: List<Event>,
+    filters: Map<String, List<String>>
+  ) {
+    whenever(searchServiceCaller!!.search(any())).then {
+      val queryArgument = it.arguments.first() as QueryDTO
+      if (queryArgument.query.contains("Cultural")) {
+        SearchResultDTO(
+          listOf(
+            Event("Cultural Event at Posthof", OffsetDateTime.now(), mapOf())
+          ),
+          1,
+          null
+        )
+      } else {
+        SearchResultDTO(
+          events,
+          events.size,
+          null
+        )
+      }
+    }
+    whenever(searchServiceCaller!!.getFiltersFor(any())).thenReturn(filters)
+
+    page.navigate("http://localhost:$port")
+
+    page.locator("button[id=\"filterButton\"]").click()
+
+    // It is important to waitFor() the page to be in the desired
+    // state *before* running analyze(). Otherwise, axe might not
+    // find all the elements your test expects it to scan.
+    page.locator("#drawer").waitFor()
+
+
+    assertTrue(true == false)
   }
 
   // TODO: test filters
-  // TODO: test event with correct image
   // TODO: test "mehr laden"
 
   private fun setupSearchServiceCaller(events: List<Event>, filters: Map<String, List<String>>) {

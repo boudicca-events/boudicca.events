@@ -17,7 +17,7 @@ open class E2ETestFixture {
       BrowserType
         .LaunchOptions()
         .setHeadless(false)
-        .setSlowMo(10.0)
+        .setSlowMo(100.0)
     )
   }
 

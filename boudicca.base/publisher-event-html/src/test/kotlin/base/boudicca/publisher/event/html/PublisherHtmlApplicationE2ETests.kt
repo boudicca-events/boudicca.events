@@ -7,6 +7,7 @@ import base.boudicca.publisher.event.html.fixture.E2ETestFixture
 import base.boudicca.publisher.event.html.service.SearchServiceCaller
 import base.boudicca.publisher.event.html.testdata.*
 import com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat
+import com.microsoft.playwright.options.ElementState
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.extension.ExtendWith
@@ -160,10 +161,10 @@ class PublisherHtmlApplicationE2ETests: E2ETestFixture() {
   ) {
     whenever(searchServiceCaller!!.search(any())).then {
       val queryArgument = it.arguments.first() as QueryDTO
-      if (queryArgument.query.contains("Cultural")) {
+      if (queryArgument.query.contains("Linz")) {
         SearchResultDTO(
           listOf(
-            Event("Cultural Event at Posthof", OffsetDateTime.now(), mapOf())
+            Event("Cultural Event at Posthof", OffsetDateTime.now(), mapOf("city" to "Linz"))
           ),
           1,
           null
@@ -187,11 +188,22 @@ class PublisherHtmlApplicationE2ETests: E2ETestFixture() {
     // find all the elements your test expects it to scan.
     page.locator("#drawer").waitFor()
 
+    page.locator("[name='locationCity']").selectOption("Linz")
+    page.locator("button[id='filterSearchButton']").click()
 
-    assertTrue(true == false)
+    val drawer = page.waitForSelector("#drawer")
+
+    drawer.waitForElementState(ElementState.HIDDEN)
+
+    assertTrue(drawer.isHidden == true)
+
+    val events = page.querySelectorAll(".event")
+    val eventSize = events.size
+
+    assertTrue(eventSize == 1) { "Expected 1 event, but found $eventSize events." }
+    assertThat(page.locator(".event")).containsText("Cultural")
   }
 
-  // TODO: test filters
   // TODO: test "mehr laden"
 
   private fun setupSearchServiceCaller(events: List<Event>, filters: Map<String, List<String>>) {

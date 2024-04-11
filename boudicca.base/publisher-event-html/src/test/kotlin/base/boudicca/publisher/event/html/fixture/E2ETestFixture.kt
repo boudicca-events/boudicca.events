@@ -16,7 +16,7 @@ open class E2ETestFixture {
     browser = playwright.chromium().launch(
       BrowserType
         .LaunchOptions()
-        .setHeadless(false)
+        .setHeadless(true)
         .setSlowMo(100.0)
     )
   }

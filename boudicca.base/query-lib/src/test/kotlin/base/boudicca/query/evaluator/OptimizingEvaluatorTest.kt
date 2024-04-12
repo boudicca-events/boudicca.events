@@ -1,8 +1,8 @@
 package base.boudicca.query.evaluator
 
-class SimpleEvaluatorTest : AbstractEvaluatorTest() {
+class OptimizingEvaluatorTest : AbstractEvaluatorTest() {
     override fun createEvaluator(entries: Collection<Map<String, String>>): Evaluator {
-        return SimpleEvaluator(entries)
+        return OptimizingEvaluator(entries)
     }
 }
 

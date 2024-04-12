@@ -12,6 +12,6 @@ dependencies {
     implementation("org.apache.velocity:velocity-engine-core:2.3")
     implementation("org.apache.velocity.tools:velocity-tools-generic:3.1")
     implementation("ch.qos.logback:logback-classic:1.5.4")
-    implementation("org.slf4j:slf4j-api:2.0.12")
+    implementation("org.slf4j:slf4j-api:2.0.13")
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
 }

@@ -202,7 +202,40 @@ class PublisherHtmlApplicationE2ETests: E2ETestFixture() {
     assertThat(page.locator(".event")).containsText("Cultural")
   }
 
-  // TODO: test "mehr laden"
+  @ParameterizedTest
+  @ArgumentsSource(E2EGeneralTestData::class)
+  fun shouldBeAbleToLoadMoreEvents(
+    events: List<Event>,
+    filters: Map<String, List<String>>
+  ) {
+    whenever(searchServiceCaller!!.search(any())).then {
+      val queryArgument = it.arguments.first() as QueryDTO
+      if (queryArgument.query.contains("category")) {
+        SearchResultDTO(
+          events + listOf(Event("Cultural Event at Posthof", OffsetDateTime.now(), mapOf("city" to "Linz"))),
+          events.size + 1,
+          null
+        )
+      } else {
+        SearchResultDTO(
+          events,
+          events.size,
+          null
+        )
+      }
+    }
+    whenever(searchServiceCaller!!.getFiltersFor(any())).thenReturn(filters)
+
+    page.navigate("http://localhost:$port")
+
+    page.locator("button[id='loadMoreButton']").click()
+
+    val events = page.querySelectorAll(".event")
+    val eventSize = events.size
+
+    assertTrue(eventSize == 31) { "Expected 1 event, but found $eventSize events." }
+    assertThat(page.locator(".event")).containsText("Cultural")
+  }
 
   private fun setupSearchServiceCaller(events: List<Event>, filters: Map<String, List<String>>) {
     whenever(searchServiceCaller!!.search(any())).thenReturn(SearchResultDTO(events, events.size, null))

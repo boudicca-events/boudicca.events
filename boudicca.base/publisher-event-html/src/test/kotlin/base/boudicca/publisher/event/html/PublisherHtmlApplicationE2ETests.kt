@@ -210,10 +210,10 @@ class PublisherHtmlApplicationE2ETests: E2ETestFixture() {
   ) {
     whenever(searchServiceCaller!!.search(any())).then {
       val queryArgument = it.arguments.first() as QueryDTO
-      if (queryArgument.query.contains("category")) {
+      if (queryArgument.offset == 30) {
         SearchResultDTO(
-          events + listOf(Event("Cultural Event at Posthof", OffsetDateTime.now(), mapOf("city" to "Linz"))),
-          events.size + 1,
+          listOf(Event("Cultural Event at Posthof", OffsetDateTime.now(), mapOf("city" to "Linz"))),
+          1,
           null
         )
       } else {
@@ -233,8 +233,10 @@ class PublisherHtmlApplicationE2ETests: E2ETestFixture() {
     val events = page.querySelectorAll(".event")
     val eventSize = events.size
 
-    assertTrue(eventSize == 31) { "Expected 1 event, but found $eventSize events." }
-    assertThat(page.locator(".event")).containsText("Cultural")
+    println(eventSize)
+
+    assertTrue(eventSize == 31) { "Expected 31 event, but found $eventSize events." }
+    assertThat(page.getByText("Cultural Event at Posthof")).isVisible()
   }
 
   private fun setupSearchServiceCaller(events: List<Event>, filters: Map<String, List<String>>) {

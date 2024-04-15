@@ -1,16 +1,17 @@
-package base.boudicca.query.evaluator
+package base.boudicca.query.evaluator.util
 
 import base.boudicca.SemanticKeys
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import java.util.concurrent.ConcurrentHashMap
 
-class EvaluatorUtilTest {
+class EvaluatorUtilDurationTest {
 
     @Test
     fun testEmpty() {
         Assertions.assertEquals(
             0.0,
-            EvaluatorUtil.getDuration(
+            getDuration(
                 "startDate", "endDate",
                 mapOf(
                 )
@@ -22,7 +23,7 @@ class EvaluatorUtilTest {
     fun testNoStart() {
         Assertions.assertEquals(
             0.0,
-            EvaluatorUtil.getDuration(
+            getDuration(
                 "startDate", "endDate",
                 mapOf(
                     SemanticKeys.ENDDATE to "2024-05-31T01:00:00Z",
@@ -35,7 +36,7 @@ class EvaluatorUtilTest {
     fun testNoEnd() {
         Assertions.assertEquals(
             0.0,
-            EvaluatorUtil.getDuration(
+            getDuration(
                 "startDate", "endDate",
                 mapOf(
                     SemanticKeys.STARTDATE to "2024-05-31T01:00:00Z",
@@ -48,7 +49,7 @@ class EvaluatorUtilTest {
     fun testSimple() {
         Assertions.assertEquals(
             1.0,
-            EvaluatorUtil.getDuration(
+            getDuration(
                 "startDate", "endDate",
                 mapOf(
                     SemanticKeys.STARTDATE to "2024-05-31T00:00:00Z",
@@ -62,7 +63,7 @@ class EvaluatorUtilTest {
     fun testNegative() {
         Assertions.assertEquals(
             -1.0,
-            EvaluatorUtil.getDuration(
+            getDuration(
                 "startDate", "endDate",
                 mapOf(
                     SemanticKeys.STARTDATE to "2024-05-31T01:00:00Z",
@@ -76,7 +77,7 @@ class EvaluatorUtilTest {
     fun testFraction() {
         Assertions.assertEquals(
             0.5,
-            EvaluatorUtil.getDuration(
+            getDuration(
                 "startDate", "endDate",
                 mapOf(
                     SemanticKeys.STARTDATE to "2024-05-31T00:00:00Z",
@@ -84,6 +85,10 @@ class EvaluatorUtilTest {
                 )
             )
         )
+    }
+
+    fun getDuration(startDateField: String, endDateField: String, event: Map<String, String>): Double {
+        return EvaluatorUtil.getDuration(startDateField, endDateField, event, ConcurrentHashMap())
     }
 
 }

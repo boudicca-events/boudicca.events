@@ -40,8 +40,8 @@ class BrucknerhausCollector : TwoStepEventCollector<Element>("brucknerhaus") {
         return doc.select("div.event div.event__element")
     }
 
-    override fun parseEvent(event: Element): Event {
-        val startDate: OffsetDateTime = parseDate(event)
+    override fun parseMultipleEvents(event: Element): List<Event> {
+        val startDates: List<OffsetDateTime> = parseDate(event)
         val data = mutableMapOf<String, String>()
 
         val name = event.select("div.event__name").text()
@@ -61,25 +61,41 @@ class BrucknerhausCollector : TwoStepEventCollector<Element>("brucknerhaus") {
 
         data[SemanticKeys.SOURCES] = data[SemanticKeys.URL]!!
 
-        return Event(name, startDate, data)
+        return startDates.map { startDate -> Event(name, startDate, data) }
     }
 
-    private fun parseDate(event: Element): OffsetDateTime {
+    private fun parseDate(event: Element): List<OffsetDateTime> {
         val dateElement = event.select("div.event__date").first()!!
-        val datePart1 = dateElement.children()[1].children()[0].text()
-        val datePart2 = dateElement.children()[1].children()[1].text()
-        val datePart3 = dateElement.children()[2].children()[0].text()
+
+        val dateText = dateElement.text().trim()
+        val localDates = if (dateText.contains("-")) {
+            //Sa 23 März - Do 16 Mai 24
+            val split = dateText.split("-")
+            val year = dateText.substring(dateText.lastIndexOf(' ') + 1)
+            val startDate = parseSingleLocalDate(split[0].trim() + " " + year)
+            val endDate = parseSingleLocalDate(split[1].trim())
+            startDate.datesUntil(endDate.plusDays(1)).toList()
+        } else {
+            //So 14 Apr 24
+            listOf(parseSingleLocalDate(dateText))
+        }
 
         val timeElement = event.select("div.event__location").first()!!
         val time = timeElement.children()[0].children()[0].text()
 
-        val localDate = LocalDate.parse(
-            datePart1 + " " + mapMonth(datePart2) + " " + datePart3,
-            DateTimeFormatter.ofPattern("d M uu").withLocale(Locale.GERMAN)
-        )
         val localTime = LocalTime.parse(time, DateTimeFormatter.ofPattern("kk:mm"))
 
-        return localDate.atTime(localTime).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
+        return localDates.map { localDate ->
+            localDate.atTime(localTime).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
+        }
+    }
+
+    private fun parseSingleLocalDate(dateText: String): LocalDate {
+        val split = dateText.split(" ")
+        return LocalDate.parse(
+            split[1] + " " + mapMonth(split[2]) + " " + split[3],
+            DateTimeFormatter.ofPattern("d M uu").withLocale(Locale.GERMAN)
+        )
     }
 
     private fun mapMonth(month: String): String {

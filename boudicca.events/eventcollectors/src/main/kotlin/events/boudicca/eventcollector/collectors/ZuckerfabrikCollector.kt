@@ -86,12 +86,12 @@ class ZuckerfabrikCollector : TwoStepEventCollector<Pair<String, Document>>("zuc
         if (dateSplit[2].contains(" - ")) {
             val timeSplit = startTimeString.split(" - ")
             startTimeString = timeSplit[0]
-            endTime = LocalTime.parse(timeSplit[1], timeFormatter)
+            endTime = LocalTime.parse(timeSplit[1].replace('.', ':'), timeFormatter)
         }
         if (startTimeString.endsWith(" Uhr")) {
             startTimeString = startTimeString.substring(0, startTimeString.length - 4)
         }
-        startTime = LocalTime.parse(startTimeString, timeFormatter)
+        startTime = LocalTime.parse(startTimeString.replace('.', ':'), timeFormatter)
         val startDate = date.atTime(startTime).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
         if (endTime != null) {
             data[SemanticKeys.ENDDATE] =

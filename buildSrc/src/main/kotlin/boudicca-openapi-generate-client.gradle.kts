@@ -38,6 +38,7 @@ tasks.register<GenerateTask>("generateJavaClient") {
     generatorName.set("java")
     library.set("native")
     additionalProperties.put("supportUrlQuery", "false")
+    additionalProperties.put("useJakartaEe", "true")
     generateApiTests.set(false)
     generateModelTests.set(false)
     invokerPackage.set("base.boudicca.openapi")

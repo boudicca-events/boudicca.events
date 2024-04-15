@@ -28,6 +28,6 @@ The query service handles the evaluation of the actual search queries. For more 
 This consists of following steps:
 
 1. Parsing the Query with the [QueryParser](../../boudicca.base/search/src/main/kotlin/base/boudicca/search/service/query/QueryParser.kt) which results in an [Expression](../../boudicca.base/search/src/main/kotlin/base/boudicca/search/service/query/Expression.kt) object. This is an AST representation of the parsed Query.
-2. Using an [Evaluator](../../boudicca.base/search/src/main/kotlin/base/boudicca/search/service/query/Evaluator.kt) to run the AST expression from step 1.
+2. Using an [Evaluator](../../boudicca.base/query-lib/src/main/kotlin/base/boudicca/query/evaluator/Evaluator.kt) to run the AST expression from step 1.
 3. Return the correct page of the data, specified by the offset and size parameters of the REST endpoint
 

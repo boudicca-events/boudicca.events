@@ -1,17 +1,19 @@
 package base.boudicca.query.evaluator
 
 import base.boudicca.model.Entry
-import base.boudicca.query.Utils
 import base.boudicca.query.*
+import base.boudicca.query.evaluator.util.EvaluatorUtil
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
+import java.util.concurrent.ConcurrentHashMap
 
 class SimpleEvaluator(rawEntries: Collection<Entry>) : Evaluator {
 
-    private val events = Utils.order(rawEntries)
+    private val dateCache = ConcurrentHashMap<String, OffsetDateTime>()
+    private val events = Utils.order(rawEntries, dateCache)
 
     override fun evaluate(expression: Expression, page: Page): QueryResult {
         val results = events.filter { matchesExpression(expression, it) }
@@ -84,13 +86,21 @@ class SimpleEvaluator(rawEntries: Collection<Entry>) : Evaluator {
 
             is DurationLongerExpression -> {
                 val duration =
-                    EvaluatorUtil.getDuration(expression.getStartDateField(), expression.getEndDateField(), event)
+                    EvaluatorUtil.getDuration(
+                        expression.getStartDateField(),
+                        expression.getEndDateField(),
+                        event, dateCache
+                    )
                 return duration >= expression.getDuration().toDouble()
             }
 
             is DurationShorterExpression -> {
                 val duration =
-                    EvaluatorUtil.getDuration(expression.getStartDateField(), expression.getEndDateField(), event)
+                    EvaluatorUtil.getDuration(
+                        expression.getStartDateField(),
+                        expression.getEndDateField(),
+                        event, dateCache
+                    )
                 return duration <= expression.getDuration().toDouble()
             }
 

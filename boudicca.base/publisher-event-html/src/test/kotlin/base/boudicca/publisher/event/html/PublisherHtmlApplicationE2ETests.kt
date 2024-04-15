@@ -8,6 +8,7 @@ import base.boudicca.publisher.event.html.service.SearchServiceCaller
 import base.boudicca.publisher.event.html.testdata.*
 import com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat
 import com.microsoft.playwright.options.ElementState
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.extension.ExtendWith
@@ -112,7 +113,7 @@ class PublisherHtmlApplicationE2ETests: E2ETestFixture() {
 
     page.navigate("http://localhost:$port/")
 
-    assertTrue(page.locator(".anchor-to-eventpage").getAttribute("href") == "https://www.event.page.at/")
+    assertEquals(page.locator(".anchor-to-eventpage").getAttribute("href"), "https://www.event.page.at/")
   }
 
   @ParameterizedTest

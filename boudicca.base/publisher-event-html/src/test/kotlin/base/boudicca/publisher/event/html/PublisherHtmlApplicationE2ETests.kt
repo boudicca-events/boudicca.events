@@ -23,7 +23,7 @@ import java.time.OffsetDateTime
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(SpringExtension::class)
-@Tag("playwright")
+@Tag("uitest")
 class PublisherHtmlApplicationE2ETests: E2ETestFixture() {
 
   @LocalServerPort

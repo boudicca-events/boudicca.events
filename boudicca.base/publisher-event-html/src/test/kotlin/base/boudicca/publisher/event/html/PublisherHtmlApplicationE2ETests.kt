@@ -231,10 +231,6 @@ class PublisherHtmlApplicationE2ETests: E2ETestFixture() {
     page.navigate("http://localhost:$port")
 
     page.locator("button[id=\"filterButton\"]").click()
-
-    // It is important to waitFor() the page to be in the desired
-    // state *before* running analyze(). Otherwise, axe might not
-    // find all the elements your test expects it to scan.
     page.locator("#drawer").waitFor()
 
     page.locator("[name='locationCity']").selectOption("Linz")

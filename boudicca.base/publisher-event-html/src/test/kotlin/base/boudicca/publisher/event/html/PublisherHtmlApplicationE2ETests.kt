@@ -203,6 +203,67 @@ class PublisherHtmlApplicationE2ETests: E2ETestFixture() {
   }
 
   @ParameterizedTest
+  @ArgumentsSource(ListOfFilterableEvents::class)
+  fun shouldBeAbleToResetFilteredEvents(
+    events: List<Event>,
+    filters: Map<String, List<String>>
+  ) {
+    whenever(searchServiceCaller!!.search(any())).then {
+      val queryArgument = it.arguments.first() as QueryDTO
+      if (queryArgument.query.contains("Linz")) {
+        SearchResultDTO(
+          listOf(
+            Event("Cultural Event at Posthof", OffsetDateTime.now(), mapOf("city" to "Linz"))
+          ),
+          1,
+          null
+        )
+      } else {
+        SearchResultDTO(
+          events,
+          events.size,
+          null
+        )
+      }
+    }
+    whenever(searchServiceCaller!!.getFiltersFor(any())).thenReturn(filters)
+
+    page.navigate("http://localhost:$port")
+
+    page.locator("button[id=\"filterButton\"]").click()
+
+    // It is important to waitFor() the page to be in the desired
+    // state *before* running analyze(). Otherwise, axe might not
+    // find all the elements your test expects it to scan.
+    page.locator("#drawer").waitFor()
+
+    page.locator("[name='locationCity']").selectOption("Linz")
+    page.locator("button[id='filterSearchButton']").click()
+
+    page.waitForFunction(
+      "() => !document.querySelector('#drawer').classList.contains('drawer-open')"
+    )
+
+    val events = page.querySelectorAll(".event")
+    val eventSize = events.size
+
+    assertTrue(eventSize == 1) { "Expected 1 event, but found $eventSize events." }
+    assertThat(page.locator(".event")).containsText("Cultural")
+
+    // reopen the drawer and reset the filter
+    page.locator("button[id=\"filterButton\"]").click()
+    page.locator("#drawer").waitFor()
+
+    page.locator("button[id='resetSearchForm']").click()
+    page.locator("button[id='filterSearchButton']").click()
+
+    val eventsAfterResetingFilter = page.querySelectorAll(".event")
+    val eventSizeAfterRestingFilter = eventsAfterResetingFilter.size
+
+    assertTrue(eventSizeAfterRestingFilter == 3) { "Expected 3 event, but found $eventSizeAfterRestingFilter events." }
+  }
+
+  @ParameterizedTest
   @ArgumentsSource(E2EGeneralTestData::class)
   fun shouldBeAbleToLoadMoreEvents(
     events: List<Event>,

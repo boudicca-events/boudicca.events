@@ -7,9 +7,7 @@ import base.boudicca.publisher.event.html.fixture.E2ETestFixture
 import base.boudicca.publisher.event.html.service.SearchServiceCaller
 import base.boudicca.publisher.event.html.testdata.*
 import com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat
-import com.microsoft.playwright.options.ElementState
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
@@ -100,7 +98,7 @@ class PublisherHtmlApplicationE2ETests: E2ETestFixture() {
     val events = page.querySelectorAll(".event")
     val eventSize = events.size
 
-    assertTrue(eventSize == 30) { "Expected 30 events, but found $eventSize events." }
+    assertEquals(eventSize, 30) { "Expected 30 events, but found $eventSize events." }
   }
 
   @ParameterizedTest
@@ -150,7 +148,7 @@ class PublisherHtmlApplicationE2ETests: E2ETestFixture() {
     val events = page.querySelectorAll(".event")
     val eventSize = events.size
 
-    assertTrue(eventSize == 1) { "Expected 1 event, but found $eventSize events." }
+    assertEquals(eventSize, 1) { "Expected 1 event, but found $eventSize events." }
     assertThat(page.locator(".event")).containsText("Cultural")
   }
 
@@ -199,7 +197,7 @@ class PublisherHtmlApplicationE2ETests: E2ETestFixture() {
     val events = page.querySelectorAll(".event")
     val eventSize = events.size
 
-    assertTrue(eventSize == 1) { "Expected 1 event, but found $eventSize events." }
+    assertEquals(eventSize, 1) { "Expected 1 event, but found $eventSize events." }
     assertThat(page.locator(".event")).containsText("Cultural")
   }
 
@@ -244,7 +242,7 @@ class PublisherHtmlApplicationE2ETests: E2ETestFixture() {
     val events = page.querySelectorAll(".event")
     val eventSize = events.size
 
-    assertTrue(eventSize == 1) { "Expected 1 event, but found $eventSize events." }
+    assertEquals(eventSize, 1) { "Expected 1 event, but found $eventSize events." }
     assertThat(page.locator(".event")).containsText("Cultural")
 
     // reopen the drawer and reset the filter
@@ -257,7 +255,7 @@ class PublisherHtmlApplicationE2ETests: E2ETestFixture() {
     val eventsAfterResetingFilter = page.querySelectorAll(".event")
     val eventSizeAfterRestingFilter = eventsAfterResetingFilter.size
 
-    assertTrue(eventSizeAfterRestingFilter == 3) { "Expected 3 event, but found $eventSizeAfterRestingFilter events." }
+    assertEquals(eventSizeAfterRestingFilter, 3) { "Expected 3 event, but found $eventSizeAfterRestingFilter events." }
   }
 
   @ParameterizedTest
@@ -291,7 +289,7 @@ class PublisherHtmlApplicationE2ETests: E2ETestFixture() {
     val events = page.querySelectorAll(".event")
     val eventSize = events.size
 
-    assertTrue(eventSize == 31) { "Expected 31 event, but found $eventSize events." }
+    assertEquals(eventSize, 31) { "Expected 31 event, but found $eventSize events." }
     assertThat(page.getByText("Cultural Event at Posthof")).isVisible()
   }
 

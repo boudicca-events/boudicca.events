@@ -294,8 +294,6 @@ class PublisherHtmlApplicationE2ETests: E2ETestFixture() {
     val events = page.querySelectorAll(".event")
     val eventSize = events.size
 
-    println(eventSize)
-
     assertTrue(eventSize == 31) { "Expected 31 event, but found $eventSize events." }
     assertThat(page.getByText("Cultural Event at Posthof")).isVisible()
   }

@@ -25,7 +25,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-//we do not want long-running events on our site, so we filter for events short then 30 days
+// we do not want long-running events on our site, so we filter for events short then 30 days
 const val DEFAULT_DURATION_SHORTER_VALUE = 24 * 30
 
 private const val SEARCH_TYPE_ALL = "ALL"
@@ -33,16 +33,15 @@ private const val SEARCH_TYPE_ALL = "ALL"
 @Service
 class EventService @Autowired constructor(
     private val pictureProxyService: PictureProxyService,
-    @Value("\${boudicca.search.url}") private val searchUrl: String,
+    private val caller: SearchServiceCaller,
     @Value("\${boudicca.search.additionalFilter:}") private val additionalFilter: String,
 ) {
-    private val searchClient: SearchClient = createSearchClient()
     private val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy 'um' HH:mm 'Uhr'", Locale.GERMAN)
     private val localDateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
     @Throws(EventServiceException::class)
     fun search(searchDTO: SearchDTO): List<Map<String, String?>> {
-        val events = searchClient.queryEvents(QueryDTO(generateQuery(searchDTO), searchDTO.offset ?: 0))
+        val events = caller.search(QueryDTO(generateQuery(searchDTO), searchDTO.offset ?: 0))
         return mapEvents(events)
     }
 
@@ -107,7 +106,7 @@ class EventService @Autowired constructor(
     }
 
     fun filters(): Filters {
-        val filters = searchClient.getFiltersFor(
+        val filters = caller.getFiltersFor(
             FilterQueryDTO(
                 listOf(
                     FilterQueryEntryDTO(SemanticKeys.LOCATION_NAME),
@@ -128,7 +127,7 @@ class EventService @Autowired constructor(
 
     fun getSources(): List<String> {
         val allSources =
-            searchClient.getFiltersFor(FilterQueryDTO(listOf(FilterQueryEntryDTO(SemanticKeys.SOURCES, true))))
+            caller.getFiltersFor(FilterQueryDTO(listOf(FilterQueryEntryDTO(SemanticKeys.SOURCES, true))))
         return allSources[SemanticKeys.SOURCES]!!
             .map { normalize(it) }
             .distinct()
@@ -205,10 +204,6 @@ class EventService @Autowired constructor(
         return formatter.format(startDate.atZoneSameInstant(ZoneId.of("Europe/Vienna")))
     }
 
-    private fun createSearchClient(): SearchClient {
-        return SearchClient(searchUrl)
-    }
-
     private fun frontEndName(category: EventCategory): String {
         return when (category) {
             EventCategory.MUSIC -> "Musik"
@@ -251,4 +246,3 @@ class EventService @Autowired constructor(
         val bandNames: List<Pair<String, String>>,
     )
 }
-

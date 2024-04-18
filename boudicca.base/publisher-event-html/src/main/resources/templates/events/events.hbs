@@ -8,6 +8,12 @@
     .event {
         display: flex;
         flex-direction: column;
+        transition: grid-row 1s ease;
+        cursor: pointer;
+    }
+
+    .expanded {
+        grid-column: span 3; /* Expand to span two column */
     }
 
     .event-title {

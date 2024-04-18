@@ -19,29 +19,29 @@ class FullTextIndex(entries: List<Entry>, field: String) {
         return index.capacity() / 8
     }
 
-    fun getEntriesForWord(i: Int): Set<Int> {
+    fun getEntriesForWord(i: Int): BitSet {
         return words[i].second
     }
 
-    fun containsSearch(text: String): Set<Int> {
+    fun containsSearch(text: String): BitSet {
         val searchWords = breakText(text.lowercase())
         val subResults = searchWords.map { word ->
             val (lower, upper) = containsSearchIndices(word)
 
-            val result = mutableSetOf<Int>()
+            val result = BitSet()
             for (i in lower until upper) {
-                result.addAll(words[get(i).first].second)
+                result.or(words[get(i).first].second)
             }
             result
         }
 
         if (subResults.isEmpty()) {
-            return emptySet()
+            return BitSet()
         }
 
-        var result: Set<Int> = subResults.first()
+        val result = subResults.first()
         for (subResult in subResults.drop(1)) {
-            result = result.intersect(subResult)
+            result.and(subResult)
         }
 
         return result
@@ -92,8 +92,8 @@ class FullTextIndex(entries: List<Entry>, field: String) {
         return EvaluatorUtil.binarySearch(0, size(), comparator)
     }
 
-    private fun getWords(entries: List<Entry>, field: String): List<Pair<CharBuffer, Set<Int>>> {
-        val words = mutableMapOf<CharBuffer, MutableSet<Int>>()
+    private fun getWords(entries: List<Entry>, field: String): List<Pair<CharBuffer, BitSet>> {
+        val words = mutableMapOf<CharBuffer, BitSet>()
         entries.forEachIndexed { entryIndex, entry ->
             if (!entry[field].isNullOrEmpty()) {
                 val lowercase = entry[field]!!.lowercase()
@@ -101,9 +101,11 @@ class FullTextIndex(entries: List<Entry>, field: String) {
 
                 newWords.forEach { newWord ->
                     if (words.containsKey(newWord)) {
-                        words[newWord]!!.add(entryIndex)
+                        words[newWord]!!.set(entryIndex)
                     } else {
-                        words[newWord] = mutableSetOf(entryIndex)
+                        val bitset = BitSet()
+                        bitset.set(entryIndex)
+                        words[newWord] = bitset
                     }
                 }
             }
@@ -154,7 +156,7 @@ class FullTextIndex(entries: List<Entry>, field: String) {
         return index
     }
 
-    class SortableByteBuffer(private val byteBuffer: ByteBuffer, private val values: List<Pair<CharBuffer, Set<Int>>>) :
+    class SortableByteBuffer(private val byteBuffer: ByteBuffer, private val values: List<Pair<CharBuffer, BitSet>>) :
         EvaluatorUtil.Sortable<ByteBuffer> {
         override fun get(): ByteBuffer {
             return byteBuffer

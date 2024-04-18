@@ -1,12 +1,14 @@
 package base.boudicca.query.evaluator.util
 
+import java.util.*
+
 class SimpleIndex<T>(values: List<T>, comparator: Comparator<T>) {
     private val index = values
         .mapIndexed { index, t -> Pair(index, t) }
         .filter { it.second != null }
         .sortedWith(Comparator.comparing({ pair -> pair.second }, comparator))
 
-    fun search(comparator: (T) -> Int): Set<Int> {
+    fun search(comparator: (T) -> Int): BitSet {
         val lower = EvaluatorUtil.binarySearch(0, index.size) { i ->
             val result = comparator.invoke(index[i].second)
             if (result == 0) {
@@ -20,7 +22,7 @@ class SimpleIndex<T>(values: List<T>, comparator: Comparator<T>) {
             }
         }
         if (lower == -1) {
-            return emptySet()
+            return BitSet()
         }
 
         val upper = EvaluatorUtil.binarySearch(0, index.size) { i ->
@@ -36,9 +38,9 @@ class SimpleIndex<T>(values: List<T>, comparator: Comparator<T>) {
             }
         }
 
-        val result = mutableSetOf<Int>()
+        val result = BitSet()
         for (i in lower..upper) {
-            result.add(index[i].first)
+            result.set(index[i].first)
         }
         return result
     }

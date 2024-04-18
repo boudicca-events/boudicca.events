@@ -8,6 +8,7 @@ import base.boudicca.query.evaluator.util.SimpleIndex
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.format.DateTimeParseException
+import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
 class OptimizingEvaluator(rawEntries: Collection<Entry>) : Evaluator {
@@ -20,30 +21,31 @@ class OptimizingEvaluator(rawEntries: Collection<Entry>) : Evaluator {
 
     init {
         // init contains searches
-        for(field in allFields){
+        for (field in allFields) {
             getOrCreateFullTextIndex(field)
         }
     }
 
     override fun evaluate(expression: Expression, page: Page): QueryResult {
         val resultSet = evaluateExpression(expression)
-        val orderedResult = if (resultSet.size > entries.size / 3) {
+        val resultSize = resultSet.cardinality()
+        val orderedResult = if (resultSize > entries.size / 3) {
             // roughly, if the resultset is bigger then a third of the total entries,
             // it is faster to iterate over all entries then to sort the resultset
-            entries.filterIndexed { i, _ -> resultSet.contains(i) }
+            entries.filterIndexed { i, _ -> resultSet.get(i) }
         } else {
-            Utils.order(resultSet.map { entries[it] }, dateCache)
+            Utils.order(resultSet.stream().mapToObj{ entries[it] }.toList(), dateCache)
         }
         return QueryResult(
             orderedResult
                 .drop(page.offset)
                 .take(page.size)
                 .toList(),
-            resultSet.size
+            resultSize
         )
     }
 
-    private fun evaluateExpression(expression: Expression): Set<Int> {
+    private fun evaluateExpression(expression: Expression): BitSet {
         when (expression) {
             is EqualsExpression -> {
                 return equalsExpression(expression)
@@ -91,46 +93,37 @@ class OptimizingEvaluator(rawEntries: Collection<Entry>) : Evaluator {
         }
     }
 
-    private fun hasFieldExpression(expression: HasFieldExpression): Set<Int> {
-        return entries.mapIndexed { i, event ->
-            Pair(i, event)
-        }.filter { (_, event) ->
-            event.containsKey(expression.getFieldName()) && event[expression.getFieldName()]!!.isNotEmpty()
-        }.map { (i, _) -> i }.toSet()
+    private fun hasFieldExpression(expression: HasFieldExpression): BitSet {
+        val resultSet = BitSet()
+        entries.forEachIndexed { i, event ->
+            if(event.containsKey(expression.getFieldName()) && event[expression.getFieldName()]!!.isNotEmpty()){
+                resultSet.set(i)
+            }
+        }
+        return resultSet
     }
 
-    private fun notExpression(expression: NotExpression): Set<Int> {
+    private fun notExpression(expression: NotExpression): BitSet {
         val subEvents = evaluateExpression(expression.getChild())
-        return entries.indices.filter { i ->
-            !subEvents.contains(i)
-        }.toSet()
+        subEvents.flip(0, entries.size) //TODO this modifies the set, is that ok? can cause problems with caching
+        return subEvents
     }
 
-    private fun orExpression(expression: OrExpression): Set<Int> {
+    private fun orExpression(expression: OrExpression): BitSet {
         val leftSubEvents = evaluateExpression(expression.getLeftChild())
         val rightSubEvents = evaluateExpression(expression.getRightChild())
-        return entries.indices.filter { i ->
-            leftSubEvents.contains(i) || rightSubEvents.contains(i)
-        }.toSet()
-        //TODO check threshold for the below?
-        //                return leftSubEvents.plus(rightSubEvents)
+        leftSubEvents.or(rightSubEvents)
+        return leftSubEvents
     }
 
-    private fun andExpression(expression: AndExpression): Set<Int> {
+    private fun andExpression(expression: AndExpression): BitSet {
         val leftSubEvents = evaluateExpression(expression.getLeftChild())
         val rightSubEvents = evaluateExpression(expression.getRightChild())
-        return entries.indices.filter { i ->
-            leftSubEvents.contains(i) && rightSubEvents.contains(i)
-        }.toSet()
-        //TODO check threshold for the below?
-        //                return if (leftSubEvents.size < rightSubEvents.size) {
-        //                    leftSubEvents.intersect(rightSubEvents)
-        //                } else {
-        //                    rightSubEvents.intersect(leftSubEvents)
-        //                }
+        leftSubEvents.and(rightSubEvents)
+        return leftSubEvents
     }
 
-    private fun equalsExpression(expression: EqualsExpression): Set<Int> {
+    private fun equalsExpression(expression: EqualsExpression): BitSet {
         val lowerCase = expression.getText().lowercase()
         return starFieldSearch(expression.getFieldName()) { field ->
             val index = getOrCreateSimpleIndex("equals", field) {
@@ -140,14 +133,14 @@ class OptimizingEvaluator(rawEntries: Collection<Entry>) : Evaluator {
         }
     }
 
-    private fun containsExpression(expression: ContainsExpression): Set<Int> {
+    private fun containsExpression(expression: ContainsExpression): BitSet {
         return starFieldSearch(expression.getFieldName()) { field ->
             val index = getOrCreateFullTextIndex(field)
             index.containsSearch(expression.getText())
         }
     }
 
-    private fun beforeExpression(expression: BeforeExpression): Set<Int> {
+    private fun beforeExpression(expression: BeforeExpression): BitSet {
         val index = getOrCreateLocalDateIndex(expression.getFieldName())
         return index.search {
             if (it != null) {
@@ -162,7 +155,7 @@ class OptimizingEvaluator(rawEntries: Collection<Entry>) : Evaluator {
         }
     }
 
-    private fun afterExpression(expression: AfterExpression): Set<Int> {
+    private fun afterExpression(expression: AfterExpression): BitSet {
         val index = getOrCreateLocalDateIndex(expression.getFieldName())
         return index.search {
             if (it != null) {
@@ -177,7 +170,7 @@ class OptimizingEvaluator(rawEntries: Collection<Entry>) : Evaluator {
         }
     }
 
-    private fun durationLongerExpression(expression: DurationLongerExpression): Set<Int> {
+    private fun durationLongerExpression(expression: DurationLongerExpression): BitSet {
         val index = getDurationIndex(expression)
         val duration = expression.getDuration().toDouble()
         return index.search {
@@ -193,7 +186,7 @@ class OptimizingEvaluator(rawEntries: Collection<Entry>) : Evaluator {
         }
     }
 
-    private fun durationShorterExpression(expression: DurationShorterExpression): Set<Int> {
+    private fun durationShorterExpression(expression: DurationShorterExpression): BitSet {
         val index = getDurationIndex(expression)
         val duration = expression.getDuration().toDouble()
         return index.search {
@@ -230,15 +223,15 @@ class OptimizingEvaluator(rawEntries: Collection<Entry>) : Evaluator {
         return index
     }
 
-    private fun starFieldSearch(fieldName: String, search: (String) -> Set<Int>): Set<Int> {
+    private fun starFieldSearch(fieldName: String, search: (String) -> BitSet): BitSet {
         val allFieldsToCheck = if (fieldName == "*") {
             allFields
         } else {
             setOf(fieldName)
         }
-        val result = mutableSetOf<Int>()
+        val result = BitSet()
         for (field in allFieldsToCheck) {
-            result.addAll(search(field))
+            result.or(search(field))
         }
         return result
     }
@@ -249,16 +242,17 @@ class OptimizingEvaluator(rawEntries: Collection<Entry>) : Evaluator {
         fieldName: String,
         indexCreator: () -> SimpleIndex<T>
     ): SimpleIndex<T> {
-        //TODO this lock could lead to contention
-        synchronized(simpleIndexCache) {
-            val operationCache = if (!simpleIndexCache.containsKey(operation)) {
+        val operationCache = synchronized(simpleIndexCache) {
+            if (!simpleIndexCache.containsKey(operation)) {
                 val newCache = mutableMapOf<String, SimpleIndex<*>>()
                 simpleIndexCache[operation] = newCache
                 newCache
             } else {
                 simpleIndexCache[operation]!!
             }
+        }
 
+        synchronized(operationCache){
             val index = if (!operationCache.containsKey(fieldName)) {
                 val index = indexCreator()
                 operationCache[fieldName] = index

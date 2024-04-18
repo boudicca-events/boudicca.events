@@ -68,7 +68,7 @@ class FullTextIndexTest {
 
         assertEquals(1, index.size())
         assertEquals(0, index.get(0).second)
-        assertEquals(setOf(0, 1), index.getEntriesForWord(index.get(0).first))
+        assertEquals(bitsetOf(0, 1), index.getEntriesForWord(index.get(0).first))
     }
 
     @Test
@@ -82,7 +82,7 @@ class FullTextIndexTest {
 
         assertEquals(1, index.size())
         assertEquals(Pair(0, 0), index.get(0))
-        assertEquals(setOf(1), index.getEntriesForWord(0))
+        assertEquals(bitsetOf(1), index.getEntriesForWord(0))
     }
 
     @Test
@@ -109,8 +109,8 @@ class FullTextIndexTest {
         )
         val result = index.containsSearch("a")
 
-        assertEquals(1, result.size)
-        assertTrue(result.contains(0))
+        assertEquals(1, result.cardinality())
+        assertTrue(result.get(0))
     }
 
     @Test
@@ -124,9 +124,9 @@ class FullTextIndexTest {
         )
         val result = index.containsSearch("this is")
 
-        assertEquals(2, result.size)
-        assertTrue(result.contains(0))
-        assertTrue(result.contains(1))
+        assertEquals(2, result.cardinality())
+        assertTrue(result.get(0))
+        assertTrue(result.get(1))
     }
 
     @Test
@@ -140,9 +140,9 @@ class FullTextIndexTest {
         )
         val result = index.containsSearch("name")
 
-        assertEquals(2, result.size)
-        assertTrue(result.contains(0))
-        assertTrue(result.contains(1))
+        assertEquals(2, result.cardinality())
+        assertTrue(result.get(0))
+        assertTrue(result.get(1))
     }
 
     @Test
@@ -156,9 +156,9 @@ class FullTextIndexTest {
         )
         val result = index.containsSearch("is a")
 
-        assertEquals(2, result.size)
-        assertTrue(result.contains(0))
-        assertTrue(result.contains(1))
+        assertEquals(2, result.cardinality())
+        assertTrue(result.get(0))
+        assertTrue(result.get(1))
     }
 
     @Test
@@ -172,9 +172,9 @@ class FullTextIndexTest {
         )
         val result = index.containsSearch("test")
 
-        assertEquals(2, result.size)
-        assertTrue(result.contains(1))
-        assertTrue(result.contains(2))
+        assertEquals(2, result.cardinality())
+        assertTrue(result.get(1))
+        assertTrue(result.get(2))
     }
 
     @Test
@@ -186,8 +186,8 @@ class FullTextIndexTest {
         )
         val result = index.containsSearch("TESt")
 
-        assertEquals(1, result.size)
-        assertTrue(result.contains(0))
+        assertEquals(1, result.cardinality())
+        assertTrue(result.get(0))
     }
 
     @Test
@@ -200,7 +200,7 @@ class FullTextIndexTest {
         )
         val result = index.containsSearch("other")
 
-        assertEquals(0, result.size)
+        assertEquals(0, result.cardinality())
     }
 
     private fun create(entries: List<Entry>, field: String): FullTextIndex {

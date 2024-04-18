@@ -11,7 +11,6 @@ import java.nio.file.Path
 import java.util.concurrent.TimeUnit
 import kotlin.io.path.exists
 import kotlin.io.path.readBytes
-import kotlin.time.measureTime
 
 
 @State(Scope.Benchmark)
@@ -32,18 +31,19 @@ open class EvaluatorTest {
 //    var query: String? = null
 
     @Param(
-        """ "category" equals "music" """,
-        """ "name" contains "rock" """,
-        """ "description" contains "rock" """,
+//        """ "category" equals "music" """,
+//        """ "name" contains "rock" """,
+//        """ "description" contains "rock" """,
+        """ "name" equals "music" """,
     )
     var query: String? = null
 
     var expression: Expression? = null
 
-    @Param(/*"noop", */"simple", "optimizing")
+    @Param(/*"noop", *//*"simple",*/ "optimizing")
     var mode: String? = null
 
-    @Param("5000", "20000", "100000")
+    @Param(/*"5000", "20000",*/ "100000")
     var testDataSize: Int? = null
 
     var evaluator: Evaluator? = null
@@ -88,23 +88,35 @@ fun main() {
 //    val expression = BoudiccaQueryRunner.parseQuery(""" "name" equals "music" """)
 //    val expression = BoudiccaQueryRunner.parseQuery(""" "whatever" equals "music" """)
 
-    val expression = BoudiccaQueryRunner.parseQuery(""" ("startDate" after "2024-04-12") and (duration "startDate" "endDate" shorter 720.0) and ((not (hasField "recurrence.type")) or ("recurrence.type" equals "ONCE")) and "*" contains "rock" """)
+//    val expression = BoudiccaQueryRunner.parseQuery(""" ("startDate" after "2024-04-12") and (duration "startDate" "endDate" shorter 720.0) and ((not (hasField "recurrence.type")) or ("recurrence.type" equals "ONCE")) and "*" contains "rock" """)
+//
+//    println("search took:" + measureTime {
+//        val queryResult = evaluator.evaluate(expression, PAGE_ALL)
+//        println(queryResult.totalResults)
+//    })
+//    println("second search took:" + measureTime {
+//        val queryResult = evaluator.evaluate(expression, PAGE_ALL)
+//        println(queryResult.totalResults)
+//    })
+//    var sum = 0
+//    while (sum != 1) {
+//        val result = evaluator.evaluate(expression, PAGE_ALL)
+//        sum += result.result.hashCode()
+//    }
+//
+//    println(sum)
 
-    println("search took:" + measureTime {
-        val queryResult = evaluator.evaluate(expression, PAGE_ALL)
-        println(queryResult.totalResults)
-    })
-    println("second search took:" + measureTime {
-        val queryResult = evaluator.evaluate(expression, PAGE_ALL)
-        println(queryResult.totalResults)
-    })
-    var sum = 0
-    while (sum != 1) {
-        val result = evaluator.evaluate(expression, PAGE_ALL)
-        sum += result.result.hashCode()
-    }
 
-    println(sum)
+    val optimizingEvaluator = OptimizingEvaluator(loadTestData(100_000))
+
+
+    println(
+        BoudiccaQueryRunner.evaluateQuery(
+            """ "name" equals "music" """,
+            PAGE_ALL,
+            optimizingEvaluator
+        ).totalResults
+    )
 
 
 }
@@ -132,9 +144,9 @@ private fun loadTestData(testDataSize: Int? = null): List<Map<String, String>> {
 
 //    val testData = EventDbPublisherClient("https://eventdb.boudicca.events").getAllEntries()
 
-    if(testDataSize != null){
+    if (testDataSize != null) {
         return testData.take(testDataSize)
-    }else{
+    } else {
         return testData
     }
 }

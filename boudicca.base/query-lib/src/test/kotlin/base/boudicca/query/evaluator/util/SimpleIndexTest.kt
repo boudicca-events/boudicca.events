@@ -13,21 +13,21 @@ class SimpleIndexTest {
     fun searchOneElement() {
         val index = createIndex(listOf("a"))
 
-        assertEquals(setOf(0), index.search { it.compareTo("a") })
+        assertEquals(bitsetOf(0), index.search { it.compareTo("a") })
     }
 
     @Test
     fun searchOneElementInTwo() {
         val index = createIndex(listOf("b", "a"))
 
-        assertEquals(setOf(1), index.search { it.compareTo("a") })
+        assertEquals(bitsetOf(1), index.search { it.compareTo("a") })
     }
 
     @Test
     fun searchTwoElements() {
         val index = createIndex(listOf("b", "a", "aa", "a", "asd", "c"))
 
-        assertEquals(setOf(1, 3), index.search { it.compareTo("a") })
+        assertEquals(bitsetOf(1, 3), index.search { it.compareTo("a") })
     }
 
     @Test
@@ -35,7 +35,7 @@ class SimpleIndexTest {
         val index =
             SimpleIndex<String?>(listOf("c", null, "b", "a", null, null, null), Comparator.naturalOrder<String?>())
 
-        assertEquals(setOf(3), index.search { it?.compareTo("a") ?: -1 })
+        assertEquals(bitsetOf(3), index.search { it?.compareTo("a") ?: -1 })
     }
 
     private fun createIndex(list: List<String>): SimpleIndex<String> {

@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="modal-column">
                 <img src="/picture?uuid=${eventAttributes.pictureUuid}"
                     style="height:100px;max-height:250px;max-width:300px;"
-                    alt="{{#if event.pictureAltText}}{{event.pictureAltText}}{{else}}Event Bild{{/if}}"
+                    alt="${eventAttributes.pictureAltText}"
                     aria-label="Event Bild"
                     aria-labelledby="image"
                 />

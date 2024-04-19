@@ -10,7 +10,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const categorySelect = document.getElementById("category");
   const categoryFieldSets = document.querySelectorAll("[data-category-wanted]");
 
-  //////
+  ////// TODO: find a way to add event listener to newly added events after "merh laden" button is pressed
+  ////// TODO: refactor prototype code, follow existing code style
   const events = document.querySelectorAll('.event');
   const modal = document.getElementById('event-details-modal');
   const modalContent = modal.querySelector('.modal-content');
@@ -21,16 +22,23 @@ document.addEventListener("DOMContentLoaded", () => {
       const eventAttributes = event.dataset;
 
       modalContent.innerHTML = `
-            <h2>${eventAttributes.name}</h2>
-            <img src="/picture?uuid=${eventAttributes.pictureUuid}"
-                style="height:100px;max-height:250px;max-width:300px;"
-                alt="{{#if event.pictureAltText}}{{event.pictureAltText}}{{else}}Event Bild{{/if}}"
-                aria-label="Event Bild"
-                aria-labelledby="image"
-            />
-            <p><strong>Start Date:</strong> ${eventAttributes.startDate}</p>
-            <p><strong>Location:</strong> ${eventAttributes.locationName}${eventAttributes.city ? ', ' + eventAttributes.city : ''}</p>
-        `;
+        <div class="modal-flex-container">
+            <div class="modal-column">
+                <img src="/picture?uuid=${eventAttributes.pictureUuid}"
+                    style="height:100px;max-height:250px;max-width:300px;"
+                    alt="{{#if event.pictureAltText}}{{event.pictureAltText}}{{else}}Event Bild{{/if}}"
+                    aria-label="Event Bild"
+                    aria-labelledby="image"
+                />
+            </div>
+            <div class="modal-column">
+                <h2>${eventAttributes.name}</h2>
+                <p><strong>Start Date:</strong> ${eventAttributes.startDate}</p>
+                <p><strong>Location:</strong> ${eventAttributes.locationName}${eventAttributes.city ? ', ' + eventAttributes.city : ''}</p>
+            </div>
+        </div>
+    
+    `;
 
       modal.style.display = "block";
     });
@@ -42,6 +50,23 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
   //////
+
+
+  // <div class="modal-tabs">
+  //     <button class="tab-button active" onclick="${openTab(event, 'tab1')}">Tab 1</button>
+  //     <button class="tab-button" onclick="${openTab(event, 'tab2')}">Tab 2</button>
+  //     <button class="tab-button" onclick="${openTab(event, 'tab3')}">Tab 3</button>
+  // </div>
+
+  // <div id="tab1" class="tab-content active">
+  //   tab 1
+  // </div>
+  // <div id="tab2" class="tab-content">
+  //   tab 2
+  // </div>
+  // <div id="tab3" class="tab-content">
+  //   tab 3
+  // </div>
 
   loadMoreButton.addEventListener("click", () => {
     onLoadMoreSearch();
@@ -180,3 +205,22 @@ document.addEventListener("DOMContentLoaded", () => {
   categorySelect.addEventListener("change", onCategoryChange);
   onCategoryChange();
 });
+
+function openTab(event, tabName) {
+  console.log("here in the open_tab function")
+
+  const tabContents = document.querySelectorAll('.tab-content');
+  tabContents.forEach(tabContent => {
+    console.log("here in the tab function in contens")
+    tabContent.classList.remove('active');
+  });
+
+  const tabButtons = document.querySelectorAll('.tab-button');
+  tabButtons.forEach(tabButton => {
+    tabButton.classList.remove('active');
+  });
+
+  document.getElementById(tabName).classList.add('active');
+
+  event.currentTarget.classList.add('active');
+}

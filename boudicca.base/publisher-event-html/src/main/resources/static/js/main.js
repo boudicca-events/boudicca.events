@@ -10,6 +10,39 @@ document.addEventListener("DOMContentLoaded", () => {
   const categorySelect = document.getElementById("category");
   const categoryFieldSets = document.querySelectorAll("[data-category-wanted]");
 
+  //////
+  const events = document.querySelectorAll('.event');
+  const modal = document.getElementById('event-details-modal');
+  const modalContent = modal.querySelector('.modal-content');
+
+  events.forEach(event => {
+    event.addEventListener('click', () => {
+
+      const eventAttributes = event.dataset;
+
+      modalContent.innerHTML = `
+            <h2>${eventAttributes.name}</h2>
+            <img src="/picture?uuid=${eventAttributes.pictureUuid}"
+                style="height:100px;max-height:250px;max-width:300px;"
+                alt="{{#if event.pictureAltText}}{{event.pictureAltText}}{{else}}Event Bild{{/if}}"
+                aria-label="Event Bild"
+                aria-labelledby="image"
+            />
+            <p><strong>Start Date:</strong> ${eventAttributes.startDate}</p>
+            <p><strong>Location:</strong> ${eventAttributes.locationName}${eventAttributes.city ? ', ' + eventAttributes.city : ''}</p>
+        `;
+
+      modal.style.display = "block";
+    });
+  });
+
+  window.onclick = function(event) {
+    if (event.target == modal) {
+      modal.style.display = "none";
+    }
+  };
+  //////
+
   loadMoreButton.addEventListener("click", () => {
     onLoadMoreSearch();
   });

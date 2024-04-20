@@ -149,6 +149,7 @@ class EventService @Autowired constructor(
             "startDate" to formatDate(event.startDate),
             "locationName" to (event.data[SemanticKeys.LOCATION_NAME] ?: ""),
             "city" to event.data[SemanticKeys.LOCATION_CITY],
+            "tags" to event.data[SemanticKeys.TAGS],
             "category" to mapCategory(event.data[SemanticKeys.CATEGORY]),
             "pictureUuid" to
                     if (!event.data["pictureUrl"].isNullOrEmpty())
@@ -178,6 +179,11 @@ class EventService @Autowired constructor(
         }
         return list.sortedWith(String.CASE_INSENSITIVE_ORDER)
     }
+
+//    private fun getAllTagValues(event: Event): List<String> {
+//        val list = mutableListOf<String>()
+//
+//    }
 
     private fun mapCategory(categoryString: String?): String? {
         if (categoryString != null) {

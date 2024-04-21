@@ -12,7 +12,7 @@
                 <use xlink:href="#{{#if event.category}}{{event.category}}{{else}}image{{/if}}"></use>
             </svg>
         {{/if}}
-        <button class="anchor-to-eventmodal">
+        <button class="anchor-to-event">
             Weitere Einzelheiten
         </button>
 
@@ -59,24 +59,12 @@
             <div class="modal-flex-container {{#if event.category}}event-modal-{{event.category}}{{/if}}">
                 <div class="modal-column" style="padding-bottom: 1rem;">
                     <h2>{{event.name}}</h2>
-                    <div class="event-details-wrapper">
-                        <div class="event-details">
-                            <svg height="24px" width="24px" title="Datum Logo" viewBox="0 0 512 512" >
-                                <use xlink:href="#time"></use>
-                            </svg>
-                            <p>{{event.startDate}}</p>
-                        </div>
-                        {{#if event.locationName}}
-                            <div class="event-details">
-                                <svg height="24px" width="24px" title="Ort Logo" viewBox="0 0 512 512" >
-                                    <use xlink:href="#location"></use>
-                                </svg>
-                                <p>{{event.locationName}}{{#if event.city}}, {{event.city}} {{/if}} </p>
-                            </div>
-                        {{/if}}
-                    </div>
+
+                    {{#each event.tag}}
+                        <a class="event-modal-tag">{{this}}</a>
+                    {{/each}}
                 </div>
-                <div class="modal-row" style="justify-content: space-between;">
+                <div class="modal-row" style="gap: 2rem;">
                     <div class="modal-column">
                         <div class="event-image-modal">
                             {{#if event.pictureUuid}}
@@ -93,7 +81,38 @@
                             {{/if}}
                         </div>
                     </div>
-                    <div class="modal-column">
+                    <div class="modal-column" style="width: -webkit-fill-available;">
+                        <div class="event-details-wrapper" style="gap: 16px; height: 100%; justify-content: space-between;">
+                            <div class="modal-column" style="gap: 12px;">
+                                <div class="event-details">
+                                    <svg height="24px" width="24px" title="Datum Logo" viewBox="0 0 512 512" >
+                                        <use xlink:href="#time"></use>
+                                    </svg>
+                                    <p>{{event.startDate}}</p>
+                                </div>
+                                {{#if event.locationName}}
+                                    <div class="event-details">
+                                        <svg height="24px" width="24px" title="Ort Logo" viewBox="0 0 512 512" >
+                                            <use xlink:href="#location"></use>
+                                        </svg>
+                                        <p>{{event.locationName}}{{#if event.city}}, {{event.city}} {{/if}} </p>
+                                    </div>
+                                {{/if}}
+                                {{#if event.category}}
+                                    <div class="event-details">
+                                        <svg height="24px" width="24px" title="Datum Logo" viewBox="0 0 512 512" >
+                                            <use xlink:href="#category"></use>
+                                        </svg>
+                                        <p>{{event.category}}</p>
+                                    </div>
+                                {{/if}}
+                            </div>
+
+
+                            <a class="anchor-to-eventmodal" href="{{event.url}}" target="_blank" aria-describedby="Zur Eventseite von {{event.name}} (neues Fenster wird geöffnet)">
+                                Zur Eventseite
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

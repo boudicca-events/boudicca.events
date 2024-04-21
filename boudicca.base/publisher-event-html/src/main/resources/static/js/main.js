@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
   events.forEach(event => {
     const modal = event.querySelector('#event-details-modal');
     const modalContent = event.querySelector('.modal-content')
-    const detailButton = event.querySelector('.anchor-to-eventmodal')
+    const detailButton = event.querySelector('.anchor-to-event')
     const closeButton = event.querySelector(".modal-close-button")
 
     modal.addEventListener('click', () => {

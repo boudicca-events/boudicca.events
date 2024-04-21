@@ -50,7 +50,7 @@
        font-size: var(--font-size-small);
     }
 
-    .anchor-to-eventmodal {
+    .anchor-to-event {
         color: inherit;
         position: absolute;
         text-decoration: none;
@@ -60,6 +60,17 @@
         border: 1px solid var(--anchor-to-eventpage-border-color);
         background-color: var(--anchor-to-eventpage-background-color);
         bottom: -18px;
+        font-weight: bold;
+    }
+
+    .anchor-to-eventmodal {
+        color: inherit;
+        text-decoration: none;
+        text-align: center;
+        font-size: 14px;
+        padding: 8px 24px;
+        border: 1px solid var(--anchor-to-eventpage-border-color);
+        background-color: var(--anchor-to-eventpage-background-color);
         font-weight: bold;
     }
 
@@ -158,7 +169,7 @@
     .modal-content {
         background-color: var(--color-main);
         margin: 15% auto;
-        border: 1px solid var(--anchor-to-eventpage-border-color);
+        /*border: 1px solid var(--anchor-to-eventpage-border-color);*/
         width: 80%;
         max-width: 970px;
         position: relative;
@@ -178,13 +189,28 @@
 
     .event-image-modal {
         height: 350px;
-        width: 350px;
+        width: 540px;
         background-color: white;
         object-fit: scale-down;
         display: flex;
         align-items: center;
         justify-content: center;
         position: relative;
+    }
+
+    .event-modal-tag-row {
+        display: flex;
+        gap: 0.50rem;
+    }
+
+    .event-modal-tag {
+        display: flex;
+        background-color: white;
+        padding-top: var(--space-small);
+        padding-bottom: var(--space-small);
+        padding-left: var(--space-medium);
+        padding-right: var(--space-medium);
+        border: 1px solid black;
     }
 
     .modal-close-button {

@@ -180,11 +180,6 @@ class EventService @Autowired constructor(
         return list.sortedWith(String.CASE_INSENSITIVE_ORDER)
     }
 
-//    private fun getAllTagValues(event: Event): List<String> {
-//        val list = mutableListOf<String>()
-//
-//    }
-
     private fun mapCategory(categoryString: String?): String? {
         if (categoryString != null) {
             val category = try {
@@ -194,12 +189,12 @@ class EventService @Autowired constructor(
             }
             if (category != null) {
                 return when (category) {
-                    EventCategory.MUSIC -> "music"
-                    EventCategory.ART -> "miscArt"
-                    EventCategory.TECH -> "tech"
-                    EventCategory.SPORT -> "sport"
-                    EventCategory.ALL -> "???"
-                    EventCategory.OTHER -> null
+                    EventCategory.MUSIC -> "Musik"
+                    EventCategory.ART -> "Kunst"
+                    EventCategory.TECH -> "Technologie"
+                    EventCategory.SPORT -> "Sport"
+                    EventCategory.ALL -> "Alle"
+                    EventCategory.OTHER -> "Andere"
                 }
             }
         }

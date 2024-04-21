@@ -10,6 +10,24 @@ document.addEventListener("DOMContentLoaded", () => {
   const categorySelect = document.getElementById("category");
   const categoryFieldSets = document.querySelectorAll("[data-category-wanted]");
 
+  /// poc - expanded event element
+  const events = document.querySelectorAll('.event');
+
+  events.forEach(event => {
+    event.addEventListener('click', () => {
+      if (event.classList.contains('expanded')) {
+        event.classList.remove('expanded');
+      } else {
+        events.forEach(ev => {
+          ev.classList.remove('expanded');
+        });
+        event.classList.add('expanded');
+      }
+    });
+  });
+
+  ///
+
   loadMoreButton.addEventListener("click", () => {
     onLoadMoreSearch();
   });
@@ -56,6 +74,14 @@ document.addEventListener("DOMContentLoaded", () => {
       window.location.assign(url);
     }
   };
+
+  const onEventDrawerOpenButton = () => {
+
+  }
+
+  const onEventDrawerCloseButton = () => {
+
+  }
 
   const onSearchLoadMoreButtonBehaviour = (response) => {
     const loadMoreButton = document.getElementById("loadMoreButton");

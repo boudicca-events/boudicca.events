@@ -18,7 +18,7 @@
 
         {{#if event.accessibilityProperties}}
             <div class="accessibility-details">
-                <svg height="24px" width="24px" viewBox="0 0 122.88 122.88">
+                <svg height="24px" width="24px" viewBox="0 0 512 512">
                     <title>{{event.accessibilityProperties}}</title>
                     <use xlink:href="#accessibility"></use>
                 </svg>
@@ -100,19 +100,20 @@
                                 {{/if}}
                                 {{#if event.category}}
                                     <div class="event-details">
-                                        <svg height="24px" width="24px" title="Datum Logo" viewBox="0 0 512 512" >
+                                        <svg height="24px" width="24px" title="Kategorie Logo" viewBox="0 0 512 512" >
                                             <use xlink:href="#category"></use>
                                         </svg>
                                         <p>{{event.category}}</p>
                                     </div>
                                 {{/if}}
-
-                                <div class="event-details">
-                                    <svg height="24px" width="24px" title="Datum Logo" viewBox="0 0 512 512" >
+                                {{#if event.accessibilityProperties}}
+                                <div class="event-details" style="align-items: start;">
+                                    <svg height="24px" width="24px" title="Erreichbarkeit Logo" viewBox="0 0 512 512">
                                         <use xlink:href="#accessibility"></use>
                                     </svg>
                                     <p>{{event.accessibilityProperties}}</p>
                                 </div>
+                                {{/if}}
                             </div>
 
                             <a class="anchor-to-eventmodal" href="{{event.url}}" target="_blank" aria-describedby="Zur Eventseite von {{event.name}} (neues Fenster wird geöffnet)">

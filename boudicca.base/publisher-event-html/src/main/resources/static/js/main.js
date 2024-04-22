@@ -21,14 +21,13 @@ document.addEventListener("DOMContentLoaded", () => {
       const detailButton = event.querySelector('.anchor-to-event')
       const closeButton = event.querySelector("#closeDrawerButton")
 
-      console.log(drawer)
-
       drawer.addEventListener('click', () => {
         drawer.classList.add("drawer-open");
       })
 
       detailButton.addEventListener('click', () => {
         drawer.classList.add("event-drawer-open");
+        document.body.style.overflow = "hidden";
       });
 
       closeButton.addEventListener('click', () => {

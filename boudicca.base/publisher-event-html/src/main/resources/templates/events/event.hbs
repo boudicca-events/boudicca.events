@@ -56,79 +56,80 @@
                 </svg>
             </button>
         </div>
-        <div class="modal-content">
+        <div class="drawer-content">
             <div class="modal-flex-container {{#if event.category}}event-modal-{{event.category}}{{/if}}">
-                <div class="modal-column" style="padding-bottom: 1rem;">
+                <div class="modal-column">
                     <h2>{{event.name}}</h2>
-
                     {{#each event.tag}}
                         <a class="event-modal-tag">{{this}}</a>
                     {{/each}}
                 </div>
-                <div class="modal-row-image" style="gap: 2rem;">
-                    <div class="modal-column">
-                        <div class="event-image-modal">
-                            {{#if event.pictureUuid}}
-                                <img src="/picture?uuid={{event.pictureUuid}}"
-                                style="height:100px;max-height:250px;max-width:300px;"
-                                alt="{{#if event.pictureAltText}}{{event.pictureAltText}}{{else}}Event Bild{{/if}}"
-                                aria-label="Event Bild"
-                                aria-labelledby="image"
-                                />
-                            {{else}}
-                                <svg title="Event Bild" viewBox="0 0 512 512" height="100px" >
-                                    <use xlink:href="#{{#if event.category}}{{event.category}}{{else}}image{{/if}}"></use>
-                                </svg>
-                            {{/if}}
-                        </div>
-                    </div>
-                    <div class="modal-column" style="width: -webkit-fill-available;">
-                        <div class="event-details-wrapper" style="gap: 16px; height: 100%; justify-content: space-between;">
-                            <div class="modal-column" style="gap: 12px;">
-                                <div class="event-details">
-                                    <svg height="24px" width="24px" title="Datum Logo" viewBox="0 0 512 512" >
-                                        <use xlink:href="#time"></use>
+            </div>
+
+            <div class="modal-row main-row" style="padding: 0 1rem; gap: 1rem;">
+                <div class="modal-column" style="padding: 0 1rem; gap: 1rem;">
+                    <div class="drawer-row-image" style="gap: 2rem;">
+                        <div class="modal-column">
+                            <div class="event-image-modal">
+                                {{#if event.pictureUuid}}
+                                    <img src="/picture?uuid={{event.pictureUuid}}"
+                                    style="height:100px;max-height:250px;max-width:300px;"
+                                    alt="{{#if event.pictureAltText}}{{event.pictureAltText}}{{else}}Event Bild{{/if}}"
+                                    aria-label="Event Bild"
+                                    aria-labelledby="image"
+                                    />
+                                {{else}}
+                                    <svg title="Event Bild" viewBox="0 0 512 512" height="100px" >
+                                        <use xlink:href="#{{#if event.category}}{{event.category}}{{else}}image{{/if}}"></use>
                                     </svg>
-                                    <p>{{event.startDate}}</p>
-                                </div>
-                                {{#if event.locationName}}
-                                    <div class="event-details">
-                                        <svg height="24px" width="24px" title="Ort Logo" viewBox="0 0 512 512" >
-                                            <use xlink:href="#location"></use>
-                                        </svg>
-                                        <p>{{event.locationName}}{{#if event.city}}, {{event.city}} {{/if}} </p>
-                                    </div>
-                                {{/if}}
-                                {{#if event.category}}
-                                    <div class="event-details">
-                                        <svg height="24px" width="24px" title="Kategorie Logo" viewBox="0 0 512 512" >
-                                            <use xlink:href="#category"></use>
-                                        </svg>
-                                        <p>{{event.category}}</p>
-                                    </div>
-                                {{/if}}
-                                {{#if event.accessibilityProperties}}
-                                    <div class="event-details" style="align-items: start;">
-                                        <svg height="24px" width="24px" title="Erreichbarkeit Logo" viewBox="0 0 512 512">
-                                            <use xlink:href="#accessibility"></use>
-                                        </svg>
-                                        <p>{{event.accessibilityProperties}}</p>
-                                    </div>
                                 {{/if}}
                             </div>
-
-                            <a class="anchor-to-eventmodal" href="{{event.url}}" target="_blank" aria-describedby="Zur Eventseite von {{event.name}} (neues Fenster wird geöffnet)">
-                                Zur Eventseite
-                            </a>
+                        </div>
+                    </div>
+                    <div class="tab-container">
+                        <div id="tab1" class="tab-content active">
+                            {{event.description}}
                         </div>
                     </div>
                 </div>
-            </div>
+                <div class="modal-column" style="width: -webkit-fill-available;">
+                    <div class="event-details-wrapper" style="gap: 16px; height: 100%; width: 280px; padding: 1rem;">
+                        <div class="modal-column" style="gap: 12px;">
+                            <div class="event-details">
+                                <svg height="24px" width="24px" title="Datum Logo" viewBox="0 0 512 512" >
+                                    <use xlink:href="#time"></use>
+                                </svg>
+                                <p>{{event.startDate}}</p>
+                            </div>
+                            {{#if event.locationName}}
+                                <div class="event-details">
+                                    <svg height="24px" width="24px" title="Ort Logo" viewBox="0 0 512 512" >
+                                        <use xlink:href="#location"></use>
+                                    </svg>
+                                    <p>{{event.locationName}}{{#if event.city}}, {{event.city}} {{/if}} </p>
+                                </div>
+                            {{/if}}
+                            {{#if event.category}}
+                                <div class="event-details">
+                                    <svg height="24px" width="24px" title="Kategorie Logo" viewBox="0 0 512 512" >
+                                        <use xlink:href="#category"></use>
+                                    </svg>
+                                    <p>{{event.category}}</p>
+                                </div>
+                            {{/if}}
+                            {{#if event.accessibilityProperties}}
+                                <div class="event-details" style="align-items: start;">
+                                    <svg height="24px" width="24px" title="Erreichbarkeit Logo" viewBox="0 0 512 512">
+                                        <use xlink:href="#accessibility"></use>
+                                    </svg>
+                                    <p>{{event.accessibilityProperties}}</p>
+                                </div>
+                            {{/if}}
+                        </div>
 
-            <div id="modal-tabs" style="background-color: white; padding: 2rem;">
-                <div class="tab-container">
-                    <div id="tab1" class="tab-content active">
-                        {{event.description}}
+                        <a class="anchor-to-eventmodal" href="{{event.url}}" target="_blank" aria-describedby="Zur Eventseite von {{event.name}} (neues Fenster wird geöffnet)">
+                            Zur Eventseite
+                        </a>
                     </div>
                 </div>
             </div>
@@ -137,6 +138,253 @@
 </div>
 
 <style>
+    .event {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .event-title {
+        font-size: 1.2em;
+        margin-top: 18px;
+        margin-bottom: 8px;
+        font-weight: 600;
+        /** https://stackoverflow.com/questions/3922739/limit-text-length-to-n-lines-using-css */
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+
+    .event-image {
+        height: 250px;
+        background-color: var(--color-main);
+        object-fit: scale-down;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+
+    .event-image-tech {
+        background-color: var(--color-main-green);
+    }
+
+    .event-image-miscArt {
+        background-color: var(--color-main-yellow);
+    }
+
+    .event-image-music {
+        background-color: var(--color-main-red);
+    }
+
+    .event-description {
+        padding: 4px 8px;
+        font-size: var(--font-size-small);
+    }
+
+    .anchor-to-event {
+        color: inherit;
+        position: absolute;
+        text-decoration: none;
+        right: 8px;
+        font-size: 14px;
+        padding: 8px 24px;
+        border: 1px solid var(--anchor-to-eventpage-border-color);
+        background-color: var(--anchor-to-eventpage-background-color);
+        bottom: -18px;
+        font-weight: bold;
+    }
+
+    .anchor-to-eventmodal {
+        color: inherit;
+        text-decoration: none;
+        text-align: center;
+        font-size: 14px;
+        padding: 8px 24px;
+        border: 1px solid var(--anchor-to-eventpage-border-color);
+        background-color: var(--anchor-to-eventpage-background-color);
+        font-weight: bold;
+    }
+
+    .event-details {
+        display: grid;
+        grid-template-columns: max-content 1fr;
+        align-items: center;
+        gap: 6px;
+
+        :first-child {
+            font-size: var(--font-size-large);
+        }
+    }
+
+    .event-details-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .event-tag {
+        color: inherit;
+        text-decoration: none;
+        font-size: 14px;
+        padding: 8px 24px;
+        border: 1px solid var(--anchor-to-eventpage-border-color);
+        background-color: var(--anchor-to-eventpage-background-color);
+        font-weight: bold;
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.4);
+    }
+
+    .modal-description {
+        display: -webkit-box;
+        max-width: 400px;
+        /* https://stackoverflow.com/questions/15909489/text-overflow-ellipsis-on-two-lines */
+        -webkit-line-clamp: 10;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .modal-flex-container {
+        display: flex;
+        flex-direction: column;
+        background-color: var(--color-main);
+        padding: 2rem;
+    }
+
+    .modal-row {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .modal-column {
+        display: flex;
+        flex-direction: column;
+    }
+
+    /*.modal-tabs {*/
+    /*    margin-top: 20px;*/
+    /*}*/
+
+    /*.tab-button {*/
+    /*    background-color: white;*/
+    /*    border: none;*/
+    /*    color: black;*/
+    /*    padding: 10px 20px;*/
+    /*    cursor: pointer;*/
+    /*    border: 1px solid black;*/
+    /*}*/
+
+    /*.tab-button.active {*/
+    /*    background-color: white;*/
+    /*}*/
+
+    /*.tab-content {*/
+    /*    display: none;*/
+    /*    padding: 20px;*/
+    /*}*/
+
+    /*.tab-content.active {*/
+    /*    display: block;*/
+    /*}*/
+
+    .event-modal-tech {
+        background-color: var(--color-main-green);
+    }
+
+    .event-modal-miscArt {
+        background-color: var(--color-main-yellow);
+    }
+
+    .event-modal-music {
+        background-color: var(--color-main-red);
+    }
+
+    .event-image-modal {
+        height: 350px;
+        width: 540px;
+        background-color: white;
+        object-fit: scale-down;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+
+    .modal-row-image {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .event-modal-tag-row {
+        display: flex;
+        gap: 0.50rem;
+    }
+
+    @media only screen and (max-width: 970px) {
+        .event-image-modal {
+            width: -webkit-fill-available;
+        }
+        .modal-row-image {
+            display: flex;
+            flex-direction: column;
+        }
+        .event-details-wrapper {
+            width: -webkit-fill-available !important;
+        }
+        .main-row {
+            background-color: var(--color-main);
+            display: flex;
+            flex-direction: column;
+        }
+    }
+
+    .main-row {
+        background-color: var(--color-main);
+    }
+
+    .event-modal-tag {
+        display: flex;
+        background-color: white;
+        padding-top: var(--space-small);
+        padding-bottom: var(--space-small);
+        padding-left: var(--space-medium);
+        padding-right: var(--space-medium);
+        border: 1px solid black;
+    }
+
+    .modal-close-button {
+        display: flex;
+        background-color: white;
+        position: absolute;
+        right: 0;
+        padding: var(--space-medium);
+        top: 0;
+        border-bottom: 1px solid black;
+        border-left: 1px solid black;
+    }
+
+    .accessibility-details {
+        display: flex;
+        background-color: white;
+        position: absolute;
+        left: var(--space-medium);
+        padding: var(--space-medium);
+        border: 1px solid black;
+        top: var(--space-medium);
+    }
+
     .event-drawer {
         z-index: 10;
         min-width: 500px;
@@ -144,7 +392,7 @@
         height: 100%;
         flex-direction: column;
         background-color: var(--color-white);
-        padding: 32px;
+        /*padding: 32px;*/
         opacity: 0;
         visibility: hidden;
         position: fixed;
@@ -171,5 +419,28 @@
     .event-drawer-open {
         visibility: visible;
         opacity: 1;
+    }
+
+    /*.event-drawer-tech {*/
+    /*    background-color: var(--color-main-green);*/
+    /*}*/
+
+    /*.event-drawer-miscArt {*/
+    /*    background-color: var(--color-main-yellow);*/
+    /*}*/
+
+    /*.event-drawer-music {*/
+    /*    background-color: var(--color-main-red);*/
+    /*}*/
+
+    .drawer-content {
+        background-color: var(--color-main);
+        /*margin: 15% auto;*/
+        /*border: 1px solid var(--anchor-to-eventpage-border-color);*/
+        /*width: 80%;*/
+        height: 100%;
+        max-width: 970px;
+        position: relative;
+        padding-bottom: 1rem;
     }
 </style>

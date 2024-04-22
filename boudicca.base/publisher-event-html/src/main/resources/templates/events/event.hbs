@@ -106,8 +106,14 @@
                                         <p>{{event.category}}</p>
                                     </div>
                                 {{/if}}
-                            </div>
 
+                                <div class="event-details">
+                                    <svg height="24px" width="24px" title="Datum Logo" viewBox="0 0 512 512" >
+                                        <use xlink:href="#accessibility"></use>
+                                    </svg>
+                                    <p>{{event.accessibilityProperties}}</p>
+                                </div>
+                            </div>
 
                             <a class="anchor-to-eventmodal" href="{{event.url}}" target="_blank" aria-describedby="Zur Eventseite von {{event.name}} (neues Fenster wird geöffnet)">
                                 Zur Eventseite

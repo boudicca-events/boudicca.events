@@ -48,7 +48,7 @@
         </div>
     </div>
 
-    <div id="event-details-drawer" class="drawer">
+    <div id="event-details-drawer" class="event-drawer">
         <div class="drawer-header">
             <button type="button" id="closeDrawerButton" title="Filtersuche schließen">
                 <svg title="Schließen Logo" height="56px" width="56px" viewBox="0 0 512 512">
@@ -135,3 +135,41 @@
         </div>
     </div>
 </div>
+
+<style>
+    .event-drawer {
+        z-index: 10;
+        min-width: 500px;
+        display: flex;
+        height: 100%;
+        flex-direction: column;
+        background-color: var(--color-white);
+        padding: 32px;
+        opacity: 0;
+        visibility: hidden;
+        position: fixed;
+        right: 0;
+        top: 0;
+        border-left: 1px solid black;
+        box-shadow: 1px 0px 10px 11px #87878724;
+        overflow: scroll;
+    }
+
+    .hidden {
+        display: none;
+    }
+
+    @media only screen and (max-width: 700px) {
+        .event-drawer {
+            width: 100vw;
+            border: none;
+            box-shadow: none;
+            min-width: 0;
+        }
+    }
+
+    .event-drawer-open {
+        visibility: visible;
+        opacity: 1;
+    }
+</style>

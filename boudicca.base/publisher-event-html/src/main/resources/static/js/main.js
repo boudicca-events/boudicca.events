@@ -14,56 +14,51 @@ document.addEventListener("DOMContentLoaded", () => {
   ////// TODO: refactor prototype code, follow existing code style
   const events = document.querySelectorAll('.event');
 
-  events.forEach(event => {
-    const modal = event.querySelector('#event-details-modal');
-    const modalContent = event.querySelector('.modal-content')
-    const detailButton = event.querySelector('.anchor-to-event')
-    const closeButton = event.querySelector(".modal-close-button")
+  const setModalBehaviour = (events) => {
+    events.forEach(event => {
+      const modal = event.querySelector('#event-details-modal');
+      const modalContent = event.querySelector('.modal-content')
+      const detailButton = event.querySelector('.anchor-to-event')
+      const closeButton = event.querySelector(".modal-close-button")
 
-    modal.addEventListener('click', () => {
-      if (event.target === modalContent) {
-        return;
-      }
+      modal.addEventListener('click', () => {
+        if (event.target === modalContent) {
+          return;
+        }
 
-      modal.style.display = "none";
-    })
-
-    detailButton.addEventListener('click', () => {
-      modal.style.display = "block";
-    });
-
-    closeButton.addEventListener('click', () => {
-      modal.style.display = "none";
-    })
-
-    modalContent.addEventListener('click', function(event) {
-      event.stopPropagation();
-    });
-
-    const tabButtons = event.querySelectorAll(".tab-button")
-    tabButtons.forEach(button => {
-      button.addEventListener('click', () => {
-        console.log("jere")
+        modal.style.display = "none";
       })
+
+      detailButton.addEventListener('click', () => {
+        modal.style.display = "block";
+      });
+
+      closeButton.addEventListener('click', () => {
+        modal.style.display = "none";
+      })
+
+      modalContent.addEventListener('click', function(event) {
+        event.stopPropagation();
+      });
     })
-  });
+  };
 
-  const openTab = (event, tabName) => {
-    const tabContents = document.querySelectorAll('.tab-content');
-    tabContents.forEach(tabContent => {
-      console.log("here in the tab function in contens")
-      tabContent.classList.remove('active');
-    });
-
-    const tabButtons = document.querySelectorAll('.tab-button');
-    tabButtons.forEach(tabButton => {
-      tabButton.classList.remove('active');
-    });
-
-    document.getElementById(tabName).classList.add('active');
-
-    event.currentTarget.classList.add('active');
-  }
+  // const openTab = (event, tabName) => {
+  //   const tabContents = document.querySelectorAll('.tab-content');
+  //   tabContents.forEach(tabContent => {
+  //     console.log("here in the tab function in contens")
+  //     tabContent.classList.remove('active');
+  //   });
+  //
+  //   const tabButtons = document.querySelectorAll('.tab-button');
+  //   tabButtons.forEach(tabButton => {
+  //     tabButton.classList.remove('active');
+  //   });
+  //
+  //   document.getElementById(tabName).classList.add('active');
+  //
+  //   event.currentTarget.classList.add('active');
+  // }
   //////
 
   loadMoreButton.addEventListener("click", () => {
@@ -163,6 +158,12 @@ document.addEventListener("DOMContentLoaded", () => {
       onSearchLoadMoreButtonBehaviour(ssrDomEventString);
       const newEvents = parser.parseFromString(ssrDomEventString, "text/html");
       eventsContainer.append(...newEvents.body.children);
+
+      ////
+      const newlyAddedEvents = eventsContainer.querySelectorAll('.event');
+      setModalBehaviour(newlyAddedEvents)
+      ////
+
       goTo(`/search?${paramsAsString}`);
     } catch (e) {
       console.error(e);
@@ -202,4 +203,5 @@ document.addEventListener("DOMContentLoaded", () => {
   };
   categorySelect.addEventListener("change", onCategoryChange);
   onCategoryChange();
+  setModalBehaviour(events);
 });

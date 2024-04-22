@@ -16,17 +16,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const setModalBehaviour = (events) => {
     events.forEach(event => {
-      const modal = event.querySelector('#event-details-modal');
+      const modal = event.querySelector('#event-details-drawer');
       const modalContent = event.querySelector('.modal-content')
       const detailButton = event.querySelector('.anchor-to-event')
-      const closeButton = event.querySelector(".modal-close-button")
+      const closeButton = event.querySelector("#closeDrawerButton")
 
       modal.addEventListener('click', () => {
         if (event.target === modalContent) {
           return;
         }
 
-        modal.style.display = "none";
+        modal.classList.add("drawer-open");
       })
 
       detailButton.addEventListener('click', () => {
@@ -34,7 +34,8 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       closeButton.addEventListener('click', () => {
-        modal.style.display = "none";
+        // modal.style.display = "none";
+        modal.classList.remove("drawer-open");
       })
 
       modalContent.addEventListener('click', function(event) {

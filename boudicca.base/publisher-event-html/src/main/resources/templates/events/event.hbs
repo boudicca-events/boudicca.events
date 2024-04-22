@@ -48,14 +48,15 @@
         </div>
     </div>
 
-    <div id="event-details-modal" class="modal" style="display: none">
-        <div class="modal-content">
-            <button class="modal-close-button">
-                <svg height="32px" width="32px" viewBox="0 0 512 512">
+    <div id="event-details-drawer" class="drawer">
+        <div class="drawer-header">
+            <button type="button" id="closeDrawerButton" title="Filtersuche schließen">
+                <svg title="Schließen Logo" height="56px" width="56px" viewBox="0 0 512 512">
                     <use xlink:href="#close"></use>
                 </svg>
             </button>
-
+        </div>
+        <div class="modal-content">
             <div class="modal-flex-container {{#if event.category}}event-modal-{{event.category}}{{/if}}">
                 <div class="modal-column" style="padding-bottom: 1rem;">
                     <h2>{{event.name}}</h2>
@@ -107,12 +108,12 @@
                                     </div>
                                 {{/if}}
                                 {{#if event.accessibilityProperties}}
-                                <div class="event-details" style="align-items: start;">
-                                    <svg height="24px" width="24px" title="Erreichbarkeit Logo" viewBox="0 0 512 512">
-                                        <use xlink:href="#accessibility"></use>
-                                    </svg>
-                                    <p>{{event.accessibilityProperties}}</p>
-                                </div>
+                                    <div class="event-details" style="align-items: start;">
+                                        <svg height="24px" width="24px" title="Erreichbarkeit Logo" viewBox="0 0 512 512">
+                                            <use xlink:href="#accessibility"></use>
+                                        </svg>
+                                        <p>{{event.accessibilityProperties}}</p>
+                                    </div>
                                 {{/if}}
                             </div>
 

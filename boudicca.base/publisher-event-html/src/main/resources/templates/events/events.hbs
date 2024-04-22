@@ -198,9 +198,24 @@
         position: relative;
     }
 
+    .modal-row-image {
+        display: flex;
+        flex-direction: row;
+    }
+
     .event-modal-tag-row {
         display: flex;
         gap: 0.50rem;
+    }
+
+    @media only screen and (max-width: 970px) {
+        .event-image-modal {
+            width: -webkit-fill-available;
+        }
+        .modal-row-image {
+            display: flex;
+            flex-direction: column;
+        }
     }
 
     .event-modal-tag {

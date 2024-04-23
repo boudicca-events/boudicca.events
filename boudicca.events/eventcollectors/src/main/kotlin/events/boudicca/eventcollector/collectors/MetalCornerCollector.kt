@@ -35,7 +35,7 @@ class MetalCornerCollector : TwoStepEventCollector<Pair<String, String>>("metalc
 
     val document = Jsoup.parse(fetcher.fetchUrl(baseUrl + url))
 
-    val name = "Escape - " + document.select("div#content h1").text()
+    val name = document.select("div#content h1").text()
 
     val description = document.select("div#content p").text()
     if (description.isNotBlank()) {

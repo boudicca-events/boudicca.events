@@ -34,6 +34,7 @@ fun main() {
         .addEventCollector(OKHVoecklabruckCollector())
         .addEventCollector(ValugCollector())
         .addEventCollector(AlpenvereinCollector())
+        .addEventCollector(MetalCornerCollector())
         .build()
 
     eventCollectorCoordinator.startWebUi()

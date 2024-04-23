@@ -11,46 +11,41 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-class MetalCornerCollector : TwoStepEventCollector<Triple<String, String, Document>>("metalcorner") {
+class MetalCornerCollector : TwoStepEventCollector<Pair<String, String>>("metalcorner") {
 
+  private val fetcher = Fetcher()
   private val baseUrl = "https://www.escape-metalcorner.at/"
 
-  override fun getAllUnparsedEvents(): List<Triple<String, String, Document>> {
-    val fetcher = Fetcher()
-
-    val events = mutableListOf<Triple<String, String, Document>>()
+  override fun getAllUnparsedEvents(): List<Pair<String, String>> {
     val eventUrls = mutableListOf<Pair<String, String>>()
 
     val document = Jsoup.parse(fetcher.fetchUrl(baseUrl + "de/events"))
     document.select("div#content > div#events .event")
       .forEach {
-        eventUrls.add(Pair(it.select(".head").text(), it.select("a.overlay").attr("href")))
+        eventUrls.add(Pair(it.select(".head").text(),
+          it.select("a.overlay").attr("href").substring(2)))
       }
 
-    eventUrls.forEach {
-      val url = baseUrl + it.second.substring(2)
-      val eventType = it.first
-      events.add(Triple(eventType, url, Jsoup.parse(fetcher.fetchUrl(url))))
-    }
-
-    return events
+    return eventUrls
   }
 
-  override fun parseEvent(event: Triple<String, String, Document>): Event {
-    val (eventType, url, doc) = event
+  override fun parseEvent(event: Pair<String, String>): Event {
+    val (eventType, url) = event
     val data = mutableMapOf<String, String>()
 
-    val name = "Escape - " + doc.select("div#content h1").text()
+    val document = Jsoup.parse(fetcher.fetchUrl(baseUrl + url))
 
-    val description = doc.select("div#content p").text()
+    val name = "Escape - " + document.select("div#content h1").text()
+
+    val description = document.select("div#content p").text()
     if (description.isNotBlank()) {
       data[SemanticKeys.DESCRIPTION] = description
     }
 
-    data[SemanticKeys.URL] = url
+    data[SemanticKeys.URL] = baseUrl + url
     data[SemanticKeys.TYPE] = eventType
-    data[SemanticKeys.PICTURE_URL] = doc.select("div#content img").attr("src")
-    data[SemanticKeys.PICTURE_ALT_TEXT] = doc.select("div#content img").attr("alt")
+    data[SemanticKeys.PICTURE_URL] = document.select("div#content img").attr("src")
+    data[SemanticKeys.PICTURE_ALT_TEXT] = document.select("div#content img").attr("alt")
     data[SemanticKeys.SOURCES] = data[SemanticKeys.URL]!!
     data[SemanticKeys.LOCATION_NAME] = "Escape Metalcorner"
     data[SemanticKeys.LOCATION_CITY] = "Wien"
@@ -61,7 +56,7 @@ class MetalCornerCollector : TwoStepEventCollector<Triple<String, String, Docume
 
     val formatter = DateTimeFormatter.ofPattern("EEEE, dd.MM.yyyy HH:mm", Locale.GERMAN)
     val zoneId = TimeZone.getTimeZone("Europe/Vienna").toZoneId()
-    val eventStartDate = LocalDateTime.parse(doc.select("div#content h2").text(), formatter)
+    val eventStartDate = LocalDateTime.parse(document.select("div#content h2").text(), formatter)
       .atZone(zoneId).toOffsetDateTime()
 
     return Event(name, eventStartDate, data)

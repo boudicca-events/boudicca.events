@@ -41,7 +41,6 @@ class MetalCornerCollector : TwoStepEventCollector<Triple<String, String, Docume
     val data = mutableMapOf<String, String>()
 
     val name = "Escape - " + doc.select("div#content h1").text()
-    data[SemanticKeys.NAME] = name
 
     val description = doc.select("div#content p").text()
     if (description.isNotBlank()) {

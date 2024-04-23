@@ -7,7 +7,6 @@ import base.boudicca.model.Event
 import base.boudicca.model.EventCategory
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*

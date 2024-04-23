@@ -14,7 +14,6 @@ import java.util.*
 
 class MetalCornerCollector : TwoStepEventCollector<Triple<String, String, Document>>("metalcorner") {
 
-  private val LOG = LoggerFactory.getLogger(this::class.java)
   private val baseUrl = "https://www.escape-metalcorner.at/"
 
   override fun getAllUnparsedEvents(): List<Triple<String, String, Document>> {

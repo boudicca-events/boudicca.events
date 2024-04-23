@@ -40,9 +40,17 @@ class MetalCornerCollector : TwoStepEventCollector<Triple<String, String, Docume
   override fun parseEvent(event: Triple<String, String, Document>): Event {
     val (eventType, url, doc) = event
     val data = mutableMapOf<String, String>()
+
+    val name = "Escape - " + doc.select("div#content h1").text()
+    data[SemanticKeys.NAME] = name
+
+    val description = doc.select("div#content p").text()
+    if (description.isNotBlank()) {
+      data[SemanticKeys.DESCRIPTION] = description
+    }
+
     data[SemanticKeys.URL] = url
     data[SemanticKeys.TYPE] = eventType
-    data[SemanticKeys.NAME] = "Escape - " + doc.select("div#content h1").text()
     data[SemanticKeys.PICTURE_URL] = doc.select("div#content img").attr("src")
     data[SemanticKeys.PICTURE_ALT_TEXT] = doc.select("div#content img").attr("alt")
     data[SemanticKeys.SOURCES] = data[SemanticKeys.URL]!!
@@ -58,6 +66,6 @@ class MetalCornerCollector : TwoStepEventCollector<Triple<String, String, Docume
     val eventStartDate = LocalDateTime.parse(doc.select("div#content h2").text(), formatter)
       .atZone(zoneId).toOffsetDateTime()
 
-    return Event(name = "my event", eventStartDate, data)
+    return Event(name, eventStartDate, data)
   }
 }

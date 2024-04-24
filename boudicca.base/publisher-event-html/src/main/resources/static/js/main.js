@@ -10,6 +10,55 @@ document.addEventListener("DOMContentLoaded", () => {
   const categorySelect = document.getElementById("category");
   const categoryFieldSets = document.querySelectorAll("[data-category-wanted]");
 
+  ////// TODO: find a way to add event listener to newly added events after "merh laden" button is pressed
+  ////// TODO: refactor prototype code, follow existing code style
+  const events = document.querySelectorAll('.event');
+
+  const setModalBehaviour = (events) => {
+    events.forEach(event => {
+      const drawer = event.querySelector('#event-details-drawer');
+      const drawerContent = event.querySelector('.modal-content')
+      const detailButton = event.querySelector('.anchor-to-event')
+      const closeButton = event.querySelector("#closeDrawerButton")
+
+      drawer.addEventListener('click', () => {
+        drawer.classList.add("drawer-open");
+      })
+
+      detailButton.addEventListener('click', () => {
+        drawer.classList.add("event-drawer-open");
+        document.body.style.overflow = "hidden";
+      });
+
+      closeButton.addEventListener('click', () => {
+        // modal.style.display = "none";
+        drawer.classList.remove("event-drawer-open");
+      })
+
+      // modalContent.addEventListener('click', function(event) {
+      //   event.stopPropagation();
+      // });
+    })
+  };
+
+  // const openTab = (event, tabName) => {
+  //   const tabContents = document.querySelectorAll('.tab-content');
+  //   tabContents.forEach(tabContent => {
+  //     console.log("here in the tab function in contens")
+  //     tabContent.classList.remove('active');
+  //   });
+  //
+  //   const tabButtons = document.querySelectorAll('.tab-button');
+  //   tabButtons.forEach(tabButton => {
+  //     tabButton.classList.remove('active');
+  //   });
+  //
+  //   document.getElementById(tabName).classList.add('active');
+  //
+  //   event.currentTarget.classList.add('active');
+  // }
+  //////
+
   loadMoreButton.addEventListener("click", () => {
     onLoadMoreSearch();
   });
@@ -107,6 +156,12 @@ document.addEventListener("DOMContentLoaded", () => {
       onSearchLoadMoreButtonBehaviour(ssrDomEventString);
       const newEvents = parser.parseFromString(ssrDomEventString, "text/html");
       eventsContainer.append(...newEvents.body.children);
+
+      ////
+      const newlyAddedEvents = eventsContainer.querySelectorAll('.event');
+      setModalBehaviour(newlyAddedEvents)
+      ////
+
       goTo(`/search?${paramsAsString}`);
     } catch (e) {
       console.error(e);
@@ -146,4 +201,5 @@ document.addEventListener("DOMContentLoaded", () => {
   };
   categorySelect.addEventListener("change", onCategoryChange);
   onCategoryChange();
+  setModalBehaviour(events);
 });

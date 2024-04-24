@@ -149,6 +149,7 @@ class EventService @Autowired constructor(
             "startDate" to formatDate(event.startDate),
             "locationName" to (event.data[SemanticKeys.LOCATION_NAME] ?: ""),
             "city" to event.data[SemanticKeys.LOCATION_CITY],
+            "tags" to event.data[SemanticKeys.TAGS],
             "category" to mapCategory(event.data[SemanticKeys.CATEGORY]),
             "pictureUuid" to
                     if (!event.data["pictureUrl"].isNullOrEmpty())
@@ -188,12 +189,12 @@ class EventService @Autowired constructor(
             }
             if (category != null) {
                 return when (category) {
-                    EventCategory.MUSIC -> "music"
-                    EventCategory.ART -> "miscArt"
-                    EventCategory.TECH -> "tech"
-                    EventCategory.SPORT -> "sport"
-                    EventCategory.ALL -> "???"
-                    EventCategory.OTHER -> null
+                    EventCategory.MUSIC -> "Musik"
+                    EventCategory.ART -> "Kunst"
+                    EventCategory.TECH -> "Technologie"
+                    EventCategory.SPORT -> "Sport"
+                    EventCategory.ALL -> "Alle"
+                    EventCategory.OTHER -> "Andere"
                 }
             }
         }

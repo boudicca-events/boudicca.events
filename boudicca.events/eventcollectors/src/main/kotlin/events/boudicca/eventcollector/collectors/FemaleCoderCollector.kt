@@ -6,7 +6,6 @@ import base.boudicca.api.eventcollector.TwoStepEventCollector
 import base.boudicca.model.Event
 import base.boudicca.model.EventCategory
 import org.jsoup.Jsoup
-import org.slf4j.LoggerFactory
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZoneId
@@ -15,7 +14,6 @@ import java.util.*
 
 class FemaleCoderCollector : TwoStepEventCollector<String>("femalecoder") {
 
-  private val LOG = LoggerFactory.getLogger(this::class.java)
   private val fetcher = Fetcher()
   private val baseUrl = "https://female-coders.at/"
 

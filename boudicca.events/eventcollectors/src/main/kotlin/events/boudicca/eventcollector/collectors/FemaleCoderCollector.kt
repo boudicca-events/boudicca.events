@@ -21,7 +21,6 @@ class FemaleCoderCollector : TwoStepEventCollector<String>("femalecoder") {
 
   override fun getAllUnparsedEvents(): List<String> {
     val eventUrls = mutableListOf<String>()
-
     val document = Jsoup.parse(fetcher.fetchUrl(baseUrl))
 
     document.select("div.et_pb_section_3 .event_details")
@@ -56,6 +55,20 @@ class FemaleCoderCollector : TwoStepEventCollector<String>("femalecoder") {
     data[SemanticKeys.DESCRIPTION] = description.toString()
 
     data[SemanticKeys.SOURCES] = data[SemanticKeys.URL]!!
+    data[SemanticKeys.PICTURE_URL] = document.select("div.container > div#content-area img").attr("src")
+    data[SemanticKeys.TYPE] = "technology"
+    data[SemanticKeys.CATEGORY] = EventCategory.TECH.name
+    data[SemanticKeys.TAGS] = listOf("Study Group", "Coding", "Mentorship", "TechCommunity", "Socializing", "Networking").toString()
+    data[SemanticKeys.REGISTRATION] = "free"
+
+    data[SemanticKeys.LOCATION_NAME] = document.select("div.venue > p").first()?.text()!!
+
+    // Wien, Le, AT, 1020
+    // Wien, AT, 1120
+    // Linz, In, AT, 4020
+    // Hagenberg im Mühlkreis, AT, 4232
+    val city = document.select("div.venue > p").last()?.text()!!.substringBefore(",", missingDelimiterValue="Linz")
+    data[SemanticKeys.LOCATION_CITY] = city
 
     val date = document.select("div.details p").first()?.text()
     val startTime = document.select("div.details p").last()?.text()?.substring(0, 8)!!
@@ -68,14 +81,6 @@ class FemaleCoderCollector : TwoStepEventCollector<String>("femalecoder") {
     val offsetDateTime = localDate.atTime(localStartTime)
       .atZone(ZoneId.of("Europe/Vienna"))
       .toOffsetDateTime()
-
-    data[SemanticKeys.PICTURE_URL] = document.select("div.container > div#content-area img").attr("href")
-    data[SemanticKeys.TYPE] = "technology"
-    data[SemanticKeys.CATEGORY] = EventCategory.TECH.name
-    data[SemanticKeys.TAGS] = listOf("Study Group", "Coding", "Mentorship", "TechCommunity", "Socializing", "Networking").toString()
-
-    data[SemanticKeys.LOCATION_NAME] = document.select("div.venue > p").first()?.text()!!
-//    data[SemanticKeys.LOCATION_CITY] =
 
     return Event(name, offsetDateTime, data)
   }

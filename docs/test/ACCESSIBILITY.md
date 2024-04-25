@@ -36,3 +36,8 @@ The main color combinations that should be avoided are:
 - Blue & Purple
 - Light Green & Yellow
 - Green & Red
+
+
+### Test Cases
+
+TODO

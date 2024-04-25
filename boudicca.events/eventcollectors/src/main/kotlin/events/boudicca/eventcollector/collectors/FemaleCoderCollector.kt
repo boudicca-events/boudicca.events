@@ -18,15 +18,14 @@ class FemaleCoderCollector : TwoStepEventCollector<String>("femalecoder") {
   private val baseUrl = "https://female-coders.at/"
 
   override fun getAllUnparsedEvents(): List<String> {
-    val eventUrls = mutableListOf<String>()
     val document = Jsoup.parse(fetcher.fetchUrl(baseUrl))
 
-    document.select("div.et_pb_section_3 .event_details")
-      .forEach {
-        eventUrls.add(it.select("a").first().attr("href"))
+    val eventsUrls = document.select("div.et_pb_section_3 .event_details")
+      .map {
+        it.select("a").first().attr("href")
       }
 
-    return eventUrls
+    return eventsUrls
   }
 
   override fun parseEvent(event: String): Event {
@@ -74,7 +73,7 @@ class FemaleCoderCollector : TwoStepEventCollector<String>("femalecoder") {
     val currentYear = LocalDate.now().year
 
     val localDate = LocalDate.parse("$date $currentYear", DateTimeFormatter.ofPattern("MMMM dd yyyy", Locale.ENGLISH))
-    val localStartTime = LocalTime.parse(startTime.uppercase(Locale.getDefault()), DateTimeFormatter.ofPattern("hh:mm a"))
+    val localStartTime = LocalTime.parse(startTime.uppercase(Locale.ENGLISH), DateTimeFormatter.ofPattern("hh:mm a"))
 
     val offsetDateTime = localDate.atTime(localStartTime)
       .atZone(ZoneId.of("Europe/Vienna"))

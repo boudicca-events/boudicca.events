@@ -45,5 +45,6 @@ fun main() {
 //        .debug(OKHVoecklabruckCollector())
 //        .debug(ValugCollector())
 //        .debug(AlpenvereinCollector())
-        .debug(MetalCornerCollector())
+//        .debug(MetalCornerCollector())
+        .debug(FemaleCoderCollector())
 }

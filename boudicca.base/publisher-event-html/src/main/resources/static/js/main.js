@@ -39,6 +39,19 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  document.addEventListener("keydown", (event) => {
+    const drawerLastFocusableElement = document.querySelector("[data-last-focusable-element]")
+    if (event.key === "Tab") {
+      if (document.activeElement === drawerLastFocusableElement && !event.shiftKey) {
+        closeDrawerButton.focus()
+        event.preventDefault();
+      } else if (document.activeElement === closeDrawerButton && event.shiftKey) {
+        drawerLastFocusableElement.focus()
+        event.preventDefault();
+      }
+    }
+  })
+
   const openDraw = () => {
     drawer.classList.add("drawer-open");
     document.body.style.overflow = "hidden";

@@ -9,7 +9,7 @@ dependencies {
     implementation("com.google.auth:google-auth-library-oauth2-http:1.23.0") {
         exclude("commons-logging", "commons-logging")
     }
-    implementation("com.google.apis:google-api-services-sheets:v4-rev20240416-2.0.0") {
+    implementation("com.google.apis:google-api-services-sheets:v4-rev20240423-2.0.0") {
         exclude("commons-logging", "commons-logging")
     }
 

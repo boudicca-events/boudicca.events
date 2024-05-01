@@ -14,7 +14,7 @@ import org.springframework.web.servlet.ModelAndView
 @RequestMapping("/")
 class StartPageController @Autowired constructor(private val eventService: EventService) {
 
-    private val PAGE_TITLE = "Boudicca.Event - find accessible events in Austria"
+    private val PAGE_TITLE = "Boudicca.Events - find accessible events in Austria"
 
     @GetMapping("/")
     fun getIndex(): ModelAndView {

@@ -72,7 +72,7 @@ class FemaleCoderCollector : TwoStepEventCollector<String>("femalecoder") {
 
     val currentYear = LocalDate.now().year
 
-    val localDate = LocalDate.parse("$date $currentYear", DateTimeFormatter.ofPattern("MMMM dd yyyy", Locale.ENGLISH))
+    val localDate = LocalDate.parse("$date $currentYear", DateTimeFormatter.ofPattern("MMMM dd yyyy", Locale.GERMAN))
     val localStartTime = LocalTime.parse(startTime.uppercase(Locale.ENGLISH), DateTimeFormatter.ofPattern("hh:mm a"))
 
     val offsetDateTime = localDate.atTime(localStartTime)

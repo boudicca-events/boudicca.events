@@ -16,28 +16,22 @@ And, in rare cases, a person could have monochromacy, which means they cannot se
 
 The most common form of color blindness affects 1 in 12 men and 1 in 200 women. 
 
-### Requirements w.r.t WCAG
-
-- Color contrast ratio of at least 4:5:1 for normal text
-- Color contrast ratio of 3:1 for larger text
-- Color contrast ratio of 3:1 also applies to graphics and user interface components
-- Large text is seen as 14 point and larger, or bold
-- There are no color contrast requirements for logo 
-
-### Prevent Color Combinations
-There are certain color combinations that are particularly difficult for color-blind users to process, so it’s best to avoid them. 
-The main color combinations that should be avoided are:
-
-- Green & Black
-- Blue & Gray
-- Green & Blue
-- Green & Brown
-- Green & Gray
-- Blue & Purple
-- Light Green & Yellow
-- Green & Red
-
 
 ### Test Cases
 
-TODO
+#### Test 1: Color Alone Conveying Important Information
+
+Objective: Determine if important information relies solely on color.
+
+Tools:
+1. High Contrast Chrome plugin ([link](https://chromewebstore.google.com/detail/high-contrast/djcfdncoelnlbldjfhinnjlhdjlikmph))
+2. Total Colorfilter ([link](http://www.toptal.com/designers/colorfilter/))
+
+Steps:
+- View the webpage in grayscale mode (this can usually be done through browser settings or accessibility tools).
+- Review all information and functionalities on the page.
+- Note if any crucial information or functions are only conveyed through color.
+
+Expected Outcome: All information and functions should still be understandable and accessible in grayscale mode.
+
+Requirement: Conforms to SC 1.4.1 in WCAG 2.0, 2.1, 2.2.

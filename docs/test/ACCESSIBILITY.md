@@ -35,3 +35,5 @@ Steps:
 Expected Outcome: All information and functions should still be understandable and accessible in grayscale mode.
 
 Requirement: Conforms to SC 1.4.1 in WCAG 2.0, 2.1, 2.2.
+
+TODO

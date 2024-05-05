@@ -1,5 +1,19 @@
 # Accessibility
 
+## Manual Testing (WCAG 2.1 - AA)
+
+Manual Testing (WCAG 2.1 - AA)
+For manual testing, Microsoft Accessibility Insights for Web has been used, which comprises 25 tests in various categories.
+
+Tools:
+1. Accessibility Insights for Web plugin ([link](https://accessibilityinsights.io/docs/web/overview/))
+
+Steps:
+- Install the plugin and open it on the local or online version of publisher
+- Run the `Assessment` tests
+
+Expected Outcome: All 25 tests should pass for the HtmlPublisher to conform to WCAG 2.1 level AA.
+
 ## Visual (Colorblind) 
 
 ### Introduction
@@ -14,8 +28,7 @@ And, in rare cases, a person could have monochromacy, which means they cannot se
 
 ### Why it is important?
 
-The most common form of color blindness affects 1 in 12 men and 1 in 200 women. 
-
+The most common form of color blindness affects 1 in 12 men and 1 in 200 women.
 
 ### Test Cases
 
@@ -35,5 +48,3 @@ Steps:
 Expected Outcome: All information and functions should still be understandable and accessible in grayscale mode.
 
 Requirement: Conforms to SC 1.4.1 in WCAG 2.0, 2.1, 2.2.
-
-TODO

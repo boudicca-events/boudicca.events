@@ -53,7 +53,7 @@
         color: var(--font-color);
     }
 
-    :focus {
+    *:focus-visible {
         background-color: var(--color-main-yellow-focus);
     }
 
@@ -106,6 +106,10 @@
     input[type="checkbox"] {
         width: 18px;
         height: 18px;
+    }
+
+    input[type="checkbox"]:focus {
+        background-color: var(--color-main-yellow-focus);
     }
 
     select {

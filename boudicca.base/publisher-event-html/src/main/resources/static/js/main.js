@@ -52,6 +52,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   })
 
+  document.addEventListener("keydown", (event) => {
+    const drawerIsOpen = drawer.classList.contains("drawer-open")
+    if (event.key === "Escape" && drawerIsOpen) {
+      closeDrawer()
+    }
+  })
+
   const openDraw = () => {
     drawer.classList.add("drawer-open");
     document.body.style.overflow = "hidden";

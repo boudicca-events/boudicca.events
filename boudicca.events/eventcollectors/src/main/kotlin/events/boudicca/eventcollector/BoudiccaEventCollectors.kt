@@ -36,6 +36,7 @@ fun main() {
         .addEventCollector(AlpenvereinCollector())
         .addEventCollector(MetalCornerCollector())
         .addEventCollector(FemaleCoderCollector())
+        .addEventCollector(FhLugCollector())
         .build()
 
     eventCollectorCoordinator.startWebUi()

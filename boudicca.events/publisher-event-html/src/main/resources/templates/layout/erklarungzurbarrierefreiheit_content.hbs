@@ -1,0 +1,54 @@
+<style>
+    .home-link {
+        margin-top: 24px;
+        display: inline-block;
+    }
+
+    .col-2 {
+        display: flex;
+        justify-content: space-between;
+        gap: 24px;
+        align-items: center;
+    }
+
+    @media only screen and (max-width: 700px) {
+       .col-2  {
+            flex-direction: column;
+        }
+    }
+
+    .about-content {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+    }
+
+    .about-content p{
+        margin-top: 10px;
+    }
+
+    @media only screen and (max-width: 700px) {
+        h1 > span {
+            display: none;
+        }
+    }
+</style>
+{{#> layout/header title="Erklärung zur Barrierefreiheit BOUDICCA.EVENTS" }}{{/layout/header}}
+<main class="main">
+    <div class="about-content">
+        <div>
+            <h2>Erklärung zur Barrierefreiheit</h2>
+            <p>
+                Du liebst Konzerte, Vorträge, Veranstaltungen, ...? Wir auch!
+            </p>
+        </div>
+
+        <div>
+            <h2>Disclaimer</h2>
+            <p>Wir übernehmen keine Verantwortung oder Haftung für etwaige Fehler oder Auslassungen im Inhalt dieser Website. Die auf dieser Website enthaltenen Informationen werden ohne Gewähr für Vollständigkeit, Genauigkeit, Nützlichkeit oder Aktualität und ohne jegliche ausdrückliche oder stillschweigende Garantie bereitgestellt.
+            </p>
+        </div>
+    </div>
+
+    <a href="/" target="_self" class="home-link">Zur Einstiegsseite</a>
+</main>

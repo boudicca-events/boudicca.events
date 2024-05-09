@@ -12,7 +12,6 @@ import org.jsoup.Jsoup
 import org.slf4j.LoggerFactory
 import java.io.StringReader
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -92,11 +91,10 @@ class FhLugCollector : TwoStepEventCollector<VEvent>("fhLUG") {
     }
 
     private fun parseStartDate(event: VEvent): OffsetDateTime {
-        val startTime = when (val startDate = dateTimeFormatter.parseBest(event.startDate.value, LocalDateTime::from, LocalDate::from)) {
-            is LocalDateTime -> startDate
-            is LocalDate -> startDate.atStartOfDay()
+        return when (val startDate = dateTimeFormatter.parseBest(event.startDate.value, OffsetDateTime::from, LocalDate::from)) {
+            is OffsetDateTime -> startDate
+            is LocalDate -> startDate.atStartOfDay().atZone(viennaZoneId).toOffsetDateTime()
             else -> throw IllegalArgumentException("Unsupported temporal accessor")
         }
-        return startTime.atZone(viennaZoneId).toOffsetDateTime()
     }
 }

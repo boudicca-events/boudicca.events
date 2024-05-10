@@ -1,6 +1,6 @@
 [versions]
 kotlin = "1.9.20"
-jackson = "2.17.0"
+jackson = "2.17.1"
 jakarta-annotation = "3.0.0"
 javax-jaxrs = "2.1.1"
 findbugs = "3.0.2"
@@ -8,7 +8,7 @@ jackson-databind-nullable = "0.2.6"
 spring-openapi-starter = "2.5.0"
 swagger-core-version = "2.2.20"
 org-springframework-boot-gradle-plugin = "3.2.5"
-io-spring-dependency-management-gradle-plugin = "1.1.4"
+io-spring-dependency-management-gradle-plugin = "1.1.5"
 org-openapi-generator-gradle-plugin = "7.2.0"
 
 [libraries]

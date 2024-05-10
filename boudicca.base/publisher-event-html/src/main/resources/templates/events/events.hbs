@@ -99,7 +99,9 @@
         margin-top: var(--space-xxlarge);
     }
 
-    #endOfResults {
+    #endOfResults,
+    #resultNotFound {
+        display: flex;
         font-size: var(--font-size-large);
         margin-top: var(--space-xxlarge);
         display: flex;
@@ -113,6 +115,12 @@
 </div>
 <div style="text-align: center">
     <button id="loadMoreButton">Mehr laden</button>
+
+    <div id="resultNotFound" style="display: none">
+        Keine Ereignisse gefunden für <span id="searchText"></span>
+        <br>
+        <a href="/" style="display: block">zurück zur Liste aller Ereignisse</a>
+    </div>
 </div>
 <div id="endOfResults" style="display: none">
     <p>Du hast das Ende der Suchergebnisse erreicht.</p>

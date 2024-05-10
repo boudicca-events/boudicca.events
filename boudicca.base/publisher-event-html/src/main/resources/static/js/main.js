@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const loadMoreButton = document.getElementById("loadMoreButton");
   const categorySelect = document.getElementById("category");
   const categoryFieldSets = document.querySelectorAll("[data-category-wanted]");
+  const searchInput = document.querySelector("input.search-input");
 
   loadMoreButton.addEventListener("click", () => {
     onLoadMoreSearch();
@@ -79,19 +80,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const onSearchLoadMoreButtonBehaviour = (response) => {
     const loadMoreButton = document.getElementById("loadMoreButton");
-    const endOfResultsInfo = document.getElementById("endOfResults");
-    if (!loadMoreButton || !endOfResultsInfo) {
+    // const endOfResultsInfo = document.getElementById("endOfResults");
+    const resultNotFoundLink = document.getElementById("resultNotFound");
+    const searchText = document.getElementById("searchText");
+    const searchInputKeyword = searchInput.value;
+    if (!loadMoreButton || !resultNotFoundLink) {
       return;
     }
 
-    if (!response) {
-      if (loadMoreButton) {
-        loadMoreButton.style.display = "none";
-        endOfResultsInfo.style.display = "block";
-      }
+    if (!response.trim()) {
+      searchText.textContent = `"${searchInputKeyword}"`;
+      loadMoreButton.style.display = "none";
+      resultNotFoundLink.style.display = "block";
+      // endOfResultsInfo.style.display = "block";
     } else {
       loadMoreButton.style.display = "inline-block";
-      endOfResultsInfo.style.display = "none";
+      resultNotFoundLink.style.display = "none";
+      // endOfResultsInfo.style.display = "none";
     }
   };
 

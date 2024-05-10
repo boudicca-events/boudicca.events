@@ -36,7 +36,6 @@ class BoudiccaEventsExtension : Extension {
     override fun getHeaders(): List<HeaderExtension> {
         return listOf(
             HeaderExtension("Über uns", "/about"),
-            HeaderExtension("Erklärung zur Barrierefreiheit", "/erklarung-zur-barrierefreiheit"),
             HeaderExtension("Impressum", "/impressum"),
             HeaderExtension("GitHub", "https://github.com/boudicca-events/boudicca.events", "_blank"),
         )

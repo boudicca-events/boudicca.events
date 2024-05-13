@@ -9,9 +9,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const loadMoreButton = document.getElementById("loadMoreButton");
   const categorySelect = document.getElementById("category");
   const categoryFieldSets = document.querySelectorAll("[data-category-wanted]");
-
-  ////// TODO: find a way to add event listener to newly added events after "merh laden" button is pressed
-  ////// TODO: refactor prototype code, follow existing code style
   const events = document.querySelectorAll('.event');
 
   const setModalBehaviour = (events) => {
@@ -27,14 +24,17 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         modal.style.display = "none";
+        document.body.style.overflow = 'initial';
       })
 
       detailButton.addEventListener('click', () => {
         modal.style.display = "block";
+        document.body.style.overflow = 'hidden';
       });
 
       closeButton.addEventListener('click', () => {
         modal.style.display = "none";
+        document.body.style.overflow = 'initial';
       })
 
       modalContent.addEventListener('click', function(event) {
@@ -43,28 +43,30 @@ document.addEventListener("DOMContentLoaded", () => {
     })
   };
 
-  var tabs = document.querySelectorAll(".info-box li a");
-  var panels = document.querySelectorAll(".info-box article");
+  const setModalTabBehaviour = () => {
+    const tabs = document.querySelectorAll(".details-box li a");
+    const panels = document.querySelectorAll(".details-box article");
 
-  for (i = 0; i < tabs.length; i++) {
-    var tab = tabs[i];
-    setTabHandler(tab, i);
-  }
+    for (i = 0; i < tabs.length; i++) {
+      const tab = tabs[i];
+      setTabHandler(tab, i);
+    }
 
-  function setTabHandler(tab, tabPos) {
-    tab.onclick = function () {
-      for (i = 0; i < tabs.length; i++) {
-        tabs[i].className = "";
-      }
+    function setTabHandler(tab, tabPos) {
+      tab.onclick = function () {
+        for (i = 0; i < tabs.length; i++) {
+          tabs[i].className = "";
+        }
 
-      tab.className = "active-tab";
+        tab.className = "active-tab";
 
-      for (i = 0; i < panels.length; i++) {
-        panels[i].className = "";
-      }
+        for (i = 0; i < panels.length; i++) {
+          panels[i].className = "";
+        }
 
-      panels[tabPos].className = "active-panel";
-    };
+        panels[tabPos].className = "active-panel";
+      };
+    }
   }
   //////
 
@@ -169,6 +171,7 @@ document.addEventListener("DOMContentLoaded", () => {
       ////
       const newlyAddedEvents = eventsContainer.querySelectorAll('.event');
       setModalBehaviour(newlyAddedEvents)
+      setModalTabBehaviour()
       ////
 
       goTo(`/search?${paramsAsString}`);
@@ -211,4 +214,5 @@ document.addEventListener("DOMContentLoaded", () => {
   categorySelect.addEventListener("change", onCategoryChange);
   onCategoryChange();
   setModalBehaviour(events);
+  setModalTabBehaviour();
 });

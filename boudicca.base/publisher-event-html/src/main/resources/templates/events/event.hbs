@@ -136,7 +136,7 @@
 
     .modal-content {
         background-color: var(--color-main);
-        margin: 15% auto;
+        margin: 5% auto;
         /*border: 1px solid var(--anchor-to-eventpage-border-color);*/
         width: 80%;
         max-width: 970px;
@@ -223,6 +223,8 @@
         overflow: hidden;
     }
 
+    /* styling details-box tabs */
+
     .details-box ul {
         border: 1px solid black;
         overflow: hidden;
@@ -259,6 +261,8 @@
         color: black;
     }
 
+    /* styling details-box panels */
+
     .details-box .panels {
         position: relative;
         height: calc(100% - 50px);
@@ -268,7 +272,12 @@
     .details-box article {
         background-color: var(--color-main);
         color: black;
+        position: absolute;
         padding: 10px 20px;
+        height: 352px;
+        width: -webkit-fill-available;
+        top: 0;
+        left: 0;
     }
 
     .details-box .active-panel {
@@ -404,17 +413,25 @@
 
             <div id="modal-tabs" style="background-color: white; padding: 2rem;">
                 {{#if event.description}}
-                <section class="details-box">
-                    <ul>
-                        <li><a href="#" class="active-tab">Description</a></li>
-                    </ul>
-                    <div class="panels">
-                        <article class="active-panel">
-                            <h2>Event Details</h2>
-                            <p>{{ event.description }}</p>
-                        </article>
-                    </div>
-                </section>
+                    <section class="details-box">
+                        <ul>
+                            <li><a href="#" class="active-tab">Tab 1</a></li>
+                            <li><a href="#">Extra</a></li>
+                        </ul>
+                        <div class="panels">
+                            <article class="active-panel">
+                                <p>{{ event.description }}</p>
+                            </article>
+                            <article>
+                                <h2>Extra</h2>
+
+                                <p>
+                                    This tab hasn't got any Lorem Ipsum in it. But the content isn't
+                                    very exciting all the same.
+                                </p>
+                            </article>
+                        </div>
+                    </section>
                 {{/if}}
             </div>
         </div>

@@ -403,6 +403,7 @@
             </div>
 
             <div id="modal-tabs" style="background-color: white; padding: 2rem;">
+                {{#if event.description}}
                 <section class="details-box">
                     <ul>
                         <li><a href="#" class="active-tab">Description</a></li>
@@ -410,13 +411,11 @@
                     <div class="panels">
                         <article class="active-panel">
                             <h2>Event Details</h2>
-
-                            <p>
-                                {{ event.description }}
-                            </p>
+                            <p>{{ event.description }}</p>
                         </article>
                     </div>
                 </section>
+                {{/if}}
             </div>
         </div>
     </div>

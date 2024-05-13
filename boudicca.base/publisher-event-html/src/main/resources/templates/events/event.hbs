@@ -1,5 +1,5 @@
-<div class="event" tabindex="0" role="button" aria-label="custom event element">
-        <div class="event-image {{#if event.category}}event-image-{{event.category}}{{/if}}" tabindex="0">
+<div class="event" role="button" aria-label="custom event element">
+        <div class="event-image {{#if event.category}}event-image-{{event.category}}{{/if}}">
             {{#if event.pictureUuid}}
                 <img src="/picture?uuid={{event.pictureUuid}}" style="height:100px;max-height:250px;max-width:250px;" alt="{{#if event.pictureAltText}}{{event.pictureAltText}}{{else}}Event Bild{{/if}}" aria-label="Event Bild" aria-labelledby="image" />
             {{else}}
@@ -14,7 +14,7 @@
             {{/if}}
 
             {{#if event.accessibilityProperties}}
-                <div class="accessibility-details" tabindex="0">
+                <div class="accessibility-details">
                     <svg height="24px" width="24px" viewBox="0 0 122.88 122.88">
                         <title>{{event.accessibilityProperties}}</title>
                         <use xlink:href="#accessibility"></use>
@@ -24,19 +24,19 @@
         </div>
 
         <div class="event-description">
-            <p class="event-title" title="{{event.name}}" tabindex="0">
+            <p class="event-title" title="{{event.name}}">
                 {{event.name}}
             </p>
 
             <div class="event-details-wrapper">
-                <div class="event-details" tabindex="0">
+                <div class="event-details">
                     <svg height="24px" width="24px" title="Datum Logo" viewBox="0 0 512 512" >
                         <use xlink:href="#time"></use>
                     </svg>
                     <p>{{event.startDate}}</p>
                 </div>
                 {{#if event.locationName}}
-                <div class="event-details" tabindex="0">
+                <div class="event-details">
                     <svg height="24px" width="24px" title="Ort Logo" viewBox="0 0 512 512" >
                         <use xlink:href="#location"></use>
                     </svg>

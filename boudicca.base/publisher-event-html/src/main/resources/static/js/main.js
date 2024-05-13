@@ -43,22 +43,29 @@ document.addEventListener("DOMContentLoaded", () => {
     })
   };
 
-  // const openTab = (event, tabName) => {
-  //   const tabContents = document.querySelectorAll('.tab-content');
-  //   tabContents.forEach(tabContent => {
-  //     console.log("here in the tab function in contens")
-  //     tabContent.classList.remove('active');
-  //   });
-  //
-  //   const tabButtons = document.querySelectorAll('.tab-button');
-  //   tabButtons.forEach(tabButton => {
-  //     tabButton.classList.remove('active');
-  //   });
-  //
-  //   document.getElementById(tabName).classList.add('active');
-  //
-  //   event.currentTarget.classList.add('active');
-  // }
+  var tabs = document.querySelectorAll(".info-box li a");
+  var panels = document.querySelectorAll(".info-box article");
+
+  for (i = 0; i < tabs.length; i++) {
+    var tab = tabs[i];
+    setTabHandler(tab, i);
+  }
+
+  function setTabHandler(tab, tabPos) {
+    tab.onclick = function () {
+      for (i = 0; i < tabs.length; i++) {
+        tabs[i].className = "";
+      }
+
+      tab.className = "active-tab";
+
+      for (i = 0; i < panels.length; i++) {
+        panels[i].className = "";
+      }
+
+      panels[tabPos].className = "active-panel";
+    };
+  }
   //////
 
   loadMoreButton.addEventListener("click", () => {

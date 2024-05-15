@@ -68,7 +68,6 @@ document.addEventListener("DOMContentLoaded", () => {
       };
     }
   }
-  //////
 
   loadMoreButton.addEventListener("click", () => {
     onLoadMoreSearch();
@@ -168,11 +167,9 @@ document.addEventListener("DOMContentLoaded", () => {
       const newEvents = parser.parseFromString(ssrDomEventString, "text/html");
       eventsContainer.append(...newEvents.body.children);
 
-      ////
       const newlyAddedEvents = eventsContainer.querySelectorAll('.event');
-      setModalBehaviour(newlyAddedEvents)
+      setModalBehaviour(newEvents.body.children)
       setModalTabBehaviour()
-      ////
 
       goTo(`/search?${paramsAsString}`);
     } catch (e) {

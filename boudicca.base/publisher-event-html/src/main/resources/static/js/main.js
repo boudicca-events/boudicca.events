@@ -132,6 +132,17 @@ document.addEventListener("DOMContentLoaded", () => {
       onSearchLoadMoreButtonBehaviour(ssrDomEventString);
       const newEvents = parser.parseFromString(ssrDomEventString, "text/html");
       eventsContainer.append(...newEvents.body.children);
+
+      const firstTabbaleElement = newEvents.body.children.item(1)
+
+      console.log(firstTabbaleElement)
+
+      firstTabbaleElement.classList.add("first-element")
+
+      if (firstTabbaleElement) {
+        firstTabbaleElement.focus()
+      }
+
       goTo(`/search?${paramsAsString}`);
     } catch (e) {
       console.error(e);

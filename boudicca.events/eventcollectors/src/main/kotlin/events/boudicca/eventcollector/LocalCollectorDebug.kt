@@ -46,5 +46,6 @@ fun main() {
 //        .debug(ValugCollector())
 //        .debug(AlpenvereinCollector())
 //        .debug(MetalCornerCollector())
-        .debug(FemaleCoderCollector())
+//        .debug(FemaleCoderCollector())
+        .debug(ZeroxACollector())
 }

@@ -1,4 +1,8 @@
 <style>
+    .events-page {
+        display: flex;
+    }
+
     .events-grid {
         gap: 18px;
         display: grid;
@@ -110,8 +114,10 @@
     }
 </style>
 
-<div id="eventsContainer" class="events-grid">
-    {{> events/eventsRaw }}
+<div id="eventsContainer">
+    <div class="events-page events-grid" tabindex="-1">
+        {{> events/eventsRaw }}
+    </div>
 </div>
 <div style="text-align: center">
     <button id="loadMoreButton">Mehr laden</button>

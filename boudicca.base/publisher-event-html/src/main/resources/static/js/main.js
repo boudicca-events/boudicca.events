@@ -9,7 +9,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const loadMoreButton = document.getElementById("loadMoreButton");
   const categorySelect = document.getElementById("category");
   const categoryFieldSets = document.querySelectorAll("[data-category-wanted]");
-  const searchInput = document.querySelector("input.search-input");
 
   loadMoreButton.addEventListener("click", () => {
     onLoadMoreSearch();
@@ -53,13 +52,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   })
 
-  document.addEventListener("keydown", (event) => {
-    const drawerIsOpen = drawer.classList.contains("drawer-open")
-    if (event.key === "Escape" && drawerIsOpen) {
-      closeDrawer()
-    }
-  })
-
   const openDraw = () => {
     drawer.classList.add("drawer-open");
     document.body.style.overflow = "hidden";
@@ -80,23 +72,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const onSearchLoadMoreButtonBehaviour = (response) => {
     const loadMoreButton = document.getElementById("loadMoreButton");
-    // const endOfResultsInfo = document.getElementById("endOfResults");
-    const resultNotFoundLink = document.getElementById("resultNotFound");
-    const searchText = document.getElementById("searchText");
-    const searchInputKeyword = searchInput.value;
-    if (!loadMoreButton || !resultNotFoundLink) {
+    const endOfResultsInfo = document.getElementById("endOfResults");
+    if (!loadMoreButton || !endOfResultsInfo) {
       return;
     }
 
-    if (!response.trim()) {
-      searchText.textContent = `"${searchInputKeyword}"`;
-      loadMoreButton.style.display = "none";
-      resultNotFoundLink.style.display = "block";
-      // endOfResultsInfo.style.display = "block";
+    if (!response) {
+      if (loadMoreButton) {
+        loadMoreButton.style.display = "none";
+        endOfResultsInfo.style.display = "block";
+      }
     } else {
       loadMoreButton.style.display = "inline-block";
-      resultNotFoundLink.style.display = "none";
-      // endOfResultsInfo.style.display = "none";
+      endOfResultsInfo.style.display = "none";
     }
   };
 
@@ -131,18 +119,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
       onSearchLoadMoreButtonBehaviour(ssrDomEventString);
       const newEvents = parser.parseFromString(ssrDomEventString, "text/html");
-      eventsContainer.append(...newEvents.body.children);
 
-      const firstTabbaleElement = newEvents.body.children.item(1)
+      const pageWrapper = document.createElement("div")
+      pageWrapper.tabIndex = -1
+      pageWrapper.classList.add("events-page")
+      pageWrapper.classList.add("events-grid")
+      pageWrapper.append(...newEvents.body.children)
 
-      console.log(firstTabbaleElement)
+      setTimeout(() => pageWrapper.focus(), 50)
 
-      firstTabbaleElement.classList.add("first-element")
-
-      if (firstTabbaleElement) {
-        firstTabbaleElement.focus()
-      }
-
+      eventsContainer.append(pageWrapper);
       goTo(`/search?${paramsAsString}`);
     } catch (e) {
       console.error(e);

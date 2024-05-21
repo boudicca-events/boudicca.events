@@ -189,12 +189,12 @@ class EventService @Autowired constructor(
             }
             if (category != null) {
                 return when (category) {
-                    EventCategory.MUSIC -> "Musik"
-                    EventCategory.ART -> "Kunst"
-                    EventCategory.TECH -> "Technologie"
-                    EventCategory.SPORT -> "Sport"
-                    EventCategory.ALL -> "Alle"
-                    EventCategory.OTHER -> "Andere"
+                    EventCategory.MUSIC -> "music"
+                    EventCategory.ART -> "miscArt"
+                    EventCategory.TECH -> "tech"
+                    EventCategory.SPORT -> "sport"
+                    EventCategory.ALL -> "???"
+                    EventCategory.OTHER -> null
                 }
             }
         }

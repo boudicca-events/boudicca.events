@@ -1,5 +1,5 @@
 [versions]
-kotlin = "1.9.20"
+kotlin = "2.0.0"
 jackson = "2.17.1"
 jakarta-annotation = "3.0.0"
 javax-jaxrs = "2.1.1"

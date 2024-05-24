@@ -114,21 +114,17 @@
     }
 </style>
 
-<div id="eventsContainer">
-    <div class="events-page events-grid" tabindex="-1">
-        {{> events/eventsRaw }}
-    </div>
+<div id="eventsContainer" class="events-grid">
+    {{> events/eventsRaw }}
 </div>
 <div style="text-align: center">
     <button id="loadMoreButton">Mehr laden</button>
-
-    <div id="resultNotFound" style="display: none">
-        Keine Ereignisse gefunden für <span id="searchText"></span>
-        <br>
-        <a href="/" style="display: block">zurück zur Liste aller Ereignisse</a>
-    </div>
+</div>
+<div id="resultNotFound" style="display: none">
+    <p>Keine Ereignisse gefunden für <span id="searchText"></span></p>
+    <p><a href="/" style="display: block">zurück zur Liste aller Ereignisse</a></p>
 </div>
 <div id="endOfResults" style="display: none">
-    <p>Du hast das Ende der Suchergebnisse erreicht.</p>
+    <p>Sie haben das Ende der Ergebnisliste erreicht.</p>
     <p>Es fehlen Inhalte? Schreibe uns deine Empfehlung via E-Mail an <a href="mailto:team@boudicca.events">team@boudicca.events</a>.</p>
 </div>

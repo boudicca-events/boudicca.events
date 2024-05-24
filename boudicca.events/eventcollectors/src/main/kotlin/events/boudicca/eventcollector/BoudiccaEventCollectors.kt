@@ -37,6 +37,7 @@ fun main() {
         .addEventCollector(MetalCornerCollector())
         .addEventCollector(FemaleCoderCollector())
         .addEventCollector(FhLugCollector())
+        .addEventCollector(ZeroxACollector())
         .build()
 
     eventCollectorCoordinator.startWebUi()

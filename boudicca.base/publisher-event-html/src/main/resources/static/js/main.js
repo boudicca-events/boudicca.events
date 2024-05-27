@@ -9,29 +9,28 @@ document.addEventListener("DOMContentLoaded", () => {
   const loadMoreButton = document.getElementById("loadMoreButton");
   const categorySelect = document.getElementById("category");
   const categoryFieldSets = document.querySelectorAll("[data-category-wanted]");
-  const events = document.querySelectorAll('.event');
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////
+  // const events = document.querySelectorAll('.event');
 
   const setModalBehaviour = (events) => {
+    /// debug
+    console.log(events)
+    ///
+
     events.forEach(event => {
       const modal = event.querySelector('#event-details-modal');
       const modalContent = event.querySelector('.modal-content')
       const detailButton = event.querySelector('.anchor-to-event')
       const closeButton = event.querySelector(".modal-close-button")
 
-      modal.addEventListener('click', () => {
-        if (event.target === modalContent) {
-          return;
-        }
-
-        modal.style.display = "none";
-        document.body.style.overflow = 'initial';
-      })
-
+      /// open modal
       detailButton.addEventListener('click', () => {
         modal.style.display = "block";
         document.body.style.overflow = 'hidden';
       });
 
+      /// close modal
       closeButton.addEventListener('click', () => {
         modal.style.display = "none";
         document.body.style.overflow = 'initial';
@@ -44,6 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const setModalTabBehaviour = () => {
+    // it could be moved outside
     const tabs = document.querySelectorAll(".details-box li a");
     const panels = document.querySelectorAll(".details-box article");
 
@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
       setTabHandler(tab, i);
     }
 
-    function setTabHandler(tab, tabPos) {
+    const setTabHandler = (tab, tabPos) => {
       tab.onclick = function () {
         for (i = 0; i < tabs.length; i++) {
           tabs[i].className = "";
@@ -68,6 +68,23 @@ document.addEventListener("DOMContentLoaded", () => {
       };
     }
   }
+
+  const openModal = (event) => {
+    const modal = event.querySelector('#event-details-modal');
+    const modalContent = event.querySelector('.modal-content')
+
+    modal.addEventListener('click', () => {
+      if (event.target === modalContent) {
+        return;
+      }
+
+      modal.style.display = "none";
+      document.body.style.overflow = 'initial';
+    })
+  }
+
+  const closeModal = (event) => {}
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   loadMoreButton.addEventListener("click", () => {
     onLoadMoreSearch();
@@ -163,12 +180,23 @@ document.addEventListener("DOMContentLoaded", () => {
       const response = await fetch(apiUrl);
       const ssrDomEventString = await response.text();
 
+      // /// debug
+      console.log(ssrDomEventString)
+      // ////
+
       onSearchLoadMoreButtonBehaviour(ssrDomEventString);
       const newEvents = parser.parseFromString(ssrDomEventString, "text/html");
       eventsContainer.append(...newEvents.body.children);
 
-      const newlyAddedEvents = eventsContainer.querySelectorAll('.event');
-      setModalBehaviour(newEvents.body.children)
+      // /// debug
+      // console.log(...newEvents.body.children)
+      // console.log(newEvents.body.querySelectorAll('.event'))
+      // ///
+
+      console.log(newEvents.documentElement.querySelectorAll('.event'))
+
+      // const newlyAddedEvents = eventsContainer.querySelectorAll('.event');
+      setModalBehaviour(newEvents.documentElement.querySelectorAll('.event'))
       setModalTabBehaviour()
 
       goTo(`/search?${paramsAsString}`);
@@ -208,8 +236,12 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
   };
+  
   categorySelect.addEventListener("change", onCategoryChange);
   onCategoryChange();
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////
   setModalBehaviour(events);
   setModalTabBehaviour();
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////
 });

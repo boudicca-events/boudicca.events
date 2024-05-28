@@ -1,4 +1,8 @@
 <style>
+    .events-page {
+        display: flex;
+    }
+
     .events-grid {
         gap: 18px;
         display: grid;
@@ -62,11 +66,15 @@
         bottom: -18px;
         font-weight: bold;
     }
+
+    .anchor-to-eventpage:focus {
+        background-color: var(--color-main-yellow-focus);
+    }
     
     .event-details {
         display: grid;
         grid-template-columns: max-content 1fr;
-        align-items: center;
+        align-items: flex-start;
         gap: 6px;
 
         :first-child {
@@ -95,7 +103,9 @@
         margin-top: var(--space-xxlarge);
     }
 
-    #endOfResults {
+    #endOfResults,
+    #resultNotFound {
+        display: flex;
         font-size: var(--font-size-large);
         margin-top: var(--space-xxlarge);
         display: flex;
@@ -109,6 +119,10 @@
 </div>
 <div style="text-align: center">
     <button id="loadMoreButton">Mehr laden</button>
+</div>
+<div id="resultNotFound" style="display: none">
+    <p>Keine Ereignisse gefunden für <span id="searchText"></span></p>
+    <p><a href="/" style="display: block">zurück zur Liste aller Ereignisse</a></p>
 </div>
 <div id="endOfResults" style="display: none">
     <p>Du hast das Ende der Suchergebnisse erreicht.</p>

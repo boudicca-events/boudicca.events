@@ -119,7 +119,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
       onSearchLoadMoreButtonBehaviour(ssrDomEventString);
       const newEvents = parser.parseFromString(ssrDomEventString, "text/html");
-      eventsContainer.append(...newEvents.body.children);
+      
+      const pageWrapper = document.createElement("div")
+      pageWrapper.tabIndex = -1
+      pageWrapper.classList.add("events-page")
+      pageWrapper.classList.add("events-grid")
+      pageWrapper.append(...newEvents.body.children)
+
+      setTimeout(() => pageWrapper.focus(), 50)
+
+      eventsContainer.append(pageWrapper);
       goTo(`/search?${paramsAsString}`);
     } catch (e) {
       console.error(e);

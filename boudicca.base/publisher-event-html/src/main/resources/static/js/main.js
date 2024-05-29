@@ -3,6 +3,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const eventsContainer = document.getElementById("eventsContainer");
   const filterButton = document.getElementById("filterButton");
   const drawer = document.getElementById("drawer");
+  const mobileMenu = document.getElementById("menu");
+  const openMobileMenuButton = document.getElementById("openMobileMenuButton");
+  const closeMobileMenuButton = document.getElementById("closeMobileMenuButton");
   const closeDrawerButton = document.getElementById("closeDrawerButton");
   const filterSearchButton = document.getElementById("filterSearchButton");
   const resetSearchFormButton = document.getElementById("resetSearchForm");
@@ -31,6 +34,15 @@ document.addEventListener("DOMContentLoaded", () => {
     openDraw();
   });
 
+  openMobileMenuButton.addEventListener("click", () => {
+    console.log("here")
+    openMobileMenu();
+  })
+
+  // closeMobileMenuButton.addEventListener("click", () => {
+  //   closeMobileMenu();
+  // })
+
   document.addEventListener("click", (event) => {
     if (
       !drawer.contains(event.target) &&
@@ -52,6 +64,16 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
   })
+
+  const openMobileMenu = () => {
+    mobileMenu.classList.add("mobile-menu-open");
+    document.body.style.overflow = "hidden";
+  }
+
+  const closeMobileMenu = () => {
+    mobileMenu.classList.remove("mobile-menu-open");
+    document.body.style.overflow = "initial";
+  }
 
   const openDraw = () => {
     drawer.classList.add("drawer-open");

@@ -51,15 +51,34 @@
         flex: 1;
         gap: 12px;
     }
+
+    .menu-header-links {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        padding: 12px 0;
+    }
+
+    .menu-header-links a {
+        font-weight: bold;
+    }
 </style>
 
-<div id="menu" class="mobile-menu">
-    <div class="menu-header">
-        <h2>Filtersuche</h2>
-        <button type="button" id="closeDrawerButton" title="Filtersuche schließen" tabindex="0">
+<div id="mobile-menu" class="mobile-menu">
+    <div class="mobile-menu-header">
+        <h2>Menü</h2>
+        <button type="button" id="closeMenuButton" title="Filtersuche schließen" tabindex="0">
             <svg title="Schließen Logo" height="56px" width="56px" viewBox="0 0 512 512">
                 <use xlink:href="#close"></use>
             </svg>
         </button>
     </div>
+
+    <nav class="menu-header-links">
+        <a href="/" target="_self">Events</a>
+        <a href="/sources" target="_self">Sources</a>
+        {{#each extensionHeaders as |extensionHeader|}}
+            <a href="{{extensionHeader.url}}" target="{{extensionHeader.target}}">{{extensionHeader.text}}</a>
+        {{/each}}
+    </nav>
 </div>

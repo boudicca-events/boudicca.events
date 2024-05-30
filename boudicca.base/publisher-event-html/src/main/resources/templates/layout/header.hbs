@@ -20,7 +20,7 @@
         }
     }
 
-      @media only screen and (max-width: 970px) { 
+    @media only screen and (max-width: 970px) {
         .header-title {
             font-size: var(--font-size-medium);
         }
@@ -28,7 +28,12 @@
         .header-subtitle {
             font-size: var(--font-size-small);
         }
-      }
+
+        /*TODO: replace !important with a higher specificity */
+        .header-left {
+            display: none !important;
+        }
+    }
 
     .header-left {
         display: flex;
@@ -115,13 +120,13 @@
         }
 
         .search-input {
-            min-width: 200px; 
+            min-width: 200px;
         }
     }
     .searchform-top {
         display: flex;
         width: 100%;
-        justify-content: space-between;
+        justify-content: flex-end;
     }
 
     .filter-label {
@@ -144,12 +149,6 @@
         align-items: center;
         /*border-bottom: 1px solid transparent;*/
         margin-left: 12px;
-    }
-
-    .header-date-search {
-        display: flex;
-        flex: 1;
-        gap: 12px;
     }
     
 </style>

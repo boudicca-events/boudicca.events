@@ -3,9 +3,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const eventsContainer = document.getElementById("eventsContainer");
   const filterButton = document.getElementById("filterButton");
   const drawer = document.getElementById("drawer");
-  const mobileMenu = document.getElementById("mobile-menu");
-  const openMenuButton = document.getElementById("openMenuButton");
-  const closeMenuButton = document.getElementById("closeMenuButton");
   const closeDrawerButton = document.getElementById("closeDrawerButton");
   const filterSearchButton = document.getElementById("filterSearchButton");
   const resetSearchFormButton = document.getElementById("resetSearchForm");
@@ -34,14 +31,6 @@ document.addEventListener("DOMContentLoaded", () => {
     openDraw();
   });
 
-  openMenuButton.addEventListener("click", () => {
-    openMenu();
-  })
-
-  closeMenuButton.addEventListener("click", () => {
-    closeMenu();
-  })
-
   document.addEventListener("click", (event) => {
     if (
       !drawer.contains(event.target) &&
@@ -63,16 +52,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
   })
-
-  const openMenu = () => {
-    mobileMenu.classList.add("mobile-menu-open");
-    document.body.style.overflow = "hidden";
-  }
-
-  const closeMenu = () => {
-    mobileMenu.classList.remove("mobile-menu-open");
-    document.body.style.overflow = "initial";
-  }
 
   const openDraw = () => {
     drawer.classList.add("drawer-open");

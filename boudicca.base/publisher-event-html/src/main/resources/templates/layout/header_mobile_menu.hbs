@@ -1,0 +1,52 @@
+<style>
+    .header-mobile-menu {
+        display: none;
+    }
+
+    .header-mobile-left {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        text-decoration: none;
+    }
+
+    .header-mobile-left img {
+        width: 40px;
+        height: 40px;
+    }
+
+    @media only screen and (max-width: 970px) {
+        .header-mobile-menu {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 24px;
+            padding: 12px 0;
+        }
+
+        .header-mobile-title {
+            font-size: var(--font-size-small);
+        }
+    }
+
+    @media only screen and (max-width: 970px) {
+        .header-mobile-title {
+            display: block;
+        }
+    }
+</style>
+<nav class="header-mobile-menu">
+    <a href="/" class="header-mobile-left">
+        <img src="/img/logo_small.png" alt="Boudicca Logo - Ein rundes Schwarz-auf-Weiß-Bild. Ein stilisiertes Logo der Mondkrone des keltischen Volksstammes Iceni." height="56px" width="56px"/>
+        <div>
+            <h1 class="header-mobile-title">BOUDICCA.EVENTS</h1>
+        </div>
+    </a>
+    <button id="openMenuButton" aria-describedby="Menu öffnen" aria-controls="drawer" type="button">
+        <svg height="22px" width="22px" title="Filter Logo" viewBox="0 0 512 512" >
+            <use xlink:href="#menu"></use>
+        </svg>
+    </button>
+
+    {{> layout/menu}}
+</nav>

@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   document.addEventListener("keydown", (event) => {
-    const drawerLastFocusableElement = document.querySelector("[data-last-focusable-element]")
+    const drawerLastFocusableElement = document.querySelector("[data-drawer-last-focusable-element]")
     if (event.key === "Tab") {
       if (document.activeElement === drawerLastFocusableElement && !event.shiftKey) {
         closeDrawerButton.focus()

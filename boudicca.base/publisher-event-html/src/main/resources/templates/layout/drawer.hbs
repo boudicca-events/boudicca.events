@@ -75,6 +75,18 @@
         flex: 1;
         gap: 12px;
     }
+
+    .header-date-search {
+        display: flex;
+        flex: 1;
+        gap: 12px;
+    }
+
+    @media only screen and (max-width: 700px) {
+        .header-date-search {
+            flex-direction: column;
+        }
+    }
 </style>
 
 <div id="drawer" class="drawer">
@@ -221,5 +233,5 @@
         Suchen
     </button>
 
-    <button id="resetSearchForm" type="button" data-last-focusable-element>Suche zurücksetzen</button>
+    <button id="resetSearchForm" type="button" data-drawer-last-focusable-element>Suche zurücksetzen</button>
 </div>

@@ -3,9 +3,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const eventsContainer = document.getElementById("eventsContainer");
   const filterButton = document.getElementById("filterButton");
   const drawer = document.getElementById("drawer");
-  const mobileMenu = document.getElementById("menu");
-  const openMobileMenuButton = document.getElementById("openMobileMenuButton");
-  const closeMobileMenuButton = document.getElementById("closeMobileMenuButton");
+  const mobileMenu = document.getElementById("mobile-menu");
+  const openMenuButton = document.getElementById("openMenuButton");
+  const closeMenuButton = document.getElementById("closeMenuButton");
   const closeDrawerButton = document.getElementById("closeDrawerButton");
   const filterSearchButton = document.getElementById("filterSearchButton");
   const resetSearchFormButton = document.getElementById("resetSearchForm");
@@ -34,14 +34,13 @@ document.addEventListener("DOMContentLoaded", () => {
     openDraw();
   });
 
-  openMobileMenuButton.addEventListener("click", () => {
-    console.log("here")
-    openMobileMenu();
+  openMenuButton.addEventListener("click", () => {
+    openMenu();
   })
 
-  // closeMobileMenuButton.addEventListener("click", () => {
-  //   closeMobileMenu();
-  // })
+  closeMenuButton.addEventListener("click", () => {
+    closeMenu();
+  })
 
   document.addEventListener("click", (event) => {
     if (
@@ -53,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   document.addEventListener("keydown", (event) => {
-    const drawerLastFocusableElement = document.querySelector("[data-last-focusable-element]")
+    const drawerLastFocusableElement = document.querySelector("[data-drawer-last-focusable-element]")
     if (event.key === "Tab") {
       if (document.activeElement === drawerLastFocusableElement && !event.shiftKey) {
         closeDrawerButton.focus()
@@ -65,12 +64,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   })
 
-  const openMobileMenu = () => {
+  const openMenu = () => {
     mobileMenu.classList.add("mobile-menu-open");
     document.body.style.overflow = "hidden";
   }
 
-  const closeMobileMenu = () => {
+  const closeMenu = () => {
     mobileMenu.classList.remove("mobile-menu-open");
     document.body.style.overflow = "initial";
   }

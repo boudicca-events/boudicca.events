@@ -1,0 +1,84 @@
+<style>
+    .mobile-menu {
+        z-index: 9999;
+        min-width: 500px;
+        display: flex;
+        height: 100%;
+        flex-direction: column;
+        background-color: var(--color-white);
+        padding: 32px;
+        opacity: 0;
+        position: fixed;
+        right: 0;
+        top: 0;
+        visibility: hidden;
+        border-left: 1px solid black;
+        box-shadow: 1px 0px 10px 11px #87878724;
+        overflow: scroll;
+    }
+
+    .hidden {
+        display: none;
+    }
+
+    @media only screen and (max-width: 700px) {
+        .mobile-menu {
+            width: 100vw;
+            border: none;
+            box-shadow: none;
+            min-width: 0;
+        }
+    }
+
+    .mobile-menu-open {
+        visibility: visible;
+        opacity: 1;
+    }
+
+    .mobile-menu-header {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    @media only screen and (max-width: 700px) { 
+        .header-accessibility-filter {
+            flex-direction: column;
+        }
+    }
+
+    .header-accessibility-filter {
+        display: flex;
+        flex: 1;
+        gap: 12px;
+    }
+
+    .menu-header-links {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        padding: 12px 0;
+    }
+
+    .menu-header-links a {
+        font-weight: bold;
+    }
+</style>
+
+<div id="mobile-menu" class="mobile-menu">
+    <div class="mobile-menu-header">
+        <h2>Menü</h2>
+        <button type="button" id="closeMenuButton" title="Filtersuche schließen" tabindex="0">
+            <svg title="Schließen Logo" height="56px" width="56px" viewBox="0 0 512 512">
+                <use xlink:href="#close"></use>
+            </svg>
+        </button>
+    </div>
+
+    <nav class="menu-header-links">
+        <a href="/" target="_self">Events</a>
+        <a href="/sources" target="_self">Sources</a>
+        {{#each extensionHeaders as |extensionHeader|}}
+            <a href="{{extensionHeader.url}}" target="{{extensionHeader.target}}">{{extensionHeader.text}}</a>
+        {{/each}}
+    </nav>
+</div>

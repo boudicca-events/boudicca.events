@@ -24,6 +24,10 @@
         .header-title {
             font-size: var(--font-size-medium);
         }
+
+        .header-subtitle {
+            font-size: var(--font-size-small);
+        }
       }
 
     .header-left {
@@ -31,6 +35,18 @@
         align-items: center;
         gap: 18px;
         text-decoration: none;
+    }
+
+    .header-left h1 {
+        margin-top: 24px;
+    }
+
+    .header-left h3 {
+        margin: 0;
+    }
+
+    .header-left h1 {
+        margin-bottom: 0;
     }
 
     .header-right {
@@ -90,7 +106,11 @@
     }
 
     @media only screen and (max-width: 700px) { 
-        h1 {
+        .header-title {
+            display: none;
+        }
+
+        .header-subtitle {
             display: none;
         }
 
@@ -122,7 +142,8 @@
     #filterButton {
         display: flex;
         align-items: center;
-        border-bottom: 1px solid transparent;
+        /*border-bottom: 1px solid transparent;*/
+        margin-left: 12px;
     }
 
     .header-date-search {
@@ -139,6 +160,7 @@
                 <img src="/img/logo_small.png" alt="Boudicca Logo - Ein rundes Schwarz-auf-Weiß-Bild. Ein stilisiertes Logo der Mondkrone des keltischen Volksstammes Iceni." height="56px" width="56px"/>
                 <div>
                     <h1 class="header-title">{{title}}</h1>
+                    <p class="header-subtitle">Events in Österreich und Informationen zu deren Barrierefreiheit</p>
                 </div>
             </a>
 

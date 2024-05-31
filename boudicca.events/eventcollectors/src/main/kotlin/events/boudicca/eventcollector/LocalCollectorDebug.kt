@@ -44,5 +44,8 @@ fun main() {
 //        .debug(MuseumArbeitsweltCollector())
 //        .debug(OKHVoecklabruckCollector())
 //        .debug(ValugCollector())
-        .debug(AlpenvereinCollector())
+//        .debug(AlpenvereinCollector())
+//        .debug(MetalCornerCollector())
+//        .debug(FemaleCoderCollector())
+        .debug(ZeroxACollector())
 }

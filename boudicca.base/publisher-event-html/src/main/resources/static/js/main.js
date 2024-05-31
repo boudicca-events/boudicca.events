@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const loadMoreButton = document.getElementById("loadMoreButton");
   const categorySelect = document.getElementById("category");
   const categoryFieldSets = document.querySelectorAll("[data-category-wanted]");
+  const searchInput = document.querySelector("input.search-input");
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////
   // const events = document.querySelectorAll('.event');
@@ -115,6 +116,19 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  document.addEventListener("keydown", (event) => {
+    const drawerLastFocusableElement = document.querySelector("[data-last-focusable-element]")
+    if (event.key === "Tab") {
+      if (document.activeElement === drawerLastFocusableElement && !event.shiftKey) {
+        closeDrawerButton.focus()
+        event.preventDefault();
+      } else if (document.activeElement === closeDrawerButton && event.shiftKey) {
+        drawerLastFocusableElement.focus()
+        event.preventDefault();
+      }
+    }
+  })
+
   const openDraw = () => {
     drawer.classList.add("drawer-open");
     document.body.style.overflow = "hidden";
@@ -133,23 +147,67 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  const onSearchLoadMoreButtonBehaviour = (response) => {
+  const onSearchButtonBehaviour = (rawResponse) => {
     const loadMoreButton = document.getElementById("loadMoreButton");
     const endOfResultsInfo = document.getElementById("endOfResults");
+    const resultNotFoundLink = document.getElementById("resultNotFound");
+    const searchText = document.getElementById("searchText");
+    const searchInputKeyword = searchInput.value;
+
     if (!loadMoreButton || !endOfResultsInfo) {
       return;
     }
 
+    const response = rawResponse.trim()
     if (!response) {
-      if (loadMoreButton) {
-        loadMoreButton.style.display = "none";
+      loadMoreButton.style.display = "none";
+      endOfResultsInfo.style.display = "block";
+
+      if (searchInputKeyword === "") {
+        resultNotFoundLink.style.display = "none";
+      } else {
+        searchText.textContent = `"${searchInputKeyword}"`;
+        // in userflow from search field path, show the result not found link and hide the end of result
+        resultNotFoundLink.style.display = "block";
+        endOfResultsInfo.style.display = "none";
+      }
+    } else {
+      loadMoreButton.style.display = "inline-block";
+      endOfResultsInfo.style.display = "none";
+      resultNotFoundLink.style.display = "none";
+    }
+  }
+
+  const onLoadMoreButtonBehaviour = (rawResponse) => {
+    const loadMoreButton = document.getElementById("loadMoreButton");
+    const endOfResultsInfo = document.getElementById("endOfResults");
+    const resultNotFoundLink = document.getElementById("resultNotFound");
+    const searchText = document.getElementById("searchText");
+    const searchInputKeyword = searchInput.value;
+
+    if (!loadMoreButton || !endOfResultsInfo) {
+      return;
+    }
+
+    const response = rawResponse.trim()
+    if (!response) {
+      loadMoreButton.style.display = "none";
+      endOfResultsInfo.style.display = "block";
+
+      if (searchInputKeyword === "") {
+        resultNotFoundLink.style.display = "none";
+      } else {
+        searchText.textContent = `"${searchInputKeyword}"`;
+        // in userflow from search field path, hide the result not found link and show the end of result
+        resultNotFoundLink.style.display = "none";
         endOfResultsInfo.style.display = "block";
       }
     } else {
       loadMoreButton.style.display = "inline-block";
       endOfResultsInfo.style.display = "none";
+      resultNotFoundLink.style.display = "none";
     }
-  };
+  }
 
   const onSearch = async (e) => {
     e.preventDefault();
@@ -162,7 +220,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const response = await fetch(apiUrl);
       const ssrDomEventString = await response.text();
       eventsContainer.innerHTML = ssrDomEventString;
-      onSearchLoadMoreButtonBehaviour(ssrDomEventString);
+      onSearchButtonBehaviour(ssrDomEventString);
       goTo(`/search?${paramsAsString}`);
     } catch (e) {
       console.error(e);
@@ -180,12 +238,9 @@ document.addEventListener("DOMContentLoaded", () => {
       const response = await fetch(apiUrl);
       const ssrDomEventString = await response.text();
 
-      // /// debug
-      console.log(ssrDomEventString)
-      // ////
-
-      onSearchLoadMoreButtonBehaviour(ssrDomEventString);
+      onLoadMoreButtonBehaviour(ssrDomEventString);
       const newEvents = parser.parseFromString(ssrDomEventString, "text/html");
+
       eventsContainer.append(...newEvents.body.children);
 
       // /// debug
@@ -236,7 +291,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
   };
-  
+
   categorySelect.addEventListener("change", onCategoryChange);
   onCategoryChange();
 

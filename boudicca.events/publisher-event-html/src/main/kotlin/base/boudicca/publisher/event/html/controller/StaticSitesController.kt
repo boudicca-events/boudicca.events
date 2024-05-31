@@ -23,6 +23,12 @@ class StaticSitesController {
         val data: MutableMap<String, Any> = HashMap()
         return ModelAndView("impressum", data)
     }
+
+    @GetMapping("/erklarung-zur-barrierefreiheit")
+    fun getErklarungZurBarriereFreiheit(): ModelAndView {
+        val data: MutableMap<String, Any> = HashMap()
+        return ModelAndView("erklarung-zur-barrierefreiheit", data)
+    }
 }
 
 @Component

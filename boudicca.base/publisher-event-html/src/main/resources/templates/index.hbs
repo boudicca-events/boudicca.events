@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html lang="de-AT">
-    {{> layout/head title="Boudicca" }}
+    {{> layout/head title=title }}
     <body>
-        <div class="content">
+        <div id="content-anchor" class="content">
+            <a id="accessibility-main-skip-link" href="#main-content">Zum Hauptinhalt überspringen</a>
+
             {{> layout/header_links}}
             {{#> layout/header title="BOUDICCA.EVENTS"}}
                 {{> layout/header_searchbar}}

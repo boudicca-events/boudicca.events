@@ -10,82 +10,24 @@ document.addEventListener("DOMContentLoaded", () => {
   const categorySelect = document.getElementById("category");
   const categoryFieldSets = document.querySelectorAll("[data-category-wanted]");
   const searchInput = document.querySelector("input.search-input");
+  const modal = document.getElementById("modal");
+  const modalContent = modal.querySelector("#modal-content");
+  const closeModalButton = document.getElementById("modal-close");
 
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////
-  // const events = document.querySelectorAll('.event');
-
-  const setModalBehaviour = (events) => {
-    /// debug
-    console.log(events)
-    ///
-
-    events.forEach(event => {
-      const modal = event.querySelector('#event-details-modal');
-      const modalContent = event.querySelector('.modal-content')
-      const detailButton = event.querySelector('.anchor-to-event')
-      const closeButton = event.querySelector(".modal-close-button")
-
-      /// open modal
-      detailButton.addEventListener('click', () => {
-        modal.style.display = "block";
-        document.body.style.overflow = 'hidden';
-      });
-
-      /// close modal
-      closeButton.addEventListener('click', () => {
-        modal.style.display = "none";
-        document.body.style.overflow = 'initial';
-      })
-
-      modalContent.addEventListener('click', function(event) {
-        event.stopPropagation();
-      });
-    })
+  const openModal = (content) => {
+    modalContent.innerHTML = content;
+    modal.style.display = "block";
+    document.body.style.overflow = "hidden"
   };
 
-  const setModalTabBehaviour = () => {
-    // it could be moved outside
-    const tabs = document.querySelectorAll(".details-box li a");
-    const panels = document.querySelectorAll(".details-box article");
+  const closeModal = () => {
+    modal.style.display = "none";
+    document.body.style.overflow = "initial";
+  };
 
-    for (i = 0; i < tabs.length; i++) {
-      const tab = tabs[i];
-      setTabHandler(tab, i);
-    }
-
-    const setTabHandler = (tab, tabPos) => {
-      tab.onclick = function () {
-        for (i = 0; i < tabs.length; i++) {
-          tabs[i].className = "";
-        }
-
-        tab.className = "active-tab";
-
-        for (i = 0; i < panels.length; i++) {
-          panels[i].className = "";
-        }
-
-        panels[tabPos].className = "active-panel";
-      };
-    }
-  }
-
-  const openModal = (event) => {
-    const modal = event.querySelector('#event-details-modal');
-    const modalContent = event.querySelector('.modal-content')
-
-    modal.addEventListener('click', () => {
-      if (event.target === modalContent) {
-        return;
-      }
-
-      modal.style.display = "none";
-      document.body.style.overflow = 'initial';
-    })
-  }
-
-  const closeModal = (event) => {}
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////
+  modalContent.addEventListener('click', (event) => {
+    event.stopPropagation();
+  });
 
   loadMoreButton.addEventListener("click", () => {
     onLoadMoreSearch();
@@ -106,6 +48,10 @@ document.addEventListener("DOMContentLoaded", () => {
   filterButton.addEventListener("click", () => {
     openDraw();
   });
+
+  closeModalButton.addEventListener("click", () => {
+    closeModal();
+  })
 
   document.addEventListener("click", (event) => {
     if (
@@ -221,6 +167,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const ssrDomEventString = await response.text();
       eventsContainer.innerHTML = ssrDomEventString;
       onSearchButtonBehaviour(ssrDomEventString);
+      initModals(eventsContainer.querySelectorAll(".event"));
       goTo(`/search?${paramsAsString}`);
     } catch (e) {
       console.error(e);
@@ -242,23 +189,22 @@ document.addEventListener("DOMContentLoaded", () => {
       const newEvents = parser.parseFromString(ssrDomEventString, "text/html");
 
       eventsContainer.append(...newEvents.body.children);
-
-      // /// debug
-      // console.log(...newEvents.body.children)
-      // console.log(newEvents.body.querySelectorAll('.event'))
-      // ///
-
-      console.log(newEvents.documentElement.querySelectorAll('.event'))
-
-      // const newlyAddedEvents = eventsContainer.querySelectorAll('.event');
-      setModalBehaviour(newEvents.documentElement.querySelectorAll('.event'))
-      setModalTabBehaviour()
-
+      initModals(eventsContainer.querySelectorAll(".event"));
       goTo(`/search?${paramsAsString}`);
     } catch (e) {
       console.error(e);
     }
   };
+
+  const initModals = (events) => {
+    events.forEach(event => {
+      const anchor = event.querySelector(".anchor-to-event");
+      const content = event.querySelector("#modal-content");
+      anchor.addEventListener("click", () => {
+        openModal(content.innerHTML)
+      })
+    })
+  }
 
   // TODO: could use `Proxy`
   const params = new URLSearchParams(window.location.search);
@@ -295,8 +241,6 @@ document.addEventListener("DOMContentLoaded", () => {
   categorySelect.addEventListener("change", onCategoryChange);
   onCategoryChange();
 
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////
-  setModalBehaviour(events);
-  setModalTabBehaviour();
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////
+  const events = document.querySelectorAll(".event")
+  initModals(events);
 });

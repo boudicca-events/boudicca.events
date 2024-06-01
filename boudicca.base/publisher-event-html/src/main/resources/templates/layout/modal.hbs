@@ -1,0 +1,68 @@
+<style>
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 100;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.4);
+    }
+
+    .modal-description {
+        display: -webkit-box;
+        max-width: 400px;
+        /* https://stackoverflow.com/questions/15909489/text-overflow-ellipsis-on-two-lines */
+        -webkit-line-clamp: 10;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .modal-flex {
+        display: flex;
+        flex-direction: column;
+        background-color: var(--color-main);
+        padding: 2rem;
+    }
+
+    .modal-row {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .modal-column {
+        display: flex;
+        flex-direction: column;
+    }
+
+    #modal-content {
+        background-color: var(--color-main);
+        margin: 5% auto;
+        border: 1px solid var(--anchor-to-eventpage-border-color);
+        width: 80%;
+        max-width: 970px;
+        position: relative;
+    }
+
+    @media only screen and (max-width: 970px) {}
+    @media only screen and (max-width: 700px) {
+        #modal-content {
+            margin: unset;
+            width: 100%;
+        }
+    }
+</style>
+
+<div id="modal" class="modal">
+    <div id="modal-head">
+        <button id="modal-close" class="modal-close-button">
+            <svg height="32px" width="32px" viewBox="0 0 512 512">
+                <use xlink:href="#close"></use>
+            </svg>
+        </button>
+    </div>
+    <div id="modal-content"></div>
+</div>

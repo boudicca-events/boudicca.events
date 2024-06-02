@@ -106,7 +106,7 @@
                             {{/if}}
                         </div>
 
-                        <a class="anchor-to-eventmodal" href="{{event.url}}" target="_blank" aria-describedby="Zur Eventseite von {{event.name}} (neues Fenster wird geöffnet)">
+                        <a class="anchor-to-eventmodal" href="{{event.url}}" target="_blank" data-modal-last-focusable-element aria-describedby="Zur Eventseite von {{event.name}} (neues Fenster wird geöffnet)">
                             Zur Eventseite
                         </a>
                     </div>
@@ -118,10 +118,10 @@
             {{#if event.description}}
                 <section class="details-box">
                     <ul>
-                        <li><a href="#" class="active-tab">Description</a></li>
+                        <li><a href="#" class="active-tab {{#if event.category}}event-modal-{{event.category}}{{/if}}">Description</a></li>
                     </ul>
                     <div class="panels">
-                        <article class="active-panel">
+                        <article class="active-panel {{#if event.category}}event-modal-{{event.category}}{{/if}}">
                             <p>{{ event.description }}</p>
                         </article>
                     </div>

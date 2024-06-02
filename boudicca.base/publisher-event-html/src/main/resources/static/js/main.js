@@ -12,18 +12,28 @@ document.addEventListener("DOMContentLoaded", () => {
   const searchInput = document.querySelector("input.search-input");
   const modal = document.getElementById("modal");
   const modalContent = modal.querySelector("#modal-content");
-  const closeModalButton = document.getElementById("modal-close");
+  const closeModalButton = modal.querySelector("#modal-close");
 
   const openModal = (content) => {
     modalContent.innerHTML = content;
     modal.style.display = "block";
-    document.body.style.overflow = "hidden"
+    document.body.style.overflow = "hidden";
   };
 
   const closeModal = () => {
     modal.style.display = "none";
     document.body.style.overflow = "initial";
   };
+
+  modal.addEventListener('click', (event) => {
+    if (!modalContent.contains(event.target)) {
+      closeModal();
+    }
+  });
+
+  modalContent.addEventListener('click', (event) => {
+    event.stopPropagation();
+  });
 
   modalContent.addEventListener('click', (event) => {
     event.stopPropagation();
@@ -184,10 +194,8 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const response = await fetch(apiUrl);
       const ssrDomEventString = await response.text();
-
       onLoadMoreButtonBehaviour(ssrDomEventString);
       const newEvents = parser.parseFromString(ssrDomEventString, "text/html");
-
       eventsContainer.append(...newEvents.body.children);
       initModals(eventsContainer.querySelectorAll(".event"));
       goTo(`/search?${paramsAsString}`);
@@ -202,7 +210,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const content = event.querySelector("#modal-content");
       anchor.addEventListener("click", () => {
         openModal(content.innerHTML)
-      })
+      });
     })
   }
 

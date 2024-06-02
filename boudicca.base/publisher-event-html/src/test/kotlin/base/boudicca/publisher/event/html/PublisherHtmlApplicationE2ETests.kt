@@ -111,7 +111,7 @@ class PublisherHtmlApplicationE2ETests: E2ETestFixture() {
 
     page.navigate("http://localhost:$port/")
 
-    assertEquals(page.locator(".anchor-to-eventpage").getAttribute("href"), "https://www.event.page.at/")
+    assertThat(page.locator(".anchor-to-event")).containsText("Weitere Einzelheiten")
   }
 
   @ParameterizedTest

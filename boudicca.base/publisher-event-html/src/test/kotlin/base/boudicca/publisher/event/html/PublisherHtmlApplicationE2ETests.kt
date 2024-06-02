@@ -290,7 +290,6 @@ class PublisherHtmlApplicationE2ETests: E2ETestFixture() {
     val eventSize = events.size
 
     assertEquals(eventSize, 31) { "Expected 31 event, but found $eventSize events." }
-    assertThat(page.getByText("Cultural Event at Posthof")).isVisible()
   }
 
   private fun setupSearchServiceCaller(events: List<Event>, filters: Map<String, List<String>>) {

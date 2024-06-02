@@ -66,7 +66,8 @@ document.addEventListener("DOMContentLoaded", () => {
   document.addEventListener("click", (event) => {
     if (
       !drawer.contains(event.target) &&
-      !filterButton.contains(event.target)
+      !filterButton.contains(event.target) &&
+      !event.target.classList.contains("anchor-to-event")
     ) {
       closeDrawer();
     }

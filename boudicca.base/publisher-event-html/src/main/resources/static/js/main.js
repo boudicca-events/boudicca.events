@@ -197,8 +197,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const ssrDomEventString = await response.text();
       onLoadMoreButtonBehaviour(ssrDomEventString);
       const newEvents = parser.parseFromString(ssrDomEventString, "text/html");
+      initModals([...newEvents.body.children]);
       eventsContainer.append(...newEvents.body.children);
-      initModals(eventsContainer.querySelectorAll(".event"));
       goTo(`/search?${paramsAsString}`);
     } catch (e) {
       console.error(e);

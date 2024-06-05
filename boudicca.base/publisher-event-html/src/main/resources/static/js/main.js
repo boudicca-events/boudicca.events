@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const searchInput = document.querySelector("input.search-input");
   const modal = document.getElementById("modal");
   const modalContent = modal.querySelector("#modal-content");
-  const closeModalButton = modal.querySelector("#modal-close");
+  const closeModalButton = document.getElementById("modal-close");
 
   const openModal = (content) => {
     modalContent.innerHTML = content;

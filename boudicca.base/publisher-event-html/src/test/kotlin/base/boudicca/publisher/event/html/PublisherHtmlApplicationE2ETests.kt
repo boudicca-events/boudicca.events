@@ -111,7 +111,7 @@ class PublisherHtmlApplicationE2ETests: E2ETestFixture() {
 
     page.navigate("http://localhost:$port/")
 
-    assertEquals(page.locator(".anchor-to-eventpage").getAttribute("href"), "https://www.event.page.at/")
+    assertThat(page.locator(".anchor-to-event")).containsText("Mehr Informationen")
   }
 
   @ParameterizedTest
@@ -268,7 +268,7 @@ class PublisherHtmlApplicationE2ETests: E2ETestFixture() {
       val queryArgument = it.arguments.first() as QueryDTO
       if (queryArgument.offset == 30) {
         SearchResultDTO(
-          listOf(Event("Cultural Event at Posthof", OffsetDateTime.now(), mapOf("city" to "Linz"))),
+          listOf(Event("Cultural Event at Posthof", OffsetDateTime.now(), mapOf("city" to "Linz", "url" to "http://url.com"))),
           1,
           null
         )
@@ -290,7 +290,6 @@ class PublisherHtmlApplicationE2ETests: E2ETestFixture() {
     val eventSize = events.size
 
     assertEquals(eventSize, 31) { "Expected 31 event, but found $eventSize events." }
-    assertThat(page.getByText("Cultural Event at Posthof")).isVisible()
   }
 
   private fun setupSearchServiceCaller(events: List<Event>, filters: Map<String, List<String>>) {

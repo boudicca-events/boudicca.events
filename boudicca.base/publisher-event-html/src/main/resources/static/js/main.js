@@ -10,6 +10,34 @@ document.addEventListener("DOMContentLoaded", () => {
   const categorySelect = document.getElementById("category");
   const categoryFieldSets = document.querySelectorAll("[data-category-wanted]");
   const searchInput = document.querySelector("input.search-input");
+  const modal = document.getElementById("modal");
+  const modalContent = modal.querySelector("#modal-content");
+  const closeModalButton = document.getElementById("modal-close");
+
+  const openModal = (content) => {
+    modalContent.innerHTML = content;
+    modal.style.display = "block";
+    document.body.style.overflow = "hidden";
+  };
+
+  const closeModal = () => {
+    modal.style.display = "none";
+    document.body.style.overflow = "initial";
+  };
+
+  modal.addEventListener('click', (event) => {
+    if (!modalContent.contains(event.target)) {
+      closeModal();
+    }
+  });
+
+  modalContent.addEventListener('click', (event) => {
+    event.stopPropagation();
+  });
+
+  modalContent.addEventListener('click', (event) => {
+    event.stopPropagation();
+  });
 
   loadMoreButton.addEventListener("click", () => {
     onLoadMoreSearch();
@@ -31,10 +59,15 @@ document.addEventListener("DOMContentLoaded", () => {
     openDraw();
   });
 
+  closeModalButton.addEventListener("click", () => {
+    closeModal();
+  })
+
   document.addEventListener("click", (event) => {
     if (
       !drawer.contains(event.target) &&
-      !filterButton.contains(event.target)
+      !filterButton.contains(event.target) &&
+      !event.target.classList.contains("anchor-to-event")
     ) {
       closeDrawer();
     }
@@ -145,6 +178,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const ssrDomEventString = await response.text();
       eventsContainer.innerHTML = ssrDomEventString;
       onSearchButtonBehaviour(ssrDomEventString);
+      initModals(eventsContainer.querySelectorAll(".event"));
       goTo(`/search?${paramsAsString}`);
     } catch (e) {
       console.error(e);
@@ -161,16 +195,25 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const response = await fetch(apiUrl);
       const ssrDomEventString = await response.text();
-
       onLoadMoreButtonBehaviour(ssrDomEventString);
       const newEvents = parser.parseFromString(ssrDomEventString, "text/html");
-
+      initModals([...newEvents.body.children]);
       eventsContainer.append(...newEvents.body.children);
       goTo(`/search?${paramsAsString}`);
     } catch (e) {
       console.error(e);
     }
   };
+
+  const initModals = (events) => {
+    events.forEach(event => {
+      const anchor = event.querySelector(".anchor-to-event");
+      const content = event.querySelector("#modal-content");
+      anchor.addEventListener("click", () => {
+        openModal(content.innerHTML)
+      });
+    })
+  }
 
   // TODO: could use `Proxy`
   const params = new URLSearchParams(window.location.search);
@@ -203,6 +246,10 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
   };
+
   categorySelect.addEventListener("change", onCategoryChange);
   onCategoryChange();
+
+  const events = document.querySelectorAll(".event")
+  initModals(events);
 });

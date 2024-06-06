@@ -38,23 +38,23 @@
     }
 
     .event-image-tech {
-         background-color: var(--color-main-green);
+        background-color: var(--color-main-green);
     }
 
     .event-image-miscArt {
-         background-color: var(--color-main-yellow);
+        background-color: var(--color-main-yellow);
     }
 
     .event-image-music {
-         background-color: var(--color-main-red);
+        background-color: var(--color-main-red);
     }
 
     .event-description {
-       padding: 4px 8px;
-       font-size: var(--font-size-small);
+        padding: 4px 8px;
+        font-size: var(--font-size-small);
     }
 
-    .anchor-to-eventpage {
+    .anchor-to-event {
         color: inherit;
         position: absolute;
         text-decoration: none;
@@ -70,7 +70,19 @@
     .anchor-to-eventpage:focus {
         background-color: var(--color-main-yellow-focus);
     }
-    
+
+
+    .anchor-to-eventmodal {
+        color: inherit;
+        text-decoration: none;
+        text-align: center;
+        font-size: 14px;
+        padding: 8px 24px;
+        border: 1px solid var(--anchor-to-eventpage-border-color);
+        background-color: var(--anchor-to-eventpage-background-color);
+        font-weight: bold;
+    }
+
     .event-details {
         display: grid;
         grid-template-columns: max-content 1fr;
@@ -86,6 +98,79 @@
         display: flex;
         flex-direction: column;
         gap: 4px;
+    }
+
+    .event-tag {
+        color: inherit;
+        text-decoration: none;
+        font-size: 14px;
+        padding: 8px 24px;
+        border: 1px solid var(--anchor-to-eventpage-border-color);
+        background-color: var(--anchor-to-eventpage-background-color);
+        font-weight: bold;
+    }
+
+    .modal-flex.event-modal-tech {
+        background-color: var(--color-main-green);
+    }
+
+    .modal-flex.event-modal-miscArt {
+        background-color: var(--color-main-yellow);
+    }
+
+    .modal-flex.event-modal-music {
+        background-color: var(--color-main-red);
+    }
+
+    .event-image-modal {
+        height: 350px;
+        width: 540px;
+        background-color: white;
+        object-fit: scale-down;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+
+    .modal-row-image {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .event-modal-tag-row {
+        display: flex;
+        gap: 0.50rem;
+    }
+
+    @media only screen and (max-width: 970px) {
+        .event-image-modal {
+            width: -webkit-fill-available;
+        }
+        .modal-row-image {
+            display: flex;
+            flex-direction: column;
+        }
+    }
+
+    .event-modal-tag {
+        display: flex;
+        background-color: white;
+        padding-top: var(--space-small);
+        padding-bottom: var(--space-small);
+        padding-left: var(--space-medium);
+        padding-right: var(--space-medium);
+        border: 1px solid black;
+    }
+
+    .modal-close-button {
+        display: flex;
+        background-color: white;
+        position: absolute;
+        right: 0;
+        padding: var(--space-medium);
+        top: 0;
+        border: 1px solid black;
     }
 
     .accessibility-details {

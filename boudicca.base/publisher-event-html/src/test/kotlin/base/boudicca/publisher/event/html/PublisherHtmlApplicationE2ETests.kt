@@ -268,7 +268,7 @@ class PublisherHtmlApplicationE2ETests: E2ETestFixture() {
       val queryArgument = it.arguments.first() as QueryDTO
       if (queryArgument.offset == 30) {
         SearchResultDTO(
-          listOf(Event("Cultural Event at Posthof", OffsetDateTime.now(), mapOf("city" to "Linz"))),
+          listOf(Event("Cultural Event at Posthof", OffsetDateTime.now(), mapOf("city" to "Linz", "url" to "http://url.com"))),
           1,
           null
         )

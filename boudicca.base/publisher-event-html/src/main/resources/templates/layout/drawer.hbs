@@ -104,8 +104,8 @@
         <div class="header-search-filter">
             <div class="header-date-search">
                 <div class="filter-input-wrapper">
-                    <label for="category" class="filter-label">Veranstaltungsart</label>
-                    <select name="category" id="category">
+                    <label for="categorySelect" class="filter-label">Veranstaltungsart</label>
+                    <select name="category" id="categorySelect">
                         {{#each filters.categories as |category|}}
                             <option value="{{category.first}}">{{category.second}}</option>
                         {{/each}}

@@ -4,7 +4,7 @@ plugins {
 
 dependencies {
     implementation(project(":boudicca.base:semantic-conventions"))
-    implementation("org.mnode.ical4j:ical4j:3.2.18") {
+    implementation("org.mnode.ical4j:ical4j:4.0.1") {
         exclude("org.codehaus.groovy", "groovy")
         exclude("org.codehaus.groovy", "groovy-dateutil")
         exclude("commons-logging", "commons-logging")

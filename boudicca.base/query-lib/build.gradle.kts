@@ -6,7 +6,7 @@ plugins {
 
 dependencies {
     api(project(":boudicca.base:semantic-conventions"))
-    testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.10.3")
     jmh(project(":boudicca.base:publisher-client"))
     jmh(project(":boudicca.base:ingest-client"))
     jmh("com.fasterxml.jackson.core:jackson-core:2.17.1")

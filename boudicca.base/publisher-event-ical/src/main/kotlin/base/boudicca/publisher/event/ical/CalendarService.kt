@@ -55,6 +55,7 @@ class CalendarService @Autowired constructor(@Value("\${boudicca.search.url}") p
         endDateTime: OffsetDateTime?,
         sequence: Int,
     ): VEvent {
+        //todo get description?
         val titleHash = title.hashCode()
         val event = VEvent()
         event.setSummary(title)

@@ -47,5 +47,6 @@ fun main() {
 //        .debug(AlpenvereinCollector())
 //        .debug(MetalCornerCollector())
 //        .debug(FemaleCoderCollector())
+//        .debug(FhLugCollector())
         .debug(ZeroxACollector())
 }

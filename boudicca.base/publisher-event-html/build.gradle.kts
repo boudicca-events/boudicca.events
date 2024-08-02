@@ -9,5 +9,5 @@ dependencies {
     testImplementation("com.deque.html.axe-core:playwright:4.9.1")
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.3")
     testImplementation("org.junit.jupiter:junit-jupiter-params:5.10.3")
-    testImplementation("org.mockito.kotlin:mockito-kotlin:5.3.1")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
 }

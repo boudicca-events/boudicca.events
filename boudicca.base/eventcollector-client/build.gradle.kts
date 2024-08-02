@@ -5,6 +5,7 @@ plugins {
 
 dependencies {
     api(project(":boudicca.base:semantic-conventions"))
+    api("net.sf.biweekly:biweekly:0.6.8")
     implementation(project(":boudicca.base:publisher-client"))
     implementation(project(":boudicca.base:ingest-client"))
     implementation(project(":boudicca.base:enricher-client"))

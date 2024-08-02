@@ -1,18 +1,20 @@
 package base.boudicca.publisher.event.ical
 
-import base.boudicca.model.Event
 import base.boudicca.SemanticKeys
 import base.boudicca.api.search.QueryDTO
 import base.boudicca.api.search.SearchClient
-import net.fortuna.ical4j.model.Calendar
-import net.fortuna.ical4j.model.DateTime
-import net.fortuna.ical4j.model.component.VEvent
-import net.fortuna.ical4j.model.property.*
+import base.boudicca.model.Event
+import biweekly.Biweekly
+import biweekly.ICalVersion
+import biweekly.ICalendar
+import biweekly.component.VEvent
+import biweekly.property.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 @Service
 class CalendarService @Autowired constructor(@Value("\${boudicca.search.url}") private val searchUrl: String) {
@@ -21,10 +23,9 @@ class CalendarService @Autowired constructor(@Value("\${boudicca.search.url}") p
 
     fun createCalendar(events: List<Event>): ByteArray {
         // create the calendar
-        val calendar = Calendar()
-
-        calendar.properties.add(ProdId("-//Boudicca//DE"))
-        calendar.properties.add(Version.VERSION_2_0)
+        val calendar = ICalendar()
+        calendar.setProductId("-//Boudicca//DE")
+        calendar.version = ICalVersion.V2_0
 
         events.forEach { event ->
             val location = event.data[SemanticKeys.LOCATION_NAME]
@@ -33,10 +34,10 @@ class CalendarService @Autowired constructor(@Value("\${boudicca.search.url}") p
                 event.name, event.startDate, location, endDate, 0
             )
 
-            calendar.components.add(calendarEvent)
+            calendar.addEvent(calendarEvent)
         }
 
-        return calendar.toString().toByteArray()
+        return Biweekly.write(calendar).go().toByteArray()
     }
 
     private fun parseEndDate(endDate: String?): OffsetDateTime? {
@@ -54,35 +55,29 @@ class CalendarService @Autowired constructor(@Value("\${boudicca.search.url}") p
         endDateTime: OffsetDateTime?,
         sequence: Int,
     ): VEvent {
+        //todo get description?
         val titleHash = title.hashCode()
-        // create the event
-        val event = if (endDateTime == null) {
-            VEvent(
-                DateTime(startDateTime.toInstant().toEpochMilli()), title
-            ).also {
-                it.properties.add(Uid("event-${startDateTime}-${titleHash}"))
-            }
+        val event = VEvent()
+        event.setSummary(title)
+        event.dateStart = DateStart(Date(startDateTime.toInstant().toEpochMilli()))
+        if (endDateTime != null) {
+            event.dateEnd = DateEnd(Date(endDateTime.toInstant().toEpochMilli()))
+            event.uid = Uid("event-${startDateTime}-${endDateTime}-${titleHash}")
         } else {
-            VEvent(
-                DateTime(startDateTime.toInstant().toEpochMilli()),
-                DateTime(endDateTime.toInstant().toEpochMilli()),
-                title
-            ).also {
-                it.properties.add(Uid("event-${startDateTime}-${endDateTime}-${titleHash}"))
-            }
+            event.uid = Uid("event-${startDateTime}-${titleHash}")
         }
 
         // set the event properties
         if (location != null) {
-            event.properties.add(Location(location))
+            event.location = Location(location)
         }
-        event.properties.add(Sequence(sequence))
+        event.sequence = Sequence(sequence)
 
         return event
     }
 
     fun getEvents(query: String): ByteArray {
-        val events = searchClient.queryEvents(QueryDTO(query, 0, Int.MAX_VALUE))
+        val events = searchClient.queryEvents(QueryDTO(query, 0, 20))
         return createCalendar(events.result)
     }
 }

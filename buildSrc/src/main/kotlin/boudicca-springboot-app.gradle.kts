@@ -18,10 +18,28 @@ dependencies {
     testImplementation(versionCatalog.findLibrary("spring-boot-starter-test").get())
 }
 
+val containerEngine: String by rootProject.extra
+
 task<Exec>("imageBuild") {
     inputs.file("src/main/docker/Dockerfile")
     inputs.files(tasks.named("bootJar")) //TODO extract to own plugin
     dependsOn(tasks.named("assemble"))
-    commandLine("docker", "build", "-t", "localhost/boudicca-${project.name}", "-f", "src/main/docker/Dockerfile", ".")
+    commandLine(containerEngine, "build", "-t", "localhost/boudicca-${project.name}", "-f", "src/main/docker/Dockerfile", ".")
 }
+
+task<Exec>("imageBuildMultiplatform") {
+    inputs.file("src/main/docker/Dockerfile")
+    inputs.files(tasks.named("bootJar")) //TODO extract to own plugin
+    dependsOn(tasks.named("assemble"))
+    commandLine(
+        containerEngine,
+        "buildx",
+        "build",
+        "--platform",
+        "linux/amd64,linux/arm64",
+        "-t", "localhost/boudicca-${project.name}",
+        "-f", "src/main/docker/Dockerfile",
+        ".")
+}
+
 

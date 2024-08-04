@@ -58,7 +58,7 @@ To do this the workflow is following:
    our [eventcollectors project](../../boudicca.events/eventcollectors/src/main/kotlin/events/boudicca/eventcollector/collectors)
    create a new EventCollector subclass which collects some events.
    1. A good starting point is always to look at existing EventCollectors and copy one of them.
-   2. Take a look at our [Semantic Conventions](../../SEMANTIC_CONVENTIONS.md) overview where you can see the existing
+   2. Take a look at our [Semantic Conventions](../SEMANTIC_CONVENTIONS.md) overview where you can see the existing
       keys   and their meanings you should adhere to.
 2. Add your new collector   in [LocalCollectorDebug.kt](../../boudicca.events/eventcollectors/src/main/kotlin/events/boudicca/eventcollector/LocalCollectorDebug.kt)
    and run the `LocalCollectorDebugKt` launch config (or class) to dry-run your test.

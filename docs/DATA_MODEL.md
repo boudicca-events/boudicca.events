@@ -1,18 +1,39 @@
 # Boudicca's Data Model
 
-TODO write intro to this whole thing and add a link to [Semantic Conventions](docs/SEMANTIC_CONVENTIONS.md) somewhere 
+## Overview
 
+Boudicca's most basic data structure is an Entry, which is a collection of Key->Value Pairs, which are called Properties.
+Those keys and values are both UTF-8 encoded strings and represent information about the entry.
+For example `name`->`My Entry` would be a Property with key "name" and value "My Entry" and could represent the name of this Entry.
 
-At this point we need to introduce some more precise terminology:
+Sometimes you need more information about the value of one property, for example which language the value is in, or if this value is supposed to be a number, text, date, ...
+Boudicca encodes this information into the Key of the Property by appending "VariantInformation" to the base key value, which looks like `:VariantName=VariantValue`
+For example to specify that this name is in english we could have the Property `name:lang=en`->`My Entry` or to specify that something is a number we can write `price:format=number`->`20`.
+TODO add links to variant sections?
+You can of course chain and combine those VariantInformations, but be aware that most of the time the same VariantInformation is only allowed to appear once per Property.
 
-* Entry: One generic entry in our database, which consists of multiple "Key"->"Value" mappings, where key and value are strings.
-* Event: A specialised "Entry", which represents an event and has two mandatory keys: "name" and "startDate"
+An Entry is a very generic way of viewing the data in Boudicca and most of the time you will only think about and work with more specialized kinds of Entries. 
+For Boudicca the most important one is the "Event", which represents a generic event. To make those events interoperable we have standardised properties and their meaning which you can find in our [Semantic Conventions](docs/SEMANTIC_CONVENTIONS.md) documentation.
+But nothing is stopping you from adding and using your own properties to Entries or Events.
+
+There are many ways to serialize Boudicca-Entries, but the standard way is to serialize them into UTF-8 encoded JSON. 
+Here one Entry will be mapped to a JSON-Object where the properties are JSON-Object key-value pairs and a list of Entries will be a JSON-Array.
+
+TODO add canonical ordering of VariantInformations, aka sorted alphabetically?
+
+## Definitions
+
+At this point we need to specify terminology a bit better:
+
+* Entry: One generic entry in our database, which consists of multiple "Properties"
+* Property: "Key"->"Value" pair, where key and value are UTF-8 encoded strings.
+* Event: A specialised "Entry", which represents an event and has two mandatory keys: "name" and "startDate". See [Semantic Conventions](docs/SEMANTIC_CONVENTIONS.md) for more information.
 * Key: Key value of one "Key"->"Value" mapping of one entry. Can contain multiple variant information. Format is "PropertyName"\{:"VariantInformation"}
+* Value: The value of one property. Has to conform to the specified variant data, so conform to the correct language and/or format.
 * PropertyName: Name of the property of an entry. Can only consist of letters, numbers and "." TODO is that ok? do we want to allow other special chars?
 * VariantInformation: Specifying what kind of variant this key is. Format is "VariantName"="VariantValue"
 * VariantName: The name of the variant. TODO what to do if unknown value? ignore the value? but if it is the only one?
 * VariantValue: The value of the variant. For example, for the variant Format it should be the format the value is in. For Language it should be the language of the Value.
-* Value: The value of one property. Has to conform to the specified variant data, so conform to the correct language and/or format.
 
 Currently supported variants are:
 * Language: which language a value is in
@@ -20,31 +41,30 @@ Currently supported variants are:
 
 If a certain variant makes sense for a certain property needs to be decided per property basis.
 
-#### Language Variant
+## Language Variant
 
 Has the VariantName "lang" and the value is a two-letter language abbreviation, like "en", "de", "fr", ...
 
 TODO define what that means for searching, for displaying, how languages are chosen and so on
 
-#### Format Variant
+## Format Variant
 
-Has the VariantName "format" and for the value see the [Formats](#formats) section.
+Has the VariantName "format" and specifies what kind of data and in which format the Value is.
 
-TODO define more stuff here?
-
-
-## Formats
-
-We decided to support following formats for now:
+Boudicca currently supports those formats:
 * Text (VariantValue "text" as well as the default when no format is given)
 * Numbers (VariantValue "number")
 * Dates (VariantValue "date")
 * Lists (VariantValue "list")
 * Markdown (VariantValue "markdown")
 
+TODO specify if you are allowed to add new formats yourself and what this means for working with Boudicca software.
+
+TODO make below sections more standardized with information. like what about sorting, searching, ...
+
 ### Text
 
-Simply text
+Simple text
 
 ### Numbers
 

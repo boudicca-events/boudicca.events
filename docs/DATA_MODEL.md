@@ -19,8 +19,6 @@ But nothing is stopping you from adding and using your own properties to Entries
 There are many ways to serialize Boudicca-Entries, but the standard way is to serialize them into UTF-8 encoded JSON. 
 Here one Entry will be mapped to a JSON-Object where the properties are JSON-Object key-value pairs and a list of Entries will be a JSON-Array.
 
-TODO add canonical ordering of VariantInformations, aka sorted alphabetically?
-
 ## Definitions
 
 At this point we need to specify terminology a bit better:
@@ -108,3 +106,17 @@ Examples:
 Knowledge about markdown is important for rendering it correctly.
 
 We agree to use standard markdown according to [Markdown](https://en.wikipedia.org/wiki/Markdown).
+
+## Canonical Form
+
+If you have more than one VariantInformation in one key there are multiple ways to write this by changing the order of the VariantInformations. For example:
+
+`mykey:foo=bar:fuzz=bizz`->`my value` and `mykey:fuzz=bizz:foo=bar`->`my value`
+
+To make working with keys and VariantInformation in a map easier the only correct way to write a key is the canonical way:
+VariantInformation should be alphabetically ordered by their VariantName, and then by their VariantValue.
+So for the example above, the canonical way is `mykey:foo=bar:fuzz=bizz`->`my value` because "foo" is alphabetically ordered before "fuzz".
+
+Another example for repeated VariantNames is `mykey:foo=bar:foo=bizz`->`my value` which is ordered correctly because while the VariantName "foo" is the same the values "bar" and "bizz" are different and "bar" has to come before "bizz".
+
+If you are using Boudicca's libraries to work with variants the library will make sure all keys are canonical, and our EventDB will also make sure that all ingested keys are changed to be canonical. That also means that all keys you get from our EventDB and our SearchService are guaranteed to be canonical.

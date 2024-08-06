@@ -7,10 +7,10 @@ Those keys and values are both UTF-8 encoded strings and represent information a
 For example `name`->`My Entry` would be a Property with key "name" and value "My Entry" and could represent the name of this Entry.
 
 Sometimes you need more information about the value of one property, for example which language the value is in, or if this value is supposed to be a number, text, date, ...
-Boudicca encodes this information into the Key of the Property by appending "VariantInformation" to the base key value, which looks like `:VariantName=VariantValue`
+Boudicca encodes this information into the Key of the Property by appending VariantInformation to the base key value, which looks like `:VariantName=VariantValue`
 For example to specify that this name is in english we could have the Property `name:lang=en`->`My Entry` or to specify that something is a number we can write `price:format=number`->`20`.
-TODO add links to variant sections?
-You can of course chain and combine those VariantInformations, but be aware that most of the time the same VariantInformation is only allowed to appear once per Property.
+See [Format](#format-variant) and [Language](#language-variant) for more information.
+You can of course chain and combine those VariantInformations, but be aware that most of the time the same VariantInformation is only allowed to appear once per Property and watch out for the [canonical form](#canonical-form).
 
 An Entry is a very generic way of viewing the data in Boudicca and most of the time you will only think about and work with more specialized kinds of Entries. 
 For Boudicca the most important one is the "Event", which represents a generic event. To make those events interoperable we have standardised properties and their meaning which you can find in our [Semantic Conventions](docs/SEMANTIC_CONVENTIONS.md) documentation.
@@ -24,20 +24,20 @@ Here one Entry will be mapped to a JSON-Object where the properties are JSON-Obj
 At this point we need to specify terminology a bit better:
 
 * Entry: One generic entry in our database, which consists of multiple "Properties"
-* Property: "Key"->"Value" pair, where key and value are UTF-8 encoded strings.
 * Event: A specialised "Entry", which represents an event and has two mandatory keys: "name" and "startDate". See [Semantic Conventions](docs/SEMANTIC_CONVENTIONS.md) for more information.
-* Key: Key value of one "Key"->"Value" mapping of one entry. Can contain multiple variant information. Format is "PropertyName"\{:"VariantInformation"}
+* Property: "Key"->"Value" pair, where key and value are UTF-8 encoded strings.
+* Key: Key value of one "Key"->"Value" mapping of one entry. Can contain multiple variant information. Format is `PropertyName[:VariantInformation]*`
 * Value: The value of one property. Has to conform to the specified variant data, so conform to the correct language and/or format.
-* PropertyName: Name of the property of an entry. Can only consist of letters, numbers and "." TODO is that ok? do we want to allow other special chars?
-* VariantInformation: Specifying what kind of variant this key is. Format is "VariantName"="VariantValue"
-* VariantName: The name of the variant. TODO what to do if unknown value? ignore the value? but if it is the only one?
+* PropertyName: Name of the property of an entry. Can only consist of letters, numbers and "."
+* VariantInformation: Specifying what kind of variant this key is. Format is `VariantName=VariantValue`
+* VariantName: The name of the variant.
 * VariantValue: The value of the variant. For example, for the variant Format it should be the format the value is in. For Language it should be the language of the Value.
 
 Currently supported variants are:
-* Language: which language a value is in
-* Format: what kind of data this value is, for example text, dates, ...
+* [Language](#language-variant): which language a value is in
+* [Format](#format-variant): what kind of data this value is, for example text, dates, ...
 
-If a certain variant makes sense for a certain property needs to be decided per property basis.
+If a certain variant makes sense for a certain property needs to be decided per property and that properties defined meaning. For example, it does not make sense to have a language variant for "startDate".
 
 ## Language Variant
 

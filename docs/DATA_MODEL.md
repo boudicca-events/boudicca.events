@@ -2,6 +2,9 @@
 
 ## Overview
 
+TODO i think this overview is too specific already
+
+
 Boudicca's most basic data structure is an Entry, which is a collection of Key->Value Pairs, which are called Properties.
 Those keys and values are both UTF-8 encoded strings and represent information about the entry.
 For example `name`->`My Entry` would be a Property with key "name" and value "My Entry" and could represent the name of this Entry.
@@ -39,11 +42,33 @@ Currently supported variants are:
 
 If a certain variant makes sense for a certain property needs to be decided per property and that properties defined meaning. For example, it does not make sense to have a language variant for "startDate".
 
+
+TODO maybe we can define generic selecting vs searching strategies? 
+
 ## Language Variant
 
-Has the VariantName "lang" and the value is a two-letter language abbreviation, like "en", "de", "fr", ...
+Has the VariantName "lang" and the value is a two-letter language abbreviation, like "en", "de", "fr", ... 
+Denotes the language the value is in. Without a language variant it is assumed that this is the "default" language and will be used as a fallback if the wanted language is not available. TODO does this seem right?
 
-TODO define what that means for searching, for displaying, how languages are chosen and so on
+### Language in the HTML-Publisher
+
+If the user has selected a language (feature pending :P ) the Publisher will preferably select the value with the correct language variant.
+If this variant is not available (or the user has no language selected) it will fall back to the default language (aka without any lang variant).
+If this is not available it will order all remaining variants alphabetically by key and select the first one.
+
+### Language in the ical-Publisher
+
+like html publisher? do we have a language here? 
+
+### Language in Search Service
+
+The Search Service will search all Variants matching the given key and more specific ones.
+So for example, if you make a contains-query like `"name" contains "my event"` Search Service will search keys without variants like `name` and keys with variants like `name:lang=de`.
+But if you search for `"name:lang=de" contains "my event"` then Search Service will NOT search keys without variants like `name`. TODO this seems wrong? maybe we should make it fall back to the default language as well, but not other variants.
+
+TODO what about wildcard searches?
+
+TODO refine above sections
 
 ## Format Variant
 
@@ -56,41 +81,48 @@ Boudicca currently supports those formats:
 * Lists (VariantValue "list")
 * Markdown (VariantValue "markdown")
 
-TODO specify if you are allowed to add new formats yourself and what this means for working with Boudicca software.
 
 TODO make below sections more standardized with information. like what about sorting, searching, ...
 
 ### Text
 
-Simple text
+Format: Arbitrary text, no restrictions
+
+Sorting: Alphabetically, case-insensitive (so `aAbB` instead of `abAB`)
+
+Searching: Works with Equals and Contains queries.   
 
 ### Numbers
 
-Knowledge about numbers is mostly important to correctly sort them.
 
-The format looks like: TODO define format and possible numbers here
+Format: Allowed are integers, negative numbers and floating point numbers  
 
 Examples:
 * 0
 * 1
 * -5
+* 0.5
 * ...?
+
+Sorting: By numerical value
+
+Searching: Works with Equals queries. Numbers need to be equal. TODO we probably need greater and smaller-queries here.
 
 ### Dates
 
-Knowledge about dates is important for before/after + duration searches and to sort them correctly.
-
-The format is the "Date and time with the offset" format of the [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) standard. TODO not sure if we really want to accept all ISO formats, i guess there are local ones in there as well (ones without timezone information)
+Format: The format is the "Date and time with the offset" format of the [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) standard. TODO not sure if we really want to accept all ISO formats, i guess there are local ones in there as well (ones without timezone information)
 
 Examples:
 * 2024-04-27T23:59:00+02:00
 * 2024-04-27T11:00:00Z
 
+Sorting: By time.
+
+Searching: Works with Equals, After, Before and Duration queries.
+
 ### Lists
 
-Knowledge about lists is mostly important for contains searches and search faceting. We cannot sort lists.
-
-The format is a comma "," seperated list of values. That means that commas occurring in a value have to be escaped by a backslash "\" and occurring backslashes also have to be escaped by a backslash.
+Format: The format is a comma "," seperated list of values. That means that commas occurring in a value have to be escaped by a backslash "\" and occurring backslashes also have to be escaped by a backslash.
 
 Examples:
 * value1 (this is a list consisting only of one value "value1")
@@ -101,11 +133,44 @@ Examples:
 * (the empty string -> a list with a single empty value)
 * , (this is a list consisting of two empty values, please note that there is no way to specify an empty list, you need to remove the property for this)
 
+Examples:
+* 2024-04-27T23:59:00+02:00
+* 2024-04-27T11:00:00Z
+
+Sorting: Alphabetically, case-insensitive (so `aAbB` instead of `abAB`). WARNING: This is like text and is most likely not what you want, do not rely on sorting lists.
+
+Searching: Works with Equals and Contains queries. 
+
+
 ### Markdown
 
-Knowledge about markdown is important for rendering it correctly.
+Format: We agree to use standard markdown according to [Markdown](https://en.wikipedia.org/wiki/Markdown)
 
-We agree to use standard markdown according to [Markdown](https://en.wikipedia.org/wiki/Markdown).
+Sorting: Alphabetically, case-insensitive (so `aAbB` instead of `abAB`)
+
+Searching: Works with Equals and Contains queries
+
+Knowledge about markdown is important for rendering it correctly, otherwise it is treated like text.
+
+
+### Format in the HTML-Publisher
+
+For displaying properties the HTML-Publisher follows the [Semantic Conventions](docs/SEMANTIC_CONVENTIONS.md) and tries to find the variant with the highest priority.
+For searching, the filters will be kept generic, so no variant will be added to the search term. TODO is this a good idea?
+
+### Format in the ical-Publisher
+
+like html publisher?
+
+### Format in Search Service
+
+The Search Service will search all Variants matching the given key and more specific ones.
+So for example, if you make a contains-query like `"name" contains "my event"` Search Service will search keys without variants like `name` and keys with variants like `name:format=list`.
+But if you search for `"name:format=list" contains "my event"` then Search Service will NOT search keys without variants like `name`. TODO this seems wrong? maybe we should make it fall back to the default language as well, but not other variants.
+TODO seems awfully similar to language, should be a pattern here?
+TODO what about wildcard searches?
+
+TODO refine above sections
 
 ## Canonical Form
 
@@ -120,3 +185,7 @@ So for the example above, the canonical way is `mykey:foo=bar:fuzz=bizz`->`my va
 Another example for repeated VariantNames is `mykey:foo=bar:foo=bizz`->`my value` which is ordered correctly because while the VariantName "foo" is the same the values "bar" and "bizz" are different and "bar" has to come before "bizz".
 
 If you are using Boudicca's libraries to work with variants the library will make sure all keys are canonical, and our EventDB will also make sure that all ingested keys are changed to be canonical. That also means that all keys you get from our EventDB and our SearchService are guaranteed to be canonical.
+
+## Unknown Variants
+
+Boudicca will ignore all Variants it does not understand and treat the keys as if those Variants are not here. This behaviour is suggested for all Software handling Boudicca Keys.

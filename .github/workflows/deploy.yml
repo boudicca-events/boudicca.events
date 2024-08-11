@@ -20,10 +20,8 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
-      - name: Validate Gradle wrapper
-        uses: gradle/actions/wrapper-validation@v3
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v4
       - name: Execute Gradle build with tests
         run: ./gradlew build
       - name: Build Docker images with gradle

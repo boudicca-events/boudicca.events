@@ -11,12 +11,17 @@ here: https://boudicca.events/about
 
 ## Data Model
 
-Our data model is really simple, an Event/Entry is simply a collection of key-value pairs. In theory, you can put whatever you want into an Event,
-but to have some consistency and interoperability we encourage you to comply to the keys and formats you find in our [Semantic Conventions](SEMANTIC_CONVENTIONS.md) as good as you can. 
+boudicca.events is only concerned about Events, 
+but some of the underlying services are more generic and could be used for other information as well, those would be called "Entry".  
+boudicca.events is a database of Events, which are simple Key->Value pairs, but in order to support some use-cases it also
+supports format and language Variants of properties, please see [Data Model](docs/DATA_MODEL.md) for more information.
+In theory, you can put whatever you want into an Event, but to have some consistency and interoperability it is encouraged
+to comply to the keys and formats defined in the [Semantic Conventions](docs/SEMANTIC_CONVENTIONS.md) as well as you can.
 
 ## Using Boudiccas REST Apis
 
-When you want to use our data via our REST Apis or want to create our own publisher or service with Boudicca see [REST](docs/REST.md)
+When you want to use our data via our REST Apis or want to create our own publisher or service with Boudicca
+see [REST](docs/REST.md)
 
 ## Architecture
 

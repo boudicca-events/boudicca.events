@@ -22,5 +22,5 @@ This is the heart of the EventDB, responsible for persisting entries and cleanin
 The main storage is a simple ConcurrentHashMap where all operations will be executed on. Additionally, the EventDB saves all data to disk in a JSON format periodically and loads it on startup.
 
 The current mechanism for cleaning old Entries needs improvement. 
-It looks for each EventCollector when they last submitted a new Entry, and on cleanup if an Entry is not update by a EventCollector for three days, but others are, then it will be removed.
+It looks for each EventCollector when they last submitted a new Entry, and on cleanup if an Entry was not updated by a EventCollector for three days, but others were, then it will be removed.
 This of course relies on the EventCollector always sending a full collection, and not only changes/new events.

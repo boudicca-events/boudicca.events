@@ -8,7 +8,7 @@ Currently, we have one Enricher service with multiple Enrichers as a simple Spri
 
 ## Enricher API
 
-This API offers a single endpoint for submitting a list of events and get an list of enriched events back. It is implemented as a Spring RestController you can find it [here](../../boudicca.base/enricher/src/main/kotlin/base/boudicca/enricher/controller/EnricherController.kt)
+This API offers a single endpoint for submitting a list of events and get a list of enriched events back. It is implemented as a Spring RestController you can find it [here](../../boudicca.base/enricher/src/main/kotlin/base/boudicca/enricher/controller/EnricherController.kt)
 
 ## EnricherService
 
@@ -27,7 +27,7 @@ Current implementations are:
 
 ### CategoryEnricher
 
-If no category is set this Enricher will try to look up the category via the type property of the event. Currently, this lookup is hardcode via the [EventCategory](../../boudicca.base/semantic-conventions/src/main/kotlin/base/boudicca/model/EventCategory.kt) enum
+If no category is set this Enricher will try to look up the category via the type property of the event. Currently, this lookup is hardcoded via the [EventCategory](../../boudicca.base/semantic-conventions/src/main/kotlin/base/boudicca/model/EventCategory.kt) enum
 
 ### RecurrenceEnricher
 
@@ -44,5 +44,6 @@ If you want to contribute to this data please contact us via our email or our di
 
 ### MusicBrainzArtistEnricher
 
-This enricher looks at the name of an Event and searches for known Artist names in there. If it finds them it will set the `concert.genre` and `concert.bandlist` properties.
+This enricher looks at the name of an Event with category `MUSIC` and searches for known Artist names in there. If it finds them it will set the `concert.genre` and `concert.bandlist` properties.
+This enricher depends on the CategoryEnricher to run first.
 The data is manually loaded from https://data.metabrainz.org/pub/musicbrainz/data/json-dumps/ and processed manually via [MusicBrainzImporter.kt](../../boudicca.base/enricher-utils/src/main/kotlin/base/boudicca/enricher_utils/MusicBrainzImporter.kt)

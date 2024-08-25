@@ -15,7 +15,7 @@ In its simplest form the interface has only two methods you need to implement.
 1. getName() which returns a simple name for the collector. The convention is all lowercase without any special
    characters nor spaces.
 2. collectEvents() which returns a List
-   of [Events](../../boudicca.base/semantic-conventions/src/main/kotlin/base/boudicca/model/Event.kt)
+   of [Events](../../boudicca.base/common-model/src/main/kotlin/base/boudicca/model/Event.kt)
 
 and this is all you need for a EventCollector!
 

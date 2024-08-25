@@ -14,5 +14,5 @@ dependencies {
     }
 
     implementation(project(":boudicca.base:enricher-api"))
-    implementation(project(":boudicca.base:semantic-conventions"))
+    implementation(project(":boudicca.base:common-model"))
 }

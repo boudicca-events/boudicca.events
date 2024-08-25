@@ -5,7 +5,7 @@ plugins {
 }
 
 dependencies {
-    api(project(":boudicca.base:semantic-conventions"))
+    api(project(":boudicca.base:common-model"))
     testImplementation("org.junit.jupiter:junit-jupiter:5.11.0")
     jmh(project(":boudicca.base:publisher-client"))
     jmh(project(":boudicca.base:ingest-client"))

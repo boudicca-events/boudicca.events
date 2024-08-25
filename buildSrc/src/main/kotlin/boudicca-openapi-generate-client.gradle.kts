@@ -22,7 +22,7 @@ val openapi by configurations.creating {
 
 val versionCatalog = versionCatalogs.named("libs")
 dependencies {
-    api(project(":boudicca.base:semantic-conventions"))
+    api(project(":boudicca.base:common-model"))
 
     implementation(versionCatalog.findBundle("openapi-generate-client").get())
 }

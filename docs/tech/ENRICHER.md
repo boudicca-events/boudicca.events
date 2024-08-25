@@ -27,7 +27,7 @@ Current implementations are:
 
 ### CategoryEnricher
 
-If no category is set this Enricher will try to look up the category via the type property of the event. Currently, this lookup is hardcoded via the [EventCategory](../../boudicca.base/semantic-conventions/src/main/kotlin/base/boudicca/model/EventCategory.kt) enum
+If no category is set this Enricher will try to look up the category via the type property of the event. Currently, this lookup is hardcoded via the [EventCategory](../../boudicca.base/common-model/src/main/kotlin/base/boudicca/model/EventCategory.kt) enum
 
 ### RecurrenceEnricher
 

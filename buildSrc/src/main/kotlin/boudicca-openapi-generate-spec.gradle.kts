@@ -29,7 +29,7 @@ val openapiSpec: Configuration by configurations.creating {
 
 val versionCatalog = versionCatalogs.named("libs")
 dependencies {
-    implementation(project(":boudicca.base:semantic-conventions"))
+    implementation(project(":boudicca.base:common-model"))
     implementation(versionCatalog.findBundle("openapi-generate-spec").get())
 }
 

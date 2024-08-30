@@ -1,39 +1,35 @@
 package base.boudicca.model
 
 import base.boudicca.SemanticKeys
-import base.boudicca.model.Entry
+import base.boudicca.format.DateFormat
+import base.boudicca.keyfilters.KeySelector
+import base.boudicca.model.structured.StructuredEvent
+import base.boudicca.model.structured.toEvent
+import base.boudicca.model.structured.toFlatEntry
 import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeParseException
+import java.util.Optional
 
 data class Event(
     val name: String,
     val startDate: OffsetDateTime,
     val data: Map<String, String> = mapOf()
 ) {
+
+    fun toStructuredEvent(): StructuredEvent {
+        return StructuredEvent(this)
+    }
+
+    fun toEntry(): Entry {
+        return toEntry(this)
+    }
+
     companion object {
         fun toEntry(event: Event): Entry {
-            val entry = event.data.toMutableMap()
-            entry[SemanticKeys.NAME] = event.name
-            entry[SemanticKeys.STARTDATE] = DateTimeFormatter.ISO_DATE_TIME.format(event.startDate)
-            return entry
+            return event.toStructuredEvent().toEntry().toFlatEntry()
         }
 
-        fun fromEntry(entry: Entry): Event? {
-            if (!entry.containsKey(SemanticKeys.NAME) || !entry.containsKey(SemanticKeys.STARTDATE)) {
-                return null
-            }
-            val name = entry[SemanticKeys.NAME]!!
-            val startDateString = entry[SemanticKeys.STARTDATE]
-            val startDate = try {
-                OffsetDateTime.parse(startDateString, DateTimeFormatter.ISO_DATE_TIME)
-            } catch (e: DateTimeParseException) {
-                return null
-            }
-            val data = entry.toMutableMap()
-            data.remove(SemanticKeys.NAME)
-            data.remove(SemanticKeys.STARTDATE)
-            return Event(name, startDate, data)
+        fun fromEntry(entry: Entry): Optional<Event> {
+            return entry.toStructuredEntry().toEvent().map { it.toFlatEvent() }
         }
     }
 }

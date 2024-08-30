@@ -5,6 +5,7 @@ import base.boudicca.openapi.ApiClient
 import base.boudicca.openapi.ApiException
 import base.boudicca.search.openapi.api.SearchApi
 import base.boudicca.search.openapi.model.FilterQueryEntryDTO
+import kotlin.jvm.optionals.getOrNull
 import base.boudicca.search.openapi.model.FilterQueryDTO as SearchOpenapiFilterQueryDTO
 
 class SearchClient(private val searchUrl: String) {
@@ -23,7 +24,7 @@ class SearchClient(private val searchUrl: String) {
 
     fun queryEvents(queryDTO: QueryDTO): SearchResultDTO {
         val entries = queryEntries(queryDTO)
-        return SearchResultDTO(entries.result.mapNotNull { Event.fromEntry(it) }, entries.totalResults, entries.error)
+        return SearchResultDTO(entries.result.mapNotNull { Event.fromEntry(it).getOrNull() }, entries.totalResults, entries.error)
     }
 
     fun queryEntries(queryDTO: QueryDTO): ResultDTO {

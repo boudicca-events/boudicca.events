@@ -15,6 +15,7 @@ object SemanticKeys {
     const val REGISTRATION = "registration"
 
     const val PICTURE_URL = "pictureUrl"
+
     @Deprecated("use PICTURE_URL instead")
     const val PICTUREURL = PICTURE_URL
     const val PICTURE_ALT_TEXT = "pictureAltText"

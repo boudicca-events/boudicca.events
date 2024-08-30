@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    implementation("com.google.api-client:google-api-client:2.6.0") {
+    implementation("com.google.api-client:google-api-client:2.7.0") {
         exclude("commons-logging", "commons-logging")
     }
     implementation("com.google.auth:google-auth-library-oauth2-http:1.24.1") {

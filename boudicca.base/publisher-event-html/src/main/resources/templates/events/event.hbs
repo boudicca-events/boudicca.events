@@ -7,16 +7,14 @@
                 <use xlink:href="#{{#if event.category}}{{event.category}}{{else}}image{{/if}}"></use>
             </svg>
         {{/if}}
-        {{#if event.url}}
-            <button class="anchor-to-event">
-                Mehr Informationen
-            </button>
-        {{/if}}
+        <button class="anchor-to-event">
+            Mehr Informationen
+        </button>
 
         {{#if event.accessibilityProperties}}
             <div class="accessibility-details">
                 <svg height="24px" width="24px" viewBox="0 0 512 512">
-                    <title>{{event.accessibilityProperties}}</title>
+                    <title>{{#each event.accessibilityProperties}}{{#if @last}}{{this}}{{else}}{{this}}, {{/if}}{{/each}}</title>
                     <use xlink:href="#accessibility"></use>
                 </svg>
             </div>
@@ -50,7 +48,8 @@
             <div class="modal-column" style="padding-bottom: 1rem;">
                 <h2>{{event.name}}</h2>
 
-                {{#each event.tag}}
+                <!--TODO this does not look good, and why are those links?-->
+                {{#each event.tags}}
                     <a class="event-modal-tag">{{this}}</a>
                 {{/each}}
             </div>
@@ -93,6 +92,7 @@
                                     <svg height="24px" width="24px" title="Kategorie Logo" viewBox="0 0 512 512" >
                                         <use xlink:href="#category"></use>
                                     </svg>
+                                    <!--TODO we need to have two properties here, one for logos, one for displaying-->
                                     <p>{{event.category}}</p>
                                 </div>
                             {{/if}}
@@ -101,14 +101,16 @@
                                 <svg height="24px" width="24px" title="Erreichbarkeit Logo" viewBox="0 0 512 512">
                                     <use xlink:href="#accessibility"></use>
                                 </svg>
-                                <p>{{event.accessibilityProperties}}</p>
+                                {{#each event.accessibilityProperties}}{{#if @last}}{{this}}{{else}}{{this}}, {{/if}}{{/each}}
                             </div>
                             {{/if}}
                         </div>
 
-                        <a class="anchor-to-eventmodal" href="{{event.url}}" target="_blank" data-modal-last-focusable-element aria-describedby="Zur Eventseite von {{event.name}} (neues Fenster wird geöffnet)">
-                            Zur Eventseite
-                        </a>
+                        {{#if event.url}}
+                            <a class="anchor-to-eventmodal" href="{{event.url}}" target="_blank" data-modal-last-focusable-element aria-describedby="Zur Eventseite von {{event.name}} (neues Fenster wird geöffnet)">
+                                Zur Eventseite
+                            </a>
+                        {{/if}}
                     </div>
                 </div>
             </div>
@@ -122,7 +124,7 @@
                     </ul>
                     <div class="panels">
                         <article class="active-panel {{#if event.category}}event-modal-{{event.category}}{{/if}}">
-                            <p>{{ event.description }}</p>
+                            <p>{{> events/renderProperty property=event.description }}</p>
                         </article>
                     </div>
                 </section>

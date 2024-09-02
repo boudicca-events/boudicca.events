@@ -11,8 +11,8 @@ underlying [Format Variants](DATA_MODEL.md#format-variant) which are applicable 
 priority.
 Earlier Format Variants are selected over later ones.
 
-* `name (format=text)`: datatype for the event name, since that one has to be text
-* `text (format=markdown,text)`: a text or markdown for structured text, to describe some property
+* `text (format=text)`: Simple Text
+* `richtext (format=markdown,text)`: Either simple text or markdown for structured text
 * `date (format=date)`: [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) Timestamp as text, for
   example: `2009-06-30T18:30:00+02:00`
 * `number (format=number)`: A number, for example `1`,`0.5`,`-2`
@@ -27,38 +27,38 @@ Note: publishers have to be able to handle invalid values by for example simply 
 
 **Events have only two required properties: `name` and `startDate`**
 
-| PropertyName                                   | Meaning                                                                                                                         | [Data Type](#data-types) | [Usage](#usage-explanation) |
-|------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------|--------------------------|-----------------------------|
-| name                                           | The name of the event                                                                                                           | name                     | MANDATORY                   |
-| startDate                                      | Time of start for the event                                                                                                     | date                     | MANDATORY                   |
-| endDate                                        | Time of end for the event                                                                                                       | date                     | OPTIONAL                    |
-| url                                            | A link to the specific source page for this event. If the user wants to see more details about the event, he should find them here | url                      | RECOMMENDED                 |
-| [type](#type-property)                         | The type of event, for example `concert`, `????` more examples please                                                           | text                     | RECOMMENDED                 |           
-| [category](#category-enum-values)              | The category of an event, for example `MUSIC`, `ART` or `TECH`                     | enum\<EventCategory>     | RECOMMENDED                 |
-| description                                    | Text describing this event                                                                                                      | text                     | RECOMMENDED                 |
-| [tags](#tags-property)                         | A list of generic tags.                                                                                                         | list                     | RECOMMENDED                 |
-| [registration](#registration-enum-values)      | If this is a free event, a event which requires registration or a event which requires a paid ticket                            | enum\<Registration>      | OPTIONAL                    |
-| pictureUrl                                     | Url to a picture to be shown                                                                                                    | url                      | RECOMMENDED                 |
-| pictureAltText                                 | Alt text for the picture                                                                                                        | text                     | RECOMMENDED                 |
-| pictureCopyright                               | Copyright attribution to be shown                                                                                               | text                     | OPTIONAL                    |
-| collectorName                                  | Name of the collector which collected this event                                                                                | text                     | OPTIONAL                    |
+| PropertyName                                   | Meaning                                                                                                                               | [Data Type](#data-types) | [Usage](#usage-explanation) |
+|------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------|--------------------------|-----------------------------|
+| name                                           | The name of the event                                                                                                                 | text                     | MANDATORY                   |
+| startDate                                      | Time of start for the event                                                                                                           | date                     | MANDATORY                   |
+| endDate                                        | Time of end for the event                                                                                                             | date                     | OPTIONAL                    |
+| url                                            | A link to the specific source page for this event. If the user wants to see more details about the event, he should find them here    | url                      | RECOMMENDED                 |
+| [type](#type-property)                         | The type of event, for example `concert`, `????` more examples please                                                                 | text                     | RECOMMENDED                 |           
+| [category](#category-enum-values)              | The category of an event, for example `MUSIC`, `ART` or `TECH`                                                                        | enum\<EventCategory>     | RECOMMENDED                 |
+| description                                    | Text describing this event                                                                                                            | richtext                 | RECOMMENDED                 |
+| [tags](#tags-property)                         | A list of generic tags.                                                                                                               | list                     | RECOMMENDED                 |
+| [registration](#registration-enum-values)      | If this is a free event, a event which requires registration or a event which requires a paid ticket                                  | enum\<Registration>      | OPTIONAL                    |
+| pictureUrl                                     | Url to a picture to be shown                                                                                                          | url                      | RECOMMENDED                 |
+| pictureAltText                                 | Alt text for the picture                                                                                                              | text                     | RECOMMENDED                 |
+| pictureCopyright                               | Copyright attribution to be shown                                                                                                     | text                     | OPTIONAL                    |
+| collectorName                                  | Name of the collector which collected this event                                                                                      | text                     | OPTIONAL                    |
 | sources                                        | A list of all sources that were used to gather info for this event, line by line. This should include all URLs or other sources used. | list                     | RECOMMENDED                 |
-| additionalEventsFromSourceUrl                  | an url to page on the event source website where other events can be found (e.g. Termine or Veranstaltungen pages) (if available) | url                      | OPTIONAL                    |
-| location.name                                  | The name of the location the event is held in                                                                                   | text                     | RECOMMENDED                 |
-| location.url                                   | A link to the website of the location                                                                                           | url                      | RECOMMENDED                 |
-| location.latitude                              | Map-coordinates latitude for the location                                                                                       | number                   | OPTIONAL                    |
-| location.longitude                             | Map-coordinates longitude for the location                                                                                      | number                   | OPTIONAL                    |
-| location.city                                  | The city of the event                                                                                                           | text                     | OPTIONAL                    |
-| location.address                               | Full address line for the location                                                                                              | text                     | OPTIONAL                    |
-| [recurrence.type](#recurrenceType-enum-values) | Describing how often an event happens. Once, rarely or very often.                                                              | enum\<RecurrenceType>    | RECOMMENDED                 |
-| recurrence.interval                            | Describing the interval with which the event recurs                                                                             | text                     | OPTIONAL                    |
-| accessibility.accessibleEntry                  | If the entry/exit is accessible                                                                                                 | boolean                  | OPTIONAL                    |
-| accessibility.accessibleSeats                  | If there are wheelchair places available on the event hall                                                                      | boolean                  | OPTIONAL                    |
-| accessibility.accessibleToilets                | If there are accessible toilets available                                                                                       | boolean                  | OPTIONAL                    |
-| accessibility.accessibleAktivpassLinz          | If the Aktivpass Linz may be applicable                                                                                         | boolean                  | OPTIONAL                    |
-| accessibility.accessibleKulturpass             | If the Kulturpass may be applicable                                                                                             | boolean                  | OPTIONAL                    |
-| concert.genre                                  | Genre of the concert                                                                                                            | text                     | OPTIONAL                    |
-| concert.bandlist                               | List of all bands playing                                                                                                       | list                     | OPTIONAL                    |
+| additionalEventsFromSourceUrl                  | an url to page on the event source website where other events can be found (e.g. Termine or Veranstaltungen pages) (if available)     | url                      | OPTIONAL                    |
+| location.name                                  | The name of the location the event is held in                                                                                         | text                     | RECOMMENDED                 |
+| location.url                                   | A link to the website of the location                                                                                                 | url                      | RECOMMENDED                 |
+| location.latitude                              | Map-coordinates latitude for the location                                                                                             | number                   | OPTIONAL                    |
+| location.longitude                             | Map-coordinates longitude for the location                                                                                            | number                   | OPTIONAL                    |
+| location.city                                  | The city of the event                                                                                                                 | text                     | OPTIONAL                    |
+| location.address                               | Full address line for the location                                                                                                    | text                     | OPTIONAL                    |
+| [recurrence.type](#recurrenceType-enum-values) | Describing how often an event happens. Once, rarely or very often.                                                                    | enum\<RecurrenceType>    | RECOMMENDED                 |
+| recurrence.interval                            | Describing the interval with which the event recurs                                                                                   | text                     | OPTIONAL                    |
+| accessibility.accessibleEntry                  | If the entry/exit is accessible                                                                                                       | boolean                  | OPTIONAL                    |
+| accessibility.accessibleSeats                  | If there are wheelchair places available on the event hall                                                                            | boolean                  | OPTIONAL                    |
+| accessibility.accessibleToilets                | If there are accessible toilets available                                                                                             | boolean                  | OPTIONAL                    |
+| accessibility.accessibleAktivpassLinz          | If the Aktivpass Linz may be applicable                                                                                               | boolean                  | OPTIONAL                    |
+| accessibility.accessibleKulturpass             | If the Kulturpass may be applicable                                                                                                   | boolean                  | OPTIONAL                    |
+| concert.genre                                  | Genre of the concert                                                                                                                  | text                     | OPTIONAL                    |
+| concert.bandlist                               | List of all bands playing                                                                                                             | list                     | OPTIONAL                    |
 
 #### Usage explanation
 
@@ -95,7 +95,8 @@ tags is an open field, so any value is permitted, but this is a list of common/k
 
 - ...
 - TODO
-- 
+-
+
 #### Category enum values
 
 * `MUSIC`: concerts or other events where the main focus is music

@@ -30,11 +30,11 @@ where
   escaped by a preceding backslash.
 * `<number>` is a integer or decimal value, can be positive or negative, for example `2`, `-5`, `-2.5`
 * `<date>` is a `<text>` in the ISO Local Date format `"YYYY-MM-DD"`, for example `"2023-05-27"`
-* `<keyFilter>` is a `<text>` representing a [Key Filter](DATA_MODEL.md#keyfilters) matching some PropertyVariants of an entry to be queried.
+* `<keyFilter>` is a `<text>` representing a [Key Filter](DATA_MODEL.md#keyfilters) matching some Properties of an entry to be queried.
   The most simple way is to just specify the PropertyName like `"name"`. You can add filters for different Variants if
-  needed like for example `"name:lang=de"` to only query german PropertyVariants of the `name` property. There is the special
+  needed like for example `"name:lang=de"` to only query german Properties of the `name` property. There is the special
   PropertyName `"*"` which means "any PropertyName". Please note that PropertyName matching is case-sensitive, so the
-  property names `"name"`  and `"NAME"` are different properties. If a Key Filter matches multiple PropertyVariants, the
+  property names `"name"`  and `"NAME"` are different properties. If a Key Filter matches multiple Properties, the
   expression is evaluated against all of them, and if any evaluate to true, the whole expression is true.
 
 The operator precedence is with the lowest starting: `or` -> `and` -> `not`, so not is the strongest binding one.

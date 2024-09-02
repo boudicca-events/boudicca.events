@@ -2,6 +2,12 @@ package base.boudicca.publisher.event.html.service
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.search.*
+import base.boudicca.format.ListFormat
+import base.boudicca.keyfilters.KeySelector
+import base.boudicca.model.EventCategory
+import base.boudicca.model.structured.Key
+import base.boudicca.model.structured.StructuredEvent
+import base.boudicca.publisher.event.html.model.SearchDTO
 import base.boudicca.query.BoudiccaQueryBuilder.after
 import base.boudicca.query.BoudiccaQueryBuilder.and
 import base.boudicca.query.BoudiccaQueryBuilder.before
@@ -12,9 +18,6 @@ import base.boudicca.query.BoudiccaQueryBuilder.equals
 import base.boudicca.query.BoudiccaQueryBuilder.hasField
 import base.boudicca.query.BoudiccaQueryBuilder.not
 import base.boudicca.query.BoudiccaQueryBuilder.or
-import base.boudicca.model.Event
-import base.boudicca.model.EventCategory
-import base.boudicca.publisher.event.html.model.SearchDTO
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -24,6 +27,7 @@ import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
+import kotlin.jvm.optionals.getOrNull
 
 // we do not want long-running events on our site, so we filter for events short then 30 days
 const val DEFAULT_DURATION_SHORTER_VALUE = 24 * 30
@@ -40,7 +44,7 @@ class EventService @Autowired constructor(
     private val localDateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
     @Throws(EventServiceException::class)
-    fun search(searchDTO: SearchDTO): List<Map<String, String?>> {
+    fun search(searchDTO: SearchDTO): List<Map<String, Any?>> {
         val events = caller.search(QueryDTO(generateQuery(searchDTO), searchDTO.offset ?: 0))
         return mapEvents(events)
     }
@@ -134,47 +138,99 @@ class EventService @Autowired constructor(
             .sortedBy { it }
     }
 
-    private fun mapEvents(result: SearchResultDTO): List<Map<String, String?>> {
+    private fun mapEvents(result: SearchResultDTO): List<Map<String, Any?>> {
         if (result.error != null) {
             throw EventServiceException("error executing query search: " + result.error, null, true)
         }
-        return result.result.map { mapEvent(it) }
+        return result.result.map { mapEvent(it.toStructuredEvent()) }
     }
 
-    private fun mapEvent(event: Event): Map<String, String?> {
+    private fun mapEvent(event: StructuredEvent): Map<String, Any?> {
         return mapOf(
             "name" to event.name,
-            "description" to event.data[SemanticKeys.DESCRIPTION],
-            "url" to event.data[SemanticKeys.URL],
             "startDate" to formatDate(event.startDate),
-            "locationName" to (event.data[SemanticKeys.LOCATION_NAME] ?: ""),
-            "city" to event.data[SemanticKeys.LOCATION_CITY],
-            "tags" to event.data[SemanticKeys.TAGS],
-            "category" to mapCategory(event.data[SemanticKeys.CATEGORY]),
-            "pictureUuid" to
-                    if (!event.data["pictureUrl"].isNullOrEmpty())
-                        pictureProxyService.submitPicture(event.data["pictureUrl"]!!).toString()
-                    else
-                        "",
-            "pictureAltText" to (event.data[SemanticKeys.PICTURE_ALT_TEXT] ?: ""),
-            "accessibilityProperties" to getAllAccessibilityValues(event).joinToString(", "),
+            "description" to getRichTextProperty(event, SemanticKeys.DESCRIPTION),
+            "url" to getTextProperty(event, SemanticKeys.URL),
+            "locationName" to getTextProperty(event, SemanticKeys.LOCATION_NAME),
+            "city" to getTextProperty(event, SemanticKeys.LOCATION_CITY),
+            "tags" to getListProperty(event, SemanticKeys.TAGS),
+            "category" to mapCategory(getTextProperty(event, SemanticKeys.CATEGORY)),
+            "pictureUuid" to getPictureUuid(event),
+            "pictureAltText" to getTextProperty(event, SemanticKeys.PICTURE_ALT_TEXT),
+            "accessibilityProperties" to getAllAccessibilityValues(event),
         )
     }
 
-    private fun getAllAccessibilityValues(event: Event): List<String> {
+    private fun getPictureUuid(event: StructuredEvent): String? {
+        val pictureUrl = getTextProperty(event, SemanticKeys.PICTURE_URL)
+        return if (pictureUrl.isNullOrEmpty()) {
+            null
+        } else {
+            pictureProxyService.submitPicture(pictureUrl).toString()
+        }
+    }
+
+    private fun getTextProperty(event: StructuredEvent, propertyName: String): String? {
+        return getPropertyForFormats(event, propertyName, listOf(""))
+            .map { it.second }
+            .getOrNull()
+    }
+
+    private fun getRichTextProperty(event: StructuredEvent, propertyName: String): RichText? {
+        //TODO use constants instead of magic values for formats
+        return getPropertyForFormats(event, propertyName, listOf("markdown", ""))
+            .map { RichText(getIsMarkdownFromFormat(it.first), it.second) }
+            .getOrNull()
+    }
+
+    private fun getListProperty(event: StructuredEvent, propertyName: String): List<String>? {
+        return getPropertyForFormats(event, propertyName, listOf("list", "")) //use text as a wonky fallback for now
+            .map { ListFormat.parseFromString(it.second) } //TODO could we do this more generic? like a typed getter or something?
+            .getOrNull()
+    }
+
+    private fun getPropertyForFormats(
+        event: StructuredEvent,
+        propertyName: String,
+        formatVariants: List<String>
+    ): Optional<Pair<Key, String>> {
+        return KeySelector.builder(propertyName)
+            //TODO use constants instead of magic values for language
+            .thenVariant("lang", listOf(getPreferredLanguage(), "", "*"))
+            .thenVariant("format", formatVariants)
+            .build()
+            .selectSingle(event)
+    }
+
+    private fun getIsMarkdownFromFormat(key: Key): Boolean {
+        val format = key.variants.firstOrNull { it.variantName == "format" }
+        if (format == null) {
+            return false
+        }
+        return format.variantValue == "markdown"
+    }
+
+    private fun getPreferredLanguage(): String {
+        return "de" //TODO make user be able to choose this
+    }
+
+    private fun getAllAccessibilityValues(event: StructuredEvent): List<String> {
         val list = mutableListOf<String>()
-        for (property in event.data) {
-            if (property.key.startsWith("accessibility.") && property.value.equals("true", true)) {
-                list.add(
-                    when (property.key) {
-                        SemanticKeys.ACCESSIBILITY_ACCESSIBLETOILETS -> "Barrierefreie Toiletten"
-                        SemanticKeys.ACCESSIBILITY_ACCESSIBLESEATS -> "Rollstuhlplatz"
-                        SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY -> "Barrierefreier Zugang"
-                        SemanticKeys.ACCESSIBILITY_AKTIVPASSLINZ -> "Aktivpass möglich"
-                        SemanticKeys.ACCESSIBILITY_KULTURPASS -> "Kulturpass möglich"
-                        else -> property.key
-                    }
-                )
+        for (keyValuePair in event.data) {
+            if (keyValuePair.key.name.startsWith("accessibility.")) {
+                val accessibilityValue = getTextProperty(event, keyValuePair.key.name)
+                if (accessibilityValue != null && accessibilityValue.equals("true", true)) {
+                    list.add(
+                        when (keyValuePair.key.name) {
+                            SemanticKeys.ACCESSIBILITY_ACCESSIBLETOILETS -> "Barrierefreie Toiletten"
+                            SemanticKeys.ACCESSIBILITY_ACCESSIBLESEATS -> "Rollstuhlplatz"
+                            SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY -> "Barrierefreier Zugang"
+                            SemanticKeys.ACCESSIBILITY_AKTIVPASSLINZ -> "Aktivpass möglich"
+                            SemanticKeys.ACCESSIBILITY_KULTURPASS -> "Kulturpass möglich"
+                            else -> keyValuePair.key.name
+                        }
+                    )
+                }
             }
         }
         return list.sortedWith(String.CASE_INSENSITIVE_ORDER)
@@ -246,4 +302,6 @@ class EventService @Autowired constructor(
         val locationCities: List<Pair<String, String>>,
         val bandNames: List<Pair<String, String>>,
     )
+
+    data class RichText(val isMarkdown: Boolean, val value: String)
 }

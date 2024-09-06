@@ -239,8 +239,8 @@ class EventService @Autowired constructor(
         val list = mutableListOf<String>()
         for (keyValuePair in event.data) {
             if (keyValuePair.key.name.startsWith("accessibility.")) {
-                val accessibilityValue = getTextProperty(event, keyValuePair.key.name)
-                if (accessibilityValue != null && accessibilityValue.equals("true", true)) {
+                val accessibilityValue = keyValuePair.value
+                if (accessibilityValue.toBoolean()) {
                     list.add(
                         when (keyValuePair.key.name) {
                             SemanticKeys.ACCESSIBILITY_ACCESSIBLETOILETS -> "Barrierefreie Toiletten"

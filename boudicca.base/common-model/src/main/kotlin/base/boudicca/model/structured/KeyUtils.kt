@@ -4,6 +4,7 @@ object KeyUtils {
     @Throws(IllegalArgumentException::class)
     fun toStructuredKeyValuePairs(map: Map<String, String>): Map<Key, String> {
         return map.mapKeys {
+            //TODO make more smart to include duplicate key detection (detect non canonical forms)
             val (propertyName, variants) = parseKey(it.key)
             Key(propertyName, variants)
         }

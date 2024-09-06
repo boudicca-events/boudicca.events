@@ -30,9 +30,10 @@ object ListFormat {
         return result
     }
 
-    fun parseToString(value: List<String>): String? {
+    @Throws(IllegalArgumentException::class)
+    fun parseToString(value: List<String>): String {
         if (value.isEmpty()) {
-            return null
+            throw IllegalArgumentException("and empty list cannot be parsed to a string value")
         }
         return value.joinToString(",") { it.replace("\\", "\\\\").replace(",", "\\,") }
     }

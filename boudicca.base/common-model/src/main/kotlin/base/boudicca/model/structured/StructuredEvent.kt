@@ -1,7 +1,9 @@
 package base.boudicca.model.structured
 
+import base.boudicca.Property
 import base.boudicca.SemanticKeys
 import base.boudicca.format.DateFormat
+import base.boudicca.keyfilters.KeyFilters
 import base.boudicca.keyfilters.KeySelector
 import base.boudicca.model.Event
 import java.time.OffsetDateTime
@@ -14,29 +16,65 @@ data class StructuredEvent(val name: String, val startDate: OffsetDateTime, val 
         return Event(name, startDate, KeyUtils.toFlatKeyValuePairs(data))
     }
 
-    fun toEntry():StructuredEntry {
+    fun toEntry(): StructuredEntry {
         return Companion.toEntry(this)
+    }
+
+    fun toBuilder(): StructuredEventBuilder {
+        return StructuredEventBuilder(this.name, this.startDate, this.data)
+    }
+
+    //TODO doc that invalid values are missed
+    fun <T> getProperty(property: Property<T>): List<Pair<Key, T>> {
+        return getProperty(property, null)
+    }
+
+    //TODO doc that invalid values are missed
+    fun <T> getProperty(property: Property<T>, language: String?): List<Pair<Key, T>> {
+        return KeyFilters
+            .filterKeys(property.getKey(language), this)
+            .mapNotNull {
+                try {
+                    val parsedValue = property.parseFromString(it.second)
+                    Pair(it.first, parsedValue)
+                } catch (e: IllegalArgumentException) {
+                    null
+                }
+            }
+    }
+
+    fun filterKeys(keyFilter: Key): List<Pair<Key, String>> {
+        return KeyFilters.filterKeys(keyFilter, this)
+    }
+
+    fun selectKey(keySelector: KeySelector): Optional<Pair<Key, String>> {
+        return keySelector.selectSingle(this)
     }
 
     companion object {
         fun toEntry(event: StructuredEvent): StructuredEntry {
-            //TODO use entry / event builder here?
             val entry = event.data.toMutableMap()
             entry[Key.builder(SemanticKeys.NAME).build()] = event.name
-            //TODO do not use those magic strings
-            entry[Key.builder(SemanticKeys.STARTDATE ).withVariant("format","date").build()] = DateFormat.parseToString(event.startDate)
+            entry[Key.builder(SemanticKeys.STARTDATE).withVariant(
+                VariantConstants.FORMAT_VARIANT_NAME,
+                VariantConstants.FormatVariantConstants.DATE_FORMAT_NAME
+            ).build()] =
+                DateFormat.parseToString(event.startDate)
             return entry
         }
 
         fun fromEntry(entry: StructuredEntry): Optional<StructuredEvent> {
-            //TODO use entry / event builder here?
             val startDatePair =
                 KeySelector
                     .builder(SemanticKeys.STARTDATE)
                     .thenVariant(
-                        "format",
-                        listOf("date", "")
-                    ) //we fall back to text here mainly for backwards compatibility
+                        VariantConstants.FORMAT_VARIANT_NAME,
+                        listOf(
+                            VariantConstants.FormatVariantConstants.DATE_FORMAT_NAME,
+                            //we fall back to text here mainly for backwards compatibility
+                            VariantConstants.FormatVariantConstants.TEXT_FORMAT_NAME
+                        )
+                    )
                     .build()
                     .selectSingle(entry)
             val namePair =
@@ -57,6 +95,20 @@ data class StructuredEvent(val name: String, val startDate: OffsetDateTime, val 
             data.remove(namePair.get().first)
             data.remove(startDatePair.get().first)
             return Optional.of(StructuredEvent(name, startDate, data))
+        }
+
+        fun builder(name: String, startDate: OffsetDateTime): StructuredEventBuilder {
+            return StructuredEventBuilder(name, startDate)
+        }
+    }
+
+    class StructuredEventBuilder internal constructor(
+        private val name: String,
+        private val startDate: OffsetDateTime,
+        data: Map<Key, String> = emptyMap()
+    ) : AbstractStructuredBuilder<StructuredEvent>(data.toMutableMap()) {
+        override fun build(): StructuredEvent {
+            return StructuredEvent(name, startDate, data.toMap())
         }
     }
 }

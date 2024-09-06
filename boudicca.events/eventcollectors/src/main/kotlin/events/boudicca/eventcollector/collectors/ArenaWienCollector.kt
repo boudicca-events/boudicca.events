@@ -47,7 +47,7 @@ class ArenaWienCollector : TwoStepEventCollector<ArenaWienCollector.HalfEvent>("
 
         val img = eventSite.select("div.suite_imageContainer img")
         if (!img.isEmpty()) {
-            data[SemanticKeys.PICTUREURL] = "https://arena.wien/" + img.first()!!.attr("src")
+            data[SemanticKeys.PICTURE_URL] = "https://arena.wien/" + img.first()!!.attr("src")
         }
 
         data[SemanticKeys.LOCATION_NAME] = "Arena Wien"

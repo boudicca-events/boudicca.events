@@ -48,7 +48,7 @@ class ViperRoomCollector : TwoStepEventCollector<String>("viperroom") {
 
         val img = eventSite.select("div#em-event-6 p img")
         if (!img.isEmpty()) {
-            data[SemanticKeys.PICTUREURL] = img.first()!!.attr("src")
+            data[SemanticKeys.PICTURE_URL] = img.first()!!.attr("src")
         }
 
         data[SemanticKeys.LOCATION_NAME] = "Viper Room"

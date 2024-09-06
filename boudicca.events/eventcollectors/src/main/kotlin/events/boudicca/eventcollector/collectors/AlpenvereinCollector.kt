@@ -1,11 +1,13 @@
 package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
+import base.boudicca.TextProperty
 import base.boudicca.api.eventcollector.Fetcher
 import base.boudicca.api.eventcollector.TwoStepEventCollector
-import base.boudicca.model.Event
+import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import java.net.URI
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.OffsetDateTime
@@ -35,40 +37,44 @@ class AlpenvereinCollector : TwoStepEventCollector<String>("alpenverein") {
         return allLinks
     }
 
-    override fun parseEvent(event: String): Event {
+    override fun parseStructuredEvent(event: String): StructuredEvent {
         val eventSite = Jsoup.parse(fetcher.fetchUrl(event))
 
         val name = eventSite.select("div.elementBoxSheet h2").text()
 
         val (startDate, endDate) = parseDates(eventSite)
 
-        val data = mutableMapOf<String, String>()
-        data[SemanticKeys.URL] = event
-        data[SemanticKeys.SOURCES] = event
-        data[SemanticKeys.TYPE] = "sport"
-        data["sport.participation"] = "active"
-        data[SemanticKeys.DESCRIPTION] = eventSite.select("div.elementBoxSheet div.elementText").text()
+        return StructuredEvent
+            .builder(name, startDate)
+            .withProperty(SemanticKeys.NAME_PROPERTY, name)
+            .withProperty(SemanticKeys.ENDDATE_PROPERTY, endDate)
+            .withProperty(SemanticKeys.URL_PROPERTY, URI.create(event))
+            .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(event))
+            .withProperty(SemanticKeys.TYPE_PROPERTY, "sport")
+            .withProperty(TextProperty("sport.participation"), "active")
+            .withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, eventSite.select("div.elementBoxSheet div.elementText").text())
+            .withProperty(SemanticKeys.PICTURE_URL_PROPERTY, getPictureUrl(eventSite))
+            .withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, getLocationCity(eventSite))
+            .build()
+    }
 
-        if (endDate != null) {
-            data[SemanticKeys.ENDDATE] = DateTimeFormatter.ISO_DATE_TIME.format(endDate)
+    private fun getLocationCity(eventSite: Document): String? {
+        val locationElements = eventSite.select("div.elementBoxSheet dl#officeveranstaltung_ort1")
+        if (locationElements.isNotEmpty()) {
+            return locationElements.text().removePrefix("Ort: ")
         }
+        return null
+    }
 
+    private fun getPictureUrl(eventSite: Document): URI? {
         val imageElements = eventSite.select("div.elementBoxSheet dl#officeveranstaltung_bild1 img")
         if (imageElements.isNotEmpty()) {
             val pictureUrl = imageElements.first()!!.attr("src")
             if (!pictureUrl.isNullOrEmpty()) {
-                data[SemanticKeys.PICTUREURL] = normalizeUrl(pictureUrl)
+                return URI.create(normalizeUrl(pictureUrl))
             }
         }
-
-        val locationElements = eventSite.select("div.elementBoxSheet dl#officeveranstaltung_ort1")
-        if (locationElements.isNotEmpty()) {
-            data[SemanticKeys.LOCATION_CITY] =
-                locationElements.text().removePrefix("Ort: ")
-        }
-
-
-        return Event(name, startDate, data)
+        return null
     }
 
     private fun parseDates(eventSite: Document): Pair<OffsetDateTime, OffsetDateTime?> {

@@ -47,7 +47,7 @@ class OKHVoecklabruckCollector : TwoStepEventCollector<Pair<String, String>>("ok
         }
 
         data[SemanticKeys.DESCRIPTION] = eventSite.select("div.box_3").text()
-        data[SemanticKeys.PICTUREURL] = baseUrl + eventSite.select("div#headerpic img.header").attr("src").trim()
+        data[SemanticKeys.PICTURE_URL] = baseUrl + eventSite.select("div#headerpic img.header").attr("src").trim()
 
         data[SemanticKeys.LOCATION_NAME] = "Offenes Kulturhaus Vöcklabruck"
         data[SemanticKeys.LOCATION_URL] = baseUrl

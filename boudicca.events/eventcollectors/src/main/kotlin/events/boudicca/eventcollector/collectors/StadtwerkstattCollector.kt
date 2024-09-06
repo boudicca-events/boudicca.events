@@ -40,7 +40,7 @@ class StadtwerkstattCollector : TwoStepEventCollector<String>("stadtwerkstatt") 
 
         val img = eventSite.select("div.event-text img")
         if (!img.isEmpty()) {
-            data[SemanticKeys.PICTUREURL] = img.first()!!.attr("src")
+            data[SemanticKeys.PICTURE_URL] = img.first()!!.attr("src")
         }
 
         data[SemanticKeys.LOCATION_NAME] = "Stadtwerkstatt"

@@ -89,7 +89,7 @@ class LandestheaterLinzCollector :
         data[SemanticKeys.DESCRIPTION] =
             site.second.select("div.lth-layout-ctr section > h2").first { it.text() == "Stückinfo" }.parent()!!
                 .select("div.lth-section-content").text()
-        data[SemanticKeys.PICTUREURL] =
+        data[SemanticKeys.PICTURE_URL] =
             "https://www.landestheater-linz.at" + site.second.select("div.lth-slide img").first()!!.attr("src")
 
         val type = overview.select("div.lth-evitem-what > div.lth-evitem-type").text()

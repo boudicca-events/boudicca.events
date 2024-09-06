@@ -46,7 +46,7 @@ class BrucknerhausCollector : TwoStepEventCollector<Element>("brucknerhaus") {
 
         val name = event.select("div.event__name").text()
         data[SemanticKeys.URL] = "https://www.brucknerhaus.at" + event.select("a.headline_link").attr("href")
-        data[SemanticKeys.PICTUREURL] = event.select("div.event__image img").attr("src")
+        data[SemanticKeys.PICTURE_URL] = event.select("div.event__image img").attr("src")
 
         var description = event.select("div.event__teaser p").text()
         if (description.isBlank()) {

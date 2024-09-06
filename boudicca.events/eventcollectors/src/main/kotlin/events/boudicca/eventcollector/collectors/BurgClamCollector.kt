@@ -44,7 +44,7 @@ class BurgClamCollector : TwoStepEventCollector<String>("burgclam") {
 
         val pictureUrl = eventSite.select("img.avia_image").attr("src")
         if (pictureUrl.isNotBlank()) {
-            data[SemanticKeys.PICTUREURL] = pictureUrl
+            data[SemanticKeys.PICTURE_URL] = pictureUrl
         }
 
         data[SemanticKeys.DESCRIPTION] = eventSite.select("div.av-subheading").text()

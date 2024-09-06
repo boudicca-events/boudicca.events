@@ -1,17 +1,15 @@
 package base.boudicca.keyfilters
 
-import base.boudicca.model.Event
 import base.boudicca.model.structured.Key
 import base.boudicca.model.structured.StructuredEntry
 import base.boudicca.model.structured.StructuredEvent
 import base.boudicca.model.structured.Variant
-import base.boudicca.model.toStructuredEntry
 
 
 object KeyFilters {
 
     fun filterKeys(keyFilter: Key, event: StructuredEvent): List<Pair<Key, String>> {
-        return filterKeys(keyFilter, Event.toEntry(event.toFlatEvent()).toStructuredEntry())
+        return filterKeys(keyFilter, event.toEntry())
     }
 
     fun filterKeys(keyFilter: Key, data: StructuredEntry): List<Pair<Key, String>> {

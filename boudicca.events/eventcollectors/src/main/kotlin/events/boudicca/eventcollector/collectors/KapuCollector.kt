@@ -41,7 +41,7 @@ class KapuCollector : TwoStepEventCollector<String>("kapu") {
 
         val imgSrc = eventSite.select("article.event img.media__element").attr("data-src")
         if (imgSrc.isNotBlank()) {
-            data[SemanticKeys.PICTUREURL] =
+            data[SemanticKeys.PICTURE_URL] =
                 "https://www.kapu.or.at$imgSrc"
         }
 

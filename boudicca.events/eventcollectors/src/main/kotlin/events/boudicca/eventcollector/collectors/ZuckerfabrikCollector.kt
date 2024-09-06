@@ -51,7 +51,7 @@ class ZuckerfabrikCollector : TwoStepEventCollector<Pair<String, Document>>("zuc
 
         val pictureUrl = doc.select("div#storycontent img").attr("src")
         if (pictureUrl.isNotBlank()) {
-            data[SemanticKeys.PICTUREURL] = pictureUrl
+            data[SemanticKeys.PICTURE_URL] = pictureUrl
         }
 
         data[SemanticKeys.LOCATION_NAME] = "Zuckerfabrik"

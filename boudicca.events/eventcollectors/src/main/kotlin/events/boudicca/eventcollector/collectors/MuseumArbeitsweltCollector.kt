@@ -38,7 +38,7 @@ class MuseumArbeitsweltCollector : TwoStepEventCollector<Pair<String, String>>("
 
         val img = eventSite.select("div.et_pb_title_featured_container span.et_pb_image_wrap img")
         if (!img.isEmpty()) {
-            data[SemanticKeys.PICTUREURL] = img.last()!!.attr("src")
+            data[SemanticKeys.PICTURE_URL] = img.last()!!.attr("src")
         }
 
         data[SemanticKeys.LOCATION_NAME] = "Museum Arbeitswelt"

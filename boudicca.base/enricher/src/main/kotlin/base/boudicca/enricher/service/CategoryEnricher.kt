@@ -1,8 +1,8 @@
 package base.boudicca.enricher.service
 
-import base.boudicca.model.Event
-import base.boudicca.model.EventCategory
 import base.boudicca.SemanticKeys
+import base.boudicca.model.EventCategory
+import base.boudicca.model.structured.StructuredEvent
 import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Service
 
@@ -10,17 +10,20 @@ import org.springframework.stereotype.Service
 @Order(0)
 class CategoryEnricher : Enricher {
 
-    override fun enrich(e: Event): Event {
-        val data = e.data.toMutableMap()
-        data[SemanticKeys.CATEGORY] = EventCategory.OTHER.name
-        val type = data[SemanticKeys.TYPE]
-        if (!type.isNullOrBlank()) {
-            val category = EventCategory.getForType(type)
+    override fun enrich(e: StructuredEvent): StructuredEvent {
+        if (e.getProperty(SemanticKeys.CATEGORY_PROPERTY).isNotEmpty()) {
+            //already got category
+            return e
+        }
+        var foundCategory = EventCategory.OTHER
+        val type = e.getProperty(SemanticKeys.TYPE_PROPERTY).firstOrNull()
+        if (type != null) {
+            val category = EventCategory.getForType(type.second)
             if (category != null) {
-                data[SemanticKeys.CATEGORY] = category.name
+                foundCategory = category
             }
         }
-        return Event(e.name, e.startDate, data)
+        return e.toBuilder().withProperty(SemanticKeys.CATEGORY_PROPERTY, foundCategory).build()
     }
 
 }

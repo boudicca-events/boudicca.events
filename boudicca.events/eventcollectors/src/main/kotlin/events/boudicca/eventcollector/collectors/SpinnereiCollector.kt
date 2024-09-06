@@ -41,7 +41,7 @@ class SpinnereiCollector : TwoStepEventCollector<Pair<String, Document>>("spinne
         val startDate = parseTypeAndDate(data, doc.select("div.vng-details div.vng-detail-content-beginn").text())
 
         data[SemanticKeys.DESCRIPTION] = doc.select("div.vng-detail-content-bodytext").text()
-        data[SemanticKeys.PICTUREURL] =
+        data[SemanticKeys.PICTURE_URL] =
             "https://spinnerei.kulturpark.at" + parsePictureUrl(
                 doc.select("div.vng-details div.bg-image").attr("style")
             )

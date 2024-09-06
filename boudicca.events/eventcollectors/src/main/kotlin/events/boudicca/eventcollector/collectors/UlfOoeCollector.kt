@@ -76,7 +76,7 @@ class UlfOoeCollector : TwoStepEventCollector<String>("ulfooe") {
 
         val img = eventSite.select("div.event picture img")
         if (!img.isEmpty()) {
-            data[SemanticKeys.PICTUREURL] = baseUrl + img.first()!!.attr("src")
+            data[SemanticKeys.PICTURE_URL] = baseUrl + img.first()!!.attr("src")
         }
         data[SemanticKeys.SOURCES] = data[SemanticKeys.URL]!!
         return Event(name, startDate, data)

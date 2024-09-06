@@ -61,7 +61,7 @@ class KupfTicketCollector : TwoStepEventCollector<String>("kupfticket") {
                 SemanticKeys.URL to url,
                 SemanticKeys.LOCATION_NAME to location,
                 SemanticKeys.LOCATION_URL to locationUrl,
-                SemanticKeys.PICTUREURL to pictureUrl,
+                SemanticKeys.PICTURE_URL to pictureUrl,
                 SemanticKeys.ENDDATE to endDate.format(DateTimeFormatter.ISO_DATE_TIME),
                 SemanticKeys.SOURCES to url,
             )

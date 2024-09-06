@@ -31,8 +31,14 @@ class DateFormatTest {
     @Test
     fun testParseToStringValidValues() {
         assertEquals(
-            parseFromString("2024-10-21T11:12:34+02:00"),
-            OffsetDateTime.of(2024, 10, 21, 11, 12, 34, 0, ZoneOffset.ofHours(2))
+            "2024-10-21T11:12:34+02:00",
+            parseToString(
+                OffsetDateTime.of(2024, 10, 21, 11, 12, 34, 0, ZoneOffset.ofHours(2))
+            )
         )
+    }
+
+    private fun parseToString(date: OffsetDateTime): String {
+        return DateFormat.parseToString(date)
     }
 }

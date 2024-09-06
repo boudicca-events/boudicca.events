@@ -13,11 +13,11 @@ class EnricherService @Autowired constructor(
 ) {
 
     fun enrich(enrichRequestDTO: EnrichRequestDTO): List<Event> {
-        var enrichedEvents = enrichRequestDTO.events ?: emptyList()
+        var enrichedEvents = enrichRequestDTO.events?.map { it.toStructuredEvent() } ?: emptyList()
         for (enricher in enrichers) {
             enrichedEvents = enricher.enrich(enrichedEvents)
         }
-        return enrichedEvents
+        return enrichedEvents.map { it.toFlatEvent() }
     }
 
     fun forceUpdate() {

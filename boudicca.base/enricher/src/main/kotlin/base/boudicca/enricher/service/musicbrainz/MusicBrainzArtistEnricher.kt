@@ -2,8 +2,8 @@ package base.boudicca.enricher.service.musicbrainz
 
 import base.boudicca.SemanticKeys
 import base.boudicca.enricher.service.Enricher
-import base.boudicca.model.Event
 import base.boudicca.model.EventCategory
+import base.boudicca.model.structured.StructuredEvent
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
@@ -28,15 +28,15 @@ class MusicBrainzArtistEnricher @Autowired constructor(
     private val objectMapper = ObjectMapper().registerModule(KotlinModule.Builder().build())
     private val artistMatcher = createArtistMatcher(musicBrainzDataPath, musicBrainzIndexPath)
 
-    override fun enrich(e: Event): Event {
+    override fun enrich(e: StructuredEvent): StructuredEvent {
         if (artistMatcher == null) {
             return e
         }
         return doEnrich(e, artistMatcher)
     }
 
-    private fun doEnrich(e: Event, artistMatcher: ArtistMatcher): Event {
-        if (e.data[SemanticKeys.CATEGORY] != EventCategory.MUSIC.name) {
+    private fun doEnrich(e: StructuredEvent, artistMatcher: ArtistMatcher): StructuredEvent {
+        if (e.getProperty(SemanticKeys.CATEGORY_PROPERTY).firstOrNull()?.second != EventCategory.MUSIC) {
             return e
         }
         val foundArtists = artistMatcher.findArtists(e.name)
@@ -49,14 +49,19 @@ class MusicBrainzArtistEnricher @Autowired constructor(
         return e
     }
 
-    private fun insertArtistData(e: Event, artists: List<Artist>): Event {
-        val enrichedData = e.data.toMutableMap()
-        enrichedData[SemanticKeys.CONCERT_BANDLIST] = artists.joinToString("\n") { it.name }
-        val genre = artists.firstNotNullOfOrNull { it.genre }
-        if (genre != null && !enrichedData.containsKey(SemanticKeys.CONCERT_GENRE)) {
-            enrichedData[SemanticKeys.CONCERT_GENRE] = genre
+    private fun insertArtistData(e: StructuredEvent, artists: List<Artist>): StructuredEvent {
+        val builder = e.toBuilder()
+
+        if (e.getProperty(SemanticKeys.CONCERT_BANDLIST_PROPERTY).isEmpty()) {
+            builder.withProperty(SemanticKeys.CONCERT_BANDLIST_PROPERTY, artists.map { it.name })
         }
-        return Event(e.name, e.startDate, enrichedData)
+
+        val genre = artists.firstNotNullOfOrNull { it.genre }
+        if (e.getProperty(SemanticKeys.CONCERT_GENRE_PROPERTY).isEmpty()) {
+            builder.withProperty(SemanticKeys.CONCERT_GENRE_PROPERTY, genre)
+        }
+
+        return builder.build()
     }
 
     private fun createArtistMatcher(musicBrainzDataPath: String?, musicBrainzIndexPath: String?): ArtistMatcher? {
@@ -78,7 +83,9 @@ class MusicBrainzArtistEnricher @Autowired constructor(
             throw IllegalArgumentException("musicbrainz data path $musicBrainzDataPath is not a readable file!")
         }
         return objectMapper
-            .readValue(BufferedInputStream(GZIPInputStream(FileInputStream(file))), object : TypeReference<List<Artist>?>() {})
+            .readValue(
+                BufferedInputStream(GZIPInputStream(FileInputStream(file))),
+                object : TypeReference<List<Artist>?>() {})
     }
 
     private fun loadIndex(musicBrainzIndexPath: String?): ByteBuffer? {

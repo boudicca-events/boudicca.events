@@ -1,13 +1,10 @@
 package base.boudicca.model
 
-import base.boudicca.SemanticKeys
-import base.boudicca.format.DateFormat
-import base.boudicca.keyfilters.KeySelector
 import base.boudicca.model.structured.StructuredEvent
 import base.boudicca.model.structured.toEvent
 import base.boudicca.model.structured.toFlatEntry
 import java.time.OffsetDateTime
-import java.util.Optional
+import java.util.*
 
 data class Event(
     val name: String,

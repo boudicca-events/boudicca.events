@@ -1,11 +1,14 @@
 package base.boudicca.eventdb.service
 
-import base.boudicca.model.Entry
-import base.boudicca.model.Event
 import base.boudicca.SemanticKeys
 import base.boudicca.eventdb.BoudiccaEventDbProperties
 import base.boudicca.eventdb.model.EntryKey
 import base.boudicca.eventdb.model.InternalEventProperties
+import base.boudicca.keyfilters.KeySelector
+import base.boudicca.model.Entry
+import base.boudicca.model.Event
+import base.boudicca.model.structured.*
+import base.boudicca.model.toStructuredEntry
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.DatabindException
 import com.fasterxml.jackson.databind.json.JsonMapper
@@ -29,6 +32,7 @@ import java.util.concurrent.locks.ReentrantLock
 import kotlin.io.path.exists
 import kotlin.io.path.readBytes
 import kotlin.io.path.writeBytes
+import kotlin.jvm.optionals.getOrNull
 
 
 @Service
@@ -87,7 +91,7 @@ class EntryService @Autowired constructor(
 
         storeRead.forEach {
             val entry = Event.toEntry(it.first)
-            entries[getEntryKey(entry)] = Pair(entry, it.second)
+            entries[getEntryKey(entry.toStructuredEntry())] = Pair(entry, it.second)
         }
 
         needsPersist.set(true) //to write in the new format
@@ -99,7 +103,7 @@ class EntryService @Autowired constructor(
             object : TypeReference<List<Pair<Entry, InternalEventProperties>>>() {})
 
         storeRead.forEach {
-            entries[getEntryKey(it.first)] = it
+            entries[getEntryKey(it.first.toStructuredEntry())] = it
         }
 
         needsPersist.set(false)
@@ -110,12 +114,19 @@ class EntryService @Autowired constructor(
     }
 
     fun add(entry: Entry) {
-        val eventKey = getEntryKey(entry)
+        val structuredEntry = entry.toStructuredEntry()
 
-        entries[eventKey] = Pair(entry, InternalEventProperties(System.currentTimeMillis()))
-        if (entry.containsKey(SemanticKeys.COLLECTORNAME)) {
-            lastSeenCollectors[entry[SemanticKeys.COLLECTORNAME]!!] = System.currentTimeMillis()
+        val eventKey = getEntryKey(structuredEntry)
+
+        //TODO should we do format validation here?
+        //we reflatten the entry to make sure keys are canonical
+        entries[eventKey] = Pair(structuredEntry.toFlatEntry(), InternalEventProperties(System.currentTimeMillis()))
+
+        val collectorName = structuredEntry.getProperty(SemanticKeys.COLLECTORNAME_PROPERTY)
+        if (collectorName.isNotEmpty()) {
+            lastSeenCollectors[collectorName.first().second] = System.currentTimeMillis()
         }
+
         needsPersist.set(true)
     }
 
@@ -123,19 +134,20 @@ class EntryService @Autowired constructor(
 
     @Scheduled(fixedRate = 1, timeUnit = TimeUnit.DAYS)
     fun cleanup() {
-        val toRemoveEvents = entries.values
+        val toRemoveEvents = entries.entries
             .filter {
-                if (it.first.containsKey(SemanticKeys.COLLECTORNAME)) {
-                    val collectorName = it.first[SemanticKeys.COLLECTORNAME]!!
-                    it.second.timeAdded + MAX_AGE < (lastSeenCollectors[collectorName] ?: Long.MIN_VALUE)
+                val entry = it.value.first
+                if (entry.containsKey(SemanticKeys.COLLECTORNAME)) {
+                    val collectorName = entry[SemanticKeys.COLLECTORNAME]!!
+                    it.value.second.timeAdded + MAX_AGE < (lastSeenCollectors[collectorName] ?: Long.MIN_VALUE)
                 } else {
                     false
                 }
             }
 
         toRemoveEvents.forEach {
-            LOG.debug("removing event because it got too old: {}", it)
-            entries.remove(getEntryKey(it.first))
+            LOG.debug("removing event because it got too old: {}", it.value.first)
+            entries.remove(it.key)
             needsPersist.set(true)
         }
     }
@@ -167,6 +179,7 @@ class EntryService @Autowired constructor(
             if (needsPersist.get()) {
                 val bytes = objectMapper.writeValueAsBytes(entries.values)
                 try {
+                    //TODO make more resilient saving, aka save then move
                     Path.of(boudiccaEventDbProperties.store.path)
                         .writeBytes(bytes, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE)
                 } catch (e: IOException) {
@@ -179,15 +192,20 @@ class EntryService @Autowired constructor(
         }
     }
 
-    private fun getEntryKey(entry: Entry): EntryKey {
+    private fun getEntryKey(entry: StructuredEntry): EntryKey {
         val keys =
             if (!boudiccaEventDbProperties.entryKeyNames.isNullOrEmpty()) {
                 boudiccaEventDbProperties.entryKeyNames
             } else {
-                entry.keys
+                entry.keys.map { it.toKeyString() }
             }
 
         @Suppress("UNCHECKED_CAST")
-        return keys.map { it to entry[it] }.filter { it.second != null }.toMap() as EntryKey
+        return keys
+            .map {
+                it to entry.filterKeys(Key.parse(it)).firstOrNull()?.second
+            }
+            .filter { it.second != null }
+            .toMap() as EntryKey
     }
 }

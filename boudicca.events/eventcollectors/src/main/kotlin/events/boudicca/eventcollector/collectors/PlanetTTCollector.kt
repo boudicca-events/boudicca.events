@@ -77,7 +77,7 @@ class PlanetTTCollector : TwoStepEventCollector<Element>("planettt") {
         data[SemanticKeys.URL] = parseUrl(fullEvent)
         val pictureUrl = fullEvent.select("div.pl-modal-thumbnail img").attr("src")
         if (pictureUrl.isNotBlank()) {
-            data[SemanticKeys.PICTUREURL] = pictureUrl
+            data[SemanticKeys.PICTURE_URL] = pictureUrl
         }
         data[SemanticKeys.DESCRIPTION] = fullEvent.select("div.pl-modal-desc > p").text() + "\n" +
                 fullEvent.select("div.pl-modal-desc > div.acts").text()

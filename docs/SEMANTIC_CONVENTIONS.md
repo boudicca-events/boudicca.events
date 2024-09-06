@@ -70,10 +70,10 @@ publishers.
 
 #### Registration enum values
 
-* `free`: a free event which neither requires registration nor a ticket
-* `registration`: an event which requires a free registration
-* `pre-sales-only`: an event which can only be entered when buying a ticket in advance
-* `ticket`: a paid event which requires a ticket
+* `FREE`: a free event which neither requires registration nor a ticket
+* `REGISTRATION`: an event which requires a free registration
+* `PRE_SALES_ONLY`: an event which can only be entered when buying a ticket in advance
+* `TICKET`: a paid event which requires a ticket
 
 #### "type" property
 

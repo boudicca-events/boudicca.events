@@ -39,7 +39,7 @@ class OteloLinzCollector : TwoStepEventCollector<String>("otelolinz") {
 
         val img = eventSite.select("div.entry-content img")
         if (!img.isEmpty()) {
-            data[SemanticKeys.PICTUREURL] = img.first()!!.attr("src")
+            data[SemanticKeys.PICTURE_URL] = img.first()!!.attr("src")
         }
 
         data[SemanticKeys.LOCATION_NAME] = eventSite.select("div#em-event-6>p")[1].select("a").text()

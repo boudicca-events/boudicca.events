@@ -35,7 +35,7 @@ class StadthalleWienCollector : TwoStepEventCollector<String>("stadthallewien") 
 
         val pictureUrl = eventSite.select("div.img-ad img").attr("src")
         if (pictureUrl.isNotBlank()) {
-            data[SemanticKeys.PICTUREURL] = baseUrl + pictureUrl
+            data[SemanticKeys.PICTURE_URL] = baseUrl + pictureUrl
         }
 
         data[SemanticKeys.DESCRIPTION] = eventSite.select("div.readmore-txt").text()

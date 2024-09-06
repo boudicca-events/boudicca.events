@@ -21,8 +21,8 @@ class FemaleCoderCollector : TwoStepEventCollector<String>("femalecoder") {
     val document = Jsoup.parse(fetcher.fetchUrl(baseUrl))
 
     val eventsUrls = document.select("div.et_pb_section_3 .event_details")
-      .map {
-        it.select("a").first().attr("href")
+      .mapNotNull {
+        it.select("a").first()?.attr("href")
       }
 
     return eventsUrls

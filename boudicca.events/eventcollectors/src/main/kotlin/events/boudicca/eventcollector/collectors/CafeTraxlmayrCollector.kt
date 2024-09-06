@@ -39,7 +39,7 @@ class CafeTraxlmayrCollector : TwoStepEventCollector<Element>("cafetraxlmayr") {
 
         val pictureUrl = event.select("img").attr("src")
         if (pictureUrl.isNotBlank()) {
-            data[SemanticKeys.PICTUREURL] = pictureUrl
+            data[SemanticKeys.PICTURE_URL] = pictureUrl
         }
 
         val title = event.select("h3").text()

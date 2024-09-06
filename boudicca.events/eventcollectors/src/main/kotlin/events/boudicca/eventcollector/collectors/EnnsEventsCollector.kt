@@ -31,7 +31,7 @@ class EnnsEventsCollector : TwoStepEventCollector<JsonObject>("ennsevents") {
         data[SemanticKeys.DESCRIPTION] = description
 
         if (event.containsKey("picture")) {
-            data[SemanticKeys.PICTUREURL] =
+            data[SemanticKeys.PICTURE_URL] =
                 "https://erlebe.enns.at/uploads/images/thumbs_square/" + event.string("picture")
         }
 

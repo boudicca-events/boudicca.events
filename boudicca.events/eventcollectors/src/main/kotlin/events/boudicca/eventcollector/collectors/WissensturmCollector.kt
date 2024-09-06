@@ -48,7 +48,7 @@ class WissensturmCollector : TwoStepEventCollector<Pair<String, Document>>("wiss
 
         val pictureUrl = eventDoc.select("div.kw-kurdetails div.content-txt:nth-child(2) img")
         if (pictureUrl.isNotEmpty()) {
-            data[SemanticKeys.PICTUREURL] = pictureUrl.attr("src")
+            data[SemanticKeys.PICTURE_URL] = pictureUrl.attr("src")
         }
 
         return datesAndLocations

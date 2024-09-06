@@ -1,7 +1,7 @@
 package base.boudicca.enricher.service.location
 
-import base.boudicca.model.Event
 import base.boudicca.SemanticKeys
+import base.boudicca.model.Event
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.time.OffsetDateTime
@@ -12,7 +12,7 @@ class LocationEnricherTest {
     fun testNoop() {
         val event = createTestEvent()
         val locationEnricher = createNoopEnricher()
-        val enrichedEvent = locationEnricher.enrich(event)
+        val enrichedEvent = callEnrich(locationEnricher, event)
 
         assertEquals(event, enrichedEvent)
     }
@@ -28,7 +28,7 @@ class LocationEnricherTest {
                 )
             )
         )
-        val enrichedEvent = locationEnricher.enrich(event)
+        val enrichedEvent = callEnrich(locationEnricher, event)
 
         assertEquals(event.name, enrichedEvent.name)
         assertEquals(event.data[SemanticKeys.LOCATION_NAME], enrichedEvent.data[SemanticKeys.LOCATION_NAME])
@@ -46,7 +46,7 @@ class LocationEnricherTest {
                 )
             )
         )
-        val enrichedEvent = locationEnricher.enrich(event)
+        val enrichedEvent = callEnrich(locationEnricher, event)
 
         assertEquals(event.name, enrichedEvent.name)
         assertEquals(event.data[SemanticKeys.LOCATION_ADDRESS], enrichedEvent.data[SemanticKeys.LOCATION_ADDRESS])
@@ -65,7 +65,7 @@ class LocationEnricherTest {
                 )
             )
         )
-        val enrichedEvent = locationEnricher.enrich(event)
+        val enrichedEvent = callEnrich(locationEnricher, event)
 
         assertEquals(event, enrichedEvent)
     }
@@ -81,11 +81,18 @@ class LocationEnricherTest {
                 )
             )
         )
-        val enrichedEvent = locationEnricher.enrich(event)
+        val enrichedEvent = callEnrich(locationEnricher, event)
 
         assertEquals(event.name, enrichedEvent.name)
         assertEquals("location2", enrichedEvent.data[SemanticKeys.LOCATION_NAME])
         assertEquals("data", enrichedEvent.data["test.data"])
+    }
+
+    private fun callEnrich(
+        locationEnricher: LocationEnricher,
+        event: Event
+    ): Event {
+        return locationEnricher.enrich(event.toStructuredEvent()).toFlatEvent()
     }
 
     private fun createTestEnricher(testData: List<LocationData>): LocationEnricher {

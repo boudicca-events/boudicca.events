@@ -3,7 +3,8 @@
 ## Overview
 
 TODO split serialization and mental/programming model into two. name them (maybe) structured and flat view/models?
-TODO remove "Property"
+TODO remove/change "Property"
+TODO document better sorting for keys
 
 Boudicca is a database containing Entries, which are a collection of `Key`->`Value` Pairs, so-called Properties.
 For example `name`->`My Entry` would be a Property with key "name" and value "My Entry" and could represent the name of

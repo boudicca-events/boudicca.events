@@ -1,5 +1,7 @@
 package base.boudicca.model.structured
 
+import kotlin.math.min
+
 data class Key(val name: String, val variants: List<Variant>) : Comparable<Key> {
     fun toKeyString(): String {
         if (variants.isEmpty()) {
@@ -9,7 +11,16 @@ data class Key(val name: String, val variants: List<Variant>) : Comparable<Key> 
     }
 
     companion object {
-        val COMPARATOR = compareBy<Key> { it.toKeyString() } //TODO want better compare here?
+        val COMPARATOR = compareBy<Key> { it.name }
+            .thenComparing { o1, o2 ->
+                for (i in 0..<min(o1.variants.size, o2.variants.size)) {
+                    val result = o1.variants[i].compareTo(o2.variants[i])
+                    if (result != 0) {
+                        return@thenComparing result
+                    }
+                }
+                return@thenComparing o1.variants.size.compareTo(o2.variants.size)
+            }
 
         fun parse(keyFilter: String): Key {
             val keyVariantPair = KeyUtils.parseKey(keyFilter)

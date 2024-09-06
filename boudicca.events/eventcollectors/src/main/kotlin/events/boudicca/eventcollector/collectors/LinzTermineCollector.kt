@@ -92,7 +92,7 @@ class LinzTermineCollector : EventCollector {
                             SemanticKeys.ENDDATE to date.second.format(DateTimeFormatter.ISO_DATE_TIME),
                             SemanticKeys.TYPE to mapEventType(event.type),
                             SemanticKeys.DESCRIPTION to description,
-                            SemanticKeys.PICTUREURL to pictureUrl,
+                            SemanticKeys.PICTURE_URL to pictureUrl,
                             SemanticKeys.REGISTRATION to (if (event.freeOfCharge) "FREE" else "TICKET"),
                             SemanticKeys.URL to event.url,
                             SemanticKeys.LOCATION_NAME to (location?.name

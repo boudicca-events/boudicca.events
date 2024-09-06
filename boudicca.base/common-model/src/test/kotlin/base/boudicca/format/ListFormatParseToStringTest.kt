@@ -1,16 +1,14 @@
 package base.boudicca.format
 
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 class ListFormatParseToStringTest {
 
     @Test
     fun testEmptyList() {
-        val result = parseFromString(listOf())
-
-        assertNull(result)
+        assertThrows<IllegalArgumentException> { parseFromString(listOf()) }
     }
 
     @Test

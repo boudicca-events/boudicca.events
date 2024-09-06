@@ -50,7 +50,7 @@ class PosthofCollector : TwoStepEventCollector<Element>("posthof") {
         mapType(data, event.select("span.news-list-category").text())
         data[SemanticKeys.URL] = "https://www.posthof.at/" + event.select("div.h3>a").attr("href")
         data[SemanticKeys.DESCRIPTION] = event.select("div.news_text>p").text()
-        data[SemanticKeys.PICTUREURL] = "https://www.posthof.at/" + event.select("img").attr("src")
+        data[SemanticKeys.PICTURE_URL] = "https://www.posthof.at/" + event.select("img").attr("src")
 
         data[SemanticKeys.REGISTRATION] = "ticket" //are there free events in posthof?
         data[SemanticKeys.LOCATION_NAME] = "Posthof"

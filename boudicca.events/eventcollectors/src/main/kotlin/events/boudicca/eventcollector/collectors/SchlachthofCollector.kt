@@ -29,7 +29,7 @@ class SchlachthofCollector : TwoStepEventCollector<Element>("schlachthof") {
 
         data[SemanticKeys.TYPE] = event.select("h3:nth-child(1)").text()
         data[SemanticKeys.DESCRIPTION] = event.select("div.event_list_previewtext").text()
-        data[SemanticKeys.PICTUREURL] =
+        data[SemanticKeys.PICTURE_URL] =
             "https://www.schlachthofwels.at" + parsePictureUrl(event.select("div.teaserimage").attr("style"))
         data[SemanticKeys.URL] =
             "https://www.schlachthofwels.at" + event.select("a.block").attr("href")

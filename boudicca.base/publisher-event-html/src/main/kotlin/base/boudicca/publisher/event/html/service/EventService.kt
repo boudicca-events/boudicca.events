@@ -7,6 +7,8 @@ import base.boudicca.keyfilters.KeySelector
 import base.boudicca.model.EventCategory
 import base.boudicca.model.structured.Key
 import base.boudicca.model.structured.StructuredEvent
+import base.boudicca.model.structured.VariantConstants
+import base.boudicca.model.structured.VariantConstants.FormatVariantConstants
 import base.boudicca.publisher.event.html.model.SearchDTO
 import base.boudicca.query.BoudiccaQueryBuilder.after
 import base.boudicca.query.BoudiccaQueryBuilder.and
@@ -171,22 +173,35 @@ class EventService @Autowired constructor(
     }
 
     private fun getTextProperty(event: StructuredEvent, propertyName: String): String? {
-        return getPropertyForFormats(event, propertyName, listOf(""))
+        return getPropertyForFormats(event, propertyName, listOf(FormatVariantConstants.TEXT_FORMAT_NAME))
             .map { it.second }
             .getOrNull()
     }
 
     private fun getRichTextProperty(event: StructuredEvent, propertyName: String): RichText? {
-        //TODO use constants instead of magic values for formats
-        return getPropertyForFormats(event, propertyName, listOf("markdown", ""))
+        return getPropertyForFormats(
+            event,
+            propertyName,
+            listOf(FormatVariantConstants.MARKDOWN_FORMAT_NAME, FormatVariantConstants.TEXT_FORMAT_NAME)
+        )
             .map { RichText(getIsMarkdownFromFormat(it.first), it.second) }
             .getOrNull()
     }
 
     private fun getListProperty(event: StructuredEvent, propertyName: String): List<String>? {
-        return getPropertyForFormats(event, propertyName, listOf("list", "")) //use text as a wonky fallback for now
-            .map { ListFormat.parseFromString(it.second) } //TODO could we do this more generic? like a typed getter or something?
-            .getOrNull()
+        return getPropertyForFormats(
+            event,
+            propertyName,
+            listOf(FormatVariantConstants.LIST_FORMAT_NAME, FormatVariantConstants.TEXT_FORMAT_NAME)
+        ) //use text as a wonky fallback for now
+            .map {
+                try {
+                    ListFormat.parseFromString(it.second)
+                } catch (e: IllegalArgumentException) {
+                    null
+                }
+            }
+            .orElseGet { null }
     }
 
     private fun getPropertyForFormats(
@@ -195,19 +210,25 @@ class EventService @Autowired constructor(
         formatVariants: List<String>
     ): Optional<Pair<Key, String>> {
         return KeySelector.builder(propertyName)
-            //TODO use constants instead of magic values for language
-            .thenVariant("lang", listOf(getPreferredLanguage(), "", "*"))
-            .thenVariant("format", formatVariants)
+            .thenVariant(
+                VariantConstants.LANGUAGE_VARIANT_NAME,
+                listOf(
+                    getPreferredLanguage(),
+                    VariantConstants.LanguageVariantConstants.DEFAULT_LANGUAGE_NAME,
+                    VariantConstants.ANY_VARIANT_SELECTOR
+                )
+            )
+            .thenVariant(VariantConstants.FORMAT_VARIANT_NAME, formatVariants)
             .build()
             .selectSingle(event)
     }
 
     private fun getIsMarkdownFromFormat(key: Key): Boolean {
-        val format = key.variants.firstOrNull { it.variantName == "format" }
+        val format = key.variants.firstOrNull { it.variantName == VariantConstants.FORMAT_VARIANT_NAME }
         if (format == null) {
             return false
         }
-        return format.variantValue == "markdown"
+        return format.variantValue == FormatVariantConstants.MARKDOWN_FORMAT_NAME
     }
 
     private fun getPreferredLanguage(): String {

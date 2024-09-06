@@ -49,7 +49,7 @@ class StiftskonzerteCollector : TwoStepEventCollector<String>("stiftskonzerte") 
 
         val img = eventSite.select("div.entry-content img")
         if (!img.isEmpty()) {
-            data[SemanticKeys.PICTUREURL] = img.first()!!.attr("src")
+            data[SemanticKeys.PICTURE_URL] = img.first()!!.attr("src")
         }
         data[SemanticKeys.SOURCES] = data[SemanticKeys.URL]!!
 

@@ -1,9 +1,10 @@
 package base.boudicca.enricher.service.location
 
 import base.boudicca.SemanticKeys
+import base.boudicca.TextProperty
 import base.boudicca.enricher.service.Enricher
 import base.boudicca.enricher.service.ForceUpdateEvent
-import base.boudicca.model.Event
+import base.boudicca.model.structured.StructuredEvent
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.event.EventListener
 import org.springframework.scheduling.annotation.Scheduled
@@ -20,27 +21,27 @@ class LocationEnricher @Autowired constructor(
     private val updateLock = ReentrantLock()
     private var data = emptyList<LocationData>()
 
-    override fun enrich(e: Event): Event {
+    override fun enrich(e: StructuredEvent): StructuredEvent {
         for (locationData in data) {
-            if (matches(e.data, locationData)) {
-                val enrichedData = e.data.toMutableMap()
+            if (matches(e, locationData)) {
+                val builder = e.toBuilder()
                 for (locationDatum in locationData) {
-                    enrichedData[locationDatum.key] = locationDatum.value.first()
+                    builder.withProperty(TextProperty(locationDatum.key), locationDatum.value.first())
                 }
-                return Event(e.name, e.startDate, enrichedData)
+                return builder.build()
             }
         }
         return e
     }
 
-    private fun matches(eventData: Map<String, String>, locationData: Map<String, List<String>>): Boolean {
-        for (locationDatumKey in listOf(SemanticKeys.LOCATION_NAME, SemanticKeys.LOCATION_ADDRESS)) {
-            val locationDatumValue = locationData[locationDatumKey]
+    private fun matches(event: StructuredEvent, locationData: Map<String, List<String>>): Boolean {
+        for (property in listOf(SemanticKeys.LOCATION_NAME_PROPERTY, SemanticKeys.LOCATION_ADDRESS_PROPERTY)) {
+            val locationDatumValue = locationData[property.getKey().name]
             if (locationDatumValue != null) {
-                val eventDatum = eventData[locationDatumKey]
-                if (eventDatum != null) {
+                val eventData = event.getProperty(property)
+                for (eventDatum in eventData) {
                     for (locationDatumLine in locationDatumValue) {
-                        if (eventDatum == locationDatumLine) {
+                        if (eventDatum.second == locationDatumLine) {
                             return true
                         }
                     }

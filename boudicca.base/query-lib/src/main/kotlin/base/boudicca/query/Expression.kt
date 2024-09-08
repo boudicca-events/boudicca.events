@@ -1,5 +1,6 @@
 package base.boudicca.query
 
+import base.boudicca.model.structured.Key
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
@@ -43,12 +44,14 @@ abstract class HasTwoChildren(
 
 abstract class FieldAndTextExpression(
     private val name: String,
-    private val fieldName: String,
+    keyFilter: String,
     private val text: String,
 ) : Expression {
 
-    fun getFieldName(): String {
-        return fieldName
+    private val keyFilter = parseKeyFilter(keyFilter)
+
+    fun getKeyFilter(): Key {
+        return keyFilter
     }
 
     fun getText(): String {
@@ -56,29 +59,31 @@ abstract class FieldAndTextExpression(
     }
 
     override fun toString(): String {
-        return "$name('$fieldName','$text')"
+        return "$name('${keyFilter.toKeyString()}','$text')"
     }
 }
 
 abstract class FieldExpression(
     private val name: String,
-    private val fieldName: String,
+    keyFilter: String,
 ) : Expression {
 
-    fun getFieldName(): String {
-        return fieldName
+    private val keyFilter = parseKeyFilter(keyFilter)
+
+    fun getKeyFilter(): Key {
+        return keyFilter
     }
 
     override fun toString(): String {
-        return "$name('$fieldName')"
+        return "$name('${keyFilter.toKeyString()}')"
     }
 }
 
 abstract class DateExpression(
     private val name: String,
-    dateFieldName: String,
+    dateKeyFilter: String,
     dateText: String,
-) : FieldAndTextExpression(name, dateFieldName, dateText) {
+) : FieldAndTextExpression(name, dateKeyFilter, dateText) {
 
     private val date: LocalDate
 
@@ -95,23 +100,26 @@ abstract class DateExpression(
     }
 
     override fun toString(): String {
-        return "$name('${getFieldName()}','${date.format(DateTimeFormatter.ISO_LOCAL_DATE)}')"
+        return "$name('${getKeyFilter().toKeyString()}','${date.format(DateTimeFormatter.ISO_LOCAL_DATE)}')"
     }
 }
 
 abstract class AbstractDurationExpression(
     private val name: String,
-    private val startDateField: String,
-    private val endDateField: String,
+    startDateKeyFilter: String,
+    endDateKeyFilter: String,
     private val duration: Number,
 ) : Expression {
 
-    fun getStartDateField(): String {
-        return startDateField
+    private val startDateKeyFilter = parseKeyFilter(startDateKeyFilter)
+    private val endDateKeyFilter = parseKeyFilter(endDateKeyFilter)
+
+    fun getStartDateKeyFilter(): Key {
+        return startDateKeyFilter
     }
 
-    fun getEndDateField(): String {
-        return endDateField
+    fun getEndDateKeyFilter(): Key {
+        return endDateKeyFilter
     }
 
     fun getDuration(): Number {
@@ -119,7 +127,15 @@ abstract class AbstractDurationExpression(
     }
 
     override fun toString(): String {
-        return "$name('${startDateField}','${endDateField}',${duration})"
+        return "$name('${startDateKeyFilter.toKeyString()}','${endDateKeyFilter.toKeyString()}',${duration})"
+    }
+}
+
+private fun parseKeyFilter(keyFilter: String): Key {
+    try {
+        return Key.parse(keyFilter)
+    } catch (e: IllegalArgumentException) {
+        throw QueryException("invalid keyfilter", e)
     }
 }
 
@@ -138,24 +154,24 @@ class NotExpression(
 ) : HasOneChild("NOT", child)
 
 class ContainsExpression(
-    fieldName: String,
+    keyFilter: String,
     text: String,
-) : FieldAndTextExpression("CONTAINS", fieldName, text)
+) : FieldAndTextExpression("CONTAINS", keyFilter, text)
 
 class EqualsExpression(
-    fieldName: String,
+    keyFilter: String,
     text: String,
-) : FieldAndTextExpression("EQUALS", fieldName, text)
+) : FieldAndTextExpression("EQUALS", keyFilter, text)
 
 class BeforeExpression(
-    dateFieldName: String,
+    dateKeyFilter: String,
     dateText: String,
-) : DateExpression("BEFORE", dateFieldName, dateText)
+) : DateExpression("BEFORE", dateKeyFilter, dateText)
 
 class AfterExpression(
-    dateFieldName: String,
+    dateKeyFilter: String,
     dateText: String,
-) : DateExpression("AFTER", dateFieldName, dateText)
+) : DateExpression("AFTER", dateKeyFilter, dateText)
 
 class DurationShorterExpression(
     startDateField: String,
@@ -170,5 +186,5 @@ class DurationLongerExpression(
 ) : AbstractDurationExpression("DURATIONLONGER", startDateField, endDateField, duration)
 
 class HasFieldExpression(
-    fieldName: String,
-) : FieldExpression("HASFIELD", fieldName)
+    keyFilter: String,
+) : FieldExpression("HASFIELD", keyFilter)

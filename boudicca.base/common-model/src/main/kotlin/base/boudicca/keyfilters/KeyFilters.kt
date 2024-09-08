@@ -19,7 +19,7 @@ object KeyFilters {
             .sortedBy { it.first }
     }
 
-    private fun doesKeyMatchFilter(
+    fun doesKeyMatchFilter(
         key: Key,
         keyFilter: Key
     ): Boolean {
@@ -36,7 +36,7 @@ object KeyFilters {
         return true
     }
 
-    private fun containsVariant(key: Key, variant: Variant): Boolean {
+    fun containsVariant(key: Key, variant: Variant): Boolean {
         if (variant.variantValue == "*") {
             return doesContainVariantName(key, variant.variantName)
         }
@@ -54,8 +54,17 @@ object KeyFilters {
     }
 
     private fun doesContainVariantName(key: Key, variantName: String): Boolean {
-        for (selfVariant in key.variants) {
-            if (variantName == selfVariant.variantName) {
+        for (variant in key.variants) {
+            if (variantName == variant.variantName) {
+                return true
+            }
+        }
+        return false
+    }
+
+    fun doesContainVariantValue(key: Key, variantName: String, variantValues: List<String>): Boolean {
+        for (value in variantValues) {
+            if (containsVariant(key, Variant(variantName, value))) {
                 return true
             }
         }

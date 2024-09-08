@@ -1,6 +1,8 @@
 package base.boudicca.query.evaluator.util
 
+import base.boudicca.format.ListFormat
 import base.boudicca.model.Entry
+import base.boudicca.model.structured.Key
 import java.nio.ByteBuffer
 import java.nio.CharBuffer
 import java.text.BreakIterator
@@ -93,11 +95,17 @@ class FullTextIndex(entries: List<Entry>, field: String) {
     }
 
     private fun getWords(entries: List<Entry>, field: String): List<Pair<CharBuffer, BitSet>> {
+        val key = Key.parse(field)
         val words = mutableMapOf<CharBuffer, BitSet>()
         entries.forEachIndexed { entryIndex, entry ->
             if (!entry[field].isNullOrEmpty()) {
-                val lowercase = entry[field]!!.lowercase()
-                val newWords = breakText(lowercase)
+                val entryValue = entry[field]!!
+                val values = if (EvaluatorUtil.isList(key)) {
+                    ListFormat.parseFromString(entryValue)
+                } else {
+                    listOf(entryValue)
+                }
+                val newWords = values.flatMap { breakText(it.lowercase()) }
 
                 newWords.forEach { newWord ->
                     if (words.containsKey(newWord)) {

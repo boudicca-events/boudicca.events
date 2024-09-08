@@ -1,6 +1,11 @@
 package base.boudicca.query.evaluator
 
+import base.boudicca.format.ListFormat
+import base.boudicca.keyfilters.KeyFilters
 import base.boudicca.model.Entry
+import base.boudicca.model.structured.Key
+import base.boudicca.model.structured.filterKeys
+import base.boudicca.model.toStructuredEntry
 import base.boudicca.query.*
 import base.boudicca.query.evaluator.util.EvaluatorUtil
 import base.boudicca.query.evaluator.util.FullTextIndex
@@ -34,7 +39,7 @@ class OptimizingEvaluator(rawEntries: Collection<Entry>) : Evaluator {
             // it is faster to iterate over all entries then to sort the resultset
             entries.filterIndexed { i, _ -> resultSet.get(i) }
         } else {
-            Utils.order(resultSet.stream().mapToObj{ entries[it] }.toList(), dateCache)
+            Utils.order(resultSet.stream().mapToObj { entries[it] }.toList(), dateCache)
         }
         return QueryResult(
             orderedResult
@@ -95,8 +100,9 @@ class OptimizingEvaluator(rawEntries: Collection<Entry>) : Evaluator {
 
     private fun hasFieldExpression(expression: HasFieldExpression): BitSet {
         val resultSet = BitSet()
-        entries.forEachIndexed { i, event ->
-            if(event.containsKey(expression.getFieldName()) && event[expression.getFieldName()]!!.isNotEmpty()){
+        entries.forEachIndexed { i, entry ->
+            //TODO this is not performant at all...
+            if (entry.toStructuredEntry().filterKeys(expression.getKeyFilter()).any { it.second.isNotEmpty() }) {
                 resultSet.set(i)
             }
         }
@@ -125,52 +131,72 @@ class OptimizingEvaluator(rawEntries: Collection<Entry>) : Evaluator {
 
     private fun equalsExpression(expression: EqualsExpression): BitSet {
         val lowerCase = expression.getText().lowercase()
-        return starFieldSearch(expression.getFieldName()) { field ->
+        return keyFilterSearch(expression.getKeyFilter()) { field ->
             val index = getOrCreateSimpleIndex("equals", field) {
-                SimpleIndex<String?>(entries.map { it[field]?.lowercase() }, Comparator.naturalOrder<String?>())
+                SimpleIndex<String?>(
+                    entries.flatMapIndexed { entryIndex, entry ->
+                        val value = entry[field]
+                        if (EvaluatorUtil.isList(Key.parse(field))) {
+                            if (value == null) {
+                                emptyList()
+                            } else {
+                                ListFormat
+                                    .parseFromString(value)
+                                    .map { Pair(entryIndex, it.lowercase()) }
+                            }
+                        } else {
+                            listOf(Pair(entryIndex, value?.lowercase()))
+                        }
+                    }, Comparator.naturalOrder<String?>()
+                )
             }
             index.search { it?.compareTo(lowerCase) ?: -1 }
         }
     }
 
     private fun containsExpression(expression: ContainsExpression): BitSet {
-        return starFieldSearch(expression.getFieldName()) { field ->
+        return keyFilterSearch(expression.getKeyFilter()) { field ->
             val index = getOrCreateFullTextIndex(field)
             index.containsSearch(expression.getText())
         }
     }
 
     private fun beforeExpression(expression: BeforeExpression): BitSet {
-        val index = getOrCreateLocalDateIndex(expression.getFieldName())
-        return index.search {
-            if (it != null) {
-                if (it.isEqual(expression.getDate()) || it.isBefore(expression.getDate())) {
-                    0
+        return keyFilterSearch(expression.getKeyFilter()) { field ->
+            val index = getOrCreateLocalDateIndex(field)
+            index.search {
+                if (it != null) {
+                    if (it.isEqual(expression.getDate()) || it.isBefore(expression.getDate())) {
+                        0
+                    } else {
+                        1
+                    }
                 } else {
-                    1
+                    -1
                 }
-            } else {
-                -1
             }
         }
     }
 
     private fun afterExpression(expression: AfterExpression): BitSet {
-        val index = getOrCreateLocalDateIndex(expression.getFieldName())
-        return index.search {
-            if (it != null) {
-                if (it.isEqual(expression.getDate()) || it.isAfter(expression.getDate())) {
-                    0
+        return keyFilterSearch(expression.getKeyFilter()) { field ->
+            val index = getOrCreateLocalDateIndex(field)
+            index.search {
+                if (it != null) {
+                    if (it.isEqual(expression.getDate()) || it.isAfter(expression.getDate())) {
+                        0
+                    } else {
+                        -1
+                    }
                 } else {
                     -1
                 }
-            } else {
-                -1
             }
         }
     }
 
     private fun durationLongerExpression(expression: DurationLongerExpression): BitSet {
+        //TODO this still does not work 100%, we need a completely different handling here
         val index = getDurationIndex(expression)
         val duration = expression.getDuration().toDouble()
         return index.search {
@@ -187,6 +213,7 @@ class OptimizingEvaluator(rawEntries: Collection<Entry>) : Evaluator {
     }
 
     private fun durationShorterExpression(expression: DurationShorterExpression): BitSet {
+        //TODO this still does not work 100%, we need a completely different handling here
         val index = getDurationIndex(expression)
         val duration = expression.getDuration().toDouble()
         return index.search {
@@ -203,32 +230,32 @@ class OptimizingEvaluator(rawEntries: Collection<Entry>) : Evaluator {
     }
 
     private fun getDurationIndex(expression: AbstractDurationExpression): SimpleIndex<Double?> {
+        //TODO this index name generation can be wrong when & are used in keys
         val index =
-            getOrCreateSimpleIndex("duration", expression.getStartDateField() + "&" + expression.getEndDateField()) {
-                SimpleIndex<Double?>(entries.map {
+            getOrCreateSimpleIndex(
+                "duration",
+                expression.getStartDateKeyFilter().toKeyString() + "&" + expression.getEndDateKeyFilter()
+            ) {
+                SimpleIndex.create(entries.map {
                     EvaluatorUtil.getDuration(
-                        expression.getStartDateField(),
-                        expression.getEndDateField(),
-                        it, dateCache
+                        expression.getStartDateKeyFilter(),
+                        expression.getEndDateKeyFilter(),
+                        it.toStructuredEntry(), dateCache
                     )
-                }, Comparator.naturalOrder<Double?>())
+                }, Comparator.naturalOrder())
             }
         return index
     }
 
     private fun getOrCreateLocalDateIndex(fieldName: String): SimpleIndex<LocalDate?> {
         val index = getOrCreateSimpleIndex("localDate", fieldName) {
-            SimpleIndex(entries.map { safeGetLocalDate(it[fieldName], dateCache) }, Comparator.naturalOrder())
+            SimpleIndex.create(entries.map { safeGetLocalDate(it[fieldName], dateCache) }, Comparator.naturalOrder())
         }
         return index
     }
 
-    private fun starFieldSearch(fieldName: String, search: (String) -> BitSet): BitSet {
-        val allFieldsToCheck = if (fieldName == "*") {
-            allFields
-        } else {
-            setOf(fieldName)
-        }
+    private fun keyFilterSearch(keyFilter: Key, search: (String) -> BitSet): BitSet {
+        val allFieldsToCheck = allFields.filter { KeyFilters.doesKeyMatchFilter(Key.parse(it), keyFilter) }
         val result = BitSet()
         for (field in allFieldsToCheck) {
             result.or(search(field))
@@ -252,7 +279,7 @@ class OptimizingEvaluator(rawEntries: Collection<Entry>) : Evaluator {
             }
         }
 
-        synchronized(operationCache){
+        synchronized(operationCache) {
             val index = if (!operationCache.containsKey(fieldName)) {
                 val index = indexCreator()
                 operationCache[fieldName] = index

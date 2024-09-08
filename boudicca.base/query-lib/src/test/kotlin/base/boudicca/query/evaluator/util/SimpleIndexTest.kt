@@ -33,12 +33,12 @@ class SimpleIndexTest {
     @Test
     fun searchNullableIndex() {
         val index =
-            SimpleIndex<String?>(listOf("c", null, "b", "a", null, null, null), Comparator.naturalOrder<String?>())
+            SimpleIndex.create(listOf("c", null, "b", "a", null, null, null), Comparator.naturalOrder<String?>())
 
         assertEquals(bitsetOf(3), index.search { it?.compareTo("a") ?: -1 })
     }
 
     private fun createIndex(list: List<String>): SimpleIndex<String> {
-        return SimpleIndex(list, Comparator.naturalOrder())
+        return SimpleIndex.create(list, Comparator.naturalOrder())
     }
 }

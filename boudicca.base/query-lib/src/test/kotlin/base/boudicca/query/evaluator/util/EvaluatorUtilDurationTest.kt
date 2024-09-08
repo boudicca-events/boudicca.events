@@ -1,6 +1,9 @@
 package base.boudicca.query.evaluator.util
 
 import base.boudicca.SemanticKeys
+import base.boudicca.model.Entry
+import base.boudicca.model.structured.Key
+import base.boudicca.model.toStructuredEntry
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.util.concurrent.ConcurrentHashMap
@@ -87,8 +90,8 @@ class EvaluatorUtilDurationTest {
         )
     }
 
-    fun getDuration(startDateField: String, endDateField: String, event: Map<String, String>): Double {
-        return EvaluatorUtil.getDuration(startDateField, endDateField, event, ConcurrentHashMap())
+    private fun getDuration(startDateField: String, endDateField: String, entry: Entry): Double {
+        return EvaluatorUtil.getDuration(Key.parse(startDateField), Key.parse(endDateField), entry.toStructuredEntry(), ConcurrentHashMap())
     }
 
 }

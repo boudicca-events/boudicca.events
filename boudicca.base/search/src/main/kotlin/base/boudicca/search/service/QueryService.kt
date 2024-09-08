@@ -60,8 +60,7 @@ class QueryService @Autowired constructor(
 
     private fun evaluateQuery(query: String, page: Page): ResultDTO {
         return try {
-            val expression = BoudiccaQueryRunner.parseQuery(query)
-            val queryResult = evaluator.evaluate(expression, page)
+            val queryResult = BoudiccaQueryRunner.evaluateQuery(query, page, evaluator)
             ResultDTO(queryResult.result, queryResult.totalResults, queryResult.error)
         } catch (e: QueryException) {
             //TODO this should return a 400 error or something, not a 200 message with an error message...

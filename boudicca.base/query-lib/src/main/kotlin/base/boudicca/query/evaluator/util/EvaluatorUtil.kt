@@ -1,32 +1,61 @@
 package base.boudicca.query.evaluator.util
 
+import base.boudicca.format.DateFormat
+import base.boudicca.keyfilters.KeyFilters
+import base.boudicca.keyfilters.KeySelector
+import base.boudicca.model.structured.Key
+import base.boudicca.model.structured.StructuredEntry
+import base.boudicca.model.structured.VariantConstants
+import base.boudicca.model.structured.filterKeys
 import java.time.Duration
 import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 import java.time.temporal.ChronoUnit
 import java.util.concurrent.ConcurrentHashMap
-import kotlin.time.measureTime
+import kotlin.jvm.optionals.getOrNull
 
 object EvaluatorUtil {
     fun getDuration(
-        startDateField: String,
-        endDateField: String,
-        event: Map<String, String>,
+        startDateKeyFilter: Key,
+        endDateKeyFilter: Key,
+        entry: StructuredEntry,
         dataCache: ConcurrentHashMap<String, OffsetDateTime>
     ): Double {
-        if (!event.containsKey(startDateField) || !event.containsKey(endDateField)) {
+        val startDateText = selectDateValue(entry, startDateKeyFilter)
+        val endDateText = selectDateValue(entry, endDateKeyFilter)
+        if (startDateText.isNullOrEmpty() || endDateText.isNullOrEmpty()) {
             return 0.0
         }
         return try {
-            val startDate = parseDate(event[startDateField]!!, dataCache)
-            val endDate = parseDate(event[endDateField]!!, dataCache)
+            val startDate = parseDate(startDateText, dataCache)
+            val endDate = parseDate(endDateText, dataCache)
             Duration.of(endDate.toEpochSecond() - startDate.toEpochSecond(), ChronoUnit.SECONDS)
                 .toMillis()
                 .toDouble() / 1000.0 / 60.0 / 60.0
         } catch (e: DateTimeParseException) {
             0.0
         }
+    }
+
+    private fun selectDateValue(entry: StructuredEntry, keyFilter: Key): String? {
+        return KeySelector.builder(keyFilter)
+            .thenVariant(
+                VariantConstants.FORMAT_VARIANT_NAME,
+                listOf(
+                    VariantConstants.FormatVariantConstants.DATE_FORMAT_NAME,
+                    VariantConstants.FormatVariantConstants.TEXT_FORMAT_NAME
+                )
+            ).build()
+            .selectSingle(entry)
+            .map { it.second }
+            .getOrNull()
+    }
+
+    fun getDateValues(entry: StructuredEntry, dateKeyFilter: Key): List<String> {
+        return entry
+            .filterKeys(dateKeyFilter)
+            .filter { isDate(it.first) }
+            .map { it.second }
     }
 
     fun parseDate(
@@ -37,7 +66,7 @@ object EvaluatorUtil {
             dataCache[dateText]!!
         } else {
 //            try {
-            val parsedDate = OffsetDateTime.parse(dateText, DateTimeFormatter.ISO_DATE_TIME)
+            val parsedDate = DateFormat.parseFromString(dateText)
             dataCache[dateText] = parsedDate
             parsedDate
 //            } catch (e: DateTimeParseException) {
@@ -130,5 +159,35 @@ object EvaluatorUtil {
             else dest.setFrom(i, src, q++)
             i++
         }
+    }
+
+    fun isTextMarkdownOrList(key: Key): Boolean {
+        return KeyFilters.doesContainVariantValue(
+            key, VariantConstants.FORMAT_VARIANT_NAME,
+            listOf(
+                VariantConstants.FormatVariantConstants.TEXT_FORMAT_NAME,
+                VariantConstants.FormatVariantConstants.MARKDOWN_FORMAT_NAME,
+                VariantConstants.FormatVariantConstants.LIST_FORMAT_NAME,
+            )
+        )
+    }
+
+    fun isList(key: Key): Boolean {
+        return KeyFilters.doesContainVariantValue(
+            key, VariantConstants.FORMAT_VARIANT_NAME,
+            listOf(
+                VariantConstants.FormatVariantConstants.LIST_FORMAT_NAME,
+            )
+        )
+    }
+
+    fun isDate(key: Key): Boolean {
+        return KeyFilters.doesContainVariantValue(
+            key, VariantConstants.FORMAT_VARIANT_NAME,
+            listOf(
+                VariantConstants.FormatVariantConstants.DATE_FORMAT_NAME,
+                VariantConstants.FormatVariantConstants.TEXT_FORMAT_NAME, //fallback for now...
+            )
+        )
     }
 }

@@ -117,7 +117,7 @@ class EventService @Autowired constructor(
                 listOf(
                     FilterQueryEntryDTO(SemanticKeys.LOCATION_NAME),
                     FilterQueryEntryDTO(SemanticKeys.LOCATION_CITY),
-                    FilterQueryEntryDTO(SemanticKeys.CONCERT_BANDLIST, true),
+                    FilterQueryEntryDTO(SemanticKeys.CONCERT_BANDLIST),
                 )
             )
         )
@@ -133,7 +133,7 @@ class EventService @Autowired constructor(
 
     fun getSources(): List<String> {
         val allSources =
-            caller.getFiltersFor(FilterQueryDTO(listOf(FilterQueryEntryDTO(SemanticKeys.SOURCES, true))))
+            caller.getFiltersFor(FilterQueryDTO(listOf(FilterQueryEntryDTO(SemanticKeys.SOURCES))))
         return allSources[SemanticKeys.SOURCES]!!
             .map { normalize(it) }
             .distinct()

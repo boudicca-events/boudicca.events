@@ -22,6 +22,19 @@ abstract class AbstractEvaluatorTest {
     @Test
     fun simpleContains() {
         val events = callEvaluator(ContainsExpression("name", "event"))
+        assertEquals(4, events.size)
+    }
+
+    @Test
+    fun simpleEqualsWithList() {
+        val events = callEvaluator(EqualsExpression("list", "val1"))
+        assertEquals(1, events.size)
+        assertEquals("listyEvent1", events.first()["name"])
+    }
+
+    @Test
+    fun simpleContainsWithList() {
+        val events = callEvaluator(ContainsExpression("list", "val"))
         assertEquals(2, events.size)
     }
 
@@ -41,7 +54,7 @@ abstract class AbstractEvaluatorTest {
     @Test
     fun simpleNot() {
         val events = callEvaluator(NotExpression(EqualsExpression("name", "event1")))
-        assertEquals(3, events.size)
+        assertEquals(5, events.size)
     }
 
     @Test
@@ -145,6 +158,36 @@ abstract class AbstractEvaluatorTest {
     }
 
     @Test
+    fun simpleBeforeWithNewFormat() {
+        val events =
+            callEvaluator(
+                BeforeExpression("startDate", "2023-05-27"),
+                listOf(
+                    entryWithNewFormat("event1", "2023-05-25T00:00:00"),
+                    entryWithNewFormat("event2", "2023-05-28T00:00:00"),
+                    entryWithNewFormat("event3", "2023-05-29T00:00:00"),
+                )
+            )
+        assertEquals(1, events.size)
+        assertEquals("2023-05-25T00:00:00+02:00", events.first()["startDate:format=date"])
+    }
+
+    @Test
+    fun simpleAfterWithNewFormat() {
+        val events =
+            callEvaluator(
+                AfterExpression("startDate", "2023-05-27"),
+                listOf(
+                    entryWithNewFormat("event1", "2023-05-25T00:00:00"),
+                    entryWithNewFormat("event2", "2023-05-26T00:00:00"),
+                    entryWithNewFormat("event3", "2023-05-29T00:00:00"),
+                )
+            )
+        assertEquals(1, events.size)
+        assertEquals("2023-05-29T00:00:00+02:00", events.first()["startDate:format=date"])
+    }
+
+    @Test
     fun simpleAfterInclusiveToday() {
         val events =
             callEvaluator(
@@ -215,6 +258,50 @@ abstract class AbstractEvaluatorTest {
     }
 
     @Test
+    fun durationLongerWithNewFormat() {
+        val events =
+            callEvaluator(
+                DurationLongerExpression("startDate", "endDate", 2.0),
+                listOf(
+                    mapOf(
+                        SemanticKeys.NAME to "event1",
+                        SemanticKeys.STARTDATE + ":format=date" to "2024-05-31T00:00:00Z",
+                        SemanticKeys.ENDDATE + ":format=date" to "2024-05-31T03:00:00Z",
+                    ),
+                    mapOf(
+                        SemanticKeys.NAME to "event2",
+                        SemanticKeys.STARTDATE + ":format=date" to "2024-05-31T00:00:00Z",
+                        SemanticKeys.ENDDATE + ":format=date" to "2024-05-31T00:00:00Z",
+                    ),
+                )
+            )
+        assertEquals(1, events.size)
+        assertEquals("event1", events.first()["name"])
+    }
+
+    @Test
+    fun durationShorterWithNewFormat() {
+        val events =
+            callEvaluator(
+                DurationShorterExpression("startDate", "endDate", 2.0),
+                listOf(
+                    mapOf(
+                        SemanticKeys.NAME to "event1",
+                        SemanticKeys.STARTDATE + ":format=date" to "2024-05-31T00:00:00Z",
+                        SemanticKeys.ENDDATE + ":format=date" to "2024-05-31T03:00:00Z",
+                    ),
+                    mapOf(
+                        SemanticKeys.NAME to "event2",
+                        SemanticKeys.STARTDATE + ":format=date" to "2024-05-31T00:00:00Z",
+                        SemanticKeys.ENDDATE + ":format=date" to "2024-05-31T00:00:00Z",
+                    ),
+                )
+            )
+        assertEquals(1, events.size)
+        assertEquals("event2", events.first()["name"])
+    }
+
+    @Test
     fun durationZero() {
         val events =
             callEvaluator(
@@ -246,6 +333,30 @@ abstract class AbstractEvaluatorTest {
             )
         assertEquals(1, events.size)
         assertEquals("event2", events.first()["name"])
+    }
+
+    @Test
+    fun hasFieldWithKeySelector() {
+        val events =
+            callEvaluator(
+                HasFieldExpression("*:format=date"),
+                listOf(
+                    mapOf(
+                        SemanticKeys.NAME to "event1",
+                    ),
+                    mapOf(
+                        SemanticKeys.NAME to "event2",
+                        SemanticKeys.STARTDATE+":format=date" to "2024-05-31T00:00:00Z",
+                    ),
+                    mapOf(
+                        SemanticKeys.NAME to "event3",
+                        "random:format=date" to "2024-05-31T00:00:00Z",
+                    ),
+                )
+            )
+        assertEquals(2, events.size)
+        assertEquals("event3", events[0]["name"])
+        assertEquals("event2", events[1]["name"])
     }
 
     @Test
@@ -299,6 +410,15 @@ abstract class AbstractEvaluatorTest {
             entry("name" to "event2", "field" to "value2"),
             entry("name" to "somethingelse", "field" to "wuuut"),
             entry("name" to "somethingelse2", "field" to "wuuut"),
+            entry("name" to "listyEvent1", "list:format=list" to "val1,val2"),
+            entry("name" to "listyEvent2", "list:format=list" to "val3,val4"),
+        )
+    }
+
+    private fun entryWithNewFormat(name: String, startDate: String): Entry {
+        return entry(
+            "name" to name,
+            "startDate:format=date" to DateTimeFormatter.ISO_DATE_TIME.format(parseLocalDate(startDate))
         )
     }
 

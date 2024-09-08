@@ -2,9 +2,9 @@ package base.boudicca.query.evaluator.util
 
 import java.util.*
 
-class SimpleIndex<T>(values: List<T>, comparator: Comparator<T>) {
+class SimpleIndex<T>(values: List<Pair<Int, T>>, comparator: Comparator<T>) {
+
     private val index = values
-        .mapIndexed { index, t -> Pair(index, t) }
         .filter { it.second != null }
         .sortedWith(Comparator.comparing({ pair -> pair.second }, comparator))
 
@@ -45,5 +45,10 @@ class SimpleIndex<T>(values: List<T>, comparator: Comparator<T>) {
         return result
     }
 
+    companion object {
+        fun <T> create(values: List<T>, comparator: Comparator<T>): SimpleIndex<T> {
+            return SimpleIndex(values.mapIndexed { i, value -> Pair(i, value) }, comparator)
+        }
+    }
 }
 

@@ -69,6 +69,12 @@ class KeySelector private constructor(
         fun builder(propertyName: String): KeySelectorBuilder {
             return KeySelectorBuilder(propertyName)
         }
+
+        fun builder(key: Key): KeySelectorBuilder {
+            val builder = KeySelectorBuilder(key.name)
+            key.variants.forEach { builder.thenVariant(it) }
+            return builder
+        }
     }
 
     class KeySelectorBuilder internal constructor(private val propertyName: String) {
@@ -76,6 +82,11 @@ class KeySelector private constructor(
 
         fun thenVariant(variantName: String, variantValues: List<String>): KeySelectorBuilder {
             variants.add(Pair(variantName, variantValues))
+            return this
+        }
+
+        fun thenVariant(variant: Variant): KeySelectorBuilder {
+            variants.add(Pair(variant.variantName, listOf(variant.variantValue)))
             return this
         }
 

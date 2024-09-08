@@ -6,6 +6,5 @@ data class FilterQueryDTO(
 
 data class FilterQueryEntryDTO(
     val name: String,
-    val multiline: Boolean = false
 )
 

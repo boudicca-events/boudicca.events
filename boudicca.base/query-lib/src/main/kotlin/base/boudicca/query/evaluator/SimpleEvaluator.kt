@@ -1,19 +1,25 @@
 package base.boudicca.query.evaluator
 
+import base.boudicca.format.DateFormat
+import base.boudicca.format.ListFormat
 import base.boudicca.model.Entry
+import base.boudicca.model.structured.Key
+import base.boudicca.model.structured.StructuredEntry
+import base.boudicca.model.structured.filterKeys
+import base.boudicca.model.structured.toFlatEntry
+import base.boudicca.model.toStructuredEntry
 import base.boudicca.query.*
 import base.boudicca.query.evaluator.util.EvaluatorUtil
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 import java.util.concurrent.ConcurrentHashMap
 
 class SimpleEvaluator(rawEntries: Collection<Entry>) : Evaluator {
 
     private val dateCache = ConcurrentHashMap<String, OffsetDateTime>()
-    private val events = Utils.order(rawEntries, dateCache)
+    private val events = Utils.order(rawEntries, dateCache).map { it.toStructuredEntry() }
 
     override fun evaluate(expression: Expression, page: Page): QueryResult {
         val results = events.filter { matchesExpression(expression, it) }
@@ -21,51 +27,62 @@ class SimpleEvaluator(rawEntries: Collection<Entry>) : Evaluator {
             results
                 .drop(page.offset)
                 .take(page.size)
+                .map { it.toFlatEntry() }
                 .toList(),
             results.size
         )
     }
 
-    private fun matchesExpression(expression: Expression, event: Map<String, String>): Boolean {
+    private fun matchesExpression(expression: Expression, entry: StructuredEntry): Boolean {
         when (expression) {
             is EqualsExpression -> {
-                if (expression.getFieldName() == "*") {
-                    return event.values.any { it.equals(expression.getText(), true) }
-                }
-                return event.containsKey(expression.getFieldName())
-                        && event[expression.getFieldName()].equals(expression.getText(), true)
+                return entry
+                    .filterKeys(expression.getKeyFilter())
+                    .filter { EvaluatorUtil.isTextMarkdownOrList(it.first) }
+                    .any {
+                        if (EvaluatorUtil.isList(it.first)) {
+                            parseList(it).any { listValue -> listValue.equals(expression.getText(), true) }
+                        } else {
+                            it.second.equals(expression.getText(), true)
+                        }
+                    }
             }
 
             is ContainsExpression -> {
-                if (expression.getFieldName() == "*") {
-                    return event.values.any { it.contains(expression.getText(), true) }
-                }
-                return event.containsKey(expression.getFieldName())
-                        && event[expression.getFieldName()]!!.contains(expression.getText(), true)
+                return entry
+                    .filterKeys(expression.getKeyFilter())
+                    .filter { EvaluatorUtil.isTextMarkdownOrList(it.first) }
+                    .any {
+                        if (EvaluatorUtil.isList(it.first)) {
+                            parseList(it).any { listValue -> listValue.contains(expression.getText(), true) }
+                        } else {
+                            it.second.contains(expression.getText(), true)
+                        }
+                    }
             }
 
             is NotExpression -> {
-                return !matchesExpression(expression.getChild(), event)
+                return !matchesExpression(expression.getChild(), entry)
             }
 
             is AndExpression -> {
-                return matchesExpression(expression.getLeftChild(), event)
-                        && matchesExpression(expression.getRightChild(), event)
+                return matchesExpression(expression.getLeftChild(), entry)
+                        && matchesExpression(expression.getRightChild(), entry)
             }
 
             is OrExpression -> {
-                return matchesExpression(expression.getLeftChild(), event)
-                        || matchesExpression(expression.getRightChild(), event)
+                return matchesExpression(expression.getLeftChild(), entry)
+                        || matchesExpression(expression.getRightChild(), entry)
             }
 
             is BeforeExpression -> {
                 try {
-                    val dateFieldName = expression.getFieldName()
-                    if (!event.containsKey(dateFieldName)) {
-                        return false
-                    }
-                    val startDate = getLocalStartDate(event[dateFieldName]!!)
-                    return startDate.isEqual(expression.getDate()) || startDate.isBefore(expression.getDate())
+                    val dateTexts = EvaluatorUtil.getDateValues(entry, expression.getKeyFilter())
+                    return dateTexts
+                        .any {
+                            val startDate = getLocalStartDate(it)
+                            startDate.isEqual(expression.getDate()) || startDate.isBefore(expression.getDate())
+                        }
                 } catch (e: DateTimeParseException) {
                     return false
                 }
@@ -73,12 +90,12 @@ class SimpleEvaluator(rawEntries: Collection<Entry>) : Evaluator {
 
             is AfterExpression -> {
                 try {
-                    val dateFieldName = expression.getFieldName()
-                    if (!event.containsKey(dateFieldName)) {
-                        return false
-                    }
-                    val startDate = getLocalStartDate(event[dateFieldName]!!)
-                    return startDate.isEqual(expression.getDate()) || startDate.isAfter(expression.getDate())
+                    val dateTexts = EvaluatorUtil.getDateValues(entry, expression.getKeyFilter())
+                    return dateTexts
+                        .any {
+                            val startDate = getLocalStartDate(it)
+                            startDate.isEqual(expression.getDate()) || startDate.isAfter(expression.getDate())
+                        }
                 } catch (e: DateTimeParseException) {
                     return false
                 }
@@ -87,9 +104,9 @@ class SimpleEvaluator(rawEntries: Collection<Entry>) : Evaluator {
             is DurationLongerExpression -> {
                 val duration =
                     EvaluatorUtil.getDuration(
-                        expression.getStartDateField(),
-                        expression.getEndDateField(),
-                        event, dateCache
+                        expression.getStartDateKeyFilter(),
+                        expression.getEndDateKeyFilter(),
+                        entry, dateCache
                     )
                 return duration >= expression.getDuration().toDouble()
             }
@@ -97,15 +114,15 @@ class SimpleEvaluator(rawEntries: Collection<Entry>) : Evaluator {
             is DurationShorterExpression -> {
                 val duration =
                     EvaluatorUtil.getDuration(
-                        expression.getStartDateField(),
-                        expression.getEndDateField(),
-                        event, dateCache
+                        expression.getStartDateKeyFilter(),
+                        expression.getEndDateKeyFilter(),
+                        entry, dateCache
                     )
                 return duration <= expression.getDuration().toDouble()
             }
 
             is HasFieldExpression -> {
-                return event.containsKey(expression.getFieldName()) && event[expression.getFieldName()]!!.isNotEmpty()
+                return entry.filterKeys(expression.getKeyFilter()).any { it.second.isNotEmpty() }
             }
 
             else -> {
@@ -114,8 +131,12 @@ class SimpleEvaluator(rawEntries: Collection<Entry>) : Evaluator {
         }
     }
 
+    private fun parseList(keyValuePair: Pair<Key, String>): List<String> {
+        return ListFormat.parseFromString(keyValuePair.second)
+    }
+
     private fun getLocalStartDate(dateText: String): LocalDate =
-        OffsetDateTime.parse(dateText, DateTimeFormatter.ISO_DATE_TIME)
+        DateFormat.parseFromString(dateText)
             .atZoneSameInstant(ZoneId.of("Europe/Vienna"))
             .toLocalDate()
 

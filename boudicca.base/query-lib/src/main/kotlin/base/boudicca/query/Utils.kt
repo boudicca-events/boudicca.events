@@ -1,7 +1,11 @@
 package base.boudicca.query
 
 import base.boudicca.SemanticKeys
+import base.boudicca.keyfilters.KeySelector
 import base.boudicca.model.Entry
+import base.boudicca.model.structured.VariantConstants
+import base.boudicca.model.structured.selectKey
+import base.boudicca.model.toStructuredEntry
 import java.time.Instant
 import java.time.OffsetDateTime
 import java.time.ZoneId
@@ -19,7 +23,7 @@ object Utils {
 
     fun order(entries: Collection<Entry>, dateCache: ConcurrentHashMap<String, OffsetDateTime>): List<Entry> {
         return entries.toList()
-            .map { Pair(it, getStartDate(it[SemanticKeys.STARTDATE], dateCache)) }
+            .map { Pair(it, getStartDate(it, dateCache)) }
             .sortedWith(
                 Comparator
                     .comparing<Pair<Entry, OffsetDateTime>, OffsetDateTime> { it.second }
@@ -29,12 +33,22 @@ object Utils {
     }
 
     private fun getStartDate(
-        dateText: String?,
+        entry: Entry,
         startDateCache: ConcurrentHashMap<String, OffsetDateTime>
     ): OffsetDateTime {
-        if (dateText == null) {
+        val optionalDateText = entry.toStructuredEntry().selectKey(
+            KeySelector.builder(SemanticKeys.STARTDATE).thenVariant(
+                VariantConstants.FORMAT_VARIANT_NAME,
+                listOf(
+                    VariantConstants.FormatVariantConstants.DATE_FORMAT_NAME,
+                    VariantConstants.FormatVariantConstants.TEXT_FORMAT_NAME
+                )
+            ).build()
+        )
+        if (optionalDateText.isEmpty) {
             return Instant.ofEpochMilli(0).atOffset(ZoneOffset.MIN)
         }
+        val dateText = optionalDateText.get().second
         if (startDateCache.containsKey(dateText)) {
             return startDateCache[dateText]!!
         }

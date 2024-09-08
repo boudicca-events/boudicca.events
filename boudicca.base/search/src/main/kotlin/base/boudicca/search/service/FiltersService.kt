@@ -3,7 +3,10 @@ package base.boudicca.search.service
 import base.boudicca.api.search.model.FilterQueryDTO
 import base.boudicca.api.search.model.FilterQueryEntryDTO
 import base.boudicca.api.search.model.FilterResultDTO
-import base.boudicca.model.Entry
+import base.boudicca.format.ListFormat
+import base.boudicca.keyfilters.KeyFilters
+import base.boudicca.model.structured.*
+import base.boudicca.model.toStructuredEntry
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Service
 import java.util.concurrent.ConcurrentHashMap
@@ -12,12 +15,12 @@ import java.util.concurrent.ConcurrentHashMap
 class FiltersService {
 
     @Volatile
-    private var entries = emptyList<Entry>()
+    private var entries = emptyList<StructuredEntry>()
     private val cache = ConcurrentHashMap<String, List<String>>()
 
     @EventListener
     fun onEventsUpdate(event: EntriesUpdatedEvent) {
-        this.entries = event.entries.toList()
+        this.entries = event.entries.toList().map { it.toStructuredEntry() }
         this.cache.clear()
     }
 
@@ -36,23 +39,37 @@ class FiltersService {
         return result
     }
 
-    private fun getFilterValuesFor(entry: FilterQueryEntryDTO): List<String> {
+    private fun getFilterValuesFor(filterQuery: FilterQueryEntryDTO): List<String> {
         val result = mutableSetOf<String>()
 
-        for (e in entries) {
-            if (e.containsKey(entry.name)) {
-                val value = e[entry.name]!!
-                if (entry.multiline) {
-                    for (line in value.split("\n")) {
-                        result.add(line)
+        for (entry in entries) {
+            entry
+                .filterKeys(Key.parse(filterQuery.name))
+                .flatMap {
+                    //TODO can we find utils/a generic way to do this check?
+                    if (isList(it.first)) {
+                        ListFormat.parseFromString(it.second)
+                    } else {
+                        listOf(it.second)
                     }
-                } else {
-                    result.add(value)
                 }
-            }
+                .forEach {
+                    result.add(it)
+                }
         }
 
         return result.toList()
+    }
+
+    //TODO find better place to place those utils?
+    private fun isList(key: Key): Boolean {
+        return KeyFilters.containsVariant(
+            key,
+            Variant(
+                VariantConstants.FORMAT_VARIANT_NAME,
+                VariantConstants.FormatVariantConstants.LIST_FORMAT_NAME
+            )
+        )
     }
 
 }

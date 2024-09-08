@@ -45,7 +45,7 @@ class SearchClient(private val searchUrl: String) {
 
     private fun mapFilterQueryDTOToApi(filterQueryDTO: FilterQueryDTO): SearchOpenapiFilterQueryDTO {
         return SearchOpenapiFilterQueryDTO()
-            .entries(filterQueryDTO.entries.map { FilterQueryEntryDTO().name(it.name).multiline(it.multiline) })
+            .entries(filterQueryDTO.entries.map { FilterQueryEntryDTO().name(it.name)})
     }
 
     private fun mapResultDto(resultDTO: base.boudicca.search.openapi.model.ResultDTO): ResultDTO {

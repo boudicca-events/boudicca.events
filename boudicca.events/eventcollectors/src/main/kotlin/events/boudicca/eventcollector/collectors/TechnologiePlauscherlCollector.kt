@@ -3,7 +3,9 @@ package events.boudicca.eventcollector.collectors
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.EventCollector
 import base.boudicca.api.eventcollector.Fetcher
-import base.boudicca.model.Event
+import base.boudicca.format.UrlUtils
+import base.boudicca.model.Registration
+import base.boudicca.model.structured.StructuredEvent
 import com.rometools.rome.io.SyndFeedInput
 import com.rometools.rome.io.XmlReader
 import java.time.LocalDateTime
@@ -16,7 +18,7 @@ class TechnologiePlauscherlCollector : EventCollector {
         return "technologieplauscherl"
     }
 
-    override fun collectEvents(): List<Event> {
+    override fun collectStructuredEvents(): List<StructuredEvent> {
         val url = "https://technologieplauscherl.at/feed"
         val contentAsInputStream = Fetcher().fetchUrl(url).byteInputStream()
         val feed = SyndFeedInput().build(XmlReader(contentAsInputStream))
@@ -32,18 +34,19 @@ class TechnologiePlauscherlCollector : EventCollector {
             val dateTime = LocalDateTime.parse(dateString, formatter)
             val offsetDateTime = dateTime.atZone(ZoneId.of("UTC")).toOffsetDateTime()
 
-            Event(
-                nameString, offsetDateTime,
-                mapOf(
-                    SemanticKeys.LOCATION_NAME to locationString,
-                    SemanticKeys.TAGS to listOf("TechCommunity", "Afterwork", "Socializing", "Networking").toString(),
-                    SemanticKeys.URL to entry.link,
-                    SemanticKeys.TYPE to "techmeetup", //TODO not sure if this works well
-                    SemanticKeys.DESCRIPTION to entry.description.value,
-                    SemanticKeys.REGISTRATION to "free",
-                    SemanticKeys.SOURCES to entry.link,
+            StructuredEvent
+                .builder(nameString, offsetDateTime)
+                .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, locationString)
+                .withProperty(
+                    SemanticKeys.TAGS_PROPERTY,
+                    listOf("TechCommunity", "Afterwork", "Socializing", "Networking")
                 )
-            )
+                .withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(entry.link))
+                .withProperty(SemanticKeys.TYPE_PROPERTY, "techmeetup") //TODO not sure if this works well
+                .withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, entry.description.value)
+                .withProperty(SemanticKeys.REGISTRATION_PROPERTY, Registration.FREE)
+                .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(entry.link))
+                .build()
         }
 
         return events

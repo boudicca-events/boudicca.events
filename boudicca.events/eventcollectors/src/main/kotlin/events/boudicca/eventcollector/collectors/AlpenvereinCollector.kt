@@ -4,6 +4,7 @@ import base.boudicca.SemanticKeys
 import base.boudicca.TextProperty
 import base.boudicca.api.eventcollector.Fetcher
 import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -48,11 +49,14 @@ class AlpenvereinCollector : TwoStepEventCollector<String>("alpenverein") {
             .builder(name, startDate)
             .withProperty(SemanticKeys.NAME_PROPERTY, name)
             .withProperty(SemanticKeys.ENDDATE_PROPERTY, endDate)
-            .withProperty(SemanticKeys.URL_PROPERTY, URI.create(event))
+            .withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(event))
             .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(event))
             .withProperty(SemanticKeys.TYPE_PROPERTY, "sport")
             .withProperty(TextProperty("sport.participation"), "active")
-            .withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, eventSite.select("div.elementBoxSheet div.elementText").text())
+            .withProperty(
+                SemanticKeys.DESCRIPTION_TEXT_PROPERTY,
+                eventSite.select("div.elementBoxSheet div.elementText").text()
+            )
             .withProperty(SemanticKeys.PICTURE_URL_PROPERTY, getPictureUrl(eventSite))
             .withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, getLocationCity(eventSite))
             .build()
@@ -71,7 +75,7 @@ class AlpenvereinCollector : TwoStepEventCollector<String>("alpenverein") {
         if (imageElements.isNotEmpty()) {
             val pictureUrl = imageElements.first()!!.attr("src")
             if (!pictureUrl.isNullOrEmpty()) {
-                return URI.create(normalizeUrl(pictureUrl))
+                return UrlUtils.parse(normalizeUrl(pictureUrl))
             }
         }
         return null

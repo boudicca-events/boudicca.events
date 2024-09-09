@@ -3,7 +3,10 @@ package events.boudicca.eventcollector.collectors
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.EventCollector
 import base.boudicca.api.eventcollector.Fetcher
-import base.boudicca.model.Event
+import base.boudicca.format.UrlUtils
+import base.boudicca.model.Registration
+import base.boudicca.model.structured.Key
+import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -26,7 +29,7 @@ class LinzTermineCollector : EventCollector {
         return "linz termine"
     }
 
-    override fun collectEvents(): List<Event> {
+    override fun collectStructuredEvents(): List<StructuredEvent> {
         val locations = parseLocations()
         val events = filterEvents(parseEvents())
         val eventWebsites = getEventWebsites(events)
@@ -62,8 +65,8 @@ class LinzTermineCollector : EventCollector {
         eventList: List<LinzTermineEvent>,
         locations: Map<Int, Location>,
         eventWebsites: Map<String, Document>
-    ): List<Event> {
-        val mappedEvents = mutableListOf<Event>()
+    ): List<StructuredEvent> {
+        val mappedEvents = mutableListOf<StructuredEvent>()
         for (event in eventList) {
             if (event.dates.isEmpty()) {
                 LOG.warn("event does not contain any dates: $event")
@@ -81,42 +84,45 @@ class LinzTermineCollector : EventCollector {
             } else {
                 ""
             }
-            val additionalProperties = mapAdditionalProperties(event)
+            val builder = StructuredEvent
+                .builder()
+                .withName(event.name)
+                .withProperty(SemanticKeys.TYPE_PROPERTY, mapEventType(event.type))
+                .withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
+                .withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(pictureUrl))
+                .withProperty(
+                    SemanticKeys.REGISTRATION_PROPERTY,
+                    (if (event.freeOfCharge) Registration.FREE else Registration.TICKET)
+                )
+                .withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(event.url))
+                .withProperty(
+                    SemanticKeys.LOCATION_NAME_PROPERTY,
+                    (location?.name ?: event.locationFallbackName)
+                ) //they do not include all locations in their location.xml files -.-
+                .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(event.url, eventsBaseUrl, locationBaseUrl))
+            mapAdditionalProperties(event, builder)
 
             for (date in event.dates) {
                 mappedEvents.add(
-                    Event(
-                        event.name,
-                        date.first,
-                        mapOf(
-                            SemanticKeys.ENDDATE to date.second.format(DateTimeFormatter.ISO_DATE_TIME),
-                            SemanticKeys.TYPE to mapEventType(event.type),
-                            SemanticKeys.DESCRIPTION to description,
-                            SemanticKeys.PICTURE_URL to pictureUrl,
-                            SemanticKeys.REGISTRATION to (if (event.freeOfCharge) "FREE" else "TICKET"),
-                            SemanticKeys.URL to event.url,
-                            SemanticKeys.LOCATION_NAME to (location?.name
-                                ?: event.locationFallbackName), //they do not include all locations in their location.xml files -.-
-                            SemanticKeys.SOURCES to event.url + "\n" + eventsBaseUrl + "\n" + locationBaseUrl
-                        ).plus(additionalProperties).filter { it.value.isNotBlank() }
-                    )
+                    builder
+                        .copy()
+                        .withStartDate(date.first)
+                        .withProperty(SemanticKeys.ENDDATE_PROPERTY, date.second)
+                        .build()
                 )
             }
         }
         return mappedEvents
     }
 
-    private fun mapAdditionalProperties(event: LinzTermineEvent): Map<String, String> {
-        val additionalProperties = mutableMapOf<String, String>()
-
+    private fun mapAdditionalProperties(event: LinzTermineEvent, builder: StructuredEvent.StructuredEventBuilder) {
+        //TODO make a semantic key out of this
         if (event.type?.first == 401) {
-            additionalProperties["sport.participation"] = "watch"
+            builder.withKeyValuePair(Key.builder("sport.participation").build(), "watch")
         }
         if (event.type?.first == 402) {
-            additionalProperties["sport.participation"] = "active"
+            builder.withKeyValuePair(Key.builder("sport.participation").build(), "active")
         }
-
-        return additionalProperties
     }
 
     private fun parseEvents(): List<LinzTermineEvent> {

@@ -92,6 +92,7 @@ class EventService @Autowired constructor(
             queryParts.add(equals(flag!!, "true"))
         }
         if (!searchDTO.bandName.isNullOrBlank()) {
+            //TODO maybe change sometime to equals?
             queryParts.add(contains(SemanticKeys.CONCERT_BANDLIST, searchDTO.bandName!!))
         }
         if (searchDTO.includeRecurring != true) {

@@ -3,12 +3,16 @@ package events.boudicca.eventcollector.collectors
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.Fetcher
 import base.boudicca.api.eventcollector.TwoStepEventCollector
-import base.boudicca.model.Event
+import base.boudicca.format.UrlUtils
+import base.boudicca.model.structured.StructuredEvent
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import java.io.StringReader
+import java.net.URI
 import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
@@ -29,31 +33,37 @@ class ArenaWienCollector : TwoStepEventCollector<ArenaWienCollector.HalfEvent>("
         return halfEvents
     }
 
-    override fun parseEvent(event: HalfEvent): Event {
+    override fun parseStructuredEvent(event: HalfEvent): StructuredEvent {
         val eventSite = Jsoup.parse(fetcher.fetchUrl(event.url))
 
-        val startDate =
-            LocalDateTime.parse(event.dateBegin, DateTimeFormatter.ISO_DATE_TIME)
-                .atZone(ZoneId.of("Europe/Vienna"))
-                .toOffsetDateTime()
+        return StructuredEvent
+            .builder(event.title!!, parseDate(event.dateBegin!!))
+            .withProperty(
+                SemanticKeys.ENDDATE_PROPERTY,
+                if (!event.dateEnd.isNullOrBlank()) parseDate(event.dateEnd) else null
+            )
+            .withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(event.url))
+            .withProperty(SemanticKeys.TYPE_PROPERTY, "concert")
+            .withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, eventSite.select("div.suite_VAdescr").text())
+            .withProperty(SemanticKeys.PICTURE_URL_PROPERTY, getPictureUrl(eventSite))
+            .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Arena Wien")
+            .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(event.url))
+            .build()
+    }
 
-        val data = mutableMapOf<String, String>()
-        if (!event.dateEnd.isNullOrBlank()) {
-            data[SemanticKeys.ENDDATE] = event.dateEnd
-        }
-        data[SemanticKeys.URL] = event.url
-        data[SemanticKeys.TYPE] = "concert"
-        data[SemanticKeys.DESCRIPTION] = eventSite.select("div.suite_VAdescr").text()
-
+    private fun getPictureUrl(eventSite: Document): URI? {
         val img = eventSite.select("div.suite_imageContainer img")
-        if (!img.isEmpty()) {
-            data[SemanticKeys.PICTURE_URL] = "https://arena.wien/" + img.first()!!.attr("src")
+        return if (!img.isEmpty()) {
+            UrlUtils.parse("https://arena.wien/" + img.first()!!.attr("src"))
+        } else {
+            null
         }
+    }
 
-        data[SemanticKeys.LOCATION_NAME] = "Arena Wien"
-        data[SemanticKeys.SOURCES] = data[SemanticKeys.URL]!!
-
-        return Event(event.title!!, startDate, data)
+    private fun parseDate(dateText: String): OffsetDateTime {
+        return LocalDateTime.parse(dateText, DateTimeFormatter.ISO_DATE_TIME)
+            .atZone(ZoneId.of("Europe/Vienna"))
+            .toOffsetDateTime()
     }
 
     private fun getProgramList(i: Int): JsonObject {

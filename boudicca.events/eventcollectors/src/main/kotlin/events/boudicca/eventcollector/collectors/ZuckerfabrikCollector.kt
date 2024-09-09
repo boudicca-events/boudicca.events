@@ -3,7 +3,8 @@ package events.boudicca.eventcollector.collectors
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.Fetcher
 import base.boudicca.api.eventcollector.TwoStepEventCollector
-import base.boudicca.model.Event
+import base.boudicca.format.UrlUtils
+import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -33,10 +34,8 @@ class ZuckerfabrikCollector : TwoStepEventCollector<Pair<String, Document>>("zuc
         return events
     }
 
-    override fun parseEvent(event: Pair<String, Document>): Event {
+    override fun parseStructuredEvent(event: Pair<String, Document>): StructuredEvent {
         val (url, doc) = event
-        val data = mutableMapOf<String, String>()
-        data[SemanticKeys.URL] = url
 
         var name = doc.select("div#storycontent>h2").text()
 
@@ -45,21 +44,23 @@ class ZuckerfabrikCollector : TwoStepEventCollector<Pair<String, Document>>("zuc
             name += " - " + storycontent[0].text()
         }
         val dateIndex = findDateIndex(storycontent)
-        val startDate = parseTypeAndDate(data, storycontent[dateIndex])
-        data[SemanticKeys.DESCRIPTION] =
-            ((dateIndex + 1) until storycontent.size).joinToString("\n") { storycontent[it].text() }
+        val (startDate, endDate, type) = parseTypeAndDate(storycontent[dateIndex])
+        val description = ((dateIndex + 1) until storycontent.size).joinToString("\n") { storycontent[it].text() }
 
         val pictureUrl = doc.select("div#storycontent img").attr("src")
-        if (pictureUrl.isNotBlank()) {
-            data[SemanticKeys.PICTURE_URL] = pictureUrl
-        }
 
-        data[SemanticKeys.LOCATION_NAME] = "Zuckerfabrik"
-        data[SemanticKeys.LOCATION_URL] = "https://www.zuckerfabrik.at"
-        data[SemanticKeys.LOCATION_CITY] = "Enns"
-        data[SemanticKeys.SOURCES] = data[SemanticKeys.URL]!!
-
-        return Event(name, startDate, data)
+        return StructuredEvent
+            .builder(name, startDate)
+            .withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(url))
+            .withProperty(SemanticKeys.TYPE_PROPERTY, type)
+            .withProperty(SemanticKeys.ENDDATE_PROPERTY, endDate)
+            .withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(pictureUrl))
+            .withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
+            .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Zuckerfabrik")
+            .withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse("https://www.zuckerfabrik.at"))
+            .withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Enns")
+            .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(url))
+            .build()
     }
 
     private fun findDateIndex(storycontent: Elements): Int {
@@ -71,9 +72,9 @@ class ZuckerfabrikCollector : TwoStepEventCollector<Pair<String, Document>>("zuc
         throw IllegalStateException("could not find date index in: $storycontent")
     }
 
-    private fun parseTypeAndDate(data: MutableMap<String, String>, element: Element): OffsetDateTime {
+    private fun parseTypeAndDate(element: Element): Triple<OffsetDateTime, OffsetDateTime?, String> {
         val split = element.text().split(" am ")
-        data[SemanticKeys.TYPE] = split[0]
+        val type = split[0]
         val dateSplit = split[1].split(",").map { it.trim() }
         val date = LocalDate.parse(
             dateSplit[1],
@@ -93,13 +94,12 @@ class ZuckerfabrikCollector : TwoStepEventCollector<Pair<String, Document>>("zuc
         }
         startTime = LocalTime.parse(startTimeString.replace('.', ':'), timeFormatter)
         val startDate = date.atTime(startTime).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
-        if (endTime != null) {
-            data[SemanticKeys.ENDDATE] =
-                DateTimeFormatter.ISO_DATE_TIME.format(
-                    date.atTime(startTime).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
-                )
+        val endDate = if (endTime != null) {
+            date.atTime(startTime).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
+        } else {
+            null
         }
-        return startDate
+        return Triple(startDate, endDate, type)
     }
 
 }

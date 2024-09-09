@@ -3,7 +3,8 @@ package events.boudicca.eventcollector.collectors
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.Fetcher
 import base.boudicca.api.eventcollector.TwoStepEventCollector
-import base.boudicca.model.Event
+import base.boudicca.format.UrlUtils
+import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.time.LocalDate
@@ -25,27 +26,36 @@ class StadthalleWienCollector : TwoStepEventCollector<String>("stadthallewien") 
             .map { baseUrl + it.attr("href") }
     }
 
-    override fun parseMultipleEvents(event: String): List<Event?>? {
+    override fun parseMultipleStructuredEvents(event: String): List<StructuredEvent?>? {
         val eventSite = Jsoup.parse(fetcher.fetchUrl(event))
 
         val name = eventSite.select("h1.title").text()
 
-        val data = mutableMapOf<String, String>()
-        data[SemanticKeys.URL] = event
 
-        val pictureUrl = eventSite.select("div.img-ad img").attr("src")
-        if (pictureUrl.isNotBlank()) {
-            data[SemanticKeys.PICTURE_URL] = baseUrl + pictureUrl
+        val srcAttr = eventSite.select("div.img-ad img").attr("src")
+        val pictureUrl = if (srcAttr.isNotBlank()) {
+            UrlUtils.parse(baseUrl + srcAttr)
+        } else {
+            null
         }
-
-        data[SemanticKeys.DESCRIPTION] = eventSite.select("div.readmore-txt").text()
-
-        data[SemanticKeys.LOCATION_NAME] = "Stadthalle Wien"
-        data[SemanticKeys.SOURCES] = data[SemanticKeys.URL]!!
 
         val startDates = parseDates(eventSite) //we could parse enddates but this is kinda tricky
 
-        return startDates.map { Event(name, it, data.toMap()) }
+        val builder = StructuredEvent
+            .builder()
+            .withName(name)
+            .withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(event))
+            .withProperty(SemanticKeys.PICTURE_URL_PROPERTY, pictureUrl)
+            .withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, eventSite.select("div.readmore-txt").text())
+            .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Stadthalle Wien")
+            .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(event))
+
+        return startDates.map {
+            builder
+                .copy()
+                .withStartDate(it)
+                .build()
+        }
 
     }
 

@@ -3,7 +3,8 @@ package events.boudicca.eventcollector.collectors
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.Fetcher
 import base.boudicca.api.eventcollector.TwoStepEventCollector
-import base.boudicca.model.Event
+import base.boudicca.format.UrlUtils
+import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -23,29 +24,32 @@ class OteloLinzCollector : TwoStepEventCollector<String>("otelolinz") {
             .map { it.attr("href") }
     }
 
-    override fun parseEvent(event: String): Event {
+    override fun parseStructuredEvent(event: String): StructuredEvent {
         val eventSite = Jsoup.parse(fetcher.fetchUrl(event))
 
         val name = eventSite.select("div.article-inner h1").text()
         val (startDate, endDate) = parseDates(eventSite)
 
-        val data = mutableMapOf<String, String>()
-        data[SemanticKeys.URL] = event
-        if (endDate != null) {
-            data[SemanticKeys.ENDDATE] = endDate.format(DateTimeFormatter.ISO_DATE_TIME)
-        }
-        data[SemanticKeys.TYPE] = "technology"
-        data[SemanticKeys.DESCRIPTION] = getDescription(eventSite)
-
         val img = eventSite.select("div.entry-content img")
-        if (!img.isEmpty()) {
-            data[SemanticKeys.PICTURE_URL] = img.first()!!.attr("src")
+        val pictureUrl = if (!img.isEmpty()) {
+            UrlUtils.parse(img.first()!!.attr("src"))
+        } else {
+            null
         }
 
-        data[SemanticKeys.LOCATION_NAME] = eventSite.select("div#em-event-6>p")[1].select("a").text()
-        data[SemanticKeys.SOURCES] = data[SemanticKeys.URL]!!
-
-        return Event(name, startDate, data)
+        return StructuredEvent
+            .builder(name, startDate)
+            .withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(event))
+            .withProperty(SemanticKeys.ENDDATE_PROPERTY, endDate)
+            .withProperty(SemanticKeys.TYPE_PROPERTY, "technology")
+            .withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, getDescription(eventSite))
+            .withProperty(SemanticKeys.PICTURE_URL_PROPERTY, pictureUrl)
+            .withProperty(
+                SemanticKeys.LOCATION_NAME_PROPERTY,
+                eventSite.select("div#em-event-6>p")[1].select("a").text()
+            )
+            .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(event))
+            .build()
     }
 
     private fun getDescription(eventSite: Document): String {

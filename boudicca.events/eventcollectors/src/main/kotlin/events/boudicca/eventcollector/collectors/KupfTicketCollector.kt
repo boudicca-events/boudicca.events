@@ -3,7 +3,8 @@ package events.boudicca.eventcollector.collectors
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.Fetcher
 import base.boudicca.api.eventcollector.TwoStepEventCollector
-import base.boudicca.model.Event
+import base.boudicca.format.UrlUtils
+import base.boudicca.model.structured.StructuredEvent
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
 import com.beust.klaxon.lookup
@@ -39,7 +40,7 @@ class KupfTicketCollector : TwoStepEventCollector<String>("kupfticket") {
         return eventSlugs.toList()
     }
 
-    override fun parseEvent(event: String): Event {
+    override fun parseStructuredEvent(event: String): StructuredEvent {
         val eventSite = Jsoup.parse(fetcher.fetchUrl("https://kupfticket.com/events/$event"))
         val nextData = eventSite.select("body script#__NEXT_DATA__").first()!!.data()
         val jsonObject = Parser.default().parse(StringReader(nextData)) as JsonObject
@@ -54,18 +55,15 @@ class KupfTicketCollector : TwoStepEventCollector<String>("kupfticket") {
         val startDate = parseDate(eventJson.lookup<String>("date.start").first())
         val endDate = parseDate(eventJson.lookup<String>("date.end").first())
 
-        return Event(
-            name, startDate,
-            mapOf(
-                SemanticKeys.DESCRIPTION to description,
-                SemanticKeys.URL to url,
-                SemanticKeys.LOCATION_NAME to location,
-                SemanticKeys.LOCATION_URL to locationUrl,
-                SemanticKeys.PICTURE_URL to pictureUrl,
-                SemanticKeys.ENDDATE to endDate.format(DateTimeFormatter.ISO_DATE_TIME),
-                SemanticKeys.SOURCES to url,
-            )
-        )
+        return StructuredEvent.builder(name, startDate)
+            .withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
+            .withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(url))
+            .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, location)
+            .withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse(locationUrl))
+            .withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(pictureUrl))
+            .withProperty(SemanticKeys.ENDDATE_PROPERTY, endDate)
+            .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(url))
+            .build()
     }
 
     private fun parseDate(date: String): OffsetDateTime {

@@ -3,7 +3,8 @@ package events.boudicca.eventcollector.collectors
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.Fetcher
 import base.boudicca.api.eventcollector.TwoStepEventCollector
-import base.boudicca.model.Event
+import base.boudicca.format.UrlUtils
+import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -44,7 +45,7 @@ class UlfOoeCollector : TwoStepEventCollector<String>("ulfooe") {
             .filter { !it.attr("href").startsWith("http") }) // exclude events from others than ulf
     }
 
-    override fun parseEvent(event: String): Event? {
+    override fun parseStructuredEvent(event: String): StructuredEvent? {
         val fullEventLink = baseUrl + event
         val eventSite = Jsoup.parse(fetcher.fetchUrl(fullEventLink))
 
@@ -53,33 +54,40 @@ class UlfOoeCollector : TwoStepEventCollector<String>("ulfooe") {
         val startDate = try {
             parseDate(eventSite)
         } catch (exc: java.time.format.DateTimeParseException) {
+            //TODO we should be able to parse this as well
             LOG.info("Error in ${fullEventLink}: can't parse date, might be a multi-day event")
             return null
         }
 
-        val data = mutableMapOf<String, String>()
+        val img = eventSite.select("div.event picture img")
+        val pictureUrl = if (!img.isEmpty()) {
+            UrlUtils.parse(baseUrl + img.first()!!.attr("src"))
+        } else {
+            null
+        }
 
-        data[SemanticKeys.URL] = fullEventLink
-        data[SemanticKeys.DESCRIPTION] = eventSite.select("div.field-text").text()
+        val builder = StructuredEvent
+            .builder(name, startDate)
+            .withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(fullEventLink))
+            .withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, eventSite.select("div.field-text").text())
+            .withProperty(SemanticKeys.PICTURE_URL_PROPERTY, pictureUrl)
+            .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(fullEventLink))
 
         val locationName = eventSite.select("div.location").not("div.location.link-google-maps").text()
         if (locationName.isNotEmpty()) {
             val regex = """(?<name>.*?)[,|\s]*(?<zip>\d{4}) (?<city>[\w\s]+)""".toRegex()
             val matchResult = regex.find(locationName)
             if (matchResult != null) {
-                data[SemanticKeys.LOCATION_NAME] = matchResult.groups["name"]!!.value.trimEnd()
-                data[SemanticKeys.LOCATION_CITY] = matchResult.groups["city"]!!.value.trimEnd()
+                builder
+                    .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, matchResult.groups["name"]!!.value.trimEnd())
+                    .withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, matchResult.groups["city"]!!.value.trimEnd())
             } else {
-                data[SemanticKeys.LOCATION_NAME] = locationName
+                builder
+                    .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, locationName)
             }
         }
 
-        val img = eventSite.select("div.event picture img")
-        if (!img.isEmpty()) {
-            data[SemanticKeys.PICTURE_URL] = baseUrl + img.first()!!.attr("src")
-        }
-        data[SemanticKeys.SOURCES] = data[SemanticKeys.URL]!!
-        return Event(name, startDate, data)
+        return builder.build()
     }
 
     private fun parseDate(element: Element): OffsetDateTime {

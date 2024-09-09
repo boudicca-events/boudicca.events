@@ -98,18 +98,43 @@ data class StructuredEvent(val name: String, val startDate: OffsetDateTime, val 
             return Optional.of(StructuredEvent(name, startDate, data))
         }
 
+        fun builder(): StructuredEventBuilder {
+            return StructuredEventBuilder(null, null)
+        }
+
         fun builder(name: String, startDate: OffsetDateTime): StructuredEventBuilder {
             return StructuredEventBuilder(name, startDate)
         }
     }
 
     class StructuredEventBuilder internal constructor(
-        private val name: String,
-        private val startDate: OffsetDateTime,
+        private var name: String?,
+        private var startDate: OffsetDateTime?,
         data: Map<Key, String> = emptyMap()
-    ) : AbstractStructuredBuilder<StructuredEvent>(data.toMutableMap()) {
+    ) : AbstractStructuredBuilder<StructuredEvent, StructuredEventBuilder>(data.toMutableMap()) {
+
+        fun withName(name: String): StructuredEventBuilder {
+            this.name = name
+            return this
+        }
+
+        fun withStartDate(startDate: OffsetDateTime): StructuredEventBuilder {
+            this.startDate = startDate
+            return this
+        }
+
+        fun copy(): StructuredEventBuilder {
+            return StructuredEventBuilder(name, startDate, data.toMutableMap())
+        }
+
         override fun build(): StructuredEvent {
-            return StructuredEvent(name, startDate, data.toMap())
+            if (name == null) {
+                throw IllegalStateException("name cannot be null for an event!")
+            }
+            if (startDate == null) {
+                throw IllegalStateException("startDate cannot be null for an event!")
+            }
+            return StructuredEvent(name!!, startDate!!, data.toMap())
         }
     }
 }

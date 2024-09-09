@@ -3,7 +3,8 @@ package events.boudicca.eventcollector.collectors
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.Fetcher
 import base.boudicca.api.eventcollector.TwoStepEventCollector
-import base.boudicca.model.Event
+import base.boudicca.format.UrlUtils
+import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -74,64 +75,88 @@ class LandestheaterLinzCollector :
         )
     }
 
-    override fun parseEvent(event: Triple<Element, Pair<String, Document>, LocalDate>): Event {
+    override fun parseStructuredEvent(event: Triple<Element, Pair<String, Document>, LocalDate>): StructuredEvent {
         val (overview, site, date) = event
-        val data = mutableMapOf<String, String>()
-        data[SemanticKeys.URL] = site.first
 
         val name = overview.select("div.lth-evitem-title > a").text()
 
         val (startDate, endDate) = parseDates(overview, date)
-        if (endDate != null) {
-            data[SemanticKeys.ENDDATE] = DateTimeFormatter.ISO_DATE_TIME.format(endDate)
-        }
 
-        data[SemanticKeys.DESCRIPTION] =
-            site.second.select("div.lth-layout-ctr section > h2").first { it.text() == "Stückinfo" }.parent()!!
-                .select("div.lth-section-content").text()
-        data[SemanticKeys.PICTURE_URL] =
-            "https://www.landestheater-linz.at" + site.second.select("div.lth-slide img").first()!!.attr("src")
-
-        val type = overview.select("div.lth-evitem-what > div.lth-evitem-type").text()
-        data[SemanticKeys.TYPE] = type
+        val builder = StructuredEvent
+            .builder(name, startDate)
+            .withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(site.first))
+            .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(site.first))
+            .withProperty(SemanticKeys.ENDDATE_PROPERTY, endDate)
+            .withProperty(
+                SemanticKeys.DESCRIPTION_TEXT_PROPERTY,
+                site.second.select("div.lth-layout-ctr section > h2").first { it.text() == "Stückinfo" }.parent()!!
+                    .select("div.lth-section-content").text()
+            )
+            .withProperty(
+                SemanticKeys.PICTURE_URL_PROPERTY,
+                UrlUtils.parse(
+                    "https://www.landestheater-linz.at" + site.second.select("div.lth-slide img").first()!!.attr("src")
+                )
+            )
+            .withProperty(
+                SemanticKeys.TYPE_PROPERTY,
+                overview.select("div.lth-evitem-what > div.lth-evitem-type").text()
+            )
 
         val locationName =
             site.second.select("div.lth-layout-ctr > div > div > span > span").get(1).text().substring(11).trim()
-        insertLocationData(data, locationName)
-        data[SemanticKeys.SOURCES] = data[SemanticKeys.URL]!!
+        insertLocationData(builder, locationName)
 
-        return Event(name, startDate, data)
+        return builder
+            .build()
     }
 
-    private fun insertLocationData(data: MutableMap<String, String>, locationName: String) {
+    private fun insertLocationData(builder: StructuredEvent.StructuredEventBuilder, locationName: String) {
+        //TODO check enricher
         if (locationName.contains("musiktheater", ignoreCase = true)) {
-            data[SemanticKeys.LOCATION_NAME] = "Musiktheater"
-            data[SemanticKeys.LOCATION_URL] = "https://www.landestheater-linz.at/musiktheater"
-            data[SemanticKeys.LOCATION_CITY] = "Linz"
-            data[SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY] = "true"
-            data[SemanticKeys.ACCESSIBILITY_ACCESSIBLESEATS] = "true"
-            data[SemanticKeys.ACCESSIBILITY_ACCESSIBLETOILETS] = "true"
+            builder
+                .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Musiktheater")
+                .withProperty(
+                    SemanticKeys.LOCATION_URL_PROPERTY,
+                    UrlUtils.parse("https://www.landestheater-linz.at/musiktheater")
+                )
+                .withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Linz")
+                .withProperty(SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY_PROPERTY, true)
+                .withProperty(SemanticKeys.ACCESSIBILITY_ACCESSIBLESEATS_PROPERTY, true)
+                .withProperty(SemanticKeys.ACCESSIBILITY_ACCESSIBLETOILETS_PROPERTY, true)
         } else if (locationName == "Studiobühne") {
-            data[SemanticKeys.LOCATION_NAME] = "Studiobühne"
             //there is no dedicated page for it, but it is in the same building, so....
-            data[SemanticKeys.LOCATION_URL] = "https://www.landestheater-linz.at/schauspielhaus"
-            data[SemanticKeys.LOCATION_CITY] = "Linz"
+            builder
+                .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Studiobühne")
+                .withProperty(
+                    SemanticKeys.LOCATION_URL_PROPERTY,
+                    UrlUtils.parse("https://www.landestheater-linz.at/schauspielhaus")
+                )
+                .withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Linz")
         } else if (locationName == "Schauspielhaus") {
-            data[SemanticKeys.LOCATION_NAME] = "Schauspielhaus"
-            data[SemanticKeys.LOCATION_URL] = "https://www.landestheater-linz.at/schauspielhaus"
-            data[SemanticKeys.LOCATION_CITY] = "Linz"
-            data[SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY] = "true"
-            data[SemanticKeys.ACCESSIBILITY_ACCESSIBLESEATS] = "true"
-            data[SemanticKeys.ACCESSIBILITY_ACCESSIBLETOILETS] = "true"
+            builder
+                .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Schauspielhaus")
+                .withProperty(
+                    SemanticKeys.LOCATION_URL_PROPERTY,
+                    UrlUtils.parse("https://www.landestheater-linz.at/schauspielhaus")
+                )
+                .withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Linz")
+                .withProperty(SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY_PROPERTY, true)
+                .withProperty(SemanticKeys.ACCESSIBILITY_ACCESSIBLESEATS_PROPERTY, true)
+                .withProperty(SemanticKeys.ACCESSIBILITY_ACCESSIBLETOILETS_PROPERTY, true)
         } else if (locationName == "Kammerspiele") {
-            data[SemanticKeys.LOCATION_NAME] = "Kammerspiele"
-            data[SemanticKeys.LOCATION_URL] = "https://www.landestheater-linz.at/kammerspiele"
-            data[SemanticKeys.LOCATION_CITY] = "Linz"
-            data[SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY] = "true"
-            data[SemanticKeys.ACCESSIBILITY_ACCESSIBLESEATS] = "true"
-            data[SemanticKeys.ACCESSIBILITY_ACCESSIBLETOILETS] = "true"
+            builder
+                .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Kammerspiele")
+                .withProperty(
+                    SemanticKeys.LOCATION_URL_PROPERTY,
+                    UrlUtils.parse("https://www.landestheater-linz.at/kammerspiele")
+                )
+                .withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Linz")
+                .withProperty(SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY_PROPERTY, true)
+                .withProperty(SemanticKeys.ACCESSIBILITY_ACCESSIBLESEATS_PROPERTY, true)
+                .withProperty(SemanticKeys.ACCESSIBILITY_ACCESSIBLETOILETS_PROPERTY, true)
         } else if (locationName.isNotBlank()) {
-            data[SemanticKeys.LOCATION_NAME] = locationName
+            builder.withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, locationName)
         }
     }
 

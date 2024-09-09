@@ -3,7 +3,8 @@ package events.boudicca.eventcollector.collectors
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.Fetcher
 import base.boudicca.api.eventcollector.TwoStepEventCollector
-import base.boudicca.model.Event
+import base.boudicca.format.UrlUtils
+import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.time.LocalDateTime
@@ -21,25 +22,24 @@ class SchlachthofCollector : TwoStepEventCollector<Element>("schlachthof") {
         return document.select("div.eventitem:not(.pasteventitem)")
     }
 
-    override fun parseEvent(event: Element): Event {
-        val data = mutableMapOf<String, String>()
-
+    override fun parseStructuredEvent(event: Element): StructuredEvent {
         val name = event.select("h2").text().trim()
         val startDate = parseDate(event.select("div.event_list_details>p:nth-child(1)").text())
-
-        data[SemanticKeys.TYPE] = event.select("h3:nth-child(1)").text()
-        data[SemanticKeys.DESCRIPTION] = event.select("div.event_list_previewtext").text()
-        data[SemanticKeys.PICTURE_URL] =
+        val url = "https://www.schlachthofwels.at" + event.select("a.block").attr("href")
+        val pictureUrl =
             "https://www.schlachthofwels.at" + parsePictureUrl(event.select("div.teaserimage").attr("style"))
-        data[SemanticKeys.URL] =
-            "https://www.schlachthofwels.at" + event.select("a.block").attr("href")
 
-        data[SemanticKeys.LOCATION_NAME] = "Alter Schlachthof"
-        data[SemanticKeys.LOCATION_URL] = "https://www.schlachthofwels.at"
-        data[SemanticKeys.LOCATION_CITY] = "Wels"
-        data[SemanticKeys.SOURCES] = data[SemanticKeys.URL]!!
-
-        return Event(name, startDate, data)
+        return StructuredEvent
+            .builder(name, startDate)
+            .withProperty(SemanticKeys.TYPE_PROPERTY, event.select("h3:nth-child(1)").text())
+            .withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, event.select("div.event_list_previewtext").text())
+            .withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(pictureUrl))
+            .withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(url))
+            .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Alter Schlachthof")
+            .withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse("https://www.schlachthofwels.at"))
+            .withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Wels")
+            .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(url))
+            .build()
     }
 
     private fun parsePictureUrl(style: String): String {

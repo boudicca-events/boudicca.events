@@ -3,7 +3,7 @@ package events.boudicca.eventcollector.collectors
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.Fetcher
 import base.boudicca.api.eventcollector.collectors.IcalCollector
-import base.boudicca.model.Event
+import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
 
 class JkuEventCollector : IcalCollector("jku") {
@@ -23,12 +23,12 @@ class JkuEventCollector : IcalCollector("jku") {
             .map { fetcher.fetchUrl("https://www.jku.at$it") }
     }
 
-    override fun postProcess(event: Event): Event {
-        return Event(event.name, event.startDate,
-            event.data.toMutableMap().apply {
-                put(SemanticKeys.TAGS, listOf("JKU", "Universität", "Studieren").toString())
-                put(SemanticKeys.SOURCES, baseUrl)
-            })
+    override fun postProcess(event: StructuredEvent): StructuredEvent {
+        return event
+            .toBuilder()
+            .withProperty(SemanticKeys.TAGS_PROPERTY, listOf("JKU", "Universität", "Studieren"))
+            .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(baseUrl))
+            .build()
     }
 
 }

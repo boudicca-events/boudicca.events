@@ -3,7 +3,8 @@ package events.boudicca.eventcollector.collectors
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.Fetcher
 import base.boudicca.api.eventcollector.TwoStepEventCollector
-import base.boudicca.model.Event
+import base.boudicca.format.UrlUtils
+import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.time.LocalDate
@@ -30,28 +31,28 @@ class SpinnereiCollector : TwoStepEventCollector<Pair<String, Document>>("spinne
         return events
     }
 
-    override fun parseEvent(event: Pair<String, Document>): Event {
+    override fun parseStructuredEvent(event: Pair<String, Document>): StructuredEvent {
         val (url, doc) = event
-        val data = mutableMapOf<String, String>()
-        data[SemanticKeys.URL] = url
 
         var name = doc.select("div.vng-details div.vng-detail-content-titel").text()
         name += " " + doc.select("div.vng-details div.vng-detail-content-untertitel").text()
 
-        val startDate = parseTypeAndDate(data, doc.select("div.vng-details div.vng-detail-content-beginn").text())
+        val (startDate, type) = parseTypeAndDate(doc.select("div.vng-details div.vng-detail-content-beginn").text())
+        val pictureUrl = "https://spinnerei.kulturpark.at" + parsePictureUrl(
+            doc.select("div.vng-details div.bg-image").attr("style")
+        )
 
-        data[SemanticKeys.DESCRIPTION] = doc.select("div.vng-detail-content-bodytext").text()
-        data[SemanticKeys.PICTURE_URL] =
-            "https://spinnerei.kulturpark.at" + parsePictureUrl(
-                doc.select("div.vng-details div.bg-image").attr("style")
-            )
-
-        data[SemanticKeys.LOCATION_NAME] = "Spinnerei"
-        data[SemanticKeys.LOCATION_URL] = "https://spinnerei.kulturpark.at/"
-        data[SemanticKeys.LOCATION_CITY] = "Traun"
-        data[SemanticKeys.SOURCES] = data[SemanticKeys.URL]!!
-
-        return Event(name, startDate, data)
+        return StructuredEvent
+            .builder(name, startDate)
+            .withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(url))
+            .withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, doc.select("div.vng-detail-content-bodytext").text())
+            .withProperty(SemanticKeys.TYPE_PROPERTY, type)
+            .withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(pictureUrl))
+            .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Spinnerei")
+            .withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse("https://spinnerei.kulturpark.at/"))
+            .withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Traun")
+            .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(url))
+            .build()
     }
 
     private fun parsePictureUrl(style: String): String {
@@ -59,16 +60,15 @@ class SpinnereiCollector : TwoStepEventCollector<Pair<String, Document>>("spinne
         return style.substring(22, style.length - 3)
     }
 
-    private fun parseTypeAndDate(data: MutableMap<String, String>, text: String): OffsetDateTime {
+    private fun parseTypeAndDate(text: String): Pair<OffsetDateTime, String> {
         val split = text.split(' ', ignoreCase = false, limit = 4)
         if (split.size != 4) {
             throw IllegalStateException("could not parse type and date from $text")
         }
-        data[SemanticKeys.TYPE] = split[3]
 
         val date = LocalDate.parse(split[1], DateTimeFormatter.ofPattern("dd.MM.uu"))
         val time = LocalTime.parse(split[2], DateTimeFormatter.ofPattern("kk:mm"))
-        return date.atTime(time).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
+        return Pair(date.atTime(time).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime(), split[3])
     }
 
 }

@@ -3,7 +3,8 @@ package events.boudicca.eventcollector.collectors
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.Fetcher
 import base.boudicca.api.eventcollector.TwoStepEventCollector
-import base.boudicca.model.Event
+import base.boudicca.format.UrlUtils
+import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import org.slf4j.LoggerFactory
@@ -28,25 +29,20 @@ class CafeTraxlmayrCollector : TwoStepEventCollector<Element>("cafetraxlmayr") {
             .map { document.select(it).first()!! }
     }
 
-    override fun parseMultipleEvents(event: Element): List<Event?> {
-        val data = mutableMapOf<String, String>()
-        data[SemanticKeys.URL] = baseUrl //they do not have directlinks
-
-        data[SemanticKeys.LOCATION_NAME] = "Café Traxlmayr"
-        data[SemanticKeys.LOCATION_URL] = "https://www.cafe-traxlmayr.at/"
-        data[SemanticKeys.LOCATION_CITY] = "Linz"
-        data[SemanticKeys.SOURCES] = data[SemanticKeys.URL]!!
-
-        val pictureUrl = event.select("img").attr("src")
-        if (pictureUrl.isNotBlank()) {
-            data[SemanticKeys.PICTURE_URL] = pictureUrl
-        }
-
+    override fun parseMultipleStructuredEvents(event: Element): List<StructuredEvent> {
+        val builder = StructuredEvent
+            .builder()
+            .withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(baseUrl))
+            .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(baseUrl))
+            .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Café Traxlmayr")
+            .withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse("https://www.cafe-traxlmayr.at/"))
+            .withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Linz")
+            .withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(event.select("img").attr("src")))
         val title = event.select("h3").text()
         return if (title.contains("|")) {
-            parseConcert(title, event, data)
+            parseConcert(title, event, builder)
         } else if (title == "Die nächsten Lesungen im Café Traxlmayr") {
-            parseLesungen(event, data)
+            parseLesungen(event, builder)
         } else if (title.contains("aktuelle Ausstellung im Café Traxlmayr")) {
             //ignore
             emptyList()
@@ -56,7 +52,11 @@ class CafeTraxlmayrCollector : TwoStepEventCollector<Element>("cafetraxlmayr") {
         }
     }
 
-    private fun parseConcert(title: String, event: Element, data: MutableMap<String, String>): List<Event> {
+    private fun parseConcert(
+        title: String,
+        event: Element,
+        builder: StructuredEvent.StructuredEventBuilder
+    ): List<StructuredEvent> {
         val split = title.split(" | ")
         val name = split[0].trim()
         val bodyLines = event.select(".modal-body p strong").textNodes()
@@ -65,11 +65,15 @@ class CafeTraxlmayrCollector : TwoStepEventCollector<Element>("cafetraxlmayr") {
 
         val startDate = parseDateForConcert(fullDateText.text().trim())
 
-        data[SemanticKeys.DESCRIPTION] = event.select(".modal-body").text()
-        return listOf(Event(name, startDate, data))
+        builder
+            .withName(name)
+            .withStartDate(startDate)
+            .withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, event.select(".modal-body").text())
+
+        return listOf(builder.build())
     }
 
-    private fun parseLesungen(event: Element, data: MutableMap<String, String>): List<Event> {
+    private fun parseLesungen(event: Element, builder: StructuredEvent.StructuredEventBuilder): List<StructuredEvent> {
         return event.select(".modal-body div")
             .eachText()
             .mapNotNull {
@@ -79,7 +83,11 @@ class CafeTraxlmayrCollector : TwoStepEventCollector<Element>("cafetraxlmayr") {
                     val dateTimeSplit = it.split(": ")
                     val startDate = parseDateForLesung(dateTimeSplit[0])
                     val name = dateTimeSplit[1]
-                    Event(name, startDate, data)
+                    builder
+                        .copy()
+                        .withName(name)
+                        .withStartDate(startDate)
+                        .build()
                 }
             }
     }

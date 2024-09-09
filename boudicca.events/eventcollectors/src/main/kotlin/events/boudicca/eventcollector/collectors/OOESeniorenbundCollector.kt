@@ -3,7 +3,8 @@ package events.boudicca.eventcollector.collectors
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.Fetcher
 import base.boudicca.api.eventcollector.TwoStepEventCollector
-import base.boudicca.model.Event
+import base.boudicca.format.UrlUtils
+import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.time.LocalDate
@@ -28,25 +29,32 @@ class OOESeniorenbundCollector : TwoStepEventCollector<Pair<Document, String>>("
             .map { Pair(Jsoup.parse(fetcher.fetchUrl(it)), it) }
     }
 
-    override fun parseMultipleEvents(event: Pair<Document, String>): List<Event> {
-        val (eventDoc, url) = event
-        val data = mutableMapOf<String, String>()
+    override fun parseMultipleStructuredEvents(event: Pair<Document, String>): List<StructuredEvent> {
+        val (eventDoc, rawUrl) = event
 
+        val url = cleanupUrl(rawUrl)
         val name = eventDoc.select("div.title>p").text()
         val dates = getDates(eventDoc)
+        val description = eventDoc.select("div.subtitle>p").text()
+
+        val builder = StructuredEvent
+            .builder()
+            .withName(name)
+            .withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(url))
+            .withProperty(
+                SemanticKeys.LOCATION_NAME_PROPERTY,
+                eventDoc.select("div.venue").text()
+            ) //TODO location name and city here are not seperated at all -.-
+            .withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
+            .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(url))
+
         return dates.map {
             val (startDate, endDate) = it
-            val description = eventDoc.select("div.subtitle>p").text()
-
-            data[SemanticKeys.URL] = cleanupUrl(url)
-            data[SemanticKeys.LOCATION_NAME] =
-                eventDoc.select("div.venue").text() //TODO location name and city here are not seperated at all -.-
-            if (endDate != null) {
-                data[SemanticKeys.ENDDATE] = endDate.format(DateTimeFormatter.ISO_DATE_TIME)
-            }
-            data[SemanticKeys.DESCRIPTION] = description
-            data[SemanticKeys.SOURCES] = data[SemanticKeys.URL]!!
-            Event(name, startDate, data)
+            builder
+                .copy()
+                .withStartDate(startDate)
+                .withProperty(SemanticKeys.ENDDATE_PROPERTY, endDate)
+                .build()
         }
     }
 

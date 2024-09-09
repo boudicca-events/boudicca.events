@@ -3,7 +3,8 @@ package events.boudicca.eventcollector.collectors
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.Fetcher
 import base.boudicca.api.eventcollector.TwoStepEventCollector
-import base.boudicca.model.Event
+import base.boudicca.format.UrlUtils
+import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.time.LocalDate
@@ -30,7 +31,7 @@ class OKHVoecklabruckCollector : TwoStepEventCollector<Pair<String, String>>("ok
         return events
     }
 
-    override fun parseEvent(event: Pair<String, String>): Event {
+    override fun parseStructuredEvent(event: Pair<String, String>): StructuredEvent {
         val (eventUrl, eventType) = event
         val url = baseUrl + eventUrl
         val eventSite = Jsoup.parse(fetcher.fetchUrl(url))
@@ -38,30 +39,25 @@ class OKHVoecklabruckCollector : TwoStepEventCollector<Pair<String, String>>("ok
         val name = eventSite.select("h1").text()
         val dates = parseDates(eventSite)
 
-        val data = mutableMapOf<String, String>()
-        data[SemanticKeys.URL] = url
-        data[SemanticKeys.SOURCES] = data[SemanticKeys.URL]!!
-
-        if (eventType.isNotBlank()) {
-            data[SemanticKeys.TYPE] = eventType
-        }
-
-        data[SemanticKeys.DESCRIPTION] = eventSite.select("div.box_3").text()
-        data[SemanticKeys.PICTURE_URL] = baseUrl + eventSite.select("div#headerpic img.header").attr("src").trim()
-
-        data[SemanticKeys.LOCATION_NAME] = "Offenes Kulturhaus Vöcklabruck"
-        data[SemanticKeys.LOCATION_URL] = baseUrl
-        data[SemanticKeys.LOCATION_CITY] = "Vöcklabruck"
-
         val locationInfo = eventSite.select("p.ort").text()
-        if (locationInfo.contains("Barrierefreier Zugang")) {
-            data[SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY] = "true"
-        }
-        if (dates.second != null) {
-            data[SemanticKeys.ENDDATE] = DateTimeFormatter.ISO_DATE_TIME.format(dates.second)
-        }
+        val accessibleEntry = locationInfo.contains("Barrierefreier Zugang")
 
-        return Event(name, dates.first, data)
+        return StructuredEvent
+            .builder(name, dates.first)
+            .withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(url))
+            .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(url))
+            .withProperty(SemanticKeys.TYPE_PROPERTY, eventType)
+            .withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, eventSite.select("div.box_3").text())
+            .withProperty(
+                SemanticKeys.PICTURE_URL_PROPERTY,
+                UrlUtils.parse(baseUrl + eventSite.select("div#headerpic img.header").attr("src").trim())
+            )
+            .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Offenes Kulturhaus Vöcklabruck")
+            .withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse(baseUrl))
+            .withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Vöcklabruck")
+            .withProperty(SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY_PROPERTY, accessibleEntry)
+            .withProperty(SemanticKeys.ENDDATE_PROPERTY, dates.second)
+            .build()
     }
 
     private fun parseDates(element: Element): Pair<OffsetDateTime, OffsetDateTime?> {

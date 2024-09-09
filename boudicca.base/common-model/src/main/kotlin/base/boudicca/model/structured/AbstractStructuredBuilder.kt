@@ -2,10 +2,10 @@ package base.boudicca.model.structured
 
 import base.boudicca.Property
 
-abstract class AbstractStructuredBuilder<T>(protected val data: MutableMap<Key, String> = mutableMapOf()) {
+abstract class AbstractStructuredBuilder<T, B : AbstractStructuredBuilder<T, B>>(protected val data: MutableMap<Key, String> = mutableMapOf()) {
 
     @Throws(IllegalArgumentException::class)
-    fun <P> withProperty(property: Property<P>, value: P?): AbstractStructuredBuilder<T> {
+    fun <P> withProperty(property: Property<P>, value: P?): B {
         return withProperty(property, null, value)
     }
 
@@ -14,9 +14,10 @@ abstract class AbstractStructuredBuilder<T>(protected val data: MutableMap<Key, 
         property: Property<P>,
         language: String?,
         value: P?
-    ): AbstractStructuredBuilder<T> {
+    ): B {
         if (value == null) {
-            return this
+            @Suppress("UNCHECKED_CAST")
+            return this as B
         }
         return withKeyValuePair(
             property.getKey(language),
@@ -27,13 +28,15 @@ abstract class AbstractStructuredBuilder<T>(protected val data: MutableMap<Key, 
     fun withKeyValuePair(
         key: Key,
         value: String?
-    ): AbstractStructuredBuilder<T> {
+    ): B {
         if (value.isNullOrEmpty()) {
-            return this
+            @Suppress("UNCHECKED_CAST")
+            return this as B
         }
 
         data[key] = value
-        return this
+        @Suppress("UNCHECKED_CAST")
+        return this as B
     }
 
     abstract fun build(): T

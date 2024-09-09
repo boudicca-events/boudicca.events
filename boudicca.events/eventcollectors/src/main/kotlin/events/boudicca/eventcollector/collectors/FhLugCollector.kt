@@ -3,8 +3,10 @@ package events.boudicca.eventcollector.collectors
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.Fetcher
 import base.boudicca.api.eventcollector.collectors.IcalCollector
-import base.boudicca.model.Event
+import base.boudicca.format.UrlUtils
 import base.boudicca.model.EventCategory
+import base.boudicca.model.Registration
+import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
 import java.util.*
 
@@ -21,21 +23,25 @@ class FhLugCollector : IcalCollector("fhLUG") {
         return listOf(fetcher.fetchUrl(icsUrl))
     }
 
-    override fun postProcess(event: Event): Event {
-        return Event(event.name, event.startDate,
-            event.data.toMutableMap().apply {
-                put(SemanticKeys.TAGS, listOf("fhLUG", "Linux", "User Group", "Free Software").toString())
-                if (!event.data.containsKey(SemanticKeys.URL) && event.data.containsKey(SemanticKeys.DESCRIPTION)) {
-                    val url = tryGetUrlFromDescription(event.data[SemanticKeys.DESCRIPTION]!!)
-                    if (url.isPresent) {
-                        put(SemanticKeys.URL, url.get())
-                    }
-                }
-                put(SemanticKeys.TYPE, "techmeetup") // TODO same as with Technologieplauscherl
-                put(SemanticKeys.CATEGORY, EventCategory.TECH.name)
-                put(SemanticKeys.REGISTRATION, "free")
-                put(SemanticKeys.SOURCES, "${icsUrl}\n${baseUrl}")
-            })
+    override fun postProcess(event: StructuredEvent): StructuredEvent {
+        val builder = event
+            .toBuilder()
+            .withProperty(SemanticKeys.TAGS_PROPERTY, listOf("fhLUG", "Linux", "User Group", "Free Software"))
+            .withProperty(SemanticKeys.TYPE_PROPERTY, "techmeetup") // TODO same as with Technologieplauscherl
+            .withProperty(SemanticKeys.CATEGORY_PROPERTY, EventCategory.TECH)
+            .withProperty(SemanticKeys.REGISTRATION_PROPERTY, Registration.FREE)
+            .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(icsUrl, baseUrl))
+
+        if (event.getProperty(SemanticKeys.URL_PROPERTY)
+                .isEmpty() && event.getProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY).isNotEmpty()
+        ) {
+            val url = tryGetUrlFromDescription(event.getProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY).first().second)
+            if (url.isPresent) {
+                builder.withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(url.get()))
+            }
+        }
+
+        return builder.build()
     }
 
     private fun tryGetUrlFromDescription(description: String): Optional<String> {

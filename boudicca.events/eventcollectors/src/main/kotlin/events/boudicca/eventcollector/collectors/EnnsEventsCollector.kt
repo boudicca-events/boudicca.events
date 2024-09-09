@@ -3,7 +3,8 @@ package events.boudicca.eventcollector.collectors
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.Fetcher
 import base.boudicca.api.eventcollector.TwoStepEventCollector
-import base.boudicca.model.Event
+import base.boudicca.format.UrlUtils
+import base.boudicca.model.structured.StructuredEvent
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
 import java.io.StringReader
@@ -20,27 +21,30 @@ class EnnsEventsCollector : TwoStepEventCollector<JsonObject>("ennsevents") {
         return jsonObject.array<JsonObject>("items")!!.toList()
     }
 
-    override fun parseEvent(event: JsonObject): Event {
-
+    override fun parseStructuredEvent(event: JsonObject): StructuredEvent {
         val name = event.string("title")!!
         val startDate = parseDate(event)
-
-        val data = mutableMapOf<String, String>()
-        data[SemanticKeys.URL] = "https://erlebe.enns.at/events/e/" + event.string("id")
+        val url = "https://erlebe.enns.at/events/e/" + event.string("id")
         val description = (event.string("subtitle") + "\n" + event.string("description")).trim()
-        data[SemanticKeys.DESCRIPTION] = description
 
-        if (event.containsKey("picture")) {
-            data[SemanticKeys.PICTURE_URL] =
-                "https://erlebe.enns.at/uploads/images/thumbs_square/" + event.string("picture")
+        val locationUrl = if (event.containsKey("website") && !event.string("website").isNullOrBlank()) {
+            UrlUtils.parse(event.string("website")!!)
+        } else {
+            null
         }
 
-        if (event.containsKey("website") && !event.string("website").isNullOrBlank()) {
-            data[SemanticKeys.LOCATION_URL] = event.string("website")!!
-        }
-        data[SemanticKeys.SOURCES] = data[SemanticKeys.URL]!!
+        val pictureUrl = if (event.containsKey("picture")) UrlUtils.parse(
+            "https://erlebe.enns.at/uploads/images/thumbs_square/" + event.string("picture")
+        ) else null
 
-        return Event(name, startDate, data)
+        return StructuredEvent
+            .builder(name, startDate)
+            .withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(url))
+            .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(url))
+            .withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
+            .withProperty(SemanticKeys.PICTURE_URL_PROPERTY, pictureUrl)
+            .withProperty(SemanticKeys.LOCATION_URL_PROPERTY, locationUrl)
+            .build()
     }
 
     private fun parseDate(element: JsonObject): OffsetDateTime {

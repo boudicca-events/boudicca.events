@@ -11,6 +11,8 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
+
+//TODO needs redo, they relaunched their site
 class PosthofCollector : TwoStepEventCollector<Element>("posthof") {
 
     override fun getAllUnparsedEvents(): List<Element> {

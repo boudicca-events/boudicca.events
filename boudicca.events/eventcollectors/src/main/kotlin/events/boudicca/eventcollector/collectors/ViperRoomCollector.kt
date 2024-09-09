@@ -3,7 +3,8 @@ package events.boudicca.eventcollector.collectors
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.Fetcher
 import base.boudicca.api.eventcollector.TwoStepEventCollector
-import base.boudicca.model.Event
+import base.boudicca.format.UrlUtils
+import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.time.LocalDate
@@ -24,16 +25,13 @@ class ViperRoomCollector : TwoStepEventCollector<String>("viperroom") {
             .map { it.attr("href") }
     }
 
-    override fun parseEvent(event: String): Event {
+    override fun parseStructuredEvent(event: String): StructuredEvent {
         val eventSite = Jsoup.parse(fetcher.fetchUrl(event))
 
         val name = eventSite.select("h1.entry-title").text()
         val startDate = parseDate(eventSite)
 
-        val data = mutableMapOf<String, String>()
-        data[SemanticKeys.URL] = event
-        data[SemanticKeys.TYPE] = "concert"
-        data[SemanticKeys.DESCRIPTION] = eventSite.select("div#em-event-6").first()!!
+        val description = eventSite.select("div#em-event-6").first()!!
             .children()
             .toList()
             .filter {
@@ -47,14 +45,21 @@ class ViperRoomCollector : TwoStepEventCollector<String>("viperroom") {
             .joinToString("\n")
 
         val img = eventSite.select("div#em-event-6 p img")
-        if (!img.isEmpty()) {
-            data[SemanticKeys.PICTURE_URL] = img.first()!!.attr("src")
+        val pictureUrl = if (!img.isEmpty()) {
+            UrlUtils.parse(img.first()!!.attr("src"))
+        } else {
+            null
         }
 
-        data[SemanticKeys.LOCATION_NAME] = "Viper Room"
-        data[SemanticKeys.SOURCES] = data[SemanticKeys.URL]!!
-
-        return Event(name, startDate, data)
+        return StructuredEvent
+            .builder(name, startDate)
+            .withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(event))
+            .withProperty(SemanticKeys.TYPE_PROPERTY, "concert")
+            .withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
+            .withProperty(SemanticKeys.PICTURE_URL_PROPERTY, pictureUrl)
+            .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Viper Room")
+            .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(event))
+            .build()
     }
 
     private fun parseDate(event: Element): OffsetDateTime {

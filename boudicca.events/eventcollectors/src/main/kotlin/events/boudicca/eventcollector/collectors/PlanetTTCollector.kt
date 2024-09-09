@@ -3,7 +3,8 @@ package events.boudicca.eventcollector.collectors
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.Fetcher
 import base.boudicca.api.eventcollector.TwoStepEventCollector
-import base.boudicca.model.Event
+import base.boudicca.format.UrlUtils
+import base.boudicca.model.structured.StructuredEvent
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
 import org.jsoup.Jsoup
@@ -56,7 +57,7 @@ class PlanetTTCollector : TwoStepEventCollector<Element>("planettt") {
         }
     }
 
-    override fun parseEvent(event: Element): Event {
+    override fun parseStructuredEvent(event: Element): StructuredEvent {
 
         val eventId = event.attr("data-eventid")
         val postId = event.attr("data-postid")
@@ -71,23 +72,29 @@ class PlanetTTCollector : TwoStepEventCollector<Element>("planettt") {
         val fullEvent = Jsoup.parse(jsonResponse.string("data")!!)
 
         val startDate = parseDate(fullEvent)
-        val data = mutableMapOf<String, String>()
 
         val name = fullEvent.select("div.pl-modal-name").text()
-        data[SemanticKeys.URL] = parseUrl(fullEvent)
+        val url = parseUrl(fullEvent)
         val pictureUrl = fullEvent.select("div.pl-modal-thumbnail img").attr("src")
-        if (pictureUrl.isNotBlank()) {
-            data[SemanticKeys.PICTURE_URL] = pictureUrl
-        }
-        data[SemanticKeys.DESCRIPTION] = fullEvent.select("div.pl-modal-desc > p").text() + "\n" +
-                fullEvent.select("div.pl-modal-desc > div.acts").text()
 
         //TODO you could parse acts from this site
-        data[SemanticKeys.TYPE] = "concert"
-        mapLocation(data, fullEvent)
-        data[SemanticKeys.SOURCES] = data[SemanticKeys.URL]!!
 
-        return Event(name, startDate, data)
+        val builder = StructuredEvent
+            .builder(name, startDate)
+            .withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(url))
+            .withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(pictureUrl))
+            .withProperty(
+                SemanticKeys.DESCRIPTION_TEXT_PROPERTY,
+                fullEvent.select("div.pl-modal-desc > p")
+                    .text() + "\n" + fullEvent.select("div.pl-modal-desc > div.acts").text()
+            )
+            .withProperty(SemanticKeys.TYPE_PROPERTY, "concert")
+            .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(url))
+
+        mapLocation(builder, fullEvent)
+
+        return builder
+            .build()
     }
 
     private fun parseUrl(fullEvent: Document): String {
@@ -102,25 +109,28 @@ class PlanetTTCollector : TwoStepEventCollector<Element>("planettt") {
         return ""
     }
 
-    private fun mapLocation(data: MutableMap<String, String>, event: Element) {
+    private fun mapLocation(builder: StructuredEvent.StructuredEventBuilder, event: Element) {
         val location = event.select("div.pl-modal-location").attr("data-location")
         when (location) {
             "simmcity" -> {
-                data[SemanticKeys.LOCATION_NAME] = "SiMMCity"
-                data[SemanticKeys.LOCATION_URL] = "https://simmcity.at/"
-                data[SemanticKeys.LOCATION_CITY] = "Wien"
+                builder
+                    .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "SiMMCity")
+                    .withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse("https://simmcity.at/"))
+                    .withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Wien")
             }
 
             "szene" -> {
-                data[SemanticKeys.LOCATION_NAME] = "Szene"
-                data[SemanticKeys.LOCATION_URL] = "https://szene.wien/"
-                data[SemanticKeys.LOCATION_CITY] = "Wien"
+                builder
+                    .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Szene")
+                    .withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse("https://szene.wien/"))
+                    .withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Wien")
             }
 
             "planet" -> {
-                data[SemanticKeys.LOCATION_NAME] = "Gasometer"
-                data[SemanticKeys.LOCATION_URL] = "https://www.gasometer.at/"
-                data[SemanticKeys.LOCATION_CITY] = "Wien"
+                builder
+                    .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Gasometer")
+                    .withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse("https://www.gasometer.at/"))
+                    .withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Wien")
             }
 
             else -> {

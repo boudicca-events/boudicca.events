@@ -4,6 +4,7 @@ import base.boudicca.Property
 import base.boudicca.keyfilters.KeyFilters
 import base.boudicca.keyfilters.KeySelector
 import base.boudicca.model.Entry
+import base.boudicca.model.structured.StructuredEvent.StructuredEventBuilder
 import java.util.*
 
 
@@ -52,8 +53,12 @@ fun structuredEntryBuilder() : StructuredEntryBuilder {
     return StructuredEntryBuilder()
 }
 
-class StructuredEntryBuilder(data: Map<Key, String> = emptyMap()) : AbstractStructuredBuilder<StructuredEntry>(data.toMutableMap()) {
+class StructuredEntryBuilder(data: Map<Key, String> = emptyMap()) : AbstractStructuredBuilder<StructuredEntry, StructuredEntryBuilder>(data.toMutableMap()) {
     override fun build(): StructuredEntry {
         return data.toMap()
+    }
+
+    fun copy(): StructuredEntryBuilder {
+        return StructuredEntryBuilder(data.toMutableMap())
     }
 }

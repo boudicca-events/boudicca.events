@@ -53,7 +53,7 @@ class IcalParserTest {
         val data = event.data
         assertEquals("Other title", event.name)
         assertEquals(OffsetDateTime.of(2007, 12, 14, 1, 0, 0, 0, ZoneOffset.ofHours(1)), event.startDate)
-        assertEquals("2007-12-14T01:10:00+01:00", data[SemanticKeys.ENDDATE])
+        assertEquals("2007-12-14T01:10:00+01:00", data[SemanticKeys.ENDDATE + ":format=date"])
         assertEquals(
             "a840b839819203073326e820176eb4ba757cc96cca71f43f8d34946a917dafe6@events.valug.at",
             data["ics.event.uid"]
@@ -135,15 +135,15 @@ class IcalParserTest {
     }
 
     private fun mapVEventToEvent(vEvent: VEvent): Event {
-        return IcalParser.mapVEventToEvent(vEvent).get()
+        return IcalParser.mapVEventToEvent(vEvent).get().toFlatEvent()
     }
 
     private fun tryMapVEventToEvent(vEvent: VEvent): Optional<Event> {
-        return IcalParser.mapVEventToEvent(vEvent)
+        return IcalParser.mapVEventToEvent(vEvent).map { it.toFlatEvent() }
     }
 
     private fun loadAndParseAndMapEvents(testFile: String): List<Event> {
-        return IcalParser.parseAndMapToEvents(loadTestData(testFile))
+        return IcalParser.parseAndMapToEvents(loadTestData(testFile)).map { it.toFlatEvent() }
     }
 
     private fun loadTestData(testFile: String) =

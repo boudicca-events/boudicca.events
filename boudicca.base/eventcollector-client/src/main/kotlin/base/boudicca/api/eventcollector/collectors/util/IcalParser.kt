@@ -1,16 +1,17 @@
 package base.boudicca.api.eventcollector.collectors.util
 
 import base.boudicca.SemanticKeys
-import base.boudicca.model.Event
+import base.boudicca.TextProperty
+import base.boudicca.model.structured.StructuredEvent
 import biweekly.Biweekly
 import biweekly.component.VEvent
 import biweekly.property.DateEnd
 import biweekly.property.DateStart
 import biweekly.util.ICalDate
 import org.slf4j.LoggerFactory
+import java.net.URI
 import java.time.OffsetDateTime
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 import java.util.*
 
 /**
@@ -24,7 +25,7 @@ object IcalParser {
      * parses an icalResource (aka the string contents of a .ics file) to vEvents and maps them to Events
      * @param icalResource the ics file to parse and map
      */
-    fun parseAndMapToEvents(icalResource: String): List<Event> {
+    fun parseAndMapToEvents(icalResource: String): List<StructuredEvent> {
         val vEvents = parseToVEvents(icalResource)
         return mapVEventsToEvents(vEvents)
     }
@@ -43,7 +44,7 @@ object IcalParser {
     /**
      * maps a collection of vEvents to Events
      */
-    fun mapVEventsToEvents(vEvents: List<VEvent>): List<Event> {
+    fun mapVEventsToEvents(vEvents: List<VEvent>): List<StructuredEvent> {
         return vEvents
             .map { mapVEventToEvent(it) } //map to optional events
             .filter { it.isPresent } //filter only successful ones
@@ -53,7 +54,7 @@ object IcalParser {
     /**
      * maps a single vEvent to an Event. returns an optional which is empty when the vEvent does not include the required data for creating an Event
      */
-    fun mapVEventToEvent(vEvent: VEvent): Optional<Event> {
+    fun mapVEventToEvent(vEvent: VEvent): Optional<StructuredEvent> {
         if (vEvent.dateStart == null) {
             LOG.warn("event with uid ${vEvent.uid} and url ${vEvent.url} has no startDate!")
             return Optional.empty()
@@ -62,28 +63,29 @@ object IcalParser {
         val name = vEvent.summary.value
         val startDate = getStartDate(vEvent.dateStart)
 
-        val data = mutableMapOf<String, String>()
+        val builder = StructuredEvent
+            .builder(name, startDate)
         if (vEvent.location != null) {
-            data[SemanticKeys.LOCATION_NAME] = vEvent.location.value
+            builder.withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, vEvent.location.value)
         }
         if (vEvent.description != null) {
-            data[SemanticKeys.DESCRIPTION] = vEvent.description.value
+            builder.withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, vEvent.description.value)
         }
         if (vEvent.url != null) {
-            data[SemanticKeys.URL] = vEvent.url.value
+            builder.withProperty(SemanticKeys.URL_PROPERTY, URI.create(vEvent.url.value))
         }
         if (vEvent.uid != null) {
-            data["ics.event.uid"] = vEvent.uid.value
+            builder.withProperty(TextProperty("ics.event.uid"), vEvent.uid.value)
         }
         if (vEvent.dateEnd != null) {
-            data[SemanticKeys.ENDDATE] = getEndDate(vEvent.dateEnd)
+            builder.withProperty(SemanticKeys.ENDDATE_PROPERTY, getEndDate(vEvent.dateEnd))
         }
 
-        return Optional.of(Event(name, startDate, data))
+        return Optional.of(builder.build())
     }
 
-    private fun getEndDate(dateEnd: DateEnd): String {
-        return DateTimeFormatter.ISO_DATE_TIME.format(getDate(dateEnd.value))
+    private fun getEndDate(dateEnd: DateEnd): OffsetDateTime {
+        return getDate(dateEnd.value)
     }
 
     private fun getStartDate(dateStart: DateStart): OffsetDateTime {

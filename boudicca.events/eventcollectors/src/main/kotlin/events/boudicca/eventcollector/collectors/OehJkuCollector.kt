@@ -3,7 +3,8 @@ package events.boudicca.eventcollector.collectors
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.Fetcher
 import base.boudicca.api.eventcollector.TwoStepEventCollector
-import base.boudicca.model.Event
+import base.boudicca.format.UrlUtils
+import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.time.LocalDate
@@ -24,30 +25,26 @@ class OehJkuCollector : TwoStepEventCollector<String>("oehjku") {
             .map { it.attr("href") }
     }
 
-    override fun parseEvent(event: String): Event {
+    override fun parseStructuredEvent(event: String): StructuredEvent {
         val eventSite = Jsoup.parse(fetcher.fetchUrl(baseUrl + event))
 
         val name = eventSite.select("h1").text()
         val startDate = parseDate(eventSite)
 
-        val data = mutableMapOf<String, String>()
-        data[SemanticKeys.URL] = baseUrl + event
-
         val description = eventSite.select("div.generic-two-column-stacked-region--footer").text()
-        if (description.isNotBlank()) {
-            data[SemanticKeys.DESCRIPTION] = description
-        }
 
         val location = eventSite.select("div.generic-two-column-stacked-region--second").text()
             .removePrefix("Ort: ")
-        if (location.isNotBlank()) {
-            data[SemanticKeys.LOCATION_NAME] = location
-            data[SemanticKeys.LOCATION_URL] = "https://www.jku.at/"
-            data[SemanticKeys.LOCATION_CITY] = "Linz"
-        }
-        data[SemanticKeys.SOURCES] = data[SemanticKeys.URL]!!
 
-        return Event(name, startDate, data)
+        return StructuredEvent
+            .builder(name, startDate)
+            .withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(baseUrl + event))
+            .withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
+            .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, location)
+            .withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse("https://www.jku.at/"))
+            .withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Linz")
+            .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(baseUrl + event))
+            .build()
     }
 
     private fun parseDate(element: Element): OffsetDateTime {

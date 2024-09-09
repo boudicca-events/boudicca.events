@@ -3,6 +3,7 @@ package base.boudicca.api.eventcollector.collectors
 import base.boudicca.api.eventcollector.EventCollector
 import base.boudicca.api.eventcollector.collectors.util.IcalParser
 import base.boudicca.model.Event
+import base.boudicca.model.structured.StructuredEvent
 import biweekly.component.VEvent
 import java.util.*
 
@@ -18,7 +19,7 @@ abstract class IcalCollector(private val name: String) : EventCollector {
         return name
     }
 
-    override fun collectEvents(): List<Event> {
+    override fun collectStructuredEvents(): List<StructuredEvent> {
         val icalResources = getAllIcalResources()
 
         return icalResources
@@ -36,14 +37,14 @@ abstract class IcalCollector(private val name: String) : EventCollector {
     /**
      * maps one VEvent to an (optional) Event. implementations can override this method to for example extract additional properties from the VEvent
      */
-    open fun mapVEventToEvent(vEvent: VEvent): Optional<Event> {
+    open fun mapVEventToEvent(vEvent: VEvent): Optional<StructuredEvent> {
         return IcalParser.mapVEventToEvent(vEvent)
     }
 
     /**
      * postProcess the Event. can be overridden to add for example static additional properties to the Event.
      */
-    open fun postProcess(event: Event): Event {
+    open fun postProcess(event: StructuredEvent): StructuredEvent {
         return event
     }
 

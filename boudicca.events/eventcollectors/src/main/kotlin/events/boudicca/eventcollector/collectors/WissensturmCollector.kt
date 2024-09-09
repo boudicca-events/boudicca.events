@@ -3,7 +3,8 @@ package events.boudicca.eventcollector.collectors
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.Fetcher
 import base.boudicca.api.eventcollector.TwoStepEventCollector
-import base.boudicca.model.Event
+import base.boudicca.format.UrlUtils
+import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.time.LocalDate
@@ -33,41 +34,51 @@ class WissensturmCollector : TwoStepEventCollector<Pair<String, Document>>("wiss
             .map { Pair(it, Jsoup.parse(fetcher.fetchUrl(it))) }
     }
 
-    override fun parseMultipleEvents(event: Pair<String, Document>): List<Event> {
+    override fun parseMultipleStructuredEvents(event: Pair<String, Document>): List<StructuredEvent> {
         val (url, eventDoc) = event
-        val data = mutableMapOf<String, String>()
 
         val name = eventDoc.select("div.kw-kurdetails h1").text()
         val datesAndLocations = parseDatesAndLocations(eventDoc)
 
         val description = eventDoc.select("div.kw-kurdetails div.content-txt:nth-child(2)").text()
-        if (description.isNotBlank()) {
-            data[SemanticKeys.DESCRIPTION] = description
-        }
-        data[SemanticKeys.URL] = url
 
-        val pictureUrl = eventDoc.select("div.kw-kurdetails div.content-txt:nth-child(2) img")
-        if (pictureUrl.isNotEmpty()) {
-            data[SemanticKeys.PICTURE_URL] = pictureUrl.attr("src")
+        val img = eventDoc.select("div.kw-kurdetails div.content-txt:nth-child(2) img")
+        val pictureUrl = if (img.isNotEmpty()) {
+            UrlUtils.parse(img.attr("src"))
+        } else {
+            null
         }
+        val builder = StructuredEvent
+            .builder()
+            .withName(name)
+            .withProperty(SemanticKeys.PICTURE_URL_PROPERTY, pictureUrl)
+            .withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
+            .withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(url))
+            .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(url))
 
         return datesAndLocations
             .filter { it.first != null }
             .map {
-                val dataCopy = data.toMutableMap()
-                dataCopy[SemanticKeys.ENDDATE] = DateTimeFormatter.ISO_DATE_TIME.format(it.second)
+                val builderCopy = builder
+                    .copy()
+                    .withStartDate(it.first!!)
+                    .withProperty(SemanticKeys.ENDDATE_PROPERTY, it.second)
                 if (
                     it.third.contains("wissensturm", ignoreCase = true)
                     || it.third.contains("WT;", ignoreCase = false)
                 ) {
-                    dataCopy[SemanticKeys.LOCATION_NAME] = "Wissensturm"
-                    dataCopy[SemanticKeys.LOCATION_URL] = "https://wissensturm.linz.at/"
-                    dataCopy[SemanticKeys.LOCATION_CITY] = "Linz"
+                    builderCopy
+                        .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Wissensturm")
+                        .withProperty(
+                            SemanticKeys.LOCATION_URL_PROPERTY,
+                            UrlUtils.parse("https://wissensturm.linz.at/")
+                        )
+                        .withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Linz")
                 } else {
-                    dataCopy[SemanticKeys.LOCATION_NAME] = it.third
+                    builderCopy
+                        .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, it.third)
                 }
-                dataCopy[SemanticKeys.SOURCES] = data[SemanticKeys.URL]!!
-                Event(name, it.first!!, dataCopy)
+                builderCopy.build()
             }
     }
 

@@ -3,8 +3,9 @@ package events.boudicca.eventcollector.collectors
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.Fetcher
 import base.boudicca.api.eventcollector.collectors.IcalCollector
-import base.boudicca.model.Event
 import base.boudicca.model.EventCategory
+import base.boudicca.model.Registration
+import base.boudicca.model.structured.StructuredEvent
 
 class ZeroxACollector : IcalCollector("ZeroxA") {
 
@@ -16,14 +17,14 @@ class ZeroxACollector : IcalCollector("ZeroxA") {
         return listOf(fetcher.fetchUrl(icsUrl))
     }
 
-    override fun postProcess(event: Event): Event {
-        return Event(event.name, event.startDate,
-            event.data.toMutableMap().apply {
-                put(SemanticKeys.TAGS, listOf("0xA", "Science", "Association").toString())
-                put(SemanticKeys.TYPE, "techmeetup") // TODO same as with Technologieplauscherl
-                put(SemanticKeys.CATEGORY, EventCategory.TECH.name)
-                put(SemanticKeys.REGISTRATION, "free")
-                put(SemanticKeys.SOURCES, "${icsUrl}\n${baseUrl}")
-            })
+    override fun postProcess(event: StructuredEvent): StructuredEvent {
+        return event
+            .toBuilder()
+            .withProperty(SemanticKeys.TAGS_PROPERTY, listOf("0xA", "Science", "Association"))
+            .withProperty(SemanticKeys.TYPE_PROPERTY, "techmeetup") // TODO same as with Technologieplauscherl
+            .withProperty(SemanticKeys.CATEGORY_PROPERTY, EventCategory.TECH)
+            .withProperty(SemanticKeys.REGISTRATION_PROPERTY, Registration.FREE)
+            .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(icsUrl, baseUrl))
+            .build()
     }
 }

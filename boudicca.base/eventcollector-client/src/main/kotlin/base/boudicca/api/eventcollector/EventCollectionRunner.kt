@@ -69,7 +69,7 @@ class EventCollectionRunner(
             if (event.name.isBlank()) {
                 LOG.warn("event has empty name: $event")
             }
-            if (event.data[SemanticKeys.SOURCES].isNullOrBlank()) {
+            if (event.toStructuredEvent().getProperty(SemanticKeys.SOURCES_PROPERTY).isEmpty()) {
                 LOG.error("event has no sources: $event")
             }
             for (entry in event.data.entries) {

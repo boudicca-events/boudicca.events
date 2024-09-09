@@ -3,7 +3,8 @@ package events.boudicca.eventcollector.collectors
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.Fetcher
 import base.boudicca.api.eventcollector.TwoStepEventCollector
-import base.boudicca.model.Event
+import base.boudicca.format.UrlUtils
+import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
 import java.time.LocalDate
 import java.time.OffsetDateTime
@@ -22,7 +23,7 @@ class BurgClamCollector : TwoStepEventCollector<String>("burgclam") {
             .map { it.attr("href") }
     }
 
-    override fun parseEvent(event: String): Event {
+    override fun parseStructuredEvent(event: String): StructuredEvent {
         val eventSite = Jsoup.parse(fetcher.fetchUrl(event))
 
         val headLines = eventSite.select("h3.av-special-heading-tag")
@@ -39,21 +40,17 @@ class BurgClamCollector : TwoStepEventCollector<String>("burgclam") {
             eventSite.select("div.av-subheading").text()
         }
 
-        val data = mutableMapOf<String, String>()
-        data[SemanticKeys.URL] = event
-
-        val pictureUrl = eventSite.select("img.avia_image").attr("src")
-        if (pictureUrl.isNotBlank()) {
-            data[SemanticKeys.PICTURE_URL] = pictureUrl
-        }
-
-        data[SemanticKeys.DESCRIPTION] = eventSite.select("div.av-subheading").text()
-
-        data[SemanticKeys.LOCATION_NAME] = "Burg Clam"
-        data[SemanticKeys.SOURCES] = data[SemanticKeys.URL]!!
-
-        return Event(name, startDate, data)
-
+        return StructuredEvent
+            .builder(name, startDate)
+            .withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(event))
+            .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(event))
+            .withProperty(
+                SemanticKeys.PICTURE_URL_PROPERTY,
+                UrlUtils.parse(eventSite.select("img.avia_image").attr("src"))
+            )
+            .withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, eventSite.select("div.av-subheading").text())
+            .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Burg Clam")
+            .build()
     }
 
     private fun parseDate(dateText: String): OffsetDateTime {

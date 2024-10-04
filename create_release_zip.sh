@@ -6,8 +6,11 @@ rm release.zip
 
 set -e
 
+#clean
+./gradlew clean
+
 #build new release
-./gradlew publish -DdoSign=true
+./gradlew publish -DdoSign=true -Psigning.password="$1"
 
 #remove maven repo files
 find build/release_repo -name "maven-metadata.*" -delete

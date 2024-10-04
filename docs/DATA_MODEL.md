@@ -2,26 +2,28 @@
 
 ## Overview
 
-TODO split serialization and mental/programming model into two. name them (maybe) structured and flat view/models?
-TODO remove/change "Property"
-TODO document better sorting for keys
-
-Boudicca is a database containing Entries, which are a collection of `Key`->`Value` Pairs, so-called Properties.
-For example `name`->`My Entry` would be a Property with key "name" and value "My Entry" and could represent the name of
-this Entry.
+Boudicca is a database containing Entries, which are a collection of `Key`->`Value` Pairs.
+One example of such a Pair could be `name`->`My Entry` which has the key "name" and the value "My Entry" and could
+represent the name of this Entry.
 
 An `Entry` is just a generic way of talking about the data in Boudicca, because it has no semantic meaning.
 Normally you will work with `Events`, which are Entries representing some event.
-To make those events interoperable we have standardised properties and their meaning which you can find in
+To make those events interoperable we have standardised fields and their meaning which you can find in
 our [Semantic Conventions](SEMANTIC_CONVENTIONS.md) documentation.
-But nothing is stopping you from adding your own properties to Entries or Events.
+But nothing is stopping you from adding your own fields to Entries or Events.
 
-Sometimes you need more information about the value of one Property, for example which language the value is in, or if
+Sometimes you need more information about the value of one Pair, for example which language the value is in, or if
 this value is supposed to be a number, text, date, ...
-Boudicca encodes this information into the Key of the Property by appending `Variants` to the property name, which look
-like `:VariantName=VariantValue`
-For example to specify that the Property "name" is in english we could have the Property `name:lang=en`->`My Entry` or
+For this Boudicca adds so-called `Variant` information to the `Key`,
+for example we can add one `Variant` with the name `lang` and the value `en` to our key,
+which specifies that the language of the value is english.
+
+When sending or receiving Entries/Events we need to "flatten" the `Keys` into a single string.
+To do this we take the key name and append it with all the variants seperated by `:`.
+Variant name and value are seperated by a `=`.
+For example with the key "name" which is in english we could have the flat key `name:lang=en`->`My Entry` or
 to specify that something is a number we can write `price:format=number`->`20`.
+
 See [Format](#format-variant) and [Language](#language-variant) for more information on those Variants.
 You can of course chain and combine those Variants, but be aware that most of the time the same Variant is only allowed
 to appear once per Key and watch out for the [canonical form](#canonical-form).
@@ -34,13 +36,7 @@ help you understand those definitions better.
 * Entry: One generic entry in our database, which consists of multiple `Key`->`Value` pairs
 * Event: A specialised `Entry`, which represents an event and has two mandatory keys: `name` and `startDate`.
   See [Semantic Conventions](SEMANTIC_CONVENTIONS.md) for more information.
-* Property: One `Key`->`Value` pair of a property.
-* PropertyKey: Key value of one `Key`->`Value` mapping. Can contain multiple `Variants`. Format
-  is `PropertyName[:Variant]*` and
-  it is encoded as a UTF-8 string.
-* PropertyValue: The value of one `Property`. Has to conform to the specified `Variant`, so conform to the correct
-  language and/or format. It is encoded as a UTF-8 string.
-* PropertyName: Name of one `Property` of an `Entry`. Can only consist of letters, numbers and `.`
+* FieldName: Name of one `Key` of an `Entry`. Can only consist of letters, numbers and `.`. Can have multiple `Variants`
 * Variant: Specifying what kind of Variant (for example what language or what format) this key is. Format
   is `VariantName=VariantValue`
 * VariantName: The name of the Variant.
@@ -52,7 +48,7 @@ Currently supported variants are:
 * [Language](#language-variant): which language a value is in
 * [Format](#format-variant): what kind of data this value is, for example text, dates, ...
 
-If a certain Variant makes sense for a certain property needs to be decided per property and that properties defined
+If a certain Variant makes sense for a certain field needs to be decided per field and that fields defined
 meaning. For example, it does not make sense to have a language variant for `startDate`.
 
 ### Examples
@@ -65,18 +61,10 @@ Let's look at an Event with following `Key`->`Value` pairs:
 * `description:lang=de` -> `Mein Event ist großartig!`
 * `description:format=markdown:lang=de` -> `#Mein Event ist großartig!`
 
-The `Key`->`Value` pair `startDate:format=date` -> `2024-04-27T23:59:00+02:00` is one `Property` and has
-the `PropertyKey` `startDate:format=date` and the `PropertyValue` `2024-04-27T23:59:00+02:00`
-
-The `PropertyKey` `startDate:format=date` consists of the `PropertyName` `startDate` and one `Variant` `format=date`,
+The `Key` `startDate:format=date` consists of the `FieldName` `startDate` and one `Variant` `format=date`,
 seperated by `:`.
 
 The `Variant` `format=date` consists of the `VariantName` `format` and the `VariantValue` `date`.
-
-This Event has multiple `Properties`, whose `PropertyNames` are `name`, `startDate` and `description`.
-
-While the `PropertyNames` `name` and `startDate` each only occur in one `Property`, the `PropertyName` `description`
-occurs in three `Properties` with Keys: `description`, `description:lang=de` and `description:format=markdown:lang=de`.
 
 ## Serialization
 
@@ -112,26 +100,26 @@ from our EventDB and our Search Service are guaranteed to be canonical.
 
 ## KeyFilters
 
-When you are working with Properties which have multiple Variants or are using the [Boudicca Query Language](QUERY.md)
+When you are working with Fields which have multiple Variants or are using the [Boudicca Query Language](QUERY.md)
 you often want to select some subset of all available Properties of one Event for querying or displaying.
 To help you with this Boudicca offers support for so-called KeyFilters, which look like normal Keys.
-One example would be `description:lang=de`, which is a filter filtering for the PropertyName `description` and the
+One example would be `description:lang=de`, which is a filter filtering for the FieldName `description` and the
 Variant `lang=de`.
-This is done by taking all available Properties of one Event, taking only those Properties with the
-PropertyName `description` and then only taking those whose `lang`Variant matches the value `de`. It does not matter if
-the Property has additional Variants, those will be ignored.
+This is done by taking all available Keys of one Event, taking only those with the
+FieldName `description` and then only taking those whose `lang` Variant matches the value `de`. It does not matter if
+the Key has additional Variants, those will not be looked at.
 
-If KeyFilters return more than one Property, the result will be sorted alphabetically by
-their [Canonical Form](#canonical-form).
+If KeyFilters return more than one Keys, the result will be sorted alphabetically by
+their FieldName, and then by their first Variant, then their second Variant, and so on.
 
-One difference compared to normal Keys is the empty VariantValue, like `lang=`. This means "select all Properties which
+One difference compared to normal Keys is the empty VariantValue, like `lang=`. This means "select all Keys which
 do NOT have the VariantName at all".
-Another difference is that `*` is allowed as a PropertyName, this would match and select all Properties. You can still
+Another difference is that `*` is allowed as a FieldName, this would match and select all FieldNames. You can still
 add Variant Filters to the `*` filter.
-You can also use `*` as a PropertyValue, like `lang=*`, which will select all Properties which do have a language
+You can also use `*` as a VariantValue, like `lang=*`, which will select all Keys which do have a language
 Variant, regardless of what value this Variant has.
 
-Let's look at some examples given following Properties with the PropertyName `description` :
+Let's look at some examples given following Keys with the FieldName `description` :
 
 * `description`
 * `description:lang=de`
@@ -139,14 +127,13 @@ Let's look at some examples given following Properties with the PropertyName `de
 * `description:lang=en`
 * `description:lang=en:format=markdown`
 
-With the filter `description:lang=de` you would get the two Properties `description:lang=de`
+With the filter `description:lang=de` you would get the two Keys `description:lang=de`
 and `description:lang=de:format=markdown`.
 
-With the filter `description` you would get all Properties as a result, because there is no filter except the
-PropertyName.
+With the filter `description` you would get all Keys as a result, because there is no filter except the FieldName.
 
 With the empty VariantValue filter `description:lang=` you will only get `description` as a result, since this is the
-only Property without the `lang` Variant.
+only Key without the `lang` Variant.
 
 ## Unknown Variants
 
@@ -155,16 +142,16 @@ behaviour is suggested for all Software handling Boudicca Keys.
 
 ## Variants and the Search Service
 
-The Search Service will evaluate [Queries](QUERY.md) like the `contains` Query by getting all Properties
-matching the [KeyFilter](#keyfilters) given to the Query and then performing the Query against all those Properties.
+The Search Service will evaluate [Queries](QUERY.md) like the `contains` Query by getting all Keys
+matching the [KeyFilter](#keyfilters) given to the Query and then performing the Query against all those Keys.
 If any match, it will evaluate to true.
 The only Variant the Search Service does know about is the [Format Variant](#format-variant), because this will
-influence how searching, parsing and sorting works on those Variants.
+influence how searching, parsing and sorting works on those Values.
 
-If you create invalid combinations of Queries and Variants (like an `contains` Query and a `format=date` Variant) Search
-Service will simply ignore those Properties as if they were not present.
+If you create invalid combinations of Queries and Variants (like an `contains` Query and a `format=date` Key) Search
+Service will simply ignore those Keys as if they were not present.
 
-So lets say you have the following Properties:
+So lets say you have the following Keys:
 
 * `description`
 * `description:lang=de`
@@ -172,44 +159,44 @@ So lets say you have the following Properties:
 * `description:lang=en`
 * `description:lang=en:format=date`
 
-For the query `"description" contains "my search text"` Search Service will first select all Properties which
+For the query `"description" contains "my search text"` Search Service will first select all Keys which
 match the given KeyFilter `description`, which are all of the above. Then it will discard all with an invalid format
-Variant, which leaves us with the Properties `description`, `description:lang=de` and `description:lang=en`. It
-will now evaluate the `contains` query against the value of those three Properties, and if any match the query
+Variant, which leaves us with the Keys `description`, `description:lang=de` and `description:lang=en`. It
+will now evaluate the `contains` query against the value of those three Keys, and if any match the query
 will evaluate to true.
 
 ## Variants and the HTML-Publisher
 
-For displaying properties with different Formats the HTML-Publisher follows
+For displaying values with different Formats the HTML-Publisher follows
 the [Semantic Conventions](SEMANTIC_CONVENTIONS.md) and tries to find the Variant with the highest priority.
 
-If the user has selected a language (feature pending :P ) the Publisher will preferably select a Property with
+If the user has selected a language (feature pending :P ) the Publisher will preferably select a Value with
 the selected language.
 If none are available (or the user has no language selected) it will fall back to the default language (aka
-Properties without any language).
-If none are available it will select any Property with a valid Format.
+Keys without any language).
+If none are available it will select any Value with a valid Format.
 
-For example, given following Properties:
+For example, given following Keys:
 
 * `description`
 * `description:lang=de:format=date`
 * `description:lang=en`
 * `description:lang=en:format=number`
 
-If the Publisher wants to show some property with the format `text` (aka no format Variant) and the user has selected
-the language `de`, the Publisher
-would first look at all Properties with `lang=de`. There is only one, `description:lang=de:format=date`, but it
-has the wrong format so the Publisher will try again with the default language, aka `lang=`.
-The only Property without language is `description`, which has the correct format and is selected.
+If the HTML-Publisher wants to show some value with the format `text` (aka no format Variant) and the user has selected
+the language `de`, the HTML-Publisher
+would first look at all Keys with `lang=de`. There is only one, `description:lang=de:format=date`, but it
+has the wrong format so the HTML-Publisher will try again with the default language, aka `lang=`.
+The only Key without language is `description`, which has the correct format and is selected.
 
-For a second example, lets say the user still has selected the language `de` but the Publisher needs the format `number`
-to be able to show the property.
-In this case the first step is still the same, but the second step where we look at the Property `description`
+For a second example, lets say the user still has selected the language `de` but the HTML-Publisher needs the format
+`number` to be able to show the value.
+In this case the first step is still the same, but the second step where we look at the Key `description`
 now also fails because it has the wrong format.
-Now in the third step the Publisher will ignore the language Variant and will look at all Properties to find a
-valid one. In this example there is only one, so it will select `description:lang=en:format=number`. If there would be
-more than one valid Variant with the same format priority, it will sort them alphabetically and select the first one. (
-like the [KeyFilters](#keyfilters) specify.)
+Now in the third step the HTML-Publisher will ignore the language Variant and will look at all Keys to find one
+with a valid format. In this example there is only one, so it will select `description:lang=en:format=number`. If there
+would be more than one valid Variant with the same format priority, it will sort them alphabetically and select the
+first one. (like the [KeyFilters](#keyfilters) specify.)
 
 ## Variants and the iCal-Publisher
 
@@ -292,7 +279,7 @@ Examples:
 * ` ` (the empty string -> a list with a single empty value)
 * `,` (this is a list consisting of two empty values)
 
-Please note that there is no way to specify an empty list, you need to remove the Property for this.
+Please note that there is no way to specify an empty list, you need to remove the Value for this.
 
 Sorting: Alphabetically, case-insensitive (so `aAbB` instead of `abAB`). WARNING: This is like text and is most likely
 not what you want, do not rely on sorting lists.

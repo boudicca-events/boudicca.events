@@ -6,7 +6,7 @@ plugins {
 
 dependencies {
     api(project(":boudicca.base:common-model"))
-    testImplementation("org.junit.jupiter:junit-jupiter:5.11.1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.11.2")
     jmh(project(":boudicca.base:publisher-client"))
     jmh(project(":boudicca.base:ingest-client"))
     jmh("com.fasterxml.jackson.core:jackson-core:2.17.2")

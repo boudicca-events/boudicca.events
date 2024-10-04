@@ -2,7 +2,14 @@ package base.boudicca.model.structured
 
 import kotlin.math.min
 
+/**
+ * represents a parsed Key of a Key-Value pair which consists of the name and all the variants (which are sorted canonically)
+ */
 data class Key(val name: String, val variants: List<Variant>) : Comparable<Key> {
+
+    /**
+     * get the key string representation of this key for using in an unstructured/serialized event
+     */
     fun toKeyString(): String {
         if (variants.isEmpty()) {
             return name

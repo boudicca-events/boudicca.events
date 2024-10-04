@@ -7,7 +7,9 @@ import base.boudicca.model.Entry
 import base.boudicca.model.structured.StructuredEvent.StructuredEventBuilder
 import java.util.*
 
-
+/**
+ * as with the [Entry] class, a StructuredEntry is simple a typealias for a Map<Key, String>
+ */
 typealias StructuredEntry = Map<Key, String>
 
 fun StructuredEntry.toFlatEntry(): Entry {
@@ -22,12 +24,16 @@ fun StructuredEntry.toBuilder(): StructuredEntryBuilder {
     return StructuredEntryBuilder(this)
 }
 
-//TODO doc that invalid values are missed
+/**
+ * get property values from this entry. please note that if a property value cannot be parsed it will silently ignore this value
+ */
 fun <T> StructuredEntry.getProperty(property: Property<T>): List<Pair<Key, T>> {
     return getProperty(property, null)
 }
 
-//TODO doc that invalid values are missed
+/**
+ * get property values with a specific language from this entry. please note that if a property value cannot be parsed it will silently ignore this value
+ */
 fun <T> StructuredEntry.getProperty(property: Property<T>, language: String?): List<Pair<Key, T>> {
     return KeyFilters
         .filterKeys(property.getKey(language), this)
@@ -49,6 +55,9 @@ fun StructuredEntry.selectKey(keySelector: KeySelector): Optional<Pair<Key, Stri
     return keySelector.selectSingle(this)
 }
 
+/**
+ * builder method for structured entries... sadly this is just "floating" around
+ */
 fun structuredEntryBuilder() : StructuredEntryBuilder {
     return StructuredEntryBuilder()
 }

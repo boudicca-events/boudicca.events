@@ -4,6 +4,9 @@ import base.boudicca.model.EventCategory
 import base.boudicca.model.RecurrenceType
 import base.boudicca.model.Registration
 
+/**
+ * constants for all our known properties and their corresponding [Property]
+ */
 object SemanticKeys {
 
     // general properties

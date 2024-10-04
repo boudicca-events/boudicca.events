@@ -8,6 +8,36 @@ import base.boudicca.model.structured.Variant
 import base.boudicca.model.toStructuredEntry
 import java.util.*
 
+/**
+ * Extending KeyFilters, this KeySelector helps you when you need to select a single value of all possible variants.
+ * This KeySelector class helps you define priorities when selecting variants, so you get the most fitting value to display.
+ *
+ * One Example would be you wanting to select what variant to show for the "description" property of events. In this example
+ * we care about two variants: 1) Language and 2) Format. We prioritize the language, and only then the format. The code could look like this:
+ *
+ * ```
+ *   val selectedValue = KeySelector.builder(propertyName)
+ *             .thenVariant(
+ *                 VariantConstants.LANGUAGE_VARIANT_NAME,
+ *                 listOf(
+ *                     getPreferredLanguage(),
+ *                     VariantConstants.LanguageVariantConstants.DEFAULT_LANGUAGE_NAME,
+ *                     VariantConstants.ANY_VARIANT_SELECTOR
+ *                 )
+ *             )
+ *             .thenVariant(
+ *                 VariantConstants.FORMAT_VARIANT_NAME,
+ *                 listOf(
+ *                     FormatVariantConstants.MARKDOWN_FORMAT_NAME,
+ *                     FormatVariantConstants.TEXT_FORMAT_NAME
+ *                 )
+ *             )
+ *             .build()
+ *             .selectSingle(event)
+ * ```
+ *
+ * Note that the KeySelector currently does not handle the format variant, you have to convert the value manually.
+ */
 class KeySelector private constructor(
     private val propertyName: String,
     private val variants: List<Pair<String, List<String>>>

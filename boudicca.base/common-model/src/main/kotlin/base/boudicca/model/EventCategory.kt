@@ -2,6 +2,9 @@ package base.boudicca.model
 
 import java.util.*
 
+/**
+ * current event categories we support, with all their known event types
+ */
 enum class EventCategory(val types: Set<String>) {
     //ALL and OTHER are special cases needing special care
     ALL(emptySet()),

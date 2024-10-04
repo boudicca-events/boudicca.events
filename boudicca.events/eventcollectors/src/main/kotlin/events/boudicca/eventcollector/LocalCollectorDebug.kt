@@ -23,6 +23,7 @@ fun main() {
         //enable this line to ingest the collected events into the local eventdb (this uses the configuration from the application.properties)
 //        .enableIngestion()
 
+//        .debug(RemoteCollectorCollector("http://localhost:8080")) //to test remote collectors !!DON'T FORGET TO DISABLE THE FETCHER CACHE!! for example: https://github.com/boudicca-events/remote-collector-samples
 //        .debug(TechnologiePlauscherlCollector())
 //        .debug(JkuEventCollector())
 //        .debug(PosthofCollector())

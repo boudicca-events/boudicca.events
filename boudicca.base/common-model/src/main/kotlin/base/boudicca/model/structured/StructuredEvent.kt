@@ -9,6 +9,9 @@ import base.boudicca.model.Event
 import java.time.OffsetDateTime
 import java.util.*
 
+/**
+ * represents a parsed event, in the sense that all its keys have been parsed, and it has a lot of methods for filtering/selecting keys
+ */
 data class StructuredEvent(val name: String, val startDate: OffsetDateTime, val data: Map<Key, String>) {
     constructor(event: Event) : this(event.name, event.startDate, KeyUtils.toStructuredKeyValuePairs(event.data))
 
@@ -24,12 +27,16 @@ data class StructuredEvent(val name: String, val startDate: OffsetDateTime, val 
         return StructuredEventBuilder(this.name, this.startDate, this.data)
     }
 
-    //TODO doc that invalid values are missed
+    /**
+     * get property values from this entry. please note that if a property value cannot be parsed it will silently ignore this value
+     */
     fun <T> getProperty(property: Property<T>): List<Pair<Key, T>> {
         return getProperty(property, null)
     }
 
-    //TODO doc that invalid values are missed
+    /**
+     * get property values with a specific language from this entry. please note that if a property value cannot be parsed it will silently ignore this value
+     */
     fun <T> getProperty(property: Property<T>, language: String?): List<Pair<Key, T>> {
         return KeyFilters
             .filterKeys(property.getKey(language), this)

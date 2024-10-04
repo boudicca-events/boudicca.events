@@ -3,8 +3,14 @@ package base.boudicca.format
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
-import kotlin.jvm.Throws
 
+/**
+ * parsing utils to get string values to format date and back
+ *
+ * date format is (for now, lets see if we extend it) the DateTimeFormatter.ISO_DATE_TIME format
+ *
+ * all methods may throw exceptions on wrong formatted values
+ */
 object DateFormat {
     @Throws(IllegalArgumentException::class)
     fun parseFromString(value: String): OffsetDateTime {

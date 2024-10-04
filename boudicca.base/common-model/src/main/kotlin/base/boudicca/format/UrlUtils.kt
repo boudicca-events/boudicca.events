@@ -2,6 +2,9 @@ package base.boudicca.format
 
 import java.net.URI
 
+/**
+ * some utils for working with URIs for properties
+ */
 object UrlUtils {
     fun parse(string: String?): URI? {
         if (string.isNullOrEmpty()) {

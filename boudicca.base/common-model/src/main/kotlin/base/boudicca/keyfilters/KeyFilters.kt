@@ -5,7 +5,11 @@ import base.boudicca.model.structured.StructuredEntry
 import base.boudicca.model.structured.StructuredEvent
 import base.boudicca.model.structured.Variant
 
-
+/**
+ * utility methods for filtering keys of Events/Entries. you can use a Key as a KeyFilter to select only matching keys of an event/entry.
+ * this is especially needed to work with variants, because with KeyFilters you can for example select all "descriptions" in all languages, or only certain languages.
+ * see DATA_MODEL.md docs for more information on key filters
+ */
 object KeyFilters {
 
     fun filterKeys(keyFilter: Key, event: StructuredEvent): List<Pair<Key, String>> {

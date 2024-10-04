@@ -1,5 +1,8 @@
 package base.boudicca.model.structured
 
+/**
+ * constants to use with our variants. has values for known formats, and their values
+ */
 object VariantConstants {
     const val FORMAT_VARIANT_NAME = "format"
     const val LANGUAGE_VARIANT_NAME = "lang"

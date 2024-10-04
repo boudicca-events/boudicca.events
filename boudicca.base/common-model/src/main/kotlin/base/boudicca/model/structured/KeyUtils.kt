@@ -1,5 +1,8 @@
 package base.boudicca.model.structured
 
+/**
+ * utils for parsing keys
+ */
 object KeyUtils {
     @Throws(IllegalArgumentException::class)
     fun toStructuredKeyValuePairs(map: Map<String, String>): Map<Key, String> {

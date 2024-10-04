@@ -1,5 +1,12 @@
 package base.boudicca.format
 
+/**
+ * parsing utils to get string values to format list and back
+ *
+ * list format is a "," seperated list, meaning all "," and "\" occurring in list values must be escaped by an "\"
+ *
+ * all methods may throw exceptions on wrong formatted values
+ */
 object ListFormat {
     fun parseFromString(value: String): List<String> {
         val result = mutableListOf<String>()

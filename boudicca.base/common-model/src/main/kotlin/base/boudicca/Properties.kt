@@ -9,6 +9,13 @@ import java.lang.reflect.InvocationTargetException
 import java.net.URI
 import java.time.OffsetDateTime
 
+/**
+ * Properties are helpers allowing you to easier work with getting/setting values in their correct type for events/entries.
+ * You can use existing properties, where each property supports a different format variant, like the [TextProperty] or [ListProperty],
+ * but you can also easily create support for a new format/type by extending [AbstractProperty] or [Property].
+ *
+ * All our [SemanticKeys] already have properties defined for them that you can use, but you can create also create new ones on the fly just by calling the constructor like `TextProperty("newProperty")`
+ */
 interface Property<T> {
     @Throws(IllegalArgumentException::class)
     fun parseToString(value: T): String
@@ -92,7 +99,6 @@ class NumberProperty(propertyName: String) : AbstractProperty<Number>(propertyNa
     }
 }
 
-@Suppress("UNCHECKED_CAST")
 class EnumProperty<E : Enum<E>>(propertyName: String, private val enumClass: Class<E>) :
     AbstractProperty<E>(propertyName, VariantConstants.FormatVariantConstants.TEXT_FORMAT_NAME) {
     override fun parseToString(value: E): String {
@@ -101,6 +107,7 @@ class EnumProperty<E : Enum<E>>(propertyName: String, private val enumClass: Cla
 
     override fun parseFromString(string: String): E {
         try {
+            @Suppress("UNCHECKED_CAST")
             return enumClass.getMethod("valueOf", String::class.java).invoke(null, string.uppercase()) as E
         } catch (e: InvocationTargetException) {
             throw IllegalArgumentException("error getting enum constant", e)

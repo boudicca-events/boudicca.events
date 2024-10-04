@@ -9,7 +9,6 @@ import base.boudicca.model.Event
 import java.time.OffsetDateTime
 import java.util.*
 
-//TODO should data be Map<Key, String> or maybe something like Map<Key, Value>, where the data is preparsed?
 data class StructuredEvent(val name: String, val startDate: OffsetDateTime, val data: Map<Key, String>) {
     constructor(event: Event) : this(event.name, event.startDate, KeyUtils.toStructuredKeyValuePairs(event.data))
 

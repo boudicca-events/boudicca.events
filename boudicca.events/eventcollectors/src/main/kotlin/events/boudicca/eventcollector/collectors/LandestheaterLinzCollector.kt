@@ -112,49 +112,19 @@ class LandestheaterLinzCollector :
     }
 
     private fun insertLocationData(builder: StructuredEvent.StructuredEventBuilder, locationName: String) {
-        //TODO check enricher
         if (locationName.contains("musiktheater", ignoreCase = true)) {
             builder
-                .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Musiktheater")
-                .withProperty(
-                    SemanticKeys.LOCATION_URL_PROPERTY,
-                    UrlUtils.parse("https://www.landestheater-linz.at/musiktheater")
-                )
-                .withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Linz")
-                .withProperty(SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY_PROPERTY, true)
-                .withProperty(SemanticKeys.ACCESSIBILITY_ACCESSIBLESEATS_PROPERTY, true)
-                .withProperty(SemanticKeys.ACCESSIBILITY_ACCESSIBLETOILETS_PROPERTY, true)
+                .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Musiktheater Linz")
         } else if (locationName == "Studiobühne") {
             //there is no dedicated page for it, but it is in the same building, so....
             builder
-                .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Studiobühne")
-                .withProperty(
-                    SemanticKeys.LOCATION_URL_PROPERTY,
-                    UrlUtils.parse("https://www.landestheater-linz.at/schauspielhaus")
-                )
-                .withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Linz")
+                .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Studiobühne Linz")
         } else if (locationName == "Schauspielhaus") {
             builder
-                .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Schauspielhaus")
-                .withProperty(
-                    SemanticKeys.LOCATION_URL_PROPERTY,
-                    UrlUtils.parse("https://www.landestheater-linz.at/schauspielhaus")
-                )
-                .withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Linz")
-                .withProperty(SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY_PROPERTY, true)
-                .withProperty(SemanticKeys.ACCESSIBILITY_ACCESSIBLESEATS_PROPERTY, true)
-                .withProperty(SemanticKeys.ACCESSIBILITY_ACCESSIBLETOILETS_PROPERTY, true)
+                .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Schauspielhaus Linz")
         } else if (locationName == "Kammerspiele") {
             builder
-                .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Kammerspiele")
-                .withProperty(
-                    SemanticKeys.LOCATION_URL_PROPERTY,
-                    UrlUtils.parse("https://www.landestheater-linz.at/kammerspiele")
-                )
-                .withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Linz")
-                .withProperty(SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY_PROPERTY, true)
-                .withProperty(SemanticKeys.ACCESSIBILITY_ACCESSIBLESEATS_PROPERTY, true)
-                .withProperty(SemanticKeys.ACCESSIBILITY_ACCESSIBLETOILETS_PROPERTY, true)
+                .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Kammerspiele Linz")
         } else if (locationName.isNotBlank()) {
             builder.withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, locationName)
         }

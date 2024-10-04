@@ -23,8 +23,7 @@ data class Key(val name: String, val variants: List<Variant>) : Comparable<Key> 
             }
 
         fun parse(keyFilter: String): Key {
-            val keyVariantPair = KeyUtils.parseKey(keyFilter)
-            return Key(keyVariantPair.first, keyVariantPair.second)
+            return KeyUtils.parseKey(keyFilter)
         }
 
         fun builder(propertyName: String): KeyBuilder {

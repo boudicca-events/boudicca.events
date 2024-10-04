@@ -2,6 +2,7 @@ package base.boudicca.model.structured
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 class KeyUtilsTest {
     @Test
@@ -75,6 +76,16 @@ class KeyUtilsTest {
                 Key("key2", listOf(Variant("variant", "foo"), Variant("variant2", "bar"))) to "value4",
             ), result
         )
+    }
+
+    @Test
+    fun testDuplicatedKey() {
+        assertThrows<IllegalArgumentException> {
+            toStructuredKeyValuePairs(mapOf(
+                "test:var1=val1:var2=val2" to "whatever",
+                "test:var2=val2:var1=val1" to "whatever",
+            ))
+        }
     }
 
     private fun toStructuredKeyValuePairs(map: Map<String, String>): Map<Key, String> {

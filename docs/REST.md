@@ -1,8 +1,5 @@
 # Using Boudiccas REST Apis
 
-TODO how to deal with versions in this doc?
-
-
 There are multiple ways to use our REST Apis.
 
 1. With our published client (recommended)
@@ -18,7 +15,7 @@ To use them just add a dependency like
 
 ```
 Gradle:
-implementation("events.boudicca:search-client:0.2.0")
+implementation("events.boudicca:search-client:0.5.0")
 ```
 
 or
@@ -28,7 +25,7 @@ Maven:
 <dependency>
     <groupId>events.boudicca</groupId>
     <artifactId>search-client</artifactId>
-    <version>0.2.0</version>
+    <version>0.5.0</version>
 </dependency>
 ```
 
@@ -65,7 +62,7 @@ Or you can use them as a dependency with classifier `openapi` and (file-)type `j
 
 ```
 Gradle 
-openapiSpec("events.boudicca:search-api:0.2.0:openapi@json")
+openapiSpec("events.boudicca:search-api:0.5.0:openapi@json")
 ```
 
 For a full example how to generate your own client with gradle and those dependencies please have a look at our sample: https://github.com/boudicca-events/openapi-generate-sample

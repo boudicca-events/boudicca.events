@@ -68,8 +68,8 @@ class PosthofCollector : TwoStepEventCollector<String>("posthof") {
         val imgUrl = baseUrl + eventSite.select("div.tx-posthof-events img").attr("src")
 
         val builder = StructuredEvent.builder(name, startDate)
-        mapType(builder, dateAndTypeSpans[2].text())
         return builder
+            .withProperty(SemanticKeys.TYPE_PROPERTY, dateAndTypeSpans[2].text())
             .withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
             .withProperty(SemanticKeys.PICTURE_URL_PROPERTY, URI.create(imgUrl))
             .withProperty(SemanticKeys.REGISTRATION_PROPERTY, Registration.TICKET) //are there free events in posthof?
@@ -91,39 +91,4 @@ class PosthofCollector : TwoStepEventCollector<String>("posthof") {
         val preHeaders = eventSite.select("div.tx-posthof-events div.pre-header")
         return preHeaders.last()!!.select("span")
     }
-
-    //TODO move to enricher
-    private fun mapType(builder: StructuredEvent.StructuredEventBuilder, type: String) {
-        val lowerType = type.lowercase()
-        for (knownMusicType in KNOWN_MUSIC_TYPES) {
-            if (lowerType.indexOf(knownMusicType) != -1) {
-                builder.withProperty(SemanticKeys.TYPE_PROPERTY, "concert")
-                builder.withProperty(SemanticKeys.CONCERT_GENRE_PROPERTY, type)
-                return
-            }
-        }
-        if (type.isNotBlank()) {
-            builder.withProperty(SemanticKeys.TYPE_PROPERTY, type)
-        }
-    }
-
-    private val KNOWN_MUSIC_TYPES: Set<String> = setOf(
-        "metal",
-        "indie",
-        "pop",
-        "jazz",
-        "hiphop",
-        "rap",
-        "rock",
-        "electronic",
-        "punk",
-        "house",
-        "brass",
-        "reggae",
-        "soul",
-        "funk",
-        "folk",
-        "dub",
-        "klassik",        //TODO moar and moar generic
-    )
 }

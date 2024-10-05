@@ -99,7 +99,7 @@ class BrucknerhausCollector : TwoStepEventCollector<Element>("brucknerhaus") {
         val split = dateText.split(" ")
         return LocalDate.parse(
             split[1] + " " + mapMonth(split[2]) + " " + split[3],
-            DateTimeFormatter.ofPattern("d M uu").withLocale(Locale.GERMAN)
+            DateTimeFormatter.ofPattern("d. M uu").withLocale(Locale.GERMAN)
         )
     }
 

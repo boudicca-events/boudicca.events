@@ -38,8 +38,23 @@ class AlpenvereinCollector : TwoStepEventCollector<String>("alpenverein") {
         return allLinks
     }
 
-    override fun parseStructuredEvent(event: String): StructuredEvent {
+    override fun parseStructuredEvent(event: String): StructuredEvent? {
+        val uri = URI.create(event)
+        if (uri.host.contains("alpenverein-edelweiss")) { //TODO fix those
+            return null
+        }
+        if (uri.host.contains("programm.alpenverein.wien")) { //TODO fix those
+            return null
+        }
+
         val eventSite = Jsoup.parse(fetcher.fetchUrl(event))
+
+        if (eventSite
+                .select("div.blockContentInner").text()
+                .contains("Die Detailansicht der Veranstaltung kann nicht gefunden werden!")
+        ) {
+            return null
+        }
 
         val name = eventSite.select("div.elementBoxSheet h2").text()
 

@@ -42,9 +42,9 @@ class PosthofCollector : TwoStepEventCollector<String>("posthof") {
     override fun parseStructuredEvent(event: String): StructuredEvent {
         val eventSite: Element = Jsoup.parse(fetcher.fetchUrl(event))
 
-        var name = eventSite.select("div.tx-posthof-events h2 a").textNodes().first().text()
+        var name = eventSite.select("div.tx-posthof-events>:not(ul) h2 a").textNodes().first().text()
 
-        val subtextSpan = eventSite.select("div.tx-posthof-events h2 a span")
+        val subtextSpan = eventSite.select("div.tx-posthof-events>:not(ul) h2 a span")
         if (subtextSpan.isNotEmpty()) {
             name += " - " + subtextSpan.text()
         }
@@ -53,11 +53,11 @@ class PosthofCollector : TwoStepEventCollector<String>("posthof") {
         val dateAndTimeText = getDateAndTimeText(dateAndTypeSpans)
         val startDate = LocalDateTime.parse(
             dateAndTimeText,
-            DateTimeFormatter.ofPattern("dd LLL uu kk:mm", Locale.GERMAN)
+            DateTimeFormatter.ofPattern("d LLL uu kk:mm", Locale.GERMAN)
         ).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
 
         var description = ""
-        val textBlocks = eventSite.select("div.tx-posthof-events")[1].children().drop(1)
+        val textBlocks = eventSite.select("div.tx-posthof-events>:not(ul)")
         for (child in textBlocks) {
             if (child.tagName() == "hr") {
                 break
@@ -65,7 +65,7 @@ class PosthofCollector : TwoStepEventCollector<String>("posthof") {
             description += child.text() + "\n"
         }
 
-        val imgUrl = baseUrl + eventSite.select("div.tx-posthof-events img").attr("src")
+        val imgUrl = baseUrl + eventSite.select("div.tx-posthof-events>:not(ul) img").attr("src")
 
         val builder = StructuredEvent.builder(name, startDate)
         return builder
@@ -82,13 +82,14 @@ class PosthofCollector : TwoStepEventCollector<String>("posthof") {
     }
 
     private fun getDateAndTimeText(dateAndTypeSpans: Elements): String {
-        return (dateAndTypeSpans[0].text() + " " + dateAndTypeSpans[1].text())
-            .substring(4)
+        val dateAndTime = dateAndTypeSpans[0].text() + " " + dateAndTypeSpans[1].text()
+        return dateAndTime
+            .substring(dateAndTime.indexOf(" ") + 1)
             .replace("Jän", "Jan")
     }
 
     private fun getDateAndTypeSpans(eventSite: Element): Elements {
-        val preHeaders = eventSite.select("div.tx-posthof-events div.pre-header")
+        val preHeaders = eventSite.select("div.tx-posthof-events>:not(ul) div.pre-header")
         return preHeaders.last()!!.select("span")
     }
 }

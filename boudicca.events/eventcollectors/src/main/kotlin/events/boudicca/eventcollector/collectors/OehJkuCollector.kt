@@ -20,26 +20,22 @@ class OehJkuCollector : TwoStepEventCollector<String>("oehjku") {
     private val baseUrl = "https://oeh.jku.at/"
 
     override fun getAllUnparsedEvents(): List<String> {
-        val document = Jsoup.parse(fetcher.fetchUrl(baseUrl + "veranstaltungen"))
-        return document.select("div.node-event a")
+        val document = Jsoup.parse(fetcher.fetchUrl(baseUrl + "oeh-services/veranstaltungen"))
+        return document.select("article.card a")
             .map { it.attr("href") }
     }
 
     override fun parseStructuredEvent(event: String): StructuredEvent {
         val eventSite = Jsoup.parse(fetcher.fetchUrl(baseUrl + event))
 
-        val name = eventSite.select("h1").text()
+        val name = eventSite.select("section div.container h1").text()
         val startDate = parseDate(eventSite)
 
-        val description = eventSite.select("div.generic-two-column-stacked-region--footer").text()
-
-        val location = eventSite.select("div.generic-two-column-stacked-region--second").text()
-            .removePrefix("Ort: ")
+        val location = findTextByIconHref(eventSite, "icon-pin")
 
         return StructuredEvent
             .builder(name, startDate)
             .withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(baseUrl + event))
-            .withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
             .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, location)
             .withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse("https://www.jku.at/"))
             .withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Linz")
@@ -47,15 +43,19 @@ class OehJkuCollector : TwoStepEventCollector<String>("oehjku") {
             .build()
     }
 
-    private fun parseDate(element: Element): OffsetDateTime {
-        val fullDateTime = element.select("div.pane-node-field-event-date").text().split(" - ")
-        val date = fullDateTime[0].split(", ")[1]
-        val time = fullDateTime[1].split(" bis ")[0]
+    private fun parseDate(eventSite: Element): OffsetDateTime {
+        val date = findTextByIconHref(eventSite, "icon-calendar")
+        val time = findTextByIconHref(eventSite, "icon-time")
 
-        val localDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("d. MMMM uuuu", Locale.GERMAN))
+        val localDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("d.M.uuuu", Locale.GERMAN))
         val localTime = LocalTime.parse(time, DateTimeFormatter.ofPattern("k:mm"))
 
         return localDate.atTime(localTime).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
+    }
+
+    private fun findTextByIconHref(eventSite: Element, iconHref: String): String {
+        val icon = eventSite.select("div.teaser div.list-group-item svg use[xlink:href='#${iconHref}']")[0]
+        return icon.parent().parent().text()
     }
 
 }

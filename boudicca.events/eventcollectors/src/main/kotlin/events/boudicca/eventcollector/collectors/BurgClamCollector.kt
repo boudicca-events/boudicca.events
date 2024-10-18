@@ -19,25 +19,22 @@ class BurgClamCollector : TwoStepEventCollector<String>("burgclam") {
 
         val document = Jsoup.parse(fetcher.fetchUrl("https://clamlive.at/shows/#/"))
         return document
-            .select("a.av-screen-reader-only")
+            .select("section.eventCollection a")
             .map { it.attr("href") }
     }
 
     override fun parseStructuredEvent(event: String): StructuredEvent {
         val eventSite = Jsoup.parse(fetcher.fetchUrl(event))
 
-        val headLines = eventSite.select("h3.av-special-heading-tag")
-
-        var dateText = headLines[0].text()
-        if (dateText == "SOLD OUT") {
-            dateText = eventSite.select("div.av-subheading.av-subheading_below")[0].text()
-        }
+        val name = eventSite.select("h1.eventTitle").text()
+        val dateText = eventSite.select("div.eventDate").text()
         val startDate = parseDate(dateText)
 
-        val name = if (headLines.size >= 2) {
-            headLines[1].text()
-        } else {
-            eventSite.select("div.av-subheading").text()
+        var description = eventSite.select("section.eventSingle__description").text()
+        val lineupElement = eventSite.select("li.lineupList__item")
+        if (lineupElement.isNotEmpty()) {
+            val lineup = "Line-up:\n" + lineupElement.map{it.text()}.joinToString("\n") + "\n"
+            description = lineup + description
         }
 
         return StructuredEvent
@@ -46,23 +43,23 @@ class BurgClamCollector : TwoStepEventCollector<String>("burgclam") {
             .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(event))
             .withProperty(
                 SemanticKeys.PICTURE_URL_PROPERTY,
-                UrlUtils.parse(eventSite.select("img.avia_image").attr("src"))
+                UrlUtils.parse(eventSite.select("eventSingle__headerBanner img").attr("src"))
             )
-            .withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, eventSite.select("div.av-subheading").text())
+            .withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
             .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Burg Clam")
             .build()
     }
 
     private fun parseDate(dateText: String): OffsetDateTime {
         var fixedDateText = dateText.replace("Jänner", "Januar")
-            .replace("JULI", "Juli") //why the heck is this case sensititve
+            .replace("JULI", "Juli") //why the heck is this case sensitive
         if (fixedDateText.contains(", ")) {
             fixedDateText = fixedDateText.split(", ")[1]
         }
 
         val date = LocalDate.parse(
             fixedDateText,
-            DateTimeFormatter.ofPattern("d. LLLL uuuu").withLocale(Locale.GERMAN)
+            DateTimeFormatter.ofPattern("d. LLL uuuu").withLocale(Locale.GERMAN)
         )
 
         return date.atStartOfDay().atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()

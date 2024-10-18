@@ -42,6 +42,10 @@ class StadtwerkstattCollector : TwoStepEventCollector<String>("stadtwerkstatt") 
             null
         }
 
+        if (name.isNullOrEmpty()) {
+            name = description
+        }
+
         //TODO could parse lineup
 
         return StructuredEvent

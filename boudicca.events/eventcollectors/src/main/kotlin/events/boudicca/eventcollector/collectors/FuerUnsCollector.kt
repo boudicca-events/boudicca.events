@@ -16,17 +16,17 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-class UlfOoeCollector : TwoStepEventCollector<String>("ulfooe") {
+class FuerUnsCollector : TwoStepEventCollector<String>("fueruns") {
 
     private val LOG = LoggerFactory.getLogger(this::class.java)
     private val fetcher = Fetcher()
-    private val baseUrl = "https://www.ulf-ooe.at/"
+    private val baseUrl = "https://www.fuer-uns.at/"
 
     override fun getAllUnparsedEvents(): List<String> {
         val fetcher = Fetcher()
         val events = mutableListOf<Element>()
 
-        val document = Jsoup.parse(fetcher.fetchUrl(baseUrl + "veranstaltungskalender?page=1"))
+        val document = Jsoup.parse(fetcher.fetchUrl(baseUrl + "aktuelle-veranstaltungen/veranstaltungskalender?page=1"))
         val otherUrls = document.select("nav.pagination ul li a")
             .toList()
             .map { it.attr("href") }
@@ -42,7 +42,7 @@ class UlfOoeCollector : TwoStepEventCollector<String>("ulfooe") {
     private fun parseEventList(document: Document, events: MutableList<Element>) {
         events.addAll(document.select("a.event.event_list_item.event_list_item_link")
             .toList()
-            .filter { !it.attr("href").startsWith("http") }) // exclude events from others than ulf
+            .filter { !it.attr("href").startsWith("http") }) // exclude events from others than fuer uns
     }
 
     override fun parseStructuredEvent(event: String): StructuredEvent? {

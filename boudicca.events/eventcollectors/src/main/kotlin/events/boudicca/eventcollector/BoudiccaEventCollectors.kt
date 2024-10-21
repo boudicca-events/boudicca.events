@@ -22,7 +22,7 @@ fun main() {
         .addEventCollector(StadtwerkstattCollector())
         .addEventCollector(OteloLinzCollector())
         .addEventCollector(EnnsEventsCollector())
-        .addEventCollector(UlfOoeCollector())
+        .addEventCollector(FuerUnsCollector())
         .addEventCollector(StiftskonzerteCollector())
         .addEventCollector(OehJkuCollector())
         .addEventCollector(ArenaWienCollector())

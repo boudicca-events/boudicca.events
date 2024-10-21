@@ -41,7 +41,7 @@ fun main() {
 //        .debug(StadtwerkstattCollector())
 //        .debug(OteloLinzCollector())
 //        .debug(EnnsEventsCollector())
-//        .debug(UlfOoeCollector())
+//        .debug(FuerUnsCollector())
 //        .debug(StiftskonzerteCollector())
 //        .debug(OehJkuCollector())
 //        .debug(ArenaWienCollector())

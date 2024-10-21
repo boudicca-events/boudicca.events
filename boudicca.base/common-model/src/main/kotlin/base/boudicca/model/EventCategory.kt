@@ -31,7 +31,7 @@ enum class EventCategory(val types: Set<String>) {
             "brauchtum",
         )
     ),
-    TECH(setOf("techmeetup", "technology", "technologie")),
+    TECH(setOf("techmeetup", "technology", "technologie", "chaosevent")),
     SPORT(setOf("sport", "football", "soccer"));
 
     companion object {

@@ -38,6 +38,7 @@ fun main() {
         .addEventCollector(FemaleCoderCollector())
         .addEventCollector(FhLugCollector())
         .addEventCollector(ZeroxACollector())
+        .addEventCollector(CCCEventsCollector())
         .addEventCollector(ClerieDeChaosEventsCollector())
         .build()
 

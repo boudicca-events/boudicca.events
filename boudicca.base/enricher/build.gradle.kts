@@ -6,7 +6,7 @@ dependencies {
     implementation("com.google.api-client:google-api-client:2.7.0") {
         exclude("commons-logging", "commons-logging")
     }
-    implementation("com.google.auth:google-auth-library-oauth2-http:1.28.0") {
+    implementation("com.google.auth:google-auth-library-oauth2-http:1.29.0") {
         exclude("commons-logging", "commons-logging")
     }
     implementation("com.google.apis:google-api-services-sheets:v4-rev20241008-2.0.0") {

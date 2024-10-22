@@ -2,7 +2,6 @@ package base.boudicca.api.eventcollector.collectors
 
 import base.boudicca.api.eventcollector.EventCollector
 import base.boudicca.api.eventcollector.collectors.util.IcalParser
-import base.boudicca.model.Event
 import base.boudicca.model.structured.StructuredEvent
 import biweekly.component.VEvent
 import java.util.*

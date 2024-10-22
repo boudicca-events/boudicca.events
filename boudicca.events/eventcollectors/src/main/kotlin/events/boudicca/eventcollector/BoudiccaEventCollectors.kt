@@ -39,6 +39,7 @@ fun main() {
         .addEventCollector(FhLugCollector())
         .addEventCollector(ZeroxACollector())
         .addEventCollector(CCCEventsCollector())
+        .addEventCollector(ClerieDeChaosEventsCollector())
         .build()
 
     eventCollectorCoordinator.startWebUi()

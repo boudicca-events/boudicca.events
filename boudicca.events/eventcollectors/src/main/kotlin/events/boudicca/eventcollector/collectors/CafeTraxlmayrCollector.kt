@@ -74,36 +74,57 @@ class CafeTraxlmayrCollector : TwoStepEventCollector<Element>("cafetraxlmayr") {
     }
 
     private fun parseLesungen(event: Element, builder: StructuredEvent.StructuredEventBuilder): List<StructuredEvent> {
-        return event.select(".modal-body div")
-            .eachText()
-            .mapNotNull {
-                if (!it.contains("Uhr")) {
-                    null
-                } else {
-                    val dateTimeSplit = it.split(": ")
-                    val startDate = parseDateForLesung(dateTimeSplit[0])
-                    val name = dateTimeSplit[1]
-                    builder
-                        .copy()
-                        .withName(name)
-                        .withStartDate(startDate)
-                        .build()
-                }
+        val contentBlocks = event.select(".modal-body > *")
+        var startDate = OffsetDateTime.MIN
+        var name = ""
+        var description = ""
+        var pictureSrc = ""
+        val events = ArrayList<StructuredEvent>();
+
+        for (block in contentBlocks) {
+            val text = block.text()
+            if (block.select("img").isNotEmpty()){
+                pictureSrc = block.select("img").attr("src")
+            } else if (text.contains("Uhr")) {
+                startDate = parseDateForLesung(text)
+            } else if (text.contains("„")) {
+                name = text
+            } else {
+                description += text
             }
+            if (startDate != OffsetDateTime.MIN && name.isNotEmpty() && description.isNotEmpty() && pictureSrc.isNotEmpty()) {
+                val pictureUrl = if (pictureSrc.isNotBlank()) {
+                    UrlUtils.parse(baseUrl + pictureSrc)
+                } else {
+                    null
+                }
+                events.add(builder
+                    .withName(name)
+                    .withStartDate(startDate)
+                    .withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
+                    .withProperty(SemanticKeys.PICTURE_URL_PROPERTY, pictureUrl)
+                    .build())
+                startDate = OffsetDateTime.MIN
+                name = ""
+                description = ""
+                pictureSrc = ""
+            }
+        }
+        return events
     }
 
     private fun parseDateForLesung(fullDateText: String): OffsetDateTime {
         val split = fullDateText.split(',')
         val dateText = split[0].trim()
-        val timeText = split[1].trim()
+        val timeText = split[1].trim().substringBefore("Uhr").trim()
 
         val date = LocalDate.parse(
             dateText,
-            DateTimeFormatter.ofPattern("d.MM.uu").withLocale(Locale.GERMAN)
+            DateTimeFormatter.ofPattern("d. LLLL uuuu").withLocale(Locale.GERMAN)
         )
         val time = LocalTime.parse(
             timeText.replace(".", ":"),
-            DateTimeFormatter.ofPattern("kk:mm 'Uhr'").withLocale(Locale.GERMAN)
+            DateTimeFormatter.ofPattern("kk:mm").withLocale(Locale.GERMAN)
         )
 
         return date.atTime(time).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()

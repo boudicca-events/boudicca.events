@@ -99,6 +99,7 @@ class CafeTraxlmayrCollector : TwoStepEventCollector<Element>("cafetraxlmayr") {
                     null
                 }
                 events.add(builder
+                    .copy()
                     .withName(name)
                     .withStartDate(startDate)
                     .withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)

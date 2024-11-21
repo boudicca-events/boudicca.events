@@ -7,7 +7,7 @@ findbugs = "3.0.2"
 jackson-databind-nullable = "0.2.6"
 spring-openapi-starter = "2.6.0"
 swagger-core-version = "2.2.20"
-org-springframework-boot-gradle-plugin = "3.3.5"
+org-springframework-boot-gradle-plugin = "3.4.0"
 io-spring-dependency-management-gradle-plugin = "1.1.6"
 org-openapi-generator-gradle-plugin = "7.2.0"
 

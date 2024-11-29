@@ -1,15 +1,25 @@
 [versions]
 kotlin = "2.1.0"
 jackson = "2.18.2"
+jackson-databind-nullable = "0.2.6"
 jakarta-annotation = "3.0.0"
 javax-jaxrs = "2.1.1"
 findbugs = "3.0.2"
-jackson-databind-nullable = "0.2.6"
 spring-openapi-starter = "2.6.0"
 swagger-core-version = "2.2.20"
 org-springframework-boot-gradle-plugin = "3.4.0"
 io-spring-dependency-management-gradle-plugin = "1.1.6"
 org-openapi-generator-gradle-plugin = "7.2.0"
+junit-jupiter = "5.11.3"
+mockito-kotlin = "5.4.0"
+biweekly = "0.6.8"
+apache-velocity-engine-core = "2.4.1"
+apache-velocity-tools-generic = "3.1"
+logback = "1.5.12"
+slf4j = "2.0.16"
+handlebars = "4.4.0"
+microsoft-playwright = "1.49.0"
+axe-core-playwright = "4.10.1"
 
 [libraries]
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
@@ -25,7 +35,7 @@ jackson-core = { module = "com.fasterxml.jackson.core:jackson-core", version.ref
 jackson-annotations = { module = "com.fasterxml.jackson.core:jackson-annotations", version.ref = "jackson" }
 jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson" }
 jackson-databind-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version.ref = "jackson" }
-jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin" }
+jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson" }
 
 jackson-databind-nullable = { module = "org.openapitools:jackson-databind-nullable", version.ref = "jackson-databind-nullable" }
 
@@ -40,6 +50,30 @@ org-jetbrains-kotlin-plugin-spring-gradle-plugin = { module = "org.jetbrains.kot
 org-springframework-boot-gradle-plugin = { module = "org.springframework.boot:org.springframework.boot.gradle.plugin", version.ref = "org-springframework-boot-gradle-plugin" }
 io-spring-dependency-management-gradle-plugin = { module = "io.spring.dependency-management:io.spring.dependency-management.gradle.plugin", version.ref = "io-spring-dependency-management-gradle-plugin" }
 org-openapi-generator-gradle-plugin = { module = "org.openapi.generator:org.openapi.generator.gradle.plugin", version.ref = "org-openapi-generator-gradle-plugin" }
+
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit-jupiter" }
+mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockito-kotlin" }
+
+biweekly = { module = "net.sf.biweekly:biweekly", version.ref = "biweekly" }
+
+apache-velocity-engine-core = { module = "org.apache.velocity:velocity-engine-core", version.ref = "apache-velocity-engine-core" }
+apache-velocity-tools-generic = { module = "org.apache.velocity.tools:velocity-tools-generic", version.ref = "apache-velocity-tools-generic" }
+
+logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+slf4j = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
+
+handlebars = { module = "com.github.jknack:handlebars", version.ref = "handlebars" }
+microsoft-playwright = { module = "com.microsoft.playwright:playwright", version.ref = "microsoft-playwright" }
+axe-core-playwright = { module = "com.deque.html.axe-core:playwright", version.ref = "axe-core-playwright" }
+
+json = { module = "org.json:json", version = "20240303" }
+
+google-api-client = { module = "com.google.api-client:google-api-client", version = "2.7.0" }
+google-auth-library-oauth2-http = { module = "com.google.auth:google-auth-library-oauth2-http", version = "1.30.0" }
+google-api-services-sheets = { module = "com.google.apis:google-api-services-sheets", version = "v4-rev20241008-2.0.0" }
+
+[plugins]
+jmh = { id = "me.champeau.jmh", version = "0.7.2" }
 
 [bundles]
 

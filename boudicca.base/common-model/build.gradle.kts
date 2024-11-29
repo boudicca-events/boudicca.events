@@ -4,5 +4,5 @@ plugins {
 }
 
 dependencies {
-    testImplementation("org.junit.jupiter:junit-jupiter:5.11.3")
+    testImplementation(libs.junit.jupiter)
 }

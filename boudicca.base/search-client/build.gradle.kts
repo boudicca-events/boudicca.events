@@ -7,5 +7,5 @@ dependencies {
     api(project(":boudicca.base:common-model"))
     api(project(":boudicca.base:query-lib"))
     implementation(project(":boudicca.base:search-openapi"))
-    testImplementation("org.junit.jupiter:junit-jupiter:5.11.3")
+    testImplementation(libs.junit.jupiter)
 }

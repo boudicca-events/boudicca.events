@@ -52,7 +52,7 @@ io-spring-dependency-management-gradle-plugin = { module = "io.spring.dependency
 org-openapi-generator-gradle-plugin = { module = "org.openapi.generator:org.openapi.generator.gradle.plugin", version.ref = "org-openapi-generator-gradle-plugin" }
 
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit-jupiter" }
-mockito-kotlin = { module = "com.github.jknack:handlebars", version.ref = "mockito-kotlin" }
+mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockito-kotlin" }
 
 biweekly = { module = "net.sf.biweekly:biweekly", version.ref = "biweekly" }
 
@@ -62,11 +62,15 @@ apache-velocity-tools-generic = { module = "org.apache.velocity.tools:velocity-t
 logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 slf4j = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
 
-handlebars = { module = "com.microsoft.playwright:playwright", version.ref = "handlebars" }
-microsoft-playwright = { module = "com.deque.html.axe-core:playwright", version.ref = "microsoft-playwright" }
-axe-core-playwright = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "axe-core-playwright" }
+handlebars = { module = "com.github.jknack:handlebars", version.ref = "handlebars" }
+microsoft-playwright = { module = "com.microsoft.playwright:playwright", version.ref = "microsoft-playwright" }
+axe-core-playwright = { module = "com.deque.html.axe-core:playwright", version.ref = "axe-core-playwright" }
 
 json = { module = "org.json:json", version = "20240303" }
+
+google-api-client = { module = "com.google.api-client:google-api-client", version = "2.7.0" }
+google-auth-library-oauth2-http = { module = "com.google.auth:google-auth-library-oauth2-http", version = "1.30.0" }
+google-api-services-sheets = { module = "com.google.apis:google-api-services-sheets", version = "v4-rev20241008-2.0.0" }
 
 [plugins]
 jmh = { id = "me.champeau.jmh", version = "0.7.2" }

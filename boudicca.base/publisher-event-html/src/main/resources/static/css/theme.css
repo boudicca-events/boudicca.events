@@ -1,0 +1,127 @@
+:root {
+
+    /** colors */
+    --color-white: white;
+    --color-main: #d5f1f9;
+    --color-main-yellow: #ffee5b;
+    --color-main-yellow-focus: #fff6ad;
+    --color-main-red: #f78989;
+    --color-main-green: #aafbaa;
+    --color-main-grey: #ccc;
+    --color-icon: inherit;
+
+    /** font family */
+    --font-family-open-sans: 'Open Sans', Arial, Helvetica, sans-serif;
+
+    /** layout */
+    --max-main-width: 1200px;
+
+    /** responsive breakpoints */
+    /** https://bholmes.dev/blog/alternative-to-css-variable-media-queries/ */
+    /** --max-mobile-width: 700px; */
+    /** --max-tablet-width: 970px; */
+
+    /** font size */
+    --font-size-small: 0.85em;
+    --font-size-medium: 1em;
+    --font-size-large: 1.25em;
+
+    /** spacing */
+    --space-small: 4px;
+    --space-medium: 8px;
+    --space-large: 16px;
+    --space-xlarge: 32px;
+    --space-xxlarge: 128px;
+
+    /** events **/
+    --anchor-to-eventpage-border-color: black;
+    --anchor-to-eventpage-background-color: white;
+    --event-card-size: 220px;
+
+    --input-background-color: inherit;
+    --font-color: inherit;
+
+    --color-filterSearchButton: black;
+}
+
+html {
+    font-size: 1.125em
+}
+
+* {
+    font-family: var(--font-family-open-sans);
+    box-sizing: border-box;
+    color: var(--font-color);
+}
+
+*:focus-visible {
+    background-color: var(--color-main-yellow-focus);
+}
+
+p {
+    margin: 0;
+}
+
+button {
+    outline: none;
+    border: none;
+    appearance: none;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.svgsprite {
+    position: absolute;
+    width: 0;
+}
+
+svg {
+    color: var(--color-icon);
+}
+
+.visible-hidden {
+    position: absolute;
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0,0,0,0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}
+
+legend {
+    margin: 0;
+    padding: 0;
+}
+
+input, select {
+    font-size: var(--font-size-small);
+    border: 1px solid;
+    padding: 8px 12px;
+    background-color: var(--input-background-color);
+}
+
+input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+}
+
+input[type="checkbox"]:focus {
+    background-color: var(--color-main-yellow-focus);
+}
+
+select {
+    width: 100%;
+}
+
+input:focus-visible, button:focus-visible, select:focus-visible {
+    outline: 2px solid;
+    outline-offset: 1px;
+}
+
+a {
+    color: black;
+}

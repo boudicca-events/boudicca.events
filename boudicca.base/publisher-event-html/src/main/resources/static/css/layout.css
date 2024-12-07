@@ -17,6 +17,7 @@ footer {
     gap: 24px;
     padding: 12px 0;
     align-content: center;
+    white-space: nowrap;
 }
 
 .header-links a {

@@ -37,3 +37,5 @@ nb-configuration.xml
 testdata.dump
 /boudicca.store
 /fetcher.cache
+
+out/

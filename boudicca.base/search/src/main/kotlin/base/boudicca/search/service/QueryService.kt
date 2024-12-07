@@ -44,7 +44,7 @@ class QueryService @Autowired constructor(
     @EventListener
     fun onEventsUpdate(event: EntriesUpdatedEvent) {
         this.entries = Utils.order(event.entries, ConcurrentHashMap())
-        if (boudiccaSearchProperties.localMode) {
+        if (boudiccaSearchProperties.devMode) {
             //for local mode we only want the simple, the optimizing has quite some startup
             this.evaluator = SimpleEvaluator(event.entries)
         } else {

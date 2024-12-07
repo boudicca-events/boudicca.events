@@ -2,9 +2,10 @@
 
 ## Start application
 
-```
-gradlew bootRun or ./gradlew bootRun
-```
+There is the launch config `OnlineHtmlPublisher` you can run/debug.
+For template and Javascript/CSS file changes you don't need to rebuild/restart the application.
+To reload the application after you made Kotlin changes you can build the project via `Build -> Build Project` or pressing Ctrl+F9.
+To make this rebuild and reload even faster you can change your settings in `Settings -> Build, Execution, Deployment -> Gradle -> Build and run using: ` to build with Intellij instead of Gradle.
 
 ## Stack
 

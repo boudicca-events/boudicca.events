@@ -15,7 +15,7 @@ This API offers endpoints for building search functionality, it is implemented a
 
 This service is responsible for updating the data every hour. It basically is a scheduled job which runs every hour, fetches the data from the configured EventDb and then sends an `EntriesUpdatedEvent` with the new data. The other services receive this event and update their internal state to use that from now on.
 
-Data in the Search Service is normally cached and only updated every hour, so for local development there is the `boudicca.localMode` property, which will actively update the data everytime an endpoint is called.
+Data in the Search Service is normally cached and only updated every hour, so for local development there is the `boudicca.devMode` property, which will actively update the data everytime an endpoint is called.
 This property is already set in the `LocalSearch` launch config.
 
 ## FiltersService

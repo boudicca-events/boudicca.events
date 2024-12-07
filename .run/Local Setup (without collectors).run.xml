@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Local Setup (without collectors)" type="CompoundRunConfigurationType">
+    <toRun name="LocalHtmlPublisher" type="Application" />
     <toRun name="LocalEventDB" type="JetRunConfigurationType" />
-    <toRun name="LocalHtmlPublisher" type="JetRunConfigurationType" />
     <toRun name="LocalSearch" type="JetRunConfigurationType" />
     <method v="2" />
   </configuration>

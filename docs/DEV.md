@@ -13,10 +13,13 @@ After checkout please build the whole project with `gradlew build` to generate a
 ### Frontend only setup
 
 If you only want to develop the frontend ([publisher-event-html](../boudicca.base/publisher-event-html)) then you can
-use the `OnlineHtmlPublisher`
-run config.
+use the `OnlineHtmlPublisher` run config. This will start the frontend which uses the online boudicca.events website as a backend.
 
-This run configuration starts the frontend which uses the online boudicca.events website as backend.
+Both the `OnlineHtmlPublisher` and the `LocalHtmlPublisher` launch configurations set the
+`boudicca.devMode=true` property which will circumvent caching of local resources, so if you only change templates or
+static resources like Javascript or CSS, a simple reload will fetch your changes, and you do not need to restart or
+rebuild the server. For changes in Kotlin classes you will need to trigger a recompile (Ctrl+F9 in Intellij), which
+should also automatically restart the server.
 
 ### Full setup
 

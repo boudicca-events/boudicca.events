@@ -25,7 +25,7 @@ class SearchController @Autowired constructor(
     )
     @ResponseBody
     override fun filtersFor(@RequestBody filterQueryDTO: FilterQueryDTO): FilterResultDTO {
-        if (boudiccaSearchProperties.localMode) {
+        if (boudiccaSearchProperties.devMode) {
             synchronizationService.update()
         }
         return filtersService.filtersFor(filterQueryDTO)
@@ -38,7 +38,7 @@ class SearchController @Autowired constructor(
     )
     @ResponseBody
     override fun queryEntries(@RequestBody queryDTO: QueryDTO): ResultDTO {
-        if (boudiccaSearchProperties.localMode) {
+        if (boudiccaSearchProperties.devMode) {
             synchronizationService.update()
         }
         return queryService.query(queryDTO)

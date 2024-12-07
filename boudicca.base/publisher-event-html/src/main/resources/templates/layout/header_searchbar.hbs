@@ -1,18 +1,73 @@
-<div class="header-search">
-    <div class="header-search-wrapper">
+<style>
+
+    #searchForm {
+        display: flex;
+        flex-grow: 1;
+    }
+
+    .header-search {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        flex-grow: 1;
+        gap: 8px;
+    }
+
+    .search-input {
+        padding: 4px;
+        min-width: 150px;
+        max-width: 250px;
+        appearance: none;
+        height: 26px;
+        border: none;
+        border-bottom: 1px solid black;
+        flex-grow: 1;
+    }
+
+    #searchButton {
+        height: 100%;
+        cursor: pointer;
+    }
+
+    #searchButton:focus-visible {
+        outline: auto;
+    }
+
+    @media only screen and (max-width: 700px) {
+        #searchForm svg {
+            width: 18px;
+            height: 18px;
+        }
+    }
+
+    @media only screen and (max-width: 520px) {
+        #searchForm {
+            order: 3;
+        }
+
+        .header-search {
+            justify-content: flex-start;
+        }
+    }
+
+</style>
+
+<form id="searchForm">
+    <div class="header-search">
         <label for="name" class="visible-hidden">Textsuche</label>
         <input id="name" name="name" type="text" class="search-input" data-testid="search-field" />
+
         <button id="searchButton" aria-describedby="Events finden" type="submit">
             <svg height="24px" width="24px" title="Suche Logo" viewBox="0 0 512 512" >
                 <use xlink:href="#search"></use>
             </svg>
         </button>
-    </div>
 
-    <button id="filterButton" aria-describedby="Filter öffnen" aria-controls="drawer" type="button">
-        <svg height="22px" width="22px" title="Filter Logo" viewBox="0 0 512 512" >
-            <use xlink:href="#funnel"></use>
-        </svg>
-    </button>
-    {{> layout/drawer}}
-</div>
+        <button id="filterButton" aria-describedby="Filter öffnen" aria-controls="drawer" type="button">
+            <svg height="22px" width="22px" title="Filter Logo" viewBox="0 0 512 512" >
+                <use xlink:href="#funnel"></use>
+            </svg>
+        </button>
+        {{> layout/drawer}}
+    </div>
+</form>

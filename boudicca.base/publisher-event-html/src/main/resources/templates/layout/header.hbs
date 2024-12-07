@@ -8,23 +8,48 @@
         margin-bottom: 24px;
         padding-bottom: 24px;
         border-bottom: 1px solid var(--color-main-grey);
+        width: 100%;
+        gap: 20px;
+    }
+
+    .header-left {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        text-decoration: none;
+        white-space: nowrap;
     }
 
     .header-subtitle {
         margin-top: -4px;
     }
 
+    .header-title {
+        margin: 0;
+        font-size: 1.8em;
+    }
+
+    header button {
+        padding: 0;
+    }
+
     @media only screen and (max-width: 700px) {
         header {
-            flex-direction: column;
+            gap: 16px;
+            margin-top: 16px;
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            flex-direction: row;
             align-items: flex-start;
-            margin-bottom: 24px;
         }
 
-        #searchForm {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
+        .header-left {
+            gap: 12px;
+        }
+
+        header img {
+            width: 40px;
+            height: 40px;
         }
 
         .header-title {
@@ -35,9 +60,6 @@
             display: none;
         }
 
-        .search-input {
-            min-width: 200px;
-        }
     }
 
     @media only screen and (max-width: 970px) {
@@ -47,28 +69,8 @@
 
         .header-subtitle {
             font-size: var(--font-size-small);
+            margin-top: 0;
         }
-    }
-
-    .header-left {
-        display: flex;
-        align-items: center;
-        gap: 18px;
-        text-decoration: none;
-    }
-
-    .header-left h1 {
-        margin: 0;
-    }
-
-    .search-input {
-        padding: 4px;
-        min-width: 200px;
-        appearance: none;
-        height: 26px;
-        border: none;
-        border-bottom: 1px solid black;
-        margin: auto;
     }
 
     .header-search-filter {
@@ -79,38 +81,9 @@
         }
     }
 
-    #searchForm {
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-    }
-
     .date-input {
         appearance: none;
         min-width: 135px;
-    }
-
-    .header-search {
-        display: flex;
-    }
-
-    .header-search-wrapper {
-        position: relative;
-    }
-
-    #searchButton {
-        height: 100%;
-        cursor: pointer;
-    }
-
-    #searchButton:focus-visible {
-        outline: auto;
-    }
-
-    .searchform-top {
-        display: flex;
-        width: 100%;
-        justify-content: space-between;
     }
 
     .filter-label {
@@ -128,30 +101,34 @@
         width: 100%;
     }
 
-    #filterButton {
-        margin-left: 12px;
+    @media only screen and (max-width: 520px) {
+        header {
+            flex-wrap: wrap;
+        }
+
+        .header-left {
+            order: 1;
+        }
     }
     }
 
 </style>
 <header>
-    <form id="searchForm">
-        <div class="searchform-top">
-            <a href="/" class="header-left">
-                <img src="/img/logo_small.png" height="48px" width="48px"
-                     alt="Boudicca Logo - Ein rundes Schwarz-auf-Weiß-Bild. Ein stilisiertes Logo der Mondkrone des keltischen Volksstammes Iceni." />
-                <div>
-                    <h1 class="header-title">{{headerTitle}}</h1>
-                    <p class="header-subtitle">Events · für alle · in Österreich</p>
-                </div>
-            </a>
 
-            {{> layout/header_searchbar}}
-            {{> layout/header_mobile_menu}}
-            {{> layout/header_links}}
-
-            <!--TODO if did not work :( -->
-            {{> @partial-block }}
+    <a href="/" class="header-left">
+        <img src="/img/logo_small.png" height="48px" width="48px"
+             alt="Boudicca Logo - Ein rundes Schwarz-auf-Weiß-Bild. Ein stilisiertes Logo der Mondkrone des keltischen Volksstammes Iceni." />
+        <div>
+            <h1 class="header-title">{{headerTitle}}</h1>
+            <p class="header-subtitle">Events · für alle · in Österreich</p>
         </div>
-    </form>
+    </a>
+
+    {{> layout/header_searchbar}}
+    {{> layout/header_mobile_menu}}
+    {{> layout/header_links}}
+
+    <!--TODO if did not work :( -->
+    {{> @partial-block }}
+
 </header>

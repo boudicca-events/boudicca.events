@@ -2,9 +2,9 @@
 
 ## Start application
 
-```
-gradlew bootRun or ./gradlew bootRun
-```
+There is the new Launch config `BETA - OnlineHtmlPublisher` you can run/debug.
+To reload the application after you made changes you can build the project via `Build -> Build Project` or pressing Ctrl+F9.
+To make this rebuild and reload even faster you can change your settings in `Settings -> Build, Execution, Deployment -> Gradle -> Build and run using: ` to build with Intellij instead of Gradle.
 
 ## Stack
 

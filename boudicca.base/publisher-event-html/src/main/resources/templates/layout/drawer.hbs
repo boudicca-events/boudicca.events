@@ -65,6 +65,34 @@
         width: max-content;
     }
 
+    .date-input {
+        appearance: none;
+        min-width: 135px;
+    }
+
+    .filter-label {
+        font-size: 12px;
+        margin-bottom: 2px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: var(--space-small);
+    }
+
+    .filter-input-wrapper {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .header-search-filter {
+        display: flex;
+
+        > button {
+            display: flex;
+        }
+    }
+
     @media only screen and (max-width: 700px) { 
         .header-accessibility-filter {
             flex-direction: column;

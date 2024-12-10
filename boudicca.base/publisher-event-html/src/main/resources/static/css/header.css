@@ -8,6 +8,7 @@ header {
     border-bottom: 1px solid var(--color-main-grey);
     width: 100%;
     gap: 20px;
+    order: 1;
 }
 
 .header-left {
@@ -27,20 +28,13 @@ header {
     margin-top: -4px;
 }
 
-header button {
-    padding: 0;
-}
-
 #searchForm {
-    display: flex;
     flex-grow: 1;
 }
 
 .header-search {
     display: flex;
-    flex-direction: row;
     justify-content: center;
-    flex-grow: 1;
     gap: 8px;
 }
 
@@ -48,48 +42,25 @@ header button {
     padding: 4px;
     min-width: 150px;
     max-width: 250px;
-    appearance: none;
     height: 26px;
     border: none;
     border-bottom: 1px solid black;
     flex-grow: 1;
 }
 
-#searchButton {
-    height: 100%;
-    cursor: pointer;
+header button {
+    padding: 0;
 }
 
-#searchButton:focus-visible {
-    outline: auto;
-}
-
-.header-search-filter {
+.header-links {
     display: flex;
-
-    > button {
-        display: flex;
-    }
+    flex-wrap: wrap;
+    gap: 24px;
+    white-space: nowrap;
 }
 
-.date-input {
-    appearance: none;
-    min-width: 135px;
-}
-
-.filter-label {
-    font-size: 12px;
-    margin-bottom: 2px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: var(--space-small);
-}
-
-.filter-input-wrapper {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
+.header-links a {
+    text-decoration: none;
 }
 
 .header-mobile-menu {
@@ -108,9 +79,11 @@ header button {
 
     .header-mobile-menu {
        display: flex;
-       justify-content: space-between;
-       flex-wrap: wrap;
-       gap: 24px;
+       margin-right: 10px;
+    }
+
+    .header-links {
+        display: none;
     }
 }
 
@@ -120,8 +93,6 @@ header button {
         margin-top: 16px;
         margin-bottom: 16px;
         padding-bottom: 16px;
-        flex-direction: row;
-        align-items: flex-start;
     }
 
     .header-left {
@@ -129,8 +100,8 @@ header button {
     }
 
     header img {
-        width: 40px;
-        height: 40px;
+        width: 36px;
+        height: 36px;
     }
 
     .header-title {
@@ -142,14 +113,10 @@ header button {
     }
 
     #searchForm svg {
-        width: 18px;
-        height: 18px;
+        width: 20px;
+        height: 20px;
     }
 
-    .header-mobile-menu svg {
-       width: 28px;
-       height: 28px;
-    }
 }
 
 @media only screen and (max-width: 500px) {
@@ -157,12 +124,9 @@ header button {
         flex-wrap: wrap;
     }
 
-    .header-left {
-        order: 1;
-    }
-
     #searchForm {
         order: 3;
+        flex-basis: 100%;
     }
 
     .header-search {
@@ -170,7 +134,6 @@ header button {
     }
 
     .header-mobile-menu {
-       padding: 4px 4px 0 0;
        order: 2;
     }
 

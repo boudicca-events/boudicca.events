@@ -1,46 +1,15 @@
 <style>
     @layer default {
     .drawer {
-        z-index: 9999;
-        min-width: 500px;
         display: flex;
-        height: 100%;
-        flex-direction: column;
-        background-color: var(--color-white);
-        padding: 32px;
-        opacity: 0;
-        position: fixed;
-        right: 0;
-        top: 0;
-        visibility: hidden;
-        border-left: 1px solid black;
-        box-shadow: 1px 0px 10px 11px #87878724;
-        overflow: scroll;
-    }
-
-    .hidden {
-        display: none;
-    }
-
-    @media only screen and (max-width: 700px) {
-        .drawer {
-            width: 100vw;
-            border: none;
-            box-shadow: none;
-            min-width: 0;
-        }
-    }
-
-    .drawer-open {
-        visibility: visible;
-        opacity: 1;
+        padding: 0 24px 24px 24px;
+        flex-wrap: wrap;
+        margin-bottom: 24px;
+        border-bottom: 1px solid var(--color-main-grey);
     }
 
     fieldset {
-        padding: 0;
         border: none;
-        margin-top: 10px;
-        margin-bottom: 10px;
     }
 
     legend {
@@ -57,6 +26,7 @@
         border: 1px solid var(--color-filterSearchButton);
         margin-top: 24px;
         font-size: 18px;
+        height: 100%;
     }
 
     #resetSearchForm {
@@ -75,22 +45,24 @@
         margin-bottom: 2px;
         font-weight: 600;
         display: flex;
-        align-items: center;
-        gap: var(--space-small);
     }
 
     .filter-input-wrapper {
         display: flex;
         flex-direction: column;
-        width: 100%;
     }
 
     .header-search-filter {
         display: flex;
+    }
 
-        > button {
+    .header-search-filter button {
             display: flex;
         }
+
+    #drawer input:not([type='checkbox']), #drawer select {
+        min-width: 150px;
+        max-width: 300px;
     }
 
     @media only screen and (max-width: 700px) { 
@@ -103,12 +75,14 @@
         display: flex;
         flex: 1;
         gap: 12px;
+        flex-wrap: wrap;
     }
 
     .header-date-search {
         display: flex;
         flex: 1;
         gap: 12px;
+        flex-direction: column;
     }
 
     @media only screen and (max-width: 700px) {
@@ -120,26 +94,19 @@
 </style>
 
 <div id="drawer" class="drawer">
-    <div class="drawer-header">
-        <h2>Filtersuche</h2>
-        <button type="button" id="closeDrawerButton" title="Filtersuche schließen" tabindex="0">
-            <svg title="Schließen Logo" height="56px" width="56px" viewBox="0 0 512 512">
-                <use xlink:href="#close"></use>
-            </svg>
-        </button>
-    </div>
+<!-- <button type="button" id="closeDrawerButton" title="Filtersuche schließen" tabindex="0">-->
 
     <fieldset>
-        <legend><strong>Allgemein</strong></legend>
         <div class="header-search-filter">
             <div class="header-date-search">
                 <div class="filter-input-wrapper">
-                    <label for="categorySelect" class="filter-label">Veranstaltungsart</label>
-                    <select name="category" id="categorySelect">
+                    <div>
+                        <label for="categorySelect" class="filter-label">Veranstaltungsart</label>
                         {{#each filters.categories as |category|}}
-                            <option value="{{category.first}}">{{category.second}}</option>
+                            <input type="checkbox" name="category" id="categorySelect" value="{{category.first}}" />
+                            <label for="track">{{category.second}}</label>
                         {{/each}}
-                    </select>
+                    </div>
                 </div>
                 <div class="filter-input-wrapper">
                     <label for="includeRecurring" class="filter-label">Zeige sich wiederholende Veranstaltungen</label>
@@ -150,16 +117,15 @@
     </fieldset>
 
     <fieldset>
-        <legend><strong>Datum</strong></legend>
         <div class="header-search-filter">
             <div class="header-date-search">
                 <div class="filter-input-wrapper">
-                    <label for="fromDate" class="filter-label">Von</label>
+                    <label for="fromDate" class="filter-label">Datum von</label>
                     <input id="fromDate" name="fromDate" type="date" class="date-input"/>
                 </div>
 
                 <div class="filter-input-wrapper">
-                    <label for="toDate" class="filter-label">Bis</label>
+                    <label for="toDate" class="filter-label">Datum bis</label>
                     <input id="toDate" name="toDate" type="date" class="date-input"/>
                 </div>
             </div>
@@ -167,22 +133,26 @@
     </fieldset>
 
     <fieldset>
-        <legend><strong>Ort</strong></legend>
         <div class="header-search-filter">
             <div class="header-date-search">
                 <div class="filter-input-wrapper">
                     <label for="locationName" class="filter-label">Veranstaltungsort</label>
-                    <select name="locationName" id="locationName">
+                    <select name="locationName" id="locationName" multiple>
                         <option value="">Beliebig</option>
                         {{#each filters.locationNames as |locationName|}}
                             <option value="{{locationName.first}}">{{locationName.second}}</option>
                         {{/each}}
                     </select>
                 </div>
-
+            </div>
+        </div>
+    </fieldset>
+    <fieldset>
+        <div class="header-search-filter">
+             <div class="header-date-search">
                 <div class="filter-input-wrapper">
                     <label for="locationCity" class="filter-label">Stadt</label>
-                    <select name="locationCity" id="locationCity">
+                    <select name="locationCity" id="locationCity" multiple>
                         <option value="">Beliebig</option>
                         {{#each filters.locationCities as |locationCity|}}
                             <option value="{{locationCity.first}}">{{locationCity.second}}</option>
@@ -199,7 +169,7 @@
             <div class="header-date-search">
                 <div class="filter-input-wrapper">
                     <label for="bandName" class="filter-label">Bandname</label>
-                    <select name="bandName" id="bandName">
+                    <select name="bandName" id="bandName" multiple>
                         <option value="">Beliebig</option>
                         {{#each filters.bandNames as |bandName|}}
                             <option value="{{bandName.first}}">{{bandName.second}}</option>
@@ -216,7 +186,7 @@
             <div class="header-date-search">
                 <div class="filter-input-wrapper">
                     <label for="sportParticipation" class="filter-label">Teilnahme</label>
-                    <select name="sportParticipation" id="sportParticipation">
+                    <select name="sportParticipation" id="sportParticipation" multiple>
                         <option value="">Beliebig</option>
                         <option value="active">Zum Mitmachen</option>
                         <option value="watch">Zum Zuschauen</option>
@@ -231,28 +201,33 @@
         <div class="header-search-filter">
             <div class="header-accessibility-filter">
                 <div class="filter-input-wrapper">
-                    <label for="accessibility.accessibleEntry" class="filter-label">Barrierefreier Zugang
+                    <label for="accessibility.accessibleEntry" class="filter-label">
                         <input type="checkbox" id="accessibility.accessibleEntry" value="accessibility.accessibleEntry" name="flags">
+                        Barrierefreier Zugang
                     </label>
                 </div>
                 <div class="filter-input-wrapper">
-                    <label for="accessibility.accessibleSeats" class="filter-label">Rollstuhlplatz
+                    <label for="accessibility.accessibleSeats" class="filter-label">
                         <input type="checkbox" id="accessibility.accessibleSeats" value="accessibility.accessibleSeats" name="flags">
+                        Rollstuhlplatz
                     </label>
                 </div>
                 <div class="filter-input-wrapper">
-                    <label for="accessibility.accessibleToilets" class="filter-label">Barrierefreie Toiletten
+                    <label for="accessibility.accessibleToilets" class="filter-label">
                         <input type="checkbox" id="accessibility.accessibleToilets" value="accessibility.accessibleToilets" name="flags">
+                        Barrierefreie Toiletten
                     </label>
                 </div>
                 <div class="filter-input-wrapper">
-                    <label for="accessibility.accessibleAktivpassLinz" class="filter-label">Aktivpass möglich
+                    <label for="accessibility.accessibleAktivpassLinz" class="filter-label">
                         <input type="checkbox" id="accessibility.accessibleAktivpassLinz" value="accessibility.accessibleAktivpassLinz" name="flags">
+                        Aktivpass möglich
                     </label>
                 </div>
                 <div class="filter-input-wrapper">
-                    <label for="accessibility.accessibleKulturpass" class="filter-label">Kulturpass möglich
+                    <label for="accessibility.accessibleKulturpass" class="filter-label">
                         <input type="checkbox" id="accessibility.accessibleKulturpass" value="accessibility.accessibleKulturpass" name="flags">
+                        Kulturpass möglich
                     </label>
                 </div>
             </div>

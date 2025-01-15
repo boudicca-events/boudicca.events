@@ -7,7 +7,6 @@ on:
 jobs:
   update-gradle-wrapper:
     runs-on: ubuntu-latest
-    environment: ci
 
     steps:
       - uses: actions/checkout@v4

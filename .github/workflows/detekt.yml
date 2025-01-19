@@ -61,7 +61,7 @@ jobs:
           query getReleaseAssetDownloadUrl($tagName: String!) {
             repository(name: "detekt", owner: "detekt") {
               release(tagName: $tagName) {
-                releaseAssets(name: "detekt", first: 1) {
+                releaseAssets(first: 1) {
                   nodes {
                     downloadUrl
                   }

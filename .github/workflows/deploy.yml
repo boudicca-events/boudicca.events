@@ -21,13 +21,13 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@0bdd871935719febd78681f197cd39af5b6e16a6
       - name: Execute Gradle build with tests
         run: ./gradlew build
       - name: Build Docker images with gradle
         run: ./gradlew imageBuild
       - name: Login to Docker Registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567
         with:
           registry: 'ghcr.io'
           username: ${{ github.actor }}
@@ -35,7 +35,7 @@ jobs:
       - name: Tag And Push Docker Images
         run: ./deploy_images.sh
       - name: triggering deploy
-        uses: appleboy/ssh-action@v1.2.0
+        uses: appleboy/ssh-action@7eaf76671a0d7eec5d98ee897acda4f968735a17
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}

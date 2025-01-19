@@ -42,9 +42,7 @@ class EventDBApplication : WebMvcConfigurer {
             it.requestMatchers("/**").permitAll()
         }
         http.httpBasic(withDefaults())
-        http.csrf {
-            it.disable()
-        }
+        http.csrf(withDefaults())
         return http.build()
     }
 

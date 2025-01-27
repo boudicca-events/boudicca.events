@@ -1,5 +1,5 @@
 [versions]
-kotlin = "2.1.0"
+kotlin = "2.1.10"
 jackson = "2.18.2"
 jackson-databind-nullable = "0.2.6"
 jakarta-annotation = "3.0.0"

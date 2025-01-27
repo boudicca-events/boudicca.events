@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Update Gradle Wrapper
-        uses: gradle-update/update-gradle-wrapper-action@9268373d69bd0974b6318eb3b512b8e025060bbe
+        uses: gradle-update/update-gradle-wrapper-action@9cca748ef7cfd967bc3a5c39e15a7aa229ad1b3d
         with:
           repo-token: ${{ secrets.YOLGIE_PAT_UPGRADE_GRADLEW_ACTION }}
           pr-title-template: 'build(deps): Bump Gradle Wrapper from %sourceVersion% to %targetVersion%'

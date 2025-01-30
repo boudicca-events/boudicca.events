@@ -73,7 +73,7 @@ google-auth-library-oauth2-http = { module = "com.google.auth:google-auth-librar
 google-api-services-sheets = { module = "com.google.apis:google-api-services-sheets", version = "v4-rev20250106-2.0.0" }
 
 [plugins]
-jmh = { id = "me.champeau.jmh", version = "0.7.2" }
+jmh = { id = "me.champeau.jmh", version = "0.7.3" }
 
 [bundles]
 

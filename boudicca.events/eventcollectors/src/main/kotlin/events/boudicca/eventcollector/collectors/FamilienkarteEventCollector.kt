@@ -6,10 +6,8 @@ import events.boudicca.api.eventcollector.Fetcher
 import events.boudicca.api.eventcollector.TwoStepEventCollector
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
-import java.time.LocalDate
-import java.time.LocalTime
-import java.time.OffsetDateTime
-import java.time.ZoneId
+import java.net.URL
+import java.time.*
 import java.time.format.DateTimeFormatter
 
 class FamilienkarteCollector : TwoStepEventCollector<String>("familienkarte") {

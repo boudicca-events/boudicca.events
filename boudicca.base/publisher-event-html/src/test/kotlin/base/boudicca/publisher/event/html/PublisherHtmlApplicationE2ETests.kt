@@ -15,8 +15,8 @@ import org.junit.jupiter.params.provider.ArgumentsSource
 import org.mockito.kotlin.any
 import org.mockito.kotlin.whenever
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import java.time.OffsetDateTime
 
@@ -29,7 +29,7 @@ class PublisherHtmlApplicationE2ETests: E2ETestFixture() {
   @LocalServerPort
   private val port = 0
 
-  @MockBean
+  @MockitoBean
   lateinit var searchServiceCaller: SearchServiceCaller
 
   @ParameterizedTest

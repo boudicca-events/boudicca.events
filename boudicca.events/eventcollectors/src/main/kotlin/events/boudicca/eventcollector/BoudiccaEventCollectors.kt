@@ -40,6 +40,7 @@ fun main() {
         .addEventCollector(ZeroxACollector())
         .addEventCollector(CCCEventsCollector())
         .addEventCollector(ClerieDeChaosEventsCollector())
+        .addEventCollector(FamilienkarteEventCollector())
         .build()
 
     eventCollectorCoordinator.startWebUi()

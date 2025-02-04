@@ -70,7 +70,7 @@ class LandestheaterLinzCollector :
             fetcher.fetchUrlPost(
                 "https://www.landestheater-linz.at/DE/repos/evoscripts/lth/getEvents",
                 "application/x-www-form-urlencoded",
-                "cal=${now}&monthTo=${to}".encodeToByteArray()
+                "cal=${now}&monthTo=${to}"
             )
         )
     }

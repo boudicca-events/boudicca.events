@@ -17,7 +17,7 @@ import java.time.format.DateTimeFormatter
 
 class AlpenvereinCollector : TwoStepEventCollector<String>("alpenverein") {
 
-    private val fetcher = Fetcher(12 * 1000) //they have a crawl-delay of 12 seconds...
+    private val fetcher = Fetcher(manualSetDelay = 12 * 1000) //they have a crawl-delay of 12 seconds...
 
     override fun getAllUnparsedEvents(): List<String> {
 

@@ -29,6 +29,5 @@ fun main() {
 //        .debug(RemoteCollectorCollector("http://localhost:8080"))
 
         //enable/add any collectors you want to test here
-//        .debug(AlpenvereinCollector())
-        .debug(ClerieDeChaosEventsCollector())
+        .debug(FamilienkarteEventCollector())
 }

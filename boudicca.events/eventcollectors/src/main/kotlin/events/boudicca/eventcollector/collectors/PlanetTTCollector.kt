@@ -19,7 +19,7 @@ import java.time.LocalTime
 import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.util.*
+import java.util.Locale
 import java.util.regex.Pattern
 
 class PlanetTTCollector : TwoStepEventCollector<Element>("planettt") {
@@ -34,9 +34,7 @@ class PlanetTTCollector : TwoStepEventCollector<Element>("planettt") {
         val response = fetcher.fetchUrlPost(
             "https://planet.tt/wp-admin/admin-ajax.php",
             "application/x-www-form-urlencoded; charset=UTF-8",
-            "action=pl_events_list&_ajax_nonce=${nonces.first}&start=0&length=200&search=&location=&eventid=-1".toByteArray(
-                Charsets.UTF_8
-            )
+            "action=pl_events_list&_ajax_nonce=${nonces.first}&start=0&length=200&search=&location=&eventid=-1"
         )
         val jsonResponse = Parser.default().parse(StringReader(response)) as JsonObject
         val events = Jsoup.parse(jsonResponse.obj("data")!!.string("events")!!)
@@ -64,9 +62,7 @@ class PlanetTTCollector : TwoStepEventCollector<Element>("planettt") {
         val response = fetcher.fetchUrlPost(
             "https://planet.tt/wp-admin/admin-ajax.php",
             "application/x-www-form-urlencoded; charset=UTF-8",
-            "action=pl_events_modal&_ajax_nonce=${modalNonce}&eventid=$eventId&postid=$postId".toByteArray(
-                Charsets.UTF_8
-            )
+            "action=pl_events_modal&_ajax_nonce=${modalNonce}&eventid=$eventId&postid=$postId"
         )
         val jsonResponse = Parser.default().parse(StringReader(response)) as JsonObject
         val fullEvent = Jsoup.parse(jsonResponse.string("data")!!)

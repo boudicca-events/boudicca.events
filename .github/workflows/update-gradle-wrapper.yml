@@ -4,6 +4,10 @@ on:
   schedule:
     - cron: "0 0 * * *"
 
+permissions: # this can be restrictive since there as a granular personal access token that is used to open the MergeRequest
+  contents: read
+  pull-requests: read
+
 jobs:
   update-gradle-wrapper:
     runs-on: ubuntu-latest

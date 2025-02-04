@@ -14,3 +14,7 @@ dependencies {
     jmh(libs.jackson.databind.jsr310)
     jmh(libs.jackson.databind)
 }
+
+tasks.test {
+    useJUnitPlatform()
+}

@@ -4,4 +4,9 @@ plugins {
 
 dependencies {
     openapi(project(":boudicca.base:search-api"))
+    testImplementation(libs.junit.jupiter)
+}
+
+tasks.test {
+    useJUnitPlatform()
 }

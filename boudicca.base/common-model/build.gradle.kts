@@ -6,3 +6,7 @@ plugins {
 dependencies {
     testImplementation(libs.junit.jupiter)
 }
+
+tasks.test {
+    useJUnitPlatform()
+}

@@ -39,16 +39,16 @@ class FetcherTest {
             return callback.call()
         }
 
-        override fun doPost(url: String, contentType: String, content: ByteArray): Pair<Int, String> {
+        override fun doPost(url: String, contentType: String, content: String): Pair<Int, String> {
             return callback.call()
         }
 
     }
 
     private val fetcher = Fetcher(
-        instantSource.withZone(ZoneId.systemDefault()),
-        { instantSource.setMillis(instantSource.millis() + it) },
-        httpClientWrapper
+        clock = instantSource.withZone(ZoneId.systemDefault()),
+        sleeper = { instantSource.setMillis(instantSource.millis() + it) },
+        httpClient = httpClientWrapper
     )
 
     @BeforeEach
@@ -137,10 +137,10 @@ class FetcherTest {
     @Test
     fun testManualSetDelay() {
         val customFetcher = Fetcher(
-            instantSource.withZone(ZoneId.systemDefault()),
-            { instantSource.setMillis(instantSource.millis() + it) },
-            httpClientWrapper,
-            6789
+            manualSetDelay = 6789,
+            clock = instantSource.withZone(ZoneId.systemDefault()),
+            sleeper = { instantSource.setMillis(instantSource.millis() + it) },
+            httpClient = httpClientWrapper
         )
         httpClientWrapper.callback = Callable {
             Pair(200, "OK")

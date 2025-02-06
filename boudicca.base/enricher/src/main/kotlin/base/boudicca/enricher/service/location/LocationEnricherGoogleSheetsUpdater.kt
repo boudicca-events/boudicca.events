@@ -14,7 +14,7 @@ class LocationEnricherGoogleSheetsUpdater(
     private val googleCredentialsPath: String,
     private val spreadsheetId: String,
 ) : LocationEnricherUpdater {
-    private val LOG = LoggerFactory.getLogger(this.javaClass)
+    private val logger = LoggerFactory.getLogger(this::class.java)
     private val JSON_FACTORY = GsonFactory.getDefaultInstance()
     private val HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport()
     private val range = "LocationData!A1:Z"
@@ -36,7 +36,7 @@ class LocationEnricherGoogleSheetsUpdater(
             .execute()
         val values: List<List<Any?>>? = response.getValues()
         if (values.isNullOrEmpty()) {
-            LOG.error("no data found in spreadsheet!")
+            logger.error("no data found in spreadsheet!")
             return emptyList()
         }
 

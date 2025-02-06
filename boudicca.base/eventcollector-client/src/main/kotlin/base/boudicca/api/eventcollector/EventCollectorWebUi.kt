@@ -18,13 +18,13 @@ import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.util.*
+import java.util.UUID
 
 class EventCollectorWebUi(port: Int, private val eventCollectors: List<EventCollector>) {
 
     private val server: HttpServer
     private val ve: VelocityEngine = VelocityEngine()
-    private val LOG = LoggerFactory.getLogger(this::class.java)
+    private val logger = LoggerFactory.getLogger(this::class.java)
 
     init {
         //set velocity to load templates from the classpath
@@ -64,7 +64,7 @@ class EventCollectorWebUi(port: Int, private val eventCollectors: List<EventColl
 
                 sendResponse(httpExchange, "/html/index.html.vm", context)
             } catch (e: Exception) {
-                LOG.error("error while handling request", e)
+                logger.error("error while handling request", e)
                 send500(httpExchange)
             }
         }
@@ -298,12 +298,12 @@ class EventCollectorWebUi(port: Int, private val eventCollectors: List<EventColl
             it.responseBody.write(bytes)
             it.close()
         } catch (e: IOException) {
-            LOG.debug("error sending response", e)
+            logger.debug("error sending response", e)
         }
     }
 
     fun start() {
-        LOG.info("webui starting and listening on ${server.address}")
+        logger.info("webui starting and listening on ${server.address}")
         server.start()
     }
 

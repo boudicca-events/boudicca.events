@@ -4,18 +4,18 @@ import org.slf4j.Logger
 import java.net.URI
 import java.net.URISyntaxException
 
-fun <T> retry(log: Logger, function: () -> T): T {
-    return retry(log, { Thread.sleep(it) }, function)
+fun <T> retry(logger: Logger, function: () -> T): T {
+    return retry(logger, { Thread.sleep(it) }, function)
 }
 
-fun <T> retry(log: Logger, sleeper: Sleeper, function: () -> T): T {
+fun <T> retry(logger: Logger, sleeper: Sleeper, function: () -> T): T {
     var lastException: Throwable? = null
     (1..5).forEach { _ ->
         try {
             return function()
         } catch (e: Exception) {
             lastException = e
-            log.info("exception caught, retrying in 1 minute", e)
+            logger.info("exception caught, retrying in 1 minute", e)
             sleeper.sleep(1000 * 60)
         }
     }

@@ -23,7 +23,7 @@ class MusicBrainzArtistEnricher @Autowired constructor(
     @Value("\${boudicca.enricher.musicbrainz.index.path:}") musicBrainzIndexPath: String?,
 ) : Enricher {
 
-    private val LOG = LoggerFactory.getLogger(this.javaClass)
+    private val logger = LoggerFactory.getLogger(this::class.java)
 
     private val objectMapper = ObjectMapper().registerModule(KotlinModule.Builder().build())
     private val artistMatcher = createArtistMatcher(musicBrainzDataPath, musicBrainzIndexPath)
@@ -75,7 +75,7 @@ class MusicBrainzArtistEnricher @Autowired constructor(
 
     private fun loadData(musicBrainzDataPath: String?): List<Artist>? {
         if (musicBrainzDataPath.isNullOrBlank()) {
-            LOG.debug("no musicBrainzDataPath given, disabling enricher")
+            logger.debug("no musicBrainzDataPath given, disabling enricher")
             return null
         }
         val file = File(musicBrainzDataPath)
@@ -90,7 +90,7 @@ class MusicBrainzArtistEnricher @Autowired constructor(
 
     private fun loadIndex(musicBrainzIndexPath: String?): ByteBuffer? {
         if (musicBrainzIndexPath.isNullOrBlank()) {
-            LOG.debug("no musicBrainzIndexPath given, disabling enricher")
+            logger.debug("no musicBrainzIndexPath given, disabling enricher")
             return null
         }
         val file = File(musicBrainzIndexPath)

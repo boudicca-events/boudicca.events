@@ -27,33 +27,33 @@ class Fetcher(
         var fetcherCache: FetcherCache = NoopFetcherCache
     }
 
-    private val LOG = LoggerFactory.getLogger(this::class.java)
+    private val logger = LoggerFactory.getLogger(this::class.java)
 
     private var lastRequestEnd = 0L
     private var lastRequestDuration = 0L
 
     fun fetchUrl(url: String): String {
         if (fetcherCache.containsEntry(url)) {
-            LOG.debug("Returning Cached entry for URL $url")
+            logger.debug("Returning Cached entry for URL $url")
             return fetcherCache.getEntry(url)
         }
         Collections.startHttpCall(url)
         val response = doRequest(url) { httpClient.doGet(url) }
         fetcherCache.putEntry(url, response)
-        LOG.debug("Added new entry to cache with URL: $url")
+        logger.debug("Added new entry to cache with URL: $url")
         return response
     }
 
     fun fetchUrlPost(url: String, contentType: String, content: String): String {
         val cacheKey = "$url|${content}"
         if (fetcherCache.containsEntry(cacheKey)) {
-            LOG.debug("Using cached entry for Key: $cacheKey")
+            logger.debug("Using cached entry for Key: $cacheKey")
             return fetcherCache.getEntry(cacheKey)
         }
 
         Collections.startHttpCall(url, content)
         val response = doRequest(url) { httpClient.doPost(url, contentType, content) }
-        LOG.debug("Added new entry to cache with Key: $cacheKey")
+        logger.debug("Added new entry to cache with Key: $cacheKey")
         fetcherCache.putEntry(cacheKey, response)
         return response
     }
@@ -62,7 +62,7 @@ class Fetcher(
         doSleep()
         var start = 0L
         val response = try {
-            retry(LOG, sleeper) {
+            retry(logger, sleeper) {
                 Collections.resetHttpTiming()
                 start = clock.millis()
                 val response = request.call()

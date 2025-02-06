@@ -12,15 +12,20 @@ import java.net.http.HttpRequest
 import java.net.http.HttpResponse.BodyHandlers
 import java.time.Instant
 import java.time.temporal.ChronoUnit
-import java.util.*
-import java.util.concurrent.*
+import java.util.Optional
+import java.util.UUID
+import java.util.concurrent.Callable
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.Executors
+import java.util.concurrent.Future
+import java.util.concurrent.TimeUnit
 import javax.imageio.ImageIO
 import kotlin.math.max
 
 @Service
 class PictureProxyService {
 
-    private val LOG = LoggerFactory.getLogger(this::class.java)
+    private val logger = LoggerFactory.getLogger(this::class.java)
 
     private val idToImageCache = ConcurrentHashMap<UUID, Future<CacheEntry>>()
     private val urlToIdCacheEntry = ConcurrentHashMap<String, UUID>()
@@ -61,18 +66,18 @@ class PictureProxyService {
             val response = httpClient.send(request, BodyHandlers.ofByteArray())
 
             val optional = if (response.statusCode() != 200) {
-                LOG.warn("response code is invalid ${response.statusCode()} for $url")
+                logger.warn("response code is invalid ${response.statusCode()} for $url")
                 Optional.empty()
             } else {
                 val body = response.body()
                 if (body.isEmpty()) {
-                    LOG.warn("empty body for $url")
+                    logger.warn("empty body for $url")
                     Optional.empty()
                 } else {
                     try {
                         Optional.of(resize(body))
                     } catch (e: RuntimeException) {
-                        LOG.warn("error resizing image $url", e)
+                        logger.warn("error resizing image $url", e)
                         Optional.empty()
                     }
                 }
@@ -80,7 +85,7 @@ class PictureProxyService {
 
             return CacheEntry(optional)
         } catch (e: Exception) {
-            LOG.error("got exception while trying to fetch and resize the image with url $url", e)
+            logger.error("got exception while trying to fetch and resize the image with url $url", e)
             return CacheEntry(Optional.empty())
         }
     }

@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory
 
 object SearchUtils {
 
-    private val LOG = LoggerFactory.getLogger(SearchUtils::class.java)
+    private val logger = LoggerFactory.getLogger(this::class.java)
 
     fun searchAndAddToModel(eventService: EventService, searchDTO: SearchDTO, data: MutableMap<String, Any>) {
         try {
@@ -26,7 +26,7 @@ object SearchUtils {
     private fun throwException(e: Exception) {
         val newException = RuntimeException("error calling eventservice", e)
         //spring hides all the interesting bits so log it here
-        LOG.error("error calling eventservice", newException)
+        logger.error("error calling eventservice", newException)
         throw newException
     }
 }

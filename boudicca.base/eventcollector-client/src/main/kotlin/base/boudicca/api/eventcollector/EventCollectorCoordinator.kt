@@ -10,7 +10,7 @@ class EventCollectorCoordinator(
     private val eventCollectionRunner: EventCollectionRunner,
 ) : AutoCloseable {
 
-    private val LOG = LoggerFactory.getLogger(this::class.java)
+    private val logger = LoggerFactory.getLogger(this::class.java)
     private var eventCollectorWebUi: EventCollectorWebUi? = null
 
     fun startWebUi(port: Int = -1): EventCollectorCoordinator {
@@ -33,7 +33,7 @@ class EventCollectorCoordinator(
     fun run(): Nothing {
         while (true) {
             eventCollectionRunner.run()
-            LOG.info("sleeping for $interval")
+            logger.info("sleeping for $interval")
             Thread.sleep(interval.toMillis())
         }
     }

@@ -21,7 +21,7 @@ import java.time.format.DateTimeFormatter
 
 class LinzTermineCollector : EventCollector {
     private val fetcher = Fetcher()
-    private val LOG = LoggerFactory.getLogger(this::class.java)
+    private val logger = LoggerFactory.getLogger(this::class.java)
     private val eventsBaseUrl = "https://www.linztermine.at/schnittstelle/downloads/events_xml.php"
     private val locationBaseUrl = "https://www.linztermine.at/schnittstelle/downloads/locations_xml.php"
 
@@ -69,7 +69,7 @@ class LinzTermineCollector : EventCollector {
         val mappedEvents = mutableListOf<StructuredEvent>()
         for (event in eventList) {
             if (event.dates.isEmpty()) {
-                LOG.warn("event does not contain any dates: $event")
+                logger.warn("event does not contain any dates: $event")
                 continue
             }
             val website = eventWebsites[event.url] ?: continue
@@ -144,7 +144,7 @@ class LinzTermineCollector : EventCollector {
             try {
                 loadXml(it)
             } catch (e: RuntimeException) {
-                LOG.error("error fetching xml", e)
+                logger.error("error fetching xml", e)
                 //booooh
                 null
             }

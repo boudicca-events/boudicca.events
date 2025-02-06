@@ -13,10 +13,10 @@ import java.time.LocalTime
 import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.util.*
+import java.util.Locale
 
 class CafeTraxlmayrCollector : TwoStepEventCollector<Element>("cafetraxlmayr") {
-    private val LOG = LoggerFactory.getLogger(this::class.java)
+    private val logger = LoggerFactory.getLogger(this::class.java)
     private val baseUrl = "https://www.cafe-traxlmayr.at/konzerte/"
 
     override fun getAllUnparsedEvents(): List<Element> {
@@ -47,7 +47,7 @@ class CafeTraxlmayrCollector : TwoStepEventCollector<Element>("cafetraxlmayr") {
             //ignore
             emptyList()
         } else {
-            LOG.error("unknown event format: $event")
+            logger.error("unknown event format: $event")
             emptyList()
         }
     }

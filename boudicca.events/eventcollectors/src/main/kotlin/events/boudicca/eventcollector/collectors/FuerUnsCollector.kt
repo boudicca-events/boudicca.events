@@ -14,11 +14,11 @@ import java.time.LocalTime
 import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.util.*
+import java.util.Locale
 
 class FuerUnsCollector : TwoStepEventCollector<String>("fueruns") {
 
-    private val LOG = LoggerFactory.getLogger(this::class.java)
+    private val logger = LoggerFactory.getLogger(this::class.java)
     private val fetcher = Fetcher()
     private val baseUrl = "https://www.fuer-uns.at/"
 
@@ -55,7 +55,7 @@ class FuerUnsCollector : TwoStepEventCollector<String>("fueruns") {
             parseDate(eventSite)
         } catch (exc: java.time.format.DateTimeParseException) {
             //TODO we should be able to parse this as well
-            LOG.info("Error in ${fullEventLink}: can't parse date, might be a multi-day event")
+            logger.info("Error in ${fullEventLink}: can't parse date, might be a multi-day event")
             return null
         }
 

@@ -1,0 +1,27 @@
+
+{{#if data-category}}
+    <fieldset data-category-wanted="{{data-category}}">
+{{else}}
+    <fieldset>
+{{/if}}
+
+    {{#if legend}}
+        <legend><strong>{{legend}}</strong></legend>
+    {{/if}}
+    <div class="multiselect-wrapper">
+        <label for={{identifier}} class="filter-label">{{name}}</label>
+        <div class="multiselect-chips">
+            {{#each entries as |entry|}}
+                <input type="checkbox" name={{identifier}} value="{{entry.first}}" id="{{entry.first}}">
+                <label for="{{entry.first}}" class="chips">{{entry.second}}</label>
+            {{/each}}
+        </div>
+        <div class="multiselect-labels">
+            <ul>
+                {{#each entries as |entry|}}
+                    <li><label for="{{entry.first}}">{{entry.second}}</label></li>
+                {{/each}}
+            </ul>
+        </div>
+    </div>
+</fieldset>

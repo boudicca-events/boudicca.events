@@ -5,7 +5,7 @@ import base.boudicca.model.structured.StructuredEvent
 import org.slf4j.LoggerFactory
 
 abstract class TwoStepEventCollector<T>(private val name: String) : EventCollector {
-    private val LOG = LoggerFactory.getLogger(this::class.java)
+    private val logger = LoggerFactory.getLogger(this::class.java)
 
     override fun getName(): String {
         return name
@@ -17,7 +17,7 @@ abstract class TwoStepEventCollector<T>(private val name: String) : EventCollect
             try {
                 allEvents = getAllUnparsedEvents()
             } catch (e: Exception) {
-                LOG.error("collector ${getName()} throw exception while getting all unparsed events", e)
+                logger.error("collector ${getName()} throw exception while getting all unparsed events", e)
                 return emptyList()
             }
 
@@ -27,12 +27,12 @@ abstract class TwoStepEventCollector<T>(private val name: String) : EventCollect
                     try {
                         val parsedEvents = parseMultipleEvents(it)
                         if (parsedEvents == null) {
-                            LOG.error("collector ${getName()} returned null while parsing event: $it")
+                            logger.error("collector ${getName()} returned null while parsing event: $it")
                         } else {
                             events = parsedEvents
                         }
                     } catch (e: Exception) {
-                        LOG.error("collector ${getName()} throw exception while parsing event: $it", e)
+                        logger.error("collector ${getName()} throw exception while parsing event: $it", e)
                     }
                     events.filterNotNull()
                 }

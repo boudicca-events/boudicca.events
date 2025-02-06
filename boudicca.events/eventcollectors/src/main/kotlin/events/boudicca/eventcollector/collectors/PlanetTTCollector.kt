@@ -24,7 +24,7 @@ import java.util.regex.Pattern
 
 class PlanetTTCollector : TwoStepEventCollector<Element>("planettt") {
 
-    private val LOG = LoggerFactory.getLogger(this::class.java)
+    private val logger = LoggerFactory.getLogger(this::class.java)
     private val fetcher = Fetcher()
     private var modalNonce: String? = null
 
@@ -130,7 +130,7 @@ class PlanetTTCollector : TwoStepEventCollector<Element>("planettt") {
             }
 
             else -> {
-                LOG.warn("could not guess location from location: $location")
+                logger.warn("could not guess location from location: $location")
             }
         }
     }

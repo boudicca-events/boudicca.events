@@ -16,7 +16,7 @@ class SynchronizationService @Autowired constructor(
     private val eventFetcher: EventFetcher
 ) {
 
-    private val LOG = LoggerFactory.getLogger(this.javaClass)
+    private val logger = LoggerFactory.getLogger(this::class.java)
 
     private val updateLock = ReentrantLock()
 
@@ -32,7 +32,7 @@ class SynchronizationService @Autowired constructor(
                 val entries = eventFetcher.fetchAllEvents()
                 eventPublisher.publishEvent(EntriesUpdatedEvent(entries))
             } catch (e: EventDBException) {
-                LOG.warn("could not reach eventdb, retrying in 30s", e)
+                logger.warn("could not reach eventdb, retrying in 30s", e)
                 //if eventdb is currently down, retry in 30 seconds
                 //this mainly happens when both are deployed at the same time
                 Thread {

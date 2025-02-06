@@ -4,10 +4,13 @@ import base.boudicca.SemanticKeys
 import base.boudicca.eventdb.BoudiccaEventDbProperties
 import base.boudicca.eventdb.model.EntryKey
 import base.boudicca.eventdb.model.InternalEventProperties
-import base.boudicca.keyfilters.KeySelector
 import base.boudicca.model.Entry
 import base.boudicca.model.Event
-import base.boudicca.model.structured.*
+import base.boudicca.model.structured.Key
+import base.boudicca.model.structured.StructuredEntry
+import base.boudicca.model.structured.filterKeys
+import base.boudicca.model.structured.getProperty
+import base.boudicca.model.structured.toFlatEntry
 import base.boudicca.model.toStructuredEntry
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.DatabindException
@@ -32,7 +35,6 @@ import java.util.concurrent.locks.ReentrantLock
 import kotlin.io.path.exists
 import kotlin.io.path.readBytes
 import kotlin.io.path.writeBytes
-import kotlin.jvm.optionals.getOrNull
 
 
 @Service
@@ -41,7 +43,7 @@ class EntryService @Autowired constructor(
     private val boudiccaEventDbProperties: BoudiccaEventDbProperties
 ) {
 
-    private val LOG = LoggerFactory.getLogger(this::class.java)
+    private val logger = LoggerFactory.getLogger(this::class.java)
     private val entries = ConcurrentHashMap<EntryKey, Pair<Entry, InternalEventProperties>>()
     private val lastSeenCollectors = ConcurrentHashMap<String, Long>()
     private val persistLock = ReentrantLock()
@@ -56,19 +58,19 @@ class EntryService @Autowired constructor(
                 try {
                     loadStoreV3(store)
                 } catch (e: DatabindException) {
-                    LOG.info("store had wrong format, retrying with old format v2")
+                    logger.info("store had wrong format, retrying with old format v2")
                     try {
                         loadStoreV2(store)
                     } catch (e: DatabindException) {
-                        LOG.info("store had wrong format, retrying with old format v1")
+                        logger.info("store had wrong format, retrying with old format v1")
                         loadStoreV1(store)
                     }
                 }
             } else {
-                LOG.info("did not find store to read from")
+                logger.info("did not find store to read from")
             }
         } else {
-            LOG.info("no store path set, not reading nor saving anything")
+            logger.info("no store path set, not reading nor saving anything")
         }
     }
 
@@ -146,7 +148,7 @@ class EntryService @Autowired constructor(
             }
 
         toRemoveEvents.forEach {
-            LOG.debug("removing event because it got too old: {}", it.value.first)
+            logger.debug("removing event because it got too old: {}", it.value.first)
             entries.remove(it.key)
             needsPersist.set(true)
         }
@@ -183,7 +185,7 @@ class EntryService @Autowired constructor(
                     Path.of(boudiccaEventDbProperties.store.path)
                         .writeBytes(bytes, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE)
                 } catch (e: IOException) {
-                    LOG.error("error persisting store", e)
+                    logger.error("error persisting store", e)
                 }
                 needsPersist.set(false)
             }

@@ -19,7 +19,7 @@ import java.util.Optional
  */
 object IcalParser {
 
-    private val LOG = LoggerFactory.getLogger(this::class.java)
+    private val logger = LoggerFactory.getLogger(this::class.java)
 
     /**
      * parses an icalResource (aka the string contents of a .ics file) to vEvents and maps them to Events
@@ -56,7 +56,7 @@ object IcalParser {
      */
     fun mapVEventToEvent(vEvent: VEvent): Optional<StructuredEvent> {
         if (vEvent.dateStart == null) {
-            LOG.warn("event with uid ${vEvent.uid} and url ${vEvent.url} has no startDate!")
+            logger.warn("event with uid ${vEvent.uid} and url ${vEvent.url} has no startDate!")
             return Optional.empty()
         }
 

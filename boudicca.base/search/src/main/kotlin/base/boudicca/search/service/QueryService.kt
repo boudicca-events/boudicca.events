@@ -25,7 +25,7 @@ class QueryService @Autowired constructor(
     private val boudiccaSearchProperties: BoudiccaSearchProperties
 ) {
 
-    private val LOG = LoggerFactory.getLogger(this::class.java)
+    private val logger = LoggerFactory.getLogger(this::class.java)
 
     @Volatile
     private var entries = emptyList<Entry>()
@@ -55,7 +55,7 @@ class QueryService @Autowired constructor(
                     return try {
                         optimizingEvaluator.evaluate(expression, page)
                     } catch (e: Exception) {
-                        LOG.error("optimizing evaluator threw exception", e)
+                        logger.error("optimizing evaluator threw exception", e)
                         fallbackEvaluator.evaluate(expression, page)
                     }
                 }

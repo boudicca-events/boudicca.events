@@ -135,4 +135,3 @@ class EventCollectorDebugger(val verboseDebugging: Boolean = true,
     }
 
 }
-

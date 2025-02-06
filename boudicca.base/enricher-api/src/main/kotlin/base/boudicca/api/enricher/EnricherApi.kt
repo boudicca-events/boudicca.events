@@ -4,10 +4,6 @@ import base.boudicca.api.enricher.model.EnrichRequestDTO
 import base.boudicca.model.Event
 import io.swagger.v3.oas.annotations.OpenAPIDefinition
 import io.swagger.v3.oas.annotations.Operation
-import io.swagger.v3.oas.annotations.info.Info
-import io.swagger.v3.oas.annotations.media.ArraySchema
-import io.swagger.v3.oas.annotations.media.Content
-import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import javax.ws.rs.Consumes
 import javax.ws.rs.POST

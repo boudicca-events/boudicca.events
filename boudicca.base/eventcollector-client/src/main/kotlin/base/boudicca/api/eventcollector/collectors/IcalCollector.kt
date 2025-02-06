@@ -4,7 +4,7 @@ import base.boudicca.api.eventcollector.EventCollector
 import base.boudicca.api.eventcollector.collectors.util.IcalParser
 import base.boudicca.model.structured.StructuredEvent
 import biweekly.component.VEvent
-import java.util.*
+import java.util.Optional
 
 /**
  * EventCollector implementation which will collect events from ical resources.

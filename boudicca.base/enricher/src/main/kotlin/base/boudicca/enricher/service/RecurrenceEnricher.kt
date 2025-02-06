@@ -1,7 +1,6 @@
 package base.boudicca.enricher.service
 
 import base.boudicca.SemanticKeys
-import base.boudicca.model.Event
 import base.boudicca.model.RecurrenceType
 import base.boudicca.model.structured.StructuredEvent
 import org.springframework.stereotype.Service

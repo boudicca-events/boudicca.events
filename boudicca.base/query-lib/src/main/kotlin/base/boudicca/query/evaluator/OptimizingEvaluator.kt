@@ -6,14 +6,27 @@ import base.boudicca.model.Entry
 import base.boudicca.model.structured.Key
 import base.boudicca.model.structured.filterKeys
 import base.boudicca.model.toStructuredEntry
-import base.boudicca.query.*
+import base.boudicca.query.AbstractDurationExpression
+import base.boudicca.query.AfterExpression
+import base.boudicca.query.AndExpression
+import base.boudicca.query.BeforeExpression
+import base.boudicca.query.ContainsExpression
+import base.boudicca.query.DurationLongerExpression
+import base.boudicca.query.DurationShorterExpression
+import base.boudicca.query.EqualsExpression
+import base.boudicca.query.Expression
+import base.boudicca.query.HasFieldExpression
+import base.boudicca.query.NotExpression
+import base.boudicca.query.OrExpression
+import base.boudicca.query.QueryException
+import base.boudicca.query.Utils
 import base.boudicca.query.evaluator.util.EvaluatorUtil
 import base.boudicca.query.evaluator.util.FullTextIndex
 import base.boudicca.query.evaluator.util.SimpleIndex
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.format.DateTimeParseException
-import java.util.*
+import java.util.BitSet
 import java.util.concurrent.ConcurrentHashMap
 
 class OptimizingEvaluator(rawEntries: Collection<Entry>) : Evaluator {

@@ -5,7 +5,7 @@ import base.boudicca.model.Entry
 import base.boudicca.model.Event
 import base.boudicca.openapi.ApiClient
 import base.boudicca.openapi.ApiException
-import java.util.*
+import java.util.Base64
 
 class EventDbIngestClient(private val eventDbUrl: String, user: String, password: String) {
 

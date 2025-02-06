@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory
 import java.net.URI
 import java.time.OffsetDateTime
 import java.time.ZoneId
-import java.util.*
+import java.util.Optional
 
 /**
  * utility class for parsing and mapping ical resources to VEvents and then to Events

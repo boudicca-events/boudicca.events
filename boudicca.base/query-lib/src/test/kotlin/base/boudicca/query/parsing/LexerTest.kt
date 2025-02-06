@@ -1,9 +1,6 @@
 package base.boudicca.query.parsing
 
-import base.boudicca.query.parsing.Lexer
 import base.boudicca.query.QueryException
-import base.boudicca.query.parsing.Token
-import base.boudicca.query.parsing.TokenType
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows

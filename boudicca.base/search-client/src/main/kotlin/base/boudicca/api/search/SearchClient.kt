@@ -2,7 +2,6 @@ package base.boudicca.api.search
 
 import base.boudicca.model.Event
 import base.boudicca.openapi.ApiClient
-import base.boudicca.openapi.ApiException
 import base.boudicca.search.openapi.api.SearchApi
 import base.boudicca.search.openapi.model.FilterQueryEntryDTO
 import kotlin.jvm.optionals.getOrNull

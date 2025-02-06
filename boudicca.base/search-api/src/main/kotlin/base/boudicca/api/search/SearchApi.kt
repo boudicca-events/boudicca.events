@@ -1,11 +1,13 @@
 package base.boudicca.api.search
 
-import base.boudicca.api.search.model.*
+import base.boudicca.api.search.model.FilterQueryDTO
+import base.boudicca.api.search.model.FilterResultDTO
+import base.boudicca.api.search.model.QueryDTO
+import base.boudicca.api.search.model.ResultDTO
 import io.swagger.v3.oas.annotations.OpenAPIDefinition
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import javax.ws.rs.Consumes
-import javax.ws.rs.GET
 import javax.ws.rs.POST
 import javax.ws.rs.Path
 import javax.ws.rs.Produces

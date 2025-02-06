@@ -166,57 +166,9 @@
         </div>
     </fieldset>
 
-    <fieldset>
-        <div class="multiselect-wrapper">
-            <label for="locationName" class="filter-label">Veranstaltungsort</label>
-            <div class="multiselect-chips">
-                {{#each filters.locationNames as |locationName|}}
-                    <input type="checkbox" name="locationName" value="{{locationName.first}}" id="{{locationName.first}}">
-                    <label for="{{locationName.first}}" class="chips">{{locationName.second}}</label>
-                {{/each}}
-            </div>
-            <div class="multiselect-labels">
-                <ul>
-                    {{#each filters.locationNames as |locationName|}}
-                        <li><label for="{{locationName.first}}">{{locationName.second}}</label></li>
-                    {{/each}}
-                </ul>
-            </div>
-        </div>
-    </fieldset>
-
-    <fieldset>
-        <div class="header-search-filter">
-             <div class="header-date-search">
-                <div class="filter-input-wrapper">
-                    <label for="locationCity" class="filter-label">Stadt</label>
-                    <select name="locationCity" id="locationCity" multiple>
-                        <option value="">Beliebig</option>
-                        {{#each filters.locationCities as |locationCity|}}
-                            <option value="{{locationCity.first}}">{{locationCity.second}}</option>
-                        {{/each}}
-                    </select>
-                </div>
-            </div>
-        </div>
-    </fieldset>
-
-    <fieldset data-category-wanted="MUSIC">
-        <legend><strong>Musik</strong></legend>
-        <div class="header-search-filter">
-            <div class="header-date-search">
-                <div class="filter-input-wrapper">
-                    <label for="bandName" class="filter-label">Bandname</label>
-                    <select name="bandName" id="bandName" multiple>
-                        <option value="">Beliebig</option>
-                        {{#each filters.bandNames as |bandName|}}
-                            <option value="{{bandName.first}}">{{bandName.second}}</option>
-                        {{/each}}
-                    </select>
-                </div>
-            </div>
-        </div>
-    </fieldset>
+    {{> layout/multiselect_fieldset identifier="locationName" name="Veranstaltungsort" entries=filters.locationNames }}
+    {{> layout/multiselect_fieldset identifier="locationCity" name="Stadt" entries=filters.locationCities }}
+    {{> layout/multiselect_fieldset identifier="bandName" name="Bandname" entries=filters.bandNames legend="Musik" data-category="MUSIC"}}
 
     <fieldset data-category-wanted="SPORT">
         <legend><strong>Sport</strong></legend>

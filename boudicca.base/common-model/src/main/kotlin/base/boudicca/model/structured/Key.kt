@@ -63,4 +63,6 @@ data class Key(val name: String, val variants: List<Variant>) : Comparable<Key> 
             return Key(propertyName, variants.toList().sorted())
         }
     }
+
+    override fun toString() = toKeyString()
 }

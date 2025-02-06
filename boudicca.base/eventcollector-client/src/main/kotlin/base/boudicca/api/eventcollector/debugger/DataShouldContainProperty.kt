@@ -1,26 +1,26 @@
 package base.boudicca.api.eventcollector.debugger
 
+import base.boudicca.Property
 import base.boudicca.api.eventcollector.debugger.color.blue
 import base.boudicca.api.eventcollector.debugger.color.red
 import base.boudicca.api.eventcollector.debugger.color.yellow
 import base.boudicca.model.Event
 
-class DataShouldContainValue(
-    private val key: String,
-    private val format: Regex,
+class DataShouldContainProperty(
+    private val property: Property<*>,
     private val severity: ValidationSeverity,
 ) : EventCollectorValidation {
     override fun validate(event: Event, verbose: Boolean): ValidationResult {
-        if (!event.data[key]?.contains(format)!!) {
+        if (event.toStructuredEvent().getProperty(property).isEmpty()) {
             when (severity) {
                 ValidationSeverity.Info ->
-                    println("INFO: key $key expected to match format $format".blue())
+                    println("INFO: should have property ${property.getKey()}".blue())
 
                 ValidationSeverity.Warn ->
-                    println("WARN: key $key expected to match format $format".yellow())
+                    println("WARN: expected property ${property.getKey()}".yellow())
 
                 ValidationSeverity.Error ->
-                    println("ERR: key $key expected to match format $format".red())
+                    println("ERR: expected property ${property.getKey()}".red())
             }
             return severity.result
         }

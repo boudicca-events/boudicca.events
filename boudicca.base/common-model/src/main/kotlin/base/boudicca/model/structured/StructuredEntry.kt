@@ -4,8 +4,7 @@ import base.boudicca.Property
 import base.boudicca.keyfilters.KeyFilters
 import base.boudicca.keyfilters.KeySelector
 import base.boudicca.model.Entry
-import base.boudicca.model.structured.StructuredEvent.StructuredEventBuilder
-import java.util.*
+import java.util.Optional
 
 /**
  * as with the [Entry] class, a StructuredEntry is simple a typealias for a Map<Key, String>

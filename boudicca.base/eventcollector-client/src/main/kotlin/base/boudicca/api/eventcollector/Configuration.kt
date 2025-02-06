@@ -2,7 +2,7 @@ package base.boudicca.api.eventcollector
 
 import org.slf4j.LoggerFactory
 import java.io.File
-import java.util.*
+import java.util.Properties
 
 
 object Configuration {

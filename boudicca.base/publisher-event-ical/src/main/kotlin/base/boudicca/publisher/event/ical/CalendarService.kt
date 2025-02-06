@@ -8,13 +8,17 @@ import biweekly.Biweekly
 import biweekly.ICalVersion
 import biweekly.ICalendar
 import biweekly.component.VEvent
-import biweekly.property.*
+import biweekly.property.DateEnd
+import biweekly.property.DateStart
+import biweekly.property.Location
+import biweekly.property.Sequence
+import biweekly.property.Uid
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
-import java.util.*
+import java.util.Date
 
 @Service
 class CalendarService @Autowired constructor(@Value("\${boudicca.search.url}") private val searchUrl: String) {

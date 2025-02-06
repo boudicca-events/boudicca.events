@@ -1,7 +1,7 @@
 package base.boudicca.api.eventcollector.collections
 
-import java.util.*
 import java.util.Collections
+import java.util.UUID
 
 data class FullCollection(
     val id: UUID,

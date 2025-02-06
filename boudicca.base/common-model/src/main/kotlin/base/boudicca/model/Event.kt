@@ -4,7 +4,7 @@ import base.boudicca.model.structured.StructuredEvent
 import base.boudicca.model.structured.toEvent
 import base.boudicca.model.structured.toFlatEntry
 import java.time.OffsetDateTime
-import java.util.*
+import java.util.Optional
 
 /**
  * a simple, unparsed, event. used mainly for serializing and sending/receiving it. for actually working with the values please consider transforming it into a [StructuredEvent]

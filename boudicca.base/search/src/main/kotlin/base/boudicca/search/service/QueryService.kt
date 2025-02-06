@@ -7,7 +7,12 @@ import base.boudicca.query.BoudiccaQueryRunner
 import base.boudicca.query.Expression
 import base.boudicca.query.QueryException
 import base.boudicca.query.Utils
-import base.boudicca.query.evaluator.*
+import base.boudicca.query.evaluator.Evaluator
+import base.boudicca.query.evaluator.NoopEvaluator
+import base.boudicca.query.evaluator.OptimizingEvaluator
+import base.boudicca.query.evaluator.Page
+import base.boudicca.query.evaluator.QueryResult
+import base.boudicca.query.evaluator.SimpleEvaluator
 import base.boudicca.search.BoudiccaSearchProperties
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired

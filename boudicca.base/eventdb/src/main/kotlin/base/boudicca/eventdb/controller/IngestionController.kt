@@ -1,9 +1,8 @@
 package base.boudicca.eventdb.controller
 
 import base.boudicca.api.eventdb.IngestionApi
-import base.boudicca.model.Entry
-import base.boudicca.model.Event
 import base.boudicca.eventdb.service.EntryService
+import base.boudicca.model.Entry
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.PostMapping

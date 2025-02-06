@@ -1,7 +1,6 @@
 package base.boudicca.api.eventdb
 
 import base.boudicca.model.Entry
-import base.boudicca.model.Event
 import io.swagger.v3.oas.annotations.OpenAPIDefinition
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse

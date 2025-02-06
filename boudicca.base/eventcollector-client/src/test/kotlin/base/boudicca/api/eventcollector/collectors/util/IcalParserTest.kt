@@ -6,13 +6,16 @@ import biweekly.component.VEvent
 import biweekly.property.DateStart
 import biweekly.property.Summary
 import biweekly.property.Uid
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
-import java.util.*
+import java.util.Date
+import java.util.Optional
 
 class IcalParserTest {
 

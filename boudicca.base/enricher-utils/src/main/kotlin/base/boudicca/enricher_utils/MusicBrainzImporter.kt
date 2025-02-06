@@ -2,9 +2,14 @@ package base.boudicca.enricher_utils
 
 import org.json.JSONArray
 import org.json.JSONObject
-import java.io.*
+import java.io.BufferedOutputStream
+import java.io.BufferedReader
+import java.io.File
+import java.io.FileOutputStream
+import java.io.FileReader
+import java.io.OutputStream
+import java.io.OutputStreamWriter
 import java.util.zip.GZIPOutputStream
-import java.util.zip.ZipOutputStream
 import kotlin.streams.asSequence
 
 fun main() {

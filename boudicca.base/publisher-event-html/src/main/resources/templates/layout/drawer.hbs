@@ -90,7 +90,41 @@
             flex-direction: column;
         }
     }
+
+    .multiselect-wrapper {
+        font-size: var(--font-size-small);
     }
+    .multiselect-wrapper input[type=checkbox], .chips {
+        display: none;
+    }
+    input[type=checkbox]:checked + label.chips {
+        display: inline-block;
+        background-color: #eee;
+        border-radius: 10px;
+    }
+    input[type=checkbox]:checked + label.chips::before {
+        content: 'x';
+        border-radius: 10px;
+        background-color: #ccc;
+        padding: 1px 6px;
+    }
+
+    .multiselect-chips {
+        width: 300px;
+        max-height: 200px;
+        overflow: scroll;
+    }
+    .multiselect-labels {
+        width: 300px;
+        max-height: 200px;
+        overflow: scroll;
+        border: 1px black solid;
+    }
+    .multiselect-labels ul {
+        padding-left: 30px;
+        padding-right: 10px;
+    }
+}
 </style>
 
 <div id="drawer" class="drawer">
@@ -133,20 +167,24 @@
     </fieldset>
 
     <fieldset>
-        <div class="header-search-filter">
-            <div class="header-date-search">
-                <div class="filter-input-wrapper">
-                    <label for="locationName" class="filter-label">Veranstaltungsort</label>
-                    <select name="locationName" id="locationName" multiple>
-                        <option value="">Beliebig</option>
-                        {{#each filters.locationNames as |locationName|}}
-                            <option value="{{locationName.first}}">{{locationName.second}}</option>
-                        {{/each}}
-                    </select>
-                </div>
+        <div class="multiselect-wrapper">
+            <label for="locationName" class="filter-label">Veranstaltungsort</label>
+            <div class="multiselect-chips">
+                {{#each filters.locationNames as |locationName|}}
+                    <input type="checkbox" name="locationName" value="{{locationName.first}}" id="{{locationName.first}}">
+                    <label for="{{locationName.first}}" class="chips">{{locationName.second}}</label>
+                {{/each}}
+            </div>
+            <div class="multiselect-labels">
+                <ul>
+                    {{#each filters.locationNames as |locationName|}}
+                        <li><label for="{{locationName.first}}">{{locationName.second}}</label></li>
+                    {{/each}}
+                </ul>
             </div>
         </div>
     </fieldset>
+
     <fieldset>
         <div class="header-search-filter">
              <div class="header-date-search">

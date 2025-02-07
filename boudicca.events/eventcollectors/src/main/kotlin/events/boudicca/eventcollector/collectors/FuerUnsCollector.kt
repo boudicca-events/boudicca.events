@@ -1,8 +1,8 @@
 package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
-import base.boudicca.api.eventcollector.Fetcher
 import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
@@ -14,16 +14,15 @@ import java.time.LocalTime
 import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.util.Locale
+import java.util.*
 
 class FuerUnsCollector : TwoStepEventCollector<String>("fueruns") {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
-    private val fetcher = Fetcher()
+    private val fetcher = FetcherFactory.newFetcher()
     private val baseUrl = "https://www.fuer-uns.at/"
 
     override fun getAllUnparsedEvents(): List<String> {
-        val fetcher = Fetcher()
         val events = mutableListOf<Element>()
 
         val document = Jsoup.parse(fetcher.fetchUrl(baseUrl + "aktuelle-veranstaltungen/veranstaltungskalender?page=1"))

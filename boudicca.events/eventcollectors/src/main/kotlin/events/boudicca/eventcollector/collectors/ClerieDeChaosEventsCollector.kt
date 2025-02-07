@@ -1,8 +1,8 @@
 package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
-import base.boudicca.api.eventcollector.Fetcher
 import base.boudicca.api.eventcollector.collectors.IcalCollector
+import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.api.eventcollector.util.splitAtNewline
 import base.boudicca.api.eventcollector.util.tryParseToUriOrNull
 import base.boudicca.model.EventCategory
@@ -14,7 +14,7 @@ import java.net.URI
  */
 class ClerieDeChaosEventsCollector : IcalCollector("chaosevents.clerie.de") {
 
-    private val fetcher = Fetcher()
+    private val fetcher = FetcherFactory.newFetcher()
     private val baseUrl = "https://chaosevents.clerie.de/"
     private val icsUrl = "${baseUrl}chaosevents.ics"
 

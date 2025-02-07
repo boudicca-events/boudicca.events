@@ -1,8 +1,8 @@
 package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
-import base.boudicca.api.eventcollector.Fetcher
 import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
 import com.beust.klaxon.JsonObject
@@ -19,13 +19,13 @@ import java.time.LocalTime
 import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.util.Locale
+import java.util.*
 import java.util.regex.Pattern
 
 class PlanetTTCollector : TwoStepEventCollector<Element>("planettt") {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
-    private val fetcher = Fetcher()
+    private val fetcher = FetcherFactory.newFetcher()
     private var modalNonce: String? = null
 
     override fun getAllUnparsedEvents(): List<Element> {

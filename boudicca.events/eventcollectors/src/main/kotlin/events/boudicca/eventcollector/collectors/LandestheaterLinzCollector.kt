@@ -1,8 +1,9 @@
 package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
-import base.boudicca.api.eventcollector.Fetcher
 import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.api.eventcollector.util.FetcherFactory
+import base.boudicca.fetcher.Fetcher
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
@@ -19,7 +20,7 @@ class LandestheaterLinzCollector :
     TwoStepEventCollector<Triple<Element, Pair<String, Document>, LocalDate>>("landestheater linz") {
 
     override fun getAllUnparsedEvents(): List<Triple<Element, Pair<String, Document>, LocalDate>> {
-        val fetcher = Fetcher()
+        val fetcher = FetcherFactory.newFetcher()
         val events = mutableListOf<Triple<Element, String, LocalDate>>()
 
         val document = fetchList(fetcher)

@@ -4,7 +4,7 @@ import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.collections.Collections
 import base.boudicca.api.eventcollector.runner.RunnerEnricherInterface
 import base.boudicca.api.eventcollector.runner.RunnerIngestionInterface
-import base.boudicca.api.eventcollector.util.retry
+import base.boudicca.fetcher.retry
 import base.boudicca.model.Event
 import org.slf4j.LoggerFactory
 import java.util.concurrent.Executors

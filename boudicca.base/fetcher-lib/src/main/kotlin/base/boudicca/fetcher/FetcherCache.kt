@@ -1,4 +1,4 @@
-package base.boudicca.api.eventcollector.fetcher
+package base.boudicca.fetcher
 
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
@@ -10,6 +10,9 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.util.concurrent.ConcurrentHashMap
 
+/**
+ * implementations have to be thread-safe!
+ */
 interface FetcherCache {
     fun containsEntry(key: String): Boolean
     fun getEntry(key: String): String
@@ -30,7 +33,7 @@ object NoopFetcherCache : FetcherCache {
     }
 }
 
-object InMemoryFetcherCache : FetcherCache {
+class InMemoryFetcherCache : FetcherCache {
 
     private val cache = ConcurrentHashMap<String, String>()
 

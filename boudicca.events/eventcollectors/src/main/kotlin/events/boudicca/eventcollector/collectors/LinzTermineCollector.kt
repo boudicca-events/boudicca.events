@@ -2,7 +2,7 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.EventCollector
-import base.boudicca.api.eventcollector.Fetcher
+import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.Registration
 import base.boudicca.model.structured.Key
@@ -20,7 +20,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 class LinzTermineCollector : EventCollector {
-    private val fetcher = Fetcher()
+    private val fetcher = FetcherFactory.newFetcher()
     private val logger = LoggerFactory.getLogger(this::class.java)
     private val eventsBaseUrl = "https://www.linztermine.at/schnittstelle/downloads/events_xml.php"
     private val locationBaseUrl = "https://www.linztermine.at/schnittstelle/downloads/locations_xml.php"

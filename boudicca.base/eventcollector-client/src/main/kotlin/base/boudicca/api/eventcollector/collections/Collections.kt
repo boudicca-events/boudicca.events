@@ -77,15 +77,6 @@ object Collections {
         currentHttpCalls.set(null)
     }
 
-    fun resetHttpTiming() {
-        val httpCall = currentHttpCalls.get()
-        if (httpCall == null) {
-            logger.error("no current http call available, cannot reset timing")
-            return
-        }
-        httpCall.startTime = System.currentTimeMillis()
-    }
-
     fun getAllPastCollections(): List<FullCollection> {
         return pastFullCollections.toList()
     }

@@ -1,8 +1,8 @@
 package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
-import base.boudicca.api.eventcollector.Fetcher
 import base.boudicca.api.eventcollector.collectors.IcalCollector
+import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
 
@@ -10,7 +10,7 @@ class JkuEventCollector : IcalCollector("jku") {
     private val baseUrl = "https://www.jku.at/studium/studieninteressierte/messen-events/"
 
     override fun getAllIcalResources(): List<String> {
-        val fetcher = Fetcher()
+        val fetcher = FetcherFactory.newFetcher()
         val document = Jsoup.parse(fetcher.fetchUrl(baseUrl))
         val eventUrls = document.select("div.news_list_item a").eachAttr("href")
 

@@ -41,7 +41,7 @@
     --input-background-color: inherit;
     --font-color: inherit;
 
-    --color-filterSearchButton: black;
+    --color-filterSearchButton: #ccc;
 }
 
 html {

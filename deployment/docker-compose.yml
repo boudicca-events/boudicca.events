@@ -1,7 +1,6 @@
-version: '3'
 services:
   traefik:
-    image: traefik:v2.10
+    image: traefik:v3
     command:
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
@@ -84,3 +83,20 @@ services:
       - "traefik.http.routers.boudicca-ical.tls.certresolver=myresolver"
     volumes:
       - /etc/boudicca/application-ical.properties:/opt/boudicca-ical/application.properties:ro
+  nominatim:
+    image: mediagis/nominatim:4.5
+    restart: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.nominatim.rule=Host(`nominatim.${BOUDICCA_BASE_HOST}`)"
+      - "traefik.http.routers.nominatim.entrypoints=websecure"
+      - "traefik.http.routers.nominatim.tls.certresolver=myresolver"
+      - "traefik.http.services.nominatim.loadbalancer.server.port=8080"
+    environment:
+      PBF_PATH: /atdata/austria-latest.osm.pbf
+    volumes:
+      - nominatim-data:/var/lib/postgresql/16/main
+volumes:
+  nominatim-data:
+    external: true
+    name: "nominatim-data"

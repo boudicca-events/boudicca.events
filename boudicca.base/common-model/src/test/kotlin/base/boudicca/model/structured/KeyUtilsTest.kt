@@ -105,13 +105,15 @@ class KeyUtilsTest {
             mapOf(
                 Key("key", listOf()) to "value",
                 Key("key", listOf(Variant("variant", "variantvalue"))) to "value2",
+                Key("key") to "value3",
             )
         )
 
         assertEquals(
             mapOf(
                 Pair("key", "value"),
-                Pair("key:variant=variantvalue", "value2")
+                Pair("key:variant=variantvalue", "value2"),
+                Pair("key", "value3")
             ), result
         )
     }

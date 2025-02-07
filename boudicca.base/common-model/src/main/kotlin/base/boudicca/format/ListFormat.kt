@@ -8,7 +8,10 @@ package base.boudicca.format
  * all methods may throw exceptions on wrong formatted values
  */
 object ListFormat {
-    fun parseFromString(value: String): List<String> {
+    fun parseFromString(value: String?): List<String> {
+        if (value == null) {
+            return emptyList()
+        }
         val result = mutableListOf<String>()
         val currentValue = StringBuilder()
         var i = 0
@@ -39,9 +42,7 @@ object ListFormat {
 
     @Throws(IllegalArgumentException::class)
     fun parseToString(value: List<String>): String {
-        if (value.isEmpty()) {
-            throw IllegalArgumentException("and empty list cannot be parsed to a string value")
-        }
+        require(value.isNotEmpty()) { "an empty list cannot be parsed to a string value" }
         return value.joinToString(",") { it.replace("\\", "\\\\").replace(",", "\\,") }
     }
 }

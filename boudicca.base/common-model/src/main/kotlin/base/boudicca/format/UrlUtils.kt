@@ -13,7 +13,7 @@ object UrlUtils {
         val trimmed = string.trim()
         return try {
             URI.create(string)
-        } catch (e: IllegalArgumentException) {
+        } catch (_: IllegalArgumentException) {
             val fixedUrl = tryFixUrl(trimmed)
             URI.create(fixedUrl)
         }
@@ -26,4 +26,6 @@ object UrlUtils {
             .replace("]", "%5D")
             .replace(" ", "%20")
     }
+
+    fun String.encodeURL(): String = java.net.URLEncoder.encode(this, "UTF-8")
 }

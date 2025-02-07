@@ -27,11 +27,16 @@
         flex-direction: column;
         background-color: var(--color-main);
         padding: 2rem;
+        border-radius: 4px 4px 0 0;
     }
 
     .modal-row {
         display: flex;
         flex-direction: row;
+    }
+
+    .modal-tabs {
+        border-radius: 0 0 4px 4px;
     }
 
     .modal-column {
@@ -46,9 +51,10 @@
         width: 80%;
         max-width: 970px;
         position: relative;
+        border-radius: 4px;
     }
 
-    #modal-close {
+    .modal-close {
         z-index: 100;
     }
 
@@ -62,7 +68,7 @@
 
     .details-box {
         margin: 20px auto 0;
-        height: 400px;
+        max-height: 400px;
         overflow: auto;
     }
 
@@ -145,10 +151,5 @@
 </style>
 
 <div id="modal" class="modal">
-    <button id="modal-close" class="modal-close-button">
-        <svg height="32px" width="32px" viewBox="0 0 512 512">
-            <use xlink:href="#close"></use>
-        </svg>
-    </button>
     <div id="modal-content"></div>
 </div>

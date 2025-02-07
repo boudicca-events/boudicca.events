@@ -44,6 +44,12 @@
     </div>
 
     <div class="modal-content" style="display: none">
+        <button class="modal-close">
+            <svg height="32px" width="32px" viewBox="0 0 512 512">
+                <use xlink:href="#close"></use>
+            </svg>
+        </button>
+
         <div class="modal-flex {{#if event.category}}event-modal-{{event.category}}{{/if}}">
             <div class="modal-column" style="padding-bottom: 1rem;">
                 <h2>{{event.name}}</h2>
@@ -58,7 +64,6 @@
                     <div class="event-image-modal">
                         {{#if event.pictureUuid}}
                             <img src="/picture?uuid={{event.pictureUuid}}"
-                            style="height:100px;max-height:250px;max-width:300px;"
                             alt="{{#if event.pictureAltText}}{{event.pictureAltText}}{{else}}Event Bild{{/if}}"
                             aria-label="Event Bild"
                             aria-labelledby="image"
@@ -116,7 +121,7 @@
             </div>
         </div>
 
-        <div class="modal-tabs">
+        <div class="modal-tabs" style="background-color: white; padding: 2rem;">
             {{#if event.description}}
                 <section class="details-box">
                     <ul>

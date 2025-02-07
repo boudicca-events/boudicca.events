@@ -37,6 +37,7 @@
         align-items: center;
         justify-content: center;
         position: relative;
+        border-radius: 4px;
     }
 
     .event-image-tech {
@@ -67,6 +68,7 @@
         background-color: var(--anchor-to-eventpage-background-color);
         bottom: -18px;
         font-weight: bold;
+        border-radius: 4px;
     }
 
     .anchor-to-eventpage:focus {
@@ -83,6 +85,7 @@
         border: 1px solid var(--anchor-to-eventpage-border-color);
         background-color: var(--anchor-to-eventpage-background-color);
         font-weight: bold;
+        border-radius: 4px;
     }
 
     .event-details {
@@ -125,14 +128,19 @@
     }
 
     .event-image-modal {
-        height: 350px;
-        width: 540px;
+        height: 300px;
+        width: 500px;
         background-color: var(--color-white);
-        object-fit: scale-down;
         display: flex;
         align-items: center;
         justify-content: center;
         position: relative;
+    }
+
+    .event-image-modal img {
+        max-height: 300px;
+        max-width: 500px;
+        object-fit: contain;
     }
 
     .modal-row-image {
@@ -170,14 +178,12 @@
         border: 1px solid black;
     }
 
-    .modal-close-button {
+    .modal-close {
         display: flex;
-        background-color: var(--color-white);
         position: absolute;
         right: 0;
-        padding: var(--space-medium);
+        padding: var(--space-large);
         top: 0;
-        border: 1px solid black;
     }
 
     .accessibility-details {

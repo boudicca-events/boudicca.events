@@ -12,12 +12,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const searchInput = document.querySelector("input.search-input");
   const modal = document.getElementById("modal");
   const modalContent = modal.querySelector("#modal-content");
-  const closeModalButton = document.getElementById("modal-close");
 
   const openModal = (content) => {
     modalContent.innerHTML = content;
     modal.style.display = "block";
     document.body.style.overflow = "hidden";
+    const closeButton = modalContent.querySelector(".modal-close");
+    closeButton.addEventListener("click", () => {
+      closeModal();
+    })
   };
 
   const closeModal = () => {
@@ -58,10 +61,6 @@ document.addEventListener("DOMContentLoaded", () => {
   filterButton.addEventListener("click", () => {
     toggleDrawer();
   });
-
-  closeModalButton.addEventListener("click", () => {
-    closeModal();
-  })
 
   document.addEventListener("click", (event) => {
     if (

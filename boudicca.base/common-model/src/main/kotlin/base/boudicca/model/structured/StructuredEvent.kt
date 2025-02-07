@@ -12,7 +12,7 @@ import java.util.*
 /**
  * represents a parsed event, in the sense that all its keys have been parsed, and it has a lot of methods for filtering/selecting keys
  */
-data class StructuredEvent(val name: String, val startDate: OffsetDateTime, val data: Map<Key, String>) {
+data class StructuredEvent(val name: String, val startDate: OffsetDateTime, val data: Map<Key, String> = emptyMap()) {
     constructor(event: Event) : this(event.name, event.startDate, KeyUtils.toStructuredKeyValuePairs(event.data))
 
     fun toFlatEvent(): Event {
@@ -44,7 +44,7 @@ data class StructuredEvent(val name: String, val startDate: OffsetDateTime, val 
                 try {
                     val parsedValue = property.parseFromString(it.second)
                     Pair(it.first, parsedValue)
-                } catch (e: IllegalArgumentException) {
+                } catch (_: IllegalArgumentException) {
                     null
                 }
             }
@@ -95,7 +95,7 @@ data class StructuredEvent(val name: String, val startDate: OffsetDateTime, val 
             val name = namePair.get().second
             val startDate = try {
                 DateFormat.parseFromString(startDatePair.get().second)
-            } catch (e: IllegalArgumentException) {
+            } catch (_: IllegalArgumentException) {
                 return Optional.empty()
             }
             val data = entry.toMutableMap()
@@ -134,13 +134,11 @@ data class StructuredEvent(val name: String, val startDate: OffsetDateTime, val 
         }
 
         override fun build(): StructuredEvent {
-            if (name == null) {
-                throw IllegalStateException("name cannot be null for an event!")
-            }
-            if (startDate == null) {
-                throw IllegalStateException("startDate cannot be null for an event!")
-            }
-            return StructuredEvent(name!!, startDate!!, data.toMap())
+            return StructuredEvent(
+                checkNotNull(name) { "name cannot be null for an event!" },
+                checkNotNull(startDate) { "startDate cannot be null for an event!" },
+                data.toMap()
+            )
         }
     }
 }

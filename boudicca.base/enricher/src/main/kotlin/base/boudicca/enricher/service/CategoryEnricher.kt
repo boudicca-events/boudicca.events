@@ -7,23 +7,23 @@ import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Service
 
 @Service
-@Order(0)
+@Order(EnricherOrderConstants.CategoryEnricherOrder)
 class CategoryEnricher : Enricher {
 
-    override fun enrich(e: StructuredEvent): StructuredEvent {
-        if (e.getProperty(SemanticKeys.CATEGORY_PROPERTY).isNotEmpty()) {
+    override fun enrich(event: StructuredEvent): StructuredEvent {
+        if (event.getProperty(SemanticKeys.CATEGORY_PROPERTY).isNotEmpty()) {
             //already got category
-            return e
+            return event
         }
         var foundCategory = EventCategory.OTHER
-        val type = e.getProperty(SemanticKeys.TYPE_PROPERTY).firstOrNull()
+        val type = event.getProperty(SemanticKeys.TYPE_PROPERTY).firstOrNull()
         if (type != null) {
             val category = EventCategory.getForType(type.second)
             if (category != null) {
                 foundCategory = category
             }
         }
-        return e.toBuilder().withProperty(SemanticKeys.CATEGORY_PROPERTY, foundCategory).build()
+        return event.toBuilder().withProperty(SemanticKeys.CATEGORY_PROPERTY, foundCategory).build()
     }
 
 }

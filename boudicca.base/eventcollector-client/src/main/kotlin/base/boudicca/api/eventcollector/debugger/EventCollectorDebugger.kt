@@ -7,9 +7,10 @@ import base.boudicca.api.eventcollector.collections.Collections
 import base.boudicca.api.eventcollector.debugger.color.green
 import base.boudicca.api.eventcollector.debugger.color.red
 import base.boudicca.api.eventcollector.debugger.color.yellow
-import base.boudicca.api.eventcollector.fetcher.FetcherCache
+import base.boudicca.fetcher.FetcherCache
 import base.boudicca.api.eventcollector.logging.CollectionsFilter
 import base.boudicca.api.eventcollector.runner.*
+import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.api.eventdb.ingest.EventDbIngestClient
 import base.boudicca.model.Event
 
@@ -22,7 +23,7 @@ class EventCollectorDebugger(val verboseDebugging: Boolean = true,
     private val allEvents = mutableListOf<Event>()
 
     fun setFetcherCache(fetcherCache: FetcherCache): EventCollectorDebugger {
-        Fetcher.fetcherCache = fetcherCache
+        FetcherFactory.defaultFetcherCache = fetcherCache
         return this
     }
 

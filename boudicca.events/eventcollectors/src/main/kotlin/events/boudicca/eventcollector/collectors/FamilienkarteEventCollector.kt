@@ -1,8 +1,8 @@
 package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
-import base.boudicca.api.eventcollector.Fetcher
 import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
@@ -18,7 +18,7 @@ class FamilienkarteEventCollector : TwoStepEventCollector<String>("familienkarte
     // TODO: handle pagination, currently only the first 25 answers are parsed
     // TODO: handle other categories and locations (and adjust the type respectively)
 
-    private val fetcher = Fetcher()
+    private val fetcher = FetcherFactory.newFetcher()
     private val baseUrl = "https://www.familienkarte.at"
 
     override fun getAllUnparsedEvents(): List<String> {

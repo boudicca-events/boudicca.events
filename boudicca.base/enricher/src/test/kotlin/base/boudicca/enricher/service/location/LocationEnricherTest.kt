@@ -96,11 +96,7 @@ class LocationEnricherTest {
     }
 
     private fun createTestEnricher(testData: List<LocationData>): LocationEnricher {
-        val locationEnricher = LocationEnricher(object : LocationEnricherUpdater {
-            override fun updateData(): List<LocationData> {
-                return testData
-            }
-        })
+        val locationEnricher = LocationEnricher { testData }
         locationEnricher.update()
         return locationEnricher
     }

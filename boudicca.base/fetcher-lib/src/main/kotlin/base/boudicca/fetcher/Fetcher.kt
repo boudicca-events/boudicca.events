@@ -9,6 +9,9 @@ import java.net.http.HttpResponse.BodyHandlers
 import java.time.Clock
 import java.util.concurrent.Callable
 
+/**
+ * THIS CLASS IS NOT THREADSAFE!
+ */
 class Fetcher(
     private val manualSetDelay: Long? = null,
     private val userAgent: String = Constants.USER_AGENT,

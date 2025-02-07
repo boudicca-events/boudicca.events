@@ -9,17 +9,17 @@
         <legend><strong>{{legend}}</strong></legend>
     {{/if}}
     <div class="multiselect-wrapper">
-        <label for={{identifier}} class="filter-label">{{name}}</label>
+        <label class="filter-label">{{name}}</label>
         <div class="multiselect-chips">
             {{#each entries as |entry|}}
-                <input type="checkbox" name={{identifier}} value="{{entry.first}}" id="{{entry.first}}">
-                <label for="{{entry.first}}" class="chips">{{entry.second}}</label>
+                <input type="checkbox" name={{identifier}} value="{{entry.first}}" id="{{identifier}}-{{entry.first}}">
+                <label for="{{identifier}}-{{entry.first}}" class="chips">{{entry.second}}</label>
             {{/each}}
         </div>
         <div class="multiselect-labels">
             <ul>
                 {{#each entries as |entry|}}
-                    <li><label for="{{entry.first}}">{{entry.second}}</label></li>
+                    <li><label for="{{identifier}}-{{entry.first}}">{{entry.second}}</label></li>
                 {{/each}}
             </ul>
         </div>

@@ -1,7 +1,7 @@
 <style>
     @layer default {
     .drawer {
-        display: flex;
+        display: none;
         padding: 0 24px 24px 24px;
         flex-wrap: wrap;
         margin-bottom: 24px;
@@ -31,12 +31,26 @@
         justify-content: space-between;
     }
 
+    #closeDrawerButton {
+        width: 100%;
+        margin-bottom: -24px;
+        text-align: end;
+        font-size: 24px;
+        position: relative;
+        top: -8px;
+        left: 16px;
+    }
+
     #filterSearchButton {
         padding: 12px 24px;
-        border: 1px solid var(--color-filterSearchButton);
         border-radius: 10px;
         margin-top: 24px;
         font-size: 18px;
+        background-color: #eee;
+    }
+
+    #filterSearchButton:hover {
+        outline: 1px solid var(--color-filterSearchButton);
     }
 
     #resetSearchForm {
@@ -146,6 +160,10 @@
     .multiselect-labels ul li {
         margin-bottom: 4px;
     }
+    .multiselect-labels ul li label {
+        width: 100%;
+        display: inline-block;
+    }
     .multiselect-wrapper input[type=checkbox], .chips {
         display: none;
     }
@@ -153,14 +171,16 @@
         display: inline-block;
         background-color: #eee;
         border-radius: 20px;
-        padding: 4px 8px 4px 4px;
+        padding: 4px 10px 4px 10px;
         margin-bottom: 3px;
+        display: flex;
+        align-items: center;
     }
     input[type=checkbox]:checked + label.chips::before {
         content: '\2715';
         border-radius: 10px;
         color: #bbb;
-        margin: 0px 6px;
+        margin-right: 8px;
     }
     input[type=checkbox]:checked + label.chips:hover::before {
         color: #555;
@@ -169,7 +189,10 @@
 </style>
 
 <div id="drawer" class="drawer">
-<!-- <button type="button" id="closeDrawerButton" title="Filtersuche schließen" tabindex="0">-->
+    <button type="button" id="closeDrawerButton" title="Filter schließen" tabindex="0">
+        &#x2715;
+    </button>
+
 
     {{> layout/multiselect_fieldset identifier="categorySelect" name="Veranstaltungsart" entries=filters.categories }}
 

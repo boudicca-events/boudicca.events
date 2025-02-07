@@ -56,7 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   filterButton.addEventListener("click", () => {
-    openDraw();
+    toggleDrawer();
   });
 
   closeModalButton.addEventListener("click", () => {
@@ -86,14 +86,16 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   })
 
-  const openDraw = () => {
-    drawer.classList.add("drawer-open");
-    document.body.style.overflow = "hidden";
+  const toggleDrawer = () => {
+    if (drawer.style.display != "flex") {
+      drawer.style.display = "flex";
+    } else {
+      closeDrawer();
+    }
   };
 
   const closeDrawer = () => {
-    drawer.classList.remove("drawer-open");
-    document.body.style.overflow = "initial";
+    drawer.style.display = "none";
   };
 
   const goToSearch = (paramsAsString) => {

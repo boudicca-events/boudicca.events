@@ -47,12 +47,20 @@ class StartPageController @Autowired constructor(private val eventService: Event
 
     @GetMapping("/sources")
     @ResponseBody
-    fun sources(
-        searchDTO: SearchDTO
-    ): ModelAndView {
+    fun sources(): ModelAndView {
         val data: MutableMap<String, Any> = HashMap()
         data["sources"] = eventService.getSources()
         return ModelAndView("sources", data)
+    }
+
+    @GetMapping("/map")
+    @ResponseBody
+    fun map(
+        searchDTO: SearchDTO
+    ): ModelAndView {
+        val data: MutableMap<String, Any> = HashMap()
+        SearchUtils.searchAndAddToModel(eventService, searchDTO, data)
+        return ModelAndView("map", data)
     }
 }
 

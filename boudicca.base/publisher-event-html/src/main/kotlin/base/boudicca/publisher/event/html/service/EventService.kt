@@ -4,6 +4,7 @@ import base.boudicca.SemanticKeys
 import base.boudicca.api.search.*
 import base.boudicca.format.ListFormat
 import base.boudicca.keyfilters.KeySelector
+import base.boudicca.model.Event
 import base.boudicca.model.EventCategory
 import base.boudicca.model.structured.Key
 import base.boudicca.model.structured.StructuredEvent
@@ -47,8 +48,13 @@ class EventService @Autowired constructor(
 
     @Throws(EventServiceException::class)
     fun search(searchDTO: SearchDTO): List<Map<String, Any?>> {
-        val events = caller.search(QueryDTO(generateQuery(searchDTO), searchDTO.offset ?: 0))
-        return mapEvents(events)
+        val searchResult = caller.search(QueryDTO(generateQuery(searchDTO), searchDTO.offset ?: 0))
+        return mapEvents(searchResult)
+    }
+
+    @Throws(EventServiceException::class)
+    fun mapSearch(searchDTO: SearchDTO): SearchResultDTO {
+        return caller.search(QueryDTO(generateQuery(searchDTO), searchDTO.offset ?: 0))
     }
 
     fun generateQuery(searchDTO: SearchDTO): String {

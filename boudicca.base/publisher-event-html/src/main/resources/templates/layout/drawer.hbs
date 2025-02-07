@@ -8,12 +8,22 @@
         border-bottom: 1px solid var(--color-main-grey);
     }
 
+    .multiselect-labels, .drawer input, .drawer select {
+        border: 1px #ccc solid;
+        border-radius: 10px;
+        margin-bottom: 10px;
+    }
+
     fieldset {
         border: none;
     }
 
     legend {
         margin-bottom: 12px;
+    }
+
+    input[type=checkbox] {
+        margin: 0px 8px 0px -2px;
     }
 
     .drawer-header {
@@ -24,15 +34,25 @@
     #filterSearchButton {
         padding: 12px 24px;
         border: 1px solid var(--color-filterSearchButton);
+        border-radius: 10px;
         margin-top: 24px;
         font-size: 18px;
-        height: 100%;
     }
 
     #resetSearchForm {
-        margin-top: 4px;
-        text-align: left;
-        width: max-content;
+        margin-top: 12px;
+        display: block;
+    }
+
+    #resetSearchForm::before {
+        content: '\2715';
+        border-radius: 10px;
+        color: #bbb;
+        margin: 0px 6px;
+    }
+
+    #resetSearchForm:hover::before {
+        color: #555;
     }
 
     .date-input {
@@ -45,6 +65,7 @@
         margin-bottom: 2px;
         font-weight: 600;
         display: flex;
+        align-items: center;
     }
 
     .filter-input-wrapper {
@@ -57,11 +78,22 @@
     }
 
     .header-search-filter button {
-            display: flex;
-        }
+        display: flex;
+    }
+
+    .search-buttons {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+    }
+
+    fieldset.accessibility {
+        flex-grow: 1;
+        flex-basis: 30%;
+    }
 
     #drawer input:not([type='checkbox']), #drawer select {
-        min-width: 150px;
+        min-width: 200px;
         max-width: 300px;
     }
 
@@ -93,6 +125,26 @@
 
     .multiselect-wrapper {
         font-size: var(--font-size-small);
+        max-width: 300px;
+        min-width: 150px;
+    }
+    .multiselect-chips {
+        width: 100%;
+        max-height: 200px;
+        overflow: scroll;
+    }
+    .multiselect-labels {
+        width: 100%;
+        max-height: 200px;
+        overflow: scroll;
+    }
+    .multiselect-labels ul {
+        margin: 0;
+        padding: 10px;
+        list-style: none;
+    }
+    .multiselect-labels ul li {
+        margin-bottom: 4px;
     }
     .multiselect-wrapper input[type=checkbox], .chips {
         display: none;
@@ -100,29 +152,18 @@
     input[type=checkbox]:checked + label.chips {
         display: inline-block;
         background-color: #eee;
-        border-radius: 10px;
+        border-radius: 20px;
+        padding: 4px 8px 4px 4px;
+        margin-bottom: 3px;
     }
     input[type=checkbox]:checked + label.chips::before {
-        content: 'x';
+        content: '\2715';
         border-radius: 10px;
-        background-color: #ccc;
-        padding: 1px 6px;
+        color: #bbb;
+        margin: 0px 6px;
     }
-
-    .multiselect-chips {
-        width: 300px;
-        max-height: 200px;
-        overflow: scroll;
-    }
-    .multiselect-labels {
-        width: 300px;
-        max-height: 200px;
-        overflow: scroll;
-        border: 1px black solid;
-    }
-    .multiselect-labels ul {
-        padding-left: 30px;
-        padding-right: 10px;
+    input[type=checkbox]:checked + label.chips:hover::before {
+        color: #555;
     }
 }
 </style>
@@ -130,25 +171,7 @@
 <div id="drawer" class="drawer">
 <!-- <button type="button" id="closeDrawerButton" title="Filtersuche schließen" tabindex="0">-->
 
-    <fieldset>
-        <div class="header-search-filter">
-            <div class="header-date-search">
-                <div class="filter-input-wrapper">
-                    <div>
-                        <label for="categorySelect" class="filter-label">Veranstaltungsart</label>
-                        {{#each filters.categories as |category|}}
-                            <input type="checkbox" name="category" id="categorySelect" value="{{category.first}}" />
-                            <label for="track">{{category.second}}</label>
-                        {{/each}}
-                    </div>
-                </div>
-                <div class="filter-input-wrapper">
-                    <label for="includeRecurring" class="filter-label">Zeige sich wiederholende Veranstaltungen</label>
-                    <input type="checkbox" id="includeRecurring" name="includeRecurring">
-                </div>
-            </div>
-        </div>
-    </fieldset>
+    {{> layout/multiselect_fieldset identifier="categorySelect" name="Veranstaltungsart" entries=filters.categories }}
 
     <fieldset>
         <div class="header-search-filter">
@@ -161,6 +184,13 @@
                 <div class="filter-input-wrapper">
                     <label for="toDate" class="filter-label">Datum bis</label>
                     <input id="toDate" name="toDate" type="date" class="date-input"/>
+                </div>
+
+                <div class="filter-input-wrapper">
+                    <label for="includeRecurring" class="filter-label">
+                        <input type="checkbox" id="includeRecurring" name="includeRecurring">
+                        Zeige wiederholende<br/>Veranstaltungen
+                    </label>
                 </div>
             </div>
         </div>
@@ -186,7 +216,7 @@
         </div>
     </fieldset>
 
-    <fieldset>
+    <fieldset class="accessibility">
         <legend><strong>Accessibility</strong></legend>
         <div class="header-search-filter">
             <div class="header-accessibility-filter">
@@ -224,9 +254,8 @@
         </div>
     </fieldset>
 
-    <button id="filterSearchButton" type="submit">
-        Suchen
-    </button>
-
-    <button id="resetSearchForm" type="button" data-drawer-last-focusable-element>Suche zurücksetzen</button>
+    <div class="search-buttons">
+        <button id="filterSearchButton" type="submit">Suchen</button>
+        <button id="resetSearchForm" type="button" data-drawer-last-focusable-element>Suche zurücksetzen</button>
+    </div>
 </div>

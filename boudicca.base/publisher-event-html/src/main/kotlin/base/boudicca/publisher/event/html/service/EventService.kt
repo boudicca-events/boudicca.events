@@ -3,13 +3,16 @@ package base.boudicca.publisher.event.html.service
 import base.boudicca.SemanticKeys
 import base.boudicca.api.search.*
 import base.boudicca.format.ListFormat
+import base.boudicca.format.NumberFormat
 import base.boudicca.keyfilters.KeySelector
-import base.boudicca.model.Event
 import base.boudicca.model.EventCategory
 import base.boudicca.model.structured.Key
 import base.boudicca.model.structured.StructuredEvent
 import base.boudicca.model.structured.VariantConstants
 import base.boudicca.model.structured.VariantConstants.FormatVariantConstants
+import base.boudicca.publisher.event.html.model.Location
+import base.boudicca.publisher.event.html.model.LocationEvent
+import base.boudicca.publisher.event.html.model.MapSearchResultDTO
 import base.boudicca.publisher.event.html.model.SearchDTO
 import base.boudicca.query.BoudiccaQueryBuilder.after
 import base.boudicca.query.BoudiccaQueryBuilder.and
@@ -45,6 +48,7 @@ class EventService @Autowired constructor(
 ) {
     private val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy 'um' HH:mm 'Uhr'", Locale.GERMAN)
     private val localDateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    private val additionalMapFilters = listOf(hasField(SemanticKeys.LOCATION_OSM_ID))
 
     @Throws(EventServiceException::class)
     fun search(searchDTO: SearchDTO): List<Map<String, Any?>> {
@@ -53,22 +57,24 @@ class EventService @Autowired constructor(
     }
 
     @Throws(EventServiceException::class)
-    fun mapSearch(searchDTO: SearchDTO): SearchResultDTO {
-        return caller.search(QueryDTO(generateQuery(searchDTO), searchDTO.offset ?: 0))
+    fun mapSearch(searchDTO: SearchDTO): MapSearchResultDTO {
+        val searchResultDTO =
+            caller.search(QueryDTO(generateQuery(searchDTO, additionalMapFilters), searchDTO.offset ?: 0, 200))
+        return mapMapSearch(searchResultDTO)
     }
 
-    fun generateQuery(searchDTO: SearchDTO): String {
+    fun generateQuery(searchDTO: SearchDTO, additionalParts: List<String> = emptyList()): String {
         val name = searchDTO.name
         val query = if (name != null && name.startsWith('!')) {
             name.substring(1)
         } else {
             setDefaults(searchDTO)
-            buildQuery(searchDTO)
+            buildQuery(searchDTO, additionalParts)
         }
         return query
     }
 
-    private fun buildQuery(searchDTO: SearchDTO): String {
+    private fun buildQuery(searchDTO: SearchDTO, additionalParts: List<String> = emptyList()): String {
         val queryParts = mutableListOf<String>()
         if (!searchDTO.name.isNullOrBlank()) {
             queryParts.add(contains("*", searchDTO.name!!))
@@ -114,6 +120,7 @@ class EventService @Autowired constructor(
         if (!searchDTO.sportParticipation.isNullOrBlank()) {
             queryParts.add(equals("sport.participation", searchDTO.sportParticipation!!))
         }
+        queryParts.addAll(additionalParts)
         return and(queryParts)
     }
 
@@ -147,10 +154,14 @@ class EventService @Autowired constructor(
     }
 
     private fun mapEvents(result: SearchResultDTO): List<Map<String, Any?>> {
+        checkResult(result)
+        return result.result.map { mapEvent(it.toStructuredEvent()) }
+    }
+
+    private fun checkResult(result: SearchResultDTO) {
         if (result.error != null) {
             throw EventServiceException("error executing query search: " + result.error, null, true)
         }
-        return result.result.map { mapEvent(it.toStructuredEvent()) }
     }
 
     private fun mapEvent(event: StructuredEvent): Map<String, Any?> {
@@ -181,6 +192,13 @@ class EventService @Autowired constructor(
     private fun getTextProperty(event: StructuredEvent, propertyName: String): String? {
         return getPropertyForFormats(event, propertyName, listOf(FormatVariantConstants.TEXT_FORMAT_NAME))
             .map { it.second }
+            .getOrNull()
+    }
+
+    private fun getNumberProperty(event: StructuredEvent, propertyName: String): Number? {
+        return getPropertyForFormats(event, propertyName, listOf(FormatVariantConstants.NUMBER_FORMAT_NAME))
+            .map { it.second }
+            .map { NumberFormat.parseFromString(it) }
             .getOrNull()
     }
 
@@ -320,6 +338,45 @@ class EventService @Autowired constructor(
             }
         } else {
             value
+        }
+    }
+
+    private fun mapMapSearch(result: SearchResultDTO): MapSearchResultDTO {
+        if (!result.error.isNullOrEmpty()) {
+            return MapSearchResultDTO(result.error, emptyList())
+        } else {
+            val events = result.result.map { it.toStructuredEvent() }
+
+            val byLocationName = events.groupBy { getTextProperty(it, SemanticKeys.LOCATION_NAME) ?: "" }
+
+            fun <T> findFirst(events: List<StructuredEvent>, lookup: (StructuredEvent) -> T?): T? {
+                return events.firstNotNullOfOrNull(lookup)
+            }
+
+            return MapSearchResultDTO(null, byLocationName.mapNotNull {
+                val locationName = it.key
+                val locationUrl = findFirst(it.value) { event -> getTextProperty(event, SemanticKeys.LOCATION_URL) }
+                val locationLat =
+                    findFirst(it.value) { event -> getNumberProperty(event, SemanticKeys.LOCATION_COORDINATES_LAT) }
+                val locationLon =
+                    findFirst(it.value) { event -> getNumberProperty(event, SemanticKeys.LOCATION_COORDINATES_LON) }
+                if (locationLat == null || locationLon == null) {
+                    null
+                } else {
+                    Location(
+                        locationName,
+                        locationUrl,
+                        locationLat.toDouble(),
+                        locationLon.toDouble(),
+                        it.value.sortedBy { event -> event.startDate }.map { event ->
+                            LocationEvent(
+                                getTextProperty(event, SemanticKeys.NAME) ?: "",
+                                getTextProperty(event, SemanticKeys.URL)
+                            )
+                        }
+                    )
+                }
+            })
         }
     }
 

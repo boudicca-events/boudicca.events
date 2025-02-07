@@ -1,6 +1,7 @@
 package base.boudicca.publisher.event.html.restcontroller
 
 import base.boudicca.api.search.SearchResultDTO
+import base.boudicca.publisher.event.html.model.MapSearchResultDTO
 import base.boudicca.publisher.event.html.model.SearchDTO
 import base.boudicca.publisher.event.html.service.EventService
 import base.boudicca.publisher.event.html.util.SearchUtils
@@ -32,8 +33,7 @@ class SearchRestController @Autowired constructor(
     @ResponseBody
     fun mapSearch(
         searchDTO: SearchDTO
-    ): SearchResultDTO {
-        //TODO only events with osmstuff
+    ): MapSearchResultDTO {
         return eventService.mapSearch(searchDTO)
     }
 }

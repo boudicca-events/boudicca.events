@@ -1,8 +1,8 @@
 package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
-import base.boudicca.api.eventcollector.Fetcher
 import base.boudicca.api.eventcollector.collectors.IcalCollector
+import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.model.EventCategory
 import base.boudicca.model.Registration
 import base.boudicca.model.structured.StructuredEvent
@@ -12,7 +12,7 @@ import base.boudicca.model.structured.StructuredEvent
  */
 class ValugCollector : IcalCollector("valug") {
 
-    private val fetcher = Fetcher()
+    private val fetcher = FetcherFactory.newFetcher()
     private val baseUrl = "https://valug.at/"
     private val icsUrl = "${baseUrl}events/index.ics"
 

@@ -1,7 +1,7 @@
 package events.boudicca.eventcollector
 
 import base.boudicca.api.eventcollector.debugger.EventCollectorDebugger
-import base.boudicca.api.eventcollector.fetcher.FileBackedFetcherCache
+import base.boudicca.fetcher.FileBackedFetcherCache
 import events.boudicca.eventcollector.collectors.*
 import java.io.File
 
@@ -29,5 +29,5 @@ fun main() {
 //        .debug(RemoteCollectorCollector("http://localhost:8080"))
 
         //enable/add any collectors you want to test here
-        .debug(FamilienkarteEventCollector())
+        .debug(ZuckerfabrikCollector())
 }

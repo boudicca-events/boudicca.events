@@ -1,8 +1,5 @@
-package base.boudicca.api.eventcollector
+package base.boudicca.fetcher
 
-import base.boudicca.api.eventcollector.fetcher.HttpClientWrapper
-import base.boudicca.api.eventcollector.fetcher.InMemoryFetcherCache
-import base.boudicca.api.eventcollector.fetcher.NoopFetcherCache
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -47,7 +44,7 @@ class FetcherTest {
 
     private val fetcher = Fetcher(
         clock = instantSource.withZone(ZoneId.systemDefault()),
-        sleeper = { instantSource.setMillis(instantSource.millis() + it) },
+        sleeper = { instantSource.addMillis(it) },
         httpClient = httpClientWrapper
     )
 
@@ -55,7 +52,6 @@ class FetcherTest {
     fun setup() {
         httpClientWrapper.callback = Callable { throw IllegalStateException("not initialized") }
         instantSource.setMillis(0)
-        Fetcher.fetcherCache = NoopFetcherCache
     }
 
     @Test
@@ -135,6 +131,25 @@ class FetcherTest {
     }
 
     @Test
+    fun testRetryTimingsSecond() {
+        var count = 0
+        httpClientWrapper.callback = Callable {
+            instantSource.addMillis(150)
+            if (count++ == 1) {
+                Pair(400, "FAILED")
+            } else {
+                Pair(200, "OK")
+            }
+        }
+        val response = fetcher.fetchUrl("url")
+        assertEquals("OK", response)
+        val response2 = fetcher.fetchUrl("url")
+        assertEquals("OK", response2)
+        //150 first fetch + 225 waittime + 150 second fetch fail + 60000 for retry + 150 second fetch success
+        assertEquals(60675, instantSource.millis())
+    }
+
+    @Test
     fun testManualSetDelay() {
         val customFetcher = Fetcher(
             manualSetDelay = 6789,
@@ -167,7 +182,12 @@ class FetcherTest {
     @Test
     fun testCache() {
         var count = 0
-        Fetcher.fetcherCache = InMemoryFetcherCache
+        val fetcher = Fetcher(
+            clock = instantSource.withZone(ZoneId.systemDefault()),
+            sleeper = { instantSource.addMillis(it) },
+            httpClient = httpClientWrapper,
+            fetcherCache = InMemoryFetcherCache()
+        )
         httpClientWrapper.callback = Callable {
             count++
             Pair(200, "OK")

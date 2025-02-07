@@ -1,4 +1,4 @@
-package base.boudicca.api.eventcollector.fetcher
+package base.boudicca.fetcher
 
 interface HttpClientWrapper {
     fun doGet(url: String): Pair<Int, String>

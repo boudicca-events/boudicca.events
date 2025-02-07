@@ -5,6 +5,7 @@ plugins {
 
 dependencies {
     api(project(":boudicca.base:common-model"))
+    api(project(":boudicca.base:fetcher-lib"))
     api(libs.biweekly)
     implementation(project(":boudicca.base:publisher-client"))
     implementation(project(":boudicca.base:ingest-client"))

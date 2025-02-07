@@ -41,10 +41,12 @@ little as possible in the getAllUnparsedEvents() method.
 
 #### Fetcher
 
-The [Fetcher.kt](../../boudicca.base/eventcollector-client/src/main/kotlin/base/boudicca/api/eventcollector/Fetcher.kt)
+The [Fetcher.kt](../../boudicca.base/fetcher-lib/src/main/kotlin/base/boudicca/fetcher/Fetcher.kt)
 utility class allows you to easily fetch websites via http(s). It is highly recommended that you use this fetcher
 because it also provides automatic delays so that we do not overwhelm the server we scrape, and it also sets
-the User-Agent to `boudicca.events collector`.
+the User-Agent (from global config `Constants.USER_AGENT` currently: `boudicca.events.collector/1.0 (https://boudicca.events/)`).
+
+You should create a new instance of the fetcher via the `FetcherFactory.newFetcher(..)` method.
 
 #### Collections diagnostic data
 
@@ -64,7 +66,7 @@ To do this the workflow is following:
    and run the `LocalCollectorDebugKt` launch config (or class) to dry-run your test.
    1. A dry-run means events will be collected but not ingested somewhere. This is to make sure that the data looks
       sane and the EventCollector does not throw any exceptions before actually sending it to a backend.
-   2. The `LocalCollectorDebugKt` also starts the collectors overview at http://localhost:8083 where you can have a
+   2. The `LocalCollectorDebugKt` also starts the collectors overview at http://localhost:8083 where you can have an
       easier look at errors and what happened during your collection.
    3. You can also test the collection with enrichment by starting your own local enricher or using our hosted one
       at https://enricher.boudicca.events. For that uncomment one of the `.enableEnricher("...")` lines in

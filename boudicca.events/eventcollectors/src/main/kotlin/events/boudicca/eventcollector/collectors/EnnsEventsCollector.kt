@@ -1,8 +1,8 @@
 package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
-import base.boudicca.api.eventcollector.Fetcher
 import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
 import com.beust.klaxon.JsonObject
@@ -14,7 +14,7 @@ import java.time.format.DateTimeFormatter
 class EnnsEventsCollector : TwoStepEventCollector<JsonObject>("ennsevents") {
 
     override fun getAllUnparsedEvents(): List<JsonObject> {
-        val fetcher = Fetcher()
+        val fetcher = FetcherFactory.newFetcher()
         val unparsedJson =
             fetcher.fetchUrl("https://erlebe.enns.at/snpapi/search/v2?rows=400&start=0&q=&scope=ennsportal&sort=datum&type=EVENT")
         val jsonObject = Parser.default().parse(StringReader(unparsedJson)) as JsonObject

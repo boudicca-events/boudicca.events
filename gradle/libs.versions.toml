@@ -12,6 +12,7 @@ io-spring-dependency-management-gradle-plugin = "1.1.7"
 org-openapi-generator-gradle-plugin = "7.2.0"
 junit-jupiter = "5.11.4"
 mockito-kotlin = "5.4.0"
+assertk = "0.28.1"
 biweekly = "0.6.8"
 apache-velocity-engine-core = "2.4.1"
 apache-velocity-tools-generic = "3.1"
@@ -53,6 +54,7 @@ org-openapi-generator-gradle-plugin = { module = "org.openapi.generator:org.open
 
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit-jupiter" }
 mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockito-kotlin" }
+assertk = { module = "com.willowtreeapps.assertk:assertk", version.ref = "assertk" }
 
 biweekly = { module = "net.sf.biweekly:biweekly", version.ref = "biweekly" }
 

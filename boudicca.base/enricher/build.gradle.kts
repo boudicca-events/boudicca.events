@@ -15,4 +15,5 @@ dependencies {
 
     implementation(project(":boudicca.base:enricher-api"))
     implementation(project(":boudicca.base:common-model"))
+    implementation(project(":boudicca.base:fetcher-lib"))
 }

@@ -3,10 +3,12 @@ package base.boudicca.enricher.service.location
 import base.boudicca.SemanticKeys
 import base.boudicca.TextProperty
 import base.boudicca.enricher.service.Enricher
+import base.boudicca.enricher.service.EnricherOrderConstants
 import base.boudicca.enricher.service.ForceUpdateEvent
 import base.boudicca.model.structured.StructuredEvent
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.event.EventListener
+import org.springframework.core.annotation.Order
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import java.util.concurrent.TimeUnit
@@ -14,6 +16,7 @@ import java.util.concurrent.locks.ReentrantLock
 
 
 @Service
+@Order(EnricherOrderConstants.LocationEnricherOrder)
 class LocationEnricher @Autowired constructor(
     private val updater: LocationEnricherUpdater
 ) : Enricher {
@@ -21,17 +24,17 @@ class LocationEnricher @Autowired constructor(
     private val updateLock = ReentrantLock()
     private var data = emptyList<LocationData>()
 
-    override fun enrich(e: StructuredEvent): StructuredEvent {
+    override fun enrich(event: StructuredEvent): StructuredEvent {
         for (locationData in data) {
-            if (matches(e, locationData)) {
-                val builder = e.toBuilder()
+            if (matches(event, locationData)) {
+                val builder = event.toBuilder()
                 for (locationDatum in locationData) {
                     builder.withProperty(TextProperty(locationDatum.key), locationDatum.value.first())
                 }
                 return builder.build()
             }
         }
-        return e
+        return event
     }
 
     private fun matches(event: StructuredEvent, locationData: Map<String, List<String>>): Boolean {
@@ -71,9 +74,8 @@ class LocationEnricher @Autowired constructor(
     }
 }
 
-interface LocationEnricherUpdater {
+fun interface LocationEnricherUpdater {
     fun updateData(): List<LocationData>
 }
-
 
 typealias LocationData = Map<String, List<String>>

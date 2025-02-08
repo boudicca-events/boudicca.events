@@ -5,22 +5,17 @@ import base.boudicca.Property
 abstract class AbstractStructuredBuilder<T, B : AbstractStructuredBuilder<T, B>>(protected val data: MutableMap<Key, String> = mutableMapOf()) {
 
     @Throws(IllegalArgumentException::class)
-    fun <P> withProperty(property: Property<P>, value: P?): B {
-        return withProperty(property, null, value)
-    }
-
-    @Throws(IllegalArgumentException::class)
     fun <P> withProperty(
         property: Property<P>,
-        language: String?,
-        value: P?
+        value: P?,
+        variants: List<Variant> = emptyList()
     ): B {
         if (value == null) {
             @Suppress("UNCHECKED_CAST")
             return this as B
         }
         return withKeyValuePair(
-            property.getKey(language),
+            property.getKey().toBuilder().withVariants(variants).build(),
             property.parseToString(value)
         )
     }

@@ -7,6 +7,7 @@ import base.boudicca.model.Registration
 /**
  * constants for all our known properties and their corresponding [Property]
  */
+@Suppress("unused") // Definitions are maintained for API completeness and may currently be unused
 object SemanticKeys {
 
     // general properties
@@ -71,15 +72,36 @@ object SemanticKeys {
     const val LOCATION_URL = "location.url"
     val LOCATION_URL_PROPERTY = UrlProperty(LOCATION_URL)
 
-    //TODO split coordinates
-    const val LOCATION_COORDINATES = "location.coordinates"
-    val LOCATION_COORDINATES_PROPERTY = TextProperty(LOCATION_COORDINATES)
+    const val LOCATION_COORDINATES_LAT = "location.coordinates.lat"
+    val LOCATION_COORDINATES_LAT_PROPERTY = NumberProperty(LOCATION_COORDINATES_LAT)
+
+    const val LOCATION_COORDINATES_LON = "location.coordinates.lon"
+    val LOCATION_COORDINATES_LON_PROPERTY = NumberProperty(LOCATION_COORDINATES_LON)
 
     const val LOCATION_CITY = "location.city"
     val LOCATION_CITY_PROPERTY = TextProperty(LOCATION_CITY)
 
     const val LOCATION_ADDRESS = "location.address"
     val LOCATION_ADDRESS_PROPERTY = TextProperty(LOCATION_ADDRESS)
+
+    //TODO add those into semantic conventions
+    const val LOCATION_OSM_ID = "location.osmId"
+    val LOCATION_OSM_ID_PROPERTY = TextProperty(LOCATION_OSM_ID)
+
+    const val LOCATION_DESCRIPTION = "location.description"
+    val LOCATION_DESCRIPTION_PROPERTY = TextProperty(LOCATION_DESCRIPTION)
+
+    const val LOCATION_CONTACT_PHONE = "location.contact.phone"
+    val LOCATION_CONTACT_PHONE_PROPERTY = TextProperty(LOCATION_CONTACT_PHONE)
+
+    const val LOCATION_CONTACT_EMAIL = "location.contact.email"
+    val LOCATION_CONTACT_EMAIL_PROPERTY = TextProperty(LOCATION_CONTACT_EMAIL)
+
+    const val LOCATION_WIKIPEDIA = "location.wikipedia"
+    val LOCATION_WIKIPEDIA_PROPERTY = TextProperty(LOCATION_WIKIPEDIA)
+
+    const val LOCATION_WIKIDATA = "location.wikidata"
+    val LOCATION_WIKIDATA_PROPERTY = TextProperty(LOCATION_WIKIDATA)
 
     // accessibility properties
 
@@ -105,5 +127,6 @@ object SemanticKeys {
 
     const val CONCERT_BANDLIST = "concert.bandlist"
     val CONCERT_BANDLIST_PROPERTY = ListProperty(CONCERT_BANDLIST)
+
 
 }

@@ -28,25 +28,25 @@ class MusicBrainzArtistEnricher @Autowired constructor(
     private val objectMapper = ObjectMapper().registerModule(KotlinModule.Builder().build())
     private val artistMatcher = createArtistMatcher(musicBrainzDataPath, musicBrainzIndexPath)
 
-    override fun enrich(e: StructuredEvent): StructuredEvent {
+    override fun enrich(event: StructuredEvent): StructuredEvent {
         if (artistMatcher == null) {
-            return e
+            return event
         }
-        return doEnrich(e, artistMatcher)
+        return doEnrich(event, artistMatcher)
     }
 
-    private fun doEnrich(e: StructuredEvent, artistMatcher: ArtistMatcher): StructuredEvent {
-        if (e.getProperty(SemanticKeys.CATEGORY_PROPERTY).firstOrNull()?.second != EventCategory.MUSIC) {
-            return e
+    private fun doEnrich(event: StructuredEvent, artistMatcher: ArtistMatcher): StructuredEvent {
+        if (event.getProperty(SemanticKeys.CATEGORY_PROPERTY).firstOrNull()?.second != EventCategory.MUSIC) {
+            return event
         }
-        val foundArtists = artistMatcher.findArtists(e.name)
+        val foundArtists = artistMatcher.findArtists(event.name)
         if (foundArtists.isNotEmpty()) {
             val nonSubstringArtists = foundArtists.filter { artist ->
                 foundArtists.none { it.name.length != artist.name.length && it.name.contains(artist.name, true) }
             }
-            return insertArtistData(e, nonSubstringArtists)
+            return insertArtistData(event, nonSubstringArtists)
         }
-        return e
+        return event
     }
 
     private fun insertArtistData(e: StructuredEvent, artists: List<Artist>): StructuredEvent {

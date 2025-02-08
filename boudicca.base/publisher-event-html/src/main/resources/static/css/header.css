@@ -1,5 +1,6 @@
 header {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
     margin-top: 24px;
@@ -7,7 +8,7 @@ header {
     padding-bottom: 24px;
     border-bottom: 1px solid var(--color-main-grey);
     width: 100%;
-    gap: 20px;
+    column-gap: 20px;
     order: 1;
 }
 
@@ -64,6 +65,10 @@ header button {
 }
 
 .header-mobile-menu {
+    display: none;
+}
+
+#closeMenuButton {
     display: none;
 }
 
@@ -130,11 +135,15 @@ header button {
     }
 
     .header-search {
-        justify-content: flex-start;
+        justify-content: center;
     }
 
     .header-mobile-menu {
-       order: 2;
+        order: 2;
+    }
+
+    .mobile-menu {
+        order: 4;
     }
 
 }

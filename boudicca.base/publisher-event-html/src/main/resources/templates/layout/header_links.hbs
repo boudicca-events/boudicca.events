@@ -11,3 +11,18 @@
         </svg>
     </a>
 </nav>
+
+<nav class="header-mobile-menu">
+    <button id="openMenuButton" aria-describedby="Menu öffnen" aria-controls="drawer" type="button">
+        <svg height="36px" width="36px" title="Filter Logo" viewBox="0 0 512 512" >
+            <use xlink:href="#menu"></use>
+        </svg>
+    </button>
+    <button type="button" id="closeMenuButton" title="Filtersuche schließen" tabindex="0">
+        <svg title="Schließen Logo" height="36px" width="36px" viewBox="0 0 512 512">
+            <use xlink:href="#close"></use>
+        </svg>
+    </button>
+</nav>
+
+{{> layout/menu}}

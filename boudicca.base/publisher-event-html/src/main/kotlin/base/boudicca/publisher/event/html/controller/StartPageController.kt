@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.servlet.ModelAndView
+import org.springframework.web.servlet.view.RedirectView
 
 @Controller
 @RequestMapping("/")
@@ -17,12 +18,8 @@ class StartPageController @Autowired constructor(private val eventService: Event
     private val PAGE_TITLE = "Boudicca.Events - find accessible events in Austria"
 
     @GetMapping("/")
-    fun getIndex(): ModelAndView {
-        val data: MutableMap<String, Any> = HashMap()
-        data["title"] = PAGE_TITLE
-        SearchUtils.searchAndAddToModel(eventService, SearchDTO(), data)
-        data["filters"] = eventService.filters()
-        return ModelAndView("index", data)
+    fun getIndex(): RedirectView {
+        return RedirectView("/search")
     }
 
     @GetMapping("/search")

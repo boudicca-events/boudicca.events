@@ -222,7 +222,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (key === "flags") {
         document.getElementById(value).checked = true;
       } else {
-        document.getElementById(key).value = value;
+        document.querySelector(`[name="${key}"]`).value = value;
       }
     });
   };

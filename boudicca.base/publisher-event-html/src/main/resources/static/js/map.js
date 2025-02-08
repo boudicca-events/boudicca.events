@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }).addTo(map);
 
   async function fetchEvents() {
-    let response = await fetch("api/mapSearch")
+    let response = await fetch("api/mapSearch"+location.search)
     let searchResult = await response.json()
 
     console.log(searchResult)

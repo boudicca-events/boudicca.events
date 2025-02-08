@@ -6,19 +6,33 @@ document.addEventListener("DOMContentLoaded", () => {
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
   }).addTo(map);
 
-  async function fetchEvents() {
+  async function fetchEvents(map) {
     let response = await fetch("api/mapSearch"+location.search)
     let searchResult = await response.json()
 
-    console.log(searchResult)
     if (searchResult.error) {
       alert("whoops: " + searchResult.error)
       return
     }
+    if(searchResult.locations.length === 0){
+      return
+    }
+    let maxLat = searchResult.locations[0].latitude
+    let minLat = searchResult.locations[0].latitude
+    let maxLon = searchResult.locations[0].longitude
+    let minLon = searchResult.locations[0].longitude
     for (let location of searchResult.locations) {
+      maxLat = Math.max(maxLat, location.latitude)
+      minLat = Math.min(minLat, location.latitude)
+      maxLon = Math.max(maxLon, location.longitude)
+      minLon = Math.min(minLon, location.longitude)
       let marker = L.marker([location.latitude, location.longitude]).addTo(map);
       marker.bindPopup(createMarkerText(location))
     }
+    map.fitBounds([
+      [minLat, minLon],
+      [maxLat, maxLon]
+    ]);
   }
 
   function createMarkerText(location) {
@@ -61,5 +75,5 @@ document.addEventListener("DOMContentLoaded", () => {
     return div.innerHTML
   }
 
-  fetchEvents()
+  fetchEvents(map)
 });

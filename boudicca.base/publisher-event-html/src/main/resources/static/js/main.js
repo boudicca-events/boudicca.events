@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const filterSearchButton = document.getElementById("filterSearchButton");
   const resetSearchFormButton = document.getElementById("resetSearchForm");
   const loadMoreButton = document.getElementById("loadMoreButton");
-  const categorySelect = document.getElementById("categorySelect");
+  const categorySelect = document.getElementsByName("categorySelect");
   const categoryFieldSets = document.querySelectorAll("[data-category-wanted]");
   const searchInput = document.querySelector("input.search-input");
   const modal = document.getElementById("modal");
@@ -259,25 +259,33 @@ document.addEventListener("DOMContentLoaded", () => {
 
   searchForm.addEventListener("submit", onSearch);
 
-  const onCategoryChange = () => {
-    let category = categorySelect.value;
-    for (fieldSet of categoryFieldSets) {
-      if (fieldSet.dataset["categoryWanted"] === category) {
+  const onCategoryChange = (changedCategory) => {
+
+    const changedCategoryName = changedCategory.value;
+    const allIsChecked = document.getElementById("categorySelect-ALL").checked;
+    let fieldSets = document.querySelectorAll("[data-category-wanted='" + changedCategoryName + "']");
+    if (changedCategoryName === "ALL") {
+      fieldSets = document.querySelectorAll("[data-category-wanted]");
+    }
+
+    for (fieldSet of fieldSets){
+      let categoryIsChecked = document.getElementById("categorySelect-" + fieldSet.getAttribute("data-category-wanted")).checked;
+      if (categoryIsChecked || allIsChecked) {
         fieldSet.classList.remove("hidden");
       } else {
         for (select of fieldSet.querySelectorAll("select")) {
           select.selectedIndex = 0;
         }
         for (input of fieldSet.querySelectorAll("input")) {
-          input.value = "";
+          input.checked = false;
         }
         fieldSet.classList.add("hidden");
       }
     }
   };
 
-  categorySelect.addEventListener("change", onCategoryChange);
-  onCategoryChange();
+  categorySelect.forEach((checkbox) => checkbox.addEventListener("change", c => onCategoryChange(c.currentTarget)));
+//  onCategoryChange();
 
   const events = document.querySelectorAll(".event")
   initModals(events);

@@ -2,8 +2,8 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.TextProperty
-import base.boudicca.api.eventcollector.Fetcher
 import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
@@ -14,10 +14,12 @@ import java.time.LocalTime
 import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.util.concurrent.TimeUnit
 
 class AlpenvereinCollector : TwoStepEventCollector<String>("alpenverein") {
 
-    private val fetcher = Fetcher(manualSetDelay = 12 * 1000) //they have a crawl-delay of 12 seconds...
+    private val delay: Long = TimeUnit.SECONDS.toMillis(12) //they request a crawl-delay of 12 seconds
+    private val fetcher = FetcherFactory.newFetcher(manualSetDelay = delay)
 
     override fun getAllUnparsedEvents(): List<String> {
 

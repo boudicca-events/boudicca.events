@@ -2,7 +2,7 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.EventCollector
-import base.boudicca.api.eventcollector.Fetcher
+import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.Registration
 import base.boudicca.model.structured.StructuredEvent
@@ -20,7 +20,7 @@ class TechnologiePlauscherlCollector : EventCollector {
 
     override fun collectStructuredEvents(): List<StructuredEvent> {
         val url = "https://technologieplauscherl.at/feed"
-        val contentAsInputStream = Fetcher().fetchUrl(url).byteInputStream()
+        val contentAsInputStream = FetcherFactory.newFetcher().fetchUrl(url).byteInputStream()
         val feed = SyndFeedInput().build(XmlReader(contentAsInputStream))
 
         val events = feed.entries.map { entry ->

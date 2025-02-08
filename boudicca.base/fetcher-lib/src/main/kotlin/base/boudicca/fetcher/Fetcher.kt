@@ -1,12 +1,7 @@
-package base.boudicca.api.eventcollector
+package base.boudicca.fetcher
 
-import base.boudicca.api.eventcollector.collections.Collections
-import base.boudicca.api.eventcollector.fetcher.FetcherCache
-import base.boudicca.api.eventcollector.fetcher.HttpClientWrapper
-import base.boudicca.api.eventcollector.fetcher.NoopFetcherCache
-import base.boudicca.api.eventcollector.util.Sleeper
-import base.boudicca.api.eventcollector.util.retry
 import org.slf4j.LoggerFactory
+import java.net.HttpURLConnection
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -17,69 +12,70 @@ import java.util.concurrent.Callable
 
 class Fetcher(
     private val manualSetDelay: Long? = null,
-    private val userAgent: String = "boudicca.events.crawler/1.0 (https://boudicca.events/)",
+    private val userAgent: String = Constants.USER_AGENT,
     private val clock: Clock = Clock.systemDefaultZone(),
     private val sleeper: Sleeper = Sleeper { ms -> Thread.sleep(ms) },
-    private val httpClient: HttpClientWrapper = createHttpClientWrapper(userAgent)
+    private val httpClient: HttpClientWrapper = createDefaultHttpClientWrapper(userAgent),
+    private val eventListeners: List<FetcherEventListener> = emptyList(),
+    private val fetcherCache: FetcherCache = NoopFetcherCache
 ) {
-    companion object {
-        @Volatile
-        var fetcherCache: FetcherCache = NoopFetcherCache
-    }
-
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     private var lastRequestEnd = 0L
     private var lastRequestDuration = 0L
 
     fun fetchUrl(url: String): String {
-        if (fetcherCache.containsEntry(url)) {
-            logger.debug("Returning Cached entry for URL $url")
-            return fetcherCache.getEntry(url)
+        return fetch(url, url, null) {
+            httpClient.doGet(url)
         }
-        Collections.startHttpCall(url)
-        val response = doRequest(url) { httpClient.doGet(url) }
-        fetcherCache.putEntry(url, response)
-        logger.debug("Added new entry to cache with URL: $url")
-        return response
     }
 
     fun fetchUrlPost(url: String, contentType: String, content: String): String {
-        val cacheKey = "$url|${content}"
+        return fetch("$url|${contentType}|${content}", url, content) {
+            httpClient.doPost(url, contentType, content)
+        }
+    }
+
+    private fun fetch(
+        cacheKey: String,
+        url: String,
+        content: String?,
+        executeRequestAction: () -> Pair<Int, String>
+    ): String {
         if (fetcherCache.containsEntry(cacheKey)) {
             logger.debug("Using cached entry for Key: $cacheKey")
             return fetcherCache.getEntry(cacheKey)
         }
 
-        Collections.startHttpCall(url, content)
-        val response = doRequest(url) { httpClient.doPost(url, contentType, content) }
-        logger.debug("Added new entry to cache with Key: $cacheKey")
+        val response = executeRequest(url, content, executeRequestAction)
+
         fetcherCache.putEntry(cacheKey, response)
+        logger.debug("Added new entry to cache with Key: $cacheKey")
         return response
     }
 
-    private fun doRequest(url: String, request: Callable<Pair<Int, String>>): String {
+    private fun executeRequest(url: String, content: String?, request: Callable<Pair<Int, String>>): String {
         doSleep()
-        var start = 0L
-        val response = try {
-            retry(logger, sleeper) {
-                Collections.resetHttpTiming()
-                start = clock.millis()
-                val response = request.call()
-                if (response.first != 200) {
-                    throw RuntimeException("request to $url failed with status code ${response.first}")
-                }
-                response
+        val response = retry(logger, sleeper) {
+            eventListeners.forEach { it.callStarted(url, content) }
+            val start = clock.millis()
+            @Suppress("detekt.TooGenericExceptionCaught") //it will be rethrown
+            val response = try {
+                request.call()
+            } catch (e: Exception) {
+                eventListeners.forEach { it.callEnded(-1) }
+                throw e
+            } finally {
+                val end = clock.millis()
+                lastRequestEnd = end
+                lastRequestDuration = end - start
             }
-        } catch (e: Exception) {
-            Collections.endHttpCall(-1)
-            throw e
-        } finally {
-            val end = clock.millis()
-            lastRequestEnd = end
-            lastRequestDuration = end - start
+            eventListeners.forEach { it.callEnded(response.first) }
+            if (response.first != HttpURLConnection.HTTP_OK) {
+                throw FetcherException("request to $url failed with status code ${response.first}")
+            }
+            response
         }
-        Collections.endHttpCall(response.first)
         return response.second
     }
 
@@ -106,7 +102,9 @@ class Fetcher(
     }
 }
 
-private fun createHttpClientWrapper(userAgent: String): HttpClientWrapper {
+class FetcherException(reason: String) : RuntimeException(reason)
+
+private fun createDefaultHttpClientWrapper(userAgent: String): HttpClientWrapper {
     val httpClient = HttpClient.newBuilder()
         .followRedirects(HttpClient.Redirect.NORMAL)
         .build()

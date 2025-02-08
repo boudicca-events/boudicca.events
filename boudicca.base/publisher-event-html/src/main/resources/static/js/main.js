@@ -62,6 +62,29 @@ document.addEventListener("DOMContentLoaded", () => {
     toggleDrawer();
   });
 
+  const initCheckboxLabelToggle = () => {
+    const checkboxLabelsToToggle = document.querySelectorAll(".toggleFilterLabels");
+    for (label of checkboxLabelsToToggle) {
+      label.addEventListener("click", (label) => toggleCheckboxLabels(label));
+    }
+  }
+
+  const toggleCheckboxLabels = (clickedLabel) => {
+     const currentForAttribute = clickedLabel.currentTarget.getAttribute('for');
+     const chipsLabel = document.querySelector('label.chips[for="'+currentForAttribute+'"]');
+     const listLabel = document.querySelector('li label[for="'+currentForAttribute+'"]');
+     toggleSingleCheckboxLabel(chipsLabel);
+     toggleSingleCheckboxLabel(listLabel);
+  }
+
+  const toggleSingleCheckboxLabel = (label) => {
+    if (label.style.display != "inline-block") {
+       label.style.display = "inline-block";
+     } else {
+       label.style.display = "none";
+    }
+  }
+
   document.addEventListener("click", (event) => {
     if (
       !drawer.contains(event.target) &&
@@ -258,4 +281,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const events = document.querySelectorAll(".event")
   initModals(events);
+  initCheckboxLabelToggle();
 });

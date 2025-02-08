@@ -32,11 +32,17 @@
     .event-image {
         height: 250px;
         background-color: var(--color-main);
-        object-fit: scale-down;
         display: flex;
         align-items: center;
         justify-content: center;
         position: relative;
+        border-radius: 4px;
+    }
+
+    .event-image img {
+        max-height: 180px;
+        max-width: 180px;
+        object-fit: contain;
         border-radius: 4px;
     }
 
@@ -93,10 +99,6 @@
         grid-template-columns: max-content 1fr;
         align-items: flex-start;
         gap: 6px;
-
-        :first-child {
-            font-size: var(--font-size-large);
-        }
     }
 
     .event-details-wrapper {
@@ -135,6 +137,7 @@
         align-items: center;
         justify-content: center;
         position: relative;
+        border-radius: 4px;
     }
 
     .event-image-modal img {
@@ -148,16 +151,6 @@
         flex-direction: row;
     }
 
-    .event-modal-tag-row {
-        display: flex;
-        gap: 0.50rem;
-    }
-
-    .modal-tabs {
-        background-color: var(--color-white);
-        padding: 2rem;
-    }
-
     @media only screen and (max-width: 970px) {
         .event-image-modal {
             width: -webkit-fill-available;
@@ -168,14 +161,16 @@
         }
     }
 
-    .event-modal-tag {
+    .event-modal-tags {
         display: flex;
-        background-color: var(--color-white);
-        padding-top: var(--space-small);
-        padding-bottom: var(--space-small);
-        padding-left: var(--space-medium);
-        padding-right: var(--space-medium);
-        border: 1px solid black;
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+
+    .event-modal-tag {
+        padding: var(--space-small) var(--space-medium);
+        background-color: rgba(255,255,255,0.5);
+        border-radius: 20px;
     }
 
     .modal-close {
@@ -194,6 +189,7 @@
         padding: var(--space-medium);
         border: 1px solid black;
         top: var(--space-medium);
+        border-radius: 4px;
     }
 
     #loadMoreButton {

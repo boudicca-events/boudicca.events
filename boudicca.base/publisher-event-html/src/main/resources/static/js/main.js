@@ -4,7 +4,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const filterButton = document.getElementById("filterButton");
   const drawer = document.getElementById("drawer");
   const closeDrawerButton = document.getElementById("closeDrawerButton");
-  const filterSearchButton = document.getElementById("filterSearchButton");
   const resetSearchFormButton = document.getElementById("resetSearchForm");
   const loadMoreButton = document.getElementById("loadMoreButton");
   const categorySelect = document.getElementsByName("categorySelect");
@@ -48,10 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   resetSearchFormButton.addEventListener("click", () => {
     searchForm.reset();
-  });
-
-  filterSearchButton.addEventListener("click", () => {
-    closeDrawer();
+    drawer.reset();
   });
 
   closeDrawerButton.addEventListener("click", () => {
@@ -88,6 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.addEventListener("click", (event) => {
     if (
       !drawer.contains(event.target) &&
+      !searchForm.contains(event.target) &&
       !filterButton.contains(event.target) &&
       !event.target.classList.contains("anchor-to-event")
     ) {
@@ -195,11 +192,19 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  const getSearchParams = () => {
+    const searchBar = new FormData(searchForm);
+    const detailFilter = new FormData(drawer);
+    for (fields of searchBar.entries()) {
+      detailFilter.append(fields[0], fields[1]);
+    }
+    const paramsAsString = new URLSearchParams(detailFilter).toString();
+    return paramsAsString;
+  }
+
   const onSearch = async (e) => {
     e.preventDefault();
-    const paramsAsString = new URLSearchParams(
-      new FormData(e.target)
-    ).toString();
+    const paramsAsString = getSearchParams();
     const apiUrl = `/api/search?${paramsAsString}&offset=0`;
 
     try {
@@ -216,9 +221,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const parser = new DOMParser();
   const onLoadMoreSearch = async () => {
-    const paramsAsString = new URLSearchParams(
-      new FormData(searchForm)
-    ).toString();
+    const paramsAsString = getSearchParams();
     const apiUrl = `/api/search?${paramsAsString}&offset=${eventsContainer.children.length}`;
 
     try {
@@ -258,6 +261,7 @@ document.addEventListener("DOMContentLoaded", () => {
   hydrateFormValues();
 
   searchForm.addEventListener("submit", onSearch);
+  drawer.addEventListener("submit", onSearch);
 
   const onCategoryChange = (changedCategory) => {
 

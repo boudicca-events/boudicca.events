@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const mobileMenu = document.getElementById("mobile-menu");
     const openMenuButton = document.getElementById("openMenuButton");
     const closeMenuButton = document.getElementById("closeMenuButton");
+    const header = document.querySelector("header");
 
     openMenuButton.addEventListener("click", () => {
         openMenu();
@@ -12,12 +13,16 @@ document.addEventListener("DOMContentLoaded", () => {
     })
 
     const openMenu = () => {
-        mobileMenu.classList.add("mobile-menu-open");
-        document.body.style.overflow = "hidden";
+        mobileMenu.style.display = "block";
+        openMenuButton.style.display = "none";
+        closeMenuButton.style.display = "block";
+        header.style.paddingBottom = "0px";
     }
 
     const closeMenu = () => {
-        mobileMenu.classList.remove("mobile-menu-open");
-        document.body.style.overflow = "initial";
+        mobileMenu.style.display = "none";
+        openMenuButton.style.display = "block";
+        closeMenuButton.style.display = "none";
+        header.style.paddingBottom = "24px";
     }
 })

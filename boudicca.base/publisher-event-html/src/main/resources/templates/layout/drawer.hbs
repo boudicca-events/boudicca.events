@@ -1,199 +1,7 @@
-<style>
-    @layer default {
-    .drawer {
-        display: none;
-        padding: 0 0 24px 0;
-        flex-wrap: wrap;
-        margin-bottom: 24px;
-        border-bottom: 1px solid var(--color-main-grey);
-        gap: 20px;
-    }
-
-    .multiselect-labels, .drawer input, .drawer select {
-        border: 1px #ccc solid;
-        border-radius: 10px;
-        margin-bottom: 10px;
-    }
-
-    fieldset {
-        border: none;
-        flex-basis: 25%;
-        flex-grow: 5;
-        margin: 0;
-        padding: 0;
-    }
-
-    fieldset[data-category-wanted="SPORT"], .dateFieldSet {
-        flex-basis: 10%;
-        flex-grow: 1;
-    }
-
-    legend {
-        margin-bottom: 12px;
-    }
-
-    input[type=checkbox] {
-        margin: 0px 8px 0px -2px;
-    }
-
-    .drawer-header {
-        display: flex;
-        justify-content: space-between;
-    }
-
-    #closeDrawerButton {
-        width: 100%;
-        margin-bottom: -24px;
-        text-align: end;
-        font-size: 24px;
-        position: relative;
-        top: -8px;
-    }
-
-    #filterSearchButton {
-        padding: 12px 24px;
-        border-radius: 10px;
-        margin-top: 24px;
-        font-size: 18px;
-        background-color: #eee;
-    }
-
-    #filterSearchButton:hover {
-        outline: 1px solid var(--color-filterSearchButton);
-    }
-
-    #resetSearchForm {
-        margin-top: 12px;
-        display: block;
-    }
-
-    #resetSearchForm::before {
-        content: '\2715';
-        border-radius: 10px;
-        color: #bbb;
-        margin: 0px 6px;
-    }
-
-    #resetSearchForm:hover::before {
-        color: #555;
-    }
-
-    .filter-label {
-        font-size: 12px;
-        margin-bottom: 2px;
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-    }
-
-    .filter-input-wrapper {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .header-search-filter {
-        display: flex;
-    }
-
-    .header-search-filter button {
-        display: flex;
-    }
-
-    .search-buttons {
-        display: flex;
-        align-items: center;
-        flex-direction: column;
-        flex-basis: 10;
-        flex-grow: 1;
-    }
-
-    #drawer input:not([type='checkbox']), #drawer select {
-        min-width: 150px;
-        max-width: 300px;
-    }
-
-    @media only screen and (max-width: 700px) { 
-        .header-accessibility-filter {
-            flex-direction: column;
-        }
-    }
-
-    .header-accessibility-filter {
-        display: flex;
-        flex: 1;
-        gap: 12px;
-        flex-wrap: wrap;
-    }
-
-    .header-date-search {
-        display: flex;
-        flex: 1;
-        gap: 12px;
-        flex-direction: column;
-    }
-
-    @media only screen and (max-width: 700px) {
-        .header-date-search {
-            flex-direction: column;
-        }
-    }
-
-    .multiselect-wrapper {
-        font-size: var(--font-size-small);
-        max-width: 400px;
-        min-width: 180px;
-    }
-    .multiselect-chips {
-        width: 100%;
-        max-height: 200px;
-        overflow: scroll;
-    }
-    .multiselect-labels {
-        width: 100%;
-        max-height: 200px;
-        overflow: scroll;
-    }
-    .multiselect-labels ul {
-        margin: 0;
-        padding: 10px;
-        list-style: none;
-    }
-    .multiselect-labels ul li {
-        margin-bottom: 4px;
-    }
-    .multiselect-labels ul li label {
-        width: 100%;
-        display: inline-block;
-    }
-    .multiselect-wrapper input[type=checkbox], .chips {
-        display: none;
-    }
-    input[type=checkbox]:checked + label.chips {
-        display: inline-block;
-        background-color: #eee;
-        border-radius: 20px;
-        padding: 4px 10px 4px 10px;
-        margin-bottom: 3px;
-        display: flex;
-        align-items: center;
-    }
-    input[type=checkbox]:checked + label.chips::before {
-        content: '\2715';
-        border-radius: 10px;
-        color: #bbb;
-        margin-right: 8px;
-    }
-    input[type=checkbox]:checked + label.chips:hover::before {
-        color: #555;
-    }
-}
-</style>
-
-<div id="drawer" class="drawer">
+<form id="drawer" class="drawer">
     <button type="button" id="closeDrawerButton" title="Filter schließen" tabindex="0">
         &#x2715;
     </button>
-
 
     {{> layout/multiselect_fieldset identifier="categorySelect" name="Veranstaltungsart" entries=filters.categories }}
 
@@ -277,7 +85,14 @@
     </fieldset>
 
     <div class="search-buttons">
-        <button id="filterSearchButton" type="submit">Suchen</button>
-        <button id="resetSearchForm" type="button" data-drawer-last-focusable-element>Suche zurücksetzen</button>
+        <button id="filterSearchButton"  aria-describedby="Events finden" type="submit">
+            <svg height="20px" width="20px" title="Suche Logo" viewBox="0 0 512 512" >
+                <use xlink:href="#search"></use>
+            </svg>
+            Suchen
+        </button>
+        <button id="resetSearchForm" type="button" data-drawer-last-focusable-element>
+            Suche zurücksetzen
+        </button>
     </div>
-</div>
+</form>

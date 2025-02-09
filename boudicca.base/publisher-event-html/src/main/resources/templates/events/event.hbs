@@ -51,12 +51,12 @@
         </button>
 
         <div class="modal-flex {{#if event.category}}event-modal-{{event.category}}{{/if}}">
-            <div class="modal-column" style="padding-bottom: 1rem;">
+            <div class="modal-column">
                 <h2>{{event.name}}</h2>
             </div>
-            <div class="modal-row-image" style="gap: 2rem;">
+            <div class="modal-row-image">
                 <div class="modal-column">
-                    <div class="event-image-modal">
+                    <div class="event-image-modal {{#if event.category}}event-image-modal-{{event.category}}{{/if}}">
                         {{#if event.pictureUuid}}
                             <img src="/picture?uuid={{event.pictureUuid}}"
                             alt="{{#if event.pictureAltText}}{{event.pictureAltText}}{{else}}Event Bild{{/if}}"
@@ -70,9 +70,9 @@
                         {{/if}}
                     </div>
                 </div>
-                <div class="modal-column" style="width: -webkit-fill-available;">
-                    <div class="event-details-wrapper" style="gap: 16px; height: 100%; justify-content: space-between;">
-                        <div class="modal-column" style="gap: 12px;">
+                <div class="modal-column">
+                    <div class="event-details-wrapper">
+                        <div class="modal-column">
                             <div class="event-details">
                                 <svg height="24px" width="24px" title="Datum Logo" viewBox="0 0 512 512" >
                                     <use xlink:href="#time"></use>
@@ -96,24 +96,28 @@
                                     <p>{{event.category}}</p>
                                 </div>
                             {{/if}}
-                            {{#if event.accessibilityProperties}}
-                            <div class="event-details" style="align-items: start;">
-                                <svg height="24px" width="24px" title="Erreichbarkeit Logo" viewBox="0 0 512 512">
-                                    <use xlink:href="#accessibility"></use>
-                                </svg>
-                                {{#each event.accessibilityProperties}}{{#if @last}}{{this}}{{else}}{{this}}, {{/if}}{{/each}}
-                            </div>
-                            {{/if}}
 
+                            {{#if event.accessibilityProperties}}
+                                <div class="event-details">
+                                    <svg height="24px" width="24px" title="Erreichbarkeit Logo" viewBox="0 0 512 512">
+                                        <use xlink:href="#accessibility"></use>
+                                    </svg>
+                                    <div class="event-modal-chips">
+                                        {{#each event.accessibilityProperties}}
+                                            <span class="event-modal-chip event-modal-chip-{{event.category}}">{{this}}</span>
+                                        {{/each}}
+                                    </div>
+                                </div>
+                            {{/if}}
 
                             {{#if event.tags}}
                                 <div class="event-details">
                                     <svg height="24px" width="24px" title="Tags Logo" viewBox="0 0 512 512" >
                                         <use xlink:href="#tags"></use>
                                     </svg>
-                                    <div class="event-modal-tags">
+                                    <div class="event-modal-chips">
                                         {{#each event.tags}}
-                                            <span class="event-modal-tag">{{this}}</span>
+                                            <span class="event-modal-chip event-modal-chip-{{event.category}}">{{this}}</span>
                                         {{/each}}
                                     </div>
                                 </div>
@@ -130,8 +134,8 @@
             </div>
         </div>
 
-        <div class="modal-tabs" style="background-color: white; padding: 2rem;">
-            {{#if event.description}}
+        {{#if event.description}}
+            <div class="modal-tabs">
                 <section class="details-box">
                     <ul>
                         <li><a href="#" class="active-tab {{#if event.category}}event-modal-{{event.category}}{{/if}}">Description</a></li>
@@ -142,7 +146,7 @@
                         </article>
                     </div>
                 </section>
-            {{/if}}
-        </div>
+            </div>
+        {{/if}}
     </div>
 </div>

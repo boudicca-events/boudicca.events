@@ -3,10 +3,14 @@
     /** colors */
     --color-white: white;
     --color-main: #d5f1f9;
+    --color-main-light: rgba(213,241,249,0.5);
     --color-main-yellow: #ffee5b;
+    --color-main-yellow-light: rgba(255,238,91,0.5);
     --color-main-yellow-focus: #fff6ad;
     --color-main-red: #f78989;
+    --color-main-red-light: rgba(245,108,108,0.15);
     --color-main-green: #aafbaa;
+    --color-main-green-light: rgba(152,251,152,0.25);
     --color-main-grey: #ccc;
     --color-icon: inherit;
 

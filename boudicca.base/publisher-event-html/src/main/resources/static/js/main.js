@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const closeDrawerButton = document.getElementById("closeDrawerButton");
   const resetSearchFormButton = document.getElementById("resetSearchForm");
   const loadMoreButton = document.getElementById("loadMoreButton");
-  const categorySelect = document.getElementsByName("categorySelect");
+  const categorySelect = document.getElementsByName("category");
   const categoryFieldSets = document.querySelectorAll("[data-category-wanted]");
   const searchInput = document.querySelector("input.search-input");
   const modal = document.getElementById("modal");
@@ -266,14 +266,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const onCategoryChange = (changedCategory) => {
 
     const changedCategoryName = changedCategory.value;
-    const allIsChecked = document.getElementById("categorySelect-ALL").checked;
+    const allIsChecked = document.getElementById("category-ALL").checked;
     let fieldSets = document.querySelectorAll("[data-category-wanted='" + changedCategoryName + "']");
     if (changedCategoryName === "ALL") {
       fieldSets = document.querySelectorAll("[data-category-wanted]");
     }
 
     for (fieldSet of fieldSets){
-      let categoryIsChecked = document.getElementById("categorySelect-" + fieldSet.getAttribute("data-category-wanted")).checked;
+      let categoryIsChecked = document.getElementById("category-" + fieldSet.getAttribute("data-category-wanted")).checked;
       if (categoryIsChecked || allIsChecked) {
         fieldSet.classList.remove("hidden");
       } else {

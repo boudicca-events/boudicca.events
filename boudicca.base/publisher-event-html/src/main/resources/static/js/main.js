@@ -46,6 +46,11 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   resetSearchFormButton.addEventListener("click", () => {
+    // toggle the checked labels to hide the chips before the rest of the form is reset
+    let checkedLabels = document.querySelectorAll("input[type=checkbox]:checked + label.chips");
+    for (checkedLabel of checkedLabels) {
+      toggleCheckboxLabels(checkedLabel);
+    }
     searchForm.reset();
     drawer.reset();
   });
@@ -61,16 +66,18 @@ document.addEventListener("DOMContentLoaded", () => {
   const initCheckboxLabelToggle = () => {
     const checkboxLabelsToToggle = document.querySelectorAll(".toggleFilterLabels");
     for (label of checkboxLabelsToToggle) {
-      label.addEventListener("click", (label) => toggleCheckboxLabels(label));
+      label.addEventListener("click", (label) => toggleCheckboxLabels(label.currentTarget));
     }
   }
 
   const toggleCheckboxLabels = (clickedLabel) => {
-     const currentForAttribute = clickedLabel.currentTarget.getAttribute('for');
-     const chipsLabel = document.querySelector('label.chips[for="'+currentForAttribute+'"]');
-     const listLabel = document.querySelector('li label[for="'+currentForAttribute+'"]');
-     toggleSingleCheckboxLabel(chipsLabel);
-     toggleSingleCheckboxLabel(listLabel);
+     if (clickedLabel) {
+       const currentForAttribute = clickedLabel.getAttribute('for');
+       const chipsLabel = document.querySelector('label.chips[for="'+currentForAttribute+'"]');
+       const listLabel = document.querySelector('li label[for="'+currentForAttribute+'"]');
+       toggleSingleCheckboxLabel(chipsLabel);
+       toggleSingleCheckboxLabel(listLabel);
+     }
   }
 
   const toggleSingleCheckboxLabel = (label) => {

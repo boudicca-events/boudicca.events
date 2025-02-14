@@ -112,7 +112,7 @@
 .event-details-wrapper {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 20px;
 }
 
 .modal .event-details-wrapper {
@@ -138,7 +138,7 @@
         width: -webkit-fill-available;
     }
     .modal-row-image {
-        display: flex;
+        gap: 1rem;
         flex-direction: column;
     }
 }

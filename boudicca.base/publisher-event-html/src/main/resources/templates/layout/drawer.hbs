@@ -3,9 +3,10 @@
         &#x2715;
     </button>
 
-    {{> layout/multiselect_fieldset identifier="category" name="Veranstaltungsart" entries=filters.categories }}
+    {{> layout/multiselect_fieldset identifier="category" legend="Veranstaltungsart" entries=filters.categories }}
 
     <fieldset class="dateFieldSet">
+        <legend><strong>Datum</strong></legend>
         <div class="header-date-search">
             <div class="filter-input-wrapper">
                 <label for="fromDate" class="filter-label">Datum von</label>
@@ -26,9 +27,45 @@
         </div>
     </fieldset>
 
-    {{> layout/multiselect_fieldset identifier="locationName" name="Veranstaltungsort" entries=filters.locationNames }}
-    {{> layout/multiselect_fieldset identifier="locationCity" name="Stadt" entries=filters.locationCities }}
-    {{> layout/multiselect_fieldset identifier="bandName" name="Bandname" entries=filters.bandNames legend="Musik" data-category="MUSIC"}}
+    <fieldset class="accessibility">
+        <legend><strong>Accessibility</strong></legend>
+        <div class="header-accessibility-filter">
+            <div class="filter-input-wrapper">
+                <label for="accessibility.accessibleEntry" class="filter-label">
+                    <input type="checkbox" id="accessibility.accessibleEntry" value="accessibility.accessibleEntry" name="flags">
+                    Barrierefreier Zugang
+                </label>
+            </div>
+            <div class="filter-input-wrapper">
+                <label for="accessibility.accessibleSeats" class="filter-label">
+                    <input type="checkbox" id="accessibility.accessibleSeats" value="accessibility.accessibleSeats" name="flags">
+                    Rollstuhlplatz
+                </label>
+            </div>
+            <div class="filter-input-wrapper">
+                <label for="accessibility.accessibleToilets" class="filter-label">
+                    <input type="checkbox" id="accessibility.accessibleToilets" value="accessibility.accessibleToilets" name="flags">
+                    Barrierefreie Toiletten
+                </label>
+            </div>
+            <div class="filter-input-wrapper">
+                <label for="accessibility.accessibleAktivpassLinz" class="filter-label">
+                    <input type="checkbox" id="accessibility.accessibleAktivpassLinz" value="accessibility.accessibleAktivpassLinz" name="flags">
+                    Aktivpass möglich
+                </label>
+            </div>
+            <div class="filter-input-wrapper">
+                <label for="accessibility.accessibleKulturpass" class="filter-label">
+                    <input type="checkbox" id="accessibility.accessibleKulturpass" value="accessibility.accessibleKulturpass" name="flags">
+                    Kulturpass möglich
+                </label>
+            </div>
+        </div>
+    </fieldset>
+
+    {{> layout/multiselect_fieldset identifier="locationName" legend="Veranstaltungsort" entries=filters.locationNames }}
+    {{> layout/multiselect_fieldset identifier="locationCity" legend="Stadt" entries=filters.locationCities }}
+    {{> layout/multiselect_fieldset identifier="bandName" legend="Musik" entries=filters.bandNames name="Bandname" data-category="MUSIC"}}
 
     <fieldset data-category-wanted="SPORT" class="hidden">
         <legend><strong>Sport</strong></legend>
@@ -41,44 +78,6 @@
                         <option value="active">Zum Mitmachen</option>
                         <option value="watch">Zum Zuschauen</option>
                     </select>
-                </div>
-            </div>
-        </div>
-    </fieldset>
-
-    <fieldset class="accessibility">
-        <legend><strong>Accessibility</strong></legend>
-        <div class="header-search-filter">
-            <div class="header-accessibility-filter">
-                <div class="filter-input-wrapper">
-                    <label for="accessibility.accessibleEntry" class="filter-label">
-                        <input type="checkbox" id="accessibility.accessibleEntry" value="accessibility.accessibleEntry" name="flags">
-                        Barrierefreier Zugang
-                    </label>
-                </div>
-                <div class="filter-input-wrapper">
-                    <label for="accessibility.accessibleSeats" class="filter-label">
-                        <input type="checkbox" id="accessibility.accessibleSeats" value="accessibility.accessibleSeats" name="flags">
-                        Rollstuhlplatz
-                    </label>
-                </div>
-                <div class="filter-input-wrapper">
-                    <label for="accessibility.accessibleToilets" class="filter-label">
-                        <input type="checkbox" id="accessibility.accessibleToilets" value="accessibility.accessibleToilets" name="flags">
-                        Barrierefreie Toiletten
-                    </label>
-                </div>
-                <div class="filter-input-wrapper">
-                    <label for="accessibility.accessibleAktivpassLinz" class="filter-label">
-                        <input type="checkbox" id="accessibility.accessibleAktivpassLinz" value="accessibility.accessibleAktivpassLinz" name="flags">
-                        Aktivpass möglich
-                    </label>
-                </div>
-                <div class="filter-input-wrapper">
-                    <label for="accessibility.accessibleKulturpass" class="filter-label">
-                        <input type="checkbox" id="accessibility.accessibleKulturpass" value="accessibility.accessibleKulturpass" name="flags">
-                        Kulturpass möglich
-                    </label>
                 </div>
             </div>
         </div>

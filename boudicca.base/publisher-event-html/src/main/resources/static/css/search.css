@@ -2,9 +2,9 @@
     display: none;
     padding: 0 0 24px 0;
     flex-wrap: wrap;
-    margin-bottom: 24px;
+    margin: 0 10px 24px 10px;
     border-bottom: 1px solid var(--color-main-grey);
-    gap: 20px;
+    gap: 20px 30px;
     background-image: url("img/logo_grey.svg");
     background-repeat: no-repeat;
     background-position: 117% 117px;
@@ -18,10 +18,11 @@
 
 fieldset {
     border: none;
-    flex-basis: 25%;
+    flex-basis: 30%;
     flex-grow: 5;
     margin: 0;
     padding: 0;
+    max-width: max-content;
 }
 
 fieldset[data-category-wanted="SPORT"], .dateFieldSet {
@@ -104,21 +105,15 @@ input[type=checkbox] {
 
 .search-buttons {
     display: flex;
-    align-items: center;
+    align-items: end;
+    justify-content: end;
     flex-direction: column;
-    flex-basis: 10;
     flex-grow: 1;
 }
 
 #drawer input:not([type='checkbox']), #drawer select {
     min-width: 150px;
     max-width: 300px;
-}
-
-@media only screen and (max-width: 700px) {
-    .header-accessibility-filter {
-        flex-direction: column;
-    }
 }
 
 .header-accessibility-filter {
@@ -135,42 +130,52 @@ input[type=checkbox] {
     flex-direction: column;
 }
 
-@media only screen and (max-width: 700px) {
-    .header-date-search {
-        flex-direction: column;
-    }
-}
-
 .multiselect-wrapper {
     font-size: var(--font-size-small);
     max-width: 400px;
     min-width: 180px;
+    display: flex;
+    flex-direction: column;
+    max-height: 250px;
+    gap: 5px;
 }
+
 .multiselect-chips {
     width: 100%;
-    max-height: 200px;
     overflow: scroll;
+    flex-grow: 5;
+    flex-basis: 20%;
+    max-height: 150px;
+    padding-bottom: 5px;
 }
+
 .multiselect-labels {
     width: 100%;
-    max-height: 200px;
     overflow: scroll;
+    flex-shrink: 5;
+    flex-basis: 90%;
+    max-height: 230px;
 }
+
 .multiselect-labels ul {
     margin: 0;
     padding: 10px;
     list-style: none;
 }
+
 .multiselect-labels ul li {
     margin-bottom: 4px;
 }
+
 .multiselect-labels ul li label {
     width: 100%;
     display: inline-block;
 }
+
 .multiselect-wrapper input[type=checkbox], .chips {
     display: none;
 }
+
 input[type=checkbox]:checked + label.chips {
     display: inline-block;
     background-color: #eee;
@@ -180,12 +185,28 @@ input[type=checkbox]:checked + label.chips {
     display: flex;
     align-items: center;
 }
+
 input[type=checkbox]:checked + label.chips::before {
     content: '\2715';
     border-radius: 10px;
     color: #bbb;
     margin-right: 8px;
 }
+
 input[type=checkbox]:checked + label.chips:hover::before {
     color: #555;
+}
+
+@media only screen and (max-width: 700px) {
+    .header-date-search {
+        flex-direction: column;
+    }
+
+    .header-accessibility-filter {
+        flex-direction: column;
+    }
+
+    fieldset {
+        flex-basis: 40%;
+    }
 }

@@ -3,9 +3,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const openMenuButton = document.getElementById("openMenuButton");
     const closeMenuButton = document.getElementById("closeMenuButton");
     const header = document.querySelector("header");
+    const drawer = document.getElementById("drawer");
 
     openMenuButton.addEventListener("click", () => {
         openMenu();
+        drawer.style.display = "none";
     })
 
     closeMenuButton.addEventListener("click", () => {

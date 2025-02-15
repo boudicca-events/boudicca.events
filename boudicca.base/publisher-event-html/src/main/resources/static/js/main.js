@@ -11,6 +11,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const searchInput = document.querySelector("input.search-input");
   const modal = document.getElementById("modal");
   const modalContent = modal.querySelector("#modal-content");
+  const mobileMenu = document.getElementById("mobile-menu");
+  const openMenuButton = document.getElementById("openMenuButton");
+  const closeMenuButton = document.getElementById("closeMenuButton");
+  const header = document.querySelector("header");
 
   const openModal = (content) => {
     modalContent.innerHTML = content;
@@ -115,6 +119,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const toggleDrawer = () => {
     if (drawer.style.display != "flex") {
       drawer.style.display = "flex";
+      // close mobile menu
+      mobileMenu.style.display = "none";
+      openMenuButton.style.display = "block";
+      closeMenuButton.style.display = "none";
+      header.style.paddingBottom = "24px";
     } else {
       closeDrawer();
     }

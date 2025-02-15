@@ -58,6 +58,7 @@ header button {
     flex-wrap: wrap;
     gap: 24px;
     white-space: nowrap;
+    padding-top: 5px;
 }
 
 .header-links a {

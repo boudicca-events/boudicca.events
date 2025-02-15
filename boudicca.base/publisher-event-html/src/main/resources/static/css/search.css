@@ -1,13 +1,14 @@
 .drawer {
     display: none;
-    padding: 0 0 24px 0;
+    padding: 0 10px 24px 10px;
     flex-wrap: wrap;
-    margin: 0 10px 24px 10px;
+    margin: 0 0 24px 0;
     border-bottom: 1px solid var(--color-main-grey);
     gap: 20px 30px;
     background-image: url("img/logo_grey.svg");
     background-repeat: no-repeat;
     background-position: 117% 117px;
+    justify-content: space-around;
 }
 
 .multiselect-labels, .drawer input, .drawer select {
@@ -108,7 +109,6 @@ input[type=checkbox] {
     align-items: end;
     justify-content: end;
     flex-direction: column;
-    flex-grow: 1;
 }
 
 #drawer input:not([type='checkbox']), #drawer select {
@@ -121,6 +121,7 @@ input[type=checkbox] {
     flex: 1;
     gap: 12px;
     flex-wrap: wrap;
+    flex-direction: column;
 }
 
 .header-date-search {
@@ -199,10 +200,6 @@ input[type=checkbox]:checked + label.chips:hover::before {
 
 @media only screen and (max-width: 700px) {
     .header-date-search {
-        flex-direction: column;
-    }
-
-    .header-accessibility-filter {
         flex-direction: column;
     }
 

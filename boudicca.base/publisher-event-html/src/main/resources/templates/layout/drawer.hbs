@@ -1,4 +1,4 @@
-<form id="drawer" class="drawer">
+<form id="drawer" class="drawer" aria-hidden="true">
     <button type="button" id="closeDrawerButton" title="Filter schließen" tabindex="0">
         &#x2715;
     </button>
@@ -20,7 +20,7 @@
 
             <div class="filter-input-wrapper">
                 <label for="includeRecurring" class="filter-label">
-                    <input type="checkbox" id="includeRecurring" name="includeRecurring">
+                    <input type="checkbox" id="includeRecurring" name="includeRecurring" aria-checked="false">
                     Zeige wiederholende<br/>Veranstaltungen
                 </label>
             </div>
@@ -32,31 +32,31 @@
         <div class="header-accessibility-filter">
             <div class="filter-input-wrapper">
                 <label for="accessibility.accessibleEntry" class="filter-label">
-                    <input type="checkbox" id="accessibility.accessibleEntry" value="accessibility.accessibleEntry" name="flags">
+                    <input type="checkbox" id="accessibility.accessibleEntry" value="accessibility.accessibleEntry" name="flags" aria-checked="false">
                     Barrierefreier Zugang
                 </label>
             </div>
             <div class="filter-input-wrapper">
                 <label for="accessibility.accessibleSeats" class="filter-label">
-                    <input type="checkbox" id="accessibility.accessibleSeats" value="accessibility.accessibleSeats" name="flags">
+                    <input type="checkbox" id="accessibility.accessibleSeats" value="accessibility.accessibleSeats" name="flags" aria-checked="false">
                     Rollstuhlplatz
                 </label>
             </div>
             <div class="filter-input-wrapper">
                 <label for="accessibility.accessibleToilets" class="filter-label">
-                    <input type="checkbox" id="accessibility.accessibleToilets" value="accessibility.accessibleToilets" name="flags">
+                    <input type="checkbox" id="accessibility.accessibleToilets" value="accessibility.accessibleToilets" name="flags" aria-checked="false">
                     Barrierefreie Toiletten
                 </label>
             </div>
             <div class="filter-input-wrapper">
                 <label for="accessibility.accessibleAktivpassLinz" class="filter-label">
-                    <input type="checkbox" id="accessibility.accessibleAktivpassLinz" value="accessibility.accessibleAktivpassLinz" name="flags">
+                    <input type="checkbox" id="accessibility.accessibleAktivpassLinz" value="accessibility.accessibleAktivpassLinz" name="flags" aria-checked="false">
                     Aktivpass möglich
                 </label>
             </div>
             <div class="filter-input-wrapper">
                 <label for="accessibility.accessibleKulturpass" class="filter-label">
-                    <input type="checkbox" id="accessibility.accessibleKulturpass" value="accessibility.accessibleKulturpass" name="flags">
+                    <input type="checkbox" id="accessibility.accessibleKulturpass" value="accessibility.accessibleKulturpass" name="flags" aria-checked="false">
                     Kulturpass möglich
                 </label>
             </div>

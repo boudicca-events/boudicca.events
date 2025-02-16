@@ -99,6 +99,8 @@ footer {
 footer a {
     font-size: var(--font-size-small);
     text-decoration: none;
+    padding: 4px;
+    display: block;
 }
 
 footer ul {

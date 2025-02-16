@@ -15,6 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
     })
 
     const openMenu = () => {
+        mobileMenu.setAttribute('aria-hidden', false);
         mobileMenu.style.display = "block";
         openMenuButton.style.display = "none";
         closeMenuButton.style.display = "block";
@@ -22,6 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const closeMenu = () => {
+        mobileMenu.setAttribute('aria-hidden', true);
         mobileMenu.style.display = "none";
         openMenuButton.style.display = "block";
         closeMenuButton.style.display = "none";

@@ -14,7 +14,7 @@
         {{/if}}
         <div class="multiselect-chips">
             {{#each entries as |entry|}}
-                <input type="checkbox" name={{identifier}} value="{{entry.first}}" id="{{identifier}}-{{entry.first}}">
+                <input type="checkbox" name={{identifier}} value="{{entry.first}}" id="{{identifier}}-{{entry.first}}" aria-checked="false">
                 <label for="{{identifier}}-{{entry.first}}" class="chips toggleFilterLabels" style="display:none;">
                     {{entry.second}}
                 </label>

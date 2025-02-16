@@ -3,7 +3,7 @@
         {{#if event.pictureUuid}}
             <img src="/picture?uuid={{event.pictureUuid}}" alt="{{#if event.pictureAltText}}{{event.pictureAltText}}{{else}}Event Bild{{/if}}" aria-label="Event Bild" aria-labelledby="image" />
         {{else}}
-            <svg title="Event Bild" viewBox="0 0 512 512" height="100px" >
+            <svg title="Event Bild" viewBox="0 0 512 512" height="100px" aria-label="Standard Event Bild">
                 <use xlink:href="#{{#if event.category}}{{event.category}}{{else}}image{{/if}}"></use>
             </svg>
         {{/if}}
@@ -13,7 +13,7 @@
 
         {{#if event.accessibilityProperties}}
             <div class="accessibility-details">
-                <svg height="24px" width="24px" viewBox="0 0 512 512">
+                <svg height="24px" width="24px" viewBox="0 0 512 512" aria-label="Informationen zur Barrierefreitheit des Events sind verfügbar">
                     <title>{{#each event.accessibilityProperties}}{{#if @last}}{{this}}{{else}}{{this}}, {{/if}}{{/each}}</title>
                     <use xlink:href="#accessibility"></use>
                 </svg>
@@ -27,14 +27,14 @@
         </p>
         <div class="event-details-wrapper">
             <div class="event-details">
-                <svg height="24px" width="24px" title="Datum Logo" viewBox="0 0 512 512" >
+                <svg height="24px" width="24px" title="Datum Logo" viewBox="0 0 512 512" aria-label="Startzeit des Events">
                     <use xlink:href="#time"></use>
                 </svg>
                 <p>{{event.startDate}}</p>
             </div>
             {{#if event.locationName}}
                 <div class="event-details">
-                    <svg height="24px" width="24px" title="Ort Logo" viewBox="0 0 512 512" >
+                    <svg height="24px" width="24px" title="Ort Logo" viewBox="0 0 512 512" aria-label="Ort des Events">
                         <use xlink:href="#location"></use>
                     </svg>
                     <p>{{event.locationName}}{{#if event.city}}, {{event.city}} {{/if}} </p>
@@ -45,7 +45,7 @@
 
     <div class="modal-content" style="display: none">
         <button class="modal-close">
-            <svg height="32px" width="32px" viewBox="0 0 512 512">
+            <svg height="32px" width="32px" viewBox="0 0 512 512" aria-label="Schließe Eventdetails">
                 <use xlink:href="#close"></use>
             </svg>
         </button>
@@ -64,7 +64,7 @@
                             aria-labelledby="image"
                             />
                         {{else}}
-                            <svg title="Event Bild" viewBox="0 0 512 512" height="100px" >
+                            <svg title="Event Bild" viewBox="0 0 512 512" height="100px" aria-label="Event Bild">
                                 <use xlink:href="#{{#if event.category}}{{event.category}}{{else}}image{{/if}}"></use>
                             </svg>
                         {{/if}}
@@ -74,14 +74,14 @@
                     <div class="event-details-wrapper">
                         <div class="modal-column">
                             <div class="event-details">
-                                <svg height="24px" width="24px" title="Datum Logo" viewBox="0 0 512 512" >
+                                <svg height="24px" width="24px" title="Datum Logo" viewBox="0 0 512 512" aria-label="Startzeit des Events">
                                     <use xlink:href="#time"></use>
                                 </svg>
                                 <p>{{event.startDate}}</p>
                             </div>
                             {{#if event.locationName}}
                                 <div class="event-details">
-                                    <svg height="24px" width="24px" title="Ort Logo" viewBox="0 0 512 512" >
+                                    <svg height="24px" width="24px" title="Ort Logo" viewBox="0 0 512 512" aria-label="Ort des Events">
                                         <use xlink:href="#location"></use>
                                     </svg>
                                     <p>{{event.locationName}}{{#if event.city}}, {{event.city}} {{/if}} </p>
@@ -89,7 +89,7 @@
                             {{/if}}
                             {{#if event.category}}
                                 <div class="event-details">
-                                    <svg height="24px" width="24px" title="Kategorie Logo" viewBox="0 0 512 512" >
+                                    <svg height="24px" width="24px" title="Kategorie Logo" viewBox="0 0 512 512" aria-label="Kategorie des Events">
                                         <use xlink:href="#category"></use>
                                     </svg>
                                     <!--TODO we need to have two properties here, one for logos, one for displaying-->
@@ -99,7 +99,7 @@
 
                             {{#if event.accessibilityProperties}}
                                 <div class="event-details">
-                                    <svg height="24px" width="24px" title="Erreichbarkeit Logo" viewBox="0 0 512 512">
+                                    <svg height="24px" width="24px" title="Barrierefreiheit Logo" viewBox="0 0 512 512" aria-label="Details zur Barrierefreiheit des Events">
                                         <use xlink:href="#accessibility"></use>
                                     </svg>
                                     <div class="event-modal-chips">
@@ -112,7 +112,7 @@
 
                             {{#if event.tags}}
                                 <div class="event-details">
-                                    <svg height="24px" width="24px" title="Tags Logo" viewBox="0 0 512 512" >
+                                    <svg height="24px" width="24px" title="Tags Logo" viewBox="0 0 512 512" aria-label="Schlagwörter zum Event">
                                         <use xlink:href="#tags"></use>
                                     </svg>
                                     <div class="event-modal-chips">

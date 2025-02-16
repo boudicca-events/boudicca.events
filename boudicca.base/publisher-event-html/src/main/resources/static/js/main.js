@@ -15,6 +15,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const openMenuButton = document.getElementById("openMenuButton");
   const closeMenuButton = document.getElementById("closeMenuButton");
   const header = document.querySelector("header");
+  const accessibilityFlags = document.getElementsByName("flags");
+
 
   const openModal = (content) => {
     modalContent.innerHTML = content;
@@ -81,8 +83,20 @@ document.addEventListener("DOMContentLoaded", () => {
        const listLabel = document.querySelector('li label[for="'+currentForAttribute+'"]');
        toggleSingleCheckboxLabel(chipsLabel);
        toggleSingleCheckboxLabel(listLabel);
+       const checkbox = document.getElementById(currentForAttribute);
+       setCheckboxAriaChecked(checkbox);
      }
   }
+
+  const toggleCheckboxLabelsByCheckbox = (checkbox) => {
+       if (checkbox) {
+         const chipsLabel = document.querySelector('label.chips[for="'+checkbox.id+'"]');
+         const listLabel = document.querySelector('li label[for="'+checkbox.id+'"]');
+         toggleSingleCheckboxLabel(chipsLabel);
+         toggleSingleCheckboxLabel(listLabel);
+         setCheckboxAriaChecked(checkbox);
+       }
+    }
 
   const toggleSingleCheckboxLabel = (label) => {
     if (label.style.display != "inline-block") {
@@ -91,6 +105,12 @@ document.addEventListener("DOMContentLoaded", () => {
        label.style.display = "none";
     }
   }
+
+  const setCheckboxAriaChecked = (checkbox) => {
+     checkbox.setAttribute('aria-checked', checkbox.checked);
+  }
+
+  accessibilityFlags.forEach((checkbox) => checkbox.addEventListener("change", c => setCheckboxAriaChecked(c.currentTarget)));
 
   document.addEventListener("click", (event) => {
     if (
@@ -118,18 +138,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const toggleDrawer = () => {
     if (drawer.style.display != "flex") {
+      drawer.setAttribute("aria-hidden", false);
       drawer.style.display = "flex";
       // close mobile menu
+      mobileMenu.setAttribute("aria-hidden", true);
       mobileMenu.style.display = "none";
       openMenuButton.style.display = "block";
       closeMenuButton.style.display = "none";
       header.style.paddingBottom = "24px";
+      // set checkbox aria attributes in case they are already checked by the search url
+      accessibilityFlags.forEach((checkbox) => setCheckboxAriaChecked(checkbox));
     } else {
       closeDrawer();
     }
   };
 
   const closeDrawer = () => {
+    drawer.setAttribute("aria-hidden", true);
     drawer.style.display = "none";
   };
 
@@ -264,11 +289,18 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // TODO: could use `Proxy`
+  // TODO: make sure that music/sport filter are shown if pre selected with search url
   const params = new URLSearchParams(window.location.search);
   const hydrateFormValues = () => {
     params.forEach((value, key) => {
       if (key === "flags") {
         document.getElementById(value).checked = true;
+      } else if (key === "includeRecurring") {
+       document.getElementById(key).checked = true;
+      } else if (["category", "locationCity", "locationName", "bandName"].includes(key)) {
+        const checkbox = document.getElementById(key + "-" + value);
+        checkbox.checked = true;
+        toggleCheckboxLabelsByCheckbox(checkbox)
       } else {
         document.querySelector(`[name="${key}"]`).value = value;
       }

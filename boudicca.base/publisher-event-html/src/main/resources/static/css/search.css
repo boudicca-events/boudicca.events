@@ -5,7 +5,7 @@
     margin: 0 0 24px 0;
     border-bottom: 1px solid var(--color-main-grey);
     gap: 20px 30px;
-    background-image: url("img/logo_grey.svg");
+    background-image: url("/img/logo_grey.svg");
     background-repeat: no-repeat;
     background-position: 117% 117px;
     justify-content: space-around;
@@ -148,6 +148,7 @@ input[type=checkbox] {
     flex-basis: 20%;
     max-height: 150px;
     padding-bottom: 5px;
+    display: inline-block;
 }
 
 .multiselect-labels {
@@ -170,11 +171,12 @@ input[type=checkbox] {
 
 .multiselect-labels ul li label {
     width: 100%;
-    display: inline-block;
+    display: block;
 }
 
 .multiselect-wrapper input[type=checkbox], .chips {
-    display: none;
+    position: absolute;
+    opacity: 0;
 }
 
 input[type=checkbox]:checked + label.chips {
@@ -183,7 +185,6 @@ input[type=checkbox]:checked + label.chips {
     border-radius: 20px;
     padding: 4px 10px 4px 10px;
     margin-bottom: 3px;
-    display: flex;
     align-items: center;
 }
 

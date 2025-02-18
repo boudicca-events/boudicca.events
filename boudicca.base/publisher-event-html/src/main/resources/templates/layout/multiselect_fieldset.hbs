@@ -15,7 +15,7 @@
         <div class="multiselect-chips">
             {{#each entries as |entry|}}
                 <input type="checkbox" name={{identifier}} value="{{entry.first}}" id="{{identifier}}-{{entry.first}}" aria-checked="false">
-                <label for="{{identifier}}-{{entry.first}}" class="chips toggleFilterLabels" style="display:none;">
+                <label for="{{identifier}}-{{entry.first}}" class="chips toggleFilterLabels" style="position:absolute;">
                     {{entry.second}}
                 </label>
             {{/each}}
@@ -24,7 +24,7 @@
             <ul>
                 {{#each entries as |entry|}}
                     <li>
-                        <label for="{{identifier}}-{{entry.first}}" class="toggleFilterLabels" style="display:inline-block;">
+                        <label for="{{identifier}}-{{entry.first}}" class="toggleFilterLabels" style="position:relative;">
                             {{entry.second}}
                         </label>
                     </li>

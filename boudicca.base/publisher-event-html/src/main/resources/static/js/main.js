@@ -99,15 +99,18 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
   const toggleSingleCheckboxLabel = (label) => {
-    if (label.style.display != "inline-block") {
-       label.style.display = "inline-block";
+    if (label.style.position != "absolute") {
+       label.style.position = "absolute";
+       label.style.opacity = "0";
      } else {
-       label.style.display = "none";
+       label.style.position = "relative";
+       label.style.opacity = "100";
     }
   }
 
   const setCheckboxAriaChecked = (checkbox) => {
-     checkbox.setAttribute('aria-checked', checkbox.checked);
+     // checkbox is toggled automatically afterwards, so !checked has to be used here
+     checkbox.setAttribute('aria-checked', !checkbox.checked);
   }
 
   accessibilityFlags.forEach((checkbox) => checkbox.addEventListener("change", c => setCheckboxAriaChecked(c.currentTarget)));
@@ -133,6 +136,8 @@ document.addEventListener("DOMContentLoaded", () => {
         drawerLastFocusableElement.focus()
         event.preventDefault();
       }
+    } else if (event.code === "Space" && document.activeElement.type === "checkbox"){
+        toggleCheckboxLabelsByCheckbox(document.activeElement);
     }
   })
 

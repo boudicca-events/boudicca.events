@@ -120,14 +120,15 @@ class OsmEnricher(
                 SemanticKeys.LOCATION_CONTACT_PHONE_PROPERTY,
                 tags["contact:phone"]?.asText()
             )
+            val websiteText = (tags["contact:website"] ?: tags["website"])?.asText()
             try {
                 builder.updatePropertyIfEmpty(
                     event,
                     SemanticKeys.LOCATION_URL_PROPERTY,
-                    UrlUtils.parse(tags["contacts:website"]?.asText())
+                    UrlUtils.parse(websiteText)
                 )
             } catch (_: IllegalArgumentException) {
-                logger.info("Could not map ${tags["contacts:website"].asText()} to URI")
+                logger.info("Could not map $websiteText to URI")
             }
             builder.updatePropertyIfEmpty(
                 event,
@@ -161,17 +162,29 @@ class OsmEnricher(
         if (locationNames.isEmpty()) {
             return null
         }
+        val locationCities = event
+            .getProperty(SemanticKeys.LOCATION_CITY_PROPERTY)
+            .map(Pair<Key, String>::second)
 
-        val locationQuery = locationNames
+        val additionalQuery = locationCities.ifEmpty {
+            event
+                .getProperty(SemanticKeys.LOCATION_ADDRESS_PROPERTY)
+                .map(Pair<Key, String>::second)
+        }
+
+        val locationQuery = (locationNames + additionalQuery)
+            .filter { it.isNotBlank() }
             .joinToString(separator = ",")
-            .encodeURL()
 
-        val query = """$NOMINATIM_BASE_URL/search?accept-language=de,en&format=jsonv2&limit=1&q=$locationQuery"""
+        val query =
+            """$NOMINATIM_BASE_URL/search?accept-language=de,en&format=jsonv2&limit=1&q=${locationQuery.encodeURL()}"""
+                .trim()
         val response = fetcher.fetchUrl(query)
 
         val json = mapper.readTree(response) as ArrayNode
 
         return if (json.isEmpty) {
+            logNotFound(locationQuery)
             null
         } else {
             val nominatimPlace = json.first()
@@ -180,9 +193,14 @@ class OsmEnricher(
             if (!type.isNullOrBlank() && !id.isNullOrBlank()) {
                 type[0] + id
             } else {
+                logNotFound(query)
                 null
             }
         }
+    }
+
+    private fun logNotFound(locationQuery: String) {
+        logger.info("did not find any location for query: $locationQuery")
     }
 
     private fun buildAddress(tags: JsonNode): String {

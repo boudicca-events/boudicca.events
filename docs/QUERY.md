@@ -22,7 +22,7 @@ potentially nested) forms. Please note that expressions are case-insensitive:
 | Before          | Filter events starting at or before the given date. Only works with Format Variant `date`                                                                                                       | `<keyFilter> before <date>`                                                         |
 | Grouping        | Marker to identify how expression should be grouped                                                                                                                                             | `( <expression> )`                                                                  |
 | Duration        | Filter events on their duration in hours (inclusive), events without startDate or endDate have 0 duration. You can filter for longer or shorter duration. Only works with Format Variant `date` | `duration <keyFilter of startDate> <keyFilter of endDate> longer\|shorter <number>` |
-| HasProperty     | Checks that the event has this property (or any Variant) set, and it is not the empty string.                                                                                                   | `hasProperty <keyFilter>`                                                           |
+| HasField        | Checks that the event has this field (or any Variant) set, and it is not the empty string.                                                                                                      | `hasField <keyFilter>`                                                              |
 
 where
 
@@ -56,6 +56,6 @@ You can use the grouping `(...)` mechanism to circumvent the order.
 * Search for any event while I am in Vienna on
   holiday: `"location.city" equals "Wien" and "startDate" after "2023-05-27" and "startDate" before "2023-05-31"`
 * Search for events with a duration of 2 hours or less: `duration "startDate" "endDate" shorter 2`
-* Search for events which have a english description: `hasProperty "description:lang=en"`
+* Search for events which have an english description: `hasField "description:lang=en"`
 
 See our [Semantic Conventions](SEMANTIC_CONVENTIONS.md) to find common property names and their meaning.

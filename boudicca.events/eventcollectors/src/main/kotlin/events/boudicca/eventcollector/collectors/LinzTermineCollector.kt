@@ -99,6 +99,10 @@ class LinzTermineCollector : EventCollector {
                     SemanticKeys.LOCATION_NAME_PROPERTY,
                     (location?.name ?: event.locationFallbackName)
                 ) //they do not include all locations in their location.xml files -.-
+                .withProperty(
+                    SemanticKeys.LOCATION_CITY_PROPERTY,
+                    (location?.city)
+                )
                 .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(event.url, eventsBaseUrl, locationBaseUrl))
             mapAdditionalProperties(event, builder)
 
@@ -209,6 +213,7 @@ class LinzTermineCollector : EventCollector {
             Location(
                 it.attr("id").toInt(),
                 it.select("name").text(),
+                it.select("city").text(),
                 it.select("subof").text().toIntOrNull(),
             )
         }.associateBy { it.id }
@@ -231,6 +236,7 @@ class LinzTermineCollector : EventCollector {
     data class Location(
         val id: Int,
         val name: String,
+        val city: String?,
         val subOf: Int?,
     )
 

@@ -15,5 +15,4 @@ dependencies {
     implementation(libs.apache.velocity.tools.generic)
     implementation(libs.logback)
     implementation(libs.slf4j)
-    testImplementation(libs.junit.jupiter)
 }

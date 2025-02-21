@@ -96,6 +96,11 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.style.overflow = "initial";
   };
 
+  const goToSearch = (paramsAsString) => {
+    window.dispatchEvent(new CustomEvent("searchChanged", {detail: paramsAsString}))
+    goTo(`/search?${paramsAsString}`);
+  };
+
   const goTo = (url) => {
     if ("undefined" !== typeof history.pushState) {
       history.pushState({}, "", url);
@@ -179,7 +184,7 @@ document.addEventListener("DOMContentLoaded", () => {
       eventsContainer.innerHTML = ssrDomEventString;
       onSearchButtonBehaviour(ssrDomEventString);
       initModals(eventsContainer.querySelectorAll(".event"));
-      goTo(`/search?${paramsAsString}`);
+      goToSearch(paramsAsString);
     } catch (e) {
       console.error(e);
     }
@@ -199,7 +204,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const newEvents = parser.parseFromString(ssrDomEventString, "text/html");
       initModals([...newEvents.body.children]);
       eventsContainer.append(...newEvents.body.children);
-      goTo(`/search?${paramsAsString}`);
+      goToSearch(paramsAsString);
     } catch (e) {
       console.error(e);
     }
@@ -222,7 +227,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (key === "flags") {
         document.getElementById(value).checked = true;
       } else {
-        document.getElementById(key).value = value;
+        document.querySelector(`[name="${key}"]`).value = value;
       }
     });
   };

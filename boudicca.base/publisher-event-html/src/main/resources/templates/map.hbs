@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="de-AT">
+    {{#> layout/head title="Boudicca Map" }}
+        <link rel="stylesheet" href="leaflet/leaflet.css" />
+        <script src="leaflet/leaflet.js"></script>
+    {{/layout/head}}
+
+    <body>
+        <div id="content-anchor" class="content">
+            {{> layout/header_links}}
+            {{#> layout/header title="BOUDICCA.EVENTS"}}
+            {{/layout/header}}
+            {{> layout/map events}}
+            {{> layout/footer}}
+            {{> layout/modal}}
+        </div>
+
+        <script src="js/map.js"></script>
+    </body>
+</html>

@@ -6,7 +6,6 @@ plugins {
 
 dependencies {
     api(project(":boudicca.base:common-model"))
-    testImplementation(libs.junit.jupiter)
     jmh(project(":boudicca.base:publisher-client"))
     jmh(project(":boudicca.base:ingest-client"))
     jmh(libs.jackson.core)

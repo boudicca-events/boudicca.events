@@ -13,3 +13,15 @@ kotlin {
         javaParameters = true
     }
 }
+
+val versionCatalog = versionCatalogs.named("libs")
+dependencies {
+    testImplementation(platform(versionCatalog.findLibrary("junit-jupiter-bom").get()))
+    testImplementation(versionCatalog.findLibrary("junit-jupiter").get())
+    testRuntimeOnly(versionCatalog.findLibrary("junit-platform-launcher").get())
+    testImplementation(versionCatalog.findLibrary("assertk").get())
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
+}

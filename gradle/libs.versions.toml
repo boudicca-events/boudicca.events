@@ -72,7 +72,7 @@ json = { module = "org.json:json", version = "20250107" }
 
 google-api-client = { module = "com.google.api-client:google-api-client", version = "2.7.2" }
 google-auth-library-oauth2-http = { module = "com.google.auth:google-auth-library-oauth2-http", version = "1.32.1" }
-google-api-services-sheets = { module = "com.google.apis:google-api-services-sheets", version = "v4-rev20250106-2.0.0" }
+google-api-services-sheets = { module = "com.google.apis:google-api-services-sheets", version = "v4-rev20250211-2.0.0" }
 
 [plugins]
 jmh = { id = "me.champeau.jmh", version = "0.7.3" }

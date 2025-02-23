@@ -13,7 +13,7 @@
 
         {{#if event.accessibilityProperties}}
             <div class="accessibility-details">
-                <svg height="24px" width="24px" viewBox="0 0 512 512" aria-label="Informationen zur Barrierefreitheit des Events sind verfügbar">
+                <svg height="24px" width="24px" viewBox="0 0 512 512" aria-label="Informationen zur Barrierefreiheit des Events sind verfügbar">
                     <title>{{#each event.accessibilityProperties}}{{#if @last}}{{this}}{{else}}{{this}}, {{/if}}{{/each}}</title>
                     <use xlink:href="#accessibility"></use>
                 </svg>
@@ -43,7 +43,7 @@
         </div>
     </div>
 
-    <div class="modal-content" style="display: none">
+    <div class="modal-content" style="display: none" aria-modal="true">
         <button class="modal-close">
             <svg height="32px" width="32px" viewBox="0 0 512 512" aria-label="Schließe Eventdetails">
                 <use xlink:href="#close"></use>

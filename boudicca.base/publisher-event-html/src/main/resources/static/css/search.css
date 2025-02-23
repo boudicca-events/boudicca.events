@@ -1,4 +1,4 @@
-.drawer {
+#drawer {
     display: none;
     padding: 0 10px 24px 10px;
     flex-wrap: wrap;
@@ -11,7 +11,7 @@
     justify-content: space-around;
 }
 
-.multiselect-labels, .drawer input, .drawer select {
+.multiselect-labels, #drawer input, #drawer select {
     border: 1px #ccc solid;
     border-radius: 10px;
     margin-bottom: 10px;

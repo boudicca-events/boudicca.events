@@ -84,7 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
        toggleSingleCheckboxLabel(chipsLabel);
        toggleSingleCheckboxLabel(listLabel);
        const checkbox = document.getElementById(currentForAttribute);
-       setCheckboxAriaChecked(checkbox);
+       setCheckboxAriaChecked(checkbox, true);
      }
   }
 
@@ -94,7 +94,7 @@ document.addEventListener("DOMContentLoaded", () => {
          const listLabel = document.querySelector('li label[for="'+checkbox.id+'"]');
          toggleSingleCheckboxLabel(chipsLabel);
          toggleSingleCheckboxLabel(listLabel);
-         setCheckboxAriaChecked(checkbox);
+         setCheckboxAriaChecked(checkbox, true);
        }
     }
 
@@ -108,12 +108,18 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  const setCheckboxAriaChecked = (checkbox) => {
-     // checkbox is toggled automatically afterwards, so !checked has to be used here
-     checkbox.setAttribute('aria-checked', !checkbox.checked);
+  const setCheckboxAriaChecked = (checkbox, negateChecked) => {
+    if (negateChecked){
+      // if checkbox is toggled automatically afterwards, !checked has to be used
+      checkbox.setAttribute('aria-checked', !checkbox.checked);
+    }
+    else{
+      checkbox.setAttribute('aria-checked', checkbox.checked);
+    }
+
   }
 
-  accessibilityFlags.forEach((checkbox) => checkbox.addEventListener("change", c => setCheckboxAriaChecked(c.currentTarget)));
+  accessibilityFlags.forEach((checkbox) => checkbox.addEventListener("change", c => setCheckboxAriaChecked(c.currentTarget, false)));
 
   document.addEventListener("click", (event) => {
     if (
@@ -152,7 +158,7 @@ document.addEventListener("DOMContentLoaded", () => {
       closeMenuButton.style.display = "none";
       header.style.paddingBottom = "24px";
       // set checkbox aria attributes in case they are already checked by the search url
-      accessibilityFlags.forEach((checkbox) => setCheckboxAriaChecked(checkbox));
+      accessibilityFlags.forEach((checkbox) => setCheckboxAriaChecked(checkbox, false));
     } else {
       closeDrawer();
     }
@@ -252,6 +258,7 @@ document.addEventListener("DOMContentLoaded", () => {
     e.preventDefault();
     const paramsAsString = getSearchParams();
     const apiUrl = `/api/search?${paramsAsString}&offset=0`;
+    closeDrawer();
 
     try {
       const response = await fetch(apiUrl);
@@ -302,7 +309,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById(value).checked = true;
       } else if (key === "includeRecurring") {
        document.getElementById(key).checked = true;
-      } else if (["category", "locationCity", "locationName", "bandName"].includes(key)) {
+      } else if (["category", "locationCities", "locationNames", "bandNames"].includes(key)) {
         const checkbox = document.getElementById(key + "-" + value);
         checkbox.checked = true;
         toggleCheckboxLabelsByCheckbox(checkbox)

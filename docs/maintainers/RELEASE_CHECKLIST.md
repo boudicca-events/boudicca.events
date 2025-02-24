@@ -1,6 +1,6 @@
 # Release Checklist
 
-1. Increase dev-Version in build.gradle.kts and get it merged
+1. Increase dev-Version in version.txt and get it merged
 2. Build client libraries release.zip
    1. Locally, in some Linux-env, checkout the newly created commit
    2. Change the version to the newly created release (aka old dev version without the -SNAPSHOT)

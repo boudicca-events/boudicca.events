@@ -64,7 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
         eventLi.appendChild(eventA)
       } else {
         let eventSpan = document.createElement("span")
-        eventSpan.text = event.name
+        eventSpan.textContent = event.name
         eventLi.appendChild(eventSpan)
       }
       eventUl.appendChild(eventLi)

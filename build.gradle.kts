@@ -1,2 +1,2 @@
-version = "0.6.0-SNAPSHOT"
+version = file("version.txt").readText()
 ext["jvmVersion"] = 21

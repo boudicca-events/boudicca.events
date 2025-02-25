@@ -22,6 +22,7 @@ jsoup = "1.18.3"
 rometools = "2.1.0"
 klaxon = "5.6"
 logback = "1.5.16"
+slf4j = "2.0.16"
 handlebars = "4.4.0"
 microsoft-playwright = "1.50.0"
 axe-core-playwright = "4.10.1"
@@ -75,6 +76,7 @@ rometools = { module = "com.rometools:rome", version.ref = "rometools" }
 klaxon = { module = "com.beust:klaxon", version.ref = "klaxon" }
 
 logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+slf4j = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
 
 handlebars = { module = "com.github.jknack:handlebars", version.ref = "handlebars" }
 handlebars-springmvc = { module = "com.github.jknack:handlebars-springmvc", version.ref = "handlebars" }

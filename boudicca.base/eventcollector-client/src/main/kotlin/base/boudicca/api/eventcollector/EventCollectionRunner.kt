@@ -6,7 +6,7 @@ import base.boudicca.api.eventcollector.runner.RunnerEnricherInterface
 import base.boudicca.api.eventcollector.runner.RunnerIngestionInterface
 import base.boudicca.fetcher.retry
 import base.boudicca.model.Event
-import org.slf4j.LoggerFactory
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.util.concurrent.Executors
 
 
@@ -16,14 +16,14 @@ class EventCollectionRunner(
     private val enricherInterface: RunnerEnricherInterface,
 ) {
 
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = KotlinLogging.logger {}
     private val executor = Executors.newVirtualThreadPerTaskExecutor()
 
     /**
      * executes a full collection for all configured eventcollectors
      */
     fun run() {
-        logger.info("starting new full collection")
+        logger.info { "starting new full collection" }
         Collections.startFullCollection()
         try {
             eventCollectors
@@ -34,7 +34,7 @@ class EventCollectionRunner(
         } finally {
             Collections.endFullCollection()
         }
-        logger.info("full collection done")
+        logger.info { "full collection done" }
     }
 
     private fun collect(eventCollector: EventCollector) {
@@ -50,10 +50,10 @@ class EventCollectionRunner(
                     ingestionInterface.ingestEvents(enrichedEvents)
                 }
             } catch (e: RuntimeException) {
-                logger.error("could not ingest events, is the core available?", e)
+                logger.error(e) { "could not ingest events, is the core available?" }
             }
         } catch (e: Exception) {
-            logger.error("collector threw exception while collecting", e)
+            logger.error(e) { "collector threw exception while collecting" }
         } finally {
             Collections.endSingleCollection()
         }
@@ -61,16 +61,16 @@ class EventCollectionRunner(
 
     private fun validateCollection(eventCollector: EventCollector, events: List<Event>) {
         if (events.isEmpty()) {
-            logger.warn("collector collected 0 events!")
+            logger.warn { "collector collected 0 events!" }
         }
         val nonBlankFields = mutableSetOf<String>()
         val allFields = mutableSetOf<String>()
         for (event in events) {
             if (event.name.isBlank()) {
-                logger.warn("event has empty name: $event")
+                logger.warn { "event has empty name: $event" }
             }
             if (event.toStructuredEvent().getProperty(SemanticKeys.SOURCES_PROPERTY).isEmpty()) {
-                logger.error("event has no sources: $event")
+                logger.error { "event has no sources: $event" }
             }
             for (entry in event.data.entries) {
                 allFields.add(entry.key)
@@ -80,7 +80,7 @@ class EventCollectionRunner(
             }
         }
         for (field in allFields.minus(nonBlankFields)) {
-            logger.warn("eventcollector ${eventCollector.getName()} has blank values for all events for field $field")
+            logger.warn { "eventcollector ${eventCollector.getName()} has blank values for all events for field $field" }
         }
     }
 
@@ -90,7 +90,7 @@ class EventCollectionRunner(
                 enricherInterface.enrichEvents(events)
             }
         } catch (e: Exception) {
-            logger.error("enricher threw exception, submitting events un-enriched", e)
+            logger.error(e) { "enricher threw exception, submitting events un-enriched" }
             events
         }
     }

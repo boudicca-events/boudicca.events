@@ -8,18 +8,18 @@ import biweekly.component.VEvent
 import biweekly.property.DateEnd
 import biweekly.property.DateStart
 import biweekly.util.ICalDate
-import org.slf4j.LoggerFactory
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.net.URI
 import java.time.OffsetDateTime
 import java.time.ZoneId
-import java.util.Optional
+import java.util.*
 
 /**
  * utility class for parsing and mapping ical resources to VEvents and then to Events
  */
 object IcalParser {
 
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = KotlinLogging.logger {}
 
     /**
      * parses an icalResource (aka the string contents of a .ics file) to vEvents and maps them to Events
@@ -56,7 +56,7 @@ object IcalParser {
      */
     fun mapVEventToEvent(vEvent: VEvent): Optional<StructuredEvent> {
         if (vEvent.dateStart == null) {
-            logger.warn("event with uid ${vEvent.uid} and url ${vEvent.url} has no startDate!")
+            logger.warn { "event with uid ${vEvent.uid} and url ${vEvent.url} has no startDate!" }
             return Optional.empty()
         }
 

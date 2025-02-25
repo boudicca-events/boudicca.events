@@ -7,14 +7,14 @@ import com.google.api.services.sheets.v4.SheetsScopes
 import com.google.api.services.sheets.v4.model.ValueRange
 import com.google.auth.http.HttpCredentialsAdapter
 import com.google.auth.oauth2.GoogleCredentials
-import org.slf4j.LoggerFactory
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.io.FileInputStream
 
 class LocationEnricherGoogleSheetsUpdater(
     private val googleCredentialsPath: String,
     private val spreadsheetId: String,
 ) : LocationEnricherUpdater {
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = KotlinLogging.logger {}
     private val JSON_FACTORY = GsonFactory.getDefaultInstance()
     private val HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport()
     private val range = "LocationData!A1:Z"
@@ -36,7 +36,7 @@ class LocationEnricherGoogleSheetsUpdater(
             .execute()
         val values: List<List<Any?>>? = response.getValues()
         if (values.isNullOrEmpty()) {
-            logger.error("no data found in spreadsheet!")
+            logger.error { "no data found in spreadsheet!" }
             return emptyList()
         }
 

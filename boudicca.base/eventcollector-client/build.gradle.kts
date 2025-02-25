@@ -14,5 +14,4 @@ dependencies {
     implementation(libs.apache.velocity.engine.core)
     implementation(libs.apache.velocity.tools.generic)
     implementation(libs.logback)
-    implementation(libs.slf4j)
 }

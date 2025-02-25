@@ -5,10 +5,10 @@ import base.boudicca.api.eventcollector.TwoStepEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
-import org.slf4j.LoggerFactory
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.OffsetDateTime
@@ -18,7 +18,7 @@ import java.util.*
 
 class FuerUnsCollector : TwoStepEventCollector<String>("fueruns") {
 
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = KotlinLogging.logger {}
     private val fetcher = FetcherFactory.newFetcher()
     private val baseUrl = "https://www.fuer-uns.at/"
 
@@ -54,7 +54,7 @@ class FuerUnsCollector : TwoStepEventCollector<String>("fueruns") {
             parseDate(eventSite)
         } catch (exc: java.time.format.DateTimeParseException) {
             //TODO we should be able to parse this as well
-            logger.info("Error in ${fullEventLink}: can't parse date, might be a multi-day event")
+            logger.info { "Error in ${fullEventLink}: can't parse date, might be a multi-day event" }
             return null
         }
 

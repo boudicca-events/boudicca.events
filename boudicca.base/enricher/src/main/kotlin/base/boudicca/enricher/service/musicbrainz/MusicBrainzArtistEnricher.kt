@@ -7,7 +7,7 @@ import base.boudicca.model.structured.StructuredEvent
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import org.slf4j.LoggerFactory
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -23,7 +23,7 @@ class MusicBrainzArtistEnricher @Autowired constructor(
     @Value("\${boudicca.enricher.musicbrainz.index.path:}") musicBrainzIndexPath: String?,
 ) : Enricher {
 
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = KotlinLogging.logger {}
 
     private val objectMapper = ObjectMapper().registerModule(KotlinModule.Builder().build())
     private val artistMatcher = createArtistMatcher(musicBrainzDataPath, musicBrainzIndexPath)
@@ -75,7 +75,7 @@ class MusicBrainzArtistEnricher @Autowired constructor(
 
     private fun loadData(musicBrainzDataPath: String?): List<Artist>? {
         if (musicBrainzDataPath.isNullOrBlank()) {
-            logger.debug("no musicBrainzDataPath given, disabling enricher")
+            logger.debug { "no musicBrainzDataPath given, disabling enricher" }
             return null
         }
         val file = File(musicBrainzDataPath)
@@ -90,7 +90,7 @@ class MusicBrainzArtistEnricher @Autowired constructor(
 
     private fun loadIndex(musicBrainzIndexPath: String?): ByteBuffer? {
         if (musicBrainzIndexPath.isNullOrBlank()) {
-            logger.debug("no musicBrainzIndexPath given, disabling enricher")
+            logger.debug { "no musicBrainzIndexPath given, disabling enricher" }
             return null
         }
         val file = File(musicBrainzIndexPath)

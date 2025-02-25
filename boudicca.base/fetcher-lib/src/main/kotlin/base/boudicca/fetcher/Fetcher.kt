@@ -1,6 +1,6 @@
 package base.boudicca.fetcher
 
-import org.slf4j.LoggerFactory
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.net.HttpURLConnection
 import java.net.URI
 import java.net.http.HttpClient
@@ -22,7 +22,7 @@ class Fetcher(
     private val eventListeners: List<FetcherEventListener> = emptyList(),
     private val fetcherCache: FetcherCache = NoopFetcherCache
 ) {
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = KotlinLogging.logger {}
 
     private var lastRequestEnd = 0L
     private var lastRequestDuration = 0L
@@ -46,14 +46,14 @@ class Fetcher(
         executeRequestAction: () -> Pair<Int, String>
     ): String {
         if (fetcherCache.containsEntry(cacheKey)) {
-            logger.debug("Using cached entry for Key: $cacheKey")
+            logger.debug { "Using cached entry for Key: $cacheKey" }
             return fetcherCache.getEntry(cacheKey)
         }
 
         val response = executeRequest(url, content, executeRequestAction)
 
         fetcherCache.putEntry(cacheKey, response)
-        logger.debug("Added new entry to cache with Key: $cacheKey")
+        logger.debug { "Added new entry to cache with Key: $cacheKey" }
         return response
     }
 
@@ -62,6 +62,7 @@ class Fetcher(
         val response = retry(logger, sleeper) {
             eventListeners.forEach { it.callStarted(url, content) }
             val start = clock.millis()
+
             @Suppress("detekt.TooGenericExceptionCaught") //it will be rethrown
             val response = try {
                 request.call()

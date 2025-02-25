@@ -16,6 +16,7 @@ kotlin {
 
 val versionCatalog = versionCatalogs.named("libs")
 dependencies {
+    implementation(versionCatalog.findLibrary("kotlin-logging").get())
     testImplementation(platform(versionCatalog.findLibrary("junit-jupiter-bom").get()))
     testImplementation(versionCatalog.findLibrary("junit-jupiter").get())
     testRuntimeOnly(versionCatalog.findLibrary("junit-platform-launcher").get())

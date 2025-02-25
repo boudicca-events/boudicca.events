@@ -4,8 +4,8 @@
       <env name="BOUDICCA_SEARCH_URL" value="https://search.boudicca.events" />
       <env name="BOUDICCA_DEVMODE" value="true" />
     </envs>
-    <option name="MAIN_CLASS_NAME" value="base.boudicca.publisher.event.html.PublisherHtmlApplicationKt" />
-    <module name="boudicca.boudicca.base.publisher-event-html.main" />
+    <option name="MAIN_CLASS_NAME" value="base.boudicca.publisher.event.html.app.PublisherHtmlApplicationKt" />
+    <module name="boudicca.boudicca.base.publisher-event-html-app.main" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

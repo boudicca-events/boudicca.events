@@ -1,5 +1,6 @@
 /**
  * default spring boot application with docker "imageBuild" task
+ * TODO split up between openapi services and the html publishers
  */
 
 plugins {
@@ -7,7 +8,6 @@ plugins {
     id("boudicca-docker")
 
     id("org.springframework.boot")
-    id("io.spring.dependency-management")
     kotlin("plugin.spring")
 }
 

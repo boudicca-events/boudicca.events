@@ -1,4 +1,4 @@
-package base.boudicca.publisher.event.html.controller
+package events.boudicca.publisher.event.html
 
 import base.boudicca.publisher.event.html.extension.Extension
 import base.boudicca.publisher.event.html.extension.HeaderExtension

@@ -5,11 +5,10 @@ plugins {
 group = "events.boudicca"
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib")
     implementation(project(":boudicca.base:eventcollector-client"))
-    implementation("org.jsoup:jsoup:1.18.3")
-    implementation("com.rometools:rome:2.1.0")
-    implementation("com.beust:klaxon:5.6")
+    implementation(libs.jsoup)
+    implementation(libs.rometools)
+    implementation(libs.klaxon)
 }
 
 task<Exec>("imageBuild") {

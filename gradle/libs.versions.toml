@@ -17,6 +17,9 @@ spring-mockk = "4.0.2"
 biweekly = "0.6.8"
 apache-velocity-engine-core = "2.4.1"
 apache-velocity-tools-generic = "3.1"
+jsoup = "1.18.3"
+rometools = "2.1.0"
+klaxon = "5.6"
 logback = "1.5.16"
 handlebars = "4.4.0"
 microsoft-playwright = "1.50.0"
@@ -64,6 +67,10 @@ biweekly = { module = "net.sf.biweekly:biweekly", version.ref = "biweekly" }
 
 apache-velocity-engine-core = { module = "org.apache.velocity:velocity-engine-core", version.ref = "apache-velocity-engine-core" }
 apache-velocity-tools-generic = { module = "org.apache.velocity.tools:velocity-tools-generic", version.ref = "apache-velocity-tools-generic" }
+
+jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
+rometools = { module = "com.rometools:rome", version.ref = "rometools" }
+klaxon = { module = "com.beust:klaxon", version.ref = "klaxon" }
 
 logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 

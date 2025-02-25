@@ -1,4 +1,4 @@
-package base.boudicca.publisher.event.html
+package events.boudicca.publisher.event.html
 
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired

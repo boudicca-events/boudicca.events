@@ -2,8 +2,9 @@ package base.boudicca.search
 
 import base.boudicca.search.service.EventFetcher
 import base.boudicca.search.service.SynchronizationService
+import com.ninjasquad.springmockk.MockkBean
+import io.mockk.every
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
@@ -24,7 +25,7 @@ class SearchApplicationSmokeTests {
     @Autowired
     private lateinit var synchronizationService: SynchronizationService
 
-    @MockitoBean
+    @MockkBean
     private lateinit var eventFetcher: EventFetcher
 
     @Test
@@ -35,11 +36,9 @@ class SearchApplicationSmokeTests {
 
     @Test
     fun baseWorkflow() {
-        Mockito.`when`(eventFetcher.fetchAllEvents()).thenReturn(
-            setOf(
-                mapOf("name" to "coolband"),
-                mapOf("name" to "theatre")
-            )
+        every { eventFetcher.fetchAllEvents() } returns setOf(
+            mapOf("name" to "coolband"),
+            mapOf("name" to "theatre")
         )
         synchronizationService.update()
 

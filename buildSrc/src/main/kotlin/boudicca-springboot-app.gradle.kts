@@ -16,6 +16,7 @@ dependencies {
 
     developmentOnly(versionCatalog.findLibrary("spring-boot-devtools").get())
     testImplementation(versionCatalog.findLibrary("spring-boot-starter-test").get())
+    testImplementation(versionCatalog.findLibrary("spring-mockk").get())
 }
 
 task<Exec>("imageBuild") {

@@ -20,6 +20,7 @@ dependencies {
     testImplementation(versionCatalog.findLibrary("junit-jupiter").get())
     testRuntimeOnly(versionCatalog.findLibrary("junit-platform-launcher").get())
     testImplementation(versionCatalog.findLibrary("assertk").get())
+    testImplementation(versionCatalog.findLibrary("mockk").get())
 }
 
 tasks.withType<Test> {

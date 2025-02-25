@@ -1,13 +1,13 @@
 package base.boudicca.api.eventcollector
 
-import org.slf4j.LoggerFactory
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.io.File
-import java.util.Properties
+import java.util.*
 
 
 object Configuration {
     private val properties: Properties = Properties()
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = KotlinLogging.logger {}
 
     init {
         val propsFromClassPath = this.javaClass.getResourceAsStream("/application.properties")
@@ -18,7 +18,7 @@ object Configuration {
         val propsFromFile = File("application.properties")
         if (propsFromFile.exists()) {
             if (!propsFromFile.canRead()) {
-                logger.error("found application.properties file but could not read from it!")
+                logger.error { "found application.properties file but could not read from it!" }
             }
             val inputStream = propsFromFile.inputStream()
             properties.load(inputStream)

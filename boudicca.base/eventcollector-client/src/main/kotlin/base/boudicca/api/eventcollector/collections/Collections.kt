@@ -1,7 +1,7 @@
 package base.boudicca.api.eventcollector.collections
 
 import base.boudicca.api.eventcollector.EventCollector
-import org.slf4j.LoggerFactory
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.util.Collections
 import java.util.concurrent.atomic.AtomicReference
 
@@ -11,11 +11,11 @@ object Collections {
     private val currentSingleCollections = ThreadLocal<SingleCollection>()
     private val currentHttpCalls = ThreadLocal<HttpCall>()
     private val pastFullCollections = Collections.synchronizedList(mutableListOf<FullCollection>())
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = KotlinLogging.logger {}
 
     fun startFullCollection() {
         if (currentFullCollection.get() != null) {
-            logger.error("a current full collection is already set, this seems like a bug")
+            logger.error { "a current full collection is already set, this seems like a bug" }
         }
 
         val fullCollection = FullCollection()
@@ -26,7 +26,7 @@ object Collections {
     fun endFullCollection() {
         val fullCollection = currentFullCollection.get()
         if (fullCollection == null) {
-            logger.error("no full single collection available, cannot end it")
+            logger.error { "no full single collection available, cannot end it" }
             return
         }
         fullCollection.endTime = System.currentTimeMillis()
@@ -36,7 +36,7 @@ object Collections {
 
     fun startSingleCollection(collector: EventCollector) {
         if (currentSingleCollections.get() != null) {
-            logger.error("a current single collection is already set, this seems like a bug")
+            logger.error { "a current single collection is already set, this seems like a bug" }
         }
         val singleCollection = SingleCollection(collector.getName())
         singleCollection.startTime = System.currentTimeMillis()
@@ -47,7 +47,7 @@ object Collections {
     fun endSingleCollection() {
         val singleCollection = currentSingleCollections.get()
         if (singleCollection == null) {
-            logger.error("no current single collection available, cannot end it")
+            logger.error { "no current single collection available, cannot end it" }
             return
         }
         singleCollection.endTime = System.currentTimeMillis()
@@ -56,7 +56,7 @@ object Collections {
 
     fun startHttpCall(url: String, postData: String? = null) {
         if (currentHttpCalls.get() != null) {
-            logger.error("a current http call is already set, this seems like a bug")
+            logger.error { "a current http call is already set, this seems like a bug" }
         }
         val httpCall = HttpCall()
         httpCall.startTime = System.currentTimeMillis()
@@ -69,7 +69,7 @@ object Collections {
     fun endHttpCall(responseCode: Int) {
         val httpCall = currentHttpCalls.get()
         if (httpCall == null) {
-            logger.error("no current http call available, cannot end it")
+            logger.error { "no current http call available, cannot end it" }
             return
         }
         httpCall.endTime = System.currentTimeMillis()

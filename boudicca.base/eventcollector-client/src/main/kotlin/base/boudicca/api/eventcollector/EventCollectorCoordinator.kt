@@ -1,6 +1,6 @@
 package base.boudicca.api.eventcollector
 
-import org.slf4j.LoggerFactory
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.time.Duration
 
 
@@ -10,7 +10,7 @@ class EventCollectorCoordinator(
     private val eventCollectionRunner: EventCollectionRunner,
 ) : AutoCloseable {
 
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = KotlinLogging.logger {}
     private var eventCollectorWebUi: EventCollectorWebUi? = null
 
     fun startWebUi(port: Int = -1): EventCollectorCoordinator {
@@ -33,7 +33,7 @@ class EventCollectorCoordinator(
     fun run(): Nothing {
         while (true) {
             eventCollectionRunner.run()
-            logger.info("sleeping for $interval")
+            logger.info { "sleeping for $interval" }
             Thread.sleep(interval.toMillis())
         }
     }

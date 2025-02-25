@@ -7,10 +7,10 @@ import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
-import org.slf4j.LoggerFactory
 import java.io.StringReader
 import java.net.URI
 import java.net.URLDecoder
@@ -24,7 +24,7 @@ import java.util.regex.Pattern
 
 class PlanetTTCollector : TwoStepEventCollector<Element>("planettt") {
 
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = KotlinLogging.logger {}
     private val fetcher = FetcherFactory.newFetcher()
     private var modalNonce: String? = null
 
@@ -130,7 +130,7 @@ class PlanetTTCollector : TwoStepEventCollector<Element>("planettt") {
             }
 
             else -> {
-                logger.warn("could not guess location from location: $location")
+                logger.warn { "could not guess location from location: $location" }
             }
         }
     }

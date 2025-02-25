@@ -5,9 +5,9 @@ import base.boudicca.api.eventcollector.TwoStepEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
-import org.slf4j.LoggerFactory
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.OffsetDateTime
@@ -16,7 +16,7 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 
 class CafeTraxlmayrCollector : TwoStepEventCollector<Element>("cafetraxlmayr") {
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = KotlinLogging.logger {}
     private val baseUrl = "https://www.cafe-traxlmayr.at/konzerte/"
 
     override fun getAllUnparsedEvents(): List<Element> {
@@ -47,7 +47,7 @@ class CafeTraxlmayrCollector : TwoStepEventCollector<Element>("cafetraxlmayr") {
             //ignore
             emptyList()
         } else {
-            logger.error("unknown event format: $event")
+            logger.error { "unknown event format: $event" }
             emptyList()
         }
     }
@@ -83,7 +83,7 @@ class CafeTraxlmayrCollector : TwoStepEventCollector<Element>("cafetraxlmayr") {
 
         for (block in contentBlocks) {
             val text = block.text()
-            if (block.select("img").isNotEmpty()){
+            if (block.select("img").isNotEmpty()) {
                 pictureSrc = block.select("img").attr("src")
             } else if (text.contains("Uhr")) {
                 startDate = parseDateForLesung(text)
@@ -98,13 +98,15 @@ class CafeTraxlmayrCollector : TwoStepEventCollector<Element>("cafetraxlmayr") {
                 } else {
                     null
                 }
-                events.add(builder
-                    .copy()
-                    .withName(name)
-                    .withStartDate(startDate)
-                    .withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
-                    .withProperty(SemanticKeys.PICTURE_URL_PROPERTY, pictureUrl)
-                    .build())
+                events.add(
+                    builder
+                        .copy()
+                        .withName(name)
+                        .withStartDate(startDate)
+                        .withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
+                        .withProperty(SemanticKeys.PICTURE_URL_PROPERTY, pictureUrl)
+                        .build()
+                )
                 startDate = OffsetDateTime.MIN
                 name = ""
                 description = ""

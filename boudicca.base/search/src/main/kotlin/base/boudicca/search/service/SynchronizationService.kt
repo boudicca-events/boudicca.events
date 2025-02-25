@@ -2,7 +2,7 @@ package base.boudicca.search.service
 
 import base.boudicca.api.eventdb.publisher.EventDBException
 import base.boudicca.model.Entry
-import org.slf4j.LoggerFactory
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.scheduling.annotation.Scheduled
@@ -16,7 +16,7 @@ class SynchronizationService @Autowired constructor(
     private val eventFetcher: EventFetcher
 ) {
 
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = KotlinLogging.logger {}
 
     private val updateLock = ReentrantLock()
 
@@ -32,7 +32,7 @@ class SynchronizationService @Autowired constructor(
                 val entries = eventFetcher.fetchAllEvents()
                 eventPublisher.publishEvent(EntriesUpdatedEvent(entries))
             } catch (e: EventDBException) {
-                logger.warn("could not reach eventdb, retrying in 30s", e)
+                logger.warn(e) { "could not reach eventdb, retrying in 30s" }
                 //if eventdb is currently down, retry in 30 seconds
                 //this mainly happens when both are deployed at the same time
                 Thread {

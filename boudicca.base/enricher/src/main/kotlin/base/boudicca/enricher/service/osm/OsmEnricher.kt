@@ -17,7 +17,7 @@ import base.boudicca.model.structured.VariantConstants.SOURCE_VARIANT_NAME
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import org.slf4j.LoggerFactory
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Service
 
@@ -31,7 +31,7 @@ class OsmEnricher(
 ) : Enricher {
 
     companion object {
-        val logger = LoggerFactory.getLogger(this::class.java)!!
+        private val logger = KotlinLogging.logger {}
         val mapper = jacksonObjectMapper()
     }
 
@@ -59,7 +59,7 @@ class OsmEnricher(
         val builder = event.toBuilder()
         val json = mapper.readTree(response)
         if (json.isEmpty) {
-            logger.warn("nominatim did not return any results for osm id $osmId")
+            logger.warn { "nominatim did not return any results for osm id $osmId" }
             return event
         }
         val nominatimPlace = json.single()
@@ -128,7 +128,7 @@ class OsmEnricher(
                     UrlUtils.parse(websiteText)
                 )
             } catch (_: IllegalArgumentException) {
-                logger.info("Could not map $websiteText to URI")
+                logger.info { "Could not map $websiteText to URI" }
             }
             builder.updatePropertyIfEmpty(
                 event,
@@ -200,7 +200,7 @@ class OsmEnricher(
     }
 
     private fun logNotFound(locationQuery: String) {
-        logger.info("did not find any location for query: $locationQuery")
+        logger.info { "did not find any location for query: $locationQuery" }
     }
 
     private fun buildAddress(tags: JsonNode): String {

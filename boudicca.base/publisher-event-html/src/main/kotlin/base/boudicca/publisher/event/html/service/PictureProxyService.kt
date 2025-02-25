@@ -1,6 +1,6 @@
 package base.boudicca.publisher.event.html.service
 
-import org.slf4j.LoggerFactory
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import java.awt.image.BufferedImage
@@ -12,20 +12,15 @@ import java.net.http.HttpRequest
 import java.net.http.HttpResponse.BodyHandlers
 import java.time.Instant
 import java.time.temporal.ChronoUnit
-import java.util.Optional
-import java.util.UUID
-import java.util.concurrent.Callable
-import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.Executors
-import java.util.concurrent.Future
-import java.util.concurrent.TimeUnit
+import java.util.*
+import java.util.concurrent.*
 import javax.imageio.ImageIO
 import kotlin.math.max
 
 @Service
 class PictureProxyService {
 
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = KotlinLogging.logger {}
 
     private val idToImageCache = ConcurrentHashMap<UUID, Future<CacheEntry>>()
     private val urlToIdCacheEntry = ConcurrentHashMap<String, UUID>()
@@ -66,18 +61,18 @@ class PictureProxyService {
             val response = httpClient.send(request, BodyHandlers.ofByteArray())
 
             val optional = if (response.statusCode() != 200) {
-                logger.warn("response code is invalid ${response.statusCode()} for $url")
+                logger.warn { "response code is invalid ${response.statusCode()} for $url" }
                 Optional.empty()
             } else {
                 val body = response.body()
                 if (body.isEmpty()) {
-                    logger.warn("empty body for $url")
+                    logger.warn { "empty body for $url" }
                     Optional.empty()
                 } else {
                     try {
                         Optional.of(resize(body))
                     } catch (e: RuntimeException) {
-                        logger.warn("error resizing image $url", e)
+                        logger.warn(e) { "error resizing image $url" }
                         Optional.empty()
                     }
                 }
@@ -85,7 +80,7 @@ class PictureProxyService {
 
             return CacheEntry(optional)
         } catch (e: Exception) {
-            logger.error("got exception while trying to fetch and resize the image with url $url", e)
+            logger.error(e) { "got exception while trying to fetch and resize the image with url $url" }
             return CacheEntry(Optional.empty())
         }
     }

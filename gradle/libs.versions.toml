@@ -18,10 +18,10 @@ biweekly = "0.6.8"
 apache-velocity-engine-core = "2.4.1"
 apache-velocity-tools-generic = "3.1"
 logback = "1.5.16"
-slf4j = "2.0.16"
 handlebars = "4.4.0"
 microsoft-playwright = "1.50.0"
 axe-core-playwright = "4.10.1"
+kotlin-logging = "7.0.4"
 
 [libraries]
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
@@ -66,7 +66,6 @@ apache-velocity-engine-core = { module = "org.apache.velocity:velocity-engine-co
 apache-velocity-tools-generic = { module = "org.apache.velocity.tools:velocity-tools-generic", version.ref = "apache-velocity-tools-generic" }
 
 logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
-slf4j = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
 
 handlebars = { module = "com.github.jknack:handlebars", version.ref = "handlebars" }
 microsoft-playwright = { module = "com.microsoft.playwright:playwright", version.ref = "microsoft-playwright" }
@@ -77,6 +76,8 @@ json = { module = "org.json:json", version = "20250107" }
 google-api-client = { module = "com.google.api-client:google-api-client", version = "2.7.2" }
 google-auth-library-oauth2-http = { module = "com.google.auth:google-auth-library-oauth2-http", version = "1.32.1" }
 google-api-services-sheets = { module = "com.google.apis:google-api-services-sheets", version = "v4-rev20250211-2.0.0" }
+
+kotlin-logging = { module = "io.github.oshai:kotlin-logging-jvm", version.ref = "kotlin-logging" }
 
 [plugins]
 jmh = { id = "me.champeau.jmh", version = "0.7.3" }

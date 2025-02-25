@@ -6,10 +6,10 @@ import base.boudicca.api.eventcollector.collections.HttpCall
 import base.boudicca.api.eventcollector.collections.SingleCollection
 import com.sun.net.httpserver.HttpExchange
 import com.sun.net.httpserver.HttpServer
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.apache.velocity.VelocityContext
 import org.apache.velocity.app.VelocityEngine
 import org.apache.velocity.tools.generic.EscapeTool
-import org.slf4j.LoggerFactory
 import java.io.IOException
 import java.io.StringWriter
 import java.net.InetSocketAddress
@@ -18,13 +18,13 @@ import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.util.UUID
+import java.util.*
 
 class EventCollectorWebUi(port: Int, private val eventCollectors: List<EventCollector>) {
 
     private val server: HttpServer
     private val ve: VelocityEngine = VelocityEngine()
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = KotlinLogging.logger {}
 
     init {
         //set velocity to load templates from the classpath
@@ -64,7 +64,7 @@ class EventCollectorWebUi(port: Int, private val eventCollectors: List<EventColl
 
                 sendResponse(httpExchange, "/html/index.html.vm", context)
             } catch (e: Exception) {
-                logger.error("error while handling request", e)
+                logger.error(e) { "error while handling request" }
                 send500(httpExchange)
             }
         }
@@ -298,12 +298,12 @@ class EventCollectorWebUi(port: Int, private val eventCollectors: List<EventColl
             it.responseBody.write(bytes)
             it.close()
         } catch (e: IOException) {
-            logger.debug("error sending response", e)
+            logger.debug(e) { "error sending response" }
         }
     }
 
     fun start() {
-        logger.info("webui starting and listening on ${server.address}")
+        logger.info { "webui starting and listening on ${server.address}" }
         server.start()
     }
 

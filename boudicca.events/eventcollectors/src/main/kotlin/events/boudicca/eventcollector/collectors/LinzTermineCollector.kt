@@ -7,11 +7,11 @@ import base.boudicca.format.UrlUtils
 import base.boudicca.model.Registration
 import base.boudicca.model.structured.Key
 import base.boudicca.model.structured.StructuredEvent
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.parser.Parser
-import org.slf4j.LoggerFactory
 import java.net.URLEncoder
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -21,7 +21,7 @@ import java.time.format.DateTimeFormatter
 
 class LinzTermineCollector : EventCollector {
     private val fetcher = FetcherFactory.newFetcher()
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = KotlinLogging.logger {}
     private val eventsBaseUrl = "https://www.linztermine.at/schnittstelle/downloads/events_xml.php"
     private val locationBaseUrl = "https://www.linztermine.at/schnittstelle/downloads/locations_xml.php"
 
@@ -69,7 +69,7 @@ class LinzTermineCollector : EventCollector {
         val mappedEvents = mutableListOf<StructuredEvent>()
         for (event in eventList) {
             if (event.dates.isEmpty()) {
-                logger.warn("event does not contain any dates: $event")
+                logger.warn { "event does not contain any dates: $event" }
                 continue
             }
             val website = eventWebsites[event.url] ?: continue
@@ -148,7 +148,7 @@ class LinzTermineCollector : EventCollector {
             try {
                 loadXml(it)
             } catch (e: RuntimeException) {
-                logger.error("error fetching xml", e)
+                logger.error(e) { "error fetching xml" }
                 //booooh
                 null
             }

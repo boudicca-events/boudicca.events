@@ -1,10 +1,10 @@
 package base.boudicca.publisher.event.html
 
 import base.boudicca.publisher.event.html.extension.HeaderExtensionValueResolver
-import base.boudicca.publisher.event.html.handlebars.HandlebarsViewResolver
 import com.github.jknack.handlebars.ValueResolver
 import com.github.jknack.handlebars.cache.NullTemplateCache
 import com.github.jknack.handlebars.helper.ConditionalHelpers
+import com.github.jknack.handlebars.springmvc.HandlebarsViewResolver
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.runApplication

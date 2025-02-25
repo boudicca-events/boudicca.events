@@ -68,6 +68,7 @@ apache-velocity-tools-generic = { module = "org.apache.velocity.tools:velocity-t
 logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 
 handlebars = { module = "com.github.jknack:handlebars", version.ref = "handlebars" }
+handlebars-springmvc = { module = "com.github.jknack:handlebars-springmvc", version.ref = "handlebars" }
 microsoft-playwright = { module = "com.microsoft.playwright:playwright", version.ref = "microsoft-playwright" }
 axe-core-playwright = { module = "com.deque.html.axe-core:playwright", version.ref = "axe-core-playwright" }
 

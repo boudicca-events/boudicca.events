@@ -3,6 +3,7 @@ import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
     id("boudicca-kotlin")
+    id("boudicca-docker")
     id("org.springframework.boot")
     id("io.spring.dependency-management")
     kotlin("plugin.spring")
@@ -23,9 +24,6 @@ tasks.named<BootRun>("bootRun") {
     mainClass.set("base.boudicca.publisher.event.html.PublisherHtmlApplicationKt")
 }
 
-task<Exec>("imageBuild") {
-    inputs.file("src/main/docker/Dockerfile")
-    inputs.files(tasks.named("bootJar"))
-    dependsOn(tasks.named("assemble"))
-    commandLine("docker", "build", "-t", "localhost/boudicca-events-publisher-event-html", "-f", "src/main/docker/Dockerfile", ".")
+docker {
+    imageName = "boudicca-events-publisher-event-html"
 }

@@ -4,6 +4,7 @@
 
 plugins {
     id("boudicca-kotlin")
+    id("boudicca-docker")
 
     id("org.springframework.boot")
     id("io.spring.dependency-management")
@@ -18,11 +19,3 @@ dependencies {
     testImplementation(versionCatalog.findLibrary("spring-boot-starter-test").get())
     testImplementation(versionCatalog.findLibrary("spring-mockk").get())
 }
-
-task<Exec>("imageBuild") {
-    inputs.file("src/main/docker/Dockerfile")
-    inputs.files(tasks.named("bootJar")) //TODO extract to own plugin
-    dependsOn(tasks.named("assemble"))
-    commandLine("docker", "build", "-t", "localhost/boudicca-${project.name}", "-f", "src/main/docker/Dockerfile", ".")
-}
-

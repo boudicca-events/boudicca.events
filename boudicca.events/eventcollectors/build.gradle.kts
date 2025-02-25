@@ -1,5 +1,6 @@
 plugins {
     id("boudicca-kotlin")
+    id("boudicca-docker")
 }
 
 group = "events.boudicca"
@@ -11,11 +12,9 @@ dependencies {
     implementation(libs.klaxon)
 }
 
-task<Exec>("imageBuild") {
-    inputs.file("src/main/docker/Dockerfile")
-    inputs.files(tasks.named("jar"))
-    dependsOn(tasks.named("assemble"))
-    commandLine("docker", "build", "-t", "localhost/boudicca-events-eventcollectors", "-f", "src/main/docker/Dockerfile", ".")
+docker {
+    imageName = "boudicca-events-eventcollectors"
+    jarCreationTaskName = "jar"
 }
 
 tasks.withType<Jar> {

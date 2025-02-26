@@ -1,6 +1,5 @@
 /**
- * default spring boot application with docker "imageBuild" task
- * TODO split up between openapi services and the html publishers
+ * default spring boot application with docker "imageBuild" task, has no starters except testing ones
  */
 
 plugins {
@@ -13,8 +12,7 @@ plugins {
 
 val versionCatalog = versionCatalogs.named("libs")
 dependencies {
-    api(versionCatalog.findBundle("springboot-app").get())
-
+    implementation(versionCatalog.findLibrary("kotlin-reflect").get())
     developmentOnly(versionCatalog.findLibrary("spring-boot-devtools").get())
     testImplementation(versionCatalog.findLibrary("spring-boot-starter-test").get())
     testImplementation(versionCatalog.findLibrary("spring-mockk").get())

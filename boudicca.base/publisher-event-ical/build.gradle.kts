@@ -1,5 +1,5 @@
 plugins {
-    id("boudicca-springboot-app")
+    id("boudicca-springboot-rest-app")
 }
 
 dependencies {

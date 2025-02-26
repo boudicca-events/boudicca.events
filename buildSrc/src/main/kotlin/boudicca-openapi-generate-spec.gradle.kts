@@ -34,11 +34,18 @@ dependencies {
 }
 
 val openApiDefaultsTemplate = project.rootDir.resolve("openapi_defaults/openapi.yaml")
+
 val openApiDefaultsRendered = project.layout.buildDirectory.file("tmp/openapi/openapi.yaml").get().asFile
-openApiDefaultsRendered.parentFile.mkdirs()
-openApiDefaultsRendered.writeText("dummy")
+val createTemplateTask = tasks.register("createOpenApiTemplate") {
+    outputs.files(openApiDefaultsRendered)
+    doFirst {
+        openApiDefaultsRendered.parentFile.mkdirs()
+        updateOpenApiFile(openApiDefaultsRendered)
+    }
+}
 
 val generateOpenApiSpecTask = tasks.named<ResolveTask>("resolve") {
+    inputs.files(createTemplateTask)
     outputFileName = project.name
     outputFormat = ResolveTask.Format.JSON
     prettyPrint = true
@@ -46,9 +53,6 @@ val generateOpenApiSpecTask = tasks.named<ResolveTask>("resolve") {
     resourcePackages = setOf("base.boudicca.api")
     outputDir = project.layout.buildDirectory.dir("generated/openapi").get().asFile
     openApiFile = openApiDefaultsRendered
-    doFirst {
-        updateOpenApiFile()
-    }
 }
 
 val openapiSpecFile = project.layout.buildDirectory.file("generated/openapi/${project.name}.json")
@@ -68,15 +72,14 @@ publishing {
     }
 }
 
-val generateSpecExtension = GenerateSpecExtension(null, null)
-project.extensions.create<GenerateSpecExtension>("generateSpec")
+val generateSpecExtension = project.extensions.create<GenerateSpecExtension>("generateSpec")
 
-fun updateOpenApiFile() {
+fun updateOpenApiFile(file: File) {
     val text = openApiDefaultsTemplate.readText()
         .replace("%TITLE%", generateSpecExtension.title ?: "")
         .replace("%DESCRIPTION%", generateSpecExtension.description ?: "")
         .replace("%VERSION%", project.version.toString())
-    openApiDefaultsRendered.writeText(text)
+    file.writeText(text)
 }
 
 open class GenerateSpecExtension(

@@ -1,0 +1,22 @@
+<h3>Single Collections</h3>
+<table>
+    <thead>
+    <tr>
+        <td>Collector Name</td>
+        <td># events</td>
+        <td>Duration</td>
+        <td>Start/End Time</td>
+    </tr>
+    </thead>
+    <tbody>
+    {{#each singleCollections as |singleCollection|}}
+    <tr>
+        <td> {{#if singleCollection.hasErrors }}☠{{else}}{{#if singleCollection.hasWarnings }}⚠{{else}}{{/if}}{{/if}}
+            {{#if singleCollection.id }}<a href="singleCollection?id={{singleCollection.id}}">{{singleCollection.name}}</a>{{else}}{{singleCollection.name}}{{/if}}</td>
+        <td>{{singleCollection.totalEventsCollected}}</td>
+        <td>{{singleCollection.duration}}</td>
+        <td>{{singleCollection.startEndTime}}</td>
+    </tr>
+    {{/each}}
+    </tbody>
+</table>

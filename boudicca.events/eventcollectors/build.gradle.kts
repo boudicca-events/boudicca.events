@@ -1,6 +1,5 @@
 plugins {
-    id("boudicca-kotlin")
-    id("boudicca-docker")
+    id("boudicca-springboot-app")
 }
 
 group = "events.boudicca"
@@ -12,20 +11,10 @@ dependencies {
     implementation(libs.klaxon)
 }
 
-docker {
-    imageName = "events-eventcollectors"
-    jarCreationTaskName = "jar"
+springBoot {
+    mainClass.set("events.boudicca.eventcollector.BoudiccaEventCollectorsKt")
 }
 
-tasks.withType<Jar> {
-    archiveFileName.set("boudicca-eventcollectors.jar")
-
-    manifest {
-        attributes["Main-Class"] = "events.boudicca.eventcollector.BoudiccaEventCollectorsKt"
-    }
-
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-
-    inputs.files(configurations.runtimeClasspath)
-    from(configurations.runtimeClasspath.get().files.map { if (it.isDirectory()) it else zipTree(it) })
+docker {
+    imageName = "events-eventcollectors"
 }

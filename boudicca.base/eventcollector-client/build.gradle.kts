@@ -1,17 +1,16 @@
 plugins {
-    id("boudicca-kotlin")
-    id("boudicca-publish")
+    id("boudicca-springboot-lib")
 }
 
 dependencies {
     api(project(":boudicca.base:common-model"))
     api(project(":boudicca.base:fetcher-lib"))
     api(libs.biweekly)
+    api(libs.spring.boot.starter.web)
+    api(libs.handlebars)
+    api(libs.handlebars.springmvc)
     implementation(project(":boudicca.base:publisher-client"))
     implementation(project(":boudicca.base:ingest-client"))
     implementation(project(":boudicca.base:enricher-client"))
     implementation(project(":boudicca.base:remote-collector:remote-collector-client"))
-    implementation(libs.apache.velocity.engine.core)
-    implementation(libs.apache.velocity.tools.generic)
-    implementation(libs.logback)
 }

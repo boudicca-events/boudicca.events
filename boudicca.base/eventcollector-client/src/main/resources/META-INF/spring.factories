@@ -1,0 +1,2 @@
+org.springframework.boot.logging.LoggingSystemFactory=\
+ base.boudicca.api.eventcollector.webui.NoopLoggingSystemFactory

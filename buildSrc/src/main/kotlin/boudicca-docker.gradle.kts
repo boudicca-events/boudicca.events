@@ -1,6 +1,5 @@
 import org.gradle.api.tasks.Exec
 import org.gradle.kotlin.dsl.register
-import org.gradle.kotlin.dsl.task
 
 interface DockerPluginExtension {
     val imageName: Property<String>

@@ -17,10 +17,8 @@ import java.time.OffsetDateTime
  * All our [SemanticKeys] already have properties defined for them that you can use, but you can create also create new ones on the fly just by calling the constructor like `TextProperty("newProperty")`
  */
 interface Property<T> {
-    @Throws(IllegalArgumentException::class)
     fun parseToString(value: T): String
 
-    @Throws(IllegalArgumentException::class)
     fun parseFromString(string: String): T
 
     fun getKey(language: String? = null): Key

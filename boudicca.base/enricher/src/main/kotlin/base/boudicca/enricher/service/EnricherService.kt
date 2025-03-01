@@ -2,12 +2,11 @@ package base.boudicca.enricher.service
 
 import base.boudicca.api.enricher.model.EnrichRequestDTO
 import base.boudicca.model.Event
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 
 @Service
-class EnricherService @Autowired constructor(
+class EnricherService(
     private val enrichers: List<Enricher>,
     private val eventPublisher: ApplicationEventPublisher,
 ) {

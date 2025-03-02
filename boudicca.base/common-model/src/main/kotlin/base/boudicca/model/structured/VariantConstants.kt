@@ -15,8 +15,12 @@ object VariantConstants {
     object FormatVariantConstants {
         const val TEXT_FORMAT_NAME = ""
         const val NUMBER_FORMAT_NAME = "number"
+        const val BOOLEAN_FORMAT_NAME = "boolean"
         const val DATE_FORMAT_NAME = "date"
         const val LIST_FORMAT_NAME = "list"
+        const val ENUM_FORMAT_NAME = "enum"
+        const val URL_FORMAT_NAME = "url"
+        const val JSON_FORMAT_NAME = "json"
         const val MARKDOWN_FORMAT_NAME = "markdown"
     }
 

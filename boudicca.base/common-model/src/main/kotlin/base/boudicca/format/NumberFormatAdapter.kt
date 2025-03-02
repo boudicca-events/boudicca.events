@@ -1,5 +1,6 @@
 package base.boudicca.format
 
+import base.boudicca.model.structured.VariantConstants
 import java.math.BigDecimal
 
 /**
@@ -9,10 +10,8 @@ import java.math.BigDecimal
  *
  * all methods may throw exceptions on wrong formatted values
  */
-object NumberFormat {
-
-    @Throws(IllegalArgumentException::class)
-    fun parseFromString(value: String): Number {
+class NumberFormatAdapter: AbstractFormatAdapter<Number>(VariantConstants.FormatVariantConstants.NUMBER_FORMAT_NAME) {
+    override fun fromString(value: String): Number {
         try {
             return BigDecimal(value)
         } catch (e: NumberFormatException) {
@@ -20,7 +19,7 @@ object NumberFormat {
         }
     }
 
-    fun parseToString(value: Number): String {
+    override fun convertToString(value: Number): String {
         return value.toString()
     }
 }

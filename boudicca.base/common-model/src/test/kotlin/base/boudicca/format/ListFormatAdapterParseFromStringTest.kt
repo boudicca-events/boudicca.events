@@ -3,14 +3,7 @@ package base.boudicca.format
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
-class ListFormatParseFromStringTest {
-
-    @Test
-    fun testNull() {
-        val result = parseFromString(null)
-
-        assertEquals(0, result.size)
-    }
+class ListFormatAdapterParseFromStringTest {
 
     @Test
     fun testEmptyString() {
@@ -89,7 +82,7 @@ class ListFormatParseFromStringTest {
         assertEquals(listOf("1", "2,3\\", "4"), result)
     }
 
-    private fun parseFromString(s: String?): List<String> {
-        return ListFormat.parseFromString(s)
+    private fun parseFromString(s: String): List<String> {
+        return ListFormatAdapter().fromString(s)
     }
 }

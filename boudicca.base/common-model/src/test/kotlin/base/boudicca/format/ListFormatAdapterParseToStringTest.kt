@@ -4,56 +4,56 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
-class ListFormatParseToStringTest {
+class ListFormatAdapterParseToStringTest {
 
     @Test
     fun testEmptyList() {
-        assertThrows<IllegalArgumentException> { parseFromString(listOf()) }
+        assertThrows<IllegalArgumentException> { convertToString(listOf()) }
     }
 
     @Test
     fun testListWithEmptyString() {
-        val result = parseFromString(listOf(""))
+        val result = convertToString(listOf(""))
 
         assertEquals("", result)
     }
 
     @Test
     fun testListWithOneValue() {
-        val result = parseFromString(listOf("value"))
+        val result = convertToString(listOf("value"))
 
         assertEquals("value", result)
     }
 
     @Test
     fun testListWithTwoValues() {
-        val result = parseFromString(listOf("value1", "value2"))
+        val result = convertToString(listOf("value1", "value2"))
 
         assertEquals("value1,value2", result)
     }
 
     @Test
     fun testListWithValueWithComma() {
-        val result = parseFromString(listOf("val,ue"))
+        val result = convertToString(listOf("val,ue"))
 
         assertEquals("val\\,ue", result)
     }
 
     @Test
     fun testListWithValueWithBackslash() {
-        val result = parseFromString(listOf("val\\ue"))
+        val result = convertToString(listOf("val\\ue"))
 
         assertEquals("val\\\\ue", result)
     }
 
     @Test
     fun testComplex() {
-        val result = parseFromString(listOf("1,", ",2", "\\3", "4\\"))
+        val result = convertToString(listOf("1,", ",2", "\\3", "4\\"))
 
         assertEquals("1\\,,\\,2,\\\\3,4\\\\", result)
     }
 
-    private fun parseFromString(value: List<String>): String? {
-        return ListFormat.parseToString(value)
+    private fun convertToString(value: List<String>): String {
+        return ListFormatAdapter().convertToString(value)
     }
 }

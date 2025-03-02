@@ -1,5 +1,7 @@
 package base.boudicca.format
 
+import base.boudicca.model.structured.VariantConstants
+
 /**
  * parsing utils to get string values to format list and back
  *
@@ -7,9 +9,9 @@ package base.boudicca.format
  *
  * all methods may throw exceptions on wrong formatted values
  */
-object ListFormat {
-    fun parseFromString(value: String?): List<String> {
-        if (value == null) {
+class ListFormatAdapter: AbstractFormatAdapter<List<String>>(VariantConstants.FormatVariantConstants.LIST_FORMAT_NAME) {
+    override fun fromString(value: String): List<String> {
+        if (value.isBlank()) {
             return emptyList()
         }
         val result = mutableListOf<String>()
@@ -40,8 +42,7 @@ object ListFormat {
         return result
     }
 
-    @Throws(IllegalArgumentException::class)
-    fun parseToString(value: List<String>): String {
+    override fun convertToString(value: List<String>): String {
         require(value.isNotEmpty()) { "an empty list cannot be parsed to a string value" }
         return value.joinToString(",") { it.replace("\\", "\\\\").replace(",", "\\,") }
     }

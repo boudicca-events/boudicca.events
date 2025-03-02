@@ -2,10 +2,11 @@ package base.boudicca.model.structured
 
 import base.boudicca.Property
 import base.boudicca.SemanticKeys
-import base.boudicca.format.DateFormat
+import base.boudicca.format.DateFormatAdapter
 import base.boudicca.keyfilters.KeyFilters
 import base.boudicca.keyfilters.KeySelector
 import base.boudicca.model.Event
+import base.boudicca.model.structured.dsl.StructuredEventBuilder
 import java.time.OffsetDateTime
 import java.util.*
 
@@ -66,7 +67,7 @@ data class StructuredEvent(val name: String, val startDate: OffsetDateTime, val 
                 VariantConstants.FORMAT_VARIANT_NAME,
                 VariantConstants.FormatVariantConstants.DATE_FORMAT_NAME
             ).build()] =
-                DateFormat.parseToString(event.startDate)
+                DateFormatAdapter().convertToString(event.startDate)
             return entry
         }
 
@@ -94,7 +95,7 @@ data class StructuredEvent(val name: String, val startDate: OffsetDateTime, val 
             }
             val name = namePair.get().second
             val startDate = try {
-                DateFormat.parseFromString(startDatePair.get().second)
+                DateFormatAdapter().fromString(startDatePair.get().second)
             } catch (_: IllegalArgumentException) {
                 return Optional.empty()
             }

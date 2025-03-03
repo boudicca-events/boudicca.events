@@ -15,5 +15,5 @@ tasks.register<Exec>("imageBuild") {
     inputs.file("src/main/docker/Dockerfile")
     inputs.files(tasks.named(extension.jarCreationTaskName.get()))
     dependsOn(tasks.named("assemble"))
-    commandLine("docker", "build", "-t", "localhost/${extension.imageName.get()}", "-f", "src/main/docker/Dockerfile", ".")
+    commandLine("docker", "build", "-t", "localhost/boudicca-${extension.imageName.get()}", "-f", "src/main/docker/Dockerfile", ".")
 }

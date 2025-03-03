@@ -35,7 +35,7 @@ fun <T> StructuredEntry.getProperty(property: Property<T>): List<Pair<Key, T>> {
  */
 fun <T> StructuredEntry.getProperty(property: Property<T>, language: String?): List<Pair<Key, T>> {
     return KeyFilters
-        .filterKeys(property.getKey(language), this)
+        .filterKeys(property.getKeyFilter(language), this)
         .mapNotNull {
             try {
                 val parsedValue = property.parseFromString(it.second)

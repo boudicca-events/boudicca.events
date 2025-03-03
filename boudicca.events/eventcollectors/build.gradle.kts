@@ -13,7 +13,7 @@ dependencies {
 }
 
 docker {
-    imageName = "boudicca-events-eventcollectors"
+    imageName = "events-eventcollectors"
     jarCreationTaskName = "jar"
 }
 

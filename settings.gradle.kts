@@ -5,7 +5,6 @@ include("boudicca.base:enricher")
 include("boudicca.base:enricher-api")
 include("boudicca.base:enricher-client")
 include("boudicca.base:enricher-openapi")
-include("boudicca.base:enricher-utils")
 include("boudicca.base:ingest-client")
 include("boudicca.base:eventcollector-client")
 include("boudicca.base:eventdb")
@@ -30,5 +29,7 @@ include("boudicca.base:remote-collector")
 
 include("boudicca.events:eventcollectors")
 include("boudicca.events:publisher-event-html")
+include("boudicca.events:enricher")
+include("boudicca.events:enricher-utils")
 
 rootProject.name = "boudicca"

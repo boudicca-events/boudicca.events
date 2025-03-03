@@ -5,6 +5,7 @@ import com.github.jknack.handlebars.ValueResolver
 import com.github.jknack.handlebars.cache.NullTemplateCache
 import com.github.jknack.handlebars.helper.ConditionalHelpers
 import com.github.jknack.handlebars.springmvc.HandlebarsViewResolver
+import org.springframework.boot.autoconfigure.AutoConfiguration
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
@@ -19,6 +20,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 @EnableScheduling
 @ComponentScan
 @EnableConfigurationProperties(PublisherHtmlProperties::class)
+@AutoConfiguration
 class PublisherHtmlConfiguration(private val properties: PublisherHtmlProperties) : WebMvcConfigurer {
     @Bean
     fun handlebarsViewResolver(

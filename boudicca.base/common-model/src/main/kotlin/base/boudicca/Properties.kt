@@ -24,15 +24,24 @@ interface Property<T> {
     fun parseFromString(string: String): T
 
     fun getKey(language: String? = null): Key
+    fun getKeyFilter(language: String? = null): Key
 }
 
 abstract class AbstractProperty<T>(private val propertyName: String, private val formatValue: String) : Property<T> {
     override fun getKey(language: String?): Key {
+        return internalGetKey(false, language)
+    }
+
+    override fun getKeyFilter(language: String?): Key {
+        return internalGetKey(true, language)
+    }
+
+    private fun internalGetKey(alwaysIncludeFormat:Boolean, language: String?): Key {
         val builder = Key.builder(propertyName)
         if (!language.isNullOrEmpty()) {
             builder.withVariant(VariantConstants.LANGUAGE_VARIANT_NAME, language)
         }
-        if (formatValue.isNotEmpty()) {
+        if (alwaysIncludeFormat || formatValue.isNotEmpty()) {
             builder.withVariant(VariantConstants.FORMAT_VARIANT_NAME, formatValue)
         }
         return builder.build()

@@ -5,3 +5,7 @@ plugins {
 dependencies {
     implementation(project(":boudicca.base:publisher-event-html"))
 }
+
+docker {
+    imageName = "publisher-event-html"
+}

@@ -12,7 +12,8 @@ import java.time.format.DateTimeParseException
  *
  * all methods may throw exceptions on wrong formatted values
  */
-class DateFormatAdapter: AbstractFormatAdapter<OffsetDateTime>(VariantConstants.FormatVariantConstants.DATE_FORMAT_NAME) {
+class DateFormatAdapter :
+    AbstractFormatAdapter<OffsetDateTime>(VariantConstants.FormatVariantConstants.DATE_FORMAT_NAME) {
     override fun fromString(value: String): OffsetDateTime {
         try {
             return OffsetDateTime.parse(value, DateTimeFormatter.ISO_DATE_TIME)

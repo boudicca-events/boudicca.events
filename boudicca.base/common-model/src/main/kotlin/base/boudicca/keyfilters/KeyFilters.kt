@@ -27,18 +27,14 @@ object KeyFilters {
         key: Key,
         keyFilter: Key
     ): Boolean {
-        if (keyFilter.name != "*") {
-            if (keyFilter.name != key.name) {
-                return false
-            }
-        }
-        for (variant in keyFilter.variants) {
-            if (!containsVariant(key, variant)) {
-                return false
-            }
-        }
-        return true
+        return (isWildcard(keyFilter) || keyFilter.name == key.name &&
+                keyContainsAllVariants(keyFilter, key))
     }
+
+    private fun keyContainsAllVariants(keyFilter: Key, key: Key) =
+        keyFilter.variants.all { variant -> containsVariant(key, variant) }
+
+    private fun isWildcard(keyFilter: Key) = keyFilter.name == "*"
 
     fun containsVariant(key: Key, variant: Variant): Boolean {
         if (variant.variantValue == "*") {
@@ -48,10 +44,11 @@ object KeyFilters {
             return !doesContainVariantName(key, variant.variantName)
         }
         for (selfVariant in key.variants) {
-            if (variant.variantName == selfVariant.variantName) {
-                if (variant.variantValue == selfVariant.variantValue) {
-                    return true
-                }
+            if (variant.variantName == selfVariant.variantName &&
+                variant.variantValue == selfVariant.variantValue
+            ) {
+                return true
+
             }
         }
         return false

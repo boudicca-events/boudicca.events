@@ -4,7 +4,6 @@ package base.boudicca.model.structured
  * utils for parsing keys
  */
 object KeyUtils {
-    @Throws(IllegalArgumentException::class)
     fun toStructuredKeyValuePairs(map: Map<String, String>): Map<Key, String> {
         val foundKeys = mutableSetOf<Key>()
         val result = mutableMapOf<Key, String>()
@@ -25,7 +24,6 @@ object KeyUtils {
         return data.mapKeys { it.key.toKeyString() }
     }
 
-    @Throws(IllegalArgumentException::class)
     fun parseKey(propertyKey: String): Key {
         val trimmedPropertyKey = propertyKey.trim()
         if (trimmedPropertyKey.isEmpty()) {

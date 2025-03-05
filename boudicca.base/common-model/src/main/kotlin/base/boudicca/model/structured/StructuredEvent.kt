@@ -2,10 +2,11 @@ package base.boudicca.model.structured
 
 import base.boudicca.Property
 import base.boudicca.SemanticKeys
-import base.boudicca.format.DateFormat
+import base.boudicca.format.DateFormatAdapter
 import base.boudicca.keyfilters.KeyFilters
 import base.boudicca.keyfilters.KeySelector
 import base.boudicca.model.Event
+import base.boudicca.model.structured.dsl.StructuredEventBuilder
 import java.time.OffsetDateTime
 import java.util.*
 
@@ -66,7 +67,7 @@ data class StructuredEvent(val name: String, val startDate: OffsetDateTime, val 
                 VariantConstants.FORMAT_VARIANT_NAME,
                 VariantConstants.FormatVariantConstants.DATE_FORMAT_NAME
             ).build()] =
-                DateFormat.parseToString(event.startDate)
+                DateFormatAdapter().convertToString(event.startDate)
             return entry
         }
 
@@ -94,7 +95,7 @@ data class StructuredEvent(val name: String, val startDate: OffsetDateTime, val 
             }
             val name = namePair.get().second
             val startDate = try {
-                DateFormat.parseFromString(startDatePair.get().second)
+                DateFormatAdapter().fromString(startDatePair.get().second)
             } catch (_: IllegalArgumentException) {
                 return Optional.empty()
             }
@@ -103,42 +104,7 @@ data class StructuredEvent(val name: String, val startDate: OffsetDateTime, val 
             data.remove(startDatePair.get().first)
             return Optional.of(StructuredEvent(name, startDate, data))
         }
-
-        fun builder(): StructuredEventBuilder {
-            return StructuredEventBuilder(null, null)
-        }
-
-        fun builder(name: String, startDate: OffsetDateTime): StructuredEventBuilder {
-            return StructuredEventBuilder(name, startDate)
-        }
     }
 
-    class StructuredEventBuilder internal constructor(
-        private var name: String?,
-        private var startDate: OffsetDateTime?,
-        data: Map<Key, String> = emptyMap()
-    ) : AbstractStructuredBuilder<StructuredEvent, StructuredEventBuilder>(data.toMutableMap()) {
 
-        fun withName(name: String): StructuredEventBuilder {
-            this.name = name
-            return this
-        }
-
-        fun withStartDate(startDate: OffsetDateTime): StructuredEventBuilder {
-            this.startDate = startDate
-            return this
-        }
-
-        fun copy(): StructuredEventBuilder {
-            return StructuredEventBuilder(name, startDate, data.toMutableMap())
-        }
-
-        override fun build(): StructuredEvent {
-            return StructuredEvent(
-                checkNotNull(name) { "name cannot be null for an event!" },
-                checkNotNull(startDate) { "startDate cannot be null for an event!" },
-                data.toMap()
-            )
-        }
-    }
 }

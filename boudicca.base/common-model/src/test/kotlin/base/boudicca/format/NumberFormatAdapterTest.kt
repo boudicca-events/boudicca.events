@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.math.BigDecimal
 
-class NumberFormatTest {
+class NumberFormatAdapterTest {
     @Test
     fun testParseFromStringInvalidValues() {
         assertThrows<IllegalArgumentException> { parseFromString("") }
@@ -21,7 +21,7 @@ class NumberFormatTest {
     }
 
     private fun parseFromString(s: String): Number {
-        return NumberFormat.parseFromString(s)
+        return NumberFormatAdapter().fromString(s)
     }
 
     @Test
@@ -32,6 +32,6 @@ class NumberFormatTest {
     }
 
     private fun parseToString(date: Number): String {
-        return NumberFormat.parseToString(date)
+        return NumberFormatAdapter().convertToString(date)
     }
 }

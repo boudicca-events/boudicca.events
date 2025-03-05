@@ -4,7 +4,6 @@ import base.boudicca.Property
 
 abstract class AbstractStructuredBuilder<T, B : AbstractStructuredBuilder<T, B>>(protected val data: MutableMap<Key, String> = mutableMapOf()) {
 
-    @Throws(IllegalArgumentException::class)
     fun <P> withProperty(
         property: Property<P>,
         value: P?,

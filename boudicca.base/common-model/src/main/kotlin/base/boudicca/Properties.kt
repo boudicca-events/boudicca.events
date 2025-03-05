@@ -1,8 +1,6 @@
 package base.boudicca
 
-import base.boudicca.format.DateFormat
-import base.boudicca.format.ListFormat
-import base.boudicca.format.NumberFormat
+import base.boudicca.format.*
 import base.boudicca.model.structured.Key
 import base.boudicca.model.structured.VariantConstants
 import java.lang.reflect.InvocationTargetException
@@ -12,22 +10,25 @@ import java.time.OffsetDateTime
 /**
  * Properties are helpers allowing you to easier work with getting/setting values in their correct type for events/entries.
  * You can use existing properties, where each property supports a different format variant, like the [TextProperty] or [ListProperty],
- * but you can also easily create support for a new format/type by extending [AbstractProperty] or [Property].
+ * but you can also easily create support for a new format/type by extending [GenericProperty] or [Property].
  *
  * All our [SemanticKeys] already have properties defined for them that you can use, but you can create also create new ones on the fly just by calling the constructor like `TextProperty("newProperty")`
  */
 interface Property<T> {
-    @Throws(IllegalArgumentException::class)
     fun parseToString(value: T): String
 
-    @Throws(IllegalArgumentException::class)
     fun parseFromString(string: String): T
 
     fun getKey(language: String? = null): Key
     fun getKeyFilter(language: String? = null): Key
 }
 
-abstract class AbstractProperty<T>(private val propertyName: String, private val formatValue: String) : Property<T> {
+// TODO: can we somehow streamline this? right now we have markdown and url using the string adapter, which is bad
+abstract class AbstractProperty<T>(
+    private val propertyName: String,
+    private val adapter: AbstractFormatAdapter<String>
+) :
+    Property<T> {
     override fun getKey(language: String?): Key {
         return internalGetKey(false, language)
     }
@@ -36,39 +37,50 @@ abstract class AbstractProperty<T>(private val propertyName: String, private val
         return internalGetKey(true, language)
     }
 
-    private fun internalGetKey(alwaysIncludeFormat:Boolean, language: String?): Key {
+    private fun internalGetKey(alwaysIncludeFormat: Boolean, language: String?): Key {
         val builder = Key.builder(propertyName)
         if (!language.isNullOrEmpty()) {
             builder.withVariant(VariantConstants.LANGUAGE_VARIANT_NAME, language)
         }
-        if (alwaysIncludeFormat || formatValue.isNotEmpty()) {
-            builder.withVariant(VariantConstants.FORMAT_VARIANT_NAME, formatValue)
+        if (adapter.formatVariantValue.isNotEmpty()) {
+            builder.withVariant(VariantConstants.FORMAT_VARIANT_NAME, adapter.formatVariantValue)
         }
         return builder.build()
     }
 }
 
-class TextProperty(propertyName: String) : AbstractProperty<String>(propertyName, VariantConstants.FormatVariantConstants.TEXT_FORMAT_NAME) {
-    override fun parseToString(value: String): String {
-        return value
+open class GenericProperty<T>(private val propertyName: String, private val adapter: AbstractFormatAdapter<T>) :
+    Property<T> {
+    override fun parseToString(value: T): String = adapter.convertToString(value)
+
+    override fun parseFromString(string: String): T = adapter.fromString(string)
+
+    override fun getKey(language: String?): Key {
+        return internalGetKey(false, language)
     }
 
-    override fun parseFromString(string: String): String {
-        return string
+    override fun getKeyFilter(language: String?): Key {
+        return internalGetKey(true, language)
+    }
+
+    private fun internalGetKey(alwaysIncludeFormat: Boolean, language: String?): Key {
+        val builder = Key.builder(propertyName)
+        if (!language.isNullOrEmpty()) {
+            builder.withVariant(VariantConstants.LANGUAGE_VARIANT_NAME, language)
+        }
+        if (adapter.formatVariantValue.isNotEmpty()) {
+            builder.withVariant(VariantConstants.FORMAT_VARIANT_NAME, adapter.formatVariantValue)
+        }
+        return builder.build()
     }
 }
 
-class MarkdownProperty(propertyName: String) : AbstractProperty<String>(propertyName, VariantConstants.FormatVariantConstants.MARKDOWN_FORMAT_NAME) {
-    override fun parseToString(value: String): String {
-        return value
-    }
+class TextProperty(propertyName: String) : GenericProperty<String>(propertyName, TextFormatAdapter())
 
-    override fun parseFromString(string: String): String {
-        return string
-    }
-}
+class MarkdownProperty(propertyName: String) : GenericProperty<String>(propertyName, MarkdownFormatAdapter())
 
-class UrlProperty(propertyName: String) : AbstractProperty<URI>(propertyName, VariantConstants.FormatVariantConstants.TEXT_FORMAT_NAME) {
+class UrlProperty(propertyName: String) :
+    AbstractProperty<URI>(propertyName, TextFormatAdapter(VariantConstants.FormatVariantConstants.URL_FORMAT_NAME)) {
     override fun parseToString(value: URI): String {
         return value.toString()
     }
@@ -78,38 +90,14 @@ class UrlProperty(propertyName: String) : AbstractProperty<URI>(propertyName, Va
     }
 }
 
-class DateProperty(propertyName: String) : AbstractProperty<OffsetDateTime>(propertyName, VariantConstants.FormatVariantConstants.DATE_FORMAT_NAME) {
-    override fun parseToString(value: OffsetDateTime): String {
-        return DateFormat.parseToString(value)
-    }
+class DateProperty(propertyName: String) : GenericProperty<OffsetDateTime>(propertyName, DateFormatAdapter())
 
-    override fun parseFromString(string: String): OffsetDateTime {
-        return DateFormat.parseFromString(string)
-    }
-}
+class ListProperty(propertyName: String) : GenericProperty<List<String>>(propertyName, ListFormatAdapter())
 
-class ListProperty(propertyName: String) : AbstractProperty<List<String>>(propertyName, VariantConstants.FormatVariantConstants.LIST_FORMAT_NAME) {
-    override fun parseToString(value: List<String>): String {
-        return ListFormat.parseToString(value)
-    }
-
-    override fun parseFromString(string: String): List<String> {
-        return ListFormat.parseFromString(string)
-    }
-}
-
-class NumberProperty(propertyName: String) : AbstractProperty<Number>(propertyName, VariantConstants.FormatVariantConstants.NUMBER_FORMAT_NAME) {
-    override fun parseToString(value: Number): String {
-        return NumberFormat.parseToString(value)
-    }
-
-    override fun parseFromString(string: String): Number {
-        return NumberFormat.parseFromString(string)
-    }
-}
+class NumberProperty(propertyName: String) : GenericProperty<Number>(propertyName, NumberFormatAdapter())
 
 class EnumProperty<E : Enum<E>>(propertyName: String, private val enumClass: Class<E>) :
-    AbstractProperty<E>(propertyName, VariantConstants.FormatVariantConstants.TEXT_FORMAT_NAME) {
+    AbstractProperty<E>(propertyName, TextFormatAdapter(VariantConstants.FormatVariantConstants.ENUM_FORMAT_NAME)) {
     override fun parseToString(value: E): String {
         return value.name
     }
@@ -124,7 +112,10 @@ class EnumProperty<E : Enum<E>>(propertyName: String, private val enumClass: Cla
     }
 }
 
-class BooleanProperty(propertyName: String) : AbstractProperty<Boolean>(propertyName, VariantConstants.FormatVariantConstants.TEXT_FORMAT_NAME) {
+class BooleanProperty(propertyName: String) : AbstractProperty<Boolean>(
+    propertyName,
+    TextFormatAdapter(VariantConstants.FormatVariantConstants.BOOLEAN_FORMAT_NAME)
+) {
     override fun parseToString(value: Boolean): String {
         return value.toString()
     }

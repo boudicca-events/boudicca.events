@@ -5,6 +5,7 @@
 plugins {
     id("boudicca-base")
     kotlin("jvm")
+    id("io.gitlab.arturbosch.detekt")
 }
 
 kotlin {

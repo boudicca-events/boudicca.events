@@ -42,7 +42,7 @@ abstract class AbstractProperty<T>(
         if (!language.isNullOrEmpty()) {
             builder.withVariant(VariantConstants.LANGUAGE_VARIANT_NAME, language)
         }
-        if (adapter.formatVariantValue.isNotEmpty()) {
+        if (alwaysIncludeFormat || adapter.formatVariantValue.isNotEmpty()) {
             builder.withVariant(VariantConstants.FORMAT_VARIANT_NAME, adapter.formatVariantValue)
         }
         return builder.build()
@@ -68,7 +68,7 @@ open class GenericProperty<T>(private val propertyName: String, private val adap
         if (!language.isNullOrEmpty()) {
             builder.withVariant(VariantConstants.LANGUAGE_VARIANT_NAME, language)
         }
-        if (adapter.formatVariantValue.isNotEmpty()) {
+        if (alwaysIncludeFormat || adapter.formatVariantValue.isNotEmpty()) {
             builder.withVariant(VariantConstants.FORMAT_VARIANT_NAME, adapter.formatVariantValue)
         }
         return builder.build()

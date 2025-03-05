@@ -80,7 +80,10 @@ class EventCollectionRunner(
             }
         }
         for (field in allFields.minus(nonBlankFields)) {
-            logger.warn { "eventcollector ${eventCollector.getName()} has blank values for all events for field $field" }
+            logger.warn {
+                "eventcollector ${eventCollector.getName()} " +
+                        "has blank values for all events for field $field"
+            }
         }
     }
 

@@ -5,6 +5,7 @@ import base.boudicca.api.eventcollector.TwoStepEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
+import base.boudicca.model.structured.dsl.structuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.time.LocalDate
@@ -21,8 +22,7 @@ class OehJkuCollector : TwoStepEventCollector<String>("oehjku") {
 
     override fun getAllUnparsedEvents(): List<String> {
         val document = Jsoup.parse(fetcher.fetchUrl(baseUrl + "oeh-services/veranstaltungen"))
-        return document.select("article.card a")
-            .map { it.attr("href") }
+        return document.select("article.card a").map { it.attr("href") }
     }
 
     override fun parseStructuredEvent(event: String): StructuredEvent {
@@ -33,14 +33,13 @@ class OehJkuCollector : TwoStepEventCollector<String>("oehjku") {
 
         val location = findTextByIconHref(eventSite, "icon-pin")
 
-        return StructuredEvent
-            .builder(name, startDate)
-            .withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(baseUrl + event))
-            .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, location)
-            .withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse("https://www.jku.at/"))
-            .withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Linz")
-            .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(baseUrl + event))
-            .build()
+        return structuredEvent(name, startDate) {
+            withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(baseUrl + event))
+            withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, location)
+            withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse("https://www.jku.at/"))
+            withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Linz")
+            withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(baseUrl + event))
+        }
     }
 
     private fun parseDate(eventSite: Element): OffsetDateTime {

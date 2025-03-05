@@ -3,6 +3,7 @@ package base.boudicca.enricher.service
 import base.boudicca.SemanticKeys
 import base.boudicca.model.structured.Key
 import base.boudicca.model.structured.StructuredEvent
+import base.boudicca.model.structured.dsl.StructuredEventBuilder
 import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Service
 
@@ -23,7 +24,7 @@ class TypeEnricher : Enricher {
         }
     }
 
-    private fun mapType(builder: StructuredEvent.StructuredEventBuilder, key: Key, value: String) {
+    private fun mapType(builder: StructuredEventBuilder, key: Key, value: String) {
         val lowerType = value.lowercase()
         for (knownMusicType in KNOWN_MUSIC_TYPES) {
             if (lowerType.indexOf(knownMusicType) != -1) {

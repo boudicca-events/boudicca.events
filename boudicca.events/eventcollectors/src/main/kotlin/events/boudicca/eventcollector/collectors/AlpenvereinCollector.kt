@@ -6,6 +6,7 @@ import base.boudicca.api.eventcollector.TwoStepEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
+import base.boudicca.model.structured.dsl.structuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.net.URI
@@ -62,21 +63,20 @@ class AlpenvereinCollector : TwoStepEventCollector<String>("alpenverein") {
 
         val (startDate, endDate) = parseDates(eventSite)
 
-        return StructuredEvent
-            .builder(name, startDate)
-            .withProperty(SemanticKeys.NAME_PROPERTY, name)
-            .withProperty(SemanticKeys.ENDDATE_PROPERTY, endDate)
-            .withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(event))
-            .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(event))
-            .withProperty(SemanticKeys.TYPE_PROPERTY, "sport")
-            .withProperty(TextProperty("sport.participation"), "active")
-            .withProperty(
+        return structuredEvent(name, startDate) {
+            withProperty(SemanticKeys.NAME_PROPERTY, name)
+            withProperty(SemanticKeys.ENDDATE_PROPERTY, endDate)
+            withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(event))
+            withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(event))
+            withProperty(SemanticKeys.TYPE_PROPERTY, "sport")
+            withProperty(TextProperty("sport.participation"), "active")
+            withProperty(
                 SemanticKeys.DESCRIPTION_TEXT_PROPERTY,
                 eventSite.select("div.elementBoxSheet div.elementText").text()
             )
-            .withProperty(SemanticKeys.PICTURE_URL_PROPERTY, getPictureUrl(eventSite))
-            .withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, getLocationCity(eventSite))
-            .build()
+            withProperty(SemanticKeys.PICTURE_URL_PROPERTY, getPictureUrl(eventSite))
+            withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, getLocationCity(eventSite))
+        }
     }
 
     private fun getLocationCity(eventSite: Document): String? {

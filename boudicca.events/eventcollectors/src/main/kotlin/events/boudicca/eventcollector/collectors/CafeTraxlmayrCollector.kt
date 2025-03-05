@@ -5,6 +5,8 @@ import base.boudicca.api.eventcollector.TwoStepEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
+import base.boudicca.model.structured.dsl.StructuredEventBuilder
+import base.boudicca.model.structured.dsl.structuredEvent
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
@@ -29,52 +31,58 @@ class CafeTraxlmayrCollector : TwoStepEventCollector<Element>("cafetraxlmayr") {
             .map { document.select(it).first()!! }
     }
 
-    override fun parseMultipleStructuredEvents(event: Element): List<StructuredEvent> {
-        val builder = StructuredEvent
-            .builder()
-            .withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(baseUrl))
-            .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(baseUrl))
-            .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Café Traxlmayr")
-            .withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse("https://www.cafe-traxlmayr.at/"))
-            .withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Linz")
-            .withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(event.select("img").attr("src")))
-        val title = event.select("h3").text()
+    override fun parseMultipleStructuredEvents(eventData: Element): List<StructuredEvent> {
+
+        val title = eventData.select("h3").text()
         return if (title.contains("|")) {
-            parseConcert(title, event, builder)
+            parseConcert(title, eventData)
         } else if (title == "Die nächsten Lesungen im Café Traxlmayr") {
-            parseLesungen(event, builder)
+            parseLesungen(eventData)
         } else if (title.contains("aktuelle Ausstellung im Café Traxlmayr")) {
             //ignore
             emptyList()
         } else {
-            logger.error { "unknown event format: $event" }
+            logger.error { "unknown event format: $eventData" }
             emptyList()
         }
     }
 
+    private fun StructuredEventBuilder.applyCommonProperties(eventData: Element) {
+        withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(baseUrl))
+        withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(baseUrl))
+        withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Café Traxlmayr")
+        withProperty(
+            SemanticKeys.LOCATION_URL_PROPERTY,
+            UrlUtils.parse("https://www.cafe-traxlmayr.at/")
+        )
+        withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Linz")
+        withProperty(
+            SemanticKeys.PICTURE_URL_PROPERTY,
+            UrlUtils.parse(eventData.select("img").attr("src"))
+        )
+    }
+
     private fun parseConcert(
         title: String,
-        event: Element,
-        builder: StructuredEvent.StructuredEventBuilder
+        eventData: Element,
     ): List<StructuredEvent> {
         val split = title.split(" | ")
         val name = split[0].trim()
-        val bodyLines = event.select(".modal-body p strong").textNodes()
+        val bodyLines = eventData.select(".modal-body p strong").textNodes()
 
         val fullDateText = bodyLines.first { it.text().contains("Uhr") }
 
         val startDate = parseDateForConcert(fullDateText.text().trim())
 
-        builder
-            .withName(name)
-            .withStartDate(startDate)
-            .withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, event.select(".modal-body").text())
-
-        return listOf(builder.build())
+        val event = structuredEvent(name, startDate) {
+            applyCommonProperties(eventData)
+            withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, eventData.select(".modal-body").text())
+        }
+        return listOf(event)
     }
 
-    private fun parseLesungen(event: Element, builder: StructuredEvent.StructuredEventBuilder): List<StructuredEvent> {
-        val contentBlocks = event.select(".modal-body > *")
+    private fun parseLesungen(eventData: Element): List<StructuredEvent> {
+        val contentBlocks = eventData.select(".modal-body > *")
         var startDate = OffsetDateTime.MIN
         var name = ""
         var description = ""
@@ -99,13 +107,11 @@ class CafeTraxlmayrCollector : TwoStepEventCollector<Element>("cafetraxlmayr") {
                     null
                 }
                 events.add(
-                    builder
-                        .copy()
-                        .withName(name)
-                        .withStartDate(startDate)
-                        .withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
-                        .withProperty(SemanticKeys.PICTURE_URL_PROPERTY, pictureUrl)
-                        .build()
+                    structuredEvent(name, startDate) {
+                        applyCommonProperties(eventData)
+                        withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
+                        withProperty(SemanticKeys.PICTURE_URL_PROPERTY, pictureUrl)
+                    }
                 )
                 startDate = OffsetDateTime.MIN
                 name = ""

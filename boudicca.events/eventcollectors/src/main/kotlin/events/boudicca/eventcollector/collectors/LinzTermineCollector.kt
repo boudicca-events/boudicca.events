@@ -7,6 +7,8 @@ import base.boudicca.format.UrlUtils
 import base.boudicca.model.Registration
 import base.boudicca.model.structured.Key
 import base.boudicca.model.structured.StructuredEvent
+import base.boudicca.model.structured.dsl.StructuredEventBuilder
+import base.boudicca.model.structured.dsl.structuredEvent
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -66,13 +68,12 @@ class LinzTermineCollector : EventCollector {
         locations: Map<Int, Location>,
         eventWebsites: Map<String, Document>
     ): List<StructuredEvent> {
-        val mappedEvents = mutableListOf<StructuredEvent>()
-        for (event in eventList) {
+        val mappedEvents = eventList.flatMap { event ->
             if (event.dates.isEmpty()) {
                 logger.warn { "event does not contain any dates: $event" }
-                continue
+                return@flatMap emptyList()
             }
-            val website = eventWebsites[event.url] ?: continue
+            val website = eventWebsites[event.url] ?: return@flatMap emptyList()
 
             var location = locations[event.locationId]
             while (location?.subOf != null && locations[location.subOf] != null) {
@@ -84,48 +85,50 @@ class LinzTermineCollector : EventCollector {
             } else {
                 ""
             }
-            val builder = StructuredEvent
-                .builder()
-                .withName(event.name)
-                .withProperty(SemanticKeys.TYPE_PROPERTY, mapEventType(event.type))
-                .withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
-                .withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(pictureUrl))
-                .withProperty(
-                    SemanticKeys.REGISTRATION_PROPERTY,
-                    (if (event.freeOfCharge) Registration.FREE else Registration.TICKET)
-                )
-                .withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(event.url))
-                .withProperty(
-                    SemanticKeys.LOCATION_NAME_PROPERTY,
-                    (location?.name ?: event.locationFallbackName)
-                ) //they do not include all locations in their location.xml files -.-
-                .withProperty(
-                    SemanticKeys.LOCATION_CITY_PROPERTY,
-                    (location?.city)
-                )
-                .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(event.url, eventsBaseUrl, locationBaseUrl))
-            mapAdditionalProperties(event, builder)
 
-            for (date in event.dates) {
-                mappedEvents.add(
-                    builder
-                        .copy()
-                        .withStartDate(date.first)
-                        .withProperty(SemanticKeys.ENDDATE_PROPERTY, date.second)
-                        .build()
-                )
+            event.dates.map { date ->
+                structuredEvent(event.name, date.first) {
+                    withCommonProperties(event, description, pictureUrl, location)
+                    withProperty(SemanticKeys.ENDDATE_PROPERTY, date.second)
+                }
             }
         }
         return mappedEvents
     }
 
-    private fun mapAdditionalProperties(event: LinzTermineEvent, builder: StructuredEvent.StructuredEventBuilder) {
+    private fun StructuredEventBuilder.withCommonProperties(
+        event: LinzTermineEvent,
+        description: String?,
+        pictureUrl: String,
+        location: Location?
+    ) {
+        withProperty(SemanticKeys.TYPE_PROPERTY, mapEventType(event.type))
+        withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
+        withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(pictureUrl))
+        withProperty(
+            SemanticKeys.REGISTRATION_PROPERTY,
+            (if (event.freeOfCharge) Registration.FREE else Registration.TICKET)
+        )
+        withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(event.url))
+        withProperty(
+            SemanticKeys.LOCATION_NAME_PROPERTY,
+            (location?.name ?: event.locationFallbackName)
+        ) //they do not include all locations in their location.xml files -.-
+        withProperty(
+            SemanticKeys.LOCATION_CITY_PROPERTY,
+            (location?.city)
+        )
+        withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(event.url, eventsBaseUrl, locationBaseUrl))
+        withAdditionalProperties(event)
+    }
+
+    private fun StructuredEventBuilder.withAdditionalProperties(event: LinzTermineEvent) {
         //TODO make a semantic key out of this
         if (event.type?.first == 401) {
-            builder.withKeyValuePair(Key.builder("sport.participation").build(), "watch")
+            this.withKeyValuePair(Key.builder("sport.participation").build(), "watch")
         }
         if (event.type?.first == 402) {
-            builder.withKeyValuePair(Key.builder("sport.participation").build(), "active")
+            this.withKeyValuePair(Key.builder("sport.participation").build(), "active")
         }
     }
 

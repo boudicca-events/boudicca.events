@@ -5,6 +5,8 @@
 plugins {
     id("boudicca-base")
     kotlin("jvm")
+    // disable until https://github.com/boudicca-events/boudicca.events/issues/663 is discussed
+    // id("io.gitlab.arturbosch.detekt")
 }
 
 kotlin {
@@ -12,6 +14,10 @@ kotlin {
     compilerOptions {
         javaParameters = true
     }
+}
+
+detekt {
+    config.setFrom("${project.rootDir}/default-detekt-config.yml")
 }
 
 val versionCatalog = versionCatalogs.named("libs")

@@ -5,6 +5,7 @@ import base.boudicca.api.eventcollector.TwoStepEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
+import base.boudicca.model.structured.dsl.structuredEvent
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
 import java.io.StringReader
@@ -37,14 +38,13 @@ class EnnsEventsCollector : TwoStepEventCollector<JsonObject>("ennsevents") {
             "https://erlebe.enns.at/uploads/images/thumbs_square/" + event.string("picture")
         ) else null
 
-        return StructuredEvent
-            .builder(name, startDate)
-            .withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(url))
-            .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(url))
-            .withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
-            .withProperty(SemanticKeys.PICTURE_URL_PROPERTY, pictureUrl)
-            .withProperty(SemanticKeys.LOCATION_URL_PROPERTY, locationUrl)
-            .build()
+        return structuredEvent(name, startDate) {
+            withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(url))
+            withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(url))
+            withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
+            withProperty(SemanticKeys.PICTURE_URL_PROPERTY, pictureUrl)
+            withProperty(SemanticKeys.LOCATION_URL_PROPERTY, locationUrl)
+        }
     }
 
     private fun parseDate(element: JsonObject): OffsetDateTime {

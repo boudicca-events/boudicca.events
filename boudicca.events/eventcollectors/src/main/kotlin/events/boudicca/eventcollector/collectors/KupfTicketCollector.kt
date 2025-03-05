@@ -5,6 +5,7 @@ import base.boudicca.api.eventcollector.TwoStepEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
+import base.boudicca.model.structured.dsl.structuredEvent
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
 import com.beust.klaxon.lookup
@@ -56,15 +57,15 @@ class KupfTicketCollector : TwoStepEventCollector<String>("kupfticket") {
 
         val locationNameAndAddress = splitLocation(location)
 
-        return StructuredEvent.builder(name, startDate)
-            .withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
-            .withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(url))
-            .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, locationNameAndAddress.first)
-            .withProperty(SemanticKeys.LOCATION_ADDRESS_PROPERTY, locationNameAndAddress.second)
-            .withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(pictureUrl))
-            .withProperty(SemanticKeys.ENDDATE_PROPERTY, endDate)
-            .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(url))
-            .build()
+        return structuredEvent(name, startDate) {
+            withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
+            withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(url))
+            withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, locationNameAndAddress.first)
+            withProperty(SemanticKeys.LOCATION_ADDRESS_PROPERTY, locationNameAndAddress.second)
+            withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(pictureUrl))
+            withProperty(SemanticKeys.ENDDATE_PROPERTY, endDate)
+            withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(url))
+        }
     }
 
     private fun splitLocation(location: String): Pair<String, String?> {

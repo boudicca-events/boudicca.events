@@ -5,6 +5,7 @@ import base.boudicca.api.eventcollector.TwoStepEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
+import base.boudicca.model.structured.dsl.structuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.time.LocalDate
@@ -42,22 +43,21 @@ class OKHVoecklabruckCollector : TwoStepEventCollector<Pair<String, String>>("ok
         val locationInfo = eventSite.select("p.ort").text()
         val accessibleEntry = locationInfo.contains("Barrierefreier Zugang")
 
-        return StructuredEvent
-            .builder(name, dates.first)
-            .withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(url))
-            .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(url))
-            .withProperty(SemanticKeys.TYPE_PROPERTY, eventType)
-            .withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, eventSite.select("div.box_3").text())
-            .withProperty(
+        return structuredEvent(name, dates.first) {
+            withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(url))
+            withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(url))
+            withProperty(SemanticKeys.TYPE_PROPERTY, eventType)
+            withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, eventSite.select("div.box_3").text())
+            withProperty(
                 SemanticKeys.PICTURE_URL_PROPERTY,
                 UrlUtils.parse(baseUrl + eventSite.select("div#headerpic img.header").attr("src").trim())
             )
-            .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Offenes Kulturhaus Vöcklabruck")
-            .withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse(baseUrl))
-            .withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Vöcklabruck")
-            .withProperty(SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY_PROPERTY, accessibleEntry)
-            .withProperty(SemanticKeys.ENDDATE_PROPERTY, dates.second)
-            .build()
+            withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Offenes Kulturhaus Vöcklabruck")
+            withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse(baseUrl))
+            withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Vöcklabruck")
+            withProperty(SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY_PROPERTY, accessibleEntry)
+            withProperty(SemanticKeys.ENDDATE_PROPERTY, dates.second)
+        }
     }
 
     private fun parseDates(element: Element): Pair<OffsetDateTime, OffsetDateTime?> {

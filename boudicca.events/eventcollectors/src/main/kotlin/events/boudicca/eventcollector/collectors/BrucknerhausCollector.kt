@@ -5,6 +5,7 @@ import base.boudicca.api.eventcollector.TwoStepEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
+import base.boudicca.model.structured.dsl.structuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -51,22 +52,21 @@ class BrucknerhausCollector : TwoStepEventCollector<Element>("brucknerhaus") {
             description = event.select("div.event__teaser .fr-view").first()?.children()?.first()?.text() ?: ""
         }
 
-        val builder = StructuredEvent
-            .builder()
-            .withName(name)
-            .withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(url))
-            .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(url))
-            .withProperty(
-                SemanticKeys.PICTURE_URL_PROPERTY,
-                UrlUtils.parse(event.select("div.event__image img").attr("src"))
-            )
-            .withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
-            .withProperty(SemanticKeys.TYPE_PROPERTY, "concert") //TODO check
-            .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Brucknerhaus") //TODO not all events are there...
-            .withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse("https://www.brucknerhaus.at/"))
-            .withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Linz")
-
-        return startDates.map { startDate -> builder.copy().withStartDate(startDate).build() }
+        return startDates.map { startDate ->
+            structuredEvent(name, startDate) {
+                withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(url))
+                withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(url))
+                withProperty(
+                    SemanticKeys.PICTURE_URL_PROPERTY,
+                    UrlUtils.parse(event.select("div.event__image img").attr("src"))
+                )
+                withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
+                withProperty(SemanticKeys.TYPE_PROPERTY, "concert") //TODO check
+                withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Brucknerhaus") //TODO not all events are there...
+                withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse("https://www.brucknerhaus.at/"))
+                withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Linz")
+            }
+        }
     }
 
     private fun parseDate(event: Element): List<OffsetDateTime> {

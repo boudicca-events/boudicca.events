@@ -17,7 +17,11 @@ class RecurrenceTypeEnricherTest {
                 Event("group 1", OffsetDateTime.now().plusDays(2), mapOf()),
                 Event("group 1", OffsetDateTime.now().plusDays(3), mapOf()),
                 Event("group 1", OffsetDateTime.now().plusDays(4), mapOf(SemanticKeys.RECURRENCE_TYPE to "RARELY")),
-                Event("group 1", OffsetDateTime.now().plusDays(5), mapOf(SemanticKeys.RECURRENCE_TYPE to "willbeoverwritten")),
+                Event(
+                    "group 1",
+                    OffsetDateTime.now().plusDays(5),
+                    mapOf(SemanticKeys.RECURRENCE_TYPE to "willbeoverwritten")
+                ),
                 //group 2 should NOT be detected as recurring
                 Event("group 2", OffsetDateTime.now().plusDays(6), mapOf()),
                 Event("group 2", OffsetDateTime.now().plusDays(7), mapOf(SemanticKeys.RECURRENCE_TYPE to "RARELY")),

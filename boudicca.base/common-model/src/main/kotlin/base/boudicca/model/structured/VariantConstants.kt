@@ -19,6 +19,7 @@ object VariantConstants {
         const val DATE_FORMAT_NAME = "date"
         const val LIST_FORMAT_NAME = "list"
         const val MARKDOWN_FORMAT_NAME = "markdown"
+
         // for now we treat enums and json as plain text
         // TODO discuss in https://github.com/boudicca-events/boudicca.events/issues/662 how to handle this
         const val URL_FORMAT_NAME = ""

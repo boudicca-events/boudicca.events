@@ -76,8 +76,7 @@ object BoudiccaQueryBuilder {
     }
 
     private fun booleanMultiQuery(
-        subQueries: Iterable<String>,
-        operator: String
+        subQueries: Iterable<String>, operator: String
     ): String {
         if (subQueries.count() == 0) {
             throw IllegalArgumentException("you have to pass at least one subquery")

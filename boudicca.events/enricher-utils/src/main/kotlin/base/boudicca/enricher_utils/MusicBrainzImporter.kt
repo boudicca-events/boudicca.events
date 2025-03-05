@@ -2,21 +2,31 @@ package base.boudicca.enricher_utils
 
 import org.json.JSONArray
 import org.json.JSONObject
-import java.io.BufferedOutputStream
-import java.io.BufferedReader
-import java.io.File
-import java.io.FileOutputStream
-import java.io.FileReader
-import java.io.OutputStream
-import java.io.OutputStreamWriter
+import java.io.*
 import java.util.zip.GZIPOutputStream
 import kotlin.streams.asSequence
 
 fun main() {
 
     val reader = BufferedReader(FileReader(File("./boudicca.base/enricher-utils/data/artist")))
-    val dataOut = OutputStreamWriter(GZIPOutputStream(BufferedOutputStream(FileOutputStream("./boudicca.base/enricher-utils/data/artist_parsed.json.gz", false))))
-    val indexOut = GZIPOutputStream(BufferedOutputStream(FileOutputStream("./boudicca.base/enricher-utils/data/artist.index.gz", false)))
+    val dataOut = OutputStreamWriter(
+        GZIPOutputStream(
+            BufferedOutputStream(
+                FileOutputStream(
+                    "./boudicca.base/enricher-utils/data/artist_parsed.json.gz",
+                    false
+                )
+            )
+        )
+    )
+    val indexOut = GZIPOutputStream(
+        BufferedOutputStream(
+            FileOutputStream(
+                "./boudicca.base/enricher-utils/data/artist.index.gz",
+                false
+            )
+        )
+    )
 
     val artists = reader.lines().asSequence()
 //        .take(100)

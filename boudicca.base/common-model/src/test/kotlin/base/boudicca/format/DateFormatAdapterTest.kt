@@ -6,7 +6,7 @@ import org.junit.jupiter.api.assertThrows
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 
-class DateFormatTest {
+class DateFormatAdapterTest {
     @Test
     fun testParseFromStringInvalidValues() {
         assertThrows<IllegalArgumentException> { parseFromString("") }
@@ -25,7 +25,7 @@ class DateFormatTest {
     }
 
     private fun parseFromString(s: String): OffsetDateTime {
-        return DateFormat.parseFromString(s)
+        return DateFormatAdapter().fromString(s)
     }
 
     @Test
@@ -39,6 +39,6 @@ class DateFormatTest {
     }
 
     private fun parseToString(date: OffsetDateTime): String {
-        return DateFormat.parseToString(date)
+        return DateFormatAdapter().convertToString(date)
     }
 }

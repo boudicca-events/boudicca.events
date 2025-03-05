@@ -4,7 +4,8 @@ import base.boudicca.Property
 import base.boudicca.keyfilters.KeyFilters
 import base.boudicca.keyfilters.KeySelector
 import base.boudicca.model.Entry
-import java.util.Optional
+import base.boudicca.model.structured.dsl.StructuredEntryBuilder
+import java.util.*
 
 /**
  * as with the [Entry] class, a StructuredEntry is simple a typealias for a Map<Key, String>
@@ -54,19 +55,3 @@ fun StructuredEntry.selectKey(keySelector: KeySelector): Optional<Pair<Key, Stri
     return keySelector.selectSingle(this)
 }
 
-/**
- * builder method for structured entries... sadly this is just "floating" around
- */
-fun structuredEntryBuilder() : StructuredEntryBuilder {
-    return StructuredEntryBuilder()
-}
-
-class StructuredEntryBuilder(data: Map<Key, String> = emptyMap()) : AbstractStructuredBuilder<StructuredEntry, StructuredEntryBuilder>(data.toMutableMap()) {
-    override fun build(): StructuredEntry {
-        return data.toMap()
-    }
-
-    fun copy(): StructuredEntryBuilder {
-        return StructuredEntryBuilder(data.toMutableMap())
-    }
-}

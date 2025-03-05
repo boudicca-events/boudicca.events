@@ -5,6 +5,8 @@ import base.boudicca.api.eventcollector.TwoStepEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
+import base.boudicca.model.structured.dsl.modify
+import base.boudicca.model.structured.dsl.structuredEvent
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -39,13 +41,14 @@ class FuerUnsCollector : TwoStepEventCollector<String>("fueruns") {
     }
 
     private fun parseEventList(document: Document, events: MutableList<Element>) {
-        events.addAll(document.select("a.event.event_list_item.event_list_item_link")
-            .toList()
-            .filter { !it.attr("href").startsWith("http") }) // exclude events from others than fuer uns
+        events.addAll(
+            document.select("a.event.event_list_item.event_list_item_link")
+                .toList()
+                .filter { !it.attr("href").startsWith("http") }) // exclude events from others than fuer uns
     }
 
-    override fun parseStructuredEvent(event: String): StructuredEvent? {
-        val fullEventLink = baseUrl + event
+    override fun parseStructuredEvent(eventUrl: String): StructuredEvent? {
+        val fullEventLink = baseUrl + eventUrl
         val eventSite = Jsoup.parse(fetcher.fetchUrl(fullEventLink))
 
         val name = eventSite.select("h1").text()
@@ -65,28 +68,30 @@ class FuerUnsCollector : TwoStepEventCollector<String>("fueruns") {
             null
         }
 
-        val builder = StructuredEvent
-            .builder(name, startDate)
-            .withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(fullEventLink))
-            .withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, eventSite.select("div.field-text").text())
-            .withProperty(SemanticKeys.PICTURE_URL_PROPERTY, pictureUrl)
-            .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(fullEventLink))
+        val event = structuredEvent(name, startDate) {
+            withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(fullEventLink))
+            withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, eventSite.select("div.field-text").text())
+            withProperty(SemanticKeys.PICTURE_URL_PROPERTY, pictureUrl)
+            withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(fullEventLink))
+        }
 
         val locationName = eventSite.select("div.location").not("div.location.link-google-maps").text()
         if (locationName.isNotEmpty()) {
             val regex = """(?<name>.*?)[,|\s]*(?<zip>\d{4}) (?<city>[\w\s]+)""".toRegex()
             val matchResult = regex.find(locationName)
             if (matchResult != null) {
-                builder
-                    .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, matchResult.groups["name"]!!.value.trimEnd())
-                    .withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, matchResult.groups["city"]!!.value.trimEnd())
+                modify(event) {
+                    withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, matchResult.groups["name"]!!.value.trimEnd())
+                    withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, matchResult.groups["city"]!!.value.trimEnd())
+                }
             } else {
-                builder
-                    .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, locationName)
+                modify(event) {
+                    withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, locationName)
+                }
             }
         }
 
-        return builder.build()
+        return event
     }
 
     private fun parseDate(element: Element): OffsetDateTime {

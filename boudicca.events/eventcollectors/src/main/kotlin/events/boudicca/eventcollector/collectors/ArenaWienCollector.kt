@@ -5,6 +5,7 @@ import base.boudicca.api.eventcollector.TwoStepEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
+import base.boudicca.model.structured.dsl.structuredEvent
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
 import org.jsoup.Jsoup
@@ -36,19 +37,18 @@ class ArenaWienCollector : TwoStepEventCollector<ArenaWienCollector.HalfEvent>("
     override fun parseStructuredEvent(event: HalfEvent): StructuredEvent {
         val eventSite = Jsoup.parse(fetcher.fetchUrl(event.url))
 
-        return StructuredEvent
-            .builder(event.title!!, parseDate(event.dateBegin!!))
-            .withProperty(
+        return structuredEvent(event.title!!, parseDate(event.dateBegin!!)) {
+            withProperty(
                 SemanticKeys.ENDDATE_PROPERTY,
                 if (!event.dateEnd.isNullOrBlank()) parseDate(event.dateEnd) else null
             )
-            .withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(event.url))
-            .withProperty(SemanticKeys.TYPE_PROPERTY, "concert")
-            .withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, eventSite.select("div.suite_VAdescr").text())
-            .withProperty(SemanticKeys.PICTURE_URL_PROPERTY, getPictureUrl(eventSite))
-            .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Arena Wien")
-            .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(event.url))
-            .build()
+            withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(event.url))
+            withProperty(SemanticKeys.TYPE_PROPERTY, "concert")
+            withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, eventSite.select("div.suite_VAdescr").text())
+            withProperty(SemanticKeys.PICTURE_URL_PROPERTY, getPictureUrl(eventSite))
+            withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Arena Wien")
+            withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(event.url))
+        }
     }
 
     private fun getPictureUrl(eventSite: Document): URI? {

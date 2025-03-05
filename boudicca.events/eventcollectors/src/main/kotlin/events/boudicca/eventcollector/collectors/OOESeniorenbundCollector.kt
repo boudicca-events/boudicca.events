@@ -5,6 +5,7 @@ import base.boudicca.api.eventcollector.TwoStepEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
+import base.boudicca.model.structured.dsl.structuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.time.LocalDate
@@ -36,25 +37,19 @@ class OOESeniorenbundCollector : TwoStepEventCollector<Pair<Document, String>>("
         val name = eventDoc.select("div.title>p").text()
         val dates = getDates(eventDoc)
         val description = eventDoc.select("div.subtitle>p").text()
-
-        val builder = StructuredEvent
-            .builder()
-            .withName(name)
-            .withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(url))
-            .withProperty(
-                SemanticKeys.LOCATION_NAME_PROPERTY,
-                eventDoc.select("div.venue").text()
-            ) //TODO location name and city here are not seperated at all -.-
-            .withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
-            .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(url))
-
+        
         return dates.map {
             val (startDate, endDate) = it
-            builder
-                .copy()
-                .withStartDate(startDate)
-                .withProperty(SemanticKeys.ENDDATE_PROPERTY, endDate)
-                .build()
+            structuredEvent(name, startDate) {
+                withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(url))
+                withProperty(
+                    SemanticKeys.LOCATION_NAME_PROPERTY,
+                    eventDoc.select("div.venue").text()
+                ) //TODO location name and city here are not seperated at all -.-
+                withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
+                withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(url))
+                withProperty(SemanticKeys.ENDDATE_PROPERTY, endDate)
+            }
         }
     }
 

@@ -6,8 +6,7 @@ import base.boudicca.model.structured.Variant
 import base.boudicca.model.structured.VariantConstants
 
 class EventDataBuilder<T>(
-    private val name: String,
-    private var defaultFormatAdapter: AbstractFormatAdapter<T>? = null
+    private val name: String, private var defaultFormatAdapter: AbstractFormatAdapter<T>? = null
 ) {
     // all combinations of the form
     // description

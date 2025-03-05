@@ -13,10 +13,8 @@ class EvaluatorUtilDurationTest {
     @Test
     fun testEmpty() {
         Assertions.assertEquals(
-            0.0,
-            getDuration(
-                "startDate", "endDate",
-                mapOf(
+            0.0, getDuration(
+                "startDate", "endDate", mapOf(
                 )
             )
         )
@@ -25,10 +23,8 @@ class EvaluatorUtilDurationTest {
     @Test
     fun testNoStart() {
         Assertions.assertEquals(
-            0.0,
-            getDuration(
-                "startDate", "endDate",
-                mapOf(
+            0.0, getDuration(
+                "startDate", "endDate", mapOf(
                     SemanticKeys.ENDDATE to "2024-05-31T01:00:00Z",
                 )
             )
@@ -38,10 +34,8 @@ class EvaluatorUtilDurationTest {
     @Test
     fun testNoEnd() {
         Assertions.assertEquals(
-            0.0,
-            getDuration(
-                "startDate", "endDate",
-                mapOf(
+            0.0, getDuration(
+                "startDate", "endDate", mapOf(
                     SemanticKeys.STARTDATE to "2024-05-31T01:00:00Z",
                 )
             )
@@ -51,10 +45,8 @@ class EvaluatorUtilDurationTest {
     @Test
     fun testSimple() {
         Assertions.assertEquals(
-            1.0,
-            getDuration(
-                "startDate", "endDate",
-                mapOf(
+            1.0, getDuration(
+                "startDate", "endDate", mapOf(
                     SemanticKeys.STARTDATE to "2024-05-31T00:00:00Z",
                     SemanticKeys.ENDDATE to "2024-05-31T01:00:00Z",
                 )
@@ -65,10 +57,8 @@ class EvaluatorUtilDurationTest {
     @Test
     fun testNegative() {
         Assertions.assertEquals(
-            -1.0,
-            getDuration(
-                "startDate", "endDate",
-                mapOf(
+            -1.0, getDuration(
+                "startDate", "endDate", mapOf(
                     SemanticKeys.STARTDATE to "2024-05-31T01:00:00Z",
                     SemanticKeys.ENDDATE to "2024-05-31T00:00:00Z",
                 )
@@ -79,10 +69,8 @@ class EvaluatorUtilDurationTest {
     @Test
     fun testFraction() {
         Assertions.assertEquals(
-            0.5,
-            getDuration(
-                "startDate", "endDate",
-                mapOf(
+            0.5, getDuration(
+                "startDate", "endDate", mapOf(
                     SemanticKeys.STARTDATE to "2024-05-31T00:00:00Z",
                     SemanticKeys.ENDDATE to "2024-05-31T00:30:00Z",
                 )
@@ -91,7 +79,9 @@ class EvaluatorUtilDurationTest {
     }
 
     private fun getDuration(startDateField: String, endDateField: String, entry: Entry): Double {
-        return EvaluatorUtil.getDuration(Key.parse(startDateField), Key.parse(endDateField), entry.toStructuredEntry(), ConcurrentHashMap())
+        return EvaluatorUtil.getDuration(
+            Key.parse(startDateField), Key.parse(endDateField), entry.toStructuredEntry(), ConcurrentHashMap()
+        )
     }
 
 }

@@ -1,24 +1,12 @@
 package base.boudicca.query
 
 import base.boudicca.model.Entry
-import base.boudicca.query.evaluator.Evaluator
-import base.boudicca.query.evaluator.NoopEvaluator
-import base.boudicca.query.evaluator.OptimizingEvaluator
-import base.boudicca.query.evaluator.PAGE_ALL
-import base.boudicca.query.evaluator.QueryResult
-import base.boudicca.query.evaluator.SimpleEvaluator
+import base.boudicca.query.evaluator.*
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import org.openjdk.jmh.annotations.Benchmark
-import org.openjdk.jmh.annotations.Fork
-import org.openjdk.jmh.annotations.Measurement
-import org.openjdk.jmh.annotations.Param
-import org.openjdk.jmh.annotations.Scope
-import org.openjdk.jmh.annotations.Setup
-import org.openjdk.jmh.annotations.State
-import org.openjdk.jmh.annotations.Warmup
+import org.openjdk.jmh.annotations.*
 import java.nio.file.Path
 import java.util.concurrent.TimeUnit
 import kotlin.io.path.exists
@@ -124,9 +112,7 @@ fun main() {
 
     println(
         BoudiccaQueryRunner.evaluateQuery(
-            """ "name" equals "music" """,
-            PAGE_ALL,
-            optimizingEvaluator
+            """ "name" equals "music" """, PAGE_ALL, optimizingEvaluator
         ).totalResults
     )
 
@@ -142,16 +128,15 @@ private fun loadTestData(testDataSize: Int? = null): List<Map<String, String>> {
 //            mapOf("name" to "what","description" to "what","test" to "what"),
 //        )
 
-    val objectMapper = JsonMapper.builder().addModule(JavaTimeModule())
-        .addModule(KotlinModule.Builder().build()).build()
+    val objectMapper =
+        JsonMapper.builder().addModule(JavaTimeModule()).addModule(KotlinModule.Builder().build()).build()
 
     var path = Path.of("testdata.dump")
     if (!path.exists()) {
         path = Path.of("../../testdata.dump")
     }
     val testData = objectMapper.readValue(
-        path.readBytes(),
-        object : TypeReference<List<Entry>>() {})
+        path.readBytes(), object : TypeReference<List<Entry>>() {})
 
 
 //    val testData = EventDbPublisherClient("https://eventdb.boudicca.events").getAllEntries()

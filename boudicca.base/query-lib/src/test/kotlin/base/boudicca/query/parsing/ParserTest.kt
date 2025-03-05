@@ -11,8 +11,7 @@ class ParserTest {
     @Test
     fun testContains() {
         assertEquals(
-            "CONTAINS('field','text')",
-            callParser(
+            "CONTAINS('field','text')", callParser(
                 text("field"), contains(), text("text")
             )
         )
@@ -21,8 +20,7 @@ class ParserTest {
     @Test
     fun testEquals() {
         assertEquals(
-            "EQUALS('field','text')",
-            callParser(
+            "EQUALS('field','text')", callParser(
                 text("field"), equals(), text("text")
             )
         )
@@ -31,8 +29,7 @@ class ParserTest {
     @Test
     fun testNotEquals() {
         assertEquals(
-            "NOT(EQUALS('field','text'))",
-            callParser(
+            "NOT(EQUALS('field','text'))", callParser(
                 not(), text("field"), equals(), text("text")
             )
         )
@@ -41,8 +38,7 @@ class ParserTest {
     @Test
     fun testAndEquals() {
         assertEquals(
-            "AND(EQUALS('field','text'),EQUALS('field2','text2'))",
-            callParser(
+            "AND(EQUALS('field','text'),EQUALS('field2','text2'))", callParser(
                 text("field"), equals(), text("text"), and(), text("field2"), equals(), text("text2")
             )
         )
@@ -51,8 +47,7 @@ class ParserTest {
     @Test
     fun testOrEquals() {
         assertEquals(
-            "OR(EQUALS('field','text'),EQUALS('field2','text2'))",
-            callParser(
+            "OR(EQUALS('field','text'),EQUALS('field2','text2'))", callParser(
                 text("field"), equals(), text("text"), or(), text("field2"), equals(), text("text2")
             )
         )
@@ -61,14 +56,12 @@ class ParserTest {
     @Test
     fun testNotOrEquals() {
         assertEquals(
-            "OR(NOT(EQUALS('field','text')),EQUALS('field2','text2'))",
-            callParser(
+            "OR(NOT(EQUALS('field','text')),EQUALS('field2','text2'))", callParser(
                 not(), text("field"), equals(), text("text"), or(), text("field2"), equals(), text("text2")
             )
         )
         assertEquals(
-            "OR(NOT(EQUALS('field','text')),NOT(EQUALS('field2','text2')))",
-            callParser(
+            "OR(NOT(EQUALS('field','text')),NOT(EQUALS('field2','text2')))", callParser(
                 not(), text("field"), equals(), text("text"), or(), not(), text("field2"), equals(), text("text2")
             )
         )
@@ -77,8 +70,7 @@ class ParserTest {
     @Test
     fun testGrouping() {
         assertEquals(
-            "EQUALS('field','text')",
-            callParser(
+            "EQUALS('field','text')", callParser(
                 grOpen(), text("field"), equals(), text("text"), grClose()
             )
         )
@@ -87,8 +79,7 @@ class ParserTest {
     @Test
     fun testDoubleGrouping() {
         assertEquals(
-            "EQUALS('field','text')",
-            callParser(
+            "EQUALS('field','text')", callParser(
                 grOpen(), grOpen(), text("field"), equals(), text("text"), grClose(), grClose()
             )
         )
@@ -117,11 +108,20 @@ class ParserTest {
     @Test
     fun testGroupingWithNot() {
         assertEquals(
-            "OR(NOT(EQUALS('field','text')),NOT(EQUALS('field2','text2')))",
-            callParser(
-                grOpen(), not(), text("field"), equals(), text("text"), grClose(),
+            "OR(NOT(EQUALS('field','text')),NOT(EQUALS('field2','text2')))", callParser(
+                grOpen(),
+                not(),
+                text("field"),
+                equals(),
+                text("text"),
+                grClose(),
                 or(),
-                grOpen(), not(), text("field2"), equals(), text("text2"), grClose()
+                grOpen(),
+                not(),
+                text("field2"),
+                equals(),
+                text("text2"),
+                grClose()
             )
         )
     }
@@ -181,8 +181,7 @@ class ParserTest {
     @Test
     fun testBefore() {
         assertEquals(
-            "BEFORE('startDate','2023-05-27')",
-            callParser(
+            "BEFORE('startDate','2023-05-27')", callParser(
                 text("startDate"), before(), text("2023-05-27")
             )
         )
@@ -191,8 +190,7 @@ class ParserTest {
     @Test
     fun testAfter() {
         assertEquals(
-            "AFTER('startDate','2023-05-27')",
-            callParser(
+            "AFTER('startDate','2023-05-27')", callParser(
                 text("startDate"), after(), text("2023-05-27")
             )
         )
@@ -201,8 +199,7 @@ class ParserTest {
     @Test
     fun testDurationShorter() {
         assertEquals(
-            "DURATIONSHORTER('startDate','endDate',-2)",
-            callParser(
+            "DURATIONSHORTER('startDate','endDate',-2)", callParser(
                 duration(), text("startDate"), text("endDate"), shorter(), number("-2")
             )
         )
@@ -211,8 +208,7 @@ class ParserTest {
     @Test
     fun testDurationLonger() {
         assertEquals(
-            "DURATIONLONGER('startDate','endDate',2.6)",
-            callParser(
+            "DURATIONLONGER('startDate','endDate',2.6)", callParser(
                 duration(), text("startDate"), text("endDate"), longer(), number("2.6")
             )
         )
@@ -221,9 +217,19 @@ class ParserTest {
     @Test
     fun testOperatorPrecedence() {
         assertEquals(
-            "OR(AND(NOT(CONTAINS('field','text')),CONTAINS('field','text')),CONTAINS('field','text'))",
-            callParser(
-                not(), text("field"), contains(), text("text"), and(),text("field"), contains(), text("text"), or(), text("field"), contains(), text("text")
+            "OR(AND(NOT(CONTAINS('field','text')),CONTAINS('field','text')),CONTAINS('field','text'))", callParser(
+                not(),
+                text("field"),
+                contains(),
+                text("text"),
+                and(),
+                text("field"),
+                contains(),
+                text("text"),
+                or(),
+                text("field"),
+                contains(),
+                text("text")
             )
         )
     }
@@ -231,8 +237,7 @@ class ParserTest {
     @Test
     fun testHasField() {
         assertEquals(
-            "HASFIELD('field')",
-            callParser(
+            "HASFIELD('field')", callParser(
                 hasField(), text("field")
             )
         )

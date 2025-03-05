@@ -35,16 +35,14 @@ fun <T> StructuredEntry.getProperty(property: Property<T>): List<Pair<Key, T>> {
  * get property values with a specific language from this entry. please note that if a property value cannot be parsed it will silently ignore this value
  */
 fun <T> StructuredEntry.getProperty(property: Property<T>, language: String?): List<Pair<Key, T>> {
-    return KeyFilters
-        .filterKeys(property.getKeyFilter(language), this)
-        .mapNotNull {
-            try {
-                val parsedValue = property.parseFromString(it.second)
-                Pair(it.first, parsedValue)
-            } catch (e: IllegalArgumentException) {
-                null
-            }
+    return KeyFilters.filterKeys(property.getKeyFilter(language), this).mapNotNull {
+        try {
+            val parsedValue = property.parseFromString(it.second)
+            Pair(it.first, parsedValue)
+        } catch (e: IllegalArgumentException) {
+            null
         }
+    }
 }
 
 fun StructuredEntry.filterKeys(keyFilter: Key): List<Pair<Key, String>> {

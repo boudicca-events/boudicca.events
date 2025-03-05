@@ -6,6 +6,7 @@ import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.Registration
 import base.boudicca.model.structured.StructuredEvent
+import base.boudicca.model.structured.dsl.structuredEvent
 import org.jsoup.Jsoup
 import java.time.LocalDate
 import java.time.LocalTime
@@ -69,23 +70,22 @@ class FemaleCoderCollector : TwoStepEventCollector<String>("femalecoder") {
             .atZone(ZoneId.of("Europe/Vienna"))
             .toOffsetDateTime()
 
-        return StructuredEvent
-            .builder(name, startDate)
-            .withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(url))
-            .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(url))
-            .withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description.toString())
-            .withProperty(
+        return structuredEvent(name, startDate) {
+            withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(url))
+            withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(url))
+            withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description.toString())
+            withProperty(
                 SemanticKeys.PICTURE_URL_PROPERTY,
                 UrlUtils.parse(document.select("div.container > div#content-area img").attr("src"))
             )
-            .withProperty(SemanticKeys.TYPE_PROPERTY, "technology")
-            .withProperty(
+            withProperty(SemanticKeys.TYPE_PROPERTY, "technology")
+            withProperty(
                 SemanticKeys.TAGS_PROPERTY,
                 listOf("Study Group", "Coding", "Mentorship", "TechCommunity", "Socializing", "Networking")
             )
-            .withProperty(SemanticKeys.REGISTRATION_PROPERTY, Registration.FREE)
-            .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, document.select("div.venue > p").first()?.text()!!)
-            .withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, city)
-            .build()
+            withProperty(SemanticKeys.REGISTRATION_PROPERTY, Registration.FREE)
+            withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, document.select("div.venue > p").first()?.text()!!)
+            withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, city)
+        }
     }
 }

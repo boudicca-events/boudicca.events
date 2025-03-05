@@ -5,6 +5,7 @@ import base.boudicca.api.eventcollector.TwoStepEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
+import base.boudicca.model.structured.dsl.structuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.time.LocalDate
@@ -42,17 +43,16 @@ class SpinnereiCollector : TwoStepEventCollector<Pair<String, Document>>("spinne
             doc.select("div.vng-details div.bg-image").attr("style")
         )
 
-        return StructuredEvent
-            .builder(name, startDate)
-            .withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(url))
-            .withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, doc.select("div.vng-detail-content-bodytext").text())
-            .withProperty(SemanticKeys.TYPE_PROPERTY, type)
-            .withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(pictureUrl))
-            .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Spinnerei")
-            .withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse("https://spinnerei.kulturpark.at/"))
-            .withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Traun")
-            .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(url))
-            .build()
+        return structuredEvent(name, startDate) {
+            withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(url))
+            withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, doc.select("div.vng-detail-content-bodytext").text())
+            withProperty(SemanticKeys.TYPE_PROPERTY, type)
+            withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(pictureUrl))
+            withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Spinnerei")
+            withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse("https://spinnerei.kulturpark.at/"))
+            withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Traun")
+            withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(url))
+        }
     }
 
     private fun parsePictureUrl(style: String): String {

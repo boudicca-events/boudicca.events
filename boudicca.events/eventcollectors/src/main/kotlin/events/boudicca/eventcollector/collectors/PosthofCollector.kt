@@ -5,6 +5,7 @@ import base.boudicca.api.eventcollector.TwoStepEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.model.Registration
 import base.boudicca.model.structured.StructuredEvent
+import base.boudicca.model.structured.dsl.structuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
@@ -67,18 +68,17 @@ class PosthofCollector : TwoStepEventCollector<String>("posthof") {
 
         val imgUrl = baseUrl + eventSite.select("div.tx-posthof-events>:not(ul) img").attr("src")
 
-        val builder = StructuredEvent.builder(name, startDate)
-        return builder
-            .withProperty(SemanticKeys.TYPE_PROPERTY, dateAndTypeSpans[2].text())
-            .withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
-            .withProperty(SemanticKeys.PICTURE_URL_PROPERTY, URI.create(imgUrl))
-            .withProperty(SemanticKeys.REGISTRATION_PROPERTY, Registration.TICKET) //are there free events in posthof?
-            .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Posthof")
-            .withProperty(SemanticKeys.LOCATION_URL_PROPERTY, URI.create("https://www.posthof.at"))
-            .withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Linz")
-            .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(event))
-            .withProperty(SemanticKeys.URL_PROPERTY, URI.create(event))
-            .build()
+        return structuredEvent(name, startDate) {
+            withProperty(SemanticKeys.TYPE_PROPERTY, dateAndTypeSpans[2].text())
+            withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
+            withProperty(SemanticKeys.PICTURE_URL_PROPERTY, URI.create(imgUrl))
+            withProperty(SemanticKeys.REGISTRATION_PROPERTY, Registration.TICKET) //are there free events in posthof?
+            withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Posthof")
+            withProperty(SemanticKeys.LOCATION_URL_PROPERTY, URI.create("https://www.posthof.at"))
+            withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Linz")
+            withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(event))
+            withProperty(SemanticKeys.URL_PROPERTY, URI.create(event))
+        }
     }
 
     private fun getDateAndTimeText(dateAndTypeSpans: Elements): String {

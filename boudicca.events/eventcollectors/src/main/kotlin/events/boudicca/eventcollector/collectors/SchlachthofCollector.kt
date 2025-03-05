@@ -5,6 +5,7 @@ import base.boudicca.api.eventcollector.TwoStepEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
+import base.boudicca.model.structured.dsl.structuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.time.LocalDateTime
@@ -29,17 +30,16 @@ class SchlachthofCollector : TwoStepEventCollector<Element>("schlachthof") {
         val pictureUrl =
             "https://www.schlachthofwels.at" + parsePictureUrl(event.select("div.teaserimage").attr("style"))
 
-        return StructuredEvent
-            .builder(name, startDate)
-            .withProperty(SemanticKeys.TYPE_PROPERTY, event.select("h3:nth-child(1)").text())
-            .withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, event.select("div.event_list_previewtext").text())
-            .withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(pictureUrl))
-            .withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(url))
-            .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Alter Schlachthof")
-            .withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse("https://www.schlachthofwels.at"))
-            .withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Wels")
-            .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(url))
-            .build()
+        return structuredEvent(name, startDate) {
+            withProperty(SemanticKeys.TYPE_PROPERTY, event.select("h3:nth-child(1)").text())
+            withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, event.select("div.event_list_previewtext").text())
+            withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(pictureUrl))
+            withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(url))
+            withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Alter Schlachthof")
+            withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse("https://www.schlachthofwels.at"))
+            withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Wels")
+            withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(url))
+        }
     }
 
     private fun parsePictureUrl(style: String): String {

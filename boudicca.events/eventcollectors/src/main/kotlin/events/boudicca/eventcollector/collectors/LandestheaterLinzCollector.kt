@@ -6,6 +6,8 @@ import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.fetcher.Fetcher
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
+import base.boudicca.model.structured.dsl.StructuredEventBuilder
+import base.boudicca.model.structured.dsl.structuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -17,9 +19,11 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 
 class LandestheaterLinzCollector :
-    TwoStepEventCollector<Triple<Element, Pair<String, Document>, LocalDate>>("landestheater linz") {
+    TwoStepEventCollector<LandestheaterLinzCollector.LandestheaderEventData>("landestheater linz") {
 
-    override fun getAllUnparsedEvents(): List<Triple<Element, Pair<String, Document>, LocalDate>> {
+    data class LandestheaderEventData(val eventItem: Element, val document: Pair<String, Document>, val date: LocalDate)
+
+    override fun getAllUnparsedEvents(): List<LandestheaderEventData> {
         val fetcher = FetcherFactory.newFetcher()
         val events = mutableListOf<Triple<Element, String, LocalDate>>()
 
@@ -53,7 +57,13 @@ class LandestheaterLinzCollector :
         val resolvedEventUrls = eventUrls
             .associateWith { Jsoup.parse(fetcher.fetchUrl(it)) }
 
-        return events.map { Triple(it.first, Pair(it.second, resolvedEventUrls[it.second]!!), it.third) }
+        return events.map {
+            LandestheaderEventData(
+                it.first,
+                Pair(it.second, resolvedEventUrls[it.second]!!),
+                it.third
+            )
+        }
     }
 
     private fun parseDateFromSection(section: Element): LocalDate {
@@ -76,58 +86,58 @@ class LandestheaterLinzCollector :
         )
     }
 
-    override fun parseStructuredEvent(event: Triple<Element, Pair<String, Document>, LocalDate>): StructuredEvent {
+    override fun parseStructuredEvent(event: LandestheaderEventData): StructuredEvent {
         val (overview, site, date) = event
 
         val name = overview.select("div.lth-evitem-title > a").text()
 
         val (startDate, endDate) = parseDates(overview, date)
 
-        val builder = StructuredEvent
-            .builder(name, startDate)
-            .withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(site.first))
-            .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(site.first))
-            .withProperty(SemanticKeys.ENDDATE_PROPERTY, endDate)
-            .withProperty(
+        val locationName =
+            site.second.select("div.lth-layout-ctr > div > div > span > span").get(1).text().substring(11).trim()
+
+        val structuredEvent = structuredEvent(name, startDate) {
+            withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(site.first))
+            withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(site.first))
+            withProperty(SemanticKeys.ENDDATE_PROPERTY, endDate)
+            withProperty(
                 SemanticKeys.DESCRIPTION_TEXT_PROPERTY,
                 site.second.select("div.lth-layout-ctr section > h2").first { it.text() == "Stückinfo" }.parent()!!
                     .select("div.lth-section-content").text()
             )
-            .withProperty(
+            withProperty(
                 SemanticKeys.PICTURE_URL_PROPERTY,
                 UrlUtils.parse(
                     "https://www.landestheater-linz.at" + site.second.select("div.lth-slide img").first()!!.attr("src")
                 )
             )
-            .withProperty(
+            withProperty(
                 SemanticKeys.TYPE_PROPERTY,
                 overview.select("div.lth-evitem-what > div.lth-evitem-type").text()
             )
+            withLocationData(locationName)
+        }
 
-        val locationName =
-            site.second.select("div.lth-layout-ctr > div > div > span > span").get(1).text().substring(11).trim()
-        insertLocationData(builder, locationName)
 
-        return builder
-            .build()
+        return structuredEvent
     }
 
-    private fun insertLocationData(builder: StructuredEvent.StructuredEventBuilder, locationName: String) {
+    private fun StructuredEventBuilder.withLocationData(locationName: String) {
         if (locationName.contains("musiktheater", ignoreCase = true)) {
-            builder
+            this
                 .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Musiktheater Linz")
         } else if (locationName == "Studiobühne") {
             //there is no dedicated page for it, but it is in the same building, so....
-            builder
+            this
                 .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Studiobühne Linz")
         } else if (locationName == "Schauspielhaus") {
-            builder
+            this
                 .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Schauspielhaus Linz")
         } else if (locationName == "Kammerspiele") {
-            builder
+            this
                 .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Kammerspiele Linz")
         } else if (locationName.isNotBlank()) {
-            builder.withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, locationName)
+            this.withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, locationName)
         }
     }
 

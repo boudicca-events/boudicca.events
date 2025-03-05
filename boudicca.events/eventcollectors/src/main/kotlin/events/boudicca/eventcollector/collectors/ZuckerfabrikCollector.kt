@@ -5,6 +5,7 @@ import base.boudicca.api.eventcollector.TwoStepEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
+import base.boudicca.model.structured.dsl.structuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
@@ -21,8 +22,7 @@ class ZuckerfabrikCollector : TwoStepEventCollector<String>("zuckerfabrik") {
 
     override fun getAllUnparsedEvents(): List<String> {
         val document = Jsoup.parse(fetcher.fetchUrl("https://www.zuckerfabrik.at/termine-tickets/"))
-        return document.select("div#storycontent > a.bookmarklink")
-            .map { it.attr("href") }
+        return document.select("div#storycontent > a.bookmarklink").map { it.attr("href") }
     }
 
     override fun parseStructuredEvent(event: String): StructuredEvent {
@@ -40,18 +40,17 @@ class ZuckerfabrikCollector : TwoStepEventCollector<String>("zuckerfabrik") {
 
         val pictureUrl = eventSite.select("div#storycontent img").attr("src")
 
-        return StructuredEvent
-            .builder(name, startDate)
-            .withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(event))
-            .withProperty(SemanticKeys.TYPE_PROPERTY, type)
-            .withProperty(SemanticKeys.ENDDATE_PROPERTY, endDate)
-            .withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(pictureUrl))
-            .withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
-            .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Zuckerfabrik")
-            .withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse("https://www.zuckerfabrik.at"))
-            .withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Enns")
-            .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(event))
-            .build()
+        return structuredEvent(name, startDate) {
+            withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(event))
+            withProperty(SemanticKeys.TYPE_PROPERTY, type)
+            withProperty(SemanticKeys.ENDDATE_PROPERTY, endDate)
+            withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(pictureUrl))
+            withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
+            withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Zuckerfabrik")
+            withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse("https://www.zuckerfabrik.at"))
+            withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Enns")
+            withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(event))
+        }
     }
 
     private fun findDateIndex(storycontent: Elements): Int {
@@ -68,8 +67,7 @@ class ZuckerfabrikCollector : TwoStepEventCollector<String>("zuckerfabrik") {
         val type = split[0]
         val dateSplit = split[1].split(",").map { it.trim() }
         val date = LocalDate.parse(
-            dateSplit[1],
-            DateTimeFormatter.ofPattern("d. LLLL uuuu").withLocale(Locale.GERMAN)
+            dateSplit[1], DateTimeFormatter.ofPattern("d. LLLL uuuu").withLocale(Locale.GERMAN)
         )
         var startTimeString = dateSplit[2]
         if (startTimeString.endsWith(" Uhr")) {

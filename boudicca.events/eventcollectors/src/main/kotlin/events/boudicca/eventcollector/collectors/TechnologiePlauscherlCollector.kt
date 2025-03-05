@@ -6,6 +6,7 @@ import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.Registration
 import base.boudicca.model.structured.StructuredEvent
+import base.boudicca.model.structured.dsl.structuredEvent
 import com.rometools.rome.io.SyndFeedInput
 import com.rometools.rome.io.XmlReader
 import java.time.LocalDateTime
@@ -34,19 +35,18 @@ class TechnologiePlauscherlCollector : EventCollector {
             val dateTime = LocalDateTime.parse(dateString, formatter)
             val offsetDateTime = dateTime.atZone(ZoneId.of("UTC")).toOffsetDateTime()
 
-            StructuredEvent
-                .builder(nameString, offsetDateTime)
-                .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, locationString)
-                .withProperty(
+            structuredEvent(nameString, offsetDateTime) {
+                withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, locationString)
+                withProperty(
                     SemanticKeys.TAGS_PROPERTY,
                     listOf("TechCommunity", "Afterwork", "Socializing", "Networking")
                 )
-                .withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(entry.link))
-                .withProperty(SemanticKeys.TYPE_PROPERTY, "techmeetup") //TODO not sure if this works well
-                .withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, entry.description.value)
-                .withProperty(SemanticKeys.REGISTRATION_PROPERTY, Registration.FREE)
-                .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(entry.link))
-                .build()
+                withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(entry.link))
+                withProperty(SemanticKeys.TYPE_PROPERTY, "techmeetup") //TODO not sure if this works well
+                withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, entry.description.value)
+                withProperty(SemanticKeys.REGISTRATION_PROPERTY, Registration.FREE)
+                withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(entry.link))
+            }
         }
 
         return events

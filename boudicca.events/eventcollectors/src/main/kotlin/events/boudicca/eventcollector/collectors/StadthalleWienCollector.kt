@@ -5,6 +5,7 @@ import base.boudicca.api.eventcollector.TwoStepEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
+import base.boudicca.model.structured.dsl.structuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.time.LocalDate
@@ -41,22 +42,15 @@ class StadthalleWienCollector : TwoStepEventCollector<String>("stadthallewien") 
 
         val startDates = parseDates(eventSite) //we could parse enddates but this is kinda tricky
 
-        val builder = StructuredEvent
-            .builder()
-            .withName(name)
-            .withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(event))
-            .withProperty(SemanticKeys.PICTURE_URL_PROPERTY, pictureUrl)
-            .withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, eventSite.select("div.readmore-txt").text())
-            .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Stadthalle Wien")
-            .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(event))
-
-        return startDates.map {
-            builder
-                .copy()
-                .withStartDate(it)
-                .build()
+        return startDates.map { date ->
+            structuredEvent(name, date) {
+                withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(event))
+                withProperty(SemanticKeys.PICTURE_URL_PROPERTY, pictureUrl)
+                withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, eventSite.select("div.readmore-txt").text())
+                withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Stadthalle Wien")
+                withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(event))
+            }
         }
-
     }
 
     private fun parseDates(eventSite: Element): Set<OffsetDateTime> {

@@ -3,6 +3,7 @@ package base.boudicca.api.eventcollector.collectors.util
 import base.boudicca.SemanticKeys
 import base.boudicca.TextProperty
 import base.boudicca.model.structured.StructuredEvent
+import base.boudicca.model.structured.dsl.structuredEvent
 import biweekly.Biweekly
 import biweekly.component.VEvent
 import biweekly.property.DateEnd
@@ -63,25 +64,25 @@ object IcalParser {
         val name = vEvent.summary.value
         val startDate = getStartDate(vEvent.dateStart)
 
-        val builder = StructuredEvent
-            .builder(name, startDate)
-        if (vEvent.location != null) {
-            builder.withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, vEvent.location.value)
-        }
-        if (vEvent.description != null) {
-            builder.withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, vEvent.description.value)
-        }
-        if (vEvent.url != null) {
-            builder.withProperty(SemanticKeys.URL_PROPERTY, URI.create(vEvent.url.value))
-        }
-        if (vEvent.uid != null) {
-            builder.withProperty(TextProperty("ics.event.uid"), vEvent.uid.value)
-        }
-        if (vEvent.dateEnd != null) {
-            builder.withProperty(SemanticKeys.ENDDATE_PROPERTY, getEndDate(vEvent.dateEnd))
+        val event = structuredEvent(name, startDate) {
+            if (vEvent.location != null) {
+                withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, vEvent.location.value)
+            }
+            if (vEvent.description != null) {
+                withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, vEvent.description.value)
+            }
+            if (vEvent.url != null) {
+                withProperty(SemanticKeys.URL_PROPERTY, URI.create(vEvent.url.value))
+            }
+            if (vEvent.uid != null) {
+                withProperty(TextProperty("ics.event.uid"), vEvent.uid.value)
+            }
+            if (vEvent.dateEnd != null) {
+                withProperty(SemanticKeys.ENDDATE_PROPERTY, getEndDate(vEvent.dateEnd))
+            }
         }
 
-        return Optional.of(builder.build())
+        return Optional.of(event)
     }
 
     private fun getEndDate(dateEnd: DateEnd): OffsetDateTime {

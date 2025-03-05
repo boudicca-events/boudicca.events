@@ -5,14 +5,14 @@ import base.boudicca.SemanticKeys
 import base.boudicca.enricher.service.Enricher
 import base.boudicca.fetcher.Fetcher
 import base.boudicca.fetcher.InMemoryFetcherCache
-import base.boudicca.format.ListFormat
+import base.boudicca.format.ListFormatAdapter
 import base.boudicca.format.UrlUtils
 import base.boudicca.format.UrlUtils.encodeURL
 import base.boudicca.model.structured.Key
 import base.boudicca.model.structured.StructuredEvent
-import base.boudicca.model.structured.StructuredEvent.StructuredEventBuilder
 import base.boudicca.model.structured.Variant
 import base.boudicca.model.structured.VariantConstants.SOURCE_VARIANT_NAME
+import base.boudicca.model.structured.dsl.StructuredEventBuilder
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -66,7 +66,7 @@ class OsmEnricher(
         val tags = nominatimPlace["extratags"]
         val address = nominatimPlace["address"]
 
-        val currentSources = ListFormat.parseFromString(event.data[SemanticKeys.SOURCES_PROPERTY.getKey()])
+        val currentSources = ListFormatAdapter().fromStringOrNull(event.data[SemanticKeys.SOURCES_PROPERTY.getKey()])
         builder.withProperty(
             property = SemanticKeys.SOURCES_PROPERTY,
             value = currentSources + "Source:OSM:${nominatimPlace["licence"]?.asText()}"

@@ -1,7 +1,7 @@
 package base.boudicca.query.evaluator
 
-import base.boudicca.format.DateFormat
-import base.boudicca.format.ListFormat
+import base.boudicca.format.DateFormatAdapter
+import base.boudicca.format.ListFormatAdapter
 import base.boudicca.model.Entry
 import base.boudicca.model.structured.Key
 import base.boudicca.model.structured.StructuredEntry
@@ -144,11 +144,11 @@ class SimpleEvaluator(rawEntries: Collection<Entry>) : Evaluator {
     }
 
     private fun parseList(keyValuePair: Pair<Key, String>): List<String> {
-        return ListFormat.parseFromString(keyValuePair.second)
+        return ListFormatAdapter().fromString(keyValuePair.second)
     }
 
     private fun getLocalStartDate(dateText: String): LocalDate =
-        DateFormat.parseFromString(dateText)
+        DateFormatAdapter().fromString(dateText)
             .atZoneSameInstant(ZoneId.of("Europe/Vienna"))
             .toLocalDate()
 

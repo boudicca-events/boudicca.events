@@ -16,7 +16,9 @@ class EventDataBuilder<T>(
     private val variantCombinations = mutableMapOf<List<Variant>, String>()
 
     fun format(formatAdapter: AbstractFormatAdapter<T>) {
-        require(formatAdapter.formatVariantValue == VariantConstants.FORMAT_VARIANT_NAME) { "only format variants are allowed for format() shortcut " }
+        require(formatAdapter.formatVariantValue == VariantConstants.FORMAT_VARIANT_NAME) {
+            "only format variants are allowed for format() shortcut "
+        }
         this.defaultFormatAdapter = formatAdapter
     }
 
@@ -28,7 +30,9 @@ class EventDataBuilder<T>(
 
     fun variant(vararg variants: Variant, data: T) {
         val formatAdapterValue = defaultFormatAdapter
-        requireNotNull(formatAdapterValue) { "variant without format can only be used when format adapter is set on parent level" }
+        requireNotNull(formatAdapterValue) {
+            "variant without format can only be used when format adapter is set on parent level"
+        }
         variant(formatAdapterValue, variants = variants, data = data)
     }
 

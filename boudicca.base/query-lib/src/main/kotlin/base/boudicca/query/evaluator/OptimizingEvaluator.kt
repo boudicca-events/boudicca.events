@@ -1,6 +1,6 @@
 package base.boudicca.query.evaluator
 
-import base.boudicca.format.ListFormat
+import base.boudicca.format.ListFormatAdapter
 import base.boudicca.keyfilters.KeyFilters
 import base.boudicca.model.Entry
 import base.boudicca.model.structured.Key
@@ -153,8 +153,8 @@ class OptimizingEvaluator(rawEntries: Collection<Entry>) : Evaluator {
                             if (value == null) {
                                 emptyList()
                             } else {
-                                ListFormat
-                                    .parseFromString(value)
+                                ListFormatAdapter()
+                                    .fromString(value)
                                     .map { Pair(entryIndex, it.lowercase()) }
                             }
                         } else {

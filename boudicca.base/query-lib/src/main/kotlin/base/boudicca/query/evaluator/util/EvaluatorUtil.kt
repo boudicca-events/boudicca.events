@@ -1,6 +1,6 @@
 package base.boudicca.query.evaluator.util
 
-import base.boudicca.format.DateFormat
+import base.boudicca.format.DateFormatAdapter
 import base.boudicca.keyfilters.KeyFilters
 import base.boudicca.keyfilters.KeySelector
 import base.boudicca.model.structured.Key
@@ -66,7 +66,7 @@ object EvaluatorUtil {
             dataCache[dateText]!!
         } else {
 //            try {
-            val parsedDate = DateFormat.parseFromString(dateText)
+            val parsedDate = DateFormatAdapter().fromString(dateText)
             dataCache[dateText] = parsedDate
             parsedDate
 //            } catch (e: DateTimeParseException) {

@@ -2,8 +2,8 @@ package base.boudicca.publisher.event.html.service
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.search.*
-import base.boudicca.format.ListFormat
-import base.boudicca.format.NumberFormat
+import base.boudicca.format.ListFormatAdapter
+import base.boudicca.format.NumberFormatAdapter
 import base.boudicca.keyfilters.KeySelector
 import base.boudicca.model.EventCategory
 import base.boudicca.model.structured.Key
@@ -63,9 +63,12 @@ class EventService @Autowired constructor(
     @Throws(EventServiceException::class)
     fun mapSearch(searchDTO: SearchDTO): MapSearchResultDTO {
         val searchResultDTO =
-            caller.search(QueryDTO(generateQuery(searchDTO, additionalMapQueryParts), searchDTO.offset ?: 0,
-                MAP_SEARCH_RESULT_COUNT
-            ))
+            caller.search(
+                QueryDTO(
+                    generateQuery(searchDTO, additionalMapQueryParts), searchDTO.offset ?: 0,
+                    MAP_SEARCH_RESULT_COUNT
+                )
+            )
         return mapMapSearch(searchResultDTO)
     }
 
@@ -204,7 +207,7 @@ class EventService @Autowired constructor(
     private fun getNumberProperty(event: StructuredEvent, propertyName: String): Number? {
         return getPropertyForFormats(event, propertyName, listOf(FormatVariantConstants.NUMBER_FORMAT_NAME))
             .map { it.second }
-            .map { NumberFormat.parseFromString(it) }
+            .map { NumberFormatAdapter().fromString(it) }
             .getOrNull()
     }
 
@@ -226,7 +229,7 @@ class EventService @Autowired constructor(
         ) //use text as a wonky fallback for now
             .map {
                 try {
-                    ListFormat.parseFromString(it.second)
+                    ListFormatAdapter().fromString(it.second)
                 } catch (e: IllegalArgumentException) {
                     null
                 }

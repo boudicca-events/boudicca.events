@@ -52,7 +52,8 @@ class EventDataBuilder<T>(
 }
 
 private fun <U> MutableList<Variant>.addFormatVariant(formatAdapter: AbstractFormatAdapter<U>) {
-    if (!this.any { it.variantName == VariantConstants.FORMAT_VARIANT_NAME }) {
-        this.add(formatAdapter.variant)
+    val formatVariant = formatAdapter.variant
+    if (!this.any { it.variantName == VariantConstants.FORMAT_VARIANT_NAME } && formatVariant.variantValue.isNotBlank()) {
+        this.add(formatVariant)
     }
 }

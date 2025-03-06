@@ -1,5 +1,7 @@
 package base.boudicca.model.structured
 
+import assertk.assertThat
+import assertk.assertions.isEqualTo
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -81,10 +83,12 @@ class KeyUtilsTest {
     @Test
     fun testDuplicatedKey() {
         assertThrows<IllegalArgumentException> {
-            toStructuredKeyValuePairs(mapOf(
-                "test:var1=val1:var2=val2" to "whatever",
-                "test:var2=val2:var1=val1" to "whatever",
-            ))
+            toStructuredKeyValuePairs(
+                mapOf(
+                    "test:var1=val1:var2=val2" to "whatever",
+                    "test:var2=val2:var1=val1" to "whatever",
+                )
+            )
         }
     }
 
@@ -141,6 +145,13 @@ class KeyUtilsTest {
                 Pair("key2:variant=variantvalue:variant2=variantvalue2", "value4"),
             ), result
         )
+    }
+
+    @Test
+    fun `'parseKey' should handle wildcards`() {
+        val key = KeyUtils.parseKey("*:format=date")
+
+        assertThat(key.toKeyString()).isEqualTo("*:format=date")
     }
 
     private fun toFlat(data: Map<Key, String>): Map<String, String> {

@@ -1,5 +1,8 @@
 package base.boudicca.keyfilters
 
+import assertk.assertThat
+import assertk.assertions.hasSize
+import base.boudicca.SemanticKeys
 import base.boudicca.model.structured.Key
 import base.boudicca.model.structured.StructuredEntry
 import base.boudicca.model.structured.StructuredEvent
@@ -101,7 +104,34 @@ class KeyFiltersTest {
         assertEquals("name", properties[0].first)
     }
 
-    private fun assertEquals(keyString: String, key: Key){
+    @Test
+    fun `wildcard variant key filter should work`() {
+        val entry1 = mapOf(
+            Key.parse(SemanticKeys.NAME) to "event1",
+        )
+        val entry2 = mapOf(
+            Key.parse(SemanticKeys.NAME) to "event2",
+            Key.parse(SemanticKeys.STARTDATE + ":format=date") to "2024-05-31T00:00:00Z",
+        )
+        val entry3: StructuredEntry = mapOf(
+            Key.parse(SemanticKeys.NAME) to "event3",
+            Key.parse("random:format=date") to "2024-05-31T00:00:00Z",
+            Key.parse("another:format=date") to "2024-05-31T00:31:00Z",
+        )
+
+        val key = Key.parse("*:format=date")
+        
+        val filtered1 = KeyFilters.filterKeys(key, entry1)
+        assertThat(filtered1).hasSize(0)
+
+        val filtered2 = KeyFilters.filterKeys(key, entry2)
+        assertThat(filtered2).hasSize(1)
+
+        val filtered3 = KeyFilters.filterKeys(key, entry3)
+        assertThat(filtered3).hasSize(2)
+    }
+
+    private fun assertEquals(keyString: String, key: Key) {
         assertEquals(keyString, key.toKeyString())
     }
 

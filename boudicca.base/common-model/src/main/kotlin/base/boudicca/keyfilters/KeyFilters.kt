@@ -27,7 +27,7 @@ object KeyFilters {
         key: Key,
         keyFilter: Key
     ): Boolean {
-        return (isWildcard(keyFilter) || keyFilter.name == key.name &&
+        return ((isWildcard(keyFilter) || keyFilter.name == key.name) &&
                 keyContainsAllVariants(keyFilter, key))
     }
 

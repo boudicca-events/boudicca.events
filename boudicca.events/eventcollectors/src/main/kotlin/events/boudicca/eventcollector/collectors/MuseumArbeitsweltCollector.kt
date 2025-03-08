@@ -5,6 +5,7 @@ import base.boudicca.api.eventcollector.TwoStepEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
+import base.boudicca.model.structured.dsl.structuredEvent
 import org.jsoup.Jsoup
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
@@ -45,19 +46,18 @@ class MuseumArbeitsweltCollector : TwoStepEventCollector<Pair<String, String>>("
             null
         }
 
-        return StructuredEvent
-            .builder(name, startDate)
-            .withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(eventUrl))
-            .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(eventUrl))
-            .withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
-            .withProperty(
+        return structuredEvent(name, startDate) {
+            withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(eventUrl))
+            withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(eventUrl))
+            withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
+            withProperty(
                 SemanticKeys.PICTURE_URL_PROPERTY,
                 if (pictureUrl != null) UrlUtils.parse(pictureUrl) else null
             )
-            .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Museum Arbeitswelt")
-            .withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse("https://museumarbeitswelt.at/"))
-            .withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Steyr")
-            .build()
+            withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Museum Arbeitswelt")
+            withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse("https://museumarbeitswelt.at/"))
+            withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Steyr")
+        }
     }
 
     private fun parseDate(dateToParse: String): OffsetDateTime {

@@ -5,6 +5,7 @@ import base.boudicca.api.eventcollector.TwoStepEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
+import base.boudicca.model.structured.dsl.structuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.time.LocalDate
@@ -49,15 +50,14 @@ class StiftskonzerteCollector : TwoStepEventCollector<String>("stiftskonzerte") 
             null
         }
 
-        return StructuredEvent
-            .builder(name, startDate)
-            .withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(event))
-            .withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, eventSite.select("div.entry-flexible-content").text())
-            .withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, city)
-            .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, location)
-            .withProperty(SemanticKeys.PICTURE_URL_PROPERTY, pictureUrl)
-            .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(event))
-            .build()
+        return structuredEvent(name, startDate) {
+            withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(event))
+            withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, eventSite.select("div.entry-flexible-content").text())
+            withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, city)
+            withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, location)
+            withProperty(SemanticKeys.PICTURE_URL_PROPERTY, pictureUrl)
+            withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(event))
+        }
     }
 
     private fun parseDate(element: Element, locationAndTime: List<String>): OffsetDateTime {

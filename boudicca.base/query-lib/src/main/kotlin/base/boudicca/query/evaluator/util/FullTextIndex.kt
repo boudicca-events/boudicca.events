@@ -1,6 +1,6 @@
 package base.boudicca.query.evaluator.util
 
-import base.boudicca.format.ListFormat
+import base.boudicca.format.ListFormatAdapter
 import base.boudicca.model.Entry
 import base.boudicca.model.structured.Key
 import java.nio.ByteBuffer
@@ -101,7 +101,7 @@ class FullTextIndex(entries: List<Entry>, field: String) {
             if (!entry[field].isNullOrEmpty()) {
                 val entryValue = entry[field]!!
                 val values = if (EvaluatorUtil.isList(key)) {
-                    ListFormat.parseFromString(entryValue)
+                    ListFormatAdapter().fromString(entryValue)
                 } else {
                     listOf(entryValue)
                 }

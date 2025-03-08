@@ -4,6 +4,7 @@ import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.model.structured.StructuredEvent
+import base.boudicca.model.structured.dsl.structuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.net.URI
@@ -25,12 +26,12 @@ class FamilienkarteEventCollector : TwoStepEventCollector<String>("familienkarte
         val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         val dateFrom = LocalDate.now().format(dateTimeFormatter)
         val dateTo = LocalDate.now().plusYears(1).format(dateTimeFormatter)
+
         @Suppress("MaxLineLength") // this is an url that would not gain readability by linebreaking
-        val eventsUrl = "$baseUrl/de/freizeit/veranstaltungen/veranstaltungskalender.html?events_cat_key=8&date_from=$dateFrom&date_to=$dateTo"
+        val eventsUrl =
+            "$baseUrl/de/freizeit/veranstaltungen/veranstaltungskalender.html?events_cat_key=8&date_from=$dateFrom&date_to=$dateTo"
         val document = Jsoup.parse(fetcher.fetchUrl(eventsUrl))
-        return document
-            .select("div.detailButton a")
-            .map { it.attr("href") }
+        return document.select("div.detailButton a").map { it.attr("href") }
     }
 
     override fun parseStructuredEvent(event: String): StructuredEvent {
@@ -39,27 +40,24 @@ class FamilienkarteEventCollector : TwoStepEventCollector<String>("familienkarte
 
         val name = eventSite.select("div.eventDetailWrapper h1").text()
         val (startDate, endDate) = parseStartAndEndDateTime(eventSite)
-        val pictureUrl = eventSite.select("div.eventEntry img")
-            .first()
-            ?.attr("src")
-            ?.let { URI.create(it) }
+        val pictureUrl = eventSite.select("div.eventEntry img").first()?.attr("src")?.let { URI.create(it) }
 
-        return StructuredEvent
-            .builder(name, startDate)
-            .withProperty(SemanticKeys.URL_PROPERTY, URI.create(eventUrl))
-            .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(eventUrl))
-            .withProperty(SemanticKeys.TYPE_PROPERTY, "theater")
-            .withProperty(SemanticKeys.ENDDATE_PROPERTY, endDate)
-            .withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, eventSite.select("div.eventDetailDescr").text())
-            .withProperty(SemanticKeys.PICTURE_URL_PROPERTY, pictureUrl)
-            .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, eventSite.select("div.eventDetailLocation").text())
-            .build()
+        return structuredEvent(name, startDate) {
+            withProperty(SemanticKeys.URL_PROPERTY, URI.create(eventUrl))
+            withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(eventUrl))
+            withProperty(SemanticKeys.TYPE_PROPERTY, "theater")
+            withProperty(SemanticKeys.ENDDATE_PROPERTY, endDate)
+            withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, eventSite.select("div.eventDetailDescr").text())
+            withProperty(SemanticKeys.PICTURE_URL_PROPERTY, pictureUrl)
+            withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, eventSite.select("div.eventDetailLocation").text())
+        }
     }
 
 
     private fun parseStartAndEndDateTime(element: Element): Pair<OffsetDateTime, OffsetDateTime?> {
-        val fullDateString = element.select("div.eventDetailWrapper").first()?.text()
-            ?: throw IllegalArgumentException("Could not find element containing start date")
+        val fullDateString = element.select("div.eventDetailWrapper").first()?.text() ?: throw IllegalArgumentException(
+            "Could not find element containing start date"
+        )
 
         val localDate = parseDate(fullDateString)
         val (startTime, endTime) = parseStartAndEndtime(fullDateString)
@@ -72,8 +70,8 @@ class FamilienkarteEventCollector : TwoStepEventCollector<String>("familienkarte
 
     private fun parseDate(fullDateString: String): LocalDate {
         val dateRegex = """\b(\d{2})\.(\d{2})\.(\d{2})\b""".toRegex()
-        val dateMatch = dateRegex.find(fullDateString)
-            ?: throw IllegalArgumentException("Could not find date in $fullDateString")
+        val dateMatch =
+            dateRegex.find(fullDateString) ?: throw IllegalArgumentException("Could not find date in $fullDateString")
         val (day, month, year) = dateMatch.destructured
 
         val formattedDate = "$day.$month.$year"

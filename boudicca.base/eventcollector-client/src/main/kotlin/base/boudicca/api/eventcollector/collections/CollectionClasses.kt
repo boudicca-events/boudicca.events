@@ -1,7 +1,7 @@
 package base.boudicca.api.eventcollector.collections
 
+import java.util.*
 import java.util.Collections
-import java.util.UUID
 
 data class FullCollection(
     val id: UUID,
@@ -41,7 +41,8 @@ data class FullCollection(
     }
 
     /**
-     * gets all log lines for this full collection + each single collection. please note that those loglines are not sorted by time but by single-/fullcollection
+     * gets all log lines for this full collection + each single collection. please note that those loglines
+     * are not sorted by time but by single-/fullcollection
      */
     fun getAllLogLines(): List<String> {
         return logLines + singleCollections.flatMap { it.logLines }
@@ -73,7 +74,16 @@ data class SingleCollection(
     )
 
     override fun toString(): String {
-        return "SingleCollection(\nid=$id, \ncollectorName='$collectorName', \nstartTime=$startTime, \nendTime=$endTime, \ntotalEventsCollected=$totalEventsCollected, \nhttpCalls=$httpCalls, \nlogLines=$logLines, \nerrorCount=$errorCount, \nwarningCount=$warningCount)"
+        return """SingleCollection(
+            id=$id, 
+            collectorName='$collectorName', 
+            startTime=$startTime, 
+            endTime=$endTime, 
+            totalEventsCollected=$totalEventsCollected, 
+            httpCalls=$httpCalls, 
+            logLines=$logLines, 
+            errorCount=$errorCount, 
+            warningCount=$warningCount)""".trimIndent()
     }
 }
 

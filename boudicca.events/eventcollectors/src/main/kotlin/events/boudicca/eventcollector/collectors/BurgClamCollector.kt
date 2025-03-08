@@ -5,6 +5,7 @@ import base.boudicca.api.eventcollector.TwoStepEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
+import base.boudicca.model.structured.dsl.structuredEvent
 import org.jsoup.Jsoup
 import java.time.LocalDate
 import java.time.OffsetDateTime
@@ -33,21 +34,20 @@ class BurgClamCollector : TwoStepEventCollector<String>("burgclam") {
         var description = eventSite.select("section.eventSingle__description").text()
         val lineupElement = eventSite.select("li.lineupList__item")
         if (lineupElement.isNotEmpty()) {
-            val lineup = "Line-up:\n" + lineupElement.map{it.text()}.joinToString("\n") + "\n"
+            val lineup = "Line-up:\n" + lineupElement.map { it.text() }.joinToString("\n") + "\n"
             description = lineup + description
         }
 
-        return StructuredEvent
-            .builder(name, startDate)
-            .withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(event))
-            .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(event))
-            .withProperty(
+        return structuredEvent(name, startDate) {
+            withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(event))
+            withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(event))
+            withProperty(
                 SemanticKeys.PICTURE_URL_PROPERTY,
                 UrlUtils.parse(eventSite.select("eventSingle__headerBanner img").attr("src"))
             )
-            .withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
-            .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Burg Clam")
-            .build()
+            withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
+            withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Burg Clam")
+        }
     }
 
     private fun parseDate(dateText: String): OffsetDateTime {

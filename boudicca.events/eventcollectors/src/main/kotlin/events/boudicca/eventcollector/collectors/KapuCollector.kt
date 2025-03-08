@@ -5,6 +5,7 @@ import base.boudicca.api.eventcollector.TwoStepEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
+import base.boudicca.model.structured.dsl.structuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.time.LocalDateTime
@@ -42,23 +43,22 @@ class KapuCollector : TwoStepEventCollector<String>("kapu") {
             null
         }
 
-        return StructuredEvent
-            .builder(name, startDate)
-            .withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(url))
-            .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(url))
-            .withProperty(
+        return structuredEvent(name, startDate) {
+            withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(url))
+            withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(url))
+            withProperty(
                 SemanticKeys.TYPE_PROPERTY,
                 eventSite.select("article.event > div.container > div.wot").text()
             )
-            .withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
-            .withProperty(
+            withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
+            withProperty(
                 SemanticKeys.PICTURE_URL_PROPERTY,
                 if (pictureUrl != null) UrlUtils.parse(pictureUrl) else null
             )
-            .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Kapu")
-            .withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse("https://www.kapu.or.at"))
-            .withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Linz")
-            .build()
+            withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Kapu")
+            withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse("https://www.kapu.or.at"))
+            withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Linz")
+        }
     }
 
     private fun parseDate(element: Element): OffsetDateTime {

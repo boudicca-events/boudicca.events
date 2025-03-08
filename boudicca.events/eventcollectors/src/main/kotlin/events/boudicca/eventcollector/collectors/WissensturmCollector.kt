@@ -5,6 +5,7 @@ import base.boudicca.api.eventcollector.TwoStepEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
+import base.boudicca.model.structured.dsl.structuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.time.LocalDate
@@ -48,37 +49,31 @@ class WissensturmCollector : TwoStepEventCollector<Pair<String, Document>>("wiss
         } else {
             null
         }
-        val builder = StructuredEvent
-            .builder()
-            .withName(name)
-            .withProperty(SemanticKeys.PICTURE_URL_PROPERTY, pictureUrl)
-            .withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
-            .withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(url))
-            .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(url))
 
         return datesAndLocations
             .filter { it.first != null }
             .map {
-                val builderCopy = builder
-                    .copy()
-                    .withStartDate(it.first!!)
-                    .withProperty(SemanticKeys.ENDDATE_PROPERTY, it.second)
-                if (
-                    it.third.contains("wissensturm", ignoreCase = true)
-                    || it.third.contains("WT;", ignoreCase = false)
-                ) {
-                    builderCopy
-                        .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Wissensturm")
-                        .withProperty(
+                structuredEvent(name, it.first!!) {
+                    withProperty(SemanticKeys.PICTURE_URL_PROPERTY, pictureUrl)
+                    withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
+                    withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(url))
+                    withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(url))
+                    withProperty(SemanticKeys.ENDDATE_PROPERTY, it.second)
+
+                    if (
+                        it.third.contains("wissensturm", ignoreCase = true)
+                        || it.third.contains("WT;", ignoreCase = false)
+                    ) {
+                        withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Wissensturm")
+                        withProperty(
                             SemanticKeys.LOCATION_URL_PROPERTY,
                             UrlUtils.parse("https://wissensturm.linz.at/")
                         )
-                        .withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Linz")
-                } else {
-                    builderCopy
-                        .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, it.third)
+                        withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Linz")
+                    } else {
+                        withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, it.third)
+                    }
                 }
-                builderCopy.build()
             }
     }
 

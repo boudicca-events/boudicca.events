@@ -5,6 +5,7 @@ import base.boudicca.api.eventcollector.TwoStepEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
+import base.boudicca.model.structured.dsl.structuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -37,19 +38,18 @@ class OteloLinzCollector : TwoStepEventCollector<String>("otelolinz") {
             null
         }
 
-        return StructuredEvent
-            .builder(name, startDate)
-            .withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(event))
-            .withProperty(SemanticKeys.ENDDATE_PROPERTY, endDate)
-            .withProperty(SemanticKeys.TYPE_PROPERTY, "technology")
-            .withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, getDescription(eventSite))
-            .withProperty(SemanticKeys.PICTURE_URL_PROPERTY, pictureUrl)
-            .withProperty(
+        return structuredEvent(name, startDate) {
+            withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(event))
+            withProperty(SemanticKeys.ENDDATE_PROPERTY, endDate)
+            withProperty(SemanticKeys.TYPE_PROPERTY, "technology")
+            withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, getDescription(eventSite))
+            withProperty(SemanticKeys.PICTURE_URL_PROPERTY, pictureUrl)
+            withProperty(
                 SemanticKeys.LOCATION_NAME_PROPERTY,
                 eventSite.select("div#em-event-6>p")[1].select("a").text()
             )
-            .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(event))
-            .build()
+            withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(event))
+        }
     }
 
     private fun getDescription(eventSite: Document): String {

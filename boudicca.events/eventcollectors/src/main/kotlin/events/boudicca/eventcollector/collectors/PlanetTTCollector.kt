@@ -5,6 +5,8 @@ import base.boudicca.api.eventcollector.TwoStepEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
+import base.boudicca.model.structured.dsl.StructuredEventBuilder
+import base.boudicca.model.structured.dsl.structuredEvent
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -75,22 +77,18 @@ class PlanetTTCollector : TwoStepEventCollector<Element>("planettt") {
 
         //TODO you could parse acts from this site
 
-        val builder = StructuredEvent
-            .builder(name, startDate)
-            .withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(url))
-            .withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(pictureUrl))
-            .withProperty(
+        return structuredEvent(name, startDate) {
+            withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(url))
+            withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(pictureUrl))
+            withProperty(
                 SemanticKeys.DESCRIPTION_TEXT_PROPERTY,
                 fullEvent.select("div.pl-modal-desc > p")
                     .text() + "\n" + fullEvent.select("div.pl-modal-desc > div.acts").text()
             )
-            .withProperty(SemanticKeys.TYPE_PROPERTY, "concert")
-            .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(url))
-
-        mapLocation(builder, fullEvent)
-
-        return builder
-            .build()
+            withProperty(SemanticKeys.TYPE_PROPERTY, "concert")
+            withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(url))
+            withLocation(fullEvent)
+        }
     }
 
     private fun parseUrl(fullEvent: Document): String {
@@ -105,25 +103,25 @@ class PlanetTTCollector : TwoStepEventCollector<Element>("planettt") {
         return ""
     }
 
-    private fun mapLocation(builder: StructuredEvent.StructuredEventBuilder, event: Element) {
+    private fun StructuredEventBuilder.withLocation(event: Element) {
         val location = event.select("div.pl-modal-location").attr("data-location")
         when (location) {
             "simmcity" -> {
-                builder
+                this
                     .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "SiMMCity")
                     .withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse("https://simmcity.at/"))
                     .withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Wien")
             }
 
             "szene" -> {
-                builder
+                this
                     .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Szene")
                     .withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse("https://szene.wien/"))
                     .withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Wien")
             }
 
             "planet" -> {
-                builder
+                this
                     .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Gasometer")
                     .withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse("https://www.gasometer.at/"))
                     .withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Wien")

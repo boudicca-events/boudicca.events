@@ -1,28 +1,31 @@
-name: detekt
+# detekt fails due to many false positives
+# disabled for now until we have a new configuration https://github.com/boudicca-events/boudicca.events/issues/663
 
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-  schedule:
-     - cron: '42 1 * * 0'
-
-  workflow_dispatch:
-
-permissions:
-  contents: read
-  pull-requests: write
-
-jobs:
-  detekt:
-    name: Check Code Quality
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: detekt
-        uses: alaegin/Detekt-Action@b43f1c93f8b0e1aedb1bf41719220eee3b2cd49b # v1.23.7
-        with:
-          github_token: ${{ secrets.github_token }}
+#name: detekt
+#
+#on:
+#  push:
+#    branches: [ "main" ]
+#  pull_request:
+#    branches: [ "main" ]
+#  schedule:
+#     - cron: '42 1 * * 0'
+#
+#  workflow_dispatch:
+#
+#permissions:
+#  contents: read
+#  pull-requests: write
+#
+#jobs:
+#  detekt:
+#    name: Check Code Quality
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - uses: actions/checkout@v4
+#
+#      - name: detekt
+#        uses: alaegin/Detekt-Action@b43f1c93f8b0e1aedb1bf41719220eee3b2cd49b # v1.23.7
+#        with:
+#          github_token: ${{ secrets.github_token }}

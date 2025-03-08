@@ -7,6 +7,7 @@ import base.boudicca.format.UrlUtils
 import base.boudicca.model.EventCategory
 import base.boudicca.model.Registration
 import base.boudicca.model.structured.StructuredEvent
+import base.boudicca.model.structured.dsl.structuredEvent
 import org.jsoup.Jsoup
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -46,26 +47,25 @@ class MetalCornerCollector : TwoStepEventCollector<Pair<String, String>>("metalc
         val eventStartDate = LocalDateTime.parse(document.select("div#content h2").text(), formatter)
             .atZone(zoneId).toOffsetDateTime()
 
-        return StructuredEvent
-            .builder(name, eventStartDate)
-            .withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, document.select("div#content p").text())
-            .withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(baseUrl + url))
-            .withProperty(SemanticKeys.TYPE_PROPERTY, eventType)
-            .withProperty(
+        return structuredEvent(name, eventStartDate) {
+            withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, document.select("div#content p").text())
+            withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(baseUrl + url))
+            withProperty(SemanticKeys.TYPE_PROPERTY, eventType)
+            withProperty(
                 SemanticKeys.PICTURE_URL_PROPERTY,
                 UrlUtils.parse(document.select("div#content img").attr("src"))
             )
-            .withProperty(SemanticKeys.PICTURE_ALT_TEXT_PROPERTY, document.select("div#content img").attr("alt"))
-            .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(baseUrl + url))
-            .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Escape Metalcorner")
-            .withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Wien")
-            .withProperty(
+            withProperty(SemanticKeys.PICTURE_ALT_TEXT_PROPERTY, document.select("div#content img").attr("alt"))
+            withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(baseUrl + url))
+            withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Escape Metalcorner")
+            withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Wien")
+            withProperty(
                 SemanticKeys.LOCATION_ADDRESS_PROPERTY,
                 "Escape Metalcorner, Neustiftgasse 116-118, 1070 Wien"
             )
-            .withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse("https://www.escape-metalcorner.at/"))
-            .withProperty(SemanticKeys.REGISTRATION_PROPERTY, Registration.TICKET)
-            .withProperty(SemanticKeys.CATEGORY_PROPERTY, EventCategory.MUSIC)
-            .build()
+            withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse("https://www.escape-metalcorner.at/"))
+            withProperty(SemanticKeys.REGISTRATION_PROPERTY, Registration.TICKET)
+            withProperty(SemanticKeys.CATEGORY_PROPERTY, EventCategory.MUSIC)
+        }
     }
 }

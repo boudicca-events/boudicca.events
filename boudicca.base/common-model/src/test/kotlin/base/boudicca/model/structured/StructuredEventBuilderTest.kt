@@ -9,23 +9,12 @@ import java.time.OffsetDateTime
 class StructuredEventBuilderTest {
 
     @Test
-    fun `minimal event with builder constructor`() {
+    fun `minimal event with constructor`() {
         val name = "Event Name"
         val startDate = OffsetDateTime.now()
 
         val event = StructuredEvent(name, startDate)
-        val builderEvent = StructuredEvent.builder(name, startDate).build()
-
-        assertThat(builderEvent).isEqualTo(event)
-    }
-
-    @Test
-    fun `minimal event with builder`() {
-        val name = "Event Name"
-        val startDate = OffsetDateTime.now()
-
-        val event = StructuredEvent(name, startDate)
-        val builderEvent = StructuredEvent.builder().withName(name).withStartDate(startDate).build()
+        val builderEvent = StructuredEvent(name, startDate)
 
         assertThat(builderEvent).isEqualTo(event)
     }
@@ -38,8 +27,8 @@ class StructuredEventBuilderTest {
         val value = "value1"
 
         val event = StructuredEvent(name, startDate, mapOf<Key, String>(key to value))
-        val builderEvent = StructuredEvent
-            .builder(name, startDate)
+        val builderEvent = StructuredEvent(name, startDate)
+            .toBuilder()
             .withKeyValuePair(key, value)
             .build()
 
@@ -54,8 +43,8 @@ class StructuredEventBuilderTest {
         val value = "value1"
 
         val event = StructuredEvent(name, startDate, mapOf<Key, String>(property.getKey() to value))
-        val builderEvent = StructuredEvent
-            .builder(name, startDate)
+        val builderEvent = StructuredEvent(name, startDate)
+            .toBuilder()
             .withProperty(property, value)
             .build()
 
@@ -72,8 +61,8 @@ class StructuredEventBuilderTest {
         val key = Key(property.getKey().name, listOf(variant))
 
         val event = StructuredEvent(name, startDate, mapOf<Key, String>(key to value))
-        val builderEvent = StructuredEvent
-            .builder(name, startDate)
+        val builderEvent = StructuredEvent(name, startDate)
+            .toBuilder()
             .withProperty(
                 property = property,
                 value = value,

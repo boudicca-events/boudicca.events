@@ -5,6 +5,7 @@ import base.boudicca.api.eventcollector.TwoStepEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
+import base.boudicca.model.structured.dsl.structuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.time.LocalDate
@@ -48,17 +49,16 @@ class StadtwerkstattCollector : TwoStepEventCollector<String>("stadtwerkstatt") 
 
         //TODO could parse lineup
 
-        return StructuredEvent
-            .builder(name, startDate)
-            .withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(event))
-            .withProperty(SemanticKeys.TYPE_PROPERTY, type)
-            .withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
-            .withProperty(SemanticKeys.PICTURE_URL_PROPERTY, pictureUrl)
-            .withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Stadtwerkstatt")
-            .withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse("https://club.stwst.at"))
-            .withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Linz")
-            .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(event))
-            .build()
+        return structuredEvent(name, startDate) {
+            withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(event))
+            withProperty(SemanticKeys.TYPE_PROPERTY, type)
+            withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
+            withProperty(SemanticKeys.PICTURE_URL_PROPERTY, pictureUrl)
+            withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Stadtwerkstatt")
+            withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse("https://club.stwst.at"))
+            withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Linz")
+            withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(event))
+        }
     }
 
     private fun parseDate(element: Element): OffsetDateTime {

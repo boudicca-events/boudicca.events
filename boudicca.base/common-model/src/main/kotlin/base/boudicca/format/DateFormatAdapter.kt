@@ -1,5 +1,6 @@
 package base.boudicca.format
 
+import base.boudicca.model.structured.VariantConstants
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
@@ -11,9 +12,9 @@ import java.time.format.DateTimeParseException
  *
  * all methods may throw exceptions on wrong formatted values
  */
-object DateFormat {
-    @Throws(IllegalArgumentException::class)
-    fun parseFromString(value: String): OffsetDateTime {
+class DateFormatAdapter :
+    AbstractFormatAdapter<OffsetDateTime>(VariantConstants.FormatVariantConstants.DATE_FORMAT_NAME) {
+    override fun fromString(value: String): OffsetDateTime {
         try {
             return OffsetDateTime.parse(value, DateTimeFormatter.ISO_DATE_TIME)
         } catch (e: DateTimeParseException) {
@@ -21,7 +22,7 @@ object DateFormat {
         }
     }
 
-    fun parseToString(date: OffsetDateTime): String {
-        return DateTimeFormatter.ISO_DATE_TIME.format(date)
+    override fun convertToString(value: OffsetDateTime): String {
+        return DateTimeFormatter.ISO_DATE_TIME.format(value)
     }
 }

@@ -22,7 +22,7 @@ object VariantConstants {
 
         // for now we treat enums and json as plain text
         // TODO discuss in https://github.com/boudicca-events/boudicca.events/issues/662 how to handle this
-        const val URL_FORMAT_NAME = ""
+        const val URI_FORMAT_NAME = ""
         const val ENUM_FORMAT_NAME = ""
         const val JSON_FORMAT_NAME = ""
     }

@@ -1,6 +1,8 @@
 package base.boudicca.model
 
+import assertk.assertAll
 import assertk.assertThat
+import assertk.assertions.contains
 import assertk.assertions.isEqualTo
 import base.boudicca.SemanticKeys
 import base.boudicca.TextProperty
@@ -31,8 +33,12 @@ class StructuredEventDslTest {
             }
             with(SemanticKeys.SOURCES, defaultFormatAdapter = listFormat()) {
                 variant(
-                    listFormat(),
-                    data = listOf("asdf.com", "bsdf.com", "csdf.com")
+                    lang("de"),
+                    data = listOf("asdf.com in german", "bsdf.com in german", "csdf.com in german")
+                )
+                variant(
+                    lang("en"),
+                    data = listOf("asdf.com in english", "bsdf.com in english", "csdf.com in english")
                 )
                 variant(
                     textFormat(),
@@ -41,15 +47,23 @@ class StructuredEventDslTest {
             }
         }
 
-        assertThat(event.filterKeys(Key.parse("description")).size).isEqualTo(2)
-        assertThat(event.filterKeys(Key.parse("description:lang=en")).size).isEqualTo(1)
-        assertThat(event.filterKeys(Key.parse("description:lang=en")).first().second).isEqualTo("# mydata")
-        assertThat(event.filterKeys(Key.parse("sources")).size).isEqualTo(2)
-        assertThat(event.filterKeys(Key.parse("sources")).first().second).isEqualTo("asdf.com")
-        assertThat(event.filterKeys(Key.parse("sources:format=list")).size).isEqualTo(1)
-        assertThat(
-            event.filterKeys(Key.parse("sources:format=list")).first().second
-        ).isEqualTo("asdf.com,bsdf.com,csdf.com")
+        assertAll {
+            assertThat(event.filterKeys(Key.parse("description")).size).isEqualTo(2)
+            assertThat(event.filterKeys(Key.parse("description:lang=en")).size).isEqualTo(1)
+            assertThat(event.filterKeys(Key.parse("description:lang=en")).first().second).isEqualTo("# mydata")
+            assertThat(event.filterKeys(Key.parse("sources")).size).isEqualTo(3)
+            assertThat(event.filterKeys(Key.parse("sources:lang=*")).first().second).contains("asdf.com")
+            assertThat(
+                event.filterKeys(Key.parse("sources:lang=de")).first().second
+            ).isEqualTo("asdf.com in german,bsdf.com in german,csdf.com in german")
+            assertThat(
+                event.filterKeys(Key.parse("sources:lang=en")).first().second
+            ).isEqualTo("asdf.com in english,bsdf.com in english,csdf.com in english")
+            assertThat(event.filterKeys(Key.parse("sources:format=list")).size).isEqualTo(2)
+            assertThat(
+                event.filterKeys(Key.parse("sources:format=list")).first().second
+            ).isEqualTo("asdf.com in german,bsdf.com in german,csdf.com in german")
+        }
     }
 
     @Test
@@ -59,11 +73,13 @@ class StructuredEventDslTest {
             withData(SemanticKeys.SOURCES, listFormat(), listOf("asdf.com", "bsdf.com", "csdf.com"))
         }
 
-        assertThat(event.filterKeys(Key.parse("description")).size).isEqualTo(1)
-        assertThat(event.filterKeys(Key.parse("description:format=markdown")).size).isEqualTo(1)
-        assertThat(event.filterKeys(Key.parse("description:format=markdown")).first().second).isEqualTo("# mydata")
-        assertThat(event.filterKeys(Key.parse("sources")).first().second).isEqualTo("asdf.com,bsdf.com,csdf.com")
-        assertThat(event.filterKeys(Key.parse("sources:format=list")).size).isEqualTo(1)
+        assertAll {
+            assertThat(event.filterKeys(Key.parse("description")).size).isEqualTo(1)
+            assertThat(event.filterKeys(Key.parse("description:format=markdown")).size).isEqualTo(1)
+            assertThat(event.filterKeys(Key.parse("description:format=markdown")).first().second).isEqualTo("# mydata")
+            assertThat(event.filterKeys(Key.parse("sources")).first().second).isEqualTo("asdf.com,bsdf.com,csdf.com")
+            assertThat(event.filterKeys(Key.parse("sources:format=list")).size).isEqualTo(1)
+        }
     }
 
     @Test
@@ -73,25 +89,29 @@ class StructuredEventDslTest {
             withData(SemanticKeys.SOURCES, listFormat(), listOf("asdf.com", "bsdf.com", "csdf.com"))
         }
 
-        assertThat(event.filterKeys(Key.parse("description:format=markdown")).size).isEqualTo(1)
-        assertThat(event.filterKeys(Key.parse("description:format=markdown")).first().second).isEqualTo("# mydata")
-        assertThat(event.filterKeys(Key.parse("sources:format=list")).size).isEqualTo(1)
-        assertThat(event.filterKeys(Key.parse("category")).size).isEqualTo(0)
+        assertAll {
+            assertThat(event.filterKeys(Key.parse("description:format=markdown")).size).isEqualTo(1)
+            assertThat(event.filterKeys(Key.parse("description:format=markdown")).first().second).isEqualTo("# mydata")
+            assertThat(event.filterKeys(Key.parse("sources:format=list")).size).isEqualTo(1)
+            assertThat(event.filterKeys(Key.parse("category")).size).isEqualTo(0)
+        }
 
         val modifiedEvent = modify(event) {
             withTextData(SemanticKeys.DESCRIPTION, "# mymodifieddata")
             withTextData(SemanticKeys.CATEGORY, "testdata")
         }
 
-        assertThat(modifiedEvent.filterKeys(Key.parse("description:format=markdown")).size).isEqualTo(1)
-        assertThat(
-            modifiedEvent.filterKeys(Key.parse("description:format=markdown")).first().second
-        ).isEqualTo("# mydata")
-        val descriptionProperty = modifiedEvent.getProperty(TextProperty("description"))
-        assertThat(descriptionProperty.first().second).isEqualTo("# mymodifieddata")
-        assertThat(modifiedEvent.filterKeys(Key.parse("sources:format=list")).size).isEqualTo(1)
-        assertThat(modifiedEvent.filterKeys(Key.parse("category")).size).isEqualTo(1)
-        assertThat(modifiedEvent.filterKeys(Key.parse("category")).first().second).isEqualTo("testdata")
+        assertAll {
+            assertThat(modifiedEvent.filterKeys(Key.parse("description:format=markdown")).size).isEqualTo(1)
+            assertThat(
+                modifiedEvent.filterKeys(Key.parse("description:format=markdown")).first().second
+            ).isEqualTo("# mydata")
+            val descriptionProperty = modifiedEvent.getProperty(TextProperty("description"))
+            assertThat(descriptionProperty.first().second).isEqualTo("# mymodifieddata")
+            assertThat(modifiedEvent.filterKeys(Key.parse("sources:format=list")).size).isEqualTo(1)
+            assertThat(modifiedEvent.filterKeys(Key.parse("category")).size).isEqualTo(1)
+            assertThat(modifiedEvent.filterKeys(Key.parse("category")).first().second).isEqualTo("testdata")
+        }
     }
 
     @Test
@@ -102,24 +122,28 @@ class StructuredEventDslTest {
             withProperty(SemanticKeys.SOURCES_PROPERTY, listOf("asdf.com", "bsdf.com", "csdf.com"))
         }
 
-        assertThat(event.filterKeys(Key.parse("description:format=markdown")).size).isEqualTo(1)
-        assertThat(event.filterKeys(Key.parse("description:format=markdown")).first().second).isEqualTo("# mydata")
-        assertThat(event.filterKeys(Key.parse("sources:format=list")).size).isEqualTo(1)
-        assertThat(event.filterKeys(Key.parse("category")).size).isEqualTo(0)
+        assertAll {
+            assertThat(event.filterKeys(Key.parse("description:format=markdown")).size).isEqualTo(1)
+            assertThat(event.filterKeys(Key.parse("description:format=markdown")).first().second).isEqualTo("# mydata")
+            assertThat(event.filterKeys(Key.parse("sources:format=list")).size).isEqualTo(1)
+            assertThat(event.filterKeys(Key.parse("category")).size).isEqualTo(0)
+        }
 
         val modifiedEvent = modify(event) {
             withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, "# mymodifieddata")
             withProperty(SemanticKeys.CATEGORY_PROPERTY, EventCategory.TECH)
         }
 
-        assertThat(modifiedEvent.filterKeys(Key.parse("description:format=markdown")).size).isEqualTo(1)
-        assertThat(
-            modifiedEvent.filterKeys(Key.parse("description:format=markdown")).first().second
-        ).isEqualTo("# mydata")
-        val descriptionProperty = modifiedEvent.getProperty(TextProperty("description"))
-        assertThat(descriptionProperty.first().second).isEqualTo("# mymodifieddata")
-        assertThat(modifiedEvent.filterKeys(Key.parse("sources:format=list")).size).isEqualTo(1)
-        assertThat(modifiedEvent.filterKeys(Key.parse("category")).size).isEqualTo(1)
-        assertThat(modifiedEvent.filterKeys(Key.parse("category")).first().second).isEqualTo("TECH")
+        assertAll {
+            assertThat(modifiedEvent.filterKeys(Key.parse("description:format=markdown")).size).isEqualTo(1)
+            assertThat(
+                modifiedEvent.filterKeys(Key.parse("description:format=markdown")).first().second
+            ).isEqualTo("# mydata")
+            val descriptionProperty = modifiedEvent.getProperty(TextProperty("description"))
+            assertThat(descriptionProperty.first().second).isEqualTo("# mymodifieddata")
+            assertThat(modifiedEvent.filterKeys(Key.parse("sources:format=list")).size).isEqualTo(1)
+            assertThat(modifiedEvent.filterKeys(Key.parse("category")).size).isEqualTo(1)
+            assertThat(modifiedEvent.filterKeys(Key.parse("category")).first().second).isEqualTo("TECH")
+        }
     }
 }

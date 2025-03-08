@@ -16,9 +16,9 @@ class StructuredEventBuilder(
     fun withTextData(
         name: String,
         data: String,
-        init: EventDataBuilder<String>.() -> Unit = {}
+        init: EntryDataBuilder<String>.() -> Unit = {}
     ) {
-        val builder = EventDataBuilder(name, TextFormatAdapter())
+        val builder = EntryDataBuilder(name, TextFormatAdapter())
         builder.data(data)
         builder.init()
         val dataEntries = builder.build()
@@ -30,9 +30,9 @@ class StructuredEventBuilder(
         name: String,
         format: AbstractFormatAdapter<T>,
         data: T? = null,
-        init: EventDataBuilder<T>.() -> Unit = {}
+        init: EntryDataBuilder<T>.() -> Unit = {}
     ) {
-        val builder = EventDataBuilder(name, format)
+        val builder = EntryDataBuilder(name, format)
         if (data != null) {
             builder.data(data)
         }
@@ -44,16 +44,16 @@ class StructuredEventBuilder(
 
     fun withText(
         name: String,
-        init: EventDataBuilder<String>.() -> Unit = {}
+        init: EntryDataBuilder<String>.() -> Unit = {}
     ) {
         with(name, TextFormatAdapter(), init)
     }
 
     fun <T> with(
         name: String,
-        init: EventDataBuilder<T>.() -> Unit = {}
+        init: EntryDataBuilder<T>.() -> Unit = {}
     ) {
-        val builder = EventDataBuilder<T>(name)
+        val builder = EntryDataBuilder<T>(name)
         builder.init()
         val dataEntries = builder.build()
 
@@ -63,9 +63,9 @@ class StructuredEventBuilder(
     fun <T> with(
         name: String,
         defaultFormatAdapter: AbstractFormatAdapter<T>,
-        init: EventDataBuilder<T>.() -> Unit = {}
+        init: EntryDataBuilder<T>.() -> Unit = {}
     ) {
-        val builder = EventDataBuilder(name, defaultFormatAdapter)
+        val builder = EntryDataBuilder(name, defaultFormatAdapter)
         builder.init()
         val dataEntries = builder.build()
 

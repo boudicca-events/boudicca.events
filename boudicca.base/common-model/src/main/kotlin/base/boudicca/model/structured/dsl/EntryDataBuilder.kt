@@ -5,7 +5,7 @@ import base.boudicca.model.structured.Key
 import base.boudicca.model.structured.Variant
 import base.boudicca.model.structured.VariantConstants
 
-class EventDataBuilder<T>(
+class EntryDataBuilder<T>(
     private val name: String, private var defaultFormatAdapter: AbstractFormatAdapter<T>? = null
 ) {
     // all combinations of the form
@@ -16,9 +16,6 @@ class EventDataBuilder<T>(
     private val variantCombinations = mutableMapOf<List<Variant>, String>()
 
     fun format(formatAdapter: AbstractFormatAdapter<T>) {
-        require(formatAdapter.formatVariantValue == VariantConstants.FORMAT_VARIANT_NAME) {
-            "only format variants are allowed for format() shortcut "
-        }
         this.defaultFormatAdapter = formatAdapter
     }
 

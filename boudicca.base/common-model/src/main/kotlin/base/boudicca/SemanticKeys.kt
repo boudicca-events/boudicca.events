@@ -22,7 +22,7 @@ object SemanticKeys {
     val ENDDATE_PROPERTY = DateProperty(ENDDATE)
 
     const val URL = "url"
-    val URL_PROPERTY = UrlProperty(URL)
+    val URL_PROPERTY = UriProperty(URL)
 
     const val TYPE = "type"
     val TYPE_PROPERTY = TextProperty(TYPE)
@@ -47,7 +47,7 @@ object SemanticKeys {
     val REGISTRATION_PROPERTY = EnumProperty(REGISTRATION, Registration::class.java)
 
     const val PICTURE_URL = "pictureUrl"
-    val PICTURE_URL_PROPERTY = UrlProperty(PICTURE_URL)
+    val PICTURE_URL_PROPERTY = UriProperty(PICTURE_URL)
 
     const val PICTURE_ALT_TEXT = "pictureAltText"
     val PICTURE_ALT_TEXT_PROPERTY = TextProperty(PICTURE_ALT_TEXT)
@@ -62,7 +62,7 @@ object SemanticKeys {
     val SOURCES_PROPERTY = ListProperty(SOURCES)
 
     const val ADDITIONAL_EVENTS_URL = "additionalEventsFromSourceUrl"
-    val ADDITIONAL_EVENTS_URL_PROPERTY = UrlProperty(ADDITIONAL_EVENTS_URL)
+    val ADDITIONAL_EVENTS_URL_PROPERTY = UriProperty(ADDITIONAL_EVENTS_URL)
 
     // location properties
 
@@ -70,7 +70,7 @@ object SemanticKeys {
     val LOCATION_NAME_PROPERTY = TextProperty(LOCATION_NAME)
 
     const val LOCATION_URL = "location.url"
-    val LOCATION_URL_PROPERTY = UrlProperty(LOCATION_URL)
+    val LOCATION_URL_PROPERTY = UriProperty(LOCATION_URL)
 
     const val LOCATION_COORDINATES_LAT = "location.coordinates.lat"
     val LOCATION_COORDINATES_LAT_PROPERTY = NumberProperty(LOCATION_COORDINATES_LAT)

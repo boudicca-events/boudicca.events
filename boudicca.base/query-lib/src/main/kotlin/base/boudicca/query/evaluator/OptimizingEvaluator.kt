@@ -4,6 +4,7 @@ import base.boudicca.format.ListFormatAdapter
 import base.boudicca.keyfilters.KeyFilters
 import base.boudicca.model.Entry
 import base.boudicca.model.structured.Key
+import base.boudicca.model.structured.KeyFilter
 import base.boudicca.model.structured.filterKeys
 import base.boudicca.model.toStructuredEntry
 import base.boudicca.query.AbstractDurationExpression
@@ -267,7 +268,7 @@ class OptimizingEvaluator(rawEntries: Collection<Entry>) : Evaluator {
         return index
     }
 
-    private fun keyFilterSearch(keyFilter: Key, search: (String) -> BitSet): BitSet {
+    private fun keyFilterSearch(keyFilter: KeyFilter, search: (String) -> BitSet): BitSet {
         val allFieldsToCheck = allFields.filter { KeyFilters.doesKeyMatchFilter(Key.parse(it), keyFilter) }
         val result = BitSet()
         for (field in allFieldsToCheck) {

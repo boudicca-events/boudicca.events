@@ -45,7 +45,7 @@ fun <T> StructuredEntry.getProperty(property: Property<T>, language: String?): L
     }
 }
 
-fun StructuredEntry.filterKeys(keyFilter: Key): List<Pair<Key, String>> {
+fun StructuredEntry.filterKeys(keyFilter: KeyFilter): List<Pair<Key, String>> {
     return KeyFilters.filterKeys(keyFilter, this)
 }
 

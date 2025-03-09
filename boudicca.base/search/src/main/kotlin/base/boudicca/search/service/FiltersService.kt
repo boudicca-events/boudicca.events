@@ -44,7 +44,7 @@ class FiltersService {
 
         for (entry in entries) {
             entry
-                .filterKeys(Key.parse(filterQuery.name))
+                .filterKeys(KeyFilter.parse(filterQuery.name))
                 .flatMap {
                     //TODO can we find utils/a generic way to do this check?
                     if (isList(it.first)) {

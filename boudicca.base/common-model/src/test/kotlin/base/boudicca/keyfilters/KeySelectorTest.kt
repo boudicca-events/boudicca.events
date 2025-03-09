@@ -1,6 +1,9 @@
 package base.boudicca.keyfilters
 
+import base.boudicca.SemanticKeys
 import base.boudicca.model.structured.StructuredEntry
+import base.boudicca.model.structured.VariantConstants
+import base.boudicca.model.structured.key
 import base.boudicca.model.structured.toEvent
 import base.boudicca.model.toStructuredEntry
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -115,6 +118,26 @@ class KeySelectorTest {
 
         assertTrue(result.isPresent)
         assertEquals("name", result.get().first.toKeyString())
+    }
+
+    @Test
+    fun testDsl() {
+        val keySelector = keySelector(SemanticKeys.DESCRIPTION) {
+            thenVariant(
+                VariantConstants.LANGUAGE_VARIANT_NAME,
+                "de", "en"
+            )
+            thenVariant(
+                VariantConstants.FORMAT_VARIANT_NAME,
+                VariantConstants.FormatVariantConstants.MARKDOWN_FORMAT_NAME,
+                VariantConstants.FormatVariantConstants.TEXT_FORMAT_NAME
+            )
+        }
+
+        val result = keySelector.selectSingle(testEntry())
+
+        assertTrue(result.isPresent)
+        assertEquals("description:lang=de", result.get().first.toKeyString())
     }
 
     private fun testEntry(): StructuredEntry {

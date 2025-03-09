@@ -148,10 +148,18 @@ class KeyUtilsTest {
     }
 
     @Test
-    fun `'parseKey' should handle wildcards`() {
-        val key = KeyUtils.parseKey("*:format=date")
+    fun `'parseKeyFilter' should handle wildcards`() {
+        val key = KeyUtils.parseKeyFilter("*:format=date")
 
         assertThat(key.toKeyString()).isEqualTo("*:format=date")
+    }
+
+    @Test
+    fun testInvalidKeyFilters() {
+        assertThrows<IllegalArgumentException> { KeyUtils.parseKeyFilter("") }
+        assertThrows<IllegalArgumentException> { KeyUtils.parseKeyFilter("key:*=asd") }
+        assertThrows<IllegalArgumentException> { KeyUtils.parseKeyFilter("key:asd=asd=asd") }
+        assertThrows<IllegalArgumentException> { KeyUtils.parseKeyFilter("key:asd") }
     }
 
     private fun toFlat(data: Map<Key, String>): Map<String, String> {

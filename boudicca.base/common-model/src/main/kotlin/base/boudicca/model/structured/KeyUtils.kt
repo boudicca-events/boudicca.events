@@ -22,7 +22,17 @@ object KeyUtils {
         return data.mapKeys { it.key.toKeyString() }
     }
 
-    fun parseKey(propertyKey: String): Key {
+    fun parseKey(key: String): Key {
+        val resultPair = parseKeyNameAndVariants(key)
+        return Key(resultPair.first, resultPair.second)
+    }
+
+    fun parseKeyFilter(keyFilter: String): KeyFilter {
+        val resultPair = parseKeyNameAndVariants(keyFilter)
+        return KeyFilter(resultPair.first, resultPair.second)
+    }
+
+    private fun parseKeyNameAndVariants(propertyKey: String): Pair<String, List<Variant>> {
         val trimmedPropertyKey = propertyKey.trim()
         require(trimmedPropertyKey.isNotEmpty()) { "given keyfilter was empty" }
         val split = trimmedPropertyKey.split(":")
@@ -30,11 +40,9 @@ object KeyUtils {
             val splittedVariant = it.split("=")
             require(splittedVariant.size > 1) { "variant $it does not contain a \"=\"" }
             require(splittedVariant.size <= 2) { "variant $it does contain too many \"=\"" }
-            require(splittedVariant[0] != "*" && splittedVariant[0].isNotEmpty()) {
-                "variant $it has an invalid variant name"
-            }
             Variant(splittedVariant[0], splittedVariant[1])
         }.sorted()
-        return Key(split[0], variants)
+        val resultPair = Pair(split[0], variants)
+        return resultPair
     }
 }

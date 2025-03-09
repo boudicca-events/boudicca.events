@@ -144,11 +144,11 @@ class EventService @Autowired constructor(
         )
         return Filters(
             EventCategory.entries
-                .map { Pair(it.name, frontEndName(it)) }
+                .map { Triple(it.name, frontEndName(it), frontEndId(it.name)) }
                 .sortedWith(Comparator.comparing({ it.second }, String.CASE_INSENSITIVE_ORDER)),
-            filters[SemanticKeys.LOCATION_NAME]!!.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Pair(it, it) },
-            filters[SemanticKeys.LOCATION_CITY]!!.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Pair(it, it) },
-            filters[SemanticKeys.CONCERT_BANDLIST]!!.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Pair(it, it) },
+            filters[SemanticKeys.LOCATION_NAME]!!.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Triple(it, it, frontEndId(it)) },
+            filters[SemanticKeys.LOCATION_CITY]!!.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Triple(it, it, frontEndId(it)) },
+            filters[SemanticKeys.CONCERT_BANDLIST]!!.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Triple(it, it, frontEndId(it)) },
         )
     }
 
@@ -328,6 +328,10 @@ class EventService @Autowired constructor(
         }
     }
 
+    private fun frontEndId(name: String): String {
+        return name.trim().replace(Regex("\\s"), "-")
+    }
+
     private fun setDefaults(searchDTO: SearchDTO) {
         if (searchDTO.fromDate.isNullOrBlank()) {
             searchDTO.fromDate = LocalDate.now().format(localDateFormatter)
@@ -402,10 +406,10 @@ class EventService @Autowired constructor(
     }
 
     data class Filters(
-        val categories: List<Pair<String, String>>,
-        val locationNames: List<Pair<String, String>>,
-        val locationCities: List<Pair<String, String>>,
-        val bandNames: List<Pair<String, String>>,
+        val categories: List<Triple<String, String, String>>,
+        val locationNames: List<Triple<String, String, String>>,
+        val locationCities: List<Triple<String, String, String>>,
+        val bandNames: List<Triple<String, String, String>>,
     )
 
     data class RichText(val isMarkdown: Boolean, val value: String)

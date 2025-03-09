@@ -10,12 +10,13 @@
     {{/if}}
     <div class="multiselect-wrapper">
         {{#if name}}
-            <label class="filter-label">{{name}}</label>
+            <p class="filter-label">{{name}}</p>
         {{/if}}
         <div class="multiselect-chips">
             {{#each entries as |entry|}}
-                <input type="checkbox" name={{identifier}} value="{{entry.first}}" id="{{identifier}}-{{entry.first}}" aria-checked="false">
-                <label for="{{identifier}}-{{entry.first}}" class="chips toggleFilterLabels" style="position:absolute;">
+                <input type="checkbox" name={{identifier}} value="{{entry.first}}" id="{{identifier}}-{{entry.third}}"
+                       aria-checked="false" aria-labelledby="{{identifier}}-{{entry.third}}-chip {{identifier}}-{{entry.third}}-label">
+                <label for="{{identifier}}-{{entry.third}}" id="{{identifier}}-{{entry.third}}-chip" class="chips toggleFilterLabels" style="position:absolute;">
                     {{entry.second}}
                 </label>
             {{/each}}
@@ -24,7 +25,7 @@
             <ul>
                 {{#each entries as |entry|}}
                     <li>
-                        <label for="{{identifier}}-{{entry.first}}" class="toggleFilterLabels" style="position:relative;">
+                        <label for="{{identifier}}-{{entry.third}}" id="{{identifier}}-{{entry.third}}-label" class="toggleFilterLabels" style="position:relative;">
                             {{entry.second}}
                         </label>
                     </li>

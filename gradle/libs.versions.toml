@@ -86,7 +86,7 @@ google-api-client = { module = "com.google.api-client:google-api-client", versio
 google-auth-library-oauth2-http = { module = "com.google.auth:google-auth-library-oauth2-http", version = "1.33.1" }
 google-api-services-sheets = { module = "com.google.apis:google-api-services-sheets", version = "v4-rev20250211-2.0.0" }
 
-kotlin-logging = { module = "io.github.oshai:kotlin-logging-jvm", version.ref = "kotlin-logging" }
+kotlin-logging = { module = "io.github.oshai:kotlin-logging", version.ref = "kotlin-logging" }
 
 [plugins]
 jmh = { id = "me.champeau.jmh", version = "0.7.3" }

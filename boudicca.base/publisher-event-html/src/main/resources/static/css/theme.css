@@ -1,5 +1,6 @@
-:root {
+@layer default {
 
+:root {
     /** colors */
     --color-white: white;
     --color-main: #d5f1f9;
@@ -39,7 +40,7 @@
 
     /** events **/
     --anchor-to-eventpage-border-color: black;
-    --anchor-to-eventpage-background-color: white;
+    --anchor-to-eventpage-background-color: var(--color-white);;
     --event-card-size: 220px;
 
     --input-background-color: inherit;
@@ -129,3 +130,5 @@ input:focus-visible, button:focus-visible, select:focus-visible {
 a {
     color: black;
 }
+
+} /* default layer */

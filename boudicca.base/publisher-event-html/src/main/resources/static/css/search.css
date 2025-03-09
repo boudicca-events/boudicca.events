@@ -1,3 +1,5 @@
+@layer default {
+
 #drawer {
     display: none;
     padding: 0 10px 24px 10px;
@@ -208,3 +210,5 @@ input[type=checkbox]:checked + label.chips:hover::before {
         flex-basis: 40%;
     }
 }
+
+} /* default layer */

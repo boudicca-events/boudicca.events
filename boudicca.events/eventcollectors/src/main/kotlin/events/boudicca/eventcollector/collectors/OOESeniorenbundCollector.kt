@@ -6,6 +6,7 @@ import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
 import base.boudicca.model.structured.dsl.structuredEvent
+import base.boudicca.toBoudiccaOffsetDateTime
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.time.LocalDate
@@ -37,7 +38,7 @@ class OOESeniorenbundCollector : TwoStepEventCollector<Pair<Document, String>>("
         val name = eventDoc.select("div.title>p").text()
         val dates = getDates(eventDoc)
         val description = eventDoc.select("div.subtitle>p").text()
-        
+
         return dates.map {
             val (startDate, endDate) = it
             structuredEvent(name, startDate) {
@@ -48,7 +49,7 @@ class OOESeniorenbundCollector : TwoStepEventCollector<Pair<Document, String>>("
                 ) //TODO location name and city here are not seperated at all -.-
                 withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
                 withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(url))
-                withProperty(SemanticKeys.ENDDATE_PROPERTY, endDate)
+                withProperty(SemanticKeys.ENDDATE_PROPERTY, endDate?.toBoudiccaOffsetDateTime())
             }
         }
     }

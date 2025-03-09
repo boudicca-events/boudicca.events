@@ -213,7 +213,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const initModals = (events) => {
     events.forEach(event => {
       const anchor = event.querySelector(".anchor-to-event");
-      const content = event.querySelector("#modal-content");
+      const content = event.querySelector(".modal-content");
       anchor.addEventListener("click", () => {
         openModal(content.innerHTML)
       });

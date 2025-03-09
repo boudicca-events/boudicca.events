@@ -15,8 +15,6 @@ import org.springframework.web.servlet.view.RedirectView
 @RequestMapping("/")
 class StartPageController @Autowired constructor(private val eventService: EventService) {
 
-    private val PAGE_TITLE = "Boudicca.Events - find accessible events in Austria"
-
     @GetMapping("/")
     fun getIndex(): RedirectView {
         return RedirectView("/search")
@@ -28,7 +26,6 @@ class StartPageController @Autowired constructor(private val eventService: Event
         searchDTO: SearchDTO
     ): ModelAndView {
         val data: MutableMap<String, Any> = HashMap()
-        data["title"] = PAGE_TITLE
         SearchUtils.searchAndAddToModel(eventService, searchDTO, data)
         data["filters"] = eventService.filters()
         return ModelAndView("index", data)

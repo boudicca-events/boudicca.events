@@ -1,6 +1,7 @@
 package base.boudicca.publisher.event.html
 
 import base.boudicca.publisher.event.html.extension.HeaderExtensionValueResolver
+import base.boudicca.publisher.event.html.extension.TitleValueResolver
 import com.github.jknack.handlebars.ValueResolver
 import com.github.jknack.handlebars.cache.NullTemplateCache
 import com.github.jknack.handlebars.helper.ConditionalHelpers
@@ -9,8 +10,6 @@ import org.springframework.boot.autoconfigure.AutoConfiguration
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
-import org.springframework.core.Ordered
-import org.springframework.core.annotation.Order
 import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.web.servlet.ViewResolver
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
@@ -24,7 +23,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 class PublisherHtmlConfiguration(private val properties: PublisherHtmlProperties) : WebMvcConfigurer {
     @Bean
     fun handlebarsViewResolver(
-        headerExtensionValueResolver: HeaderExtensionValueResolver
+        headerExtensionValueResolver: HeaderExtensionValueResolver,
+        titleValueResolver: TitleValueResolver
     ): ViewResolver {
         val viewResolver = HandlebarsViewResolver()
         viewResolver.order = 0 //we have to decrease the order so ours is first (default is Int.MAX_VALUE)
@@ -41,7 +41,8 @@ class PublisherHtmlConfiguration(private val properties: PublisherHtmlProperties
             viewResolver.setPrefix("file:boudicca.base/publisher-event-html/src/main/resources/templates/")
         }
 
-        val valueResolvers = ValueResolver.defaultValueResolvers().union(listOf(headerExtensionValueResolver))
+        val valueResolvers =
+            ValueResolver.defaultValueResolvers().union(listOf(headerExtensionValueResolver, titleValueResolver))
         viewResolver.setValueResolvers(*valueResolvers.toTypedArray())
         return viewResolver
     }

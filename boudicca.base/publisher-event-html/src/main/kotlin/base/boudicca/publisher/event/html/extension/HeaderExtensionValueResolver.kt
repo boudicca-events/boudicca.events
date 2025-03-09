@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 @Component
-class HeaderExtensionValueResolver @Autowired constructor(extensions: List<Extension>) : ValueResolver {
+class HeaderExtensionValueResolver(extensions: List<Extension>) : ValueResolver {
 
     private val headers: List<Map<String, String>> = getAllExtensionHeaders(extensions)
 

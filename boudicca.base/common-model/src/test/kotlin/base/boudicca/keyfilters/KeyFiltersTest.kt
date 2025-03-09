@@ -3,10 +3,7 @@ package base.boudicca.keyfilters
 import assertk.assertThat
 import assertk.assertions.hasSize
 import base.boudicca.SemanticKeys
-import base.boudicca.model.structured.Key
-import base.boudicca.model.structured.StructuredEntry
-import base.boudicca.model.structured.StructuredEvent
-import base.boudicca.model.structured.toEvent
+import base.boudicca.model.structured.*
 import base.boudicca.model.toStructuredEntry
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -119,15 +116,15 @@ class KeyFiltersTest {
             Key.parse("another:format=date") to "2024-05-31T00:31:00Z",
         )
 
-        val key = Key.parse("*:format=date")
-        
-        val filtered1 = KeyFilters.filterKeys(key, entry1)
+        val key = KeyFilter.parse("*:format=date")
+
+        val filtered1 = filterKeys(key, entry1)
         assertThat(filtered1).hasSize(0)
 
-        val filtered2 = KeyFilters.filterKeys(key, entry2)
+        val filtered2 = filterKeys(key, entry2)
         assertThat(filtered2).hasSize(1)
 
-        val filtered3 = KeyFilters.filterKeys(key, entry3)
+        val filtered3 = filterKeys(key, entry3)
         assertThat(filtered3).hasSize(2)
     }
 
@@ -136,11 +133,15 @@ class KeyFiltersTest {
     }
 
     private fun filterKeys(keyFilter: String, event: StructuredEvent): List<Pair<Key, String>> {
-        return KeyFilters.filterKeys(Key.parse(keyFilter), event)
+        return KeyFilters.filterKeys(KeyFilter.parse(keyFilter), event)
     }
 
     private fun filterKeys(keyFilter: String, entry: StructuredEntry): List<Pair<Key, String>> {
-        return KeyFilters.filterKeys(Key.parse(keyFilter), entry)
+        return KeyFilters.filterKeys(KeyFilter.parse(keyFilter), entry)
+    }
+
+    private fun filterKeys(keyFilter: KeyFilter, entry: StructuredEntry): List<Pair<Key, String>> {
+        return KeyFilters.filterKeys(keyFilter, entry)
     }
 
     private fun testEntry(): StructuredEntry {

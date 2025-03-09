@@ -51,7 +51,7 @@ data class StructuredEvent(val name: String, val startDate: OffsetDateTime, val 
             }
     }
 
-    fun filterKeys(keyFilter: Key): List<Pair<Key, String>> {
+    fun filterKeys(keyFilter: KeyFilter): List<Pair<Key, String>> {
         return KeyFilters.filterKeys(keyFilter, this)
     }
 

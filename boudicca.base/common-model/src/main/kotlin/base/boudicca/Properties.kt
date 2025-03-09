@@ -1,8 +1,7 @@
 package base.boudicca
 
 import base.boudicca.format.*
-import base.boudicca.model.structured.Key
-import base.boudicca.model.structured.VariantConstants
+import base.boudicca.model.structured.*
 import java.net.URI
 import java.time.OffsetDateTime
 
@@ -19,22 +18,30 @@ interface Property<T> {
     fun parseFromString(string: String): T
 
     fun getKey(language: String? = null): Key
-    fun getKeyFilter(language: String? = null): Key
+    fun getKeyFilter(language: String? = null): KeyFilter
 }
 
 abstract class AbstractProperty<T>(
     private val propertyName: String, private val adapter: AbstractFormatAdapter<T>
 ) : Property<T> {
     override fun getKey(language: String?): Key {
-        return internalGetKey(false, language)
+        return internalGetKey(false, language) {
+            Key.builder(it)
+        }
     }
 
-    override fun getKeyFilter(language: String?): Key {
-        return internalGetKey(true, language)
+    override fun getKeyFilter(language: String?): KeyFilter {
+        return internalGetKey(true, language) {
+            KeyFilter.builder(it)
+        }
     }
 
-    private fun internalGetKey(alwaysIncludeFormat: Boolean, language: String?): Key {
-        val builder = Key.builder(propertyName)
+    private fun <T : AbstractKey<T>> internalGetKey(
+        alwaysIncludeFormat: Boolean,
+        language: String?,
+        builderFunction: (String) -> AbstractKeyBuilder<T>
+    ): T {
+        val builder = builderFunction(propertyName)
         if (!language.isNullOrEmpty()) {
             builder.withVariant(VariantConstants.LANGUAGE_VARIANT_NAME, language)
         }

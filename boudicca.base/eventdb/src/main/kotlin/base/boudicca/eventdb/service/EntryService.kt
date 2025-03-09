@@ -201,7 +201,7 @@ class EntryService @Autowired constructor(
         @Suppress("UNCHECKED_CAST")
         return keys
             .map {
-                it to entry.filterKeys(Key.parse(it)).firstOrNull()?.second
+                it to entry.filterKeys(KeyFilter.parse(it)).firstOrNull()?.second
             }
             .filter { it.second != null }
             .toMap() as EntryKey

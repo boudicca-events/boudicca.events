@@ -1,6 +1,6 @@
 package base.boudicca.query
 
-import base.boudicca.model.structured.Key
+import base.boudicca.model.structured.KeyFilter
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
@@ -50,7 +50,7 @@ abstract class FieldAndTextExpression(
 
     private val keyFilter = parseKeyFilter(keyFilter)
 
-    fun getKeyFilter(): Key {
+    fun getKeyFilter(): KeyFilter {
         return keyFilter
     }
 
@@ -70,7 +70,7 @@ abstract class FieldExpression(
 
     private val keyFilter = parseKeyFilter(keyFilter)
 
-    fun getKeyFilter(): Key {
+    fun getKeyFilter(): KeyFilter {
         return keyFilter
     }
 
@@ -114,11 +114,11 @@ abstract class AbstractDurationExpression(
     private val startDateKeyFilter = parseKeyFilter(startDateKeyFilter)
     private val endDateKeyFilter = parseKeyFilter(endDateKeyFilter)
 
-    fun getStartDateKeyFilter(): Key {
+    fun getStartDateKeyFilter(): KeyFilter {
         return startDateKeyFilter
     }
 
-    fun getEndDateKeyFilter(): Key {
+    fun getEndDateKeyFilter(): KeyFilter {
         return endDateKeyFilter
     }
 
@@ -131,9 +131,9 @@ abstract class AbstractDurationExpression(
     }
 }
 
-private fun parseKeyFilter(keyFilter: String): Key {
+private fun parseKeyFilter(keyFilter: String): KeyFilter {
     try {
-        return Key.parse(keyFilter)
+        return KeyFilter.parse(keyFilter)
     } catch (e: IllegalArgumentException) {
         throw QueryException("invalid keyfilter", e)
     }

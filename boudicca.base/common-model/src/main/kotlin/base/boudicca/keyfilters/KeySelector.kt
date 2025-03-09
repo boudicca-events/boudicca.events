@@ -1,10 +1,7 @@
 package base.boudicca.keyfilters
 
 import base.boudicca.model.Event
-import base.boudicca.model.structured.Key
-import base.boudicca.model.structured.StructuredEntry
-import base.boudicca.model.structured.StructuredEvent
-import base.boudicca.model.structured.Variant
+import base.boudicca.model.structured.*
 import base.boudicca.model.toStructuredEntry
 import java.util.*
 
@@ -38,7 +35,7 @@ import java.util.*
  *
  * Note that the KeySelector currently does not handle the format variant, you have to convert the value manually.
  */
-class KeySelector private constructor(
+class KeySelector(
     private val propertyName: String,
     private val variants: List<Pair<String, List<String>>>
 ) {
@@ -58,10 +55,7 @@ class KeySelector private constructor(
             }
             if (currentVariant >= variants.size) {
                 //selectorList is full
-                val keyFilter = Key
-                    .builder(propertyName)
-                    .withVariants(variantList)
-                    .build()
+                val keyFilter = KeyFilter(propertyName, variantList)
                 val keys = KeyFilters.filterKeys(keyFilter, properties)
                 if (keys.isNotEmpty()) {
                     return Optional.of(keys.first())
@@ -105,23 +99,11 @@ class KeySelector private constructor(
             key.variants.forEach { builder.thenVariant(it) }
             return builder
         }
-    }
 
-    class KeySelectorBuilder internal constructor(private val propertyName: String) {
-        private val variants = mutableListOf<Pair<String, List<String>>>()
-
-        fun thenVariant(variantName: String, variantValues: List<String>): KeySelectorBuilder {
-            variants.add(Pair(variantName, variantValues))
-            return this
-        }
-
-        fun thenVariant(variant: Variant): KeySelectorBuilder {
-            variants.add(Pair(variant.variantName, listOf(variant.variantValue)))
-            return this
-        }
-
-        fun build(): KeySelector {
-            return KeySelector(propertyName, variants.toList())
+        fun builder(keyFilter: KeyFilter): KeySelectorBuilder {
+            val builder = KeySelectorBuilder(keyFilter.name)
+            keyFilter.variants.forEach { builder.thenVariant(it) }
+            return builder
         }
     }
 

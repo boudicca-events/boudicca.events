@@ -1,33 +1,19 @@
 package base.boudicca.model.structured
 
-import kotlin.math.min
-
 /**
  * represents a parsed Key of a Key-Value pair which consists of the name and all the variants (which are sorted canonically)
  */
-data class Key(val name: String, val variants: List<Variant> = emptyList()) : Comparable<Key> {
+class Key(name: String, variants: List<Variant> = emptyList()) : AbstractKey<Key>(name, variants) {
 
-    /**
-     * get the key string representation of this key for using in an unstructured/serialized event
-     */
-    fun toKeyString(): String {
-        if (variants.isEmpty()) {
-            return name
+    override fun validate() {
+        require(name != "*") { "key name is not allowed to be '*'" }
+        variants.forEach {
+            require(it.variantValue != "*") { "for a key a variant value is not allowed to be '*'" }
+            require(it.variantValue != "") { "for a key a variant value is not allowed to be the empty string" }
         }
-        return name + ":" + variants.joinToString(":") { it.toKeyString() }
     }
 
     companion object {
-        val COMPARATOR = compareBy<Key> { it.name }.thenComparing { o1, o2 ->
-            for (i in 0..<min(o1.variants.size, o2.variants.size)) {
-                val result = o1.variants[i].compareTo(o2.variants[i])
-                if (result != 0) {
-                    return@thenComparing result
-                }
-            }
-            return@thenComparing o1.variants.size.compareTo(o2.variants.size)
-        }
-
         fun parse(keyFilter: String): Key {
             return KeyUtils.parseKey(keyFilter)
         }
@@ -37,33 +23,10 @@ data class Key(val name: String, val variants: List<Variant> = emptyList()) : Co
         }
     }
 
-    override fun compareTo(other: Key): Int {
-        return COMPARATOR.compare(this, other)
+    fun asKeyFilter(): KeyFilter {
+        return KeyFilter(name, variants)
     }
 
-    fun toBuilder(): KeyBuilder = KeyBuilder(name).withVariants(variants)
+    override fun toBuilder() = KeyBuilder(name).withVariants(variants)
 
-    class KeyBuilder internal constructor(private val propertyName: String) {
-        private val variants = mutableListOf<Variant>()
-
-        fun withVariant(variantName: String, variantValue: String): KeyBuilder {
-            return withVariant(Variant(variantName, variantValue))
-        }
-
-        fun withVariant(variant: Variant): KeyBuilder {
-            variants.add(variant)
-            return this
-        }
-
-        fun withVariants(newVariants: List<Variant>): KeyBuilder {
-            variants.addAll(newVariants)
-            return this
-        }
-
-        fun build(): Key {
-            return Key(propertyName, variants.toList().sorted())
-        }
-    }
-
-    override fun toString() = toKeyString()
 }

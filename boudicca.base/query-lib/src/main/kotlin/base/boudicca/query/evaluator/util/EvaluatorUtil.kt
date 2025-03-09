@@ -3,10 +3,7 @@ package base.boudicca.query.evaluator.util
 import base.boudicca.format.DateFormatAdapter
 import base.boudicca.keyfilters.KeyFilters
 import base.boudicca.keyfilters.KeySelector
-import base.boudicca.model.structured.Key
-import base.boudicca.model.structured.StructuredEntry
-import base.boudicca.model.structured.VariantConstants
-import base.boudicca.model.structured.filterKeys
+import base.boudicca.model.structured.*
 import java.time.Duration
 import java.time.OffsetDateTime
 import java.time.format.DateTimeParseException
@@ -16,8 +13,8 @@ import kotlin.jvm.optionals.getOrNull
 
 object EvaluatorUtil {
     fun getDuration(
-        startDateKeyFilter: Key,
-        endDateKeyFilter: Key,
+        startDateKeyFilter: KeyFilter,
+        endDateKeyFilter: KeyFilter,
         entry: StructuredEntry,
         dataCache: ConcurrentHashMap<String, OffsetDateTime>
     ): Double {
@@ -37,7 +34,7 @@ object EvaluatorUtil {
         }
     }
 
-    private fun selectDateValue(entry: StructuredEntry, keyFilter: Key): String? {
+    private fun selectDateValue(entry: StructuredEntry, keyFilter: KeyFilter): String? {
         return KeySelector.builder(keyFilter)
             .thenVariant(
                 VariantConstants.FORMAT_VARIANT_NAME,
@@ -51,7 +48,7 @@ object EvaluatorUtil {
             .getOrNull()
     }
 
-    fun getDateValues(entry: StructuredEntry, dateKeyFilter: Key): List<String> {
+    fun getDateValues(entry: StructuredEntry, dateKeyFilter: KeyFilter): List<String> {
         return entry
             .filterKeys(dateKeyFilter)
             .filter { isDate(it.first) }

@@ -12,7 +12,7 @@ class DataShouldContainPropertyWithFormat(
     private val severity: ValidationSeverity,
 ) : EventCollectorValidation {
     override fun validate(event: Event, verbose: Boolean): ValidationResult {
-        val key = property.getKey()
+        val key = property.getKeyFilter()
         if (event.toStructuredEvent().filterKeys(key).none { it.second.contains(format) }) {
             when (severity) {
                 ValidationSeverity.Info ->

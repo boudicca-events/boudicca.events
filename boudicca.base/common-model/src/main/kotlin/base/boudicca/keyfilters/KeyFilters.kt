@@ -1,9 +1,6 @@
 package base.boudicca.keyfilters
 
-import base.boudicca.model.structured.Key
-import base.boudicca.model.structured.StructuredEntry
-import base.boudicca.model.structured.StructuredEvent
-import base.boudicca.model.structured.Variant
+import base.boudicca.model.structured.*
 
 /**
  * utility methods for filtering keys of Events/Entries. you can use a Key as a KeyFilter to select only matching keys of an event/entry.
@@ -12,11 +9,11 @@ import base.boudicca.model.structured.Variant
  */
 object KeyFilters {
 
-    fun filterKeys(keyFilter: Key, event: StructuredEvent): List<Pair<Key, String>> {
+    fun filterKeys(keyFilter: KeyFilter, event: StructuredEvent): List<Pair<Key, String>> {
         return filterKeys(keyFilter, event.toEntry())
     }
 
-    fun filterKeys(keyFilter: Key, data: StructuredEntry): List<Pair<Key, String>> {
+    fun filterKeys(keyFilter: KeyFilter, data: StructuredEntry): List<Pair<Key, String>> {
         return data
             .filter { doesKeyMatchFilter(it.key, keyFilter) }
             .toList()
@@ -25,16 +22,16 @@ object KeyFilters {
 
     fun doesKeyMatchFilter(
         key: Key,
-        keyFilter: Key
+        keyFilter: KeyFilter
     ): Boolean {
         return ((isWildcard(keyFilter) || keyFilter.name == key.name) &&
                 keyContainsAllVariants(keyFilter, key))
     }
 
-    private fun keyContainsAllVariants(keyFilter: Key, key: Key) =
+    private fun keyContainsAllVariants(keyFilter: KeyFilter, key: Key) =
         keyFilter.variants.all { variant -> containsVariant(key, variant) }
 
-    private fun isWildcard(keyFilter: Key) = keyFilter.name == "*"
+    private fun isWildcard(keyFilter: KeyFilter) = keyFilter.name == "*"
 
     fun containsVariant(key: Key, variant: Variant): Boolean {
         if (variant.variantValue == "*") {

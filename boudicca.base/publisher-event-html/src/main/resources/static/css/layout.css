@@ -1,3 +1,5 @@
+@layer default {
+
 body {
     background-color: var(--color-white);
 }
@@ -107,3 +109,5 @@ footer ul {
     list-style: none;
     text-align: right;
 }
+
+} /* default layer */

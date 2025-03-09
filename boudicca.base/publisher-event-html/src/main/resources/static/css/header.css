@@ -1,3 +1,5 @@
+@layer default {
+
 header {
     display: flex;
     flex-wrap: wrap;
@@ -148,3 +150,5 @@ header button {
     }
 
 }
+
+} /* default layer */

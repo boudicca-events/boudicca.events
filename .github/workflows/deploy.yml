@@ -27,7 +27,7 @@ jobs:
       - name: Build Docker images with gradle
         run: ./gradlew imageBuild
       - name: Login to Docker Registry
-        uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567
+        uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772
         with:
           registry: 'ghcr.io'
           username: ${{ github.actor }}
@@ -35,7 +35,7 @@ jobs:
       - name: Tag And Push Docker Images
         run: ./deploy_images.sh
       - name: triggering deploy
-        uses: appleboy/ssh-action@8faa84277b88b6cd1455986f459aa66cf72bc8a3
+        uses: appleboy/ssh-action@2ead5e36573f08b82fbfce1504f1a4b05a647c6f
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}

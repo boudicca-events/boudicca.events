@@ -12,6 +12,7 @@ import java.time.ZoneId
 
 class FormatAdapterTest {
 
+    @Suppress("detekt:EnumNaming")
     enum class TestEnum {
         // caPItaLIzAtIOn HeRE iS ON purPOSE, pls do not change
         asdf,

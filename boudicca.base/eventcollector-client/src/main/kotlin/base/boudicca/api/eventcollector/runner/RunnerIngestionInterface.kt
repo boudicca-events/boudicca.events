@@ -10,10 +10,10 @@ fun interface RunnerIngestionInterface {
         fun createFromConfiguration(): RunnerIngestionInterface {
             val eventDbUrl = Configuration.getProperty("boudicca.eventdb.url")
             if (eventDbUrl.isNullOrBlank()) {
-                throw IllegalStateException("you need to specify the boudicca.eventdb.url property!")
+                error { "you need to specify the boudicca.eventdb.url property!" }
             }
             val userAndPassword = Configuration.getProperty("boudicca.ingest.auth")
-                ?: throw IllegalStateException("you need to specify the boudicca.ingest.auth property!")
+                ?: error { "you need to specify the boudicca.ingest.auth property!" }
             val user = userAndPassword.split(":")[0]
             val password = userAndPassword.split(":")[1]
             val eventDb = EventDbIngestClient(eventDbUrl, user, password)

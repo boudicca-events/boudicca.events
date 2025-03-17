@@ -16,7 +16,7 @@ class EventCollectorCoordinator(
     fun startWebUi(port: Int = -1): EventCollectorCoordinator {
         val realPort = if (port == -1) {
             Configuration.getProperty("server.port")?.toInt()
-                ?: throw IllegalStateException("you need to specify the server.port property!")
+                ?: error { "you need to specify the server.port property!" }
         } else {
             port
         }

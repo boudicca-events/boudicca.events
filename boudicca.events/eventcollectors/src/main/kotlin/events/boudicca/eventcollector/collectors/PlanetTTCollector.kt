@@ -53,7 +53,7 @@ class PlanetTTCollector : TwoStepEventCollector<Element>("planettt") {
         if (listMatcher.find() && modalMatcher.find()) {
             return Pair(listMatcher.group(1), modalMatcher.group(1))
         } else {
-            throw RuntimeException("could not parse nonces from script")
+            error("could not parse nonces from script")
         }
     }
 

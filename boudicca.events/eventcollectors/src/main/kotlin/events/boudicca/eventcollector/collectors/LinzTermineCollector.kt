@@ -137,7 +137,7 @@ class LinzTermineCollector : EventCollector {
 
         var date = LocalDate.now(ZoneId.of("Europe/Vienna")).atStartOfDay()
         val links = mutableListOf<String>()
-        for (i in 1..(4 * 6)) {
+        for (ignored in 1..(4 * 6)) {
             links.add(
                 "$eventsBaseUrl?lt_datefrom=" +
                         URLEncoder.encode(

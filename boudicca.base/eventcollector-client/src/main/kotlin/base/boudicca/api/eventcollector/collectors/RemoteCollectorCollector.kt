@@ -5,6 +5,7 @@ import base.boudicca.api.eventcollector.collections.Collections
 import base.boudicca.api.remotecollector.RemoteCollectorClient
 import base.boudicca.api.remotecollector.model.HttpCall
 import base.boudicca.model.Event
+import java.net.HttpURLConnection
 
 /**
  * EventCollector implementation which will collect events from a remote EventCollector via HTTP.
@@ -19,7 +20,7 @@ class RemoteCollectorCollector(private val url: String, private val name: String
         Collections.startHttpCall(url)
         val eventCollection = try {
             val eventCollection = RemoteCollectorClient(url).collectEvents()
-            Collections.endHttpCall(200)
+            Collections.endHttpCall(HttpURLConnection.HTTP_OK)
             eventCollection
         } catch (e: Exception) {
             Collections.endHttpCall(-1)

@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.ReentrantLock
 
+private const val DEFAULT_RETRY_TIME_MILLIS = 30000L
+
 @Service
 class SynchronizationService @Autowired constructor(
     private val eventPublisher: ApplicationEventPublisher,
@@ -36,7 +38,7 @@ class SynchronizationService @Autowired constructor(
                 //if eventdb is currently down, retry in 30 seconds
                 //this mainly happens when both are deployed at the same time
                 Thread {
-                    Thread.sleep(30000)
+                    Thread.sleep(DEFAULT_RETRY_TIME_MILLIS)
                     updateEvents()
                 }.start()
             }

@@ -24,6 +24,7 @@ import base.boudicca.query.BoudiccaQueryBuilder.equals
 import base.boudicca.query.BoudiccaQueryBuilder.hasField
 import base.boudicca.query.BoudiccaQueryBuilder.not
 import base.boudicca.query.BoudiccaQueryBuilder.or
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -42,7 +43,9 @@ private const val SEARCH_TYPE_ALL = "ALL"
 
 private const val MAP_SEARCH_RESULT_COUNT = 200
 
+//TODO we should think about reducing the size of this class, maybe we can split out all the property selecting methods
 @Service
+@Suppress("detekt:TooManyFunctions")
 class EventService @Autowired constructor(
     private val pictureProxyService: PictureProxyService,
     private val caller: SearchServiceCaller,
@@ -52,6 +55,7 @@ class EventService @Autowired constructor(
         private val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy 'um' HH:mm 'Uhr'", Locale.GERMAN)
         private val localDateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         private val additionalMapQueryParts = listOf(hasField(SemanticKeys.LOCATION_OSM_ID))
+        private val logger = KotlinLogging.logger {}
     }
 
     @Throws(EventServiceException::class)
@@ -83,6 +87,7 @@ class EventService @Autowired constructor(
         return query
     }
 
+    @Suppress("detekt:CyclomaticComplexMethod")
     private fun buildQuery(searchDTO: SearchDTO, additionalQueryParts: List<String> = emptyList()): String {
         val queryParts = mutableListOf<String>()
         if (!searchDTO.name.isNullOrBlank()) {
@@ -231,6 +236,7 @@ class EventService @Autowired constructor(
                 try {
                     ListFormatAdapter().fromString(it.second)
                 } catch (e: IllegalArgumentException) {
+                    logger.warn(e) { "could not parse value for key '${it.first}' to 'list' format: ${it.second}" }
                     null
                 }
             }
@@ -295,6 +301,7 @@ class EventService @Autowired constructor(
             val category = try {
                 EventCategory.valueOf(categoryString)
             } catch (e: IllegalArgumentException) {
+                logger.warn(e) { "$categoryString is not a valid category" }
                 null
             }
             if (category != null) {
@@ -341,7 +348,7 @@ class EventService @Autowired constructor(
             //treat as url
             try {
                 URI.create(value).normalize().host
-            } catch (e: IllegalArgumentException) {
+            } catch (ignored: IllegalArgumentException) {
                 //hm, no url?
                 value
             }

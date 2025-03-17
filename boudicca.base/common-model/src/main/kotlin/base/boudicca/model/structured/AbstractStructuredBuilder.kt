@@ -2,7 +2,9 @@ package base.boudicca.model.structured
 
 import base.boudicca.Property
 
-abstract class AbstractStructuredBuilder<T, B : AbstractStructuredBuilder<T, B>>(protected val data: MutableMap<Key, String> = mutableMapOf()) {
+abstract class AbstractStructuredBuilder<T, B : AbstractStructuredBuilder<T, B>>(
+    protected val data: MutableMap<Key, String> = mutableMapOf()
+) {
 
     fun <P> withProperty(
         property: Property<P>,

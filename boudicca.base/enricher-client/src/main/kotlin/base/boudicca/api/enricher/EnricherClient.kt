@@ -12,9 +12,7 @@ class EnricherClient(private val enricherUrl: String) {
     private val enricherApi: EnricherApi
 
     init {
-        if (enricherUrl.isBlank()) {
-            throw IllegalStateException("you need to pass an enricherUrl!")
-        }
+        check(enricherUrl.isNotBlank()) { "you need to pass an enricherUrl!" }
         val apiClient = ApiClient()
         apiClient.updateBaseUri(enricherUrl)
 

@@ -32,6 +32,8 @@ import kotlin.io.path.exists
 import kotlin.io.path.readBytes
 import kotlin.io.path.writeBytes
 
+private const val MAX_AGE_IN_DAYS = 3L
+private val MAX_AGE = Duration.ofDays(MAX_AGE_IN_DAYS).toMillis()
 
 @Service
 @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON) //even if this is the default, we REALLY have to make sure there is only one
@@ -53,11 +55,11 @@ class EntryService @Autowired constructor(
             if (store.exists()) {
                 try {
                     loadStoreV3(store)
-                } catch (e: DatabindException) {
+                } catch (ignored: DatabindException) {
                     logger.info { "store had wrong format, retrying with old format v2" }
                     try {
                         loadStoreV2(store)
-                    } catch (e: DatabindException) {
+                    } catch (ignored: DatabindException) {
                         logger.info { "store had wrong format, retrying with old format v1" }
                         loadStoreV1(store)
                     }
@@ -127,8 +129,6 @@ class EntryService @Autowired constructor(
 
         needsPersist.set(true)
     }
-
-    private val MAX_AGE = Duration.ofDays(3).toMillis()
 
     @Scheduled(fixedRate = 1, timeUnit = TimeUnit.DAYS)
     fun cleanup() {

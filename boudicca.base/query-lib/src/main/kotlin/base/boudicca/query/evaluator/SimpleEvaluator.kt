@@ -8,19 +8,7 @@ import base.boudicca.model.structured.StructuredEntry
 import base.boudicca.model.structured.filterKeys
 import base.boudicca.model.structured.toFlatEntry
 import base.boudicca.model.toStructuredEntry
-import base.boudicca.query.AfterExpression
-import base.boudicca.query.AndExpression
-import base.boudicca.query.BeforeExpression
-import base.boudicca.query.ContainsExpression
-import base.boudicca.query.DurationLongerExpression
-import base.boudicca.query.DurationShorterExpression
-import base.boudicca.query.EqualsExpression
-import base.boudicca.query.Expression
-import base.boudicca.query.HasFieldExpression
-import base.boudicca.query.NotExpression
-import base.boudicca.query.OrExpression
-import base.boudicca.query.QueryException
-import base.boudicca.query.Utils
+import base.boudicca.query.*
 import base.boudicca.query.evaluator.util.EvaluatorUtil
 import java.time.LocalDate
 import java.time.OffsetDateTime
@@ -28,6 +16,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeParseException
 import java.util.concurrent.ConcurrentHashMap
 
+@Suppress("detekt:LongMethod", "detekt:CyclomaticComplexMethod")
 class SimpleEvaluator(rawEntries: Collection<Entry>) : Evaluator {
 
     private val dateCache = ConcurrentHashMap<String, OffsetDateTime>()

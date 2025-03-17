@@ -14,9 +14,13 @@ import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.api.eventdb.ingest.EventDbIngestClient
 import base.boudicca.model.Event
 
-class EventCollectorDebugger(val verboseDebugging: Boolean = true,
-                             val verboseValidation: Boolean = true,
-                             val keepOpen: Boolean = true) {
+private const val DEFAULT_PORT = 8083
+
+class EventCollectorDebugger(
+    val verboseDebugging: Boolean = true,
+    val verboseValidation: Boolean = true,
+    val keepOpen: Boolean = true
+) {
 
     private var runnerIngestionInterface: RunnerIngestionInterface? = null
     private var runnerEnricherInterface: RunnerEnricherInterface? = null
@@ -67,7 +71,7 @@ class EventCollectorDebugger(val verboseDebugging: Boolean = true,
         val collectedEvents = mutableListOf<Event>()
 
         val eventCollectorWebUi =
-            EventCollectorWebUi(Configuration.getProperty("server.port")?.toInt() ?: 8083, eventCollectorAsList)
+            EventCollectorWebUi(Configuration.getProperty("server.port")?.toInt() ?: DEFAULT_PORT, eventCollectorAsList)
         eventCollectorWebUi.start()
 
         val runner = EventCollectionRunner(
@@ -119,7 +123,7 @@ class EventCollectorDebugger(val verboseDebugging: Boolean = true,
             }
             if (highestSeverity == ValidationResult.Error) {
                 println("Validation: CHECK FAILED".red())
-            } else if (highestSeverity == ValidationResult.Warn)  {
+            } else if (highestSeverity == ValidationResult.Warn) {
                 println("Validation: CHECK WARN".yellow())
             } else {
                 println("Validation: CHECK OK".green())

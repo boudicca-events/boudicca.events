@@ -83,7 +83,8 @@ class ArenaWienCollector : TwoStepEventCollector<ArenaWienCollector.HalfEvent>("
     }
 
     private fun getAjaxUrl(page: Int): String {
-        return "https://arena.wien/DesktopModules/WebAPI/API/Event/Search?searchTerm=&day=1&month=-1&year=-1&page=${page}&pageSize=20&eventCategory=-1&abonnement=-1&cultureCode=de-AT&locationId=0"
+        return "https://arena.wien/DesktopModules/WebAPI/API/Event/Search?searchTerm=&day=1&month=-1&year=-1&" +
+                "page=${page}&pageSize=20&eventCategory=-1&abonnement=-1&cultureCode=de-AT&locationId=0"
     }
 
     data class HalfEvent(

@@ -13,13 +13,13 @@ class EventDbIngestClient(private val eventDbUrl: String, user: String, password
 
     init {
         if (eventDbUrl.isBlank()) {
-            throw IllegalStateException("you need to pass an eventDbUrl!")
+            error("you need to pass an eventDbUrl!")
         }
         if (user.isBlank()) {
-            throw IllegalStateException("you need to pass an user!")
+            error("you need to pass an user!")
         }
         if (password.isBlank()) {
-            throw IllegalStateException("you need to pass an password!")
+            error("you need to pass an password!")
         }
         val apiClient = ApiClient()
         apiClient.updateBaseUri(eventDbUrl)
@@ -49,4 +49,4 @@ class EventDbIngestClient(private val eventDbUrl: String, user: String, password
 
 }
 
-class EventDBException(msg: String, e: ApiException) : RuntimeException(msg ,e)
+class EventDBException(msg: String, e: ApiException) : RuntimeException(msg, e)

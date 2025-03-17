@@ -7,7 +7,7 @@ import java.time.Duration
 class EventCollectorCoordinatorBuilder {
 
     private val eventCollectors: MutableList<EventCollector> = mutableListOf()
-    private var interval: Duration = Duration.ofHours(24)
+    private var interval: Duration = Duration.ofDays(1)
     private var runnerIngestionInterface: RunnerIngestionInterface? = null
     private var runnerEnricherInterface: RunnerEnricherInterface? = null
 

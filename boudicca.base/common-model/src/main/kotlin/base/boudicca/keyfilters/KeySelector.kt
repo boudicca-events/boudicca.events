@@ -3,7 +3,6 @@ package base.boudicca.keyfilters
 import base.boudicca.model.Event
 import base.boudicca.model.structured.*
 import base.boudicca.model.toStructuredEntry
-import java.util.*
 
 /**
  * Extending KeyFilters, this KeySelector helps you when you need to select a single value of all possible variants.
@@ -39,11 +38,11 @@ class KeySelector(
     private val propertyName: String,
     private val variants: List<Pair<String, List<String>>>
 ) {
-    fun selectSingle(event: StructuredEvent): Optional<Pair<Key, String>> {
+    fun selectSingle(event: StructuredEvent): Pair<Key, String>? {
         return selectSingle(Event.toEntry(event.toFlatEvent()).toStructuredEntry())
     }
 
-    fun selectSingle(properties: StructuredEntry): Optional<Pair<Key, String>> {
+    fun selectSingle(properties: StructuredEntry): Pair<Key, String>? {
         val variantList = mutableListOf<Variant>()
         val variantIndexes = IntArray(variants.size) { 0 }
         var currentVariant = 0
@@ -51,14 +50,14 @@ class KeySelector(
         while (true) {
             if (currentVariant < 0) {
                 //we exhausted all options from all variants
-                return Optional.empty()
+                return null
             }
             if (currentVariant >= variants.size) {
                 //selectorList is full
                 val keyFilter = KeyFilter(propertyName, variantList)
                 val keys = KeyFilters.filterKeys(keyFilter, properties)
                 if (keys.isNotEmpty()) {
-                    return Optional.of(keys.first())
+                    return keys.first()
                 } else {
                     currentVariant--
                     if (variantList.isNotEmpty()) {

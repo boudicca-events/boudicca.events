@@ -5,7 +5,6 @@ import base.boudicca.keyfilters.KeyFilters
 import base.boudicca.keyfilters.KeySelector
 import base.boudicca.model.Entry
 import base.boudicca.model.structured.dsl.StructuredEntryBuilder
-import java.util.*
 
 /**
  * as with the [Entry] class, a StructuredEntry is simple a typealias for a Map<Key, String>
@@ -16,7 +15,7 @@ fun StructuredEntry.toFlatEntry(): Entry {
     return KeyUtils.toFlatKeyValuePairs(this)
 }
 
-fun StructuredEntry.toEvent(): Optional<StructuredEvent> {
+fun StructuredEntry.toEvent(): StructuredEvent? {
     return StructuredEvent.fromEntry(this)
 }
 
@@ -49,7 +48,7 @@ fun StructuredEntry.filterKeys(keyFilter: KeyFilter): List<Pair<Key, String>> {
     return KeyFilters.filterKeys(keyFilter, this)
 }
 
-fun StructuredEntry.selectKey(keySelector: KeySelector): Optional<Pair<Key, String>> {
+fun StructuredEntry.selectKey(keySelector: KeySelector): Pair<Key, String>? {
     return keySelector.selectSingle(this)
 }
 

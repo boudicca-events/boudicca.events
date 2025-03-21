@@ -95,7 +95,7 @@ class KeyFiltersTest {
 
     @Test
     fun testKeysWithEvent() {
-        val properties = filterKeys("name", testEntry().toEvent().get())
+        val properties = filterKeys("name", testEntry().toEvent()!!)
 
         assertEquals(1, properties.size)
         assertEquals("name", properties[0].first)

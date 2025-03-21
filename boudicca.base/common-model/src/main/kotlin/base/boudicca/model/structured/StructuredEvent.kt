@@ -8,7 +8,6 @@ import base.boudicca.keyfilters.KeySelector
 import base.boudicca.model.Event
 import base.boudicca.model.structured.dsl.StructuredEventBuilder
 import java.time.OffsetDateTime
-import java.util.*
 
 /**
  * represents a parsed event, in the sense that all its keys have been parsed, and it has a lot of methods for filtering/selecting keys
@@ -55,7 +54,7 @@ data class StructuredEvent(val name: String, val startDate: OffsetDateTime, val 
         return KeyFilters.filterKeys(keyFilter, this)
     }
 
-    fun selectKey(keySelector: KeySelector): Optional<Pair<Key, String>> {
+    fun selectKey(keySelector: KeySelector): Pair<Key, String>? {
         return keySelector.selectSingle(this)
     }
 
@@ -71,7 +70,7 @@ data class StructuredEvent(val name: String, val startDate: OffsetDateTime, val 
             return entry
         }
 
-        fun fromEntry(entry: StructuredEntry): Optional<StructuredEvent> {
+        fun fromEntry(entry: StructuredEntry): StructuredEvent? {
             val startDatePair =
                 KeySelector
                     .builder(SemanticKeys.STARTDATE)
@@ -90,19 +89,19 @@ data class StructuredEvent(val name: String, val startDate: OffsetDateTime, val 
                     .builder(SemanticKeys.NAME)
                     .build()
                     .selectSingle(entry)
-            if (namePair.isEmpty || startDatePair.isEmpty) {
-                return Optional.empty()
+            if (namePair == null || startDatePair == null) {
+                return null
             }
-            val name = namePair.get().second
+            val name = namePair.second
             val startDate = try {
-                DateFormatAdapter().fromString(startDatePair.get().second)
+                DateFormatAdapter().fromString(startDatePair.second)
             } catch (_: IllegalArgumentException) {
-                return Optional.empty()
+                return null
             }
             val data = entry.toMutableMap()
-            data.remove(namePair.get().first)
-            data.remove(startDatePair.get().first)
-            return Optional.of(StructuredEvent(name, startDate, data))
+            data.remove(namePair.first)
+            data.remove(startDatePair.first)
+            return StructuredEvent(name, startDate, data)
         }
     }
 

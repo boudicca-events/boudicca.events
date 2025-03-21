@@ -1,5 +1,8 @@
 package base.boudicca.keyfilters
 
+import assertk.assertThat
+import assertk.assertions.isNotNull
+import assertk.assertions.isNull
 import base.boudicca.SemanticKeys
 import base.boudicca.model.structured.StructuredEntry
 import base.boudicca.model.structured.VariantConstants
@@ -18,8 +21,8 @@ class KeySelectorTest {
             .build()
             .selectSingle(testEntry())
 
-        assertTrue(result.isPresent)
-        assertEquals("description", result.get().first.toKeyString())
+        assertThat(result).isNotNull()
+        assertEquals("description", result!!.first.toKeyString())
     }
 
     @Test
@@ -30,8 +33,8 @@ class KeySelectorTest {
             .build()
             .selectSingle(testEntry())
 
-        assertTrue(result.isPresent)
-        assertEquals("name", result.get().first.toKeyString())
+        assertThat(result).isNotNull()
+        assertEquals("name", result!!.first.toKeyString())
     }
 
     @Test
@@ -41,7 +44,7 @@ class KeySelectorTest {
             .build()
             .selectSingle(testEntry())
 
-        assertTrue(result.isEmpty)
+        assertThat(result).isNull()
     }
 
     @Test
@@ -53,8 +56,8 @@ class KeySelectorTest {
             .build()
             .selectSingle(testEntry())
 
-        assertTrue(result.isPresent)
-        assertEquals("description:lang=de", result.get().first.toKeyString())
+        assertThat(result).isNotNull()
+        assertEquals("description:lang=de", result!!.first.toKeyString())
     }
 
     @Test
@@ -66,8 +69,8 @@ class KeySelectorTest {
             .build()
             .selectSingle(testEntry())
 
-        assertTrue(result.isPresent)
-        assertEquals("description:format=markdown:lang=en", result.get().first.toKeyString())
+        assertThat(result).isNotNull()
+        assertEquals("description:format=markdown:lang=en", result!!.first.toKeyString())
     }
 
     @Test
@@ -79,8 +82,8 @@ class KeySelectorTest {
             .build()
             .selectSingle(testEntry())
 
-        assertTrue(result.isPresent)
-        assertEquals("description", result.get().first.toKeyString())
+        assertThat(result).isNotNull()
+        assertEquals("description", result!!.first.toKeyString())
     }
 
     @Test
@@ -92,7 +95,7 @@ class KeySelectorTest {
             .build()
             .selectSingle(testEntry())
 
-        assertTrue(result.isEmpty)
+        assertThat(result).isNull()
     }
 
     @Test
@@ -105,8 +108,8 @@ class KeySelectorTest {
             .build()
             .selectSingle(testEntry())
 
-        assertTrue(result.isPresent)
-        assertEquals("description:format=markdown:lang=en", result.get().first.toKeyString())
+        assertThat(result).isNotNull()
+        assertEquals("description:format=markdown:lang=en", result!!.first.toKeyString())
     }
 
     @Test
@@ -114,10 +117,10 @@ class KeySelectorTest {
         val result = KeySelector
             .builder("name")
             .build()
-            .selectSingle(testEntry().toEvent().get())
+            .selectSingle(testEntry().toEvent()!!)
 
-        assertTrue(result.isPresent)
-        assertEquals("name", result.get().first.toKeyString())
+        assertThat(result).isNotNull()
+        assertEquals("name", result!!.first.toKeyString())
     }
 
     @Test
@@ -136,8 +139,8 @@ class KeySelectorTest {
 
         val result = keySelector.selectSingle(testEntry())
 
-        assertTrue(result.isPresent)
-        assertEquals("description:lang=de", result.get().first.toKeyString())
+        assertThat(result).isNotNull()
+        assertEquals("description:lang=de", result!!.first.toKeyString())
     }
 
     private fun testEntry(): StructuredEntry {

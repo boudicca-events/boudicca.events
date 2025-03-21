@@ -22,7 +22,7 @@ class EventDbPublisherClient(private val eventDbUrl: String) {
     }
 
     fun getAllEvents(): Set<Event> {
-        return getAllEntries().mapNotNull { it.toEvent().getOrNull() }.toSet()
+        return getAllEntries().mapNotNull { it.toEvent() }.toSet()
     }
 
     fun getAllEntries(): Set<Entry> {
@@ -34,4 +34,4 @@ class EventDbPublisherClient(private val eventDbUrl: String) {
     }
 }
 
-class EventDBException(msg: String, e: ApiException) : RuntimeException(msg ,e)
+class EventDBException(msg: String, e: ApiException) : RuntimeException(msg, e)

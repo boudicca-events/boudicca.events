@@ -1,5 +1,8 @@
 package base.boudicca.model
 
+import assertk.assertThat
+import assertk.assertions.isNotNull
+import assertk.assertions.isNull
 import base.boudicca.SemanticKeys
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -34,9 +37,10 @@ class EventEntryConversionTest {
             "description:format=markdown:lang=en" to "#my english markdown description"
         )
 
-        val event = Event.fromEntry(entry).get()
+        val event = Event.fromEntry(entry)
 
-        assertEquals(6, event.data.size)
+        assertThat(event).isNotNull()
+        assertEquals(6, event!!.data.size)
         assertEquals("My Event", event.name)
         assertEquals(
             OffsetDateTime.parse("2024-04-27T23:59:00+02:00", DateTimeFormatter.ISO_DATE_TIME),
@@ -57,9 +61,10 @@ class EventEntryConversionTest {
             "description:format=markdown:lang=en" to "#my english markdown description"
         )
 
-        val event = Event.fromEntry(entry).get()
+        val event = Event.fromEntry(entry)
 
-        assertEquals(5, event.data.size)
+        assertThat(event).isNotNull()
+        assertEquals(5, event!!.data.size)
         assertEquals("My Event", event.name)
         assertEquals(
             OffsetDateTime.parse("2024-04-27T23:59:00+02:00", DateTimeFormatter.ISO_DATE_TIME),
@@ -77,7 +82,7 @@ class EventEntryConversionTest {
 
         val event = Event.fromEntry(entry)
 
-        assertTrue(event.isEmpty)
+        assertThat(event).isNull()
     }
 
     @Test
@@ -89,7 +94,7 @@ class EventEntryConversionTest {
 
         val event = Event.fromEntry(entry)
 
-        assertTrue(event.isEmpty)
+        assertThat(event).isNull()
     }
 
     @Test
@@ -100,8 +105,9 @@ class EventEntryConversionTest {
             "description" to "my default lang description",
         )
 
-        val event = Event.fromEntry(entry).get()
+        val event = Event.fromEntry(entry)
 
-        assertEquals("My Event", event.name)
+        assertThat(event).isNotNull()
+        assertEquals("My Event", event!!.name)
     }
 }

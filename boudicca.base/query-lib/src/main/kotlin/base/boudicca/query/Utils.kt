@@ -36,7 +36,7 @@ object Utils {
         entry: Entry,
         startDateCache: ConcurrentHashMap<String, OffsetDateTime>
     ): OffsetDateTime {
-        val optionalDateText = entry.toStructuredEntry().selectKey(
+        val nullableDateText = entry.toStructuredEntry().selectKey(
             KeySelector.builder(SemanticKeys.STARTDATE).thenVariant(
                 VariantConstants.FORMAT_VARIANT_NAME,
                 listOf(
@@ -45,10 +45,10 @@ object Utils {
                 )
             ).build()
         )
-        if (optionalDateText.isEmpty) {
+        if (nullableDateText == null) {
             return Instant.ofEpochMilli(0).atOffset(ZoneOffset.MIN)
         }
-        val dateText = optionalDateText.get().second
+        val dateText = nullableDateText.second
         if (startDateCache.containsKey(dateText)) {
             return startDateCache[dateText]!!
         }

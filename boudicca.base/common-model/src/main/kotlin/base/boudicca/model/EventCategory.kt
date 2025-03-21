@@ -39,7 +39,7 @@ enum class EventCategory(val types: Set<String>) {
             if (type == null) {
                 return null
             }
-            val lowerType = type.lowercase(Locale.getDefault())
+            val lowerType = type.lowercase()
             for (category in entries) {
                 for (categoryType in category.types) {
                     if (lowerType.contains(categoryType)) {

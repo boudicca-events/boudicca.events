@@ -25,14 +25,14 @@ abstract class AbstractKey<T : AbstractKey<T>>(val name: String, variants: List<
     }
 
     companion object {
-        val COMPARATOR = compareBy<AbstractKey<*>> { it.name }.thenComparing { o1, o2 ->
-            (0..<min(o1.variants.size, o2.variants.size)).forEach { i ->
+        val COMPARATOR = compareBy<AbstractKey<*>> { it.name }.thenComparator { o1, o2 ->
+            for (i in 0..<min(o1.variants.size, o2.variants.size)) {
                 val result = o1.variants[i].compareTo(o2.variants[i])
                 if (result != 0) {
-                    return@thenComparing result
+                    return@thenComparator result
                 }
             }
-            return@thenComparing o1.variants.size.compareTo(o2.variants.size)
+            return@thenComparator o1.variants.size.compareTo(o2.variants.size)
         }
     }
 
@@ -55,7 +55,7 @@ abstract class AbstractKey<T : AbstractKey<T>>(val name: String, variants: List<
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (javaClass != other?.javaClass) return false
+        if (other == null || this::class != other::class) return false
 
         other as AbstractKey<*>
 

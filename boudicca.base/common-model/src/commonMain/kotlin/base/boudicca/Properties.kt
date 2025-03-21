@@ -2,8 +2,8 @@ package base.boudicca
 
 import base.boudicca.format.*
 import base.boudicca.model.OffsetDateTime
-import base.boudicca.model.URI
 import base.boudicca.model.structured.*
+import base.boudicca.model.URI
 
 /**
  * Properties are helpers allowing you to easier work with getting/setting values in their correct type for events/entries.

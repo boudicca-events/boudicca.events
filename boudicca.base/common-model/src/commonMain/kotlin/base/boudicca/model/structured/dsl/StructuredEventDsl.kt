@@ -1,7 +1,7 @@
 package base.boudicca.model.structured.dsl
 
-import base.boudicca.model.OffsetDateTime
 import base.boudicca.model.structured.StructuredEvent
+import base.boudicca.model.OffsetDateTime
 
 fun structuredEvent(
     name: String,

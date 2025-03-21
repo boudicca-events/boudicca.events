@@ -2,10 +2,10 @@ package base.boudicca.model.structured.dsl
 
 import base.boudicca.format.AbstractFormatAdapter
 import base.boudicca.format.TextFormatAdapter
-import base.boudicca.model.OffsetDateTime
 import base.boudicca.model.structured.AbstractStructuredBuilder
 import base.boudicca.model.structured.Key
 import base.boudicca.model.structured.StructuredEvent
+import base.boudicca.model.OffsetDateTime
 
 class StructuredEventBuilder(
     private val name: String,

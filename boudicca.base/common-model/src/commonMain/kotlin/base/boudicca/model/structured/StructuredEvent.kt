@@ -1,11 +1,12 @@
 package base.boudicca.model.structured
 
+import base.boudicca.model.Event
+import base.boudicca.model.KeyUtils
 import base.boudicca.Property
 import base.boudicca.SemanticKeys
 import base.boudicca.format.DateFormatAdapter
 import base.boudicca.keyfilters.KeyFilters
 import base.boudicca.keyfilters.KeySelector
-import base.boudicca.model.Event
 import base.boudicca.model.OffsetDateTime
 import base.boudicca.model.structured.dsl.StructuredEventBuilder
 
@@ -20,7 +21,7 @@ data class StructuredEvent(val name: String, val startDate: OffsetDateTime, val 
     }
 
     fun toEntry(): StructuredEntry {
-        return Companion.toEntry(this)
+        return toEntry(this)
     }
 
     fun toBuilder(): StructuredEventBuilder {

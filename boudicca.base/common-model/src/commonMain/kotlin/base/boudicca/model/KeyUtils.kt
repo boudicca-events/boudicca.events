@@ -1,4 +1,8 @@
-package base.boudicca.model.structured
+package base.boudicca.model
+
+import base.boudicca.model.structured.Key
+import base.boudicca.model.structured.KeyFilter
+import base.boudicca.model.structured.Variant
 
 /**
  * utils for parsing keys

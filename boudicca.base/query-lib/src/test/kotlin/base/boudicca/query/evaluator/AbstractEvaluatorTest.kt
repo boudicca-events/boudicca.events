@@ -346,7 +346,7 @@ abstract class AbstractEvaluatorTest {
                     ),
                     mapOf(
                         SemanticKeys.NAME to "event2",
-                        SemanticKeys.STARTDATE+":format=date" to "2024-05-31T00:00:00Z",
+                        SemanticKeys.STARTDATE + ":format=date" to "2024-05-31T00:00:00Z",
                     ),
                     mapOf(
                         SemanticKeys.NAME to "event3",

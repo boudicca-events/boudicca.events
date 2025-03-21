@@ -1,7 +1,7 @@
 package base.boudicca.format
 
-import base.boudicca.model.OffsetDateTime
 import base.boudicca.model.structured.VariantConstants
+import base.boudicca.model.OffsetDateTime
 
 /**
  * parsing utils to get string values to format date and back

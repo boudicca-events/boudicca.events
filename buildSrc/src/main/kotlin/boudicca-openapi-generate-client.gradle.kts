@@ -39,6 +39,17 @@ tasks.register<GenerateTask>("generateJavaClient") {
     library.set("native")
     additionalProperties.put("supportUrlQuery", "false")
     additionalProperties.put("useJakartaEe", "true")
+    additionalProperties.put("dateLibrary", "kotlinx.datetime")
+//    typeMappings.set(
+//        mapOf(
+//            "OffsetDateTime" to "kotlinx.datetime.Instant"
+//        )
+//    )
+//    importMappings.set(
+//        mapOf(
+//            "java.time.OffsetDateTime" to "kotlinx.datetime.Instant"
+//        )
+//    )
     generateApiTests.set(false)
     generateModelTests.set(false)
     invokerPackage.set("base.boudicca.openapi")

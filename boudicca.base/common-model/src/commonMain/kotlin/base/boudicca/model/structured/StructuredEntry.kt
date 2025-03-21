@@ -1,9 +1,10 @@
 package base.boudicca.model.structured
 
+import base.boudicca.model.Entry
+import base.boudicca.model.KeyUtils
 import base.boudicca.Property
 import base.boudicca.keyfilters.KeyFilters
 import base.boudicca.keyfilters.KeySelector
-import base.boudicca.model.Entry
 import base.boudicca.model.structured.dsl.StructuredEntryBuilder
 
 /**

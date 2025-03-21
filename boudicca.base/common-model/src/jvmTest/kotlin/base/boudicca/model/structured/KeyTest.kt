@@ -66,13 +66,13 @@ class KeyTest {
     fun testInvalidKeys() {
         assertThrows<IllegalArgumentException> { Key("*") }
         assertThrows<IllegalArgumentException> { Key("asd:asd") }
-        assertThrows<IllegalArgumentException> { Key("key", listOf(Variant("*","value"))) }
-        assertThrows<IllegalArgumentException> { Key("key", listOf(Variant("asd=asd","value"))) }
-        assertThrows<IllegalArgumentException> { Key("key", listOf(Variant("asd:asd","value"))) }
-        assertThrows<IllegalArgumentException> { Key("key", listOf(Variant("name","*"))) }
-        assertThrows<IllegalArgumentException> { Key("key", listOf(Variant("name",""))) }
-        assertThrows<IllegalArgumentException> { Key("key", listOf(Variant("name","asd:asd"))) }
-        assertThrows<IllegalArgumentException> { Key("key", listOf(Variant("name","asd=asd"))) }
+        assertThrows<IllegalArgumentException> { Key("key", listOf(Variant("*", "value"))) }
+        assertThrows<IllegalArgumentException> { Key("key", listOf(Variant("asd=asd", "value"))) }
+        assertThrows<IllegalArgumentException> { Key("key", listOf(Variant("asd:asd", "value"))) }
+        assertThrows<IllegalArgumentException> { Key("key", listOf(Variant("name", "*"))) }
+        assertThrows<IllegalArgumentException> { Key("key", listOf(Variant("name", ""))) }
+        assertThrows<IllegalArgumentException> { Key("key", listOf(Variant("name", "asd:asd"))) }
+        assertThrows<IllegalArgumentException> { Key("key", listOf(Variant("name", "asd=asd"))) }
     }
 
     @Test

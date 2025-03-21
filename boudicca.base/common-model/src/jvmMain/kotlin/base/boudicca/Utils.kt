@@ -1,10 +1,10 @@
 package base.boudicca
 
-import base.boudicca.model.OffsetDateTime
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
+import base.boudicca.model.OffsetDateTime
 
-fun OffsetDateTime.toJava(): java.time.OffsetDateTime {
+fun OffsetDateTime.toJavaOffsetDateTime(): java.time.OffsetDateTime {
     return java.time.OffsetDateTime.now()
 }
 

@@ -32,6 +32,7 @@ kotlin {
             implementation(versionCatalog.findLibrary("kotlin-logging").get())
             // TODO: version catalog
             implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2")
+            implementation(versionCatalog.findLibrary("swagger-annotations").get())
         }
 
         jvmMain.dependencies {

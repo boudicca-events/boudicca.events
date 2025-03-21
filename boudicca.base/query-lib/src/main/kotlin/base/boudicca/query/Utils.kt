@@ -45,10 +45,10 @@ object Utils {
                 )
             ).build()
         )
-        if (optionalDateText.isEmpty) {
+        if (optionalDateText == null) {
             return Instant.ofEpochMilli(0).atOffset(ZoneOffset.MIN)
         }
-        val dateText = optionalDateText.get().second
+        val dateText = optionalDateText.second
         if (startDateCache.containsKey(dateText)) {
             return startDateCache[dateText]!!
         }

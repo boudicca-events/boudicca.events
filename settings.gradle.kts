@@ -33,3 +33,5 @@ include("boudicca.events:enricher")
 include("boudicca.events:enricher-utils")
 
 rootProject.name = "boudicca"
+include("boudicca.base:base-model")
+findProject(":boudicca.base:base-model")?.name = "base-model"

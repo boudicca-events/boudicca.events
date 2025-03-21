@@ -2,6 +2,7 @@ package base.boudicca.model.structured
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import base.boudicca.model.KeyUtils
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows

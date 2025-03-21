@@ -1,5 +1,7 @@
 package base.boudicca.model.structured
 
+import base.boudicca.model.KeyUtils
+
 /**
  * represents a parsed Key of a Key-Value pair which consists of the name and all the variants (which are sorted canonically)
  */

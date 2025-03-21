@@ -1,10 +1,12 @@
 package base.boudicca.format
 
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.UtcOffset
+import kotlinx.datetime.asTimeZone
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import java.time.OffsetDateTime
-import java.time.ZoneOffset
+import base.boudicca.model.OffsetDateTime
 
 class DateFormatAdapterTest {
     @Test
@@ -19,7 +21,7 @@ class DateFormatAdapterTest {
     @Test
     fun testParseFromStringValidValues() {
         assertEquals(
-            OffsetDateTime.of(2024, 10, 21, 11, 12, 34, 0, ZoneOffset.ofHours(2)),
+            OffsetDateTime(LocalDateTime(2024, 10, 21, 11, 12, 34, 0), UtcOffset(2).asTimeZone()),
             parseFromString("2024-10-21T11:12:34+02:00")
         )
     }
@@ -33,7 +35,7 @@ class DateFormatAdapterTest {
         assertEquals(
             "2024-10-21T11:12:34+02:00",
             parseToString(
-                OffsetDateTime.of(2024, 10, 21, 11, 12, 34, 0, ZoneOffset.ofHours(2))
+                OffsetDateTime(LocalDateTime(2024, 10, 21, 11, 12, 34, 0), UtcOffset(2).asTimeZone())
             )
         )
     }

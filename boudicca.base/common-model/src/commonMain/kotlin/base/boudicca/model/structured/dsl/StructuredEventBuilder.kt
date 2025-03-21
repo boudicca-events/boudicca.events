@@ -1,15 +1,15 @@
 package base.boudicca.model.structured.dsl
 
 import base.boudicca.format.AbstractFormatAdapter
+import base.boudicca.format.Date
 import base.boudicca.format.TextFormatAdapter
 import base.boudicca.model.structured.AbstractStructuredBuilder
 import base.boudicca.model.structured.Key
 import base.boudicca.model.structured.StructuredEvent
-import java.time.OffsetDateTime
 
 class StructuredEventBuilder(
     private val name: String,
-    private val startDate: OffsetDateTime,
+    private val startDate: Date,
     data: Map<Key, String> = emptyMap()
 ) : AbstractStructuredBuilder<StructuredEvent, StructuredEventBuilder>(data.toMutableMap()) {
 

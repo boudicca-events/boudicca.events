@@ -1,16 +1,16 @@
 package base.boudicca.model
 
+import base.boudicca.format.Date
 import base.boudicca.model.structured.StructuredEvent
 import base.boudicca.model.structured.toEvent
 import base.boudicca.model.structured.toFlatEntry
-import java.time.OffsetDateTime
 
 /**
  * a simple, unparsed, event. used mainly for serializing and sending/receiving it. for actually working with the values please consider transforming it into a [StructuredEvent]
  */
 data class Event(
     val name: String,
-    val startDate: OffsetDateTime,
+    val startDate: Date,
     val data: Map<String, String> = mapOf()
 ) {
 

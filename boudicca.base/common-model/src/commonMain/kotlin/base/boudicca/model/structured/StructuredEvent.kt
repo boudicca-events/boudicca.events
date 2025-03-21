@@ -2,17 +2,17 @@ package base.boudicca.model.structured
 
 import base.boudicca.Property
 import base.boudicca.SemanticKeys
+import base.boudicca.format.Date
 import base.boudicca.format.DateFormatAdapter
 import base.boudicca.keyfilters.KeyFilters
 import base.boudicca.keyfilters.KeySelector
 import base.boudicca.model.Event
 import base.boudicca.model.structured.dsl.StructuredEventBuilder
-import java.time.OffsetDateTime
 
 /**
  * represents a parsed event, in the sense that all its keys have been parsed, and it has a lot of methods for filtering/selecting keys
  */
-data class StructuredEvent(val name: String, val startDate: OffsetDateTime, val data: Map<Key, String> = emptyMap()) {
+data class StructuredEvent(val name: String, val startDate: Date, val data: Map<Key, String> = emptyMap()) {
     constructor(event: Event) : this(event.name, event.startDate, KeyUtils.toStructuredKeyValuePairs(event.data))
 
     fun toFlatEvent(): Event {

@@ -1,9 +1,8 @@
 package base.boudicca
 
 import base.boudicca.format.*
+import base.boudicca.format.URI
 import base.boudicca.model.structured.*
-import java.net.URI
-import java.time.OffsetDateTime
 
 /**
  * Properties are helpers allowing you to easier work with getting/setting values in their correct type for events/entries.
@@ -65,7 +64,7 @@ class MarkdownProperty(propertyName: String) : GenericProperty<String>(propertyN
 
 class UriProperty(propertyName: String) : GenericProperty<URI>(propertyName, UriFormatAdapter())
 
-class DateProperty(propertyName: String) : GenericProperty<OffsetDateTime>(propertyName, DateFormatAdapter())
+class DateProperty(propertyName: String) : GenericProperty<Date>(propertyName, DateFormatAdapter())
 
 class ListProperty(propertyName: String) : GenericProperty<List<String>>(propertyName, ListFormatAdapter())
 

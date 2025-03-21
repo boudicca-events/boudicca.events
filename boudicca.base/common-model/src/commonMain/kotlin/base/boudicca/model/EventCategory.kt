@@ -1,7 +1,5 @@
 package base.boudicca.model
 
-import java.util.Locale
-
 /**
  * current event categories we support, with all their known event types
  */

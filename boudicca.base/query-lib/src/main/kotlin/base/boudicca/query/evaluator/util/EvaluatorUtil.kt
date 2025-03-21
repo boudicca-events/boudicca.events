@@ -1,15 +1,15 @@
 package base.boudicca.query.evaluator.util
 
+import base.boudicca.model.structured.*
 import base.boudicca.format.DateFormatAdapter
 import base.boudicca.keyfilters.KeyFilters
 import base.boudicca.keyfilters.KeySelector
-import base.boudicca.model.structured.*
+import base.boudicca.toJavaOffsetDateTime
 import java.time.Duration
 import java.time.OffsetDateTime
 import java.time.format.DateTimeParseException
 import java.time.temporal.ChronoUnit
 import java.util.concurrent.ConcurrentHashMap
-import kotlin.jvm.optionals.getOrNull
 
 object EvaluatorUtil {
     fun getDuration(
@@ -44,8 +44,7 @@ object EvaluatorUtil {
                 )
             ).build()
             .selectSingle(entry)
-            .map { it.second }
-            .getOrNull()
+            ?.second
     }
 
     fun getDateValues(entry: StructuredEntry, dateKeyFilter: KeyFilter): List<String> {
@@ -59,18 +58,16 @@ object EvaluatorUtil {
         dateText: String,
         dataCache: ConcurrentHashMap<String, OffsetDateTime>
     ): OffsetDateTime {
-        return if (dataCache.containsKey(dateText)) {
-            dataCache[dateText]!!
-        } else {
+        if (!dataCache.containsKey(dateText)) {
 //            try {
             val parsedDate = DateFormatAdapter().fromString(dateText)
-            dataCache[dateText] = parsedDate
-            parsedDate
+            dataCache[dateText] = parsedDate.toJavaOffsetDateTime()
 //            } catch (e: DateTimeParseException) {
 //                dataCache[dateText] = null //TODO make nullable cache
 //                null
 //            }
         }
+        return dataCache[dateText]!!
     }
 
     fun binarySearch(start: Int, length: Int, comparator: (Int) -> Int): Int {

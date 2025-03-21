@@ -3,9 +3,9 @@ package base.boudicca.search.service
 import base.boudicca.api.search.model.FilterQueryDTO
 import base.boudicca.api.search.model.FilterQueryEntryDTO
 import base.boudicca.api.search.model.FilterResultDTO
+import base.boudicca.model.structured.*
 import base.boudicca.format.ListFormatAdapter
 import base.boudicca.keyfilters.KeyFilters
-import base.boudicca.model.structured.*
 import base.boudicca.model.toStructuredEntry
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Service

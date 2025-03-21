@@ -15,6 +15,9 @@ plugins {
 
 val versionCatalog = versionCatalogs.named("libs")
 kotlin {
+    compilerOptions {
+        freeCompilerArgs.add("-Xexpect-actual-classes")
+    }
     jvmToolchain(rootProject.ext["jvmVersion"] as Int)
     jvm {
         compilerOptions {

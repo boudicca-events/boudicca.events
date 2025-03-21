@@ -6,7 +6,6 @@ import assertk.assertions.contains
 import assertk.assertions.isEqualTo
 import base.boudicca.SemanticKeys
 import base.boudicca.TextProperty
-import base.boudicca.model.structured.Key
 import base.boudicca.model.structured.KeyFilter
 import base.boudicca.model.structured.dsl.*
 import org.junit.jupiter.api.Test
@@ -77,8 +76,14 @@ class StructuredEventDslTest {
         assertAll {
             assertThat(event.filterKeys(KeyFilter.parse("description")).size).isEqualTo(1)
             assertThat(event.filterKeys(KeyFilter.parse("description:format=markdown")).size).isEqualTo(1)
-            assertThat(event.filterKeys(KeyFilter.parse("description:format=markdown")).first().second).isEqualTo("# mydata")
-            assertThat(event.filterKeys(KeyFilter.parse("sources")).first().second).isEqualTo("asdf.com,bsdf.com,csdf.com")
+            assertThat(
+                event.filterKeys(KeyFilter.parse("description:format=markdown"))
+                    .first().second
+            ).isEqualTo("# mydata")
+            assertThat(
+                event.filterKeys(KeyFilter.parse("sources"))
+                    .first().second
+            ).isEqualTo("asdf.com,bsdf.com,csdf.com")
             assertThat(event.filterKeys(KeyFilter.parse("sources:format=list")).size).isEqualTo(1)
         }
     }
@@ -92,7 +97,10 @@ class StructuredEventDslTest {
 
         assertAll {
             assertThat(event.filterKeys(KeyFilter.parse("description:format=markdown")).size).isEqualTo(1)
-            assertThat(event.filterKeys(KeyFilter.parse("description:format=markdown")).first().second).isEqualTo("# mydata")
+            assertThat(
+                event.filterKeys(KeyFilter.parse("description:format=markdown"))
+                    .first().second
+            ).isEqualTo("# mydata")
             assertThat(event.filterKeys(KeyFilter.parse("sources:format=list")).size).isEqualTo(1)
             assertThat(event.filterKeys(KeyFilter.parse("category")).size).isEqualTo(0)
         }
@@ -125,7 +133,10 @@ class StructuredEventDslTest {
 
         assertAll {
             assertThat(event.filterKeys(KeyFilter.parse("description:format=markdown")).size).isEqualTo(1)
-            assertThat(event.filterKeys(KeyFilter.parse("description:format=markdown")).first().second).isEqualTo("# mydata")
+            assertThat(
+                event.filterKeys(KeyFilter.parse("description:format=markdown"))
+                    .first().second
+            ).isEqualTo("# mydata")
             assertThat(event.filterKeys(KeyFilter.parse("sources:format=list")).size).isEqualTo(1)
             assertThat(event.filterKeys(KeyFilter.parse("category")).size).isEqualTo(0)
         }

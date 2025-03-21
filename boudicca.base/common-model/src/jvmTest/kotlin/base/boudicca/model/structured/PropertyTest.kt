@@ -6,7 +6,6 @@ import assertk.assertions.isEqualTo
 import base.boudicca.MarkdownProperty
 import base.boudicca.SemanticKeys
 import base.boudicca.TextProperty
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.time.OffsetDateTime
 

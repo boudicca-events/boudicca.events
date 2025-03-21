@@ -10,24 +10,26 @@ class VariantTest {
     @Test
     fun testSorting() {
         val unsorted = listOf(
-            Variant("name","value2"),
-            Variant("name4","value"),
-            Variant("name3","value"),
-            Variant("name","value3"),
-            Variant("name2","value"),
-            Variant("name","value"),
+            Variant("name", "value2"),
+            Variant("name4", "value"),
+            Variant("name3", "value"),
+            Variant("name", "value3"),
+            Variant("name2", "value"),
+            Variant("name", "value"),
         )
 
         val sorted = unsorted.sorted()
 
-        assertThat(sorted).isEqualTo(listOf(
-            Variant("name","value"),
-            Variant("name","value2"),
-            Variant("name","value3"),
-            Variant("name2","value"),
-            Variant("name3","value"),
-            Variant("name4","value"),
-        ))
+        assertThat(sorted).isEqualTo(
+            listOf(
+                Variant("name", "value"),
+                Variant("name", "value2"),
+                Variant("name", "value3"),
+                Variant("name2", "value"),
+                Variant("name3", "value"),
+                Variant("name4", "value"),
+            )
+        )
     }
 
     @Test

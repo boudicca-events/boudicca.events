@@ -6,11 +6,9 @@ import assertk.assertions.isNull
 import base.boudicca.SemanticKeys
 import base.boudicca.model.structured.StructuredEntry
 import base.boudicca.model.structured.VariantConstants
-import base.boudicca.model.structured.key
 import base.boudicca.model.structured.toEvent
 import base.boudicca.model.toStructuredEntry
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class KeySelectorTest {

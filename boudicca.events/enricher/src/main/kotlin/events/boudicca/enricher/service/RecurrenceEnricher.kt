@@ -21,6 +21,7 @@ class RecurrenceEnricher : Enricher {
         }
     }
 
+    @Suppress("detekt:MagicNumber")
     private fun groupIsRecurring(group: List<StructuredEvent>): Boolean {
         //TODO arbitrary number 3, add better detection
         return group.size > 3

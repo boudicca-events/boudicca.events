@@ -9,7 +9,7 @@ import java.util.function.Function
 
 @Deprecated("use EventCollectorCoordinator + EventCollectorCoordinatorBuilder instead")
 class EventCollectorScheduler(
-    private val interval: Duration = Duration.ofHours(24),
+    private val interval: Duration = Duration.ofDays(1),
     private val eventSink: Consumer<List<Event>>? = null,
     private val enricherFunction: Function<List<Event>, List<Event>>? = null
 ) : AutoCloseable {

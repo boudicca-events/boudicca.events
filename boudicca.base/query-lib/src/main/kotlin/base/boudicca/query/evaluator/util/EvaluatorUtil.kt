@@ -11,6 +11,8 @@ import java.time.temporal.ChronoUnit
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.jvm.optionals.getOrNull
 
+private val MILLIS_PER_HOUR = Duration.ofHours(1).toMillis()
+
 object EvaluatorUtil {
     fun getDuration(
         startDateKeyFilter: KeyFilter,
@@ -28,7 +30,7 @@ object EvaluatorUtil {
             val endDate = parseDate(endDateText, dataCache)
             Duration.of(endDate.toEpochSecond() - startDate.toEpochSecond(), ChronoUnit.SECONDS)
                 .toMillis()
-                .toDouble() / 1000.0 / 60.0 / 60.0
+                .toDouble() / MILLIS_PER_HOUR
         } catch (e: DateTimeParseException) {
             0.0
         }

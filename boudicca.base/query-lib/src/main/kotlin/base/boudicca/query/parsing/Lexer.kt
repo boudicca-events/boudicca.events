@@ -55,7 +55,8 @@ class Lexer(private val query: String) {
         }
         i = tokenEnd
     }
-
+    
+    @Suppress("detekt:CyclomaticComplexMethod")
     private fun readToken() {
         var tokenEnd = i
         while (tokenEnd < query.length) {

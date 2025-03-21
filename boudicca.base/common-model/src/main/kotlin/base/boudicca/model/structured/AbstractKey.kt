@@ -26,7 +26,7 @@ abstract class AbstractKey<T : AbstractKey<T>>(val name: String, variants: List<
 
     companion object {
         val COMPARATOR = compareBy<AbstractKey<*>> { it.name }.thenComparing { o1, o2 ->
-            (0..<min(o1.variants.size, o2.variants.size)).forEach { i ->
+            for (i in 0..<min(o1.variants.size, o2.variants.size)) {
                 val result = o1.variants[i].compareTo(o2.variants[i])
                 if (result != 0) {
                     return@thenComparing result

@@ -5,12 +5,15 @@ import base.boudicca.keyfilters.KeyFilters
 import base.boudicca.keyfilters.KeySelector
 import base.boudicca.model.Entry
 import base.boudicca.model.structured.dsl.StructuredEntryBuilder
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.util.*
 
 /**
  * as with the [Entry] class, a StructuredEntry is simple a typealias for a Map<Key, String>
  */
 typealias StructuredEntry = Map<Key, String>
+
+private val logger = KotlinLogging.logger("base.boudicca.model.structured.StructuredEntry")
 
 fun StructuredEntry.toFlatEntry(): Entry {
     return KeyUtils.toFlatKeyValuePairs(this)
@@ -40,6 +43,7 @@ fun <T> StructuredEntry.getProperty(property: Property<T>, language: String?): L
             val parsedValue = property.parseFromString(it.second)
             Pair(it.first, parsedValue)
         } catch (e: IllegalArgumentException) {
+            logger.warn(e) { "error parsing value for key '${it.first}': ${it.second}" }
             null
         }
     }

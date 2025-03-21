@@ -14,7 +14,7 @@ class EventDbPublisherClient(private val eventDbUrl: String) {
 
     init {
         if (eventDbUrl.isBlank()) {
-            throw IllegalStateException("you need to pass an eventDbUrl!")
+            error("you need to pass an eventDbUrl!")
         }
         val apiClient = ApiClient()
         apiClient.updateBaseUri(eventDbUrl)
@@ -34,4 +34,4 @@ class EventDbPublisherClient(private val eventDbUrl: String) {
     }
 }
 
-class EventDBException(msg: String, e: ApiException) : RuntimeException(msg ,e)
+class EventDBException(msg: String, e: ApiException) : RuntimeException(msg, e)

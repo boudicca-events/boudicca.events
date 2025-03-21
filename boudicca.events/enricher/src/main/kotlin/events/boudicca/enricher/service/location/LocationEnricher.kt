@@ -55,7 +55,7 @@ class LocationEnricher @Autowired constructor(
     }
 
     @EventListener
-    fun onEventsUpdate(event: ForceUpdateEvent) {
+    fun onEventsUpdate(ignored: ForceUpdateEvent) {
         updateData()
     }
 

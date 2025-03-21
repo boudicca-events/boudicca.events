@@ -62,9 +62,7 @@ class SpinnereiCollector : TwoStepEventCollector<Pair<String, Document>>("spinne
 
     private fun parseTypeAndDate(text: String): Pair<OffsetDateTime, String> {
         val split = text.split(' ', ignoreCase = false, limit = 4)
-        if (split.size != 4) {
-            throw IllegalStateException("could not parse type and date from $text")
-        }
+        check(split.size == 4) { "could not parse type and date from $text" }
 
         val date = LocalDate.parse(split[1], DateTimeFormatter.ofPattern("dd.MM.uu"))
         val time = LocalTime.parse(split[2], DateTimeFormatter.ofPattern("kk:mm"))

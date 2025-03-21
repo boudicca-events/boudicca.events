@@ -8,6 +8,7 @@ import java.nio.CharBuffer
 import java.text.BreakIterator
 import java.util.*
 
+@Suppress("detekt:MagicNumber")
 class FullTextIndex(entries: List<Entry>, field: String) {
 
     private val words = getWords(entries, field)

@@ -6,15 +6,20 @@ import base.boudicca.model.Entry
 import base.boudicca.model.structured.VariantConstants
 import base.boudicca.model.structured.selectKey
 import base.boudicca.model.toStructuredEntry
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.time.Instant
 import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 import java.util.concurrent.ConcurrentHashMap
 import java.util.function.Function
 
 object Utils {
+
+    private val logger = KotlinLogging.logger {}
+
     private const val DEFAULT_SIZE = 30
 
     fun offset(events: List<Entry>, offset: Int?, size: Int?): List<Entry> {
@@ -58,7 +63,8 @@ object Utils {
                 .toOffsetDateTime()
             startDateCache[dateText] = offsetDateTime
             offsetDateTime
-        } catch (e: Exception) {
+        } catch (e: DateTimeParseException) {
+            logger.warn(e) { "error parsing date '$dateText'" }
             Instant.ofEpochMilli(0).atOffset(ZoneOffset.MIN)
         }
     }

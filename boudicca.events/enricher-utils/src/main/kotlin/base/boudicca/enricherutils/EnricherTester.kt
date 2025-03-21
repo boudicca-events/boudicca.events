@@ -1,8 +1,9 @@
-package base.boudicca.enricher_utils
+package base.boudicca.enricherutils
 
 import base.boudicca.api.enricher.EnricherClient
 import base.boudicca.api.eventdb.publisher.EventDbPublisherClient
 import base.boudicca.model.Event
+import java.util.*
 
 private const val EVENTDB_URL = "http://localhost:8081"
 private const val ENRICHER_URL = "http://localhost:8085"
@@ -23,9 +24,7 @@ fun main() {
 }
 
 fun compare(events: List<Event>, enrichedEvents: List<Event>) {
-    if (events.size != enrichedEvents.size) {
-        throw IllegalArgumentException("sizes do not match, wat")
-    }
+    require(events.size == enrichedEvents.size) { "sizes do not match, wat" }
 
     for (i in events.indices) {
         if (events[i] != enrichedEvents[i]) {
@@ -58,7 +57,7 @@ fun printDiff(event: Event, enrichedEvent: Event) {
 }
 
 fun printValues(key: String, oldValue: String?, newValue: String?) {
-    println(String.format("%10s: %10s -> %10s", key, oldValue, newValue))
+    println(String.format(Locale.getDefault(), "%10s: %10s -> %10s", key, oldValue, newValue))
 }
 
 private fun enrich(originalEvents: List<Event>): List<Event> {

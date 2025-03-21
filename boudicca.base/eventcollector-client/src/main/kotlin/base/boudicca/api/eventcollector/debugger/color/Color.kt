@@ -15,6 +15,7 @@ private const val BG_JUMP = 10
 /**
  * An enumeration of colors supported by most terminals. Can be applied to both foreground and background.
  */
+@Suppress("detekt:MagicNumber")
 enum class Color(baseCode: Int) {
     BLACK(30),
     RED(31),

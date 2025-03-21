@@ -63,7 +63,7 @@ class FetcherTest {
 
     @Test
     fun testSimpleFailException() {
-        httpClientWrapper.callback = Callable { throw RuntimeException("intentional exception") }
+        httpClientWrapper.callback = Callable { error("intentional exception") }
         assertThrows<RuntimeException> {
             fetcher.fetchUrl("url")
         }

@@ -15,11 +15,11 @@ class LocationEnricherGoogleSheetsUpdater(
     private val spreadsheetId: String,
 ) : LocationEnricherUpdater {
     private val logger = KotlinLogging.logger {}
-    private val JSON_FACTORY = GsonFactory.getDefaultInstance()
-    private val HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport()
+    private val jsonFactory = GsonFactory.getDefaultInstance()
+    private val httpTransport = GoogleNetHttpTransport.newTrustedTransport()
     private val range = "LocationData!A1:Z"
     private val credentials = createCredentials()
-    private val service = Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, HttpCredentialsAdapter(credentials))
+    private val service = Sheets.Builder(httpTransport, jsonFactory, HttpCredentialsAdapter(credentials))
         .setApplicationName("Boudicca Location Data Enricher")
         .build()
 

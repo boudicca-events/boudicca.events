@@ -23,9 +23,14 @@ class WissensturmCollector : TwoStepEventCollector<Pair<String, Document>>("wiss
         var date = LocalDate.now(ZoneId.of("Europe/Vienna"))
 
         //only collect 6 months for now
-        for (i in 1..6) {
+        for (ignored in 1..6) {
             val monthlyOverview =
-                Jsoup.parse(fetcher.fetchUrl("https://vhskurs.linz.at/index.php?kathaupt=109&blkeep=1&month=${date.monthValue}&year=${date.year}"))
+                Jsoup.parse(
+                    fetcher.fetchUrl(
+                        "https://vhskurs.linz.at/index.php?kathaupt=109&blkeep=1" +
+                                "&month=${date.monthValue}&year=${date.year}"
+                    )
+                )
             eventUrls.addAll(monthlyOverview.select("div.kurse_demn article a").eachAttr("href"))
             date = date.plusMonths(1)
         }

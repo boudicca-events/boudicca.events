@@ -31,9 +31,7 @@ object BoudiccaQueryBuilder {
     }
 
     fun not(query: String): String {
-        if (query.isEmpty()) {
-            throw IllegalArgumentException("query is not allowed to be empty")
-        }
+        require(query.isNotEmpty()) { "query is not allowed to be empty" }
         return "not ($query)"
     }
 
@@ -45,17 +43,14 @@ object BoudiccaQueryBuilder {
         return escapeText(dateFieldName) + " before " + escapeText(DateTimeFormatter.ISO_LOCAL_DATE.format(localDate))
     }
 
+    @Suppress("detekt:ExceptionRaisedInUnexpectedLocation")
     fun equals(field: String, value: String): String {
-        if (field.isEmpty()) {
-            throw IllegalArgumentException("field is not allowed to be empty")
-        }
+        require(field.isNotEmpty()) { "field is not allowed to be empty" }
         return escapeText(field) + " equals " + escapeText(value)
     }
 
     fun contains(field: String, value: String): String {
-        if (field.isEmpty()) {
-            throw IllegalArgumentException("field is not allowed to be empty")
-        }
+        require(field.isNotEmpty()) { "field is not allowed to be empty" }
         return escapeText(field) + " contains " + escapeText(value)
     }
 
@@ -78,12 +73,8 @@ object BoudiccaQueryBuilder {
     private fun booleanMultiQuery(
         subQueries: Iterable<String>, operator: String
     ): String {
-        if (subQueries.count() == 0) {
-            throw IllegalArgumentException("you have to pass at least one subquery")
-        }
-        if (subQueries.any { it.isEmpty() }) {
-            throw IllegalArgumentException("subQueries are not allowed to be empty")
-        }
+        require(subQueries.count() > 0) { "you have to pass at least one subquery" }
+        require(subQueries.none { it.isEmpty() }) { "subQueries are not allowed to be empty" }
         return subQueries.joinToString(" $operator ") { "($it)" }
     }
 }

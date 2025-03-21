@@ -80,7 +80,7 @@ class MusicBrainzArtistEnricher @Autowired constructor(
         }
         val file = File(musicBrainzDataPath)
         if (!file.exists() || !file.isFile || !file.canRead()) {
-            throw IllegalArgumentException("musicbrainz data path $musicBrainzDataPath is not a readable file!")
+            error("musicbrainz data path $musicBrainzDataPath is not a readable file!")
         }
         return objectMapper
             .readValue(
@@ -95,7 +95,7 @@ class MusicBrainzArtistEnricher @Autowired constructor(
         }
         val file = File(musicBrainzIndexPath)
         if (!file.exists() || !file.isFile || !file.canRead()) {
-            throw IllegalArgumentException("musicbrainz index path $musicBrainzIndexPath is not a readable file!")
+            error("musicbrainz index path $musicBrainzIndexPath is not a readable file!")
         }
         return ByteBuffer.wrap(BufferedInputStream(GZIPInputStream(FileInputStream(file))).readBytes())
     }

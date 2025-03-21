@@ -23,7 +23,16 @@ data class FullCollection(
     )
 
     override fun toString(): String {
-        return "FullCollection(\nid=$id, \nstartTime=$startTime, \nendTime=$endTime, \nsingleCollections=$singleCollections, \nlogLines=$logLines, \nerrorCount=$errorCount, \nwarningCount=$warningCount)"
+        return """
+                FullCollection(
+                    id=$id, 
+                    startTime=$startTime, 
+                    endTime=$endTime, 
+                    singleCollections=$singleCollections, 
+                    logLines=$logLines, 
+                    errorCount=$errorCount, 
+                    warningCount=$warningCount
+                )""".trimIndent()
     }
 
     /**
@@ -74,16 +83,18 @@ data class SingleCollection(
     )
 
     override fun toString(): String {
-        return """SingleCollection(
-            id=$id, 
-            collectorName='$collectorName', 
-            startTime=$startTime, 
-            endTime=$endTime, 
-            totalEventsCollected=$totalEventsCollected, 
-            httpCalls=$httpCalls, 
-            logLines=$logLines, 
-            errorCount=$errorCount, 
-            warningCount=$warningCount)""".trimIndent()
+        return """
+            SingleCollection(
+                id=$id, 
+                collectorName='$collectorName', 
+                startTime=$startTime, 
+                endTime=$endTime, 
+                totalEventsCollected=$totalEventsCollected, 
+                httpCalls=$httpCalls, 
+                logLines=$logLines, 
+                errorCount=$errorCount, 
+                warningCount=$warningCount
+            )""".trimIndent()
     }
 }
 

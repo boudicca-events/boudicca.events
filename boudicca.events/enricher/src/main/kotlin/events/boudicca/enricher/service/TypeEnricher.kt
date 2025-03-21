@@ -8,6 +8,26 @@ import base.boudicca.model.structured.dsl.StructuredEventBuilder
 import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Service
 
+private val KNOWN_MUSIC_TYPES: Set<String> = setOf(
+    "metal",
+    "indie",
+    "pop",
+    "jazz",
+    "hiphop",
+    "rap",
+    "rock",
+    "electronic",
+    "punk",
+    "house",
+    "brass",
+    "reggae",
+    "soul",
+    "funk",
+    "folk",
+    "dub",
+    "klassik",
+)
+
 @Service
 @Order(EnricherOrderConstants.TypeEnricherOrder)
 class TypeEnricher : Enricher {
@@ -35,24 +55,4 @@ class TypeEnricher : Enricher {
             }
         }
     }
-
-    private val KNOWN_MUSIC_TYPES: Set<String> = setOf(
-        "metal",
-        "indie",
-        "pop",
-        "jazz",
-        "hiphop",
-        "rap",
-        "rock",
-        "electronic",
-        "punk",
-        "house",
-        "brass",
-        "reggae",
-        "soul",
-        "funk",
-        "folk",
-        "dub",
-        "klassik",
-    )
 }

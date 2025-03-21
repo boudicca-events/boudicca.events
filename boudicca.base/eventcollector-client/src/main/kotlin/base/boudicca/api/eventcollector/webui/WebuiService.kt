@@ -16,6 +16,8 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
 
+private const val CUTOFF_TO_HIGHER_UNIT = 5L
+
 @Suppress("SpringJavaInjectionPointsAutowiringInspection") //this bean is added dynamically
 @Service
 class WebuiService(
@@ -169,9 +171,9 @@ class WebuiService(
         val realEndTime = if (endTime != 0L) endTime else System.currentTimeMillis()
         val durationInMillis = realEndTime - startTime
         val duration = Duration.ofMillis(durationInMillis)
-        return if (duration < Duration.ofSeconds(5)) {
+        return if (duration < Duration.ofSeconds(CUTOFF_TO_HIGHER_UNIT)) {
             "${duration.toMillis()} ms"
-        } else if (duration < Duration.ofMinutes(5)) {
+        } else if (duration < Duration.ofMinutes(CUTOFF_TO_HIGHER_UNIT)) {
             "${duration.toSeconds()} s"
         } else {
             "${duration.toMinutes()} m"

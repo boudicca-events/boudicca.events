@@ -1,7 +1,5 @@
 package base.boudicca.format
 
-import java.net.URI
-
 /**
  * some utils for working with URIs for properties
  */
@@ -12,10 +10,10 @@ object UrlUtils {
         }
         val trimmed = string.trim()
         return try {
-            URI.create(string)
+            parseURI(string)
         } catch (_: IllegalArgumentException) {
             val fixedUrl = tryFixUrl(trimmed)
-            URI.create(fixedUrl)
+            parseURI(fixedUrl)
         }
     }
 
@@ -26,6 +24,4 @@ object UrlUtils {
             .replace("]", "%5D")
             .replace(" ", "%20")
     }
-
-    fun String.encodeURL(): String = java.net.URLEncoder.encode(this, "UTF-8")
 }

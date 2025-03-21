@@ -1,6 +1,7 @@
 package base.boudicca.model
 
 import base.boudicca.format.Date
+import base.boudicca.model.structured.KeyUtils
 import base.boudicca.model.structured.StructuredEvent
 import base.boudicca.model.structured.toEvent
 import base.boudicca.model.structured.toFlatEntry
@@ -15,7 +16,7 @@ data class Event(
 ) {
 
     fun toStructuredEvent(): StructuredEvent {
-        return StructuredEvent(this)
+        return StructuredEvent(name, startDate, KeyUtils.toStructuredKeyValuePairs(data))
     }
 
     fun toEntry(): Entry {

@@ -8,12 +8,16 @@ import base.boudicca.keyfilters.KeyFilters
 import base.boudicca.keyfilters.KeySelector
 import base.boudicca.model.Event
 import base.boudicca.model.structured.dsl.StructuredEventBuilder
+import kotlin.js.ExperimentalJsExport
+import kotlin.js.JsExport
+import kotlin.js.JsName
 
 /**
  * represents a parsed event, in the sense that all its keys have been parsed, and it has a lot of methods for filtering/selecting keys
  */
+@OptIn(ExperimentalJsExport::class)
+@JsExport
 data class StructuredEvent(val name: String, val startDate: Date, val data: Map<Key, String> = emptyMap()) {
-    constructor(event: Event) : this(event.name, event.startDate, KeyUtils.toStructuredKeyValuePairs(event.data))
 
     fun toFlatEvent(): Event {
         return Event(name, startDate, KeyUtils.toFlatKeyValuePairs(data))
@@ -37,6 +41,7 @@ data class StructuredEvent(val name: String, val startDate: Date, val data: Map<
     /**
      * get property values with a specific language from this entry. please note that if a property value cannot be parsed it will silently ignore this value
      */
+    @JsName("getPropertyWithLanguage")
     fun <T> getProperty(property: Property<T>, language: String?): List<Pair<Key, T>> {
         return KeyFilters
             .filterKeys(property.getKeyFilter(language), this)

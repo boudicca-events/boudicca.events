@@ -6,7 +6,12 @@ import base.boudicca.format.TextFormatAdapter
 import base.boudicca.model.structured.AbstractStructuredBuilder
 import base.boudicca.model.structured.Key
 import base.boudicca.model.structured.StructuredEvent
+import kotlin.js.ExperimentalJsExport
+import kotlin.js.JsExport
+import kotlin.js.JsName
 
+@OptIn(ExperimentalJsExport::class)
+@JsExport
 class StructuredEventBuilder(
     private val name: String,
     private val startDate: Date,
@@ -60,6 +65,7 @@ class StructuredEventBuilder(
         this.data.putAll(dataEntries)
     }
 
+    @JsName("withDefaultFormatAdapter")
     fun <T> with(
         name: String,
         defaultFormatAdapter: AbstractFormatAdapter<T>,

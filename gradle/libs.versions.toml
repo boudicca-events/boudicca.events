@@ -12,6 +12,7 @@ spring-boot = "3.4.3"
 swagger-core-version = "2.2.20"
 org-springframework-boot-gradle-plugin = "3.4.3"
 org-openapi-generator-gradle-plugin = "7.2.0"
+dev-petuska-npm-publish-gradle-plugin = "3.5.3"
 junit-jupiter = "5.12.1"
 assertk = "0.28.1"
 mockk = "1.13.17"
@@ -58,6 +59,7 @@ org-jetbrains-kotlin-plugin-spring-gradle-plugin = { module = "org.jetbrains.kot
 io-gitlab-arturbosch-detekt-gradle-plugin = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
 org-springframework-boot-gradle-plugin = { module = "org.springframework.boot:org.springframework.boot.gradle.plugin", version.ref = "org-springframework-boot-gradle-plugin" }
 org-openapi-generator-gradle-plugin = { module = "org.openapi.generator:org.openapi.generator.gradle.plugin", version.ref = "org-openapi-generator-gradle-plugin" }
+dev-petuska-npm-publish-gradle-plugin = { module = "dev.petuska.npm.publish:dev.petuska.npm.publish.gradle.plugin", version.ref = "dev-petuska-npm-publish-gradle-plugin" }
 
 junit-jupiter-bom = { module = "org.junit:junit-bom", version.ref = "junit-jupiter" }
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter" }
@@ -100,4 +102,4 @@ openapi-generate-spec = ["swagger-annotations", "javax-jaxrs"]
 openapi-generate-client = ["findbugs", "jackson-core", "jackson-annotations", "jackson-databind", "jackson-databind-jsr310", "jackson-databind-nullable", "jakarta-annotation"]
 
 #all third-party plugins applied by our boudicca-* plugins
-boudicca-plugins = ["org-jetbrains-kotlin-jvm-gradle-plugin", "org-jetbrains-kotlin-plugin-spring-gradle-plugin", "io-gitlab-arturbosch-detekt-gradle-plugin", "org-springframework-boot-gradle-plugin", "org-openapi-generator-gradle-plugin", "io-swagger-core-v3-swagger-gradle-plugin"]
+boudicca-plugins = ["org-jetbrains-kotlin-jvm-gradle-plugin", "org-jetbrains-kotlin-plugin-spring-gradle-plugin", "io-gitlab-arturbosch-detekt-gradle-plugin", "org-springframework-boot-gradle-plugin", "org-openapi-generator-gradle-plugin", "io-swagger-core-v3-swagger-gradle-plugin", "dev-petuska-npm-publish-gradle-plugin"]

@@ -3,10 +3,14 @@ package base.boudicca
 import base.boudicca.model.EventCategory
 import base.boudicca.model.RecurrenceType
 import base.boudicca.model.Registration
+import kotlin.js.ExperimentalJsExport
+import kotlin.js.JsExport
 
 /**
  * constants for all our known properties and their corresponding [Property]
  */
+@OptIn(ExperimentalJsExport::class)
+@JsExport
 @Suppress("unused") // Definitions are maintained for API completeness and may currently be unused
 object SemanticKeys {
 

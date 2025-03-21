@@ -1,14 +1,15 @@
-import gradle.kotlin.dsl.accessors._75d5f13ca443f8b16e6e50ca4ba45c16.sourceSets
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.kotlin.dsl.withType
 
 /**
- * plugin for applying the correct kotlin version
+ * plugin for setting up kotlin multiplatform builds
  */
 
 plugins {
-    id("boudicca-base")
+    id("dev.petuska.npm.publish")
     kotlin("multiplatform")
+    id("boudicca-base")
+    id("boudicca-publish-configure")
     // disable until https://github.com/boudicca-events/boudicca.events/issues/663 is discussed
 //     id("io.gitlab.arturbosch.detekt")
 }
@@ -20,12 +21,13 @@ kotlin {
     }
     jvmToolchain(rootProject.ext["jvmVersion"] as Int)
     jvm {
+        mavenPublication { }
         compilerOptions {
             javaParameters = true
         }
     }
     js(IR) {
-        nodejs() // For Node.js environment
+        nodejs()
         binaries.library() // For creating a library
         generateTypeScriptDefinitions()
     }
@@ -59,4 +61,14 @@ kotlin {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+npmPublish {
+    registries {
+        // For registries expecting an authentiation token, use authToken
+        register("npmjs") {
+            uri.set("https://registry.npmjs.org")
+            authToken.set("obfuscated")
+        }
+    }
 }

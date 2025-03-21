@@ -71,7 +71,7 @@ class ListProperty(propertyName: String) : GenericProperty<List<String>>(propert
 
 class NumberProperty(propertyName: String) : GenericProperty<Number>(propertyName, NumberFormatAdapter())
 
-class EnumProperty<E : Enum<E>>(propertyName: String, private val enumClass: Class<E>) :
-    GenericProperty<E>(propertyName, EnumFormatAdapter(enumClass))
+class EnumProperty<E : Enum<E>>(propertyName: String, toEnum: (value: String) -> E) :
+    GenericProperty<E>(propertyName, EnumFormatAdapter(toEnum))
 
 class BooleanProperty(propertyName: String) : GenericProperty<Boolean>(propertyName, BooleanFormatAdapter())

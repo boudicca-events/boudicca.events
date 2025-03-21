@@ -28,14 +28,14 @@ object SemanticKeys {
     val TYPE_PROPERTY = TextProperty(TYPE)
 
     const val CATEGORY = "category"
-    val CATEGORY_PROPERTY = EnumProperty(CATEGORY, EventCategory::class.java)
+    val CATEGORY_PROPERTY = EnumProperty(CATEGORY, EventCategory::valueOf)
 
     const val DESCRIPTION = "description"
     val DESCRIPTION_TEXT_PROPERTY = TextProperty(DESCRIPTION)
     val DESCRIPTION_MARKDOWN_PROPERTY = MarkdownProperty(DESCRIPTION)
 
     const val RECURRENCE_TYPE = "recurrence.type"
-    val RECURRENCE_TYPE_PROPERTY = EnumProperty(RECURRENCE_TYPE, RecurrenceType::class.java)
+    val RECURRENCE_TYPE_PROPERTY = EnumProperty(RECURRENCE_TYPE, RecurrenceType::valueOf)
 
     const val RECURRENCE_INTERVAL = "recurrence.interval"
     val RECURRENCE_INTERVAL_PROPERTY = TextProperty(RECURRENCE_INTERVAL)
@@ -44,7 +44,7 @@ object SemanticKeys {
     val TAGS_PROPERTY = ListProperty(TAGS)
 
     const val REGISTRATION = "registration"
-    val REGISTRATION_PROPERTY = EnumProperty(REGISTRATION, Registration::class.java)
+    val REGISTRATION_PROPERTY = EnumProperty(REGISTRATION, Registration::valueOf)
 
     const val PICTURE_URL = "pictureUrl"
     val PICTURE_URL_PROPERTY = UriProperty(PICTURE_URL)

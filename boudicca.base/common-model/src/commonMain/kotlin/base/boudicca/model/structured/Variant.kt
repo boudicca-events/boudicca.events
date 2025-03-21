@@ -5,7 +5,7 @@ package base.boudicca.model.structured
  */
 data class Variant(val variantName: String, val variantValue: String) : Comparable<Variant> {
 
-    init{
+    init {
         validate()
     }
 

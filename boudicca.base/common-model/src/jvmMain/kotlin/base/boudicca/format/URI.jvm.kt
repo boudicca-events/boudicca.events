@@ -2,10 +2,12 @@ package base.boudicca.format
 
 actual typealias URI = java.net.URI
 
-actual fun parseURI(uri: String): URI {
-    return URI.create(uri)
-}
+actual object URIParser {
+    actual fun parseURI(uri: String): URI {
+        return URI.create(uri)
+    }
 
-actual fun uriToString(uri: URI): String {
-    return uri.toASCIIString()
+    actual fun uriToString(uri: URI): String {
+        return uri.toASCIIString()
+    }
 }

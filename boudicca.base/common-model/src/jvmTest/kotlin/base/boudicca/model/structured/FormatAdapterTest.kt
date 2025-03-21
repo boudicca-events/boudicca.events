@@ -51,7 +51,7 @@ class FormatAdapterTest {
 
     @Test
     fun `EnumProperty should be able to convert to data value and back`() {
-        val prop = EnumProperty("test", TestEnum::class.java)
+        val prop = EnumProperty("test", TestEnum::valueOf)
 
         assertThat(prop.parseFromString(prop.parseToString(TestEnum.asdf))).isEqualTo(TestEnum.asdf)
         assertThat(prop.parseFromString(prop.parseToString(TestEnum.Bsdf))).isEqualTo(TestEnum.Bsdf)

@@ -1,11 +1,15 @@
 package base.boudicca.format
 
-actual typealias URI = String
+import org.w3c.dom.url.URL
 
-actual fun parseURI(uri: String): URI {
-    return uri
-}
+actual typealias URI = URL
 
-actual fun uriToString(uri: URI): String {
-    return uri
+actual object URIParser {
+    actual fun parseURI(uri: String): URI {
+        return URL(uri)
+    }
+
+    actual fun uriToString(uri: URI): String {
+        return uri.href
+    }
 }

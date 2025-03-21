@@ -10,10 +10,10 @@ object UrlUtils {
         }
         val trimmed = string.trim()
         return try {
-            parseURI(string)
+            URIParser.parseURI(string)
         } catch (_: IllegalArgumentException) {
             val fixedUrl = tryFixUrl(trimmed)
-            parseURI(fixedUrl)
+            URIParser.parseURI(fixedUrl)
         }
     }
 

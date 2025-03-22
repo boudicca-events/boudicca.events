@@ -1,6 +1,8 @@
 package base.boudicca.format
 
 import base.boudicca.model.structured.VariantConstants
+import kotlin.js.ExperimentalJsExport
+import kotlin.js.JsExport
 
 /**
  * parsing utils to get string values to format list and back
@@ -9,6 +11,8 @@ import base.boudicca.model.structured.VariantConstants
  *
  * all methods may throw exceptions on wrong formatted values
  */
+@OptIn(ExperimentalJsExport::class)
+@JsExport
 class ListFormatAdapter :
     AbstractFormatAdapter<List<String>>(VariantConstants.FormatVariantConstants.LIST_FORMAT_NAME) {
     fun fromStringOrNull(value: String?): List<String> = value?.let { fromString(it) } ?: emptyList()

@@ -1,6 +1,8 @@
 package base.boudicca.format
 
 import base.boudicca.model.structured.VariantConstants
+import kotlin.js.ExperimentalJsExport
+import kotlin.js.JsExport
 
 /**
  * parsing utils to get string values to format date and back
@@ -9,6 +11,8 @@ import base.boudicca.model.structured.VariantConstants
  *
  * all methods may throw exceptions on wrong formatted values
  */
+@OptIn(ExperimentalJsExport::class)
+@JsExport
 class DateFormatAdapter :
     AbstractFormatAdapter<Date>(VariantConstants.FormatVariantConstants.DATE_FORMAT_NAME) {
     override fun fromString(value: String): Date {

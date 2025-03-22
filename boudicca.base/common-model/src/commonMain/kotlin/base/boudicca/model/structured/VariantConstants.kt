@@ -1,8 +1,13 @@
 package base.boudicca.model.structured
 
+import kotlin.js.ExperimentalJsExport
+import kotlin.js.JsExport
+
 /**
  * constants to use with our variants. has values for known formats, and their values
  */
+@OptIn(ExperimentalJsExport::class)
+@JsExport
 @Suppress("unused") // Constants are maintained for API completeness and may currently be unused
 object VariantConstants {
     const val FORMAT_VARIANT_NAME = "format"

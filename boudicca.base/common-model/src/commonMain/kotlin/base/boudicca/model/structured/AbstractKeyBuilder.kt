@@ -1,5 +1,11 @@
 package base.boudicca.model.structured
 
+import kotlin.js.ExperimentalJsExport
+import kotlin.js.JsExport
+import kotlin.js.JsName
+
+@OptIn(ExperimentalJsExport::class)
+@JsExport
 abstract class AbstractKeyBuilder<T>(private val name: String) {
     private val variants = mutableListOf<Variant>()
 
@@ -7,6 +13,7 @@ abstract class AbstractKeyBuilder<T>(private val name: String) {
         return withVariant(Variant(variantName, variantValue))
     }
 
+    @JsName("withVariantObject")
     fun withVariant(variant: Variant): AbstractKeyBuilder<T> {
         variants.add(variant)
         return this
@@ -21,5 +28,6 @@ abstract class AbstractKeyBuilder<T>(private val name: String) {
         return build(name, variants)
     }
 
+    @JsName("doBuild")
     abstract fun build(name: String, variants: List<Variant>): T
 }

@@ -1,8 +1,13 @@
 package base.boudicca.model
 
+import kotlin.js.ExperimentalJsExport
+import kotlin.js.JsExport
+
 /**
  * current event categories we support, with all their known event types
  */
+@OptIn(ExperimentalJsExport::class)
+@JsExport
 enum class EventCategory(val types: Set<String>) {
     //ALL and OTHER are special cases needing special care
     ALL(emptySet()),

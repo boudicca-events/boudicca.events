@@ -1,9 +1,14 @@
 package base.boudicca.model.structured
 
+import kotlin.js.ExperimentalJsExport
+import kotlin.js.JsExport
+
 /**
  * represents a parsed KeyFilter of a Key-Value pair which consists of the name and all the variants (which are sorted canonically)
  * similar to a Key, but a KeyFilter also allows "*" as a propertyName and "*", "" (the empty string) as values for variants
  */
+@OptIn(ExperimentalJsExport::class)
+@JsExport
 class KeyFilter(name: String, variants: List<Variant> = emptyList()) : AbstractKey<KeyFilter>(name, variants) {
 
     companion object {

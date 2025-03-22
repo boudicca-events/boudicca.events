@@ -3,6 +3,9 @@ package base.boudicca.keyfilters
 import base.boudicca.model.Event
 import base.boudicca.model.structured.*
 import base.boudicca.model.toStructuredEntry
+import kotlin.js.ExperimentalJsExport
+import kotlin.js.JsExport
+import kotlin.js.JsName
 
 /**
  * Extending KeyFilters, this KeySelector helps you when you need to select a single value of all possible variants.
@@ -34,14 +37,18 @@ import base.boudicca.model.toStructuredEntry
  *
  * Note that the KeySelector currently does not handle the format variant, you have to convert the value manually.
  */
+@OptIn(ExperimentalJsExport::class)
+@JsExport
 class KeySelector(
     private val propertyName: String,
     private val variants: List<Pair<String, List<String>>>
 ) {
+    @JsName("selectSingleForEvent")
     fun selectSingle(event: StructuredEvent): Pair<Key, String>? {
         return selectSingle(Event.toEntry(event.toFlatEvent()).toStructuredEntry())
     }
 
+    @JsName("selectSingleForEntry")
     fun selectSingle(properties: StructuredEntry): Pair<Key, String>? {
         val variantList = mutableListOf<Variant>()
         val variantIndexes = IntArray(variants.size) { 0 }
@@ -89,16 +96,19 @@ class KeySelector(
     }
 
     companion object {
+        @JsName("builderWithPropertyName")
         fun builder(propertyName: String): KeySelectorBuilder {
             return KeySelectorBuilder(propertyName)
         }
 
+        @JsName("builderWithKey")
         fun builder(key: Key): KeySelectorBuilder {
             val builder = KeySelectorBuilder(key.name)
             key.variants.forEach { builder.thenVariant(it) }
             return builder
         }
 
+        @JsName("builderWithKeyFilter")
         fun builder(keyFilter: KeyFilter): KeySelectorBuilder {
             val builder = KeySelectorBuilder(keyFilter.name)
             keyFilter.variants.forEach { builder.thenVariant(it) }

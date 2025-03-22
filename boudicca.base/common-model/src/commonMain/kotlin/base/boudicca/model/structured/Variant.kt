@@ -1,8 +1,13 @@
 package base.boudicca.model.structured
 
+import kotlin.js.ExperimentalJsExport
+import kotlin.js.JsExport
+
 /**
  * a variant in the form of variantName=variantValue, but already parsed
  */
+@OptIn(ExperimentalJsExport::class)
+@JsExport
 data class Variant(val variantName: String, val variantValue: String) : Comparable<Variant> {
 
     init {

@@ -4,7 +4,12 @@ import base.boudicca.format.AbstractFormatAdapter
 import base.boudicca.model.structured.Key
 import base.boudicca.model.structured.Variant
 import base.boudicca.model.structured.VariantConstants
+import kotlin.js.ExperimentalJsExport
+import kotlin.js.JsExport
+import kotlin.js.JsName
 
+@OptIn(ExperimentalJsExport::class)
+@JsExport
 class EntryDataBuilder<T>(
     private val name: String, private var defaultFormatAdapter: AbstractFormatAdapter<T>? = null
 ) {
@@ -33,6 +38,7 @@ class EntryDataBuilder<T>(
         variant(formatAdapterValue, variants = variants, data = data)
     }
 
+    @JsName("variantWithFormat")
     fun <U> variant(formatAdapter: AbstractFormatAdapter<U>, vararg variants: Variant, data: U) {
         val variantList = variants.toMutableList()
         variantList.addFormatVariant(formatAdapter)

@@ -1,18 +1,25 @@
 package base.boudicca.keyfilters
 
 import base.boudicca.model.structured.*
+import kotlin.js.ExperimentalJsExport
+import kotlin.js.JsExport
+import kotlin.js.JsName
 
 /**
  * utility methods for filtering keys of Events/Entries. you can use a Key as a KeyFilter to select only matching keys of an event/entry.
  * this is especially needed to work with variants, because with KeyFilters you can for example select all "descriptions" in all languages, or only certain languages.
  * see DATA_MODEL.md docs for more information on key filters
  */
+@OptIn(ExperimentalJsExport::class)
+@JsExport
 object KeyFilters {
 
+    @JsName("filterKeysForEvent")
     fun filterKeys(keyFilter: KeyFilter, event: StructuredEvent): List<Pair<Key, String>> {
         return filterKeys(keyFilter, event.toEntry())
     }
 
+    @JsName("filterKeysForEntry")
     fun filterKeys(keyFilter: KeyFilter, data: StructuredEntry): List<Pair<Key, String>> {
         return data
             .filter { doesKeyMatchFilter(it.key, keyFilter) }

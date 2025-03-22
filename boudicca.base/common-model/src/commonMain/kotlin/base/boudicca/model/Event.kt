@@ -5,10 +5,14 @@ import base.boudicca.model.structured.KeyUtils
 import base.boudicca.model.structured.StructuredEvent
 import base.boudicca.model.structured.toEvent
 import base.boudicca.model.structured.toFlatEntry
+import kotlin.js.ExperimentalJsExport
+import kotlin.js.JsExport
 
 /**
  * a simple, unparsed, event. used mainly for serializing and sending/receiving it. for actually working with the values please consider transforming it into a [StructuredEvent]
  */
+@OptIn(ExperimentalJsExport::class)
+@JsExport
 data class Event(
     val name: String,
     val startDate: Date,

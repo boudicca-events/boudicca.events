@@ -1,7 +1,11 @@
 package base.boudicca.format
 
 import base.boudicca.model.structured.VariantConstants
+import kotlin.js.ExperimentalJsExport
+import kotlin.js.JsExport
 
+@OptIn(ExperimentalJsExport::class)
+@JsExport
 class EnumFormatAdapter<E : Enum<E>>(private val toEnum: (value: String) -> E) :
     AbstractFormatAdapter<E>(VariantConstants.FormatVariantConstants.ENUM_FORMAT_NAME) {
 

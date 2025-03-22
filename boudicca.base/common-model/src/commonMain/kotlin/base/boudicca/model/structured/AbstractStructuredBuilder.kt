@@ -1,7 +1,11 @@
 package base.boudicca.model.structured
 
 import base.boudicca.Property
+import kotlin.js.ExperimentalJsExport
+import kotlin.js.JsExport
 
+@OptIn(ExperimentalJsExport::class)
+@JsExport
 abstract class AbstractStructuredBuilder<T, B : AbstractStructuredBuilder<T, B>>(protected val data: MutableMap<Key, String> = mutableMapOf()) {
 
     fun <P> withProperty(

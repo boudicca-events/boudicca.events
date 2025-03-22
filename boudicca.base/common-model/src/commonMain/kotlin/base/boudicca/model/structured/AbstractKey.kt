@@ -1,10 +1,14 @@
 package base.boudicca.model.structured
 
+import kotlin.js.ExperimentalJsExport
+import kotlin.js.JsExport
 import kotlin.math.min
 
 /**
  * represents a parsed Key of a Key-Value pair which consists of the name and all the variants (which are sorted canonically)
  */
+@OptIn(ExperimentalJsExport::class)
+@JsExport
 abstract class AbstractKey<T : AbstractKey<T>>(val name: String, variants: List<Variant> = emptyList()) :
     Comparable<T> {
 

@@ -1,8 +1,13 @@
 package base.boudicca.model.structured
 
+import kotlin.js.ExperimentalJsExport
+import kotlin.js.JsExport
+
 /**
  * utils for parsing keys
  */
+@OptIn(ExperimentalJsExport::class)
+@JsExport
 object KeyUtils {
     fun toStructuredKeyValuePairs(map: Map<String, String>): Map<Key, String> {
         val foundKeys = mutableSetOf<Key>()

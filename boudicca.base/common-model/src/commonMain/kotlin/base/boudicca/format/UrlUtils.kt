@@ -1,8 +1,13 @@
 package base.boudicca.format
 
+import kotlin.js.ExperimentalJsExport
+import kotlin.js.JsExport
+
 /**
  * some utils for working with URIs for properties
  */
+@OptIn(ExperimentalJsExport::class)
+@JsExport
 object UrlUtils {
     fun parse(string: String?): URI? {
         if (string.isNullOrEmpty()) {

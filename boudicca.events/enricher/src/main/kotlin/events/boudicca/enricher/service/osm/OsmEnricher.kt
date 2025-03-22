@@ -7,7 +7,6 @@ import base.boudicca.fetcher.Fetcher
 import base.boudicca.fetcher.InMemoryFetcherCache
 import base.boudicca.format.ListFormatAdapter
 import base.boudicca.format.UrlUtils
-import base.boudicca.format.UrlUtils.encodeURL
 import base.boudicca.model.structured.Key
 import base.boudicca.model.structured.StructuredEvent
 import base.boudicca.model.structured.Variant
@@ -227,6 +226,8 @@ class OsmEnricher(
     }
 
     private fun isValidOsmIdFormat(osmId: String): Boolean = osmId.matches(Regex("^[NRWnrw]?\\d+$"))
+
+    private fun String.encodeURL(): String = java.net.URLEncoder.encode(this, "UTF-8")
 }
 
 fun createDefaultFetcher(): Fetcher {

@@ -9,7 +9,6 @@ import java.time.OffsetDateTime
 import java.time.format.DateTimeParseException
 import java.time.temporal.ChronoUnit
 import java.util.concurrent.ConcurrentHashMap
-import kotlin.jvm.optionals.getOrNull
 
 object EvaluatorUtil {
     fun getDuration(
@@ -44,8 +43,7 @@ object EvaluatorUtil {
                 )
             ).build()
             .selectSingle(entry)
-            .map { it.second }
-            .getOrNull()
+            ?.second
     }
 
     fun getDateValues(entry: StructuredEntry, dateKeyFilter: KeyFilter): List<String> {

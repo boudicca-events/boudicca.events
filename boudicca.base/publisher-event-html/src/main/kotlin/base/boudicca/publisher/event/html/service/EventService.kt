@@ -242,18 +242,20 @@ class EventService @Autowired constructor(
         propertyName: String,
         formatVariants: List<String>
     ): Optional<Pair<Key, String>> {
-        return KeySelector.builder(propertyName)
-            .thenVariant(
-                VariantConstants.LANGUAGE_VARIANT_NAME,
-                listOf(
-                    getPreferredLanguage(),
-                    VariantConstants.LanguageVariantConstants.DEFAULT_LANGUAGE_NAME,
-                    VariantConstants.ANY_VARIANT_SELECTOR
+        return Optional.ofNullable(
+            KeySelector.builder(propertyName)
+                .thenVariant(
+                    VariantConstants.LANGUAGE_VARIANT_NAME,
+                    listOf(
+                        getPreferredLanguage(),
+                        VariantConstants.LanguageVariantConstants.DEFAULT_LANGUAGE_NAME,
+                        VariantConstants.ANY_VARIANT_SELECTOR
+                    )
                 )
-            )
-            .thenVariant(VariantConstants.FORMAT_VARIANT_NAME, formatVariants)
-            .build()
-            .selectSingle(event)
+                .thenVariant(VariantConstants.FORMAT_VARIANT_NAME, formatVariants)
+                .build()
+                .selectSingle(event)
+        )
     }
 
     private fun getIsMarkdownFromFormat(key: Key): Boolean {

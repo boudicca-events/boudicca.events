@@ -1,4 +1,5 @@
 plugins {
-    id("boudicca-kotlin")
-    id("boudicca-publish")
+    id("boudicca-kotlin-multiplatform")
+    // TODO: fix publish job
+    //id("boudicca-publish")
 }

@@ -2,6 +2,7 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.api.eventcollector.dateparser.dateParser
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.model.Registration
 import base.boudicca.model.structured.StructuredEvent
@@ -51,11 +52,10 @@ class PosthofCollector : TwoStepEventCollector<String>("posthof") {
         }
 
         val dateAndTypeSpans = getDateAndTypeSpans(eventSite)
-        val dateAndTimeText = getDateAndTimeText(dateAndTypeSpans)
-        val startDate = LocalDateTime.parse(
-            dateAndTimeText,
-            DateTimeFormatter.ofPattern("d LLL uu kk:mm", Locale.GERMAN)
-        ).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
+        val startDate = dateParser {
+            date(dateAndTypeSpans[0].text())
+            time(dateAndTypeSpans[1].text())
+        }
 
         var description = ""
         val textBlocks = eventSite.select("div.tx-posthof-events>:not(ul)")
@@ -79,13 +79,6 @@ class PosthofCollector : TwoStepEventCollector<String>("posthof") {
             withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(event))
             withProperty(SemanticKeys.URL_PROPERTY, URI.create(event))
         }
-    }
-
-    private fun getDateAndTimeText(dateAndTypeSpans: Elements): String {
-        val dateAndTime = dateAndTypeSpans[0].text() + " " + dateAndTypeSpans[1].text()
-        return dateAndTime
-            .substring(dateAndTime.indexOf(" ") + 1)
-            .replace("Jän", "Jan")
     }
 
     private fun getDateAndTypeSpans(eventSite: Element): Elements {

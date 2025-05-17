@@ -79,6 +79,49 @@ class DateParserTest {
     }
 
     @Test
+    fun shortTextDates() {
+        assertDates(dateParser {
+            date("25 Jän 1992")
+        }, "1992-01-25T00:00+01:00")
+        assertDates(dateParser {
+            date("25 Jan 1992")
+        }, "1992-01-25T00:00+01:00")
+        assertDates(dateParser {
+            date("25 Feb 1992")
+        }, "1992-02-25T00:00+01:00")
+        assertDates(dateParser {
+            date("25 Mär 1992")
+        }, "1992-03-25T00:00+01:00")
+        assertDates(dateParser {
+            date("25 Apr 1992")
+        }, "1992-04-25T00:00+02:00")
+        assertDates(dateParser {
+            date("25 Mai 1992")
+        }, "1992-05-25T00:00+02:00")
+        assertDates(dateParser {
+            date("25 Jun 1992")
+        }, "1992-06-25T00:00+02:00")
+        assertDates(dateParser {
+            date("25 Jul 1992")
+        }, "1992-07-25T00:00+02:00")
+        assertDates(dateParser {
+            date("25 Aug 1992")
+        }, "1992-08-25T00:00+02:00")
+        assertDates(dateParser {
+            date("25 Sep 1992")
+        }, "1992-09-25T00:00+02:00")
+        assertDates(dateParser {
+            date("25 Okt 1992")
+        }, "1992-10-25T00:00+01:00")
+        assertDates(dateParser {
+            date("25 Nov 1992")
+        }, "1992-11-25T00:00+01:00")
+        assertDates(dateParser {
+            date("25 Dez 1992")
+        }, "1992-12-25T00:00+01:00")
+    }
+
+    @Test
     fun simpleDateTimes() {
         assertDates(dateParser {
             date("25.04.1992")
@@ -104,6 +147,38 @@ class DateParserTest {
             date("25.04.1992")
             time("Uhr 10 00")
         }, "1992-04-25T10:00+02:00")
+    }
+
+    @Test
+    fun datesWithNoiseInDate() {
+        assertDates(dateParser {
+            date("Sa, 25.04.1992")
+        }, "1992-04-25T00:00+02:00")
+        assertDates(dateParser {
+            date("25.04.1992 Sa")
+        }, "1992-04-25T00:00+02:00")
+        assertDates(dateParser {
+            date("Samstag 25.04.1992")
+        }, "1992-04-25T00:00+02:00")
+        assertDates(dateParser {
+            date("Samstag 25.04.1992 whatever")
+        }, "1992-04-25T00:00+02:00")
+    }
+
+    @Test
+    fun datesWithShorthandYear() {
+        assertDates(dateParser {
+            date("25.04.92")
+        }, "1992-04-25T00:00+02:00")
+        assertDates(dateParser {
+            date("25.04.25")
+        }, "2025-04-25T00:00+02:00")
+        assertDates(dateParser {
+            date("25.04.00")
+        }, "2000-04-25T00:00+02:00")
+        assertDates(dateParser {
+            date("25.04.99")
+        }, "1999-04-25T00:00+02:00")
     }
 
 

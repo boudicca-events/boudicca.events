@@ -30,6 +30,6 @@ fun main() {
 
         //enable/add any collectors you want to test here
 //        .debug(ZuckerfabrikCollector())
-        .debug(PosthofCollector())
-//        .debug(BrucknerhausCollector())
+//        .debug(PosthofCollector())
+        .debug(BrucknerhausCollector())
 }

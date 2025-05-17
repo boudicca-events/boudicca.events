@@ -39,22 +39,24 @@ class DateParserImpl(inputTokens: List<Pair<TokenType, String>>) {
         return buildDate()
     }
 
+    fun tryParseLocalDate(): LocalDate? {
+        resolveUnknownTokens()
+        return buildLocalDate()
+    }
+
+    fun tryParseLocalTime(): LocalTime? {
+        resolveUnknownTokens()
+        return buildLocalTime()
+    }
+
     private fun resolveUnknownTokens() {
         //nothing yet, comes soon
     }
 
     private fun buildDate(): OffsetDateTime? {
-        val dateToken = tokens.find { it.first == TokenType.DATE }
-        if (dateToken == null) {
-            logger.debug { "did not find any date tokens, cannot build date" }
-            return null
-        }
-        logger.debug { "found date token: $dateToken" }
-        val localDate = parseDateTokenToLocalDate(dateToken) ?: return null
+        val localDate = buildLocalDate() ?: return null
 
-        val timeToken = tokens.find { it.first == TokenType.TIME }
-        logger.debug { "found time token: $timeToken" }
-        val localTime = parseTimeTokenToLocalTime(timeToken)
+        val localTime = buildLocalTime()
 
         val timezone = ZoneId.of("Europe/Vienna") //TODO make configurable
 
@@ -63,6 +65,23 @@ class DateParserImpl(inputTokens: List<Pair<TokenType, String>>) {
         } else {
             localDate.atStartOfDay(timezone)
         }.toOffsetDateTime()
+    }
+
+    private fun buildLocalDate(): LocalDate? {
+        val dateToken = tokens.find { it.first == TokenType.DATE }
+        if (dateToken == null) {
+            logger.debug { "did not find any date tokens, cannot build date" }
+            return null
+        }
+        logger.debug { "found date token: $dateToken" }
+        return parseDateTokenToLocalDate(dateToken)
+    }
+
+    private fun buildLocalTime(): LocalTime? {
+        val timeToken = tokens.find { it.first == TokenType.TIME }
+        logger.debug { "found time token: $timeToken" }
+        val localTime = parseTimeTokenToLocalTime(timeToken)
+        return localTime
     }
 
     private fun parseTimeTokenToLocalTime(timeToken: Pair<TokenType, String>?): LocalTime? {

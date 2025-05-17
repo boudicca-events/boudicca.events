@@ -4,6 +4,8 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.time.LocalDate
+import java.time.LocalTime
 import java.time.OffsetDateTime
 
 class DateParserTest {
@@ -181,6 +183,25 @@ class DateParserTest {
         }, "1999-04-25T00:00+02:00")
     }
 
+    @Test
+    fun parseSimpleLocalDate() {
+        assertThat(localDateParser {
+            date("17.5.2025")
+        }).isEqualTo(LocalDate.of(2025, 5, 17))
+        assertThat(localDateParser {
+            date("17 5 2025")
+        }).isEqualTo(LocalDate.of(2025, 5, 17))
+    }
+
+    @Test
+    fun parseSimpleLocalTime() {
+        assertThat(localTimeParser {
+            time("17:00")
+        }).isEqualTo(LocalTime.of(17, 0))
+        assertThat(localTimeParser {
+            time("17 00 Uhr")
+        }).isEqualTo(LocalTime.of(17, 0))
+    }
 
     private fun assertDates(actual: OffsetDateTime, expected: String) {
         assertThat(actual.toString()).isEqualTo(expected)

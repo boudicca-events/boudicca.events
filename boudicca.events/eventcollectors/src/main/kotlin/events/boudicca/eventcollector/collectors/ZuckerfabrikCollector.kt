@@ -2,6 +2,7 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.api.eventcollector.dateparser.dateParser
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
@@ -65,29 +66,25 @@ class ZuckerfabrikCollector : TwoStepEventCollector<String>("zuckerfabrik") {
     private fun parseTypeAndDate(element: Element): Triple<OffsetDateTime, OffsetDateTime?, String> {
         val split = element.text().split(" am ")
         val type = split[0]
+
         val dateSplit = split[1].split(",").map { it.trim() }
-        val date = LocalDate.parse(
-            dateSplit[1], DateTimeFormatter.ofPattern("d. LLLL uuuu").withLocale(Locale.GERMAN)
-        )
         var startTimeString = dateSplit[2]
-        if (startTimeString.endsWith(" Uhr")) {
-            startTimeString = startTimeString.substring(0, startTimeString.length - 4)
-        }
-        val startTime: LocalTime
-        var endTime: LocalTime? = null
-        val timeFormatter = DateTimeFormatter.ofPattern("kk:mm")
+        var endTimeString: String? = null
         if (startTimeString.contains(" - ")) {
             val timeSplit = startTimeString.split(" - ")
             startTimeString = timeSplit[0]
-            endTime = LocalTime.parse(timeSplit[1].replace('.', ':'), timeFormatter)
+            endTimeString = timeSplit[1]
         }
-        if (startTimeString.endsWith(" Uhr")) {
-            startTimeString = startTimeString.substring(0, startTimeString.length - 4)
+
+        val startDate = dateParser {
+            date(dateSplit[1])
+            time(startTimeString)
         }
-        startTime = LocalTime.parse(startTimeString.replace('.', ':'), timeFormatter)
-        val startDate = date.atTime(startTime).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
-        val endDate = if (endTime != null) {
-            date.atTime(startTime).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
+        val endDate = if (endTimeString != null) {
+            dateParser {
+                date(dateSplit[1])
+                time(endTimeString)
+            }
         } else {
             null
         }

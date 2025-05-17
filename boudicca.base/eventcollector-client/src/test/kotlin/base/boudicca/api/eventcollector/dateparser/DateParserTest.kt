@@ -1,0 +1,113 @@
+package base.boudicca.api.eventcollector.dateparser
+
+import assertk.assertThat
+import assertk.assertions.isEqualTo
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
+import java.time.OffsetDateTime
+
+class DateParserTest {
+    @Test
+    fun invalidDatesThrowExceptions() {
+        assertThrows<IllegalArgumentException> {
+            dateParser { }
+        }
+    }
+
+    @Test
+    fun simpleNumberDates() {
+        assertDates(dateParser {
+            date("25.04.1992")
+        }, "1992-04-25T00:00+02:00")
+        assertDates(dateParser {
+            date("25 04 1992")
+        }, "1992-04-25T00:00+02:00")
+        assertDates(dateParser {
+            date("25-04-1992")
+        }, "1992-04-25T00:00+02:00")
+    }
+
+    @Test
+    fun simpleTextDates() {
+        assertDates(dateParser {
+            date("25. April 1992")
+        }, "1992-04-25T00:00+02:00")
+        assertDates(dateParser {
+            date("25 April 1992")
+        }, "1992-04-25T00:00+02:00")
+
+
+        assertDates(dateParser {
+            date("25 Jänner 1992")
+        }, "1992-01-25T00:00+01:00")
+        assertDates(dateParser {
+            date("25 Januar 1992")
+        }, "1992-01-25T00:00+01:00")
+        assertDates(dateParser {
+            date("25 Februar 1992")
+        }, "1992-02-25T00:00+01:00")
+        assertDates(dateParser {
+            date("25 März 1992")
+        }, "1992-03-25T00:00+01:00")
+        assertDates(dateParser {
+            date("25 April 1992")
+        }, "1992-04-25T00:00+02:00")
+        assertDates(dateParser {
+            date("25 Mai 1992")
+        }, "1992-05-25T00:00+02:00")
+        assertDates(dateParser {
+            date("25 Juni 1992")
+        }, "1992-06-25T00:00+02:00")
+        assertDates(dateParser {
+            date("25 Juli 1992")
+        }, "1992-07-25T00:00+02:00")
+        assertDates(dateParser {
+            date("25 August 1992")
+        }, "1992-08-25T00:00+02:00")
+        assertDates(dateParser {
+            date("25 September 1992")
+        }, "1992-09-25T00:00+02:00")
+        assertDates(dateParser {
+            date("25 Oktober 1992")
+        }, "1992-10-25T00:00+01:00")
+        assertDates(dateParser {
+            date("25 November 1992")
+        }, "1992-11-25T00:00+01:00")
+        assertDates(dateParser {
+            date("25 Dezember 1992")
+        }, "1992-12-25T00:00+01:00")
+    }
+
+    @Test
+    fun simpleDateTimes() {
+        assertDates(dateParser {
+            date("25.04.1992")
+            time("10:00")
+        }, "1992-04-25T10:00+02:00")
+        assertDates(dateParser {
+            date("25.04.1992")
+            time("10.00")
+        }, "1992-04-25T10:00+02:00")
+    }
+
+    @Test
+    fun dateTimesWithNoiseInTime() {
+        assertDates(dateParser {
+            date("25.04.1992")
+            time("10:00 Uhr")
+        }, "1992-04-25T10:00+02:00")
+        assertDates(dateParser {
+            date("25.04.1992")
+            time("10 00 Uhr")
+        }, "1992-04-25T10:00+02:00")
+        assertDates(dateParser {
+            date("25.04.1992")
+            time("Uhr 10 00")
+        }, "1992-04-25T10:00+02:00")
+    }
+
+
+    private fun assertDates(actual: OffsetDateTime, expected: String) {
+        assertThat(actual.toString()).isEqualTo(expected)
+    }
+}

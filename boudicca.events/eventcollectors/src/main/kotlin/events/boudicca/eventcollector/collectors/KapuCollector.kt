@@ -2,6 +2,7 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.api.eventcollector.dateparser.dateParser
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
@@ -64,13 +65,9 @@ class KapuCollector : TwoStepEventCollector<String>("kapu") {
     private fun parseDate(element: Element): OffsetDateTime {
         val fullDateTime = element.select("article.event > div.container div.wob:nth-child(1)").text()
 
-        val split = fullDateTime.split(". ", ignoreCase = true, limit = 2)
-        val dateTime = split[1]
-
-        return LocalDateTime.parse(
-            dateTime,
-            DateTimeFormatter.ofPattern("dd.LL.uuuu - kk:mm").withLocale(Locale.GERMAN)
-        ).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
+        return dateParser {
+            dayMonthYearTime(fullDateTime)
+        }
     }
 
 }

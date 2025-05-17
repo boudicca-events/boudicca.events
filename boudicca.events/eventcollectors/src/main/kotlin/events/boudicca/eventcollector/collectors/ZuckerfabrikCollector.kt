@@ -10,12 +10,7 @@ import base.boudicca.model.structured.dsl.structuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
-import java.time.LocalDate
-import java.time.LocalTime
 import java.time.OffsetDateTime
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.util.*
 
 class ZuckerfabrikCollector : TwoStepEventCollector<String>("zuckerfabrik") {
 
@@ -77,12 +72,12 @@ class ZuckerfabrikCollector : TwoStepEventCollector<String>("zuckerfabrik") {
         }
 
         val startDate = dateParser {
-            date(dateSplit[1])
+            dayMonthYear(dateSplit[1])
             time(startTimeString)
         }
         val endDate = if (endTimeString != null) {
             dateParser {
-                date(dateSplit[1])
+                dayMonthYear(dateSplit[1])
                 time(endTimeString)
             }
         } else {

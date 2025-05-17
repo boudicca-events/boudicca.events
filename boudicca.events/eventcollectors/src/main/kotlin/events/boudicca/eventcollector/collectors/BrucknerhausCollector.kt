@@ -98,7 +98,7 @@ class BrucknerhausCollector : TwoStepEventCollector<Element>("brucknerhaus") {
 
     private fun parseSingleLocalDate(dateText: String): LocalDate {
         return localDateParser {
-            date(dateText)
+            dayMonthYear(dateText)
         }
     }
 

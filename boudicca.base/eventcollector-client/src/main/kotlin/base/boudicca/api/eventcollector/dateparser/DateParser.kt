@@ -11,8 +11,12 @@ class DateParser {
 
     private val tokens = mutableListOf<Pair<TokenType, String>>()
 
-    fun date(date: String) {
-        tokens.add(Pair(TokenType.DATE, date))
+    fun dayMonthYear(date: String) {
+        tokens.add(Pair(TokenType.DAY_MONTH_YEAR, date))
+    }
+
+    fun dayMonthYearTime(date: String) {
+        tokens.add(Pair(TokenType.DAY_MONTH_YEAR_TIME, date))
     }
 
     fun time(time: String) {

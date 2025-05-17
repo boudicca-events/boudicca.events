@@ -11,10 +11,6 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 import java.net.URI
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.util.*
 
 
 class PosthofCollector : TwoStepEventCollector<String>("posthof") {
@@ -53,7 +49,7 @@ class PosthofCollector : TwoStepEventCollector<String>("posthof") {
 
         val dateAndTypeSpans = getDateAndTypeSpans(eventSite)
         val startDate = dateParser {
-            date(dateAndTypeSpans[0].text())
+            dayMonthYear(dateAndTypeSpans[0].text())
             time(dateAndTypeSpans[1].text())
         }
 

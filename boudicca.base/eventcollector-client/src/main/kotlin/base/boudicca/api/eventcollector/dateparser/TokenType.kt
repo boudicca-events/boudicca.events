@@ -1,6 +1,7 @@
 package base.boudicca.api.eventcollector.dateparser
 
 enum class TokenType {
-    DATE, //TODO rename to DAYMONTHYEAR?
-    TIME
+    DAY_MONTH_YEAR,
+    TIME,
+    DAY_MONTH_YEAR_TIME,
 }

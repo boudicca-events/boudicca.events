@@ -32,7 +32,7 @@ class DateParserImpl(inputTokens: List<Pair<TokenType, String>>) {
 
     private val logger = KotlinLogging.logger {}
 
-    private val tokens = inputTokens.toList()
+    private var tokens = inputTokens.toList()
 
     fun tryParse(): OffsetDateTime? {
         resolveUnknownTokens()
@@ -50,7 +50,31 @@ class DateParserImpl(inputTokens: List<Pair<TokenType, String>>) {
     }
 
     private fun resolveUnknownTokens() {
-        //nothing yet, comes soon
+        splitAllDayMonthYearTimeTokens()
+    }
+
+    private fun splitAllDayMonthYearTimeTokens() {
+        tokens = tokens.flatMap { splitAllDayMonthYearTimeToken(it) }
+    }
+
+    private fun splitAllDayMonthYearTimeToken(token: Pair<TokenType, String>): List<Pair<TokenType, String>> {
+        //TODO this seems quite hacky
+        if (token.first != TokenType.DAY_MONTH_YEAR_TIME) {
+            return listOf(token)
+        }
+        var splits = token.second.split(alphanumericSplitRegex)
+            .map { it.trim() }
+            .filter { it.isNotBlank() }
+        splits = trimNoiseOnEnds(splits)
+        if (splits.size == 5) {
+            return listOf(
+                Pair(TokenType.DAY_MONTH_YEAR, splits.take(3).joinToString()),
+                Pair(TokenType.TIME, splits.drop(3).joinToString())
+            )
+        } else {
+            //we failed? dunno
+            return listOf(token)
+        }
     }
 
     private fun buildDate(): OffsetDateTime? {
@@ -68,7 +92,7 @@ class DateParserImpl(inputTokens: List<Pair<TokenType, String>>) {
     }
 
     private fun buildLocalDate(): LocalDate? {
-        val dateToken = tokens.find { it.first == TokenType.DATE }
+        val dateToken = tokens.find { it.first == TokenType.DAY_MONTH_YEAR }
         if (dateToken == null) {
             logger.debug { "did not find any date tokens, cannot build date" }
             return null

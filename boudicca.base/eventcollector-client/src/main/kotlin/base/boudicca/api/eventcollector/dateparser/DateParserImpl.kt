@@ -10,7 +10,6 @@ class DateParserImpl(val inputTokens: List<Pair<List<TokenType>, String>>) {
 
     companion object {
         private val alphanumericSplitRegex = Regex("[^\\wäöüß]+")
-        private val onlyNumerical = Regex("\\d+")
         private val nonNumerical = Regex("\\D+")
 
         private val monthMappings = mapOf(
@@ -35,32 +34,41 @@ class DateParserImpl(val inputTokens: List<Pair<List<TokenType>, String>>) {
     private var tokens = emptyList<Pair<TokenType, String>>()
 
     fun tryParse(): OffsetDateTime? {
-        resolveUnknownTokens()
+        processTokens()
         return buildDate()
     }
 
     fun tryParseLocalDate(): LocalDate? {
-        resolveUnknownTokens()
+        processTokens()
         return buildLocalDate()
     }
 
     fun tryParseLocalTime(): LocalTime? {
-        resolveUnknownTokens()
+        processTokens()
         return buildLocalTime()
     }
 
-    private fun resolveUnknownTokens() {
+    private fun processTokens() {
         splitAllDayMonthYearTimeTokens()
     }
 
     private fun splitAllDayMonthYearTimeTokens() {
-        tokens = inputTokens.flatMap { splitAllDayMonthYearTimeToken(it) }
+        tokens = inputTokens
+            .flatMap { splitAllDayMonthYearTimeToken(it) }
+            .flatMap { splitAllDayMonthYearToken(it) }
+            .flatMap { splitAllTimeToken(it) }
+            .map {
+                if (it.first.size != 1) {
+                    logger.warn { "found invalid tokentype length for flattening: $it" }
+                }
+                Pair(it.first.first(), it.second)
+            }
     }
 
-    private fun splitAllDayMonthYearTimeToken(token: Pair<List<TokenType>, String>): List<Pair<TokenType, String>> {
+    private fun splitAllDayMonthYearTimeToken(token: Pair<List<TokenType>, String>): List<Pair<List<TokenType>, String>> {
         //TODO this seems quite hacky
         if (token.first != listOf(TokenType.DAY_MONTH_YEAR, TokenType.TIME)) {
-            return listOf(Pair(token.first.first(), token.second)) //TODO broken as fuuu
+            return listOf(token)
         }
         var splits = token.second.split(alphanumericSplitRegex)
             .map { it.trim() }
@@ -68,13 +76,58 @@ class DateParserImpl(val inputTokens: List<Pair<List<TokenType>, String>>) {
         splits = trimNoiseOnEnds(splits)
         if (splits.size == 5) {
             return listOf(
-                Pair(TokenType.DAY_MONTH_YEAR, splits.take(3).joinToString()),
-                Pair(TokenType.TIME, splits.drop(3).joinToString())
+                Pair(listOf(TokenType.DAY_MONTH_YEAR), splits.take(3).joinToString()),
+                Pair(listOf(TokenType.TIME), splits.drop(3).joinToString())
             )
         } else {
             //we failed? dunno
-            return listOf(Pair(token.first.first(), token.second)) //TODO broken as fuuu
+            return listOf(token)
         }
+    }
+
+    private fun splitAllDayMonthYearToken(dateToken: Pair<List<TokenType>, String>): List<Pair<List<TokenType>, String>> {
+        if (dateToken.first != listOf(TokenType.DAY_MONTH_YEAR)) {
+            return listOf(dateToken)
+        }
+        var splits = dateToken.second.split(alphanumericSplitRegex)
+            .map { it.trim() }
+            .filter { it.isNotBlank() }
+        if (splits.size < 3) {
+            logger.debug { "could not parse dateToken into at least 3 parts: $dateToken" }
+            return listOf(dateToken)
+        }
+        splits = trimNoiseOnEnds(splits)
+        if (splits.size != 3) {
+            logger.debug { "could not parse dateToken into 3 parts: $dateToken, after trimming only $splits remained" }
+            return listOf(dateToken)
+        }
+        return listOf(
+            Pair(listOf(TokenType.DAY), splits[0]),
+            Pair(listOf(TokenType.MONTH), splits[1]),
+            Pair(listOf(TokenType.YEAR), splits[2])
+        )
+    }
+
+    private fun splitAllTimeToken(timeToken: Pair<List<TokenType>, String>): List<Pair<List<TokenType>, String>> {
+        if (timeToken.first != listOf(TokenType.TIME)) {
+            return listOf(timeToken)
+        }
+        var splits = timeToken.second.split(alphanumericSplitRegex)
+            .map { it.trim() }
+            .filter { it.isNotBlank() }
+        if (splits.size < 2) {
+            logger.debug { "could not parse timeToken into at least 2 parts: $timeToken" }
+            return listOf(timeToken)
+        }
+        splits = trimNoiseOnEnds(splits)
+        if (splits.size != 2) {
+            logger.debug { "could not parse timeToken into 2 parts: $timeToken, after trimming only $splits remained" }
+            return listOf(timeToken)
+        }
+        return listOf(
+            Pair(listOf(TokenType.HOURS), splits[0]),
+            Pair(listOf(TokenType.MINUTES), splits[1]),
+        )
     }
 
     private fun buildDate(): OffsetDateTime? {
@@ -92,63 +145,34 @@ class DateParserImpl(val inputTokens: List<Pair<List<TokenType>, String>>) {
     }
 
     private fun buildLocalDate(): LocalDate? {
-        val dateToken = tokens.find { it.first == TokenType.DAY_MONTH_YEAR }
-        if (dateToken == null) {
-            logger.debug { "did not find any date tokens, cannot build date" }
+        try {
+            val day = findToken(TokenType.DAY).parseToInt() ?: return null
+            val month = parseMonthToNumber(findToken(TokenType.MONTH)) ?: return null
+            val year = findToken(TokenType.YEAR).parseToInt() ?: return null
+            return LocalDate.of(fixYear(year), month, day)
+        } catch (e: NumberFormatException) {
+            logger.debug(e) { "could not parse numbers for localdate" }
             return null
         }
-        logger.debug { "found date token: $dateToken" }
-        return parseDateTokenToLocalDate(dateToken)
     }
 
     private fun buildLocalTime(): LocalTime? {
-        val timeToken = tokens.find { it.first == TokenType.TIME }
-        logger.debug { "found time token: $timeToken" }
-        val localTime = parseTimeTokenToLocalTime(timeToken)
-        return localTime
-    }
-
-    private fun parseTimeTokenToLocalTime(timeToken: Pair<TokenType, String>?): LocalTime? {
-        if (timeToken == null) {
-            return null
-        }
-        val splits = timeToken.second.split(alphanumericSplitRegex)
-            .map { it.trim() }
-            .filter { it.isNotBlank() }
-            .filter { it.matches(onlyNumerical) }
-
         try {
-            val hour = splits[0].toInt()
-            val minutes = splits[1].toInt()
-            return LocalTime.of(hour, minutes)
+            val hours = findToken(TokenType.HOURS).parseToInt() ?: return null
+            val minutes = findToken(TokenType.MINUTES).parseToInt() ?: return null
+            return LocalTime.of(hours, minutes)
         } catch (e: NumberFormatException) {
-            logger.debug(e) { "could not parse numbers from timeToken: $timeToken" }
+            logger.debug(e) { "could not parse numbers for localtime" }
             return null
         }
     }
 
-    private fun parseDateTokenToLocalDate(dateToken: Pair<TokenType, String>): LocalDate? {
-        var splits = dateToken.second.split(alphanumericSplitRegex)
-            .map { it.trim() }
-            .filter { it.isNotBlank() }
-        if (splits.size < 3) {
-            logger.debug { "could not parse dateToken into at least 3 parts: $dateToken" }
-            return null
+    private fun findToken(tokenType: TokenType): String? {
+        val result = tokens.find { it.first == tokenType }
+        if (result == null) {
+            logger.debug { "could not find token of type $tokenType" }
         }
-        splits = trimNoiseOnEnds(splits)
-        if (splits.size != 3) {
-            logger.debug { "could not parse dateToken into 3 parts: $dateToken, after trimming only $splits remained" }
-            return null
-        }
-        try {
-            val day = splits[0].toInt()
-            val month = parseMonthToNumber(splits[1]) ?: return null
-            val year = splits[2].toInt()
-            return LocalDate.of(fixYear(year), month, day)
-        } catch (e: NumberFormatException) {
-            logger.debug(e) { "could not parse numbers from dateToken: $dateToken" }
-            return null
-        }
+        return result?.second
     }
 
     private fun fixYear(year: Int): Int {
@@ -172,7 +196,10 @@ class DateParserImpl(val inputTokens: List<Pair<List<TokenType>, String>>) {
         return result
     }
 
-    private fun parseMonthToNumber(month: String): Int? {
+    private fun parseMonthToNumber(month: String?): Int? {
+        if (month == null) {
+            return null
+        }
         val result = month.toIntOrNull()
         if (result == null) {
             val lowercaseMonth = month.lowercase()
@@ -188,4 +215,14 @@ class DateParserImpl(val inputTokens: List<Pair<List<TokenType>, String>>) {
         return result
     }
 
+    private fun String?.parseToInt(): Int? {
+        if (this == null) {
+            return null
+        }
+        val result = this.toIntOrNull()
+        if (result == null) {
+            logger.debug { "could not parse $this to int" }
+        }
+        return result
+    }
 }

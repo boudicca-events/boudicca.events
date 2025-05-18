@@ -206,10 +206,14 @@ class DateParserTest {
     @Test
     fun parseDayMonthYearTime() {
         assertDates(dateParser {
-            combo("25.04.1992 - 10 00", TokenType.DAY_MONTH_YEAR, TokenType.TIME)
+            dayMonthYearTime(
+                "25.04.1992 - 10 00"
+            )
         }, "1992-04-25T10:00+02:00")
         assertDates(dateParser {
-            combo("Fr. 25.04.1992 - 10 00", TokenType.DAY_MONTH_YEAR, TokenType.TIME)
+            dayMonthYearTime(
+                "Fr. 25.04.1992 - 10 00"
+            )
         }, "1992-04-25T10:00+02:00")
     }
 

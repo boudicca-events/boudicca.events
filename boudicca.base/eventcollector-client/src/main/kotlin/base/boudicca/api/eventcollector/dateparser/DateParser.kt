@@ -12,15 +12,20 @@ class DateParser {
     private val tokens = mutableListOf<Pair<List<TokenType>, String>>()
 
     fun dayMonthYear(date: String) {
-        tokens.add(Pair(listOf(TokenType.DAY_MONTH_YEAR), date))
+        tokens.add(Pair(listOf(TokenType.DAY, TokenType.MONTH, TokenType.YEAR), date))
     }
 
     fun time(time: String) {
-        tokens.add(Pair(listOf(TokenType.TIME), time))
+        tokens.add(Pair(listOf(TokenType.HOURS, TokenType.MINUTES), time))
     }
 
-    fun combo(string: String, vararg tokenTypes: TokenType) {
-        tokens.add(Pair(tokenTypes.asList(), string))
+    fun dayMonthYearTime(date: String) {
+        tokens.add(
+            Pair(
+                listOf(TokenType.DAY, TokenType.MONTH, TokenType.YEAR, TokenType.HOURS, TokenType.MINUTES),
+                date
+            )
+        )
     }
 
     fun tryParse(): OffsetDateTime? {

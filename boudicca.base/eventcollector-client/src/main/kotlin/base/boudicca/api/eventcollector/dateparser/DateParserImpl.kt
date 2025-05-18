@@ -67,7 +67,7 @@ class DateParserImpl(val inputTokens: List<Pair<List<TokenType>, String>>) {
 
     private fun splitAllDayMonthYearTimeToken(token: Pair<List<TokenType>, String>): List<Pair<List<TokenType>, String>> {
         //TODO this seems quite hacky
-        if (token.first != listOf(TokenType.DAY_MONTH_YEAR, TokenType.TIME)) {
+        if (token.first != listOf(TokenType.DAY, TokenType.MONTH, TokenType.YEAR, TokenType.HOURS, TokenType.MINUTES)) {
             return listOf(token)
         }
         var splits = token.second.split(alphanumericSplitRegex)
@@ -76,8 +76,8 @@ class DateParserImpl(val inputTokens: List<Pair<List<TokenType>, String>>) {
         splits = trimNoiseOnEnds(splits)
         if (splits.size == 5) {
             return listOf(
-                Pair(listOf(TokenType.DAY_MONTH_YEAR), splits.take(3).joinToString()),
-                Pair(listOf(TokenType.TIME), splits.drop(3).joinToString())
+                Pair(listOf(TokenType.DAY, TokenType.MONTH, TokenType.YEAR), splits.take(3).joinToString()),
+                Pair(listOf(TokenType.HOURS, TokenType.MINUTES), splits.drop(3).joinToString())
             )
         } else {
             //we failed? dunno
@@ -86,7 +86,7 @@ class DateParserImpl(val inputTokens: List<Pair<List<TokenType>, String>>) {
     }
 
     private fun splitAllDayMonthYearToken(dateToken: Pair<List<TokenType>, String>): List<Pair<List<TokenType>, String>> {
-        if (dateToken.first != listOf(TokenType.DAY_MONTH_YEAR)) {
+        if (dateToken.first != listOf(TokenType.DAY, TokenType.MONTH, TokenType.YEAR)) {
             return listOf(dateToken)
         }
         var splits = dateToken.second.split(alphanumericSplitRegex)
@@ -109,7 +109,7 @@ class DateParserImpl(val inputTokens: List<Pair<List<TokenType>, String>>) {
     }
 
     private fun splitAllTimeToken(timeToken: Pair<List<TokenType>, String>): List<Pair<List<TokenType>, String>> {
-        if (timeToken.first != listOf(TokenType.TIME)) {
+        if (timeToken.first != listOf(TokenType.HOURS, TokenType.MINUTES)) {
             return listOf(timeToken)
         }
         var splits = timeToken.second.split(alphanumericSplitRegex)

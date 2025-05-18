@@ -12,20 +12,23 @@ class DateParser {
     private val tokens = mutableListOf<Pair<List<TokenType>, String>>()
 
     fun dayMonthYear(date: String) {
-        tokens.add(Pair(listOf(TokenType.DAY, TokenType.MONTH, TokenType.YEAR), date))
+        TokenBuilder().dayMonthYear().with(date)
     }
 
     fun time(time: String) {
-        tokens.add(Pair(listOf(TokenType.HOURS, TokenType.MINUTES), time))
+        TokenBuilder().time().with(time)
     }
 
-    fun dayMonthYearTime(date: String) {
-        tokens.add(
-            Pair(
-                listOf(TokenType.DAY, TokenType.MONTH, TokenType.YEAR, TokenType.HOURS, TokenType.MINUTES),
-                date
-            )
-        )
+    fun dayMonthYear(): TokenBuilder {
+        return TokenBuilder().dayMonthYear()
+    }
+
+    fun time(): TokenBuilder {
+        return TokenBuilder().time()
+    }
+
+    fun token(): TokenBuilder {
+        return TokenBuilder()
     }
 
     fun tryParse(): OffsetDateTime? {
@@ -60,5 +63,46 @@ class DateParser {
 
     override fun toString(): String {
         return "DateParser(tokens=$tokens)"
+    }
+
+    inner class TokenBuilder {
+        private val tokenTypes = mutableListOf<TokenType>()
+
+        fun dayMonthYear(): TokenBuilder {
+            return day().month().year()
+        }
+
+        fun time(): TokenBuilder {
+            return hours().minutes()
+        }
+
+        fun day(): TokenBuilder {
+            tokenTypes.add(TokenType.DAY)
+            return this
+        }
+
+        fun month(): TokenBuilder {
+            tokenTypes.add(TokenType.MONTH)
+            return this
+        }
+
+        fun year(): TokenBuilder {
+            tokenTypes.add(TokenType.YEAR)
+            return this
+        }
+
+        fun hours(): TokenBuilder {
+            tokenTypes.add(TokenType.HOURS)
+            return this
+        }
+
+        fun minutes(): TokenBuilder {
+            tokenTypes.add(TokenType.MINUTES)
+            return this
+        }
+
+        fun with(value: String) {
+            this@DateParser.tokens.add(Pair(tokenTypes, value))
+        }
     }
 }

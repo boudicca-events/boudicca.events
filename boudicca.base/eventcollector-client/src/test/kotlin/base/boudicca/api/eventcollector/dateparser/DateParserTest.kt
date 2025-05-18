@@ -206,16 +206,30 @@ class DateParserTest {
     @Test
     fun parseDayMonthYearTime() {
         assertDates(dateParser {
-            dayMonthYearTime(
+            dayMonthYear().time().with(
                 "25.04.1992 - 10 00"
             )
         }, "1992-04-25T10:00+02:00")
         assertDates(dateParser {
-            dayMonthYearTime(
+            dayMonthYear().time().with(
                 "Fr. 25.04.1992 - 10 00"
             )
         }, "1992-04-25T10:00+02:00")
     }
+
+//    @Test
+//    fun parseYearMonthDay() {
+//        assertDates(dateParser {
+//            year().month.day()(
+//                "25.04.1992 - 10 00"
+//            )
+//        }, "1992-04-25T10:00+02:00")
+//        assertDates(dateParser {
+//            dayMonthYear(
+//                "Fr. 25.04.1992 - 10 00"
+//            )
+//        }, "1992-04-25T10:00+02:00")
+//    }
 
     private fun assertDates(actual: OffsetDateTime, expected: String) {
         assertThat(actual.toString()).isEqualTo(expected)

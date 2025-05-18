@@ -62,7 +62,7 @@ class KapuCollector : TwoStepEventCollector<String>("kapu") {
         val fullDateTime = element.select("article.event > div.container div.wob:nth-child(1)").text()
 
         return dateParser {
-            dayMonthYearTime(fullDateTime)
+            dayMonthYear().time().with(fullDateTime)
         }
     }
 

@@ -101,6 +101,11 @@ class DateParser {
             return this
         }
 
+        fun seconds(): TokenBuilder {
+            tokenTypes.add(TokenType.SECONDS)
+            return this
+        }
+
         fun with(value: String) {
             this@DateParser.tokens.add(Pair(tokenTypes, value))
         }

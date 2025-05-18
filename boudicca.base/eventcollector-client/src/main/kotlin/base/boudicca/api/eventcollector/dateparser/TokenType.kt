@@ -5,5 +5,6 @@ enum class TokenType {
     MONTH,
     YEAR,
     HOURS,
-    MINUTES
+    MINUTES,
+    SECONDS,
 }

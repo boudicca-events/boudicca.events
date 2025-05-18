@@ -2,6 +2,8 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.EventCollector
+import base.boudicca.api.eventcollector.dateparser.TokenType
+import base.boudicca.api.eventcollector.dateparser.dateParser
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.Registration
@@ -16,7 +18,6 @@ import org.jsoup.nodes.Element
 import org.jsoup.parser.Parser
 import java.net.URLEncoder
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -133,7 +134,7 @@ class LinzTermineCollector : EventCollector {
     }
 
     private fun parseEvents(): List<LinzTermineEvent> {
-        val formatter = DateTimeFormatter.ofPattern("uuuu-MM-dd kk:mm:ss")
+        val urlFormatter = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss")
 
         var date = LocalDate.now(ZoneId.of("Europe/Vienna")).atStartOfDay()
         val links = mutableListOf<String>()
@@ -141,7 +142,7 @@ class LinzTermineCollector : EventCollector {
             links.add(
                 "$eventsBaseUrl?lt_datefrom=" +
                         URLEncoder.encode(
-                            date.format(DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss")),
+                            date.format(urlFormatter),
                             Charsets.UTF_8
                         )
             )
@@ -164,10 +165,16 @@ class LinzTermineCollector : EventCollector {
                         findTag(it),
                         it.select("date").map {
                             Pair(
-                                LocalDateTime.parse(it.attr("dFrom"), formatter).atZone(ZoneId.of("Europe/Vienna"))
-                                    .toOffsetDateTime(),
-                                LocalDateTime.parse(it.attr("dTo"), formatter).atZone(ZoneId.of("Europe/Vienna"))
-                                    .toOffsetDateTime(),
+                                dateParser {
+                                    token().year().month().day().hours().minutes().seconds().with(
+                                        it.attr("dFrom")
+                                    )
+                                },
+                                dateParser {
+                                    token().year().month().day().hours().minutes().seconds().with(
+                                        it.attr("dTo")
+                                    )
+                                }
                             )
                         },
                         it.attr("freeofcharge") == "1",

@@ -2,7 +2,9 @@ package events.boudicca.eventcollector
 
 import base.boudicca.api.eventcollector.debugger.EventCollectorDebugger
 import base.boudicca.fetcher.FileBackedFetcherCache
-import events.boudicca.eventcollector.collectors.*
+import events.boudicca.eventcollector.collectors.LandestheaterLinzCollector
+import events.boudicca.eventcollector.collectors.LinzTermineCollector
+import events.boudicca.eventcollector.collectors.MetalCornerCollector
 import java.io.File
 
 /**
@@ -13,7 +15,7 @@ import java.io.File
  * 4) Also allows you to ingest the data into your local eventdb
  */
 fun main() {
-    EventCollectorDebugger()
+    EventCollectorDebugger(keepOpen = true)
         // this debugger caches all fetcher calls locally to avoid spamming the server when developing.
         // if there are problems with old data or something like that just delete the file and restart the debugger
         .setFetcherCache(FileBackedFetcherCache(File("./fetcher.cache")))
@@ -29,5 +31,11 @@ fun main() {
 //        .debug(RemoteCollectorCollector("http://localhost:8080"))
 
         //enable/add any collectors you want to test here
-        .debug(ZuckerfabrikCollector())
+//        .debug(ZuckerfabrikCollector())
+//        .debug(PosthofCollector())
+//        .debug(BrucknerhausCollector())
+//        .debug(KapuCollector())
+//        .debug(LinzTermineCollector())
+//        .debug(LandestheaterLinzCollector())
+        .debug(MetalCornerCollector())
 }

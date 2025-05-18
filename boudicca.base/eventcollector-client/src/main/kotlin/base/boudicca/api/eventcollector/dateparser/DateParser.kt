@@ -9,18 +9,18 @@ class DateParser {
 
     private val logger = KotlinLogging.logger {}
 
-    private val tokens = mutableListOf<Pair<TokenType, String>>()
+    private val tokens = mutableListOf<Pair<List<TokenType>, String>>()
 
     fun dayMonthYear(date: String) {
-        tokens.add(Pair(TokenType.DAY_MONTH_YEAR, date))
-    }
-
-    fun dayMonthYearTime(date: String) {
-        tokens.add(Pair(TokenType.DAY_MONTH_YEAR_TIME, date))
+        tokens.add(Pair(listOf(TokenType.DAY_MONTH_YEAR), date))
     }
 
     fun time(time: String) {
-        tokens.add(Pair(TokenType.TIME, time))
+        tokens.add(Pair(listOf(TokenType.TIME), time))
+    }
+
+    fun combo(string: String, vararg tokenTypes: TokenType) {
+        tokens.add(Pair(tokenTypes.asList(), string))
     }
 
     fun tryParse(): OffsetDateTime? {

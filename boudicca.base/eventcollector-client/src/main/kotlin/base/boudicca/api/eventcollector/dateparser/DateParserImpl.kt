@@ -6,7 +6,7 @@ import java.time.LocalTime
 import java.time.OffsetDateTime
 import java.time.ZoneId
 
-class DateParserImpl(inputTokens: List<Pair<TokenType, String>>) {
+class DateParserImpl(val inputTokens: List<Pair<List<TokenType>, String>>) {
 
     companion object {
         private val alphanumericSplitRegex = Regex("[^\\wäöüß]+")
@@ -32,7 +32,7 @@ class DateParserImpl(inputTokens: List<Pair<TokenType, String>>) {
 
     private val logger = KotlinLogging.logger {}
 
-    private var tokens = inputTokens.toList()
+    private var tokens = emptyList<Pair<TokenType, String>>()
 
     fun tryParse(): OffsetDateTime? {
         resolveUnknownTokens()
@@ -54,13 +54,13 @@ class DateParserImpl(inputTokens: List<Pair<TokenType, String>>) {
     }
 
     private fun splitAllDayMonthYearTimeTokens() {
-        tokens = tokens.flatMap { splitAllDayMonthYearTimeToken(it) }
+        tokens = inputTokens.flatMap { splitAllDayMonthYearTimeToken(it) }
     }
 
-    private fun splitAllDayMonthYearTimeToken(token: Pair<TokenType, String>): List<Pair<TokenType, String>> {
+    private fun splitAllDayMonthYearTimeToken(token: Pair<List<TokenType>, String>): List<Pair<TokenType, String>> {
         //TODO this seems quite hacky
-        if (token.first != TokenType.DAY_MONTH_YEAR_TIME) {
-            return listOf(token)
+        if (token.first != listOf(TokenType.DAY_MONTH_YEAR, TokenType.TIME)) {
+            return listOf(Pair(token.first.first(), token.second)) //TODO broken as fuuu
         }
         var splits = token.second.split(alphanumericSplitRegex)
             .map { it.trim() }
@@ -73,7 +73,7 @@ class DateParserImpl(inputTokens: List<Pair<TokenType, String>>) {
             )
         } else {
             //we failed? dunno
-            return listOf(token)
+            return listOf(Pair(token.first.first(), token.second)) //TODO broken as fuuu
         }
     }
 

@@ -5,124 +5,10 @@ import base.boudicca.api.eventcollector.dateparser.impl.Guesser.GuesserType
 
 internal class Guesser(private val hints: List<HintType>, private val tokens: List<Pair<TokenizerType, String>>) {
 
-
-    companion object {
-        private fun canBe(guesserType: GuesserType): Matcher {
-            return CanBeMatcher(false, guesserType)
-        }
-
-        private fun matches(description: String, condition: (Any) -> Boolean): Matcher {
-            return ConditionMatcher(false, description, condition)
-        }
-
-        private fun createDate(
-            day: Any, month: Any, year: Any
-        ): Date {
-            //TODO error catching?
-            return Date(
-                0,
-                day.value.toInt(),
-                month.value.toIntOrNull() ?: MonthMappings.mapMonthToInt(month.value) ?: throw IllegalArgumentException(
-                    "blaa"
-                ), //TODO
-                fixYear(year.value.toInt()),
-            )
-        }
-
-        private fun fixYear(year: Int): Int {
-            return if (year < 70) { //we get some problems in the year 2070 with this...
-                2000 + year
-            } else if (year < 100) {
-                1900 + year
-            } else {
-                year
-            }
-        }
-
-        private val GROUP_REMAINING_ANY_FORMULAS = listOf(
-            Formula(
-                listOf(
-                    canBe(GuesserType.HOURS),
-                    matches("matches a ':' for \"hours:minutes\"") { it.possibleTypes.isEmpty() && it.value.trim() == ":" },
-                    canBe(GuesserType.MINUTES)
-                )
-            ) { matches ->
-                listOf(
-                    Any(
-                        0, matches[0].value, setOf(GuesserType.HOURS)
-                    ), matches[1], Any(
-                        0, matches[2].value, setOf(GuesserType.MINUTES)
-                    )
-                )
-            })
-        private val GROUP_GUESSES_FORMULAS = listOf(
-            Formula(
-                listOf(
-                    canBe(GuesserType.HOURS),
-                    canBe(GuesserType.MINUTES),
-                    canBe(GuesserType.SECONDS),
-                )
-            ) { matches ->
-                listOf(
-                    Time(
-                        0,
-                        matches[0].value.toInt(),
-                        matches[1].value.toInt(),
-                        matches[2].value.toInt(),
-                    )
-                )
-            },
-            Formula(
-                listOf(
-                    canBe(GuesserType.HOURS),
-                    canBe(GuesserType.MINUTES),
-                )
-            ) { matches ->
-                listOf(
-                    Time(
-                        0, matches[0].value.toInt(), matches[1].value.toInt(), 0
-                    )
-                )
-            },
-            Formula(
-                listOf(
-                    canBe(GuesserType.DAY),
-                    canBe(GuesserType.MONTH),
-                    canBe(GuesserType.YEAR),
-                )
-            ) { matches ->
-                listOf(
-                    createDate(
-                        matches[0],
-                        matches[1],
-                        matches[2],
-                    )
-                )
-            },
-            Formula(
-                listOf(
-                    canBe(GuesserType.YEAR),
-                    canBe(GuesserType.MONTH),
-                    canBe(GuesserType.DAY),
-                )
-            ) { matches ->
-                listOf(
-                    createDate(
-                        matches[2],
-                        matches[1],
-                        matches[0],
-                    )
-                )
-            },
-        )
-    }
-
     fun guess(): List<Guess> {
         var guesses = mapAndValidateTokens(tokens)
-        guesses = mapHints(guesses)
-        guesses = applyFormulas(guesses, GROUP_REMAINING_ANY_FORMULAS)
-        guesses = guesses.filter { it is Any && it.possibleTypes.isNotEmpty() } //TODO probably not so good, but oh well
-        guesses = applyFormulas(guesses, GROUP_GUESSES_FORMULAS)
+        guesses = applyHints(guesses)
+        guesses = applyFormulas(guesses, Formulas.FORMULAS)
         return guesses
     }
 
@@ -158,32 +44,46 @@ internal class Guesser(private val hints: List<HintType>, private val tokens: Li
         }
     }
 
-    private fun applyFormulas(inputGuesses: List<Guess>, formulas: List<Formula>): List<Guess> {
+    private fun applyFormulas(inputGuesses: List<Guess>, formulas: List<Formulas.Formula>): List<Guess> {
         var guesses = inputGuesses
         var result = mutableListOf<Guess>()
         for (formula in formulas) {
             var i = 0
             while (i < guesses.size) {
                 if (i + formula.matchers.size <= guesses.size) {
-                    var formulaMatches = true
-                    val capturedMatches = mutableListOf<Any>()
-                    for (step in formula.matchers.indices) {
-                        val guess = guesses[i + step]
+                    var formulaMatches = false
+                    var capturedCount = 0
+                    var stepCount = 0
+                    val capturedMatches = mutableListOf<List<Any>>()
+                    var currentCapturedMatches = mutableListOf<Any>()
+                    while (i + capturedCount < guesses.size) {
+                        val guess = guesses[i + capturedCount]
                         if (guess !is Any) {
-                            formulaMatches = false
                             break
                         }
-                        val matches = formula.matchers[step].matches(guess)
-                        if (!matches) {
-                            formulaMatches = false
+                        val currentMatcher = formula.matchers[stepCount]
+                        val matches = currentMatcher.matches(guess)
+                        if (!(matches || (currentMatcher.canMatchMultipleTimes && currentCapturedMatches.isNotEmpty()))) {
                             break
                         }
-                        capturedMatches.add(guess)
+                        if (matches) {
+                            capturedCount++
+                            currentCapturedMatches.add(guess)
+                        }
+                        if (!currentMatcher.canMatchMultipleTimes || !matches) {
+                            capturedMatches.add(currentCapturedMatches)
+                            currentCapturedMatches = mutableListOf()
+                            stepCount++
+                        }
+                        if (stepCount >= formula.matchers.size) {
+                            formulaMatches = true
+                            break
+                        }
                     }
                     if (formulaMatches) {
                         val replacements = formula.replacement(capturedMatches)
                         result.addAll(replacements)
-                        i += capturedMatches.size //TODO adapt for more captured?
+                        i += capturedCount
                         continue
                     }
                 }
@@ -196,7 +96,7 @@ internal class Guesser(private val hints: List<HintType>, private val tokens: Li
         return guesses
     }
 
-    private fun mapHints(guesserTokens: List<Guess>): List<Guess> {
+    private fun applyHints(guesserTokens: List<Guess>): List<Guess> {
         val remainingHints = hints.toMutableList()
         return guesserTokens.map {
             val nextHint = remainingHints.firstOrNull()
@@ -214,7 +114,7 @@ internal class Guesser(private val hints: List<HintType>, private val tokens: Li
         }
     }
 
-    enum class GuesserType { //TODO same as hinttype?
+    enum class GuesserType {
         DAY, MONTH, YEAR, HOURS, MINUTES, SECONDS;
 
         companion object {
@@ -231,42 +131,6 @@ internal class Guesser(private val hints: List<HintType>, private val tokens: Li
             }
         }
     }
-
-    private class Formula(val matchers: List<Matcher>, val replacement: (List<Any>) -> List<Guess>) {
-        override fun toString(): String {
-            return "Formula(matchers=$matchers)"
-        }
-    }
-
-    private sealed class Matcher {
-        abstract val canMatchMultipleTimes: Boolean
-        abstract fun matches(any: Any): Boolean
-    }
-
-    private data class CanBeMatcher(
-        override val canMatchMultipleTimes: Boolean,
-        val guesserType: GuesserType
-    ) : Matcher() {
-        override fun matches(any: Any): Boolean {
-            return any.possibleTypes.contains(guesserType)
-        }
-    }
-
-    private class ConditionMatcher(
-        override val canMatchMultipleTimes: Boolean,
-        val description: String, //only useful for debugging purposes
-        val condition: (Any) -> Boolean
-    ) : Matcher() {
-        override fun matches(any: Any): Boolean {
-            return condition(any)
-        }
-
-        override fun toString(): String {
-            return "ConditionMatcher(canMatchMultipleTimes=$canMatchMultipleTimes, description='$description')"
-        }
-    }
-
-
 }
 
 internal sealed class Guess {
@@ -279,6 +143,5 @@ internal data class Date(
 ) : Guess()
 
 internal data class Time(
-    override val confidence: Int, val hours: Int, val minutes: Int, //TODO make nullable as well?
-    val seconds: Int?
+    override val confidence: Int, val hours: Int, val minutes: Int, val seconds: Int?
 ) : Guess()

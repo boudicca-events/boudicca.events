@@ -95,13 +95,7 @@ internal class Guesser(private val hints: List<HintType>, private val tokens: Li
                     ) && third is Any && third.possibleTypes.contains(GuesserType.YEAR)
                 ) {
                     result.add(
-                        Date(
-                            0,
-                            first.value.toInt(),
-                            second.value.toIntOrNull() ?: MonthMappings.mapMonthToInt(second.value)
-                            ?: throw IllegalArgumentException("blaa"), //TODO
-                            fixYear(third.value.toInt()),
-                        )
+                        createDate(first, second, third)
                     )
                     i += 3
                     continue
@@ -110,13 +104,7 @@ internal class Guesser(private val hints: List<HintType>, private val tokens: Li
                     ) && third is Any && third.possibleTypes.contains(GuesserType.DAY)
                 ) {
                     result.add(
-                        Date(
-                            0,
-                            third.value.toInt(),
-                            second.value.toIntOrNull() ?: MonthMappings.mapMonthToInt(second.value)
-                            ?: throw IllegalArgumentException("blaa"), //TODO
-                            fixYear(first.value.toInt()),
-                        )
+                        createDate(third, second, first)
                     )
                     i += 3
                     continue
@@ -155,6 +143,19 @@ internal class Guesser(private val hints: List<HintType>, private val tokens: Li
             i++
         }
         return result
+    }
+
+    private fun createDate(
+        day: Any, month: Any, year: Any
+    ): Date {
+        //TODO error catching?
+        return Date(
+            0,
+            day.value.toInt(),
+            month.value.toIntOrNull() ?: MonthMappings.mapMonthToInt(month.value)
+            ?: throw IllegalArgumentException("blaa"), //TODO
+            fixYear(year.value.toInt()),
+        )
     }
 
     private fun mapHints(guesserTokens: List<Guess>): List<Guess> {

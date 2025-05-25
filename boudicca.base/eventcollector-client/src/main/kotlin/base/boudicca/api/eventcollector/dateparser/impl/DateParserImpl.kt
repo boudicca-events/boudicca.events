@@ -58,52 +58,28 @@ internal class DateParserImpl(private val inputTokens: List<Pair<List<HintType>,
     }
 
     private fun buildLocalDate(): LocalDate? {
-        val date = findToken(Date::class)
-        if (date == null) {
-            try {
-                val day = findToken(Day::class)?.value.parseToInt() ?: return null
-                val month = parseMonthToNumber(findToken(Month::class)?.value) ?: return null
-                val year = findToken(Year::class)?.value.parseToInt() ?: return null
-                return LocalDate.of(fixYear(year), month, day)
-            } catch (e: NumberFormatException) {
-                logger.debug(e) { "could not parse numbers for localdate" }
-                return null
-            }
-        } else {
-            try {
-                val day = date.day.parseToInt() ?: return null
-                val month = parseMonthToNumber(date.month) ?: return null
-                val year = date.year.parseToInt() ?: return null
-                return LocalDate.of(fixYear(year), month, day)
-            } catch (e: NumberFormatException) {
-                logger.debug(e) { "could not parse numbers for localdate" }
-                return null
-            }
+        val date = findToken(Date::class) ?: return null
+        try {
+            val day = date.day.parseToInt() ?: return null
+            val month = parseMonthToNumber(date.month) ?: return null
+            val year = date.year.parseToInt() ?: return null
+            return LocalDate.of(fixYear(year), month, day)
+        } catch (e: NumberFormatException) {
+            logger.debug(e) { "could not parse numbers for localdate" }
+            return null
         }
     }
 
     private fun buildLocalTime(): LocalTime? {
-        val time = findToken(Time::class)
-        if (time == null) {
-            try {
-                val hours = findToken(Hours::class)?.value.parseToInt() ?: 0
-                val minutes = findToken(Minutes::class)?.value.parseToInt() ?: 0
-                val seconds = findToken(Seconds::class)?.value.parseToInt() ?: 0
-                return LocalTime.of(hours, minutes, seconds)
-            } catch (e: NumberFormatException) {
-                logger.debug(e) { "could not parse numbers for localtime" }
-                return null
-            }
-        } else {
-            try {
-                val hours = time.hours.parseToInt() ?: 0
-                val minutes = time.minutes.parseToInt() ?: 0
-                val seconds = time.seconds.parseToInt() ?: 0
-                return LocalTime.of(hours, minutes, seconds)
-            } catch (e: NumberFormatException) {
-                logger.debug(e) { "could not parse numbers for localtime" }
-                return null
-            }
+        val time = findToken(Time::class) ?: return null
+        try {
+            val hours = time.hours.parseToInt() ?: 0
+            val minutes = time.minutes.parseToInt() ?: 0
+            val seconds = time.seconds.parseToInt() ?: 0
+            return LocalTime.of(hours, minutes, seconds)
+        } catch (e: NumberFormatException) {
+            logger.debug(e) { "could not parse numbers for localtime" }
+            return null
         }
     }
 
@@ -113,8 +89,7 @@ internal class DateParserImpl(private val inputTokens: List<Pair<List<HintType>,
             logger.debug { "could not find token of type $clazz" }
             return null
         }
-        @Suppress("UNCHECKED_CAST")
-        return result as T
+        @Suppress("UNCHECKED_CAST") return result as T
     }
 
     private fun fixYear(year: Int): Int {

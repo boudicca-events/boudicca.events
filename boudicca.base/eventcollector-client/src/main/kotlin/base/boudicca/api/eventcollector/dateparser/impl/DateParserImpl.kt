@@ -60,28 +60,12 @@ internal class DateParserImpl(private val inputTokens: List<Pair<List<HintType>,
 
     private fun buildLocalDate(): LocalDate? {
         val date = findToken(Date::class) ?: return null
-        try {
-            val day = date.day.parseToInt() ?: return null
-            val month = parseMonthToNumber(date.month) ?: return null
-            val year = date.year.parseToInt() ?: return null
-            return LocalDate.of(fixYear(year), month, day)
-        } catch (e: NumberFormatException) {
-            logger.debug(e) { "could not parse numbers for localdate" }
-            return null
-        }
+        return LocalDate.of(date.year, date.month, date.day)
     }
 
     private fun buildLocalTime(): LocalTime? {
         val time = findToken(Time::class) ?: return null
-        try {
-            val hours = time.hours.parseToInt() ?: 0
-            val minutes = time.minutes.parseToInt() ?: 0
-            val seconds = time.seconds.parseToInt() ?: 0
-            return LocalTime.of(hours, minutes, seconds)
-        } catch (e: NumberFormatException) {
-            logger.debug(e) { "could not parse numbers for localtime" }
-            return null
-        }
+        return LocalTime.of(time.hours, time.minutes, time.seconds ?: 0)
     }
 
     private fun <T : Guess> findToken(clazz: KClass<T>): T? {
@@ -93,38 +77,4 @@ internal class DateParserImpl(private val inputTokens: List<Pair<List<HintType>,
         @Suppress("UNCHECKED_CAST") return result as T
     }
 
-    private fun fixYear(year: Int): Int {
-        return if (year < 70) { //we get some problems in the year 2070 with this...
-            2000 + year
-        } else if (year < 100) {
-            1900 + year
-        } else {
-            year
-        }
-    }
-
-    private fun parseMonthToNumber(month: String?): Int? {
-        if (month == null) {
-            return null
-        }
-        var result = month.toIntOrNull()
-        if (result == null) {
-            result = MonthMappings.mapMonthToInt(month)
-        }
-        if (result == null) {
-            logger.debug { "could neither parse month '$month' as int nor resolve at from the mapping" }
-        }
-        return result
-    }
-
-    private fun String?.parseToInt(): Int? {
-        if (this == null) {
-            return null
-        }
-        val result = this.toIntOrNull()
-        if (result == null) {
-            logger.debug { "could not parse $this to int" }
-        }
-        return result
-    }
 }

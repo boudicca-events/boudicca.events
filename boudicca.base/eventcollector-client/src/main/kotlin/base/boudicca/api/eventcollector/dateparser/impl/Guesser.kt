@@ -16,19 +16,30 @@ internal class Guesser(private val hints: List<HintType>, private val tokens: Li
     private fun mapGuesserTokensToGuesses(guesserTokens: List<GuesserToken>): List<Guess> {
         return guesserTokens.map {
             if (it.possibleTypes.isEmpty()) {
-                Noise(it.value)
+                Noise(0, it.value)
             } else if (it.possibleTypes.size == 1) {
-                val nextHint = it.possibleTypes.first()
-                when (nextHint) {
-                    GuesserType.DAY -> Day(it.value)
-                    GuesserType.MONTH -> Month(it.value)
-                    GuesserType.YEAR -> Year(it.value)
-                    GuesserType.HOURS -> Hours(it.value)
-                    GuesserType.MINUTES -> Minutes(it.value)
-                    GuesserType.SECONDS -> Seconds(it.value)
+                val guesserType = it.possibleTypes.first()
+
+                var parsedValue = it.value.toIntOrNull()
+                if (parsedValue == null && guesserType == GuesserType.MONTH) {
+                    parsedValue = MonthMappings.mapMonthToInt(it.value)
+                }
+
+                if (parsedValue != null) {
+                    when (guesserType) {
+                        GuesserType.DAY -> Day(0, parsedValue)
+                        GuesserType.MONTH -> Month(0, parsedValue)
+                        GuesserType.YEAR -> Year(0, fixYear(parsedValue))
+                        GuesserType.HOURS -> Hours(0, parsedValue)
+                        GuesserType.MINUTES -> Minutes(0, parsedValue)
+                        GuesserType.SECONDS -> Seconds(0, parsedValue)
+                    }
+                } else {
+                    //could not parse the int, so wtf is it?
+                    Noise(0, it.value)
                 }
             } else {
-                Any(it.value)
+                Any(0, it.value)
             }
         }
     }
@@ -97,6 +108,7 @@ internal class Guesser(private val hints: List<HintType>, private val tokens: Li
                 if (guesses[i] is Day && guesses[i + 1] is Month && guesses[i + 2] is Year) {
                     result.add(
                         Date(
+                            0,
                             (guesses[i] as Day).value, (guesses[i + 1] as Month).value, (guesses[i + 2] as Year).value
                         )
                     )
@@ -105,6 +117,7 @@ internal class Guesser(private val hints: List<HintType>, private val tokens: Li
                 } else if (guesses[i] is Year && guesses[i + 1] is Month && guesses[i + 2] is Day) {
                     result.add(
                         Date(
+                            0,
                             (guesses[i + 2] as Day).value, (guesses[i + 1] as Month).value, (guesses[i] as Year).value
                         )
                     )
@@ -113,6 +126,7 @@ internal class Guesser(private val hints: List<HintType>, private val tokens: Li
                 } else if (guesses[i] is Hours && guesses[i + 1] is Minutes && guesses[i + 2] is Seconds) {
                     result.add(
                         Time(
+                            0,
                             (guesses[i] as Hours).value,
                             (guesses[i + 1] as Minutes).value,
                             (guesses[i + 2] as Seconds).value
@@ -126,6 +140,7 @@ internal class Guesser(private val hints: List<HintType>, private val tokens: Li
                 if (guesses[i] is Hours && guesses[i + 1] is Minutes) {
                     result.add(
                         Time(
+                            0,
                             (guesses[i] as Hours).value, (guesses[i + 1] as Minutes).value, null
                         )
                     )
@@ -157,6 +172,16 @@ internal class Guesser(private val hints: List<HintType>, private val tokens: Li
         }
     }
 
+    private fun fixYear(year: Int): Int {
+        return if (year < 70) { //we get some problems in the year 2070 with this...
+            2000 + year
+        } else if (year < 100) {
+            1900 + year
+        } else {
+            year
+        }
+    }
+
     data class GuesserToken(val value: String, val possibleTypes: Set<GuesserType>)
 
     enum class GuesserType { //TODO same as hinttype?
@@ -178,20 +203,25 @@ internal class Guesser(private val hints: List<HintType>, private val tokens: Li
     }
 }
 
-internal sealed interface Guess
-internal data class Noise(val value: String) : Guess
-internal data class Any(val value: String) : Guess
-internal data class Day(val value: String) : Guess
-internal data class Month(val value: String) : Guess
-internal data class Year(val value: String) : Guess
-internal data class Hours(val value: String) : Guess
-internal data class Minutes(val value: String) : Guess
-internal data class Seconds(val value: String) : Guess
+internal sealed class Guess {
+    abstract val confidence: Int
+}
+
+internal data class Noise(override val confidence: Int, val value: String) : Guess()
+internal data class Any(override val confidence: Int, val value: String) : Guess()
+internal data class Day(override val confidence: Int, val value: Int) : Guess()
+internal data class Month(override val confidence: Int, val value: Int) : Guess()
+internal data class Year(override val confidence: Int, val value: Int) : Guess()
+internal data class Hours(override val confidence: Int, val value: Int) : Guess()
+internal data class Minutes(override val confidence: Int, val value: Int) : Guess()
+internal data class Seconds(override val confidence: Int, val value: Int) : Guess()
 internal data class Date(
-    val day: String, val month: String, val year: String
-) : Guess //TODO should those be int already?
+    override val confidence: Int,
+    val day: Int, val month: Int, val year: Int
+) : Guess() //TODO should those be int already?
 
 internal data class Time(
-    val hours: String, val minutes: String, //TODO make nullable as well?
-    val seconds: String?
-) : Guess //TODO should those be int already?
+    override val confidence: Int,
+    val hours: Int, val minutes: Int, //TODO make nullable as well?
+    val seconds: Int?
+) : Guess() //TODO should those be int already?

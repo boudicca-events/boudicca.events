@@ -2,7 +2,6 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.EventCollector
-import base.boudicca.api.eventcollector.dateparser.TokenType
 import base.boudicca.api.eventcollector.dateparser.dateParser
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils

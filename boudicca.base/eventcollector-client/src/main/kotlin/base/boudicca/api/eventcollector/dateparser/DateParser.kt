@@ -10,34 +10,34 @@ class DateParser {
 
     private val logger = KotlinLogging.logger {}
 
-    private val tokens = mutableListOf<Pair<List<TokenType>, String>>()
+    private val tokens = mutableListOf<Pair<List<HintType>, String>>()
 
     fun dayMonthYear(date: String) {
-        TokenBuilder().dayMonthYear().with(date)
+        HintBuilder().dayMonthYear().with(date)
     }
 
     fun time(time: String) {
-        TokenBuilder().time().with(time)
+        HintBuilder().time().with(time)
     }
 
     fun any(text: String) {
-        TokenBuilder().any().with(text)
+        HintBuilder().any().with(text)
     }
 
-    fun dayMonthYear(): TokenBuilder {
-        return TokenBuilder().dayMonthYear()
+    fun dayMonthYear(): HintBuilder {
+        return HintBuilder().dayMonthYear()
     }
 
-    fun time(): TokenBuilder {
-        return TokenBuilder().time()
+    fun time(): HintBuilder {
+        return HintBuilder().time()
     }
 
-    fun any(): TokenBuilder {
-        return TokenBuilder().any()
+    fun any(): HintBuilder {
+        return HintBuilder().any()
     }
 
-    fun token(): TokenBuilder {
-        return TokenBuilder()
+    fun token(): HintBuilder {
+        return HintBuilder()
     }
 
     fun tryParse(): OffsetDateTime? {
@@ -74,54 +74,54 @@ class DateParser {
         return "DateParser(tokens=$tokens)"
     }
 
-    inner class TokenBuilder {
-        private val tokenTypes = mutableListOf<TokenType>()
+    inner class HintBuilder {
+        private val hintTypes = mutableListOf<HintType>()
 
-        fun dayMonthYear(): TokenBuilder {
+        fun dayMonthYear(): HintBuilder {
             return day().month().year()
         }
 
-        fun time(): TokenBuilder {
+        fun time(): HintBuilder {
             return hours().minutes()
         }
 
-        fun any(): TokenBuilder {
-            tokenTypes.add(TokenType.ANY)
+        fun any(): HintBuilder {
+            hintTypes.add(HintType.ANY)
             return this
         }
 
-        fun day(): TokenBuilder {
-            tokenTypes.add(TokenType.DAY)
+        fun day(): HintBuilder {
+            hintTypes.add(HintType.DAY)
             return this
         }
 
-        fun month(): TokenBuilder {
-            tokenTypes.add(TokenType.MONTH)
+        fun month(): HintBuilder {
+            hintTypes.add(HintType.MONTH)
             return this
         }
 
-        fun year(): TokenBuilder {
-            tokenTypes.add(TokenType.YEAR)
+        fun year(): HintBuilder {
+            hintTypes.add(HintType.YEAR)
             return this
         }
 
-        fun hours(): TokenBuilder {
-            tokenTypes.add(TokenType.HOURS)
+        fun hours(): HintBuilder {
+            hintTypes.add(HintType.HOURS)
             return this
         }
 
-        fun minutes(): TokenBuilder {
-            tokenTypes.add(TokenType.MINUTES)
+        fun minutes(): HintBuilder {
+            hintTypes.add(HintType.MINUTES)
             return this
         }
 
-        fun seconds(): TokenBuilder {
-            tokenTypes.add(TokenType.SECONDS)
+        fun seconds(): HintBuilder {
+            hintTypes.add(HintType.SECONDS)
             return this
         }
 
         fun with(value: String) {
-            this@DateParser.tokens.add(Pair(tokenTypes, value))
+            this@DateParser.tokens.add(Pair(hintTypes, value))
         }
     }
 }

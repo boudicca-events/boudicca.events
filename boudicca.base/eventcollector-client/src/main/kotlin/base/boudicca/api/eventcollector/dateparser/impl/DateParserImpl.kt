@@ -1,37 +1,18 @@
 package base.boudicca.api.eventcollector.dateparser.impl
 
-import base.boudicca.api.eventcollector.dateparser.TokenType
+import base.boudicca.api.eventcollector.dateparser.HintType
 import io.github.oshai.kotlinlogging.KotlinLogging
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.OffsetDateTime
 import java.time.ZoneId
+import kotlin.reflect.KClass
 
-internal class DateParserImpl(private val inputTokens: List<Pair<List<TokenType>, String>>) {
-
-    companion object {
-        private val nonNumerical = Regex("\\D+")
-
-        private val monthMappings = mapOf(
-            "januar" to 1,
-            "jänner" to 1,
-            "februar" to 2,
-            "märz" to 3,
-            "april" to 4,
-            "mai" to 5,
-            "juni" to 6,
-            "juli" to 7,
-            "august" to 8,
-            "september" to 9,
-            "oktober" to 10,
-            "november" to 11,
-            "dezember" to 12,
-        )
-    }
+internal class DateParserImpl(private val inputTokens: List<Pair<List<HintType>, String>>) {
 
     private val logger = KotlinLogging.logger {}
 
-    private var tokens = emptyList<Pair<TokenType, String>>()
+    private var tokens = emptyList<Guess>()
 
     fun tryParse(): OffsetDateTime? {
         processTokens()
@@ -53,32 +34,13 @@ internal class DateParserImpl(private val inputTokens: List<Pair<List<TokenType>
     }
 
     private fun splitAllTokens() {
-        tokens = inputTokens
-            .flatMap { genericSplit(it) }
-            .map {
-                if (it.first.size != 1) {
-                    logger.warn { "found invalid tokentype length for flattening: $it" }
-                }
-                Pair(it.first.first(), it.second)
-            }
+        tokens = inputTokens.flatMap { genericSplit(it) }
     }
 
-    private fun genericSplit(token: Pair<List<TokenType>, String>): List<Pair<List<TokenType>, String>> {
-        val wantedLength = token.first.size
-        var splits = Tokenizer.tokenize(token.second)
-            .filter { it.first != TokenizerType.SEPARATOR }
-            .map { it.second.trim() }
-            .filter { it.isNotBlank() }
-        if (splits.size < wantedLength) {
-            logger.debug { "could not parse token into at least $wantedLength parts: $token" }
-            return listOf(token)
-        }
-        splits = trimNoiseOnEnds(splits)
-        if (splits.size != wantedLength) {
-            logger.debug { "could not parse token into $wantedLength parts: $token, after trimming only $splits remained" }
-            return listOf(token)
-        }
-        return token.first.zip(splits) { tokenTypes, value -> Pair(listOf(tokenTypes), value) }
+    private fun genericSplit(token: Pair<List<HintType>, String>): List<Guess> {
+        val tokens = Tokenizer.tokenize(token.second)
+        val guessResult = Guesser(token.first, tokens).guess().filter { it !is Noise }
+        return guessResult
     }
 
     private fun buildDate(): OffsetDateTime? {
@@ -97,9 +59,9 @@ internal class DateParserImpl(private val inputTokens: List<Pair<List<TokenType>
 
     private fun buildLocalDate(): LocalDate? {
         try {
-            val day = findToken(TokenType.DAY).parseToInt() ?: return null
-            val month = parseMonthToNumber(findToken(TokenType.MONTH)) ?: return null
-            val year = findToken(TokenType.YEAR).parseToInt() ?: return null
+            val day = findToken(Day::class).parseToInt() ?: return null
+            val month = parseMonthToNumber(findToken(Month::class)) ?: return null
+            val year = findToken(Year::class).parseToInt() ?: return null
             return LocalDate.of(fixYear(year), month, day)
         } catch (e: NumberFormatException) {
             logger.debug(e) { "could not parse numbers for localdate" }
@@ -109,9 +71,9 @@ internal class DateParserImpl(private val inputTokens: List<Pair<List<TokenType>
 
     private fun buildLocalTime(): LocalTime? {
         try {
-            val hours = findToken(TokenType.HOURS).parseToInt() ?: 0
-            val minutes = findToken(TokenType.MINUTES).parseToInt() ?: 0
-            val seconds = findToken(TokenType.SECONDS).parseToInt() ?: 0
+            val hours = findToken(Hours::class).parseToInt() ?: 0
+            val minutes = findToken(Minutes::class).parseToInt() ?: 0
+            val seconds = findToken(Seconds::class).parseToInt() ?: 0
             return LocalTime.of(hours, minutes, seconds)
         } catch (e: NumberFormatException) {
             logger.debug(e) { "could not parse numbers for localtime" }
@@ -119,12 +81,12 @@ internal class DateParserImpl(private val inputTokens: List<Pair<List<TokenType>
         }
     }
 
-    private fun findToken(tokenType: TokenType): String? {
-        val result = tokens.find { it.first == tokenType }
+    private fun <T : Guess> findToken(clazz: KClass<T>): String? {
+        val result = tokens.find { clazz.isInstance(it) }
         if (result == null) {
-            logger.debug { "could not find token of type $tokenType" }
+            logger.debug { "could not find token of type $clazz" }
         }
-        return result?.second
+        return result?.value
     }
 
     private fun fixYear(year: Int): Int {
@@ -137,29 +99,13 @@ internal class DateParserImpl(private val inputTokens: List<Pair<List<TokenType>
         }
     }
 
-    private fun trimNoiseOnEnds(splits: List<String>): List<String> {
-        var result = splits
-        if (result.first().contains(nonNumerical)) {
-            result = result.drop(1)
-        }
-        if (result.last().contains(nonNumerical)) {
-            result = result.dropLast(1)
-        }
-        return result
-    }
-
     private fun parseMonthToNumber(month: String?): Int? {
         if (month == null) {
             return null
         }
-        val result = month.toIntOrNull()
+        var result = month.toIntOrNull()
         if (result == null) {
-            val lowercaseMonth = month.lowercase()
-            for (entry in monthMappings) {
-                if (entry.key.startsWith(lowercaseMonth)) {
-                    return entry.value
-                }
-            }
+            result = MonthMappings.mapMonthToInt(month)
         }
         if (result == null) {
             logger.debug { "could neither parse month '$month' as int nor resolve at from the mapping" }

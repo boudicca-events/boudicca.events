@@ -4,10 +4,43 @@ import base.boudicca.api.eventcollector.dateparser.HintType
 
 internal class Guesser(private val hints: List<HintType>, private val tokens: List<Pair<TokenizerType, String>>) {
     fun guess(): List<Guess> {
-        var guesses = mapHints()
+        val guesserTokens = mapAndValidateTokens(tokens)
+        var guesses = mapHints(guesserTokens)
         guesses = guessRemainingAny(guesses).filter { it !is Noise } //TODO probably not so good, but oh well
         guesses = groupGuesses(guesses)
         return guesses
+    }
+
+    private fun mapAndValidateTokens(tokens: List<Pair<TokenizerType, String>>): List<GuesserToken> {
+        return tokens.map {
+            val possibleTypes = mutableSetOf<GuesserType>()
+            if (it.first == TokenizerType.STRING) {
+                if (MonthMappings.mapMonthToInt(it.second) != null) {
+                    possibleTypes.add(GuesserType.MONTH)
+                }
+            } else if (it.first == TokenizerType.INT) {
+                val num = it.second.toIntOrNull()
+                if (num != null) {
+                    if (0 <= num && num <= 99 || 1900 <= num && num <= 3000) { //shortform 0-99 + longform 1900-3000
+                        possibleTypes.add(GuesserType.YEAR)
+                    }
+                    if (1 <= num && num <= 12) {
+                        possibleTypes.add(GuesserType.MONTH)
+                    }
+                    if (1 <= num && num <= 31) {
+                        possibleTypes.add(GuesserType.DAY)
+                    }
+                    if (0 <= num && num <= 24) {
+                        possibleTypes.add(GuesserType.HOURS)
+                    }
+                    if (0 <= num && num <= 59) {
+                        possibleTypes.add(GuesserType.MINUTES)
+                        possibleTypes.add(GuesserType.SECONDS)
+                    }
+                }
+            }
+            GuesserToken(it.second, possibleTypes)
+        }
     }
 
     private fun guessRemainingAny(guesses: List<Guess>): List<Guess> {
@@ -81,34 +114,62 @@ internal class Guesser(private val hints: List<HintType>, private val tokens: Li
         return result
     }
 
-    private fun mapHints(): List<Guess> {
+    private fun mapHints(guesserTokens: List<GuesserToken>): List<Guess> {
         val remainingHints = hints.toMutableList()
-        return tokens.map {
-            if (isNotNoise(it)) {
-                val hint = remainingHints.removeFirstOrNull()
-                if (hint == HintType.DAY) {
-                    Day(it.second)
-                } else if (hint == HintType.MONTH) {
-                    Month(it.second)
-                } else if (hint == HintType.YEAR) {
-                    Year(it.second)
-                } else if (hint == HintType.HOURS) {
-                    Hours(it.second)
-                } else if (hint == HintType.MINUTES) {
-                    Minutes(it.second)
-                } else if (hint == HintType.SECONDS) {
-                    Seconds(it.second)
-                } else {
-                    Any(it.second)
-                }
+        return guesserTokens.map {
+            if (it.possibleTypes.isEmpty()) {
+                Noise(it.value)
             } else {
-                Noise(it.second)
+                val nextHint = remainingHints.firstOrNull()
+                if (nextHint != null) {
+                    val guesserType = GuesserType.fromHintType(nextHint)
+                    if (guesserType != null && it.possibleTypes.contains(guesserType)) {
+                        remainingHints.removeFirst()
+                        if (nextHint == HintType.DAY) {
+                            Day(it.value)
+                        } else if (nextHint == HintType.MONTH) {
+                            Month(it.value)
+                        } else if (nextHint == HintType.YEAR) {
+                            Year(it.value)
+                        } else if (nextHint == HintType.HOURS) {
+                            Hours(it.value)
+                        } else if (nextHint == HintType.MINUTES) {
+                            Minutes(it.value)
+                        } else if (nextHint == HintType.SECONDS) {
+                            Seconds(it.value)
+                        } else {
+                            Any(it.value)
+                        }
+                    } else {
+                        Any(it.value)
+                    }
+                } else {
+                    Any(it.value)
+                }
             }
         }
     }
 
-    private fun isNotNoise(it: Pair<TokenizerType, String>): Boolean {
-        return it.first == TokenizerType.INT || it.first == TokenizerType.STRING && MonthMappings.mapMonthToInt(it.second) != null
+    data class GuesserToken(val value: String, val possibleTypes: MutableSet<GuesserType>) {
+
+    }
+
+    enum class GuesserType { //TODO same as hinttype?
+        DAY, MONTH, YEAR, HOURS, MINUTES, SECONDS;
+
+        companion object {
+            fun fromHintType(hintType: HintType): GuesserType? {
+                return when (hintType) {
+                    HintType.ANY -> null
+                    HintType.DAY -> DAY
+                    HintType.MONTH -> MONTH
+                    HintType.YEAR -> YEAR
+                    HintType.HOURS -> HOURS
+                    HintType.MINUTES -> MINUTES
+                    HintType.SECONDS -> SECONDS
+                }
+            }
+        }
     }
 }
 

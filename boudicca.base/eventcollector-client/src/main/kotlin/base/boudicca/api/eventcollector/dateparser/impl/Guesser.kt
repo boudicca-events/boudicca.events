@@ -5,51 +5,73 @@ import base.boudicca.api.eventcollector.dateparser.HintType
 internal class Guesser(private val hints: List<HintType>, private val tokens: List<Pair<TokenizerType, String>>) {
     fun guess(): List<Guess> {
         var guesses = mapHints()
+        guesses = guessRemainingAny(guesses).filter { it !is Noise } //TODO probably not so good, but oh well
         guesses = groupGuesses(guesses)
         return guesses
+    }
+
+    private fun guessRemainingAny(guesses: List<Guess>): List<Guess> {
+        val result = mutableListOf<Guess>()
+        var i = 0
+        while (i < guesses.size) {
+            if (i + 2 < guesses.size) {
+                if (guesses[i] is Any && guesses[i + 1] is Noise && guesses[i + 2] is Any) {
+                    if ((guesses[i + 1] as Noise).value.trim() == ":") {
+                        result.add(Hours((guesses[i] as Any).value))
+                        result.add(guesses[i + 1])
+                        result.add(Minutes((guesses[i + 2] as Any).value))
+                        i += 3
+                        continue
+                    }
+                }
+            }
+            result.add(guesses[i])
+            i++
+        }
+        return result
     }
 
     private fun groupGuesses(guesses: List<Guess>): List<Guess> {
         val result = mutableListOf<Guess>()
         var i = 0
         while (i < guesses.size) {
-            if (i + 4 < guesses.size) {
-                if (guesses[i] is Day && guesses[i + 1] is Noise && guesses[i + 2] is Month && guesses[i + 3] is Noise && guesses[i + 4] is Year) {
-                    result.add(
-                        Date(
-                            (guesses[i] as Day).value, (guesses[i + 2] as Month).value, (guesses[i + 4] as Year).value
-                        )
-                    )
-                    i += 5
-                    continue
-                } else if (guesses[i] is Year && guesses[i + 1] is Noise && guesses[i + 2] is Month && guesses[i + 3] is Noise && guesses[i + 4] is Day) {
-                    result.add(
-                        Date(
-                            (guesses[i + 4] as Day).value, (guesses[i + 2] as Month).value, (guesses[i] as Year).value
-                        )
-                    )
-                    i += 5
-                    continue
-                } else if (guesses[i] is Hours && guesses[i + 1] is Noise && guesses[i + 2] is Minutes && guesses[i + 3] is Noise && guesses[i + 4] is Seconds) {
-                    result.add(
-                        Time(
-                            (guesses[i] as Hours).value,
-                            (guesses[i + 2] as Minutes).value,
-                            (guesses[i + 4] as Seconds).value
-                        )
-                    )
-                    i += 5
-                    continue
-                }
-            }
             if (i + 2 < guesses.size) {
-                if (guesses[i] is Hours && guesses[i + 1] is Noise && guesses[i + 2] is Minutes) {
+                if (guesses[i] is Day && guesses[i + 1] is Month && guesses[i + 2] is Year) {
                     result.add(
-                        Time(
-                            (guesses[i] as Hours).value, (guesses[i + 2] as Minutes).value, null
+                        Date(
+                            (guesses[i] as Day).value, (guesses[i + 1] as Month).value, (guesses[i + 2] as Year).value
                         )
                     )
                     i += 3
+                    continue
+                } else if (guesses[i] is Year && guesses[i + 1] is Month && guesses[i + 2] is Day) {
+                    result.add(
+                        Date(
+                            (guesses[i + 2] as Day).value, (guesses[i + 1] as Month).value, (guesses[i] as Year).value
+                        )
+                    )
+                    i += 3
+                    continue
+                } else if (guesses[i] is Hours && guesses[i + 1] is Minutes && guesses[i + 2] is Seconds) {
+                    result.add(
+                        Time(
+                            (guesses[i] as Hours).value,
+                            (guesses[i + 1] as Minutes).value,
+                            (guesses[i + 2] as Seconds).value
+                        )
+                    )
+                    i += 3
+                    continue
+                }
+            }
+            if (i + 1 < guesses.size) {
+                if (guesses[i] is Hours && guesses[i + 1] is Minutes) {
+                    result.add(
+                        Time(
+                            (guesses[i] as Hours).value, (guesses[i + 1] as Minutes).value, null
+                        )
+                    )
+                    i += 2
                     continue
                 }
             }
@@ -63,7 +85,7 @@ internal class Guesser(private val hints: List<HintType>, private val tokens: Li
         val remainingHints = hints.toMutableList()
         return tokens.map {
             if (isNotNoise(it)) {
-                val hint = remainingHints.removeFirst() //TODO guard against that
+                val hint = remainingHints.removeFirstOrNull()
                 if (hint == HintType.DAY) {
                     Day(it.second)
                 } else if (hint == HintType.MONTH) {

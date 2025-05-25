@@ -245,14 +245,28 @@ class DateParserTest {
         }, "1992-04-25T02:04:06+02:00")
     }
 
-//    @Test
-//    fun parseSimpleAny() {
-//        assertDates(dateParser {
-//            any(
-//                "25.04.1992"
-//            )
-//        }, "1992-04-25T00:00+02:00")
-//    }
+    @Test
+    fun parseNoiseHeavyDateTime() {
+        assertDates(dateParser {
+            dayMonthYear().time().with(
+                "es ist am 25 April 1992 um 2:40 Uhr"
+            )
+        }, "1992-04-25T02:40+02:00")
+        assertDates(dateParser {
+            dayMonthYear().time().with(
+                "es ist am 25ten April im Jahre 1992 um 2 Uhr und 40 Minuten"
+            )
+        }, "1992-04-25T02:40+02:00")
+    }
+
+    @Test
+    fun parseSimpleAnyTime() {
+        assertThat(localTimeParser {
+            any(
+                "19:30"
+            )
+        }).isEqualTo(LocalTime.of(19, 30))
+    }
 
     private fun assertDates(actual: OffsetDateTime, expected: String) {
         assertThat(actual.toString()).isEqualTo(expected)

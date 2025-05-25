@@ -39,7 +39,8 @@ internal class DateParserImpl(private val inputTokens: List<Pair<List<HintType>,
 
     private fun genericSplit(token: Pair<List<HintType>, String>): List<Guess> {
         val tokens = Tokenizer.tokenize(token.second)
-        val guessResult = Guesser(token.first, tokens).guess().filter { it !is Noise }
+        val guessResult = Guesser(token.first, tokens).guess()
+        logger.debug { "guesser output is: $guessResult" }
         return guessResult
     }
 

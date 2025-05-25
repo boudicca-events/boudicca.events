@@ -1,23 +1,23 @@
 package base.boudicca.api.eventcollector.dateparser.impl
 
 import base.boudicca.api.eventcollector.dateparser.HintType
+import base.boudicca.api.eventcollector.dateparser.impl.Guesser.GuesserType
 
 internal class Guesser(private val hints: List<HintType>, private val tokens: List<Pair<TokenizerType, String>>) {
     fun guess(): List<Guess> {
-        var guesserTokens = mapAndValidateTokens(tokens)
-        guesserTokens = mapHints(guesserTokens)
-        guesserTokens = guessRemainingAny(guesserTokens)
-        var guesses =
-            mapGuesserTokensToGuesses(guesserTokens).filter { it !is Noise } //TODO probably not so good, but oh well
+        var guesses = mapAndValidateTokens(tokens)
+        guesses = mapHints(guesses)
+        guesses = guessRemainingAny(guesses)
+        guesses = mapAnyToSpecific(guesses).filter { it !is Noise } //TODO probably not so good, but oh well
         guesses = groupGuesses(guesses)
         return guesses
     }
 
-    private fun mapGuesserTokensToGuesses(guesserTokens: List<GuesserToken>): List<Guess> {
-        return guesserTokens.map {
-            if (it.possibleTypes.isEmpty()) {
-                Noise(0, it.value)
-            } else if (it.possibleTypes.size == 1) {
+    private fun mapAnyToSpecific(guesses: List<Guess>): List<Guess> {
+        return guesses.map {
+            if (it !is Any || it.possibleTypes.isEmpty()) {
+                Noise(0, "???") //TODO can this happen? i guess this method will soon vanish anyway
+            } else if (it is Any && it.possibleTypes.size == 1) {
                 val guesserType = it.possibleTypes.first()
 
                 var parsedValue = it.value.toIntOrNull()
@@ -39,12 +39,12 @@ internal class Guesser(private val hints: List<HintType>, private val tokens: Li
                     Noise(0, it.value)
                 }
             } else {
-                Any(0, it.value)
+                Any(0, it.value, it.possibleTypes)
             }
         }
     }
 
-    private fun mapAndValidateTokens(tokens: List<Pair<TokenizerType, String>>): List<GuesserToken> {
+    private fun mapAndValidateTokens(tokens: List<Pair<TokenizerType, String>>): List<Guess> {
         return tokens.map {
             val possibleTypes = mutableSetOf<GuesserType>()
             if (it.first == TokenizerType.STRING) {
@@ -72,29 +72,32 @@ internal class Guesser(private val hints: List<HintType>, private val tokens: Li
                     }
                 }
             }
-            GuesserToken(it.second, possibleTypes)
+            Any(0, it.second, possibleTypes)
         }
     }
 
-    private fun guessRemainingAny(guesses: List<GuesserToken>): List<GuesserToken> {
-        val result = mutableListOf<GuesserToken>()
+    private fun guessRemainingAny(guesses: List<Guess>): List<Guess> {
+        val result = mutableListOf<Guess>()
         var i = 0
         while (i < guesses.size) {
+            val first = guesses[i]
             if (i + 2 < guesses.size) {
-                if (guesses[i].possibleTypes.contains(GuesserType.HOURS) && guesses[i + 1].possibleTypes.isEmpty() && guesses[i + 2].possibleTypes.contains(
-                        GuesserType.MINUTES
-                    )
+                val second = guesses[i + 1]
+                val third = guesses[i + 2]
+                if (first is Any && first.possibleTypes.contains(GuesserType.HOURS)
+                    && second is Any && second.possibleTypes.isEmpty()
+                    && third is Any && third.possibleTypes.contains(GuesserType.MINUTES)
                 ) {
-                    if (guesses[i + 1].value.trim() == ":") {
-                        result.add(GuesserToken(guesses[i].value, setOf(GuesserType.HOURS)))
-                        result.add(guesses[i + 1])
-                        result.add(GuesserToken(guesses[i + 2].value, setOf(GuesserType.MINUTES)))
+                    if (second.value.trim() == ":") {
+                        result.add(Any(0, first.value, setOf(GuesserType.HOURS)))
+                        result.add(second)
+                        result.add(Any(0, third.value, setOf(GuesserType.MINUTES)))
                         i += 3
                         continue
                     }
                 }
             }
-            result.add(guesses[i])
+            result.add(first)
             i++
         }
         return result
@@ -154,15 +157,15 @@ internal class Guesser(private val hints: List<HintType>, private val tokens: Li
         return result
     }
 
-    private fun mapHints(guesserTokens: List<GuesserToken>): List<GuesserToken> {
+    private fun mapHints(guesserTokens: List<Guess>): List<Guess> {
         val remainingHints = hints.toMutableList()
         return guesserTokens.map {
             val nextHint = remainingHints.firstOrNull()
             if (nextHint != null) {
                 val guesserTypeFromHint = GuesserType.fromHintType(nextHint)
-                if (guesserTypeFromHint != null && it.possibleTypes.contains(guesserTypeFromHint)) {
+                if (guesserTypeFromHint != null && (it is Any) && it.possibleTypes.contains(guesserTypeFromHint)) {
                     remainingHints.removeFirst()
-                    GuesserToken(it.value, setOf(guesserTypeFromHint)) //only allow hint
+                    Any(0, it.value, setOf(guesserTypeFromHint)) //only allow hint
                 } else {
                     it
                 }
@@ -181,8 +184,6 @@ internal class Guesser(private val hints: List<HintType>, private val tokens: Li
             year
         }
     }
-
-    data class GuesserToken(val value: String, val possibleTypes: Set<GuesserType>)
 
     enum class GuesserType { //TODO same as hinttype?
         DAY, MONTH, YEAR, HOURS, MINUTES, SECONDS;
@@ -208,7 +209,7 @@ internal sealed class Guess {
 }
 
 internal data class Noise(override val confidence: Int, val value: String) : Guess()
-internal data class Any(override val confidence: Int, val value: String) : Guess()
+internal data class Any(override val confidence: Int, val value: String, val possibleTypes: Set<GuesserType>) : Guess()
 internal data class Day(override val confidence: Int, val value: Int) : Guess()
 internal data class Month(override val confidence: Int, val value: Int) : Guess()
 internal data class Year(override val confidence: Int, val value: Int) : Guess()

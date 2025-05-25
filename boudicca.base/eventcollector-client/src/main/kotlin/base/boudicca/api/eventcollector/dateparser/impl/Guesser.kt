@@ -4,12 +4,125 @@ import base.boudicca.api.eventcollector.dateparser.HintType
 import base.boudicca.api.eventcollector.dateparser.impl.Guesser.GuesserType
 
 internal class Guesser(private val hints: List<HintType>, private val tokens: List<Pair<TokenizerType, String>>) {
+
+
+    companion object {
+        private fun canBe(guesserType: GuesserType): Matcher {
+            return CanBeMatcher(false, guesserType)
+        }
+
+        private fun matches(description: String, condition: (Any) -> Boolean): Matcher {
+            return ConditionMatcher(false, description, condition)
+        }
+
+        private fun createDate(
+            day: Any, month: Any, year: Any
+        ): Date {
+            //TODO error catching?
+            return Date(
+                0,
+                day.value.toInt(),
+                month.value.toIntOrNull() ?: MonthMappings.mapMonthToInt(month.value) ?: throw IllegalArgumentException(
+                    "blaa"
+                ), //TODO
+                fixYear(year.value.toInt()),
+            )
+        }
+
+        private fun fixYear(year: Int): Int {
+            return if (year < 70) { //we get some problems in the year 2070 with this...
+                2000 + year
+            } else if (year < 100) {
+                1900 + year
+            } else {
+                year
+            }
+        }
+
+        private val GROUP_REMAINING_ANY_FORMULAS = listOf(
+            Formula(
+                listOf(
+                    canBe(GuesserType.HOURS),
+                    matches("matches a ':' for \"hours:minutes\"") { it.possibleTypes.isEmpty() && it.value.trim() == ":" },
+                    canBe(GuesserType.MINUTES)
+                )
+            ) { matches ->
+                listOf(
+                    Any(
+                        0, matches[0].value, setOf(GuesserType.HOURS)
+                    ), matches[1], Any(
+                        0, matches[2].value, setOf(GuesserType.MINUTES)
+                    )
+                )
+            })
+        private val GROUP_GUESSES_FORMULAS = listOf(
+            Formula(
+                listOf(
+                    canBe(GuesserType.HOURS),
+                    canBe(GuesserType.MINUTES),
+                    canBe(GuesserType.SECONDS),
+                )
+            ) { matches ->
+                listOf(
+                    Time(
+                        0,
+                        matches[0].value.toInt(),
+                        matches[1].value.toInt(),
+                        matches[2].value.toInt(),
+                    )
+                )
+            },
+            Formula(
+                listOf(
+                    canBe(GuesserType.HOURS),
+                    canBe(GuesserType.MINUTES),
+                )
+            ) { matches ->
+                listOf(
+                    Time(
+                        0, matches[0].value.toInt(), matches[1].value.toInt(), 0
+                    )
+                )
+            },
+            Formula(
+                listOf(
+                    canBe(GuesserType.DAY),
+                    canBe(GuesserType.MONTH),
+                    canBe(GuesserType.YEAR),
+                )
+            ) { matches ->
+                listOf(
+                    createDate(
+                        matches[0],
+                        matches[1],
+                        matches[2],
+                    )
+                )
+            },
+            Formula(
+                listOf(
+                    canBe(GuesserType.YEAR),
+                    canBe(GuesserType.MONTH),
+                    canBe(GuesserType.DAY),
+                )
+            ) { matches ->
+                listOf(
+                    createDate(
+                        matches[2],
+                        matches[1],
+                        matches[0],
+                    )
+                )
+            },
+        )
+    }
+
     fun guess(): List<Guess> {
         var guesses = mapAndValidateTokens(tokens)
         guesses = mapHints(guesses)
-        guesses = guessRemainingAny(guesses)
+        guesses = applyFormulas(guesses, GROUP_REMAINING_ANY_FORMULAS)
         guesses = guesses.filter { it is Any && it.possibleTypes.isNotEmpty() } //TODO probably not so good, but oh well
-        guesses = groupGuesses(guesses)
+        guesses = applyFormulas(guesses, GROUP_GUESSES_FORMULAS)
         return guesses
     }
 
@@ -45,27 +158,13 @@ internal class Guesser(private val hints: List<HintType>, private val tokens: Li
         }
     }
 
-    private fun guessRemainingAny(inputGuesses: List<Guess>): List<Guess> {
-        val formulas = listOf(
-            Formula(
-                listOf(
-                    canBe(GuesserType.HOURS),
-                    matches { it.possibleTypes.isEmpty() && it.value.trim() == ":" },
-                    canBe(GuesserType.MINUTES)
-                )
-            ) { matches ->
-                listOf(
-                    Any(0, matches[0].value, setOf(GuesserType.HOURS)),
-                    matches[1],
-                    Any(0, matches[2].value, setOf(GuesserType.MINUTES))
-                )
-            })
+    private fun applyFormulas(inputGuesses: List<Guess>, formulas: List<Formula>): List<Guess> {
         var guesses = inputGuesses
         var result = mutableListOf<Guess>()
         for (formula in formulas) {
             var i = 0
             while (i < guesses.size) {
-                if (i + formula.matchers.size < guesses.size) {
+                if (i + formula.matchers.size <= guesses.size) {
                     var formulaMatches = true
                     val capturedMatches = mutableListOf<Any>()
                     for (step in formula.matchers.indices) {
@@ -74,8 +173,7 @@ internal class Guesser(private val hints: List<HintType>, private val tokens: Li
                             formulaMatches = false
                             break
                         }
-                        val matches = formula.matchers[step].matcher(guess)
-                        formulaMatches = formulaMatches.and(matches)
+                        val matches = formula.matchers[step].matches(guess)
                         if (!matches) {
                             formulaMatches = false
                             break
@@ -85,7 +183,7 @@ internal class Guesser(private val hints: List<HintType>, private val tokens: Li
                     if (formulaMatches) {
                         val replacements = formula.replacement(capturedMatches)
                         result.addAll(replacements)
-                        i += replacements.size
+                        i += capturedMatches.size //TODO adapt for more captured?
                         continue
                     }
                 }
@@ -96,82 +194,6 @@ internal class Guesser(private val hints: List<HintType>, private val tokens: Li
             result = mutableListOf()
         }
         return guesses
-    }
-
-    private fun groupGuesses(guesses: List<Guess>): List<Guess> {
-        val result = mutableListOf<Guess>()
-        var i = 0
-        while (i < guesses.size) {
-            val first = guesses[i]
-            if (i + 2 < guesses.size) {
-                val second = guesses[i + 1]
-                val third = guesses[i + 2]
-                if (first is Any && first.possibleTypes.contains(GuesserType.DAY) && second is Any && second.possibleTypes.contains(
-                        GuesserType.MONTH
-                    ) && third is Any && third.possibleTypes.contains(GuesserType.YEAR)
-                ) {
-                    result.add(
-                        createDate(first, second, third)
-                    )
-                    i += 3
-                    continue
-                } else if (first is Any && first.possibleTypes.contains(GuesserType.YEAR) && second is Any && second.possibleTypes.contains(
-                        GuesserType.MONTH
-                    ) && third is Any && third.possibleTypes.contains(GuesserType.DAY)
-                ) {
-                    result.add(
-                        createDate(third, second, first)
-                    )
-                    i += 3
-                    continue
-                } else if (first is Any && first.possibleTypes.contains(GuesserType.HOURS) && second is Any && second.possibleTypes.contains(
-                        GuesserType.MINUTES
-                    ) && third is Any && third.possibleTypes.contains(GuesserType.SECONDS)
-                ) {
-                    result.add(
-                        Time(
-                            0,
-                            first.value.toInt(),
-                            second.value.toInt(),
-                            third.value.toInt(),
-                        )
-                    )
-                    i += 3
-                    continue
-                }
-            }
-            if (i + 1 < guesses.size) {
-                val second = guesses[i + 1]
-                if (first is Any && first.possibleTypes.contains(GuesserType.HOURS) && second is Any && second.possibleTypes.contains(
-                        GuesserType.MINUTES
-                    )
-                ) {
-                    result.add(
-                        Time(
-                            0, first.value.toInt(), second.value.toInt(), null
-                        )
-                    )
-                    i += 2
-                    continue
-                }
-            }
-            result.add(first)
-            i++
-        }
-        return result
-    }
-
-    private fun createDate(
-        day: Any, month: Any, year: Any
-    ): Date {
-        //TODO error catching?
-        return Date(
-            0,
-            day.value.toInt(),
-            month.value.toIntOrNull() ?: MonthMappings.mapMonthToInt(month.value)
-            ?: throw IllegalArgumentException("blaa"), //TODO
-            fixYear(year.value.toInt()),
-        )
     }
 
     private fun mapHints(guesserTokens: List<Guess>): List<Guess> {
@@ -189,16 +211,6 @@ internal class Guesser(private val hints: List<HintType>, private val tokens: Li
             } else {
                 it
             }
-        }
-    }
-
-    private fun fixYear(year: Int): Int {
-        return if (year < 70) { //we get some problems in the year 2070 with this...
-            2000 + year
-        } else if (year < 100) {
-            1900 + year
-        } else {
-            year
         }
     }
 
@@ -220,17 +232,40 @@ internal class Guesser(private val hints: List<HintType>, private val tokens: Li
         }
     }
 
-    private class Formula(val matchers: List<Matcher>, val replacement: (List<Any>) -> List<Guess>)
-
-    private class Matcher(val canMatchMultipleTimes: Boolean, val matcher: (any: Any) -> Boolean)
-
-    private fun canBe(guesserType: GuesserType): Matcher {
-        return Matcher(false) { any: Any -> any.possibleTypes.contains(guesserType) }
+    private class Formula(val matchers: List<Matcher>, val replacement: (List<Any>) -> List<Guess>) {
+        override fun toString(): String {
+            return "Formula(matchers=$matchers)"
+        }
     }
 
-    private fun matches(condition: (Any) -> Boolean): Matcher {
-        return Matcher(false, condition)
+    private sealed class Matcher {
+        abstract val canMatchMultipleTimes: Boolean
+        abstract fun matches(any: Any): Boolean
     }
+
+    private data class CanBeMatcher(
+        override val canMatchMultipleTimes: Boolean,
+        val guesserType: GuesserType
+    ) : Matcher() {
+        override fun matches(any: Any): Boolean {
+            return any.possibleTypes.contains(guesserType)
+        }
+    }
+
+    private class ConditionMatcher(
+        override val canMatchMultipleTimes: Boolean,
+        val description: String, //only useful for debugging purposes
+        val condition: (Any) -> Boolean
+    ) : Matcher() {
+        override fun matches(any: Any): Boolean {
+            return condition(any)
+        }
+
+        override fun toString(): String {
+            return "ConditionMatcher(canMatchMultipleTimes=$canMatchMultipleTimes, description='$description')"
+        }
+    }
+
 
 }
 

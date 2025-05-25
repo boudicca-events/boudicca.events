@@ -202,9 +202,9 @@ internal sealed class Guess {
 internal data class Any(override val confidence: Int, val value: String, val possibleTypes: Set<GuesserType>) : Guess()
 internal data class Date(
     override val confidence: Int, val day: Int, val month: Int, val year: Int
-) : Guess() //TODO should those be int already?
+) : Guess()
 
 internal data class Time(
     override val confidence: Int, val hours: Int, val minutes: Int, //TODO make nullable as well?
     val seconds: Int?
-) : Guess() //TODO should those be int already?
+) : Guess()

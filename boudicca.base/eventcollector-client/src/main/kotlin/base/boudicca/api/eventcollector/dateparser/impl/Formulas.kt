@@ -7,17 +7,31 @@ internal object Formulas {
         Formula(
             listOf(
                 canBe(GuesserType.HOURS),
+                matches("matches a ':' for \"hours:minutes:seconds\"") { it.possibleTypes.isEmpty() && it.value.trim() == ":" },
+                canBe(GuesserType.MINUTES),
+                matches("matches a ':' for \"hours:minutes:seconds\"") { it.possibleTypes.isEmpty() && it.value.trim() == ":" },
+                canBe(GuesserType.SECONDS)
+            )
+        ) { matches ->
+            listOf(
+                Time(
+                    0,
+                    matches[0].first().value.toInt(),
+                    matches[2].first().value.toInt(),
+                    matches[4].first().value.toInt(),
+                )
+            )
+        },
+        Formula(
+            listOf(
+                canBe(GuesserType.HOURS),
                 matches("matches a ':' for \"hours:minutes\"") { it.possibleTypes.isEmpty() && it.value.trim() == ":" },
                 canBe(GuesserType.MINUTES)
             )
         ) { matches ->
             listOf(
-                Any(
-                    0, matches[0].first().value, setOf(GuesserType.HOURS)
-                ),
-                matches[1].first(),
-                Any(
-                    0, matches[2].first().value, setOf(GuesserType.MINUTES)
+                Time(
+                    0, matches[0].first().value.toInt(), matches[2].first().value.toInt(), null
                 )
             )
         },

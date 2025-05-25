@@ -8,38 +8,17 @@ internal class Guesser(private val hints: List<HintType>, private val tokens: Li
         var guesses = mapAndValidateTokens(tokens)
         guesses = mapHints(guesses)
         guesses = guessRemainingAny(guesses)
-        guesses = mapAnyToSpecific(guesses).filter { it !is Noise } //TODO probably not so good, but oh well
+        guesses = mapEmptyToNoise(guesses).filter { it !is Noise } //TODO probably not so good, but oh well
         guesses = groupGuesses(guesses)
         return guesses
     }
 
-    private fun mapAnyToSpecific(guesses: List<Guess>): List<Guess> {
+    private fun mapEmptyToNoise(guesses: List<Guess>): List<Guess> {
         return guesses.map {
-            if (it !is Any || it.possibleTypes.isEmpty()) {
-                Noise(0, "???") //TODO can this happen? i guess this method will soon vanish anyway
-            } else if (it is Any && it.possibleTypes.size == 1) {
-                val guesserType = it.possibleTypes.first()
-
-                var parsedValue = it.value.toIntOrNull()
-                if (parsedValue == null && guesserType == GuesserType.MONTH) {
-                    parsedValue = MonthMappings.mapMonthToInt(it.value)
-                }
-
-                if (parsedValue != null) {
-                    when (guesserType) {
-                        GuesserType.DAY -> Day(0, parsedValue)
-                        GuesserType.MONTH -> Month(0, parsedValue)
-                        GuesserType.YEAR -> Year(0, fixYear(parsedValue))
-                        GuesserType.HOURS -> Hours(0, parsedValue)
-                        GuesserType.MINUTES -> Minutes(0, parsedValue)
-                        GuesserType.SECONDS -> Seconds(0, parsedValue)
-                    }
-                } else {
-                    //could not parse the int, so wtf is it?
-                    Noise(0, it.value)
-                }
+            if (it is Any && it.possibleTypes.isEmpty()) {
+                Noise(0, it.value)
             } else {
-                Any(0, it.value, it.possibleTypes)
+                it
             }
         }
     }
@@ -84,9 +63,9 @@ internal class Guesser(private val hints: List<HintType>, private val tokens: Li
             if (i + 2 < guesses.size) {
                 val second = guesses[i + 1]
                 val third = guesses[i + 2]
-                if (first is Any && first.possibleTypes.contains(GuesserType.HOURS)
-                    && second is Any && second.possibleTypes.isEmpty()
-                    && third is Any && third.possibleTypes.contains(GuesserType.MINUTES)
+                if (first is Any && first.possibleTypes.contains(GuesserType.HOURS) && second is Any && second.possibleTypes.isEmpty() && third is Any && third.possibleTypes.contains(
+                        GuesserType.MINUTES
+                    )
                 ) {
                     if (second.value.trim() == ":") {
                         result.add(Any(0, first.value, setOf(GuesserType.HOURS)))
@@ -107,32 +86,50 @@ internal class Guesser(private val hints: List<HintType>, private val tokens: Li
         val result = mutableListOf<Guess>()
         var i = 0
         while (i < guesses.size) {
+            val first = guesses[i]
             if (i + 2 < guesses.size) {
-                if (guesses[i] is Day && guesses[i + 1] is Month && guesses[i + 2] is Year) {
+                val second = guesses[i + 1]
+                val third = guesses[i + 2]
+                if (first is Any && first.possibleTypes.contains(GuesserType.DAY) && second is Any && second.possibleTypes.contains(
+                        GuesserType.MONTH
+                    ) && third is Any && third.possibleTypes.contains(GuesserType.YEAR)
+                ) {
                     result.add(
                         Date(
                             0,
-                            (guesses[i] as Day).value, (guesses[i + 1] as Month).value, (guesses[i + 2] as Year).value
+                            first.value.toInt(),
+                            second.value.toIntOrNull() ?: MonthMappings.mapMonthToInt(second.value)
+                            ?: throw IllegalArgumentException("blaa"), //TODO
+                            fixYear(third.value.toInt()),
                         )
                     )
                     i += 3
                     continue
-                } else if (guesses[i] is Year && guesses[i + 1] is Month && guesses[i + 2] is Day) {
+                } else if (first is Any && first.possibleTypes.contains(GuesserType.YEAR) && second is Any && second.possibleTypes.contains(
+                        GuesserType.MONTH
+                    ) && third is Any && third.possibleTypes.contains(GuesserType.DAY)
+                ) {
                     result.add(
                         Date(
                             0,
-                            (guesses[i + 2] as Day).value, (guesses[i + 1] as Month).value, (guesses[i] as Year).value
+                            third.value.toInt(),
+                            second.value.toIntOrNull() ?: MonthMappings.mapMonthToInt(second.value)
+                            ?: throw IllegalArgumentException("blaa"), //TODO
+                            fixYear(first.value.toInt()),
                         )
                     )
                     i += 3
                     continue
-                } else if (guesses[i] is Hours && guesses[i + 1] is Minutes && guesses[i + 2] is Seconds) {
+                } else if (first is Any && first.possibleTypes.contains(GuesserType.HOURS) && second is Any && second.possibleTypes.contains(
+                        GuesserType.MINUTES
+                    ) && third is Any && third.possibleTypes.contains(GuesserType.SECONDS)
+                ) {
                     result.add(
                         Time(
                             0,
-                            (guesses[i] as Hours).value,
-                            (guesses[i + 1] as Minutes).value,
-                            (guesses[i + 2] as Seconds).value
+                            first.value.toInt(),
+                            second.value.toInt(),
+                            third.value.toInt(),
                         )
                     )
                     i += 3
@@ -140,18 +137,21 @@ internal class Guesser(private val hints: List<HintType>, private val tokens: Li
                 }
             }
             if (i + 1 < guesses.size) {
-                if (guesses[i] is Hours && guesses[i + 1] is Minutes) {
+                val second = guesses[i + 1]
+                if (first is Any && first.possibleTypes.contains(GuesserType.HOURS) && second is Any && second.possibleTypes.contains(
+                        GuesserType.MINUTES
+                    )
+                ) {
                     result.add(
                         Time(
-                            0,
-                            (guesses[i] as Hours).value, (guesses[i + 1] as Minutes).value, null
+                            0, first.value.toInt(), second.value.toInt(), null
                         )
                     )
                     i += 2
                     continue
                 }
             }
-            result.add(guesses[i])
+            result.add(first)
             i++
         }
         return result
@@ -210,19 +210,11 @@ internal sealed class Guess {
 
 internal data class Noise(override val confidence: Int, val value: String) : Guess()
 internal data class Any(override val confidence: Int, val value: String, val possibleTypes: Set<GuesserType>) : Guess()
-internal data class Day(override val confidence: Int, val value: Int) : Guess()
-internal data class Month(override val confidence: Int, val value: Int) : Guess()
-internal data class Year(override val confidence: Int, val value: Int) : Guess()
-internal data class Hours(override val confidence: Int, val value: Int) : Guess()
-internal data class Minutes(override val confidence: Int, val value: Int) : Guess()
-internal data class Seconds(override val confidence: Int, val value: Int) : Guess()
 internal data class Date(
-    override val confidence: Int,
-    val day: Int, val month: Int, val year: Int
+    override val confidence: Int, val day: Int, val month: Int, val year: Int
 ) : Guess() //TODO should those be int already?
 
 internal data class Time(
-    override val confidence: Int,
-    val hours: Int, val minutes: Int, //TODO make nullable as well?
+    override val confidence: Int, val hours: Int, val minutes: Int, //TODO make nullable as well?
     val seconds: Int?
 ) : Guess() //TODO should those be int already?

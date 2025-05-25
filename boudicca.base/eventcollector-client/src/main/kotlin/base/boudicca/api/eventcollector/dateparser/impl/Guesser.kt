@@ -9,7 +9,7 @@ internal class Guesser(private val hints: List<HintType>, private val tokens: Li
         var guesses = mapAndValidateTokens(tokens)
         guesses = applyHints(guesses)
         guesses = applyFormulas(guesses, Formulas.FORMULAS)
-        return guesses
+        return guesses //TODO should we filter Anys from here? outside we probably won't do anything with it
     }
 
     private fun mapAndValidateTokens(tokens: List<Pair<TokenizerType, String>>): List<Guess> {

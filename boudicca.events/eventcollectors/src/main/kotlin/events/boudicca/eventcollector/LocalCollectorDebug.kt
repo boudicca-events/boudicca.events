@@ -5,6 +5,7 @@ import base.boudicca.fetcher.FileBackedFetcherCache
 import events.boudicca.eventcollector.collectors.LandestheaterLinzCollector
 import events.boudicca.eventcollector.collectors.LinzTermineCollector
 import events.boudicca.eventcollector.collectors.MetalCornerCollector
+import events.boudicca.eventcollector.collectors.ViperRoomCollector
 import java.io.File
 
 /**
@@ -37,5 +38,6 @@ fun main() {
 //        .debug(KapuCollector())
 //        .debug(LinzTermineCollector())
 //        .debug(LandestheaterLinzCollector())
-        .debug(MetalCornerCollector())
+//        .debug(MetalCornerCollector())
+        .debug(ViperRoomCollector())
 }

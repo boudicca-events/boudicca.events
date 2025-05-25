@@ -43,7 +43,7 @@ class LoggingConfigurator : ContextAwareBase(), Configurator {
 
         //TODO cleanup
         loggerContext.getLogger("base.boudicca.api.eventcollector.dateparser.DateParser").level = Level.DEBUG
-        loggerContext.getLogger("base.boudicca.api.eventcollector.dateparser.DateParserImpl").level = Level.DEBUG
+        loggerContext.getLogger("base.boudicca.api.eventcollector.dateparser.impl.DateParserImpl").level = Level.DEBUG
 
         return Configurator.ExecutionStatus.DO_NOT_INVOKE_NEXT_IF_ANY
     }

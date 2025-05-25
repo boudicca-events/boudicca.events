@@ -245,6 +245,15 @@ class DateParserTest {
         }, "1992-04-25T02:04:06+02:00")
     }
 
+//    @Test
+//    fun parseSimpleAny() {
+//        assertDates(dateParser {
+//            any(
+//                "25.04.1992"
+//            )
+//        }, "1992-04-25T00:00+02:00")
+//    }
+
     private fun assertDates(actual: OffsetDateTime, expected: String) {
         assertThat(actual.toString()).isEqualTo(expected)
     }

@@ -1,5 +1,6 @@
 package base.boudicca.api.eventcollector.dateparser
 
+import base.boudicca.api.eventcollector.dateparser.impl.DateParserImpl
 import io.github.oshai.kotlinlogging.KotlinLogging
 import java.time.LocalDate
 import java.time.LocalTime
@@ -19,12 +20,20 @@ class DateParser {
         TokenBuilder().time().with(time)
     }
 
+    fun any(text: String) {
+        TokenBuilder().any().with(text)
+    }
+
     fun dayMonthYear(): TokenBuilder {
         return TokenBuilder().dayMonthYear()
     }
 
     fun time(): TokenBuilder {
         return TokenBuilder().time()
+    }
+
+    fun any(): TokenBuilder {
+        return TokenBuilder().any()
     }
 
     fun token(): TokenBuilder {
@@ -74,6 +83,11 @@ class DateParser {
 
         fun time(): TokenBuilder {
             return hours().minutes()
+        }
+
+        fun any(): TokenBuilder {
+            tokenTypes.add(TokenType.ANY)
+            return this
         }
 
         fun day(): TokenBuilder {

@@ -1,15 +1,15 @@
-package base.boudicca.api.eventcollector.dateparser
+package base.boudicca.api.eventcollector.dateparser.impl
 
+import base.boudicca.api.eventcollector.dateparser.TokenType
 import io.github.oshai.kotlinlogging.KotlinLogging
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.OffsetDateTime
 import java.time.ZoneId
 
-class DateParserImpl(private val inputTokens: List<Pair<List<TokenType>, String>>) {
+internal class DateParserImpl(private val inputTokens: List<Pair<List<TokenType>, String>>) {
 
     companion object {
-        private val alphanumericSplitRegex = Regex("[^\\wäöüß]+")
         private val nonNumerical = Regex("\\D+")
 
         private val monthMappings = mapOf(
@@ -65,8 +65,9 @@ class DateParserImpl(private val inputTokens: List<Pair<List<TokenType>, String>
 
     private fun genericSplit(token: Pair<List<TokenType>, String>): List<Pair<List<TokenType>, String>> {
         val wantedLength = token.first.size
-        var splits = token.second.split(alphanumericSplitRegex)
-            .map { it.trim() }
+        var splits = Tokenizer.tokenize(token.second)
+            .filter { it.first != TokenizerType.SEPARATOR }
+            .map { it.second.trim() }
             .filter { it.isNotBlank() }
         if (splits.size < wantedLength) {
             logger.debug { "could not parse token into at least $wantedLength parts: $token" }

@@ -6,8 +6,9 @@ internal class Guesser(private val hints: List<HintType>, private val tokens: Li
     fun guess(): List<Guess> {
         var guesserTokens = mapAndValidateTokens(tokens)
         guesserTokens = mapHints(guesserTokens)
-        var guesses = mapGuesserTokensToGuesses(guesserTokens)
-        guesses = guessRemainingAny(guesses).filter { it !is Noise } //TODO probably not so good, but oh well
+        guesserTokens = guessRemainingAny(guesserTokens)
+        var guesses =
+            mapGuesserTokensToGuesses(guesserTokens).filter { it !is Noise } //TODO probably not so good, but oh well
         guesses = groupGuesses(guesses)
         return guesses
     }
@@ -64,16 +65,19 @@ internal class Guesser(private val hints: List<HintType>, private val tokens: Li
         }
     }
 
-    private fun guessRemainingAny(guesses: List<Guess>): List<Guess> {
-        val result = mutableListOf<Guess>()
+    private fun guessRemainingAny(guesses: List<GuesserToken>): List<GuesserToken> {
+        val result = mutableListOf<GuesserToken>()
         var i = 0
         while (i < guesses.size) {
             if (i + 2 < guesses.size) {
-                if (guesses[i] is Any && guesses[i + 1] is Noise && guesses[i + 2] is Any) {
-                    if ((guesses[i + 1] as Noise).value.trim() == ":") {
-                        result.add(Hours((guesses[i] as Any).value))
+                if (guesses[i].possibleTypes.contains(GuesserType.HOURS) && guesses[i + 1].possibleTypes.isEmpty() && guesses[i + 2].possibleTypes.contains(
+                        GuesserType.MINUTES
+                    )
+                ) {
+                    if (guesses[i + 1].value.trim() == ":") {
+                        result.add(GuesserToken(guesses[i].value, setOf(GuesserType.HOURS)))
                         result.add(guesses[i + 1])
-                        result.add(Minutes((guesses[i + 2] as Any).value))
+                        result.add(GuesserToken(guesses[i + 2].value, setOf(GuesserType.MINUTES)))
                         i += 3
                         continue
                     }
@@ -93,9 +97,7 @@ internal class Guesser(private val hints: List<HintType>, private val tokens: Li
                 if (guesses[i] is Day && guesses[i + 1] is Month && guesses[i + 2] is Year) {
                     result.add(
                         Date(
-                            (guesses[i] as Day).value,
-                            (guesses[i + 1] as Month).value,
-                            (guesses[i + 2] as Year).value
+                            (guesses[i] as Day).value, (guesses[i + 1] as Month).value, (guesses[i + 2] as Year).value
                         )
                     )
                     i += 3
@@ -103,9 +105,7 @@ internal class Guesser(private val hints: List<HintType>, private val tokens: Li
                 } else if (guesses[i] is Year && guesses[i + 1] is Month && guesses[i + 2] is Day) {
                     result.add(
                         Date(
-                            (guesses[i + 2] as Day).value,
-                            (guesses[i + 1] as Month).value,
-                            (guesses[i] as Year).value
+                            (guesses[i + 2] as Day).value, (guesses[i + 1] as Month).value, (guesses[i] as Year).value
                         )
                     )
                     i += 3

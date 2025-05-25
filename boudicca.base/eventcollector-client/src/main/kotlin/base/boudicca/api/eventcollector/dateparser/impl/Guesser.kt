@@ -5,7 +5,7 @@ import base.boudicca.api.eventcollector.dateparser.HintType
 internal class Guesser(private val hints: List<HintType>, private val tokens: List<Pair<TokenizerType, String>>) {
     fun guess(): List<Guess> {
         val remainingHints = hints.toMutableList()
-        return tokens.map {
+        val guesses = tokens.map {
             if (isNotNoise(it)) {
                 val hint = remainingHints.removeFirst() //TODO guard against that
                 if (hint == HintType.DAY) {
@@ -27,6 +27,7 @@ internal class Guesser(private val hints: List<HintType>, private val tokens: Li
                 Noise(it.second)
             }
         }
+        return guesses
     }
 
     private fun isNotNoise(it: Pair<TokenizerType, String>): Boolean {
@@ -34,12 +35,18 @@ internal class Guesser(private val hints: List<HintType>, private val tokens: Li
     }
 }
 
-internal sealed class Guess(val value: String) //TODO probably not right
-internal class Noise(value: String) : Guess(value)
-internal class Any(value: String) : Guess(value)
-internal class Day(value: String) : Guess(value)
-internal class Month(value: String) : Guess(value)
-internal class Year(value: String) : Guess(value)
-internal class Hours(value: String) : Guess(value)
-internal class Minutes(value: String) : Guess(value)
-internal class Seconds(value: String) : Guess(value)
+internal sealed class Guess
+internal class Noise(val value: String) : Guess()
+internal class Any(val value: String) : Guess()
+internal class Day(val value: String) : Guess()
+internal class Month(val value: String) : Guess()
+internal class Year(val value: String) : Guess()
+internal class Hours(val value: String) : Guess()
+internal class Minutes(val value: String) : Guess()
+internal class Seconds(val value: String) : Guess()
+internal class Date(val day: String, val month: String, val year: String) : Guess() //TODO should those be int already?
+internal class Time(
+    val hours: String,
+    val minutes: String, //TODO make nullable as well?
+    val seconds: String?
+) : Guess() //TODO should those be int already?

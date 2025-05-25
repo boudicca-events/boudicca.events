@@ -8,19 +8,9 @@ internal class Guesser(private val hints: List<HintType>, private val tokens: Li
         var guesses = mapAndValidateTokens(tokens)
         guesses = mapHints(guesses)
         guesses = guessRemainingAny(guesses)
-        guesses = mapEmptyToNoise(guesses).filter { it !is Noise } //TODO probably not so good, but oh well
+        guesses = guesses.filter { it is Any && it.possibleTypes.isNotEmpty() } //TODO probably not so good, but oh well
         guesses = groupGuesses(guesses)
         return guesses
-    }
-
-    private fun mapEmptyToNoise(guesses: List<Guess>): List<Guess> {
-        return guesses.map {
-            if (it is Any && it.possibleTypes.isEmpty()) {
-                Noise(0, it.value)
-            } else {
-                it
-            }
-        }
     }
 
     private fun mapAndValidateTokens(tokens: List<Pair<TokenizerType, String>>): List<Guess> {
@@ -209,7 +199,6 @@ internal sealed class Guess {
     abstract val confidence: Int
 }
 
-internal data class Noise(override val confidence: Int, val value: String) : Guess()
 internal data class Any(override val confidence: Int, val value: String, val possibleTypes: Set<GuesserType>) : Guess()
 internal data class Date(
     override val confidence: Int, val day: Int, val month: Int, val year: Int

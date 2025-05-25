@@ -45,31 +45,57 @@ internal class Guesser(private val hints: List<HintType>, private val tokens: Li
         }
     }
 
-    private fun guessRemainingAny(guesses: List<Guess>): List<Guess> {
-        val result = mutableListOf<Guess>()
-        var i = 0
-        while (i < guesses.size) {
-            val first = guesses[i]
-            if (i + 2 < guesses.size) {
-                val second = guesses[i + 1]
-                val third = guesses[i + 2]
-                if (first is Any && first.possibleTypes.contains(GuesserType.HOURS) && second is Any && second.possibleTypes.isEmpty() && third is Any && third.possibleTypes.contains(
-                        GuesserType.MINUTES
-                    )
-                ) {
-                    if (second.value.trim() == ":") {
-                        result.add(Any(0, first.value, setOf(GuesserType.HOURS)))
-                        result.add(second)
-                        result.add(Any(0, third.value, setOf(GuesserType.MINUTES)))
-                        i += 3
+    private fun guessRemainingAny(inputGuesses: List<Guess>): List<Guess> {
+        val formulas = listOf(
+            Formula(
+                listOf(
+                    canBe(GuesserType.HOURS),
+                    matches { it.possibleTypes.isEmpty() && it.value.trim() == ":" },
+                    canBe(GuesserType.MINUTES)
+                )
+            ) { matches ->
+                listOf(
+                    Any(0, matches[0].value, setOf(GuesserType.HOURS)),
+                    matches[1],
+                    Any(0, matches[2].value, setOf(GuesserType.MINUTES))
+                )
+            })
+        var guesses = inputGuesses
+        var result = mutableListOf<Guess>()
+        for (formula in formulas) {
+            var i = 0
+            while (i < guesses.size) {
+                if (i + formula.matchers.size < guesses.size) {
+                    var formulaMatches = true
+                    val capturedMatches = mutableListOf<Any>()
+                    for (step in formula.matchers.indices) {
+                        val guess = guesses[i + step]
+                        if (guess !is Any) {
+                            formulaMatches = false
+                            break
+                        }
+                        val matches = formula.matchers[step].matcher(guess)
+                        formulaMatches = formulaMatches.and(matches)
+                        if (!matches) {
+                            formulaMatches = false
+                            break
+                        }
+                        capturedMatches.add(guess)
+                    }
+                    if (formulaMatches) {
+                        val replacements = formula.replacement(capturedMatches)
+                        result.addAll(replacements)
+                        i += replacements.size
                         continue
                     }
                 }
+                result.add(guesses[i])
+                i++
             }
-            result.add(first)
-            i++
+            guesses = result
+            result = mutableListOf()
         }
-        return result
+        return guesses
     }
 
     private fun groupGuesses(guesses: List<Guess>): List<Guess> {
@@ -193,6 +219,19 @@ internal class Guesser(private val hints: List<HintType>, private val tokens: Li
             }
         }
     }
+
+    private class Formula(val matchers: List<Matcher>, val replacement: (List<Any>) -> List<Guess>)
+
+    private class Matcher(val canMatchMultipleTimes: Boolean, val matcher: (any: Any) -> Boolean)
+
+    private fun canBe(guesserType: GuesserType): Matcher {
+        return Matcher(false) { any: Any -> any.possibleTypes.contains(guesserType) }
+    }
+
+    private fun matches(condition: (Any) -> Boolean): Matcher {
+        return Matcher(false, condition)
+    }
+
 }
 
 internal sealed class Guess {

@@ -69,6 +69,6 @@ class ViperRoomCollector : TwoStepEventCollector<String>("viperroom") {
         return dateParser {
             dayMonthYear(fullDateText)
             time(fullTimeText)
-        } //TODO time does not work, yaay
+        }
     }
 }

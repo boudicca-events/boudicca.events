@@ -266,6 +266,11 @@ class DateParserTest {
                 "19:30"
             )
         }).isEqualTo(LocalTime.of(19, 30))
+        assertThat(localTimeParser {
+            any(
+                "um 19:30 Uhr"
+            )
+        }).isEqualTo(LocalTime.of(19, 30))
     }
 
     private fun assertDates(actual: OffsetDateTime, expected: String) {

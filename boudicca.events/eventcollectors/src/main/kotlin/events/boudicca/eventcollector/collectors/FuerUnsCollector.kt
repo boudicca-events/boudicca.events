@@ -2,6 +2,7 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.api.eventcollector.dateparser.dateParser
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
@@ -11,12 +12,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
-import java.time.LocalDate
-import java.time.LocalTime
 import java.time.OffsetDateTime
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.util.*
 
 class FuerUnsCollector : TwoStepEventCollector<String>("fueruns") {
 
@@ -97,15 +93,11 @@ class FuerUnsCollector : TwoStepEventCollector<String>("fueruns") {
     private fun parseDate(element: Element): OffsetDateTime {
         val dtDiv = element.select("div.details_date_time")
         val date = dtDiv.select("div.date").text()
-        val localDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("dd. MMMM uuuu", Locale.GERMAN))
-
-        var time = dtDiv.select("div.time").text()
-        var localDateTime = localDate.atStartOfDay()
-        if (time.isNotEmpty()) {
-            time = time.split(" ")[0]
-            val localTime = LocalTime.parse(time, DateTimeFormatter.ofPattern("kk:mm"))
-            localDateTime = localDate.atTime(localTime)
+        val time = dtDiv.select("div.time").text() //TODO can also contain endtime (.. bis ... uhr)
+        return dateParser {
+            any(date)
+            any(time)
         }
-        return localDateTime.atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
+
     }
 }

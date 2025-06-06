@@ -2,6 +2,8 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.api.eventcollector.dateparser.localDateParser
+import base.boudicca.api.eventcollector.dateparser.localTimeParser
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.fetcher.Fetcher
 import base.boudicca.format.UrlUtils
@@ -16,7 +18,6 @@ import java.time.LocalTime
 import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.util.*
 
 class LandestheaterLinzCollector :
     TwoStepEventCollector<LandestheaterLinzCollector.LandestheaderEventData>("landestheater linz") {
@@ -67,9 +68,9 @@ class LandestheaterLinzCollector :
     }
 
     private fun parseDateFromSection(section: Element): LocalDate {
-        val dateText = section.select("div.lth-section-title > div.lth-evitem-date > span.lth-book").text()
-        val cleanedUpText = dateText.replace("Jänner", "Januar") //java does not parse Jänner...
-        return LocalDate.parse(cleanedUpText, DateTimeFormatter.ofPattern("dd. MMMM uuuu", Locale.GERMAN))
+        return localDateParser {
+            dayMonthYear(section.select("div.lth-section-title > div.lth-evitem-date > span.lth-book").text())
+        }
     }
 
     private fun fetchList(fetcher: Fetcher): Document {
@@ -143,23 +144,17 @@ class LandestheaterLinzCollector :
 
     private fun parseDates(overview: Element, date: LocalDate): Pair<OffsetDateTime, OffsetDateTime?> {
         val timeText = overview.select("div.lth-evitem-time").text()
-        if (timeText.length > 13) {
-            val startTimeText = timeText.substring(0, 5)
-            val endTimeText = timeText.substring(8, 13)
-            val startTime = LocalTime.parse(startTimeText, DateTimeFormatter.ofPattern("kk:mm"))
-            val endTime = LocalTime.parse(endTimeText, DateTimeFormatter.ofPattern("kk:mm"))
-            return Pair(
-                date.atTime(startTime).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime(),
-                date.atTime(endTime).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime(),
-            )
-        } else {
-            val startTimeText = timeText.substring(0, 5)
-            val startTime = LocalTime.parse(startTimeText, DateTimeFormatter.ofPattern("kk:mm"))
-            return Pair(
-                date.atTime(startTime).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime(),
-                null
-            )
-        }
+        val times = timeText
+            .split("-")
+            .map { localTimeParser { time(it) } }
+
+        return Pair(
+            times.getOrNull(0)!!.toOffsetDateTime(date),
+            times.getOrNull(1)?.toOffsetDateTime(date),
+        )
     }
 
+    private fun LocalTime.toOffsetDateTime(date: LocalDate): OffsetDateTime {
+        return date.atTime(this).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
+    }
 }

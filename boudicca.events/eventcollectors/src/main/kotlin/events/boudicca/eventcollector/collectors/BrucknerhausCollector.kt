@@ -2,6 +2,8 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.api.eventcollector.dateparser.localDateParser
+import base.boudicca.api.eventcollector.dateparser.localTimeParser
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
@@ -10,11 +12,8 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import java.time.LocalDate
-import java.time.LocalTime
 import java.time.OffsetDateTime
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.util.*
 
 
 class BrucknerhausCollector : TwoStepEventCollector<Element>("brucknerhaus") {
@@ -88,36 +87,18 @@ class BrucknerhausCollector : TwoStepEventCollector<Element>("brucknerhaus") {
         val timeElement = event.select("div.event__location").first()!!
         val time = timeElement.children()[0].children()[0].text()
 
-        val localTime = LocalTime.parse(time, DateTimeFormatter.ofPattern("kk:mm"))
-
+        val localTime =
+            localTimeParser {
+                time(time)
+            }
         return localDates.map { localDate ->
             localDate.atTime(localTime).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
         }
     }
 
     private fun parseSingleLocalDate(dateText: String): LocalDate {
-        val split = dateText.split(" ")
-        return LocalDate.parse(
-            split[1] + " " + mapMonth(split[2]) + " " + split[3],
-            DateTimeFormatter.ofPattern("d. M uu").withLocale(Locale.GERMAN)
-        )
-    }
-
-    private fun mapMonth(month: String): String {
-        return when (month.uppercase()) {
-            "JAN" -> "1"
-            "FEB" -> "2"
-            "MÄRZ" -> "3"
-            "APR" -> "4"
-            "MAI" -> "5"
-            "JUNI" -> "6"
-            "JULI" -> "7"
-            "AUG" -> "8"
-            "SEP" -> "9"
-            "OKT" -> "10"
-            "NOV" -> "11"
-            "DEZ" -> "12"
-            else -> throw IllegalArgumentException("cannot map month $month")
+        return localDateParser {
+            dayMonthYear(dateText)
         }
     }
 

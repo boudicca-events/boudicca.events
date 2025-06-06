@@ -273,6 +273,39 @@ class DateParserTest {
         }).isEqualTo(LocalTime.of(19, 30))
     }
 
+    @Test
+    fun parseSimpleAnyLocalDate() {
+        assertThat(localDateParser {
+            any(
+                "25.04.1992"
+            )
+        }).isEqualTo(LocalDate.of(1992, 4, 25))
+        assertThat(localDateParser {
+            any(
+                "am 25.04.1992"
+            )
+        }).isEqualTo(LocalDate.of(1992, 4, 25))
+    }
+
+    @Test
+    fun parseSimpleAnyDate() {
+        assertDates(dateParser {
+            any(
+                "25 April 1992 - 2:40 Uhr"
+            )
+        }, "1992-04-25T02:40+02:00")
+        assertDates(dateParser {
+            any(
+                "25.04.1992 - 2:40 Uhr"
+            )
+        }, "1992-04-25T02:40+02:00")
+        assertDates(dateParser {
+            any(
+                "Do. 10.07.2025 - 20:30"
+            )
+        }, "2025-07-10T20:30+02:00")
+    }
+
     private fun assertDates(actual: OffsetDateTime, expected: String) {
         assertThat(actual.toString()).isEqualTo(expected)
     }

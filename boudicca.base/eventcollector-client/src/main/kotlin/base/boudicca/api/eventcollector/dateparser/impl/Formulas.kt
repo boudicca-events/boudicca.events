@@ -37,6 +37,40 @@ internal object Formulas {
         },
         Formula(
             listOf(
+                canBe(GuesserType.DAY),
+                matches("matches a '.' for \"day:month:year\"") { it.possibleTypes.isEmpty() && it.value.trim() == "." },
+                canBe(GuesserType.MONTH),
+                matches("matches a '.' for \"day:month:year\"") { it.possibleTypes.isEmpty() && it.value.trim() == "." },
+                canBe(GuesserType.YEAR),
+            )
+        ) { matches ->
+            listOf(
+                createDate(
+                    matches[0].first(),
+                    matches[2].first(),
+                    matches[4].first(),
+                )
+            )
+        },
+        Formula(
+            listOf(
+                canBe(GuesserType.YEAR),
+                matches("matches a '.' for \"day:month:year\"") { it.possibleTypes.isEmpty() && it.value.trim() == "." },
+                canBe(GuesserType.MONTH),
+                matches("matches a '.' for \"day:month:year\"") { it.possibleTypes.isEmpty() && it.value.trim() == "." },
+                canBe(GuesserType.DAY),
+            )
+        ) { matches ->
+            listOf(
+                createDate(
+                    matches[4].first(),
+                    matches[2].first(),
+                    matches[0].first(),
+                )
+            )
+        },
+        Formula(
+            listOf(
                 canBe(GuesserType.HOURS),
                 canBeNothing(true),
                 canBe(GuesserType.MINUTES),

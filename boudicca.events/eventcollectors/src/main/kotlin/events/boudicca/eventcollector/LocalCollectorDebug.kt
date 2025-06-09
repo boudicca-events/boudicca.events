@@ -13,7 +13,7 @@ import java.io.File
  * 4) Also allows you to ingest the data into your local eventdb
  */
 fun main() {
-    EventCollectorDebugger()
+    EventCollectorDebugger(startWebUi = false)
         // this debugger caches all fetcher calls locally to avoid spamming the server when developing.
         // if there are problems with old data or something like that just delete the file and restart the debugger
         .setFetcherCache(FileBackedFetcherCache(File("./fetcher.cache")))

@@ -72,6 +72,7 @@ class DateParser {
 
     fun parse(): DateParserResult {
         val result = DateParserImpl(tokens).parse()
+        require(result.dates.isNotEmpty()) { "could not parse any dates with following data: $this" }
         logger.debug { "parsed $result from data: $this" }
         return result
     }

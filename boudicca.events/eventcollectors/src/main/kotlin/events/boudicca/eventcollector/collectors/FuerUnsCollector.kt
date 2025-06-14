@@ -2,7 +2,7 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
-import base.boudicca.api.eventcollector.dateparser.dateParser
+import base.boudicca.api.eventcollector.dateparser.singleDateParser
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
@@ -94,7 +94,7 @@ class FuerUnsCollector : TwoStepEventCollector<String>("fueruns") {
         val dtDiv = element.select("div.details_date_time")
         val date = dtDiv.select("div.date").text()
         val time = dtDiv.select("div.time").text() //TODO can also contain endtime (.. bis ... uhr)
-        return dateParser {
+        return singleDateParser {
             any(date)
             any(time)
         }

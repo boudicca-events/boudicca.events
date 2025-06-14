@@ -40,14 +40,14 @@ class DateParser {
         return HintBuilder()
     }
 
-    fun tryParse(): OffsetDateTime? {
-        val result = DateParserImpl(tokens).tryParse()
+    fun tryParseSingle(): OffsetDateTime? {
+        val result = DateParserImpl(tokens).tryParseSingle()
         logger.debug { "parsed $result from data: $this" }
         return result
     }
 
-    fun parse(): OffsetDateTime {
-        return requireNotNull(tryParse()) { "could not parse OffsetDateTime with following data: $this" }
+    fun parseSingle(): OffsetDateTime {
+        return requireNotNull(tryParseSingle()) { "could not parse OffsetDateTime with following data: $this" }
     }
 
     fun tryParseLocalDate(): LocalDate? {
@@ -68,6 +68,12 @@ class DateParser {
 
     fun parseLocalTime(): LocalTime {
         return requireNotNull(tryParseLocalTime()) { "could not parse LocalTime with following data: $this" }
+    }
+
+    fun parse(): DateParserResult {
+        val result = DateParserImpl(tokens).parse()
+        logger.debug { "parsed $result from data: $this" }
+        return result
     }
 
     override fun toString(): String {

@@ -2,7 +2,7 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
-import base.boudicca.api.eventcollector.dateparser.dateParser
+import base.boudicca.api.eventcollector.dateparser.singleDateParser
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.EventCategory
@@ -40,7 +40,7 @@ class MetalCornerCollector : TwoStepEventCollector<Pair<String, String>>("metalc
 
         val name = document.select("div#content h1").text()
 
-        val eventStartDate = dateParser {
+        val eventStartDate = singleDateParser {
             dayMonthYear().time().with(document.select("div#content h2").text())
         }
 

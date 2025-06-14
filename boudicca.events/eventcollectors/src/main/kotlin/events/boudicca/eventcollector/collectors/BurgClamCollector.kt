@@ -2,7 +2,7 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
-import base.boudicca.api.eventcollector.dateparser.dateParser
+import base.boudicca.api.eventcollector.dateparser.singleDateParser
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
@@ -25,7 +25,7 @@ class BurgClamCollector : TwoStepEventCollector<String>("burgclam") {
 
         val name = eventSite.select("h1.eventTitle").text()
         val dateText = eventSite.select("div.eventDate").text()
-        val startDate = dateParser {
+        val startDate = singleDateParser {
             any(dateText)
         }
 

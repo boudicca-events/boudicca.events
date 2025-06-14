@@ -12,124 +12,124 @@ class DateParserTest {
     @Test
     fun invalidDatesThrowExceptions() {
         assertThrows<IllegalArgumentException> {
-            dateParser { }
+            singleDateParser { }
         }
     }
 
     @Test
     fun simpleNumberDates() {
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             dayMonthYear("25.04.1992")
         }, "1992-04-25T00:00+02:00")
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             dayMonthYear("25 04 1992")
         }, "1992-04-25T00:00+02:00")
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             dayMonthYear("25-04-1992")
         }, "1992-04-25T00:00+02:00")
     }
 
     @Test
     fun simpleTextDates() {
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             dayMonthYear("25. April 1992")
         }, "1992-04-25T00:00+02:00")
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             dayMonthYear("25 April 1992")
         }, "1992-04-25T00:00+02:00")
 
 
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             dayMonthYear("25 Jänner 1992")
         }, "1992-01-25T00:00+01:00")
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             dayMonthYear("25 Januar 1992")
         }, "1992-01-25T00:00+01:00")
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             dayMonthYear("25 Februar 1992")
         }, "1992-02-25T00:00+01:00")
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             dayMonthYear("25 März 1992")
         }, "1992-03-25T00:00+01:00")
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             dayMonthYear("25 April 1992")
         }, "1992-04-25T00:00+02:00")
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             dayMonthYear("25 Mai 1992")
         }, "1992-05-25T00:00+02:00")
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             dayMonthYear("25 Juni 1992")
         }, "1992-06-25T00:00+02:00")
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             dayMonthYear("25 Juli 1992")
         }, "1992-07-25T00:00+02:00")
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             dayMonthYear("25 August 1992")
         }, "1992-08-25T00:00+02:00")
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             dayMonthYear("25 September 1992")
         }, "1992-09-25T00:00+02:00")
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             dayMonthYear("25 Oktober 1992")
         }, "1992-10-25T00:00+01:00")
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             dayMonthYear("25 November 1992")
         }, "1992-11-25T00:00+01:00")
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             dayMonthYear("25 Dezember 1992")
         }, "1992-12-25T00:00+01:00")
     }
 
     @Test
     fun shortTextDates() {
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             dayMonthYear("25 Jän 1992")
         }, "1992-01-25T00:00+01:00")
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             dayMonthYear("25 Jan 1992")
         }, "1992-01-25T00:00+01:00")
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             dayMonthYear("25 Feb 1992")
         }, "1992-02-25T00:00+01:00")
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             dayMonthYear("25 Mär 1992")
         }, "1992-03-25T00:00+01:00")
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             dayMonthYear("25 Apr 1992")
         }, "1992-04-25T00:00+02:00")
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             dayMonthYear("25 Mai 1992")
         }, "1992-05-25T00:00+02:00")
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             dayMonthYear("25 Jun 1992")
         }, "1992-06-25T00:00+02:00")
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             dayMonthYear("25 Jul 1992")
         }, "1992-07-25T00:00+02:00")
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             dayMonthYear("25 Aug 1992")
         }, "1992-08-25T00:00+02:00")
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             dayMonthYear("25 Sep 1992")
         }, "1992-09-25T00:00+02:00")
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             dayMonthYear("25 Okt 1992")
         }, "1992-10-25T00:00+01:00")
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             dayMonthYear("25 Nov 1992")
         }, "1992-11-25T00:00+01:00")
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             dayMonthYear("25 Dez 1992")
         }, "1992-12-25T00:00+01:00")
     }
 
     @Test
     fun simpleDateTimes() {
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             dayMonthYear("25.04.1992")
             time("10:00")
         }, "1992-04-25T10:00+02:00")
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             dayMonthYear("25.04.1992")
             time("10.00")
         }, "1992-04-25T10:00+02:00")
@@ -137,15 +137,15 @@ class DateParserTest {
 
     @Test
     fun dateTimesWithNoiseInTime() {
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             dayMonthYear("25.04.1992")
             time("10:00 Uhr")
         }, "1992-04-25T10:00+02:00")
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             dayMonthYear("25.04.1992")
             time("10 00 Uhr")
         }, "1992-04-25T10:00+02:00")
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             dayMonthYear("25.04.1992")
             time("Uhr 10 00")
         }, "1992-04-25T10:00+02:00")
@@ -153,32 +153,32 @@ class DateParserTest {
 
     @Test
     fun datesWithNoiseInDate() {
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             dayMonthYear("Sa, 25.04.1992")
         }, "1992-04-25T00:00+02:00")
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             dayMonthYear("25.04.1992 Sa")
         }, "1992-04-25T00:00+02:00")
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             dayMonthYear("Samstag 25.04.1992")
         }, "1992-04-25T00:00+02:00")
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             dayMonthYear("Samstag 25.04.1992 whatever")
         }, "1992-04-25T00:00+02:00")
     }
 
     @Test
     fun datesWithShorthandYear() {
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             dayMonthYear("25.04.92")
         }, "1992-04-25T00:00+02:00")
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             dayMonthYear("25.04.25")
         }, "2025-04-25T00:00+02:00")
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             dayMonthYear("25.04.00")
         }, "2000-04-25T00:00+02:00")
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             dayMonthYear("25.04.99")
         }, "1999-04-25T00:00+02:00")
     }
@@ -205,12 +205,12 @@ class DateParserTest {
 
     @Test
     fun parseDayMonthYearTime() {
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             dayMonthYear().time().with(
                 "25.04.1992 - 10 00"
             )
         }, "1992-04-25T10:00+02:00")
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             dayMonthYear().time().with(
                 "Fr. 25.04.1992 - 10 00"
             )
@@ -219,12 +219,12 @@ class DateParserTest {
 
     @Test
     fun parseYearMonthDay() {
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             token().year().month().day().with(
                 "1992-04-25"
             )
         }, "1992-04-25T00:00+02:00")
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             token().year().month().day().with(
                 "Fr. 1992.04.25"
             )
@@ -233,12 +233,12 @@ class DateParserTest {
 
     @Test
     fun parseYearMonthDayHoursMinutesSeconds() {
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             token().year().month().day().hours().minutes().seconds().with(
                 "1992-04-25 02:04:06"
             )
         }, "1992-04-25T02:04:06+02:00")
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             token().year().month().day().hours().minutes().seconds().with(
                 "1992-04-25 02 04 06"
             )
@@ -247,12 +247,12 @@ class DateParserTest {
 
     @Test
     fun parseNoiseHeavyDateTime() {
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             dayMonthYear().time().with(
                 "es ist am 25 April 1992 um 2:40 Uhr"
             )
         }, "1992-04-25T02:40+02:00")
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             dayMonthYear().time().with(
                 "es ist am 25ten April im Jahre 1992 um 2 Uhr und 40 Minuten"
             )
@@ -289,24 +289,62 @@ class DateParserTest {
 
     @Test
     fun parseSimpleAnyDate() {
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             any(
                 "25 April 1992 - 2:40 Uhr"
             )
         }, "1992-04-25T02:40+02:00")
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             any(
                 "25.04.1992 - 2:40 Uhr"
             )
         }, "1992-04-25T02:40+02:00")
-        assertDates(dateParser {
+        assertDates(singleDateParser {
             any(
                 "Do. 10.07.2025 - 20:30"
             )
         }, "2025-07-10T20:30+02:00")
     }
 
+    @Test
+    fun parseDateTimeUntilTimeRange() {
+        assertDates(dateParser {
+            any(
+                "Di. 17.06.2025 09:00 - 10:00 Uhr"
+            )
+        }, pair("2025-06-17T09:00+02:00", "2025-06-17T10:00+02:00"))
+    }
+
+    @Test
+    fun parseDateTimeUntilDateTimeRange() {
+        assertDates(dateParser {
+            any(
+                "Di. 17.06.2025 09:00 - 18.06.2025 10:00 Uhr"
+            )
+        }, pair("2025-06-17T09:00+02:00", "2025-06-18T10:00+02:00"))
+    }
+
+    private fun pair(startDate: String, endDate: String?): DatePair {
+        return DatePair(OffsetDateTime.parse(startDate), endDate?.run { OffsetDateTime.parse(this) })
+    }
+
     private fun assertDates(actual: OffsetDateTime, expected: String) {
         assertThat(actual.toString()).isEqualTo(expected)
+    }
+
+    private fun assertDates(actual: DateParserResult, vararg expected: String) {
+        assertDates(actual, expected.map { pair(it, null) })
+    }
+
+    private fun assertDates(actual: DateParserResult, vararg expected: DatePair) {
+        assertDates(actual, expected.asList())
+    }
+
+    private fun assertDates(actual: DateParserResult, expected: List<DatePair>) {
+        assertThat(actual.dates.size).isEqualTo(expected.size)
+        for (i in expected.indices) {
+            assertThat(actual.dates[i].startDate).isEqualTo(expected[i].startDate)
+            assertThat(actual.dates[i].endDate).isEqualTo(expected[i].endDate)
+        }
     }
 }

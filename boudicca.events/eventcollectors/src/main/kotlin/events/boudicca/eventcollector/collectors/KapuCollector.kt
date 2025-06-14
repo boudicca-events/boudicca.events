@@ -2,7 +2,7 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
-import base.boudicca.api.eventcollector.dateparser.dateParser
+import base.boudicca.api.eventcollector.dateparser.singleDateParser
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
@@ -61,7 +61,7 @@ class KapuCollector : TwoStepEventCollector<String>("kapu") {
     private fun parseDate(element: Element): OffsetDateTime {
         val fullDateTime = element.select("article.event > div.container div.wob:nth-child(1)").text()
 
-        return dateParser {
+        return singleDateParser {
             any(fullDateTime)
         }
     }

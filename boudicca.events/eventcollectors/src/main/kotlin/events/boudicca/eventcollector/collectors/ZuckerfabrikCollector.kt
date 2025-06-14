@@ -2,7 +2,7 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
-import base.boudicca.api.eventcollector.dateparser.dateParser
+import base.boudicca.api.eventcollector.dateparser.singleDateParser
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
@@ -71,12 +71,12 @@ class ZuckerfabrikCollector : TwoStepEventCollector<String>("zuckerfabrik") {
             endTimeString = timeSplit[1]
         }
 
-        val startDate = dateParser {
+        val startDate = singleDateParser {
             dayMonthYear(dateSplit[1])
             time(startTimeString)
         }
         val endDate = if (endTimeString != null) {
-            dateParser {
+            singleDateParser {
                 dayMonthYear(dateSplit[1])
                 time(endTimeString)
             }

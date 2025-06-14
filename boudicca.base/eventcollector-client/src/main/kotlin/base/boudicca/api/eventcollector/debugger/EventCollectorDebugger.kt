@@ -2,16 +2,19 @@ package base.boudicca.api.eventcollector.debugger
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.enricher.EnricherClient
-import base.boudicca.api.eventcollector.*
+import base.boudicca.api.eventcollector.Configuration
+import base.boudicca.api.eventcollector.EventCollectionRunner
+import base.boudicca.api.eventcollector.EventCollector
+import base.boudicca.api.eventcollector.EventCollectorWebUi
 import base.boudicca.api.eventcollector.collections.Collections
 import base.boudicca.api.eventcollector.debugger.color.green
 import base.boudicca.api.eventcollector.debugger.color.red
 import base.boudicca.api.eventcollector.debugger.color.yellow
-import base.boudicca.fetcher.FetcherCache
 import base.boudicca.api.eventcollector.logging.CollectionsFilter
 import base.boudicca.api.eventcollector.runner.*
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.api.eventdb.ingest.EventDbIngestClient
+import base.boudicca.fetcher.FetcherCache
 import base.boudicca.model.Event
 
 private const val DEFAULT_PORT = 8083
@@ -19,7 +22,7 @@ private const val DEFAULT_PORT = 8083
 class EventCollectorDebugger(
     val verboseDebugging: Boolean = true,
     val verboseValidation: Boolean = true,
-    val keepOpen: Boolean = true
+    val startWebUi: Boolean = true,
 ) {
 
     private var runnerIngestionInterface: RunnerIngestionInterface? = null
@@ -70,9 +73,15 @@ class EventCollectorDebugger(
         val eventCollectorAsList = listOf(eventCollector)
         val collectedEvents = mutableListOf<Event>()
 
-        val eventCollectorWebUi =
-            EventCollectorWebUi(Configuration.getProperty("server.port")?.toInt() ?: DEFAULT_PORT, eventCollectorAsList)
-        eventCollectorWebUi.start()
+        val configuredWebUiPort = Configuration.getProperty("server.port")?.toInt() ?: DEFAULT_PORT
+        var eventCollectorWebUi: EventCollectorWebUi? = null
+        if (startWebUi) {
+            eventCollectorWebUi = EventCollectorWebUi(
+                configuredWebUiPort,
+                eventCollectorAsList
+            )
+            eventCollectorWebUi.start()
+        }
 
         val runner = EventCollectionRunner(
             eventCollectorAsList,
@@ -104,10 +113,11 @@ class EventCollectorDebugger(
             println("found $warningCount warnings!")
         }
 
-        if (keepOpen) {
+        if (eventCollectorWebUi != null) {
+            println("webui is running on http://localhost:$configuredWebUiPort and is blocking until you press enter in this console")
             readlnOrNull()
+            eventCollectorWebUi.stop()
         }
-        eventCollectorWebUi.stop()
 
         return this
     }

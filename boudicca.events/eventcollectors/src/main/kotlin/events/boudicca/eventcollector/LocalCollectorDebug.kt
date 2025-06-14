@@ -2,7 +2,10 @@ package events.boudicca.eventcollector
 
 import base.boudicca.api.eventcollector.debugger.EventCollectorDebugger
 import base.boudicca.fetcher.FileBackedFetcherCache
-import events.boudicca.eventcollector.collectors.*
+import events.boudicca.eventcollector.collectors.LandestheaterLinzCollector
+import events.boudicca.eventcollector.collectors.LinzTermineCollector
+import events.boudicca.eventcollector.collectors.MetalCornerCollector
+import events.boudicca.eventcollector.collectors.ViperRoomCollector
 import java.io.File
 
 /**
@@ -29,5 +32,12 @@ fun main() {
 //        .debug(RemoteCollectorCollector("http://localhost:8080"))
 
         //enable/add any collectors you want to test here
-        .debug(ZuckerfabrikCollector())
+//        .debug(ZuckerfabrikCollector())
+//        .debug(PosthofCollector())
+//        .debug(BrucknerhausCollector())
+//        .debug(KapuCollector())
+//        .debug(LinzTermineCollector())
+//        .debug(LandestheaterLinzCollector())
+//        .debug(MetalCornerCollector())
+        .debug(ViperRoomCollector())
 }

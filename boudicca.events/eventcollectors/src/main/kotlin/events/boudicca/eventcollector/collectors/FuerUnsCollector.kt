@@ -2,21 +2,18 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
-import base.boudicca.api.eventcollector.dateparser.singleDateParser
+import base.boudicca.api.eventcollector.dateparser.DateParser
+import base.boudicca.api.eventcollector.dateparser.DateParserResult
+import base.boudicca.api.eventcollector.dateparser.structuredEvent
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
-import base.boudicca.model.structured.dsl.modify
-import base.boudicca.model.structured.dsl.structuredEvent
-import io.github.oshai.kotlinlogging.KotlinLogging
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
-import java.time.OffsetDateTime
 
 class FuerUnsCollector : TwoStepEventCollector<String>("fueruns") {
 
-    private val logger = KotlinLogging.logger {}
     private val fetcher = FetcherFactory.newFetcher()
     private val baseUrl = "https://www.fuer-uns.at/"
 
@@ -43,19 +40,13 @@ class FuerUnsCollector : TwoStepEventCollector<String>("fueruns") {
                 .filter { !it.attr("href").startsWith("http") }) // exclude events from others than fuer uns
     }
 
-    override fun parseStructuredEvent(eventUrl: String): StructuredEvent? {
-        val fullEventLink = baseUrl + eventUrl
+    override fun parseMultipleStructuredEvents(event: String): List<StructuredEvent?>? {
+        val fullEventLink = baseUrl + event
         val eventSite = Jsoup.parse(fetcher.fetchUrl(fullEventLink))
 
         val name = eventSite.select("h1").text()
 
-        val startDate = try {
-            parseDate(eventSite)
-        } catch (exc: java.time.format.DateTimeParseException) {
-            //TODO we should be able to parse this as well
-            logger.info { "Error in ${fullEventLink}: can't parse date, might be a multi-day event" }
-            return null
-        }
+        val startDate = parseDate(eventSite)
 
         val img = eventSite.select("div.event picture img")
         val pictureUrl = if (!img.isEmpty()) {
@@ -64,40 +55,30 @@ class FuerUnsCollector : TwoStepEventCollector<String>("fueruns") {
             null
         }
 
-        val event = structuredEvent(name, startDate) {
+        val locationName = eventSite.select("div.location").not("div.location.link-google-maps").text()
+
+        return structuredEvent(name, startDate) {
             withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(fullEventLink))
             withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, eventSite.select("div.field-text").text())
             withProperty(SemanticKeys.PICTURE_URL_PROPERTY, pictureUrl)
             withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(fullEventLink))
-        }
-
-        val locationName = eventSite.select("div.location").not("div.location.link-google-maps").text()
-        if (locationName.isNotEmpty()) {
-            val regex = """(?<name>.*?)[,|\s]*(?<zip>\d{4}) (?<city>[\w\s]+)""".toRegex()
-            val matchResult = regex.find(locationName)
-            if (matchResult != null) {
-                modify(event) {
+            if (locationName.isNotEmpty()) {
+                val regex = """(?<name>.*?)[,|\s]*(?<zip>\d{4}) (?<city>[\w\s]+)""".toRegex()
+                val matchResult = regex.find(locationName)
+                if (matchResult != null) {
                     withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, matchResult.groups["name"]!!.value.trimEnd())
                     withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, matchResult.groups["city"]!!.value.trimEnd())
-                }
-            } else {
-                modify(event) {
+                } else {
                     withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, locationName)
                 }
             }
         }
-
-        return event
     }
 
-    private fun parseDate(element: Element): OffsetDateTime {
+    private fun parseDate(element: Element): DateParserResult {
         val dtDiv = element.select("div.details_date_time")
         val date = dtDiv.select("div.date").text()
-        val time = dtDiv.select("div.time").text() //TODO can also contain endtime (.. bis ... uhr)
-        return singleDateParser {
-            any(date)
-            any(time)
-        }
-
+        val time = dtDiv.select("div.time").text()
+        return DateParser.parse(date, time)
     }
 }

@@ -11,6 +11,9 @@ object FetcherFactory {
     @Volatile
     var defaultFetcherCache: FetcherCache = NoopFetcherCache
 
+    @Volatile
+    var disableRetries: Boolean = false
+
     private val collectionFetcherEventListener = object : FetcherEventListener {
         override fun callStarted(url: String, content: String?) {
             Collections.startHttpCall(url, content)
@@ -29,7 +32,8 @@ object FetcherFactory {
             manualSetDelay = manualSetDelay,
             userAgent = userAgent,
             eventListeners = listOf(collectionFetcherEventListener),
-            fetcherCache = defaultFetcherCache
+            fetcherCache = defaultFetcherCache,
+            disableRetries = disableRetries
         )
     }
 }

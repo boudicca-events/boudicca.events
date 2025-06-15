@@ -2,8 +2,8 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.api.eventcollector.dateparser.DateParser
 import base.boudicca.api.eventcollector.dateparser.DateParserResult
-import base.boudicca.api.eventcollector.dateparser.dateParser
 import base.boudicca.api.eventcollector.dateparser.structuredEvent
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
@@ -65,6 +65,9 @@ class BrucknerhausCollector : TwoStepEventCollector<Element>("brucknerhaus") {
 
     private fun parseDate(event: Element): DateParserResult {
         val dateElement = event.select("div.event__date").first()!!
-        return dateParser { any(dateElement.text()) }  //TODO does not work yet
+        val timeElement = event.select("div.event__location").first()!!
+        val date = dateElement.text()
+        val time = timeElement.children()[0].children()[0].text()
+        return DateParser.parse(date, time)
     }
 }

@@ -2,11 +2,12 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
-import base.boudicca.api.eventcollector.dateparser.singleDateParser
+import base.boudicca.api.eventcollector.dateparser.DateParser
+import base.boudicca.api.eventcollector.dateparser.DateParserResult
+import base.boudicca.api.eventcollector.dateparser.structuredEvent
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
-import base.boudicca.model.structured.dsl.structuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.time.OffsetDateTime
@@ -22,7 +23,7 @@ class ViperRoomCollector : TwoStepEventCollector<String>("viperroom") {
             .map { it.attr("href") }
     }
 
-    override fun parseStructuredEvent(event: String): StructuredEvent {
+    override fun parseMultipleStructuredEvents(event: String): List<StructuredEvent?>? {
         val eventSite = Jsoup.parse(fetcher.fetchUrl(event))
 
         val name = eventSite.select("h1.entry-title").text()
@@ -58,12 +59,9 @@ class ViperRoomCollector : TwoStepEventCollector<String>("viperroom") {
         }
     }
 
-    private fun parseDate(event: Element): OffsetDateTime {
+    private fun parseDate(event: Element): DateParserResult {
         val fullDateText = event.select("p.event_time").textNodes()[0].text()
         val fullTimeText = event.select("span.event_doors").text()
-        return singleDateParser {
-            dayMonthYear(fullDateText)
-            time(fullTimeText)
-        }
+        return DateParser.parse(fullDateText, fullTimeText)
     }
 }

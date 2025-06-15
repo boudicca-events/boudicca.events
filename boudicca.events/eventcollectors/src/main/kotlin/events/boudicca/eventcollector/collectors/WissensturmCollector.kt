@@ -2,7 +2,7 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
-import base.boudicca.api.eventcollector.dateparser.dateParser
+import base.boudicca.api.eventcollector.dateparser.DateParser
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
@@ -10,10 +10,8 @@ import base.boudicca.model.structured.dsl.structuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.time.LocalDate
-import java.time.LocalTime
 import java.time.OffsetDateTime
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 
 class WissensturmCollector : TwoStepEventCollector<Pair<String, Document>>("wissensturm") {
 
@@ -91,7 +89,7 @@ class WissensturmCollector : TwoStepEventCollector<Pair<String, Document>>("wiss
                 if (fullDateText.contains("ausfall", true) || fullDateText.contains("zusatz", true)) {
                     null
                 } else {
-                    val result = dateParser { any(fullDateText) }
+                    val result = DateParser.parse(fullDateText)
                     Triple(
                         result.single().startDate,
                         result.single().endDate!!,

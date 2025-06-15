@@ -2,13 +2,13 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
-import base.boudicca.api.eventcollector.dateparser.singleDateParser
+import base.boudicca.api.eventcollector.dateparser.DateParser
+import base.boudicca.api.eventcollector.dateparser.structuredEvent
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.EventCategory
 import base.boudicca.model.Registration
 import base.boudicca.model.structured.StructuredEvent
-import base.boudicca.model.structured.dsl.structuredEvent
 import org.jsoup.Jsoup
 
 class MetalCornerCollector : TwoStepEventCollector<Pair<String, String>>("metalcorner") {
@@ -33,16 +33,14 @@ class MetalCornerCollector : TwoStepEventCollector<Pair<String, String>>("metalc
         return eventUrls
     }
 
-    override fun parseStructuredEvent(event: Pair<String, String>): StructuredEvent {
+    override fun parseMultipleStructuredEvents(event: Pair<String, String>): List<StructuredEvent?>? {
         val (eventType, url) = event
 
         val document = Jsoup.parse(fetcher.fetchUrl(baseUrl + url))
 
         val name = document.select("div#content h1").text()
 
-        val eventStartDate = singleDateParser {
-            dayMonthYear().time().with(document.select("div#content h2").text())
-        }
+        val eventStartDate = DateParser.parse(document.select("div#content h2").text())
 
         return structuredEvent(name, eventStartDate) {
             withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, document.select("div#content p").text())

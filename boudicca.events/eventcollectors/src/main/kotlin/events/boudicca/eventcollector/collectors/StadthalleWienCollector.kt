@@ -2,8 +2,8 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.api.eventcollector.dateparser.DateParser
 import base.boudicca.api.eventcollector.dateparser.DateParserResult
-import base.boudicca.api.eventcollector.dateparser.dateParser
 import base.boudicca.api.eventcollector.dateparser.reduce
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
@@ -52,11 +52,11 @@ class StadthalleWienCollector : TwoStepEventCollector<String>("stadthallewien") 
     private fun parseDates(eventSite: Element): DateParserResult {
         return try {
             eventSite.select("ul#datetable li").map {
-                dateParser { any(it.text()) }
+                DateParser.parse(it.text())
             }.reduce()
         } catch (ignored: IllegalArgumentException) {
             //sometimes the timetable is empty, try fallback to header
-            dateParser { any(eventSite.select("div.description h3.date").text()) }
+            DateParser.parse(eventSite.select("div.description h3.date").text())
         }
     }
 

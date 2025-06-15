@@ -2,7 +2,17 @@ package base.boudicca.api.eventcollector.dateparser
 
 import base.boudicca.api.eventcollector.dateparser.impl.DateParserImpl
 
-class DateParser(private val tokens: List<String>) {
+class DateParser private constructor(private val tokens: List<String>) {
+
+    companion object {
+        fun parse(vararg tokens: String): DateParserResult {
+            return parse(tokens.toList())
+        }
+
+        fun parse(tokens: List<String>): DateParserResult {
+            return DateParser(tokens).parse()
+        }
+    }
 
     fun parse(): DateParserResult {
         val result = DateParserImpl(tokens).parse()

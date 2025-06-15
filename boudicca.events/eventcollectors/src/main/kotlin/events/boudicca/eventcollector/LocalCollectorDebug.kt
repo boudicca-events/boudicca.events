@@ -29,12 +29,5 @@ fun main() {
 //        .debug(RemoteCollectorCollector("http://localhost:8080"))
 
         //enable/add any collectors you want to test here
-//        .debug(ZuckerfabrikCollector())
-//        .debug(PosthofCollector())
-//        .debug(BrucknerhausCollector())
-//        .debug(KapuCollector())
-//        .debug(LinzTermineCollector())
-//        .debug(LandestheaterLinzCollector())
-//        .debug(MetalCornerCollector())
-        .debug(BrucknerhausCollector())
+        .debug(ZuckerfabrikCollector())
 }

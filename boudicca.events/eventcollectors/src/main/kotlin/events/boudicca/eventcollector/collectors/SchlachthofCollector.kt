@@ -2,19 +2,13 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
-import base.boudicca.api.eventcollector.dateparser.DateParserResult
-import base.boudicca.api.eventcollector.dateparser.dateParser
+import base.boudicca.api.eventcollector.dateparser.DateParser
 import base.boudicca.api.eventcollector.dateparser.structuredEvent
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
-import base.boudicca.model.structured.dsl.structuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
-import java.time.LocalDateTime
-import java.time.OffsetDateTime
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 
 class SchlachthofCollector : TwoStepEventCollector<Element>("schlachthof") {
 
@@ -28,7 +22,7 @@ class SchlachthofCollector : TwoStepEventCollector<Element>("schlachthof") {
 
     override fun parseMultipleStructuredEvents(event: Element): List<StructuredEvent> {
         val name = event.select("h2").text().trim()
-        val startDate = dateParser { any(event.select("div.event_list_details>p:nth-child(1)").text()) }
+        val startDate = DateParser.parse(event.select("div.event_list_details>p:nth-child(1)").text())
         val url = "https://www.schlachthofwels.at" + event.select("a.block").attr("href")
         val pictureUrl =
             "https://www.schlachthofwels.at" + parsePictureUrl(event.select("div.teaserimage").attr("style"))

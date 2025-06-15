@@ -2,11 +2,11 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
-import base.boudicca.api.eventcollector.dateparser.singleDateParser
+import base.boudicca.api.eventcollector.dateparser.DateParser
+import base.boudicca.api.eventcollector.dateparser.structuredEvent
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.model.Registration
 import base.boudicca.model.structured.StructuredEvent
-import base.boudicca.model.structured.dsl.structuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
@@ -37,7 +37,7 @@ class PosthofCollector : TwoStepEventCollector<String>("posthof") {
         return eventUrls
     }
 
-    override fun parseStructuredEvent(event: String): StructuredEvent {
+    override fun parseMultipleStructuredEvents(event: String): List<StructuredEvent?>? {
         val eventSite: Element = Jsoup.parse(fetcher.fetchUrl(event))
 
         var name = eventSite.select("div.tx-posthof-events>:not(ul) h2 a").textNodes().first().text()
@@ -48,10 +48,7 @@ class PosthofCollector : TwoStepEventCollector<String>("posthof") {
         }
 
         val dateAndTypeSpans = getDateAndTypeSpans(eventSite)
-        val startDate = singleDateParser {
-            dayMonthYear(dateAndTypeSpans[0].text())
-            time(dateAndTypeSpans[1].text())
-        }
+        val startDate = DateParser.parse(dateAndTypeSpans[0].text(), dateAndTypeSpans[1].text())
 
         var description = ""
         val textBlocks = eventSite.select("div.tx-posthof-events>:not(ul)")

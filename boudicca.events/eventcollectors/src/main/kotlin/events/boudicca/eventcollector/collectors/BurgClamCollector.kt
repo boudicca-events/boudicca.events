@@ -2,11 +2,11 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
-import base.boudicca.api.eventcollector.dateparser.singleDateParser
+import base.boudicca.api.eventcollector.dateparser.DateParser
+import base.boudicca.api.eventcollector.dateparser.structuredEvent
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
-import base.boudicca.model.structured.dsl.structuredEvent
 import org.jsoup.Jsoup
 
 class BurgClamCollector : TwoStepEventCollector<String>("burgclam") {
@@ -20,14 +20,12 @@ class BurgClamCollector : TwoStepEventCollector<String>("burgclam") {
             .map { it.attr("href") }
     }
 
-    override fun parseStructuredEvent(event: String): StructuredEvent {
+    override fun parseMultipleStructuredEvents(event: String): List<StructuredEvent?> {
         val eventSite = Jsoup.parse(fetcher.fetchUrl(event))
 
         val name = eventSite.select("h1.eventTitle").text()
         val dateText = eventSite.select("div.eventDate").text()
-        val startDate = singleDateParser {
-            any(dateText)
-        }
+        val startDate = DateParser.parse(dateText)
 
         var description = eventSite.select("section.eventSingle__description").text()
         val lineupElement = eventSite.select("li.lineupList__item")

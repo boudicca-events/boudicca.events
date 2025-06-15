@@ -2,8 +2,8 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.api.eventcollector.dateparser.DateParser
 import base.boudicca.api.eventcollector.dateparser.DateParserResult
-import base.boudicca.api.eventcollector.dateparser.dateParser
 import base.boudicca.api.eventcollector.dateparser.structuredEvent
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
@@ -66,7 +66,7 @@ class SpinnereiCollector : TwoStepEventCollector<String>("spinnerei") {
         val split = text.split(' ', ignoreCase = false, limit = 4)
         check(split.size == 4) { "could not parse type and date from $text" }
 
-        return Pair(dateParser { any(text) }, split[3])
+        return Pair(DateParser.parse(text), split[3])
     }
 
 }

@@ -2,7 +2,7 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.EventCollector
-import base.boudicca.api.eventcollector.dateparser.singleDateParser
+import base.boudicca.api.eventcollector.dateparser.DateParser
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.Registration
@@ -164,16 +164,8 @@ class LinzTermineCollector : EventCollector {
                         findTag(it),
                         it.select("date").map {
                             Pair(
-                                singleDateParser {
-                                    token().year().month().day().hours().minutes().seconds().with(
-                                        it.attr("dFrom")
-                                    )
-                                },
-                                singleDateParser {
-                                    token().year().month().day().hours().minutes().seconds().with(
-                                        it.attr("dTo")
-                                    )
-                                }
+                                DateParser.parse(it.attr("dFrom")).single().startDate,
+                                DateParser.parse(it.attr("dTo")).single().startDate
                             )
                         },
                         it.attr("freeofcharge") == "1",

@@ -2,15 +2,15 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
-import base.boudicca.api.eventcollector.dateparser.singleDateParser
+import base.boudicca.api.eventcollector.dateparser.DateParser
+import base.boudicca.api.eventcollector.dateparser.DateParserResult
+import base.boudicca.api.eventcollector.dateparser.structuredEvent
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
-import base.boudicca.model.structured.dsl.structuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
-import java.time.OffsetDateTime
 
 class ZuckerfabrikCollector : TwoStepEventCollector<String>("zuckerfabrik") {
 
@@ -21,7 +21,7 @@ class ZuckerfabrikCollector : TwoStepEventCollector<String>("zuckerfabrik") {
         return document.select("div#storycontent > a.bookmarklink").map { it.attr("href") }
     }
 
-    override fun parseStructuredEvent(event: String): StructuredEvent {
+    override fun parseMultipleStructuredEvents(event: String): List<StructuredEvent?> {
         val eventSite = Jsoup.parse(fetcher.fetchUrl(event))
 
         var name = eventSite.select("div#storycontent>h2").text()
@@ -31,15 +31,14 @@ class ZuckerfabrikCollector : TwoStepEventCollector<String>("zuckerfabrik") {
             name += " - " + storycontent[0].text()
         }
         val dateIndex = findDateIndex(storycontent)
-        val (startDate, endDate, type) = parseTypeAndDate(storycontent[dateIndex])
+        val (dates, type) = parseTypeAndDate(storycontent[dateIndex])
         val description = ((dateIndex + 1) until storycontent.size).joinToString("\n") { storycontent[it].text() }
 
         val pictureUrl = eventSite.select("div#storycontent img").attr("src")
 
-        return structuredEvent(name, startDate) {
+        return structuredEvent(name, dates) {
             withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(event))
             withProperty(SemanticKeys.TYPE_PROPERTY, type)
-            withProperty(SemanticKeys.ENDDATE_PROPERTY, endDate)
             withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(pictureUrl))
             withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
             withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Zuckerfabrik")
@@ -58,32 +57,11 @@ class ZuckerfabrikCollector : TwoStepEventCollector<String>("zuckerfabrik") {
         error("could not find date index in: $storycontent")
     }
 
-    private fun parseTypeAndDate(element: Element): Triple<OffsetDateTime, OffsetDateTime?, String> {
+    private fun parseTypeAndDate(element: Element): Pair<DateParserResult, String> {
         val split = element.text().split(" am ")
         val type = split[0]
-
-        val dateSplit = split[1].split(",").map { it.trim() }
-        var startTimeString = dateSplit[2]
-        var endTimeString: String? = null
-        if (startTimeString.contains(" - ")) {
-            val timeSplit = startTimeString.split(" - ")
-            startTimeString = timeSplit[0]
-            endTimeString = timeSplit[1]
-        }
-
-        val startDate = singleDateParser {
-            dayMonthYear(dateSplit[1])
-            time(startTimeString)
-        }
-        val endDate = if (endTimeString != null) {
-            singleDateParser {
-                dayMonthYear(dateSplit[1])
-                time(endTimeString)
-            }
-        } else {
-            null
-        }
-        return Triple(startDate, endDate, type)
+        val dates = DateParser.parse(split[1].split(",").map { it.trim() })
+        return Pair(dates, type)
     }
 
 }

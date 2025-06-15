@@ -30,6 +30,9 @@ import java.time.format.DateTimeParseException
 import java.util.BitSet
 import java.util.concurrent.ConcurrentHashMap
 
+private const val SORTING_RATIO = 3
+
+@Suppress("detekt:TooManyFunctions")
 class OptimizingEvaluator(rawEntries: Collection<Entry>) : Evaluator {
 
     private val dateCache = ConcurrentHashMap<String, OffsetDateTime>()
@@ -48,7 +51,7 @@ class OptimizingEvaluator(rawEntries: Collection<Entry>) : Evaluator {
     override fun evaluate(expression: Expression, page: Page): QueryResult {
         val resultSet = evaluateExpression(expression)
         val resultSize = resultSet.cardinality()
-        val orderedResult = if (resultSize > entries.size / 3) {
+        val orderedResult = if (resultSize > entries.size / SORTING_RATIO) {
             // roughly, if the resultset is bigger then a third of the total entries,
             // it is faster to iterate over all entries then to sort the resultset
             entries.filterIndexed { i, _ -> resultSet.get(i) }

@@ -15,6 +15,8 @@ import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Service
 import java.util.concurrent.ConcurrentHashMap
 
+private const val DEFAULT_PAGE_SIZE = 30
+
 @Service
 class QueryService @Autowired constructor(
     private val boudiccaSearchProperties: BoudiccaSearchProperties
@@ -33,7 +35,7 @@ class QueryService @Autowired constructor(
         if (queryDTO.query.isNullOrEmpty()) {
             return ResultDTO(Utils.offset(entries, queryDTO.offset, queryDTO.size), entries.size)
         }
-        return evaluateQuery(queryDTO.query!!, Page(queryDTO.offset ?: 0, queryDTO.size ?: 30))
+        return evaluateQuery(queryDTO.query!!, Page(queryDTO.offset ?: 0, queryDTO.size ?: DEFAULT_PAGE_SIZE))
     }
 
     @EventListener

@@ -1,4 +1,4 @@
-package base.boudicca.enricher_utils
+package base.boudicca.enricherutils
 
 import org.json.JSONArray
 import org.json.JSONObject
@@ -42,6 +42,7 @@ fun main() {
     reader.close()
 }
 
+@Suppress("detekt:MagicNumber")
 fun writeIndex(indexOut: OutputStream, filteredArtists: List<Artist>) {
     val allNames = filteredArtists.mapIndexed { i, artist -> Pair(i, artist.name.lowercase()) }
     val sortedList = allNames.sortedBy { it.second }
@@ -55,8 +56,10 @@ fun writeIndex(indexOut: OutputStream, filteredArtists: List<Artist>) {
     }
 }
 
+private const val MIN_ARTIST_NAME_LENGTH = 3
+
 private fun getFilteredArtists(artists: List<Artist>): List<Artist> {
-    var filtered = artists.filter { it.name.length >= 3 /*&& it.aliases.all { it.length >= 3 }*/ }
+    var filtered = artists.filter { it.name.length >= MIN_ARTIST_NAME_LENGTH /*&& it.aliases.all { it.length >= 3 }*/ }
 
     filtered = filtered.filter { !it.ended }
 

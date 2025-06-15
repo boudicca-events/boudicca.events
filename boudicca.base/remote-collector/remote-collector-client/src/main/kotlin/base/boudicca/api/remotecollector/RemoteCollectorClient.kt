@@ -13,7 +13,7 @@ class RemoteCollectorClient(private val remoteCollectorUrl: String) {
 
     init {
         if (remoteCollectorUrl.isBlank()) {
-            throw IllegalStateException("you need to pass an remoteCollectorUrl!")
+            error("you need to pass an remoteCollectorUrl!")
         }
         val apiClient = ApiClient()
         apiClient.updateBaseUri(remoteCollectorUrl)

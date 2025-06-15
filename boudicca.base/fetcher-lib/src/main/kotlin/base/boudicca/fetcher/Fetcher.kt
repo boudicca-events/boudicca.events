@@ -10,9 +10,13 @@ import java.net.http.HttpResponse.BodyHandlers
 import java.time.Clock
 import java.util.concurrent.Callable
 
+private const val WAIT_TIME_FACTOR = 1.5F
+private const val MIN_WAIT_TIME = 100L
+
 /**
  * THIS CLASS IS NOT THREADSAFE!
  */
+@Suppress("detekt:LongParameterList")
 class Fetcher(
     private val manualSetDelay: Long? = null,
     private val userAgent: String = Constants.USER_AGENT,
@@ -98,9 +102,9 @@ class Fetcher(
         if (lastRequestDuration == 0L) {
             return 0L
         }
-        val waitTime = (lastRequestDuration.toDouble() * 1.5F).toLong()
-        if (waitTime <= 100L) {
-            return 100L
+        val waitTime = (lastRequestDuration.toDouble() * WAIT_TIME_FACTOR).toLong()
+        if (waitTime <= MIN_WAIT_TIME) {
+            return MIN_WAIT_TIME
         }
         return waitTime
     }

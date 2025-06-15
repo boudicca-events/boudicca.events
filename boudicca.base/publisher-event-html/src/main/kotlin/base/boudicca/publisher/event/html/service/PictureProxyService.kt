@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service
 import java.awt.image.BufferedImage
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
+import java.net.HttpURLConnection
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -16,6 +17,11 @@ import java.util.*
 import java.util.concurrent.*
 import javax.imageio.ImageIO
 import kotlin.math.max
+
+private const val WANTED_WIDTH = 300
+private const val WANTED_HEIGHT = 250
+
+private const val HOURS_TO_REFRESH = 22L
 
 @Service
 class PictureProxyService {
@@ -60,7 +66,7 @@ class PictureProxyService {
                 .build()
             val response = httpClient.send(request, BodyHandlers.ofByteArray())
 
-            val optional = if (response.statusCode() != 200) {
+            val optional = if (response.statusCode() != HttpURLConnection.HTTP_OK) {
                 logger.warn { "response code is invalid ${response.statusCode()} for $url" }
                 Optional.empty()
             } else {
@@ -107,8 +113,6 @@ class PictureProxyService {
         return outputStream.toByteArray()
     }
 
-    private val WANTED_WIDTH = 300
-    private val WANTED_HEIGHT = 250
     private fun calcResizedDimensions(width: Int, height: Int): Pair<Int, Int> {
         val widthScaleFactor = WANTED_WIDTH / width.toDouble()
         val heightScaleFactor = WANTED_HEIGHT / height.toDouble()
@@ -143,7 +147,7 @@ class PictureProxyService {
     }
 
     private fun shouldRefresh(dateAdded: Instant): Boolean {
-        return dateAdded.isBefore(Instant.now().minus(22, ChronoUnit.HOURS))
+        return dateAdded.isBefore(Instant.now().minus(HOURS_TO_REFRESH, ChronoUnit.HOURS))
     }
 
 

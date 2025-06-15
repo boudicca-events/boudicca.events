@@ -7,6 +7,7 @@ import base.boudicca.keyfilters.KeyFilters
 import base.boudicca.keyfilters.KeySelector
 import base.boudicca.model.Event
 import base.boudicca.model.structured.dsl.StructuredEventBuilder
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.time.OffsetDateTime
 import java.util.*
 
@@ -14,6 +15,9 @@ import java.util.*
  * represents a parsed event, in the sense that all its keys have been parsed, and it has a lot of methods for filtering/selecting keys
  */
 data class StructuredEvent(val name: String, val startDate: OffsetDateTime, val data: Map<Key, String> = emptyMap()) {
+
+    private val logger = KotlinLogging.logger {}
+
     constructor(event: Event) : this(event.name, event.startDate, KeyUtils.toStructuredKeyValuePairs(event.data))
 
     fun toFlatEvent(): Event {
@@ -45,7 +49,8 @@ data class StructuredEvent(val name: String, val startDate: OffsetDateTime, val 
                 try {
                     val parsedValue = property.parseFromString(it.second)
                     Pair(it.first, parsedValue)
-                } catch (_: IllegalArgumentException) {
+                } catch (e: IllegalArgumentException) {
+                    logger.warn(e) { "error parsing value for key '${it.first}': ${it.second}" }
                     null
                 }
             }

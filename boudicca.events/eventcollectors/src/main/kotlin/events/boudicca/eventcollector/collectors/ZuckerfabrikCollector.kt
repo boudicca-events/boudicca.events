@@ -59,7 +59,7 @@ class ZuckerfabrikCollector : TwoStepEventCollector<String>("zuckerfabrik") {
                 return i
             }
         }
-        throw IllegalStateException("could not find date index in: $storycontent")
+        error("could not find date index in: $storycontent")
     }
 
     private fun parseTypeAndDate(element: Element): Triple<OffsetDateTime, OffsetDateTime?, String> {

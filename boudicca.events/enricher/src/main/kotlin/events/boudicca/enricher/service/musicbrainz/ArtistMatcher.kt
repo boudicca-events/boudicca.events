@@ -2,6 +2,7 @@ package events.boudicca.enricher.service.musicbrainz
 
 import java.nio.ByteBuffer
 
+@Suppress("detekt:MagicNumber")
 class ArtistMatcher(private val artists: List<Artist>, private val index: ByteBuffer) {
     fun findArtists(string: String): List<Artist> {
         if (string.isEmpty()) {

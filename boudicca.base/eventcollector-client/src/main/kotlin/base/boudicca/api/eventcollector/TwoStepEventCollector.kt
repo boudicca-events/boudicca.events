@@ -50,7 +50,10 @@ abstract class TwoStepEventCollector<T>(private val name: String) : EventCollect
     }
 
     open fun parseEvent(event: T): Event? { //can be used by java so make nullable just to make sure
-        throw NotImplementedError("child classes have to either implement parseEvent, parseMultipleEvents, parseStructuredEvent or parseMultipleStructuredEvents")
+        throw NotImplementedError(
+            "child classes have to either implement parseEvent, parseMultipleEvents," +
+                    " parseStructuredEvent or parseMultipleStructuredEvents"
+        )
     }
 
     open fun parseMultipleStructuredEvents(event: T): List<StructuredEvent?>? { //can be used by java so make nullable just to make sure

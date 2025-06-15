@@ -1,13 +1,6 @@
 package base.boudicca.fetcher
 
-import java.io.BufferedInputStream
-import java.io.BufferedOutputStream
-import java.io.DataInputStream
-import java.io.DataOutputStream
-import java.io.EOFException
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
+import java.io.*
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -25,7 +18,7 @@ object NoopFetcherCache : FetcherCache {
     }
 
     override fun getEntry(key: String): String {
-        throw IllegalStateException("noop implementation does not contain $key")
+        error { "noop implementation does not contain $key" }
     }
 
     override fun putEntry(key: String, entry: String) {
@@ -61,7 +54,7 @@ class FileBackedFetcherCache(private val file: File) : FetcherCache {
             }
             loadFile()
         } else {
-            throw IllegalArgumentException("invalid file $file specified")
+            error { "invalid file $file specified" }
         }
     }
 
@@ -79,7 +72,7 @@ class FileBackedFetcherCache(private val file: File) : FetcherCache {
                         cache[key] = entry
                     }
                 }
-        } catch (e: EOFException) {
+        } catch (expected: EOFException) {
             //just means we read all lines, the api of this stream is weird...
         }
     }

@@ -2,6 +2,9 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.api.eventcollector.dateparser.DateParserResult
+import base.boudicca.api.eventcollector.dateparser.dateParser
+import base.boudicca.api.eventcollector.dateparser.structuredEvent
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
@@ -23,9 +26,9 @@ class SchlachthofCollector : TwoStepEventCollector<Element>("schlachthof") {
         return document.select("div.eventitem:not(.pasteventitem)")
     }
 
-    override fun parseStructuredEvent(event: Element): StructuredEvent {
+    override fun parseMultipleStructuredEvents(event: Element): List<StructuredEvent> {
         val name = event.select("h2").text().trim()
-        val startDate = parseDate(event.select("div.event_list_details>p:nth-child(1)").text())
+        val startDate = dateParser { any(event.select("div.event_list_details>p:nth-child(1)").text()) }
         val url = "https://www.schlachthofwels.at" + event.select("a.block").attr("href")
         val pictureUrl =
             "https://www.schlachthofwels.at" + parsePictureUrl(event.select("div.teaserimage").attr("style"))
@@ -45,13 +48,6 @@ class SchlachthofCollector : TwoStepEventCollector<Element>("schlachthof") {
     private fun parsePictureUrl(style: String): String {
         //looks like background-image:url(/uploads/_processed_/b/b/csm_0610_doomsday-clock-90-seconds-to-midnight_0fad0fee80.png)
         return style.substring(21, style.length - 1)
-    }
-
-    private fun parseDate(text: String): OffsetDateTime {
-        return LocalDateTime
-            .parse(text.substring(6), DateTimeFormatter.ofPattern("dd.MM.uu kk:mm"))
-            .atZone(ZoneId.of("Europe/Vienna"))
-            .toOffsetDateTime()
     }
 
 }

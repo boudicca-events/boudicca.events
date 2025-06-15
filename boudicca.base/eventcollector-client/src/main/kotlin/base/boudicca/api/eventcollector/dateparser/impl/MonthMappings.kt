@@ -17,7 +17,10 @@ internal object MonthMappings {
         "dezember" to 12,
     )
 
-    internal fun mapMonthToInt(month: String): Int? {
+    internal fun mapMonthToInt(month: String?): Int? {
+        if (month == null) {
+            return null
+        }
         val lowercaseMonth = month.lowercase()
         for (entry in MONTH_MAPPINGS) {
             if (entry.key.startsWith(lowercaseMonth)) {

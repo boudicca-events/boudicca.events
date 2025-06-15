@@ -1,18 +1,62 @@
 package base.boudicca.api.eventcollector.dateparser.impl
 
-import base.boudicca.api.eventcollector.dateparser.HintType
+import base.boudicca.api.eventcollector.dateparser.DatePair
+import base.boudicca.api.eventcollector.dateparser.DateParserResult
 import base.boudicca.api.eventcollector.dateparser.impl.Guesser.GuesserType
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.ZoneId
 
-internal class Guesser(private val hints: List<HintType>, private val tokens: List<Pair<TokenizerType, String>>) {
 
-    fun guess(): List<Guess> {
-        var guesses = mapAndValidateTokens(tokens)
-        guesses = applyHints(guesses)
-        guesses = applyFormulas(guesses, Formulas.FORMULAS)
-        return guesses //TODO should we filter Anys from here? outside we probably won't do anything with it
+internal class Guesser(private val tokenGroups: List<List<Pair<TokenizerType, String>>>) {
+
+    fun guess(): DateParserResult {
+        val guesses = tokenGroups.map { mapAndValidateTokens(it) }
+            .reduce { acc, guesses -> acc + listOf(Separator) + guesses }
+
+        val chain = buildChain()
+        val result = chain.mutate(Guesses(guesses))
+        if (result != null) {
+            return result
+        }
+        throw IllegalArgumentException("could not solve, blabla") //TODO
     }
 
-    private fun mapAndValidateTokens(tokens: List<Pair<TokenizerType, String>>): List<Guess> {
+    private fun buildChain(): MutatorChain {
+        return FixedPatternStep(CheckIfSolvableStep(null))
+    }
+
+    class CheckIfSolvableStep(val next: MutatorChain?) : MutatorChain {
+        override fun mutate(guess: Guess): DateParserResult? {
+            val result = guess.solve()
+            if (result != null) {
+                return result
+            }
+            if (next != null) {
+                return next.mutate(guess)
+            }
+            return null
+        }
+    }
+
+    class FixedPatternStep(val next: MutatorChain) : MutatorChain {
+        override fun mutate(guess: Guess): DateParserResult? {
+            if (guess is Guesses) {
+                val applied = Patterns.apply(guess.guesses, Patterns.PATTERNS_FIXED)
+                val result = next.mutate(Guesses(applied))
+                if (result != null) {
+                    return result
+                }
+            }
+            return next.mutate(guess)
+        }
+    }
+
+    interface MutatorChain {
+        fun mutate(guess: Guess): DateParserResult?
+    }
+
+    private fun mapAndValidateTokens(tokens: List<Pair<TokenizerType, String>>): List<Component> {
         return tokens.map {
             val possibleTypes = mutableSetOf<GuesserType>()
             if (it.first == TokenizerType.STRING) {
@@ -40,108 +84,115 @@ internal class Guesser(private val hints: List<HintType>, private val tokens: Li
                     }
                 }
             }
-            Any(0, it.second, possibleTypes)
-        }
-    }
-
-    private fun applyFormulas(inputGuesses: List<Guess>, formulas: List<Formulas.Formula>): List<Guess> {
-        var guesses = inputGuesses
-        var result = mutableListOf<Guess>()
-        for (formula in formulas) {
-            var i = 0
-            while (i < guesses.size) {
-                if (i + formula.matchers.size <= guesses.size) {
-                    var formulaMatches = false
-                    var capturedCount = 0
-                    var stepCount = 0
-                    val capturedMatches = mutableListOf<List<Any>>()
-                    var currentCapturedMatches = mutableListOf<Any>()
-                    while (i + capturedCount < guesses.size) {
-                        val guess = guesses[i + capturedCount]
-                        if (guess !is Any) {
-                            break
-                        }
-                        val currentMatcher = formula.matchers[stepCount]
-                        val matches = currentMatcher.matches(guess)
-                        if (!(matches || (currentMatcher.canMatchMultipleTimes && currentCapturedMatches.isNotEmpty()))) {
-                            break
-                        }
-                        if (matches) {
-                            capturedCount++
-                            currentCapturedMatches.add(guess)
-                        }
-                        if (!currentMatcher.canMatchMultipleTimes || !matches) {
-                            capturedMatches.add(currentCapturedMatches)
-                            currentCapturedMatches = mutableListOf()
-                            stepCount++
-                        }
-                        if (stepCount >= formula.matchers.size) {
-                            formulaMatches = true
-                            break
-                        }
-                    }
-                    if (formulaMatches) {
-                        val replacements = formula.replacement(capturedMatches)
-                        result.addAll(replacements)
-                        i += capturedCount
-                        continue
-                    }
-                }
-                result.add(guesses[i])
-                i++
-            }
-            guesses = result
-            result = mutableListOf()
-        }
-        return guesses
-    }
-
-    private fun applyHints(guesserTokens: List<Guess>): List<Guess> {
-        val remainingHints = hints.toMutableList()
-        return guesserTokens.map {
-            val nextHint = remainingHints.firstOrNull()
-            if (nextHint != null) {
-                val guesserTypeFromHint = GuesserType.fromHintType(nextHint)
-                if (guesserTypeFromHint != null && (it is Any) && it.possibleTypes.contains(guesserTypeFromHint)) {
-                    remainingHints.removeFirst()
-                    Any(0, it.value, setOf(guesserTypeFromHint)) //only allow hint
-                } else {
-                    it
-                }
-            } else {
-                it
-            }
+            Any(it.second, possibleTypes)
         }
     }
 
     enum class GuesserType {
         DAY, MONTH, YEAR, HOURS, MINUTES, SECONDS;
+    }
 
-        companion object {
-            fun fromHintType(hintType: HintType): GuesserType? {
-                return when (hintType) {
-                    HintType.ANY -> null
-                    HintType.DAY -> DAY
-                    HintType.MONTH -> MONTH
-                    HintType.YEAR -> YEAR
-                    HintType.HOURS -> HOURS
-                    HintType.MINUTES -> MINUTES
-                    HintType.SECONDS -> SECONDS
-                }
-            }
-        }
+}
+
+internal sealed interface Guess {
+    fun solve(): DateParserResult? {
+        return null
     }
 }
 
-internal sealed class Guess {
-    abstract val confidence: Int
+internal sealed interface Grouper : Guess {
+
 }
 
-internal data class Any(override val confidence: Int, val value: String, val possibleTypes: Set<GuesserType>) : Guess()
+internal sealed interface Component : Guess {
+    fun isSolved(): Boolean {
+        return false
+    }
+}
+
+internal sealed interface SolutionComponent : Component {
+}
+
+internal data object Separator : Component {
+    override fun isSolved(): Boolean {
+        return true
+    }
+}
+
+internal data class Any(val value: String, val possibleTypes: Set<GuesserType>) : Component {
+    override fun isSolved(): Boolean {
+        return possibleTypes.isEmpty()
+    }
+}
+
 internal data class Date(
-    override val confidence: Int, val day: Int, val month: Int, val year: Int
-) : Guess()
+    val day: Int?, val month: Int?, val year: Int?
+) : SolutionComponent {
+    override fun isSolved(): Boolean {
+        return day != null && month != null && year != null
+    }
+
+    fun toLocalDate(): LocalDate {
+        return LocalDate.of(year!!, month!!, day!!)
+    }
+}
 
 internal data class Time(
-    override val confidence: Int, val hours: Int, val minutes: Int, val seconds: Int?
-) : Guess()
+    val hours: Int?, val minutes: Int?, val seconds: Int?
+) : SolutionComponent {
+    override fun isSolved(): Boolean {
+        return hours != null
+    }
+
+    fun toLocalTime(): LocalTime {
+        return LocalTime.of(hours!!, minutes ?: 0, seconds ?: 0)
+    }
+}
+
+internal data class Guesses(val guesses: List<Component>) : Guess {
+
+    override fun solve(): DateParserResult? {
+        var guesses = guesses
+        if (guesses.any { !it.isSolved() }) {
+            if (Patterns.canApplyWithoutCollision(guesses, Patterns.PATTERNS_MAYBES)) {
+                guesses = Patterns.apply(guesses, Patterns.PATTERNS_MAYBES)
+                if (guesses.any { !it.isSolved() }) {
+                    return null
+                }
+            }
+        }
+        val components = getAllSolutionComponents(guesses)
+        if (components.size == 1) {
+            val component = components[0]
+            if (component is Date) {
+                val localDate = component.toLocalDate()
+                val date = localDate.atStartOfDay()
+                    .atZone(ZoneId.of("Europe/Vienna")) //TODO make configurable
+                    .toOffsetDateTime()
+                return DateParserResult(listOf(DatePair(date)))
+            }
+        }
+        if (components.size == 2) {
+            val dates = components.filterIsInstance<Date>()
+            val times = components.filterIsInstance<Time>()
+            if (dates.size == 1 && times.size == 1) {
+                val localDate = dates[0].toLocalDate()
+                val localTime = times[0].toLocalTime()
+                val date =
+                    localDate.atTime(localTime)
+                        .atZone(ZoneId.of("Europe/Vienna")) //TODO make configurable
+                        .toOffsetDateTime()
+                return DateParserResult(listOf(DatePair(date)))
+            }
+        }
+        return null
+    }
+
+    private fun getAllSolutionComponents(guesses: List<Guess>): List<SolutionComponent> {
+        return guesses.filterIsInstance<SolutionComponent>()
+    }
+}
+
+internal data class Grouping(val groups: List<Guesses>) : Grouper {
+
+}

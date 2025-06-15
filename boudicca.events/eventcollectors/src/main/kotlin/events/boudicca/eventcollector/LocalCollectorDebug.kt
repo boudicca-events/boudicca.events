@@ -2,10 +2,7 @@ package events.boudicca.eventcollector
 
 import base.boudicca.api.eventcollector.debugger.EventCollectorDebugger
 import base.boudicca.fetcher.FileBackedFetcherCache
-import events.boudicca.eventcollector.collectors.LandestheaterLinzCollector
-import events.boudicca.eventcollector.collectors.LinzTermineCollector
-import events.boudicca.eventcollector.collectors.MetalCornerCollector
-import events.boudicca.eventcollector.collectors.ViperRoomCollector
+import events.boudicca.eventcollector.collectors.*
 import java.io.File
 
 /**
@@ -39,5 +36,5 @@ fun main() {
 //        .debug(LinzTermineCollector())
 //        .debug(LandestheaterLinzCollector())
 //        .debug(MetalCornerCollector())
-        .debug(ViperRoomCollector())
+        .debug(BrucknerhausCollector())
 }

@@ -6,195 +6,106 @@ internal object Patterns {
     val PATTERNS_FIXED = listOf(
         Pattern(
             listOf(
-                canBe(GuesserType.HOURS),
-                matches("matches a ':' for \"hours:minutes:seconds\"") { it.possibleTypes.isEmpty() && it.value.trim() == ":" },
-                canBe(GuesserType.MINUTES),
-                matches("matches a ':' for \"hours:minutes:seconds\"") { it.possibleTypes.isEmpty() && it.value.trim() == ":" },
-                canBe(GuesserType.SECONDS)
+                type(GuesserType.HOURS),
+                separator(":"),
+                type(GuesserType.MINUTES),
+                separator(":"),
+                type(GuesserType.SECONDS)
             )
-        ) { matches ->
-            listOf(
-                Time(
-                    matches[0].first().value.toInt(),
-                    matches[2].first().value.toInt(),
-                    matches[4].first().value.toInt(),
-                )
-            )
-        },
+        ),
         Pattern(
             listOf(
-                canBe(GuesserType.HOURS),
-                matches("matches a ':' for \"hours:minutes\"") { it.possibleTypes.isEmpty() && it.value.trim() == ":" },
-                canBe(GuesserType.MINUTES)
+                type(GuesserType.HOURS), separator(":"), type(GuesserType.MINUTES)
             )
-        ) { matches ->
-            listOf(
-                Time(
-                    matches[0].first().value.toInt(), matches[2].first().value.toInt(), null
-                )
-            )
-        },
+        ),
         Pattern(
             listOf(
-                canBe(GuesserType.DAY),
-                matches("matches a '.' for \"day.month.year\"") { it.possibleTypes.isEmpty() && it.value.trim() == "." },
-                canBe(GuesserType.MONTH),
-                matches("matches a '.' for \"day.month.year\"") { it.possibleTypes.isEmpty() && it.value.trim() == "." },
-                canBe(GuesserType.YEAR),
+                type(GuesserType.DAY),
+                separator("."),
+                type(GuesserType.MONTH),
+                separator("."),
+                type(GuesserType.YEAR),
             )
-        ) { matches ->
-            listOf(
-                createDate(
-                    matches[0].first(),
-                    matches[2].first(),
-                    matches[4].first(),
-                )
-            )
-        },
+        ),
         Pattern(
             listOf(
-                canBe(GuesserType.YEAR),
-                matches("matches a '-' for \"year-month-day\"") { it.possibleTypes.isEmpty() && it.value.trim() == "-" },
-                canBe(GuesserType.MONTH),
-                matches("matches a '-' for \"year-month-day\"") { it.possibleTypes.isEmpty() && it.value.trim() == "-" },
-                canBe(GuesserType.DAY),
+                type(GuesserType.YEAR),
+                separator("-"),
+                type(GuesserType.MONTH),
+                separator("-"),
+                type(GuesserType.DAY),
             )
-        ) { matches ->
-            listOf(
-                createDate(
-                    matches[4].first(),
-                    matches[2].first(),
-                    matches[0].first(),
-                )
-            )
-        },
+        ),
         Pattern(
             listOf(
-                canBe(GuesserType.MONTH),
-                matches("matches a '/' for \"month/day/year\"") { it.possibleTypes.isEmpty() && it.value.trim() == "/" },
-                canBe(GuesserType.DAY),
-                matches("matches a '/' for \"month/day/year\"") { it.possibleTypes.isEmpty() && it.value.trim() == "/" },
-                canBe(GuesserType.YEAR),
+                type(GuesserType.MONTH),
+                separator("/"),
+                type(GuesserType.DAY),
+                separator("/"),
+                type(GuesserType.YEAR),
             )
-        ) { matches ->
-            listOf(
-                createDate(
-                    matches[2].first(),
-                    matches[0].first(),
-                    matches[4].first(),
-                )
-            )
-        },
+        ),
     )
 
     val PATTERNS_MAYBES = listOf(
         Pattern(
             listOf(
-                canBe(GuesserType.HOURS),
-                canBeNothing(true),
-                canBe(GuesserType.MINUTES),
-                canBeNothing(true),
-                canBe(GuesserType.SECONDS),
+                type(GuesserType.HOURS),
+                noise(true),
+                type(GuesserType.MINUTES),
+                noise(true),
+                type(GuesserType.SECONDS),
             )
-        ) { matches ->
-            listOf(
-                Time(
-                    matches[0].first().value.toInt(),
-                    matches[2].first().value.toInt(),
-                    matches[4].first().value.toInt(),
-                )
-            )
-        },
+        ),
         Pattern(
             listOf(
-                canBe(GuesserType.HOURS),
-                canBeNothing(true),
-                canBe(GuesserType.MINUTES),
+                type(GuesserType.HOURS),
+                noise(true),
+                type(GuesserType.MINUTES),
             )
-        ) { matches ->
-            listOf(
-                Time(
-                    matches[0].first().value.toInt(), matches[2].first().value.toInt(), 0
-                )
-            )
-        },
+        ),
         Pattern(
             listOf(
-                canBe(GuesserType.DAY),
-                canBeNothing(true),
-                canBe(GuesserType.MONTH),
-                canBeNothing(true),
-                canBe(GuesserType.YEAR),
+                type(GuesserType.DAY),
+                noise(true),
+                type(GuesserType.MONTH),
+                noise(true),
+                type(GuesserType.YEAR),
             )
-        ) { matches ->
-            listOf(
-                createDate(
-                    matches[0].first(),
-                    matches[2].first(),
-                    matches[4].first(),
-                )
-            )
-        },
+        ),
         Pattern(
             listOf(
-                canBe(GuesserType.YEAR),
-                canBeNothing(true),
-                canBe(GuesserType.MONTH),
-                canBeNothing(true),
-                canBe(GuesserType.DAY),
+                type(GuesserType.DAY),
+                noise(true),
+                type(GuesserType.MONTH),
             )
-        ) { matches ->
+        ),
+        Pattern(
             listOf(
-                createDate(
-                    matches[4].first(),
-                    matches[2].first(),
-                    matches[0].first(),
-                )
+                type(GuesserType.YEAR),
+                noise(true),
+                type(GuesserType.MONTH),
+                noise(true),
+                type(GuesserType.DAY),
             )
-        },
+        ),
     )
 
-    fun canBe(guesserType: GuesserType, canMatchMultipleTimes: Boolean = false): Matcher {
-        return CanBeMatcher(canMatchMultipleTimes, guesserType)
+    fun type(guesserType: GuesserType, canMatchMultipleTimes: Boolean = false): Matcher {
+        return TypeMatcher(canMatchMultipleTimes, guesserType)
     }
 
-    fun canBeNothing(canMatchMultipleTimes: Boolean = false): Matcher {
-        return CanBeNothingMatcher(canMatchMultipleTimes)
+    fun noise(canMatchMultipleTimes: Boolean = false): Matcher {
+        return NoiseMatcher(canMatchMultipleTimes)
     }
 
-    fun matches(
-        description: String, canMatchMultipleTimes: Boolean = false, condition: (Any) -> Boolean
+    fun separator(
+        separator: String, canMatchMultipleTimes: Boolean = false
     ): Matcher {
-        return ConditionMatcher(canMatchMultipleTimes, description, condition)
+        return SeparatorMatcher(canMatchMultipleTimes, separator)
     }
 
-    fun createDate(
-        day: Any, month: Any?, year: Any?
-    ): Date {
-        //TODO error catching?
-        return Date(
-            day.value.toInt(),
-            if (month != null)
-                month.value.toIntOrNull()
-                    ?: MonthMappings.mapMonthToInt(month.value)
-                    ?: throw IllegalArgumentException("blaa")
-            else
-                null,
-            if (year != null) fixYear(year.value.toInt()) else null
-        )
-    }
-
-    private fun fixYear(year: Int): Int {
-        return if (year < 70) { //we get some problems in the year 2070 with this...
-            2000 + year
-        } else if (year < 100) {
-            1900 + year
-        } else {
-            year
-        }
-    }
-
-    internal class Pattern(val matchers: List<Matcher>, val replacement: (List<List<Any>>) -> List<Component>) {
+    internal class Pattern(val matchers: List<Matcher>) {
         override fun toString(): String {
             return "Pattern(matchers=$matchers)"
         }
@@ -202,37 +113,20 @@ internal object Patterns {
 
     internal sealed class Matcher {
         abstract val canMatchMultipleTimes: Boolean
-        abstract fun matches(any: Any): Boolean
     }
 
-    internal data class CanBeNothingMatcher(
+    internal data class NoiseMatcher(
         override val canMatchMultipleTimes: Boolean,
-    ) : Matcher() {
-        override fun matches(any: Any): Boolean {
-            return any.possibleTypes.isEmpty()
-        }
-    }
+    ) : Matcher()
 
-    internal data class CanBeMatcher(
+    internal data class TypeMatcher(
         override val canMatchMultipleTimes: Boolean, val guesserType: GuesserType
-    ) : Matcher() {
-        override fun matches(any: Any): Boolean {
-            return any.possibleTypes.contains(guesserType)
-        }
-    }
+    ) : Matcher()
 
-    internal class ConditionMatcher(
-        override val canMatchMultipleTimes: Boolean, val description: String, //only useful for debugging purposes
-        val condition: (Any) -> Boolean
-    ) : Matcher() {
-        override fun matches(any: Any): Boolean {
-            return condition(any)
-        }
+    internal data class SeparatorMatcher(
+        override val canMatchMultipleTimes: Boolean, val separator: String
+    ) : Matcher()
 
-        override fun toString(): String {
-            return "ConditionMatcher(canMatchMultipleTimes=$canMatchMultipleTimes, description='$description')"
-        }
-    }
 
     //TODO this code is fugly
     fun apply(inputGuesses: List<Component>, patterns: List<Pattern>): List<Component> {
@@ -253,7 +147,7 @@ internal object Patterns {
                             break
                         }
                         val currentMatcher = pattern.matchers[stepCount]
-                        val matches = currentMatcher.matches(guess)
+                        val matches = matches(currentMatcher, guess)
                         if (!(matches || (currentMatcher.canMatchMultipleTimes && currentCapturedMatches.isNotEmpty()))) {
                             break
                         }
@@ -272,7 +166,7 @@ internal object Patterns {
                         }
                     }
                     if (patternMatches) {
-                        val replacements = pattern.replacement(capturedMatches)
+                        val replacements = replacement(pattern, capturedMatches)
                         result.addAll(replacements)
                         i += capturedCount
                         continue
@@ -288,62 +182,60 @@ internal object Patterns {
     }
 
     fun canApplyWithoutCollision(guesses: List<Component>, patterns: List<Pattern>): Boolean {
-        val matchedRanges = mutableListOf<Pair<Int, Int>>()
+        if (patterns.isEmpty()) {
+            return false
+        }
+
+        val results = mutableListOf<List<Component>>()
         for (pattern in patterns) {
-            var i = 0
-            while (i < guesses.size) {
-                if (i + pattern.matchers.size <= guesses.size) {
-                    var patternMatches = false
-                    var capturedCount = 0
-                    var stepCount = 0
-                    var currentStepMatched = false
-                    while (i + capturedCount < guesses.size) {
-                        val guess = guesses[i + capturedCount]
-                        if (guess !is Any) {
-                            break
-                        }
-                        val currentMatcher = pattern.matchers[stepCount]
-                        val matches = currentMatcher.matches(guess)
-                        if (!(matches || (currentMatcher.canMatchMultipleTimes && currentStepMatched))) {
-                            break
-                        }
-                        if (matches) {
-                            capturedCount++
-                            currentStepMatched = true
-                        }
-                        if (!currentMatcher.canMatchMultipleTimes || !matches) {
-                            stepCount++
-                        }
-                        if (stepCount >= pattern.matchers.size) {
-                            patternMatches = true
-                            break
-                        }
-                    }
-                    if (patternMatches) {
-                        matchedRanges.add(Pair(i, i + capturedCount - 1))
-                        i += capturedCount
+            results.add(apply(guesses, listOf(pattern)))
+        }
+
+        for (guessIndex in results[0].indices) {
+            for (resultIndex1 in results.indices) {
+                for (resultIndex2 in results.indices) {
+                    if (resultIndex1 == resultIndex2) {
                         continue
                     }
-                }
-                i++
-            }
-        }
-        for (i1 in matchedRanges.indices) {
-            for (i2 in matchedRanges.indices) {
-                if (i1 == i2) {
-                    continue
-                }
-                val r1 = matchedRanges[i1]
-                val r2 = matchedRanges[i2]
-                if (r1.first <= r2.first && r1.second >= r2.second) {
-                    return false
-                }
-                if (r1.first >= r2.first && r1.first <= r2.second) {
-                    return false
+                    val resultGuess1 = results[resultIndex1][guessIndex]
+                    val resultGuess2 = results[resultIndex2][guessIndex]
+                    if (resultGuess1 is Any && resultGuess2 is Any && resultGuess1.possibleTypes.isNotEmpty() && resultGuess2.possibleTypes.isNotEmpty()) {
+                        if (resultGuess1.possibleTypes.intersect(resultGuess2.possibleTypes).isEmpty()) {
+                            return false
+                        }
+                    }
                 }
             }
         }
+
         return true
+    }
+
+    private fun matches(matcher: Matcher, guess: Component): Boolean {
+        return when (matcher) {
+            is TypeMatcher -> guess is Any && guess.possibleTypes.contains(matcher.guesserType)
+            is NoiseMatcher -> guess !is Any || guess.possibleTypes.isEmpty()
+            is SeparatorMatcher -> guess is Any && guess.possibleTypes.isEmpty() && guess.value.trim() == matcher.separator
+        }
+    }
+
+    private fun replacement(pattern: Pattern, capturedComponents: List<List<Component>>): List<Component> {
+        check(pattern.matchers.size == capturedComponents.size)
+        return pattern.matchers.zip(capturedComponents).map { replacement(it.first, it.second) }.flatten()
+    }
+
+    private fun replacement(matcher: Matcher, components: List<Component>): List<Component> {
+        return when (matcher) {
+            is TypeMatcher -> components.map {
+                if (it is Any) {
+                    Any(it.value, setOf(matcher.guesserType))
+                } else {
+                    it
+                }
+            }
+
+            else -> components
+        }
     }
 
 }

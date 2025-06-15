@@ -9,89 +9,80 @@ class PatternsTest {
     fun testSimple() {
         val result = Patterns.apply(
             listOf(
-                Any("12", setOf(Guesser.GuesserType.DAY)),
-                Any("04", setOf(Guesser.GuesserType.MONTH)),
+                Any("12", setOf(Guesser.GuesserType.DAY, Guesser.GuesserType.HOURS)),
+                Any("04", setOf(Guesser.GuesserType.MONTH, Guesser.GuesserType.MINUTES)),
                 Any("2025", setOf(Guesser.GuesserType.YEAR)),
             ), listOf(
                 Patterns.Pattern(
                     listOf(
-                        Patterns.canBe(Guesser.GuesserType.DAY),
-                        Patterns.canBe(Guesser.GuesserType.MONTH),
-                        Patterns.canBe(Guesser.GuesserType.YEAR),
+                        Patterns.type(Guesser.GuesserType.DAY),
+                        Patterns.type(Guesser.GuesserType.MONTH),
+                        Patterns.type(Guesser.GuesserType.YEAR),
                     )
-                ) { matches ->
-                    listOf(
-                        Patterns.createDate(
-                            matches[0].first(),
-                            matches[1].first(),
-                            matches[2].first()
-                        )
-                    )
-                })
+                )
+            )
         )
 
-        assertThat(result).size().isEqualTo(1)
-        assertThat(result).first().isInstanceOf(Date::class)
+        assertThat(result).isEqualTo(
+            listOf(
+                Any("12", setOf(Guesser.GuesserType.DAY)),
+                Any("04", setOf(Guesser.GuesserType.MONTH)),
+                Any("2025", setOf(Guesser.GuesserType.YEAR)),
+            )
+        )
     }
 
     @Test
     fun testSimpleNotMatch() {
-        val result = Patterns.apply(
-            listOf(
-                Any("12", setOf(Guesser.GuesserType.DAY)),
-                Any("2025", setOf(Guesser.GuesserType.YEAR)),
-            ), listOf(
-                Patterns.Pattern(
-                    listOf(
-                        Patterns.canBe(Guesser.GuesserType.DAY),
-                        Patterns.canBe(Guesser.GuesserType.MONTH),
-                        Patterns.canBe(Guesser.GuesserType.YEAR),
-                    )
-                ) { matches ->
-                    listOf(
-                        Patterns.createDate(
-                            matches[0].first(),
-                            matches[1].first(),
-                            matches[2].first()
-                        )
-                    )
-                })
+        val input = listOf(
+            Any("12", setOf(Guesser.GuesserType.DAY)),
+            Any("2025", setOf(Guesser.GuesserType.YEAR)),
         )
 
-        assertThat(result).size().isEqualTo(2)
-        assertThat(result).first().isInstanceOf(Any::class)
-        assertThat(result).transform { it[1] }.isInstanceOf(Any::class)
+        val result = Patterns.apply(
+            input, listOf(
+                Patterns.Pattern(
+                    listOf(
+                        Patterns.type(Guesser.GuesserType.DAY),
+                        Patterns.type(Guesser.GuesserType.MONTH),
+                        Patterns.type(Guesser.GuesserType.YEAR),
+                    )
+                )
+            )
+        )
+
+        assertThat(result).isEqualTo(input)
     }
 
     @Test
     fun testMultipleMatchApply() {
         val result = Patterns.apply(
             listOf(
+                Any("12", setOf(Guesser.GuesserType.DAY, Guesser.GuesserType.HOURS)),
+                Any(".", setOf()),
+                Any(".", setOf()),
+                Any(".", setOf()),
+                Any("2025", setOf(Guesser.GuesserType.YEAR, Guesser.GuesserType.SECONDS)),
+            ), listOf(
+                Patterns.Pattern(
+                    listOf(
+                        Patterns.type(Guesser.GuesserType.DAY),
+                        Patterns.noise(true),
+                        Patterns.type(Guesser.GuesserType.YEAR),
+                    )
+                )
+            )
+        )
+
+        assertThat(result).isEqualTo(
+            listOf(
                 Any("12", setOf(Guesser.GuesserType.DAY)),
                 Any(".", setOf()),
                 Any(".", setOf()),
                 Any(".", setOf()),
                 Any("2025", setOf(Guesser.GuesserType.YEAR)),
-            ), listOf(
-                Patterns.Pattern(
-                    listOf(
-                        Patterns.canBe(Guesser.GuesserType.DAY),
-                        Patterns.canBeNothing(true),
-                        Patterns.canBe(Guesser.GuesserType.YEAR),
-                    )
-                ) { matches ->
-                    listOf(
-                        Patterns.createDate(
-                            matches[0].first(),
-                            Any("10", setOf()),
-                            matches[2].first()
-                        )
-                    )
-                })
+            )
         )
-
-        assertThat(result).size().isEqualTo(1)
-        assertThat(result).first().isInstanceOf(Date::class)
     }
 
     @Test
@@ -103,14 +94,15 @@ class PatternsTest {
             ), listOf(
                 Patterns.Pattern(
                     listOf(
-                        Patterns.canBe(Guesser.GuesserType.DAY),
+                        Patterns.type(Guesser.GuesserType.DAY),
                     )
-                ) { _ -> listOf() },
+                ),
                 Patterns.Pattern(
                     listOf(
-                        Patterns.canBe(Guesser.GuesserType.YEAR),
+                        Patterns.type(Guesser.GuesserType.YEAR),
                     )
-                ) { _ -> listOf() })
+                )
+            )
         )
 
         assertThat(result).isTrue()
@@ -124,14 +116,15 @@ class PatternsTest {
             ), listOf(
                 Patterns.Pattern(
                     listOf(
-                        Patterns.canBe(Guesser.GuesserType.DAY),
+                        Patterns.type(Guesser.GuesserType.DAY),
                     )
-                ) { _ -> listOf() },
+                ),
                 Patterns.Pattern(
                     listOf(
-                        Patterns.canBe(Guesser.GuesserType.YEAR),
+                        Patterns.type(Guesser.GuesserType.YEAR),
                     )
-                ) { _ -> listOf() })
+                )
+            )
         )
 
         assertThat(result).isFalse()
@@ -146,21 +139,22 @@ class PatternsTest {
             ), listOf(
                 Patterns.Pattern(
                     listOf(
-                        Patterns.canBe(Guesser.GuesserType.DAY),
+                        Patterns.type(Guesser.GuesserType.DAY),
                     )
-                ) { _ -> listOf() },
+                ),
                 Patterns.Pattern(
                     listOf(
-                        Patterns.canBe(Guesser.GuesserType.YEAR),
+                        Patterns.type(Guesser.GuesserType.YEAR),
                     )
-                ) { _ -> listOf() })
+                )
+            )
         )
 
         assertThat(result).isFalse()
     }
 
     @Test
-    fun testCanApplyWithoutCollisionNo3() {
+    fun testCanApplyWithoutCollisionYes2() {
         val result = Patterns.canApplyWithoutCollision(
             listOf(
                 Any("12", setOf(Guesser.GuesserType.DAY)),
@@ -169,16 +163,42 @@ class PatternsTest {
             ), listOf(
                 Patterns.Pattern(
                     listOf(
-                        Patterns.canBe(Guesser.GuesserType.DAY),
-                        Patterns.canBe(Guesser.GuesserType.MONTH),
+                        Patterns.type(Guesser.GuesserType.DAY),
+                        Patterns.type(Guesser.GuesserType.MONTH),
                     )
-                ) { _ -> listOf() },
+                ),
                 Patterns.Pattern(
                     listOf(
-                        Patterns.canBe(Guesser.GuesserType.MONTH),
-                        Patterns.canBe(Guesser.GuesserType.YEAR),
+                        Patterns.type(Guesser.GuesserType.MONTH),
+                        Patterns.type(Guesser.GuesserType.YEAR),
                     )
-                ) { _ -> listOf() })
+                )
+            )
+        )
+
+        assertThat(result).isTrue()
+    }
+
+    @Test
+    fun testCanApplyWithoutCollisionNo3() {
+        val result = Patterns.canApplyWithoutCollision(
+            listOf(
+                Any("12", setOf(Guesser.GuesserType.DAY, Guesser.GuesserType.HOURS)),
+                Any("10", setOf(Guesser.GuesserType.MONTH, Guesser.GuesserType.MINUTES)),
+            ), listOf(
+                Patterns.Pattern(
+                    listOf(
+                        Patterns.type(Guesser.GuesserType.DAY),
+                        Patterns.type(Guesser.GuesserType.MONTH),
+                    )
+                ),
+                Patterns.Pattern(
+                    listOf(
+                        Patterns.type(Guesser.GuesserType.HOURS),
+                        Patterns.type(Guesser.GuesserType.MINUTES),
+                    )
+                )
+            )
         )
 
         assertThat(result).isFalse()

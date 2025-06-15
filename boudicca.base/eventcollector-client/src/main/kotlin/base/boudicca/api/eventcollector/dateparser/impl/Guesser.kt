@@ -11,8 +11,8 @@ import java.time.ZoneId
 internal class Guesser(private val tokenGroups: List<List<Pair<TokenizerType, String>>>) {
 
     fun guess(): DateParserResult {
-        val guesses = tokenGroups.map { mapAndValidateTokens(it) }
-            .reduce { acc, guesses -> acc + listOf(Separator) + guesses }
+        val guesses =
+            tokenGroups.map { mapAndValidateTokens(it) }.reduce { acc, guesses -> acc + listOf(Separator) + guesses }
 
         val chain = buildChain()
         val result = chain.mutate(Guesses(guesses))
@@ -104,13 +104,8 @@ internal sealed interface Grouper : Guess {
 
 }
 
-internal sealed interface Component : Guess {
-    fun isSolved(): Boolean {
-        return false
-    }
-}
-
-internal sealed interface SolutionComponent : Component {
+internal sealed interface Component {
+    fun isSolved(): Boolean
 }
 
 internal data object Separator : Component {
@@ -121,7 +116,13 @@ internal data object Separator : Component {
 
 internal data class Any(val value: String, val possibleTypes: Set<GuesserType>) : Component {
     override fun isSolved(): Boolean {
-        return possibleTypes.isEmpty()
+        return possibleTypes.size <= 1
+    }
+}
+
+internal sealed interface SolutionComponent {
+    fun isSolved(): Boolean {
+        return false
     }
 }
 
@@ -135,6 +136,31 @@ internal data class Date(
     fun toLocalDate(): LocalDate {
         return LocalDate.of(year!!, month!!, day!!)
     }
+
+    companion object {
+        fun create(
+            day: Any, month: Any?, year: Any?
+        ): Date {
+            //TODO error catching?
+            return Date(
+                day.value.toInt(),
+                if (month != null) month.value.toIntOrNull() ?: MonthMappings.mapMonthToInt(month.value)
+                ?: throw IllegalArgumentException("blaa")
+                else null,
+                if (year != null) fixYear(year.value.toInt()) else null
+            )
+        }
+
+        private fun fixYear(year: Int): Int {
+            return if (year < 70) { //we get some problems in the year 2070 with this...
+                2000 + year
+            } else if (year < 100) {
+                1900 + year
+            } else {
+                year
+            }
+        }
+    }
 }
 
 internal data class Time(
@@ -146,6 +172,19 @@ internal data class Time(
 
     fun toLocalTime(): LocalTime {
         return LocalTime.of(hours!!, minutes ?: 0, seconds ?: 0)
+    }
+
+    companion object {
+        fun create(
+            hours: Any, minutes: Any?, seconds: Any?
+        ): Time {
+            //TODO error catching?
+            return Time(
+                hours.value.toInt(),
+                minutes?.value?.toInt(),
+                seconds?.value?.toInt(),
+            )
+        }
     }
 }
 
@@ -159,15 +198,19 @@ internal data class Guesses(val guesses: List<Component>) : Guess {
                 if (guesses.any { !it.isSolved() }) {
                     return null
                 }
+            } else {
+                return null
             }
         }
         val components = getAllSolutionComponents(guesses)
+        if (components.any { !it.isSolved() }) {
+            return null
+        }
         if (components.size == 1) {
             val component = components[0]
             if (component is Date) {
                 val localDate = component.toLocalDate()
-                val date = localDate.atStartOfDay()
-                    .atZone(ZoneId.of("Europe/Vienna")) //TODO make configurable
+                val date = localDate.atStartOfDay().atZone(ZoneId.of("Europe/Vienna")) //TODO make configurable
                     .toOffsetDateTime()
                 return DateParserResult(listOf(DatePair(date)))
             }
@@ -178,18 +221,59 @@ internal data class Guesses(val guesses: List<Component>) : Guess {
             if (dates.size == 1 && times.size == 1) {
                 val localDate = dates[0].toLocalDate()
                 val localTime = times[0].toLocalTime()
-                val date =
-                    localDate.atTime(localTime)
-                        .atZone(ZoneId.of("Europe/Vienna")) //TODO make configurable
-                        .toOffsetDateTime()
+                val date = localDate.atTime(localTime).atZone(ZoneId.of("Europe/Vienna")) //TODO make configurable
+                    .toOffsetDateTime()
                 return DateParserResult(listOf(DatePair(date)))
             }
         }
         return null
     }
 
-    private fun getAllSolutionComponents(guesses: List<Guess>): List<SolutionComponent> {
-        return guesses.filterIsInstance<SolutionComponent>()
+    private fun getAllSolutionComponents(guesses: List<Component>): List<SolutionComponent> {
+        val result = mutableListOf<SolutionComponent>()
+
+        val anys = guesses.filterIsInstance<Any>().filter { it.possibleTypes.size == 1 }.toMutableList()
+        while (anys.isNotEmpty()) {
+            val next = anys.removeFirst()
+            if (next.possibleTypes == setOf(GuesserType.DAY)) {
+                val month = anys.removeFirstOrNull()
+                if (month?.possibleTypes == setOf(GuesserType.MONTH)) {
+                    val year = anys.removeFirstOrNull()
+                    if (year?.possibleTypes == setOf(GuesserType.YEAR)) {
+                        result.add(Date.create(next, month, year))
+                    } else {
+                        result.add(Date.create(next, month, null))
+                    }
+                } else {
+                    result.add(Date.create(next, null, null))
+                }
+            }
+            if (next.possibleTypes == setOf(GuesserType.YEAR)) {
+                val month = anys.removeFirstOrNull()
+                if (month?.possibleTypes == setOf(GuesserType.MONTH)) {
+                    val day = anys.removeFirstOrNull()
+                    if (day?.possibleTypes == setOf(GuesserType.DAY)) {
+                        result.add(Date.create(day, month, next))
+                    }
+                }
+            }
+            if (next.possibleTypes == setOf(GuesserType.HOURS)) {
+                val minutes = anys.removeFirstOrNull()
+                if (minutes?.possibleTypes == setOf(GuesserType.MINUTES)) {
+                    val seconds = anys.removeFirstOrNull()
+                    if (seconds?.possibleTypes == setOf(GuesserType.SECONDS)) {
+                        result.add(Time.create(next, minutes, seconds))
+                    } else {
+                        result.add(Time.create(next, minutes, null))
+                    }
+                } else {
+                    result.add(Time.create(next, null, null))
+                }
+            }
+        }
+
+
+        return result
     }
 }
 

@@ -80,15 +80,15 @@ internal object Patterns {
                 type(GuesserType.MONTH),
             )
         ),
-        Pattern(
-            listOf(
-                type(GuesserType.YEAR),
-                noise(true),
-                type(GuesserType.MONTH),
-                noise(true),
-                type(GuesserType.DAY),
-            )
-        ),
+//        Pattern(
+//            listOf(
+//                type(GuesserType.YEAR),
+//                noise(true),
+//                type(GuesserType.MONTH),
+//                noise(true),
+//                type(GuesserType.DAY),
+//            )
+//        ),
     )
 
     fun type(guesserType: GuesserType, canMatchMultipleTimes: Boolean = false): Matcher {

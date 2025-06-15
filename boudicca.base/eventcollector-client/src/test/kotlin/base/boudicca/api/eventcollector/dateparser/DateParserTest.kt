@@ -81,7 +81,7 @@ class DateParserTest {
             testDate("10.04.1992 10:05", "1992-04-10T10:05+02:00"),
             testDate("10 04 1992  10:05", "1992-04-10T10:05+02:00"),
             //TODO more variations of grouping
-            
+
             //range tests
             testDate("Di. 17.06.2025 09:00 - 10:00 Uhr", pair("2025-06-17T09:00+02:00", "2025-06-17T10:00+02:00")),
             testDate(
@@ -125,7 +125,7 @@ class DateParserTest {
     @FieldSource("testDates")
     fun testDateParser(testCase: Pair<List<String>, List<DatePair>>) {
         val (actual, expected) = testCase
-        val result = DateParser(actual).parse()
+        val result = DateParser.parse(actual)
         assertThat(result.dates.size).isEqualTo(expected.size)
         for (i in expected.indices) {
             assertThat(result.dates[i].startDate).isEqualTo(expected[i].startDate)

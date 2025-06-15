@@ -11,8 +11,8 @@ import java.time.ZoneId
 internal class Guesser(private val tokenGroups: List<List<Pair<TokenizerType, String>>>) {
 
     fun guess(): DateParserResult {
-        val guesses =
-            tokenGroups.map { mapAndValidateTokens(it) }.reduce { acc, guesses -> acc + listOf(Separator) + guesses }
+        val guesses = tokenGroups.map { mapAndValidateTokens(it) }
+            .reduce { acc, guesses -> acc + listOf(Separator(10000)) + guesses }
 
         val chain = buildChain()
         val result = chain.mutate(Guesses(guesses))
@@ -23,7 +23,7 @@ internal class Guesser(private val tokenGroups: List<List<Pair<TokenizerType, St
     }
 
     private fun buildChain(): MutatorChain {
-        return FixedPatternStep(CheckIfSolvableStep(null))
+        return FixedPatternStep(CheckIfSolvableStep(GroupingStep(CheckIfSolvableStep(null))))
     }
 
     class CheckIfSolvableStep(val next: MutatorChain?) : MutatorChain {
@@ -49,6 +49,92 @@ internal class Guesser(private val tokenGroups: List<List<Pair<TokenizerType, St
                 }
             }
             return next.mutate(guess)
+        }
+    }
+
+    class GroupingStep(val next: MutatorChain) : MutatorChain {
+        override fun mutate(guess: Guess): DateParserResult? {
+            var result = next.mutate(guess)
+            if (result != null) {
+                return result
+            }
+            if (guess is Guesses) {
+                val joinedSeparatorsList = joinAllSeparators(guess)
+                val allSeparatorValues = collectSeparatorValues(joinedSeparatorsList)
+                for (separatorThreshold in allSeparatorValues) {
+                    val groups = mutableListOf<Guesses>()
+                    var currentGroup = mutableListOf<Component>()
+                    for (component in joinedSeparatorsList) {
+                        when (component) {
+                            is Separator -> {
+                                if (component.weight >= separatorThreshold) {
+                                    if (currentGroup.isNotEmpty()) {
+                                        groups.add(Guesses(currentGroup))
+                                        currentGroup = mutableListOf()
+                                    }
+                                } else {
+                                    currentGroup.add(component)
+                                }
+                            }
+
+                            else -> currentGroup.add(component)
+                        }
+                    }
+                    if (currentGroup.isNotEmpty()) {
+                        groups.add(Guesses(currentGroup))
+                    }
+                    result = next.mutate(Grouping(groups))
+                    if (result != null) {
+                        return result
+                    }
+                }
+            }
+            return null
+        }
+
+        private fun joinAllSeparators(guess: Guesses): List<Component> {
+            val result = mutableListOf<Component>()
+            var currentSeparatorWeight = 0
+
+            for (component in guess.guesses) {
+                when (component) {
+                    is Separator -> currentSeparatorWeight += component.weight
+                    is Any -> {
+                        if (component.possibleTypes.isEmpty()) {
+                            currentSeparatorWeight += calculateSeparatorWeight(component.value)
+                        } else {
+                            if (currentSeparatorWeight > 0) {
+                                if (result.isNotEmpty()) {
+                                    result.add(Separator(currentSeparatorWeight))
+                                }
+                                currentSeparatorWeight = 0
+                            }
+                            result.add(component)
+                        }
+                    }
+                }
+            }
+
+            return result
+        }
+
+        private fun calculateSeparatorWeight(value: String): Int {
+            return value.map {
+                when (it) {
+                    '.', '-', '/', ':' -> 1
+                    ' ' -> 2
+                    else -> 3
+                }
+            }.sum()
+        }
+
+        private fun collectSeparatorValues(components: List<Component>): List<Int> {
+            return components.asSequence()
+                .filterIsInstance<Separator>()
+                .map { it.weight }
+                .distinct()
+                .sortedDescending()
+                .toList()
         }
     }
 
@@ -108,7 +194,7 @@ internal sealed interface Component {
     fun isSolved(): Boolean
 }
 
-internal data object Separator : Component {
+internal data class Separator(val weight: Int) : Component {
     override fun isSolved(): Boolean {
         return true
     }
@@ -188,48 +274,25 @@ internal data class Time(
     }
 }
 
-internal data class Guesses(val guesses: List<Component>) : Guess {
+internal class Guesses(inputGuesses: List<Component>) : Guess {
 
-    override fun solve(): DateParserResult? {
-        var guesses = guesses
-        if (guesses.any { !it.isSolved() }) {
-            if (Patterns.canApplyWithoutCollision(guesses, Patterns.PATTERNS_MAYBES)) {
-                guesses = Patterns.apply(guesses, Patterns.PATTERNS_MAYBES)
-                if (guesses.any { !it.isSolved() }) {
-                    return null
-                }
-            } else {
-                return null
-            }
-        }
-        val components = getAllSolutionComponents(guesses)
-        if (components.any { !it.isSolved() }) {
-            return null
-        }
-        if (components.size == 1) {
-            val component = components[0]
-            if (component is Date) {
-                val localDate = component.toLocalDate()
-                val date = localDate.atStartOfDay().atZone(ZoneId.of("Europe/Vienna")) //TODO make configurable
-                    .toOffsetDateTime()
-                return DateParserResult(listOf(DatePair(date)))
-            }
-        }
-        if (components.size == 2) {
-            val dates = components.filterIsInstance<Date>()
-            val times = components.filterIsInstance<Time>()
-            if (dates.size == 1 && times.size == 1) {
-                val localDate = dates[0].toLocalDate()
-                val localTime = times[0].toLocalTime()
-                val date = localDate.atTime(localTime).atZone(ZoneId.of("Europe/Vienna")) //TODO make configurable
-                    .toOffsetDateTime()
-                return DateParserResult(listOf(DatePair(date)))
-            }
-        }
-        return null
+    val guesses = if (inputGuesses.any { !it.isSolved() } && Patterns.canApplyWithoutCollision(
+            inputGuesses, Patterns.PATTERNS_MAYBES
+        )) {
+        Patterns.apply(inputGuesses, Patterns.PATTERNS_MAYBES)
+    } else {
+        inputGuesses
     }
 
-    private fun getAllSolutionComponents(guesses: List<Component>): List<SolutionComponent> {
+    override fun solve(): DateParserResult? {
+        if (guesses.any { !it.isSolved() }) {
+            return null
+        }
+        val components = getAllSolutionComponents()
+        return buildDateParserResultFromComponents(components)
+    }
+
+    fun getAllSolutionComponents(): List<SolutionComponent> {
         val result = mutableListOf<SolutionComponent>()
 
         val anys = guesses.filterIsInstance<Any>().filter { it.possibleTypes.size == 1 }.toMutableList()
@@ -275,8 +338,105 @@ internal data class Guesses(val guesses: List<Component>) : Guess {
 
         return result
     }
+
+    fun isInteresting(): Boolean {
+        return guesses.any { it is Any && it.possibleTypes.isNotEmpty() }
+    }
 }
 
-internal data class Grouping(val groups: List<Guesses>) : Grouper {
+internal data class Grouping(val inputGroups: List<Guesses>) : Grouper {
+    override fun solve(): DateParserResult? {
+        val groups = inputGroups.filter { it.isInteresting() }
+        if (groups.size == 1) {
+            return groups.single().solve()
+        }
+        if (groups.size != 2) {
+            //dunno how to handle this
+            return null
+        }
+        val left = groups[0]
+        val right = groups[1]
 
+        var leftComponents = left.getAllSolutionComponents().filter { it.isSolved() }
+        var rightComponents = right.getAllSolutionComponents().filter { it.isSolved() }
+
+        if (leftComponents.isEmpty() && rightComponents.isEmpty()) {
+            return null
+        }
+        if (leftComponents.size > 1 || rightComponents.size > 1) {
+            return null
+        }
+        if (leftComponents.isEmpty()) {
+            val rightResult = rightComponents.single()
+            leftComponents = retryWithContext(rightResult, left)
+            if (leftComponents.size != 1 || !leftComponents.single().isSolved()) {
+                return null
+            }
+        }
+        if (rightComponents.isEmpty()) {
+            val leftResult = leftComponents.single()
+            rightComponents = retryWithContext(leftResult, right)
+            if (rightComponents.size != 1 || !rightComponents.single().isSolved()) {
+                return null
+            }
+        }
+        return buildDateParserResultFromComponents(leftComponents + rightComponents)
+    }
+
+    private fun retryWithContext(
+        solutionComponent: SolutionComponent, guessesToRetry: Guesses
+    ): List<SolutionComponent> {
+        return when (solutionComponent) {
+            is Date -> {
+                removeTypesFromGuesses(
+                    guessesToRetry, setOf(GuesserType.DAY, GuesserType.MONTH, GuesserType.YEAR)
+                )
+            }
+
+            is Time -> {
+                removeTypesFromGuesses(
+                    guessesToRetry, setOf(GuesserType.HOURS, GuesserType.MINUTES, GuesserType.SECONDS)
+                )
+            }
+        }.getAllSolutionComponents()
+    }
+
+    private fun removeTypesFromGuesses(guesses: Guesses, types: Set<GuesserType>): Guesses {
+        return Guesses(guesses.guesses.map {
+            if (it is Any) {
+                Any(
+                    it.value, it.possibleTypes.minus(types)
+                )
+            } else {
+                it
+            }
+        })
+    }
+}
+
+private fun buildDateParserResultFromComponents(components: List<SolutionComponent>): DateParserResult? {
+    if (components.any { !it.isSolved() }) {
+        return null
+    }
+    if (components.size == 1) {
+        val component = components[0]
+        if (component is Date) {
+            val localDate = component.toLocalDate()
+            val date = localDate.atStartOfDay().atZone(ZoneId.of("Europe/Vienna")) //TODO make configurable
+                .toOffsetDateTime()
+            return DateParserResult(listOf(DatePair(date)))
+        }
+    }
+    if (components.size == 2) {
+        val dates = components.filterIsInstance<Date>()
+        val times = components.filterIsInstance<Time>()
+        if (dates.size == 1 && times.size == 1) {
+            val localDate = dates[0].toLocalDate()
+            val localTime = times[0].toLocalTime()
+            val date = localDate.atTime(localTime).atZone(ZoneId.of("Europe/Vienna")) //TODO make configurable
+                .toOffsetDateTime()
+            return DateParserResult(listOf(DatePair(date)))
+        }
+    }
+    return null
 }

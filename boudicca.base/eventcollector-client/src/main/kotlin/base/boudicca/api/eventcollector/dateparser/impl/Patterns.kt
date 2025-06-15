@@ -139,13 +139,10 @@ internal object Patterns {
                     var patternMatches = false
                     var capturedCount = 0
                     var stepCount = 0
-                    val capturedMatches = mutableListOf<List<Any>>()
-                    var currentCapturedMatches = mutableListOf<Any>()
+                    val capturedMatches = mutableListOf<List<Component>>()
+                    var currentCapturedMatches = mutableListOf<Component>()
                     while (i + capturedCount < guesses.size) {
                         val guess = guesses[i + capturedCount]
-                        if (guess !is Any) {
-                            break
-                        }
                         val currentMatcher = pattern.matchers[stepCount]
                         val matches = matches(currentMatcher, guess)
                         if (!(matches || (currentMatcher.canMatchMultipleTimes && currentCapturedMatches.isNotEmpty()))) {

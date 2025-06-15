@@ -66,9 +66,10 @@ class DateParserTest {
 
 
             //grouping tests
-            //TODO how to detect only day.month or only day? how to make patterns which do not block itself
             testDate(listOf("25.04.1992", "10.05"), "1992-04-25T10:05+02:00"),
             testDate(listOf("10 04 1992", "10:05"), "1992-04-10T10:05+02:00"),
+            testDate("10.04.1992 10:05", "1992-04-10T10:05+02:00"),
+            testDate("10 04 1992  10:05", "1992-04-10T10:05+02:00"),
             //TODO more variations of grouping
 
 

@@ -2,19 +2,20 @@
 <html lang="de-AT">
     {{#> layout/head title="Boudicca Map" }}
         <link rel="stylesheet" href="leaflet/leaflet.css" />
+        <link rel="stylesheet" href="css/map.css">
         <script src="leaflet/leaflet.js"></script>
+        <script src="js/map.js"></script>
+        <script src="js/main.js"></script>
+        <script src="js/menu.js"></script>
     {{/layout/head}}
 
     <body>
         <div id="content-anchor" class="content">
-            {{> layout/header_links}}
-            {{#> layout/header}}
-            {{/layout/header}}
+            {{#> layout/header}}{{/layout/header}}
+            {{> layout/drawer}}
             {{> layout/map events}}
             {{> layout/footer}}
             {{> layout/modal}}
         </div>
-
-        <script src="js/map.js"></script>
     </body>
 </html>

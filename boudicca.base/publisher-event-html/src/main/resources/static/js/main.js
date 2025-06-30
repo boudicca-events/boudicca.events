@@ -16,6 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const closeMenuButton = document.getElementById("closeMenuButton");
   const header = document.querySelector("header");
   const accessibilityFlags = document.getElementsByName("flags");
+  const map = document.getElementById("map");
 
 
   const openModal = (content) => {
@@ -47,9 +48,11 @@ document.addEventListener("DOMContentLoaded", () => {
     event.stopPropagation();
   });
 
-  loadMoreButton.addEventListener("click", () => {
-    onLoadMoreSearch();
-  });
+  if (loadMoreButton != null) {
+      loadMoreButton.addEventListener("click", () => {
+        onLoadMoreSearch();
+      });
+  }
 
   resetSearchFormButton.addEventListener("click", () => {
     // toggle the checked labels to hide the chips before the rest of the form is reset
@@ -171,7 +174,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const goToSearch = (paramsAsString) => {
     window.dispatchEvent(new CustomEvent("searchChanged", {detail: paramsAsString}))
-    goTo(`/search?${paramsAsString}`);
+    if (map != null){
+        goTo(`/map?${paramsAsString}`);
+        window.location.reload();
+    } else {
+        goTo(`/search?${paramsAsString}`);
+    }
   };
 
   const goTo = (url) => {
@@ -263,9 +271,11 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const response = await fetch(apiUrl);
       const ssrDomEventString = await response.text();
-      eventsContainer.innerHTML = ssrDomEventString;
-      onSearchButtonBehaviour(ssrDomEventString);
-      initModals(eventsContainer.querySelectorAll(".event"));
+      if (eventsContainer != null){
+        eventsContainer.innerHTML = ssrDomEventString;
+        onSearchButtonBehaviour(ssrDomEventString);
+        initModals(eventsContainer.querySelectorAll(".event"));
+      }
       goToSearch(paramsAsString);
     } catch (e) {
       console.error(e);

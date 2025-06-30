@@ -13,4 +13,5 @@ dependencies {
     implementation(project(":boudicca.base:ingest-client"))
     implementation(project(":boudicca.base:enricher-client"))
     implementation(project(":boudicca.base:remote-collector:remote-collector-client"))
+    testImplementation("org.junit.jupiter:junit-jupiter-params")
 }

@@ -1,0 +1,32 @@
+package base.boudicca.api.eventcollector.dateparser.impl
+
+internal object MonthMappings {
+    private val MONTH_MAPPINGS = mapOf(
+        "januar" to 1,
+        "jänner" to 1,
+        "februar" to 2,
+        "märz" to 3,
+        "april" to 4,
+        "mai" to 5,
+        "juni" to 6,
+        "juli" to 7,
+        "august" to 8,
+        "september" to 9,
+        "oktober" to 10,
+        "november" to 11,
+        "dezember" to 12,
+    )
+
+    internal fun mapMonthToInt(month: String?): Int? {
+        if (month == null) {
+            return null
+        }
+        val lowercaseMonth = month.lowercase()
+        for (entry in MONTH_MAPPINGS) {
+            if (entry.key.startsWith(lowercaseMonth)) {
+                return entry.value
+            }
+        }
+        return null
+    }
+}

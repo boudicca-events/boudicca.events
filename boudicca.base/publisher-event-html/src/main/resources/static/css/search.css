@@ -37,7 +37,7 @@ legend {
     margin-bottom: 12px;
 }
 
-input[type=checkbox] {
+#drawer input[type=checkbox] {
     margin: 0px 8px 0px -2px;
 }
 

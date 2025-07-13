@@ -34,7 +34,6 @@ nb-configuration.xml
 *.rej
 
 # Local environment
-.env
 testdata.dump
 /boudicca.store
 /fetcher.cache

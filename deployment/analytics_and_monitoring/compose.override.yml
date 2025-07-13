@@ -1,0 +1,28 @@
+services:
+  plausible:
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.boudicca-plausible.rule=Host(`plausible.monitoring.boudicca.events`)"
+      - "traefik.http.routers.boudicca-plausible.entrypoints=websecure"
+      - "traefik.http.routers.boudicca-plausible.tls.certresolver=myresolver"
+  traefik:
+    image: traefik:v3
+    command:
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
+      - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
+      #- "--certificatesresolvers.myresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+      - "--certificatesresolvers.myresolver.acme.email=team@boudicca.events"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /letsencrypt
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: always

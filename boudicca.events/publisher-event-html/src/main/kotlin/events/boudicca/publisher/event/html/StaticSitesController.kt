@@ -29,6 +29,12 @@ class StaticSitesController {
         val data: MutableMap<String, Any> = HashMap()
         return ModelAndView("erklarung-zur-barrierefreiheit", data)
     }
+
+    @GetMapping("/data-privacy")
+    fun getDataPrivacy(): ModelAndView {
+        val data: MutableMap<String, Any> = HashMap()
+        return ModelAndView("data_privacy", data)
+    }
 }
 
 @Component
@@ -37,6 +43,7 @@ class BoudiccaEventsExtension : Extension {
         return listOf(
             HeaderExtension("Über uns", "/about"),
             HeaderExtension("Impressum", "/impressum"),
+            HeaderExtension("Data Privacy", "/data-privacy"),
             HeaderExtension("GitHub", "https://github.com/boudicca-events/boudicca.events", "_blank"),
         )
     }

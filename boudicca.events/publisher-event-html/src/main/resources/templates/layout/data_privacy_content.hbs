@@ -1,0 +1,56 @@
+<style>
+    .home-link {
+        margin-top: 24px;
+        display: inline-block;
+    }
+
+    .col-2 {
+        display: flex;
+        justify-content: space-between;
+        gap: 24px;
+        align-items: center;
+    }
+
+    @media only screen and (max-width: 700px) {
+        .col-2 {
+            flex-direction: column;
+        }
+    }
+
+    .about-content {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+    }
+
+    .about-content p {
+        margin-top: 10px;
+    }
+
+    @media only screen and (max-width: 700px) {
+        h1 > span {
+            display: none;
+        }
+    }
+</style>
+{{#> layout/header title="Data Privacy" }}{{/layout/header}}
+<main id="#main-content" class="main">
+    <div class="about-content">
+        <div>
+            <h2>Datenschutz</h2>
+            <p>
+                Wir sammeln anonymisierte Besucherdaten damit wir sehen können ob unsere Seite auch wirklich verwendet
+                wird :)
+            </p>
+            <p>
+                Wir speichern keine Benutzerbezogenen Daten und auch keine IP Adressen, alle Daten die wir sammeln
+                sind öffentlich unter
+                <a target="_blank" href="https://plausible.monitoring.boudicca.events/boudicca.events">https://plausible.monitoring.boudicca.events/boudicca.events</a>
+                zu sehen
+            </p>
+
+        </div>
+    </div>
+
+    <a href="/" target="_self" class="home-link">Zur Einstiegsseite</a>
+</main>

@@ -9,5 +9,5 @@ dependencies {
 }
 
 docker {
-    imageName = "boudicca-events-publisher-event-html"
+    imageName = "events-publisher-event-html"
 }

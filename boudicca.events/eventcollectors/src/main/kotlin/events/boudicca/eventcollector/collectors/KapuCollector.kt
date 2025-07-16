@@ -2,17 +2,14 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.dateparser.dateparser.DateParser
+import base.boudicca.dateparser.dateparser.DateParserResult
+import base.boudicca.api.eventcollector.util.structuredEvent
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
-import base.boudicca.model.structured.dsl.structuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
-import java.time.LocalDateTime
-import java.time.OffsetDateTime
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.util.*
 
 class KapuCollector : TwoStepEventCollector<String>("kapu") {
 
@@ -24,7 +21,7 @@ class KapuCollector : TwoStepEventCollector<String>("kapu") {
             .map { it.attr("about") }
     }
 
-    override fun parseStructuredEvent(event: String): StructuredEvent {
+    override fun parseMultipleStructuredEvents(event: String): List<StructuredEvent?> {
         val url = "https://www.kapu.or.at$event"
         val eventSite = Jsoup.parse(fetcher.fetchUrl(url))
 
@@ -61,16 +58,10 @@ class KapuCollector : TwoStepEventCollector<String>("kapu") {
         }
     }
 
-    private fun parseDate(element: Element): OffsetDateTime {
+    private fun parseDate(element: Element): DateParserResult {
         val fullDateTime = element.select("article.event > div.container div.wob:nth-child(1)").text()
 
-        val split = fullDateTime.split(". ", ignoreCase = true, limit = 2)
-        val dateTime = split[1]
-
-        return LocalDateTime.parse(
-            dateTime,
-            DateTimeFormatter.ofPattern("dd.LL.uuuu - kk:mm").withLocale(Locale.GERMAN)
-        ).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
+        return DateParser.parse(fullDateTime)
     }
 
 }

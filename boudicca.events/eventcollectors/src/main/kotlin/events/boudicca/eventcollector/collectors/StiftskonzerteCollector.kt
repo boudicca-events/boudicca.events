@@ -3,16 +3,13 @@ package events.boudicca.eventcollector.collectors
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
+import base.boudicca.api.eventcollector.util.structuredEvent
+import base.boudicca.dateparser.dateparser.DateParser
+import base.boudicca.dateparser.dateparser.DateParserResult
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
-import base.boudicca.model.structured.dsl.structuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
-import java.time.LocalDate
-import java.time.LocalTime
-import java.time.OffsetDateTime
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 
 class StiftskonzerteCollector : TwoStepEventCollector<String>("stiftskonzerte") {
 
@@ -28,7 +25,7 @@ class StiftskonzerteCollector : TwoStepEventCollector<String>("stiftskonzerte") 
             }
     }
 
-    override fun parseStructuredEvent(event: String): StructuredEvent {
+    override fun parseMultipleStructuredEvents(event: String): List<StructuredEvent?>? {
         val eventSite = Jsoup.parse(fetcher.fetchUrl(event))
         val name = eventSite.select("header.entry-header h1").text()
 
@@ -60,15 +57,9 @@ class StiftskonzerteCollector : TwoStepEventCollector<String>("stiftskonzerte") 
         }
     }
 
-    private fun parseDate(element: Element, locationAndTime: List<String>): OffsetDateTime {
+    private fun parseDate(element: Element, locationAndTime: List<String>): DateParserResult {
         val fullDate = element.select("div.entry-content div.date").text()
-        val date = fullDate.split(", ")[1]
-        val time = locationAndTime[0].replace(" Uhr", "")
-
-        val localDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("dd.LL.uuuu"))
-        val localTime = LocalTime.parse(time, DateTimeFormatter.ofPattern("kk.mm"))
-
-        return localDate.atTime(localTime).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
+        return DateParser.parse(fullDate, locationAndTime[0])
     }
 
 }

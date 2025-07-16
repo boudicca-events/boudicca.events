@@ -25,6 +25,11 @@ class EventCollectorDebugger(
     val startWebUi: Boolean = true,
 ) {
 
+    init {
+        CollectionsFilter.alsoLog = true
+        FetcherFactory.disableRetries = true
+    }
+
     private var runnerIngestionInterface: RunnerIngestionInterface? = null
     private var runnerEnricherInterface: RunnerEnricherInterface? = null
     private val allEvents = mutableListOf<Event>()
@@ -69,7 +74,6 @@ class EventCollectorDebugger(
     }
 
     fun debug(eventCollector: EventCollector): EventCollectorDebugger {
-        CollectionsFilter.alsoLog = true
         val eventCollectorAsList = listOf(eventCollector)
         val collectedEvents = mutableListOf<Event>()
 

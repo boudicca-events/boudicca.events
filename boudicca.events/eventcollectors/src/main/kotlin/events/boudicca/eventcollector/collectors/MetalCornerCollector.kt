@@ -2,16 +2,14 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.dateparser.dateparser.DateParser
+import base.boudicca.api.eventcollector.util.structuredEvent
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.EventCategory
 import base.boudicca.model.Registration
 import base.boudicca.model.structured.StructuredEvent
-import base.boudicca.model.structured.dsl.structuredEvent
 import org.jsoup.Jsoup
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.util.*
 
 class MetalCornerCollector : TwoStepEventCollector<Pair<String, String>>("metalcorner") {
 
@@ -35,17 +33,14 @@ class MetalCornerCollector : TwoStepEventCollector<Pair<String, String>>("metalc
         return eventUrls
     }
 
-    override fun parseStructuredEvent(event: Pair<String, String>): StructuredEvent {
+    override fun parseMultipleStructuredEvents(event: Pair<String, String>): List<StructuredEvent?>? {
         val (eventType, url) = event
 
         val document = Jsoup.parse(fetcher.fetchUrl(baseUrl + url))
 
         val name = document.select("div#content h1").text()
 
-        val formatter = DateTimeFormatter.ofPattern("EEEE, dd.MM.yyyy HH:mm", Locale.GERMAN)
-        val zoneId = TimeZone.getTimeZone("Europe/Vienna").toZoneId()
-        val eventStartDate = LocalDateTime.parse(document.select("div#content h2").text(), formatter)
-            .atZone(zoneId).toOffsetDateTime()
+        val eventStartDate = DateParser.parse(document.select("div#content h2").text())
 
         return structuredEvent(name, eventStartDate) {
             withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, document.select("div#content p").text())

@@ -24,7 +24,8 @@ class Fetcher(
     private val sleeper: Sleeper = Sleeper { ms -> Thread.sleep(ms) },
     private val httpClient: HttpClientWrapper = createDefaultHttpClientWrapper(userAgent),
     private val eventListeners: List<FetcherEventListener> = emptyList(),
-    private val fetcherCache: FetcherCache = NoopFetcherCache
+    private val fetcherCache: FetcherCache = NoopFetcherCache,
+    private val disableRetries: Boolean = false
 ) {
     private val logger = KotlinLogging.logger {}
 
@@ -63,7 +64,7 @@ class Fetcher(
 
     private fun executeRequest(url: String, content: String?, request: Callable<Pair<Int, String>>): String {
         doSleep()
-        val response = retry(logger, sleeper) {
+        val response = retry {
             eventListeners.forEach { it.callStarted(url, content) }
             val start = clock.millis()
 
@@ -85,6 +86,14 @@ class Fetcher(
             response
         }
         return response.second
+    }
+
+    private fun <T> retry(function: () -> T): T {
+        return if (disableRetries) {
+            function()
+        } else {
+            retry(logger, sleeper, function)
+        }
     }
 
     private fun doSleep() {

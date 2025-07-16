@@ -3,16 +3,13 @@ package events.boudicca.eventcollector.collectors
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
+import base.boudicca.api.eventcollector.util.structuredEvent
+import base.boudicca.dateparser.dateparser.DateParser
+import base.boudicca.dateparser.dateparser.DateParserResult
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
-import base.boudicca.model.structured.dsl.structuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
-import java.time.LocalDate
-import java.time.LocalTime
-import java.time.OffsetDateTime
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 
 class OKHVoecklabruckCollector : TwoStepEventCollector<Pair<String, String>>("okhvoecklabruck") {
     private val fetcher = FetcherFactory.newFetcher()
@@ -32,7 +29,7 @@ class OKHVoecklabruckCollector : TwoStepEventCollector<Pair<String, String>>("ok
         return events
     }
 
-    override fun parseStructuredEvent(event: Pair<String, String>): StructuredEvent {
+    override fun parseMultipleStructuredEvents(event: Pair<String, String>): List<StructuredEvent?>? {
         val (eventUrl, eventType) = event
         val url = baseUrl + eventUrl
         val eventSite = Jsoup.parse(fetcher.fetchUrl(url))
@@ -43,7 +40,7 @@ class OKHVoecklabruckCollector : TwoStepEventCollector<Pair<String, String>>("ok
         val locationInfo = eventSite.select("p.ort").text()
         val accessibleEntry = locationInfo.contains("Barrierefreier Zugang")
 
-        return structuredEvent(name, dates.first) {
+        return structuredEvent(name, dates) {
             withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(url))
             withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(url))
             withProperty(SemanticKeys.TYPE_PROPERTY, eventType)
@@ -56,49 +53,18 @@ class OKHVoecklabruckCollector : TwoStepEventCollector<Pair<String, String>>("ok
             withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse(baseUrl))
             withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Vöcklabruck")
             withProperty(SemanticKeys.ACCESSIBILITY_ACCESSIBLEENTRY_PROPERTY, accessibleEntry)
-            withProperty(SemanticKeys.ENDDATE_PROPERTY, dates.second)
         }
     }
 
-    private fun parseDates(element: Element): Pair<OffsetDateTime, OffsetDateTime?> {
+    private fun parseDates(element: Element): DateParserResult {
         val fullDateTime = element.select("div.box_datum p")
 
         val dateText = fullDateTime[0].text()
-
-        val (startDate, endDate) =
-            if (dateText.contains("-")) {
-                //start from: 09.-11.05.24
-                //["09.", "11.05.24"]
-                val split = dateText.split("-").map { it.trim() }
-                //["11", "05.24"]
-                val secondSplit = split[1].split(".", limit = 2)
-
-                val dayStart = split[0].substring(0, split[0].length - 1)
-                val dayEnd = secondSplit[0]
-                Pair(
-                    LocalDate.parse(
-                        "${dayStart}.${secondSplit[1]}",
-                        DateTimeFormatter.ofPattern("dd.MM.uu")
-                    ),
-                    LocalDate.parse(
-                        "${dayEnd}.${secondSplit[1]}",
-                        DateTimeFormatter.ofPattern("dd.MM.uu")
-                    ),
-                )
-            } else {
-                Pair(LocalDate.parse(dateText, DateTimeFormatter.ofPattern("dd.MM.uu")), null)
-            }
-
-
-        val time = if (fullDateTime.size > 1 && fullDateTime[1].text().isNotBlank()) fullDateTime[1].text()
-            .split("Beginn: ", "Einlass: ")[1].split(" Uhr")[0] else "00:00"
-        val localTime = LocalTime.parse(time, DateTimeFormatter.ofPattern("kk:mm"))
-
-
-        return Pair(
-            startDate.atTime(localTime).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime(),
-            endDate?.atTime(localTime)?.atZone(ZoneId.of("Europe/Vienna"))?.toOffsetDateTime()
-        )
+        return if (fullDateTime.size > 1 && fullDateTime[1].textNodes().isNotEmpty()) {
+            DateParser.parse(dateText, fullDateTime[1].textNodes().first().text())
+        } else {
+            DateParser.parse(dateText)
+        }
     }
 
 }

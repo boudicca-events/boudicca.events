@@ -3,17 +3,14 @@ package events.boudicca.eventcollector.collectors
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
+import base.boudicca.api.eventcollector.util.structuredEvent
+import base.boudicca.dateparser.dateparser.DateParser
+import base.boudicca.dateparser.dateparser.DateParserResult
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
-import base.boudicca.model.structured.dsl.structuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
-import java.time.LocalDate
-import java.time.LocalTime
-import java.time.OffsetDateTime
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 
 class OteloLinzCollector : TwoStepEventCollector<String>("otelolinz") {
 
@@ -25,11 +22,10 @@ class OteloLinzCollector : TwoStepEventCollector<String>("otelolinz") {
             .map { it.attr("href") }
     }
 
-    override fun parseStructuredEvent(event: String): StructuredEvent {
+    override fun parseMultipleStructuredEvents(event: String): List<StructuredEvent?>? {
         val eventSite = Jsoup.parse(fetcher.fetchUrl(event))
 
         val name = eventSite.select("div.article-inner h1").text()
-        val (startDate, endDate) = parseDates(eventSite)
 
         val img = eventSite.select("div.entry-content img")
         val pictureUrl = if (!img.isEmpty()) {
@@ -38,9 +34,8 @@ class OteloLinzCollector : TwoStepEventCollector<String>("otelolinz") {
             null
         }
 
-        return structuredEvent(name, startDate) {
+        return structuredEvent(name, parseDates(eventSite)) {
             withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(event))
-            withProperty(SemanticKeys.ENDDATE_PROPERTY, endDate)
             withProperty(SemanticKeys.TYPE_PROPERTY, "technology")
             withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, getDescription(eventSite))
             withProperty(SemanticKeys.PICTURE_URL_PROPERTY, pictureUrl)
@@ -73,36 +68,11 @@ class OteloLinzCollector : TwoStepEventCollector<String>("otelolinz") {
         return sb.toString()
     }
 
-    private fun parseDates(element: Element): Pair<OffsetDateTime, OffsetDateTime?> {
-        val fullDate = element.select("div#em-event-6>p").first()!!.textNodes()[1].text().trim()
-        val date = fullDate.substring(fullDate.length - 10)
-        val localDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("dd.LL.uuuu"))
+    private fun parseDates(element: Element): DateParserResult {
+        val dateText = element.select("div#em-event-6>p").first()!!.textNodes()[1].text().trim()
+        val timeText = element.select("div#em-event-6>p").first()!!.select("i").text()
 
-        val startAndEndTimeText = element.select("div#em-event-6>p").first()!!.select("i").text()
-        if (startAndEndTimeText == "0:00") {
-            return Pair(
-                localDate.atStartOfDay().atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime(),
-                null
-            )
-        }
-
-        val startAndEndTimes = startAndEndTimeText.split(" - ")
-
-        val localStartTime = LocalTime.parse(startAndEndTimes[0].trim(), DateTimeFormatter.ofPattern("kk:mm"))
-        val localEndTime = if (startAndEndTimes.size > 1) {
-            LocalTime.parse(startAndEndTimes[1].trim(), DateTimeFormatter.ofPattern("kk:mm"))
-        } else {
-            null
-        }
-
-        return Pair(
-            localDate.atTime(localStartTime).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime(),
-            if (localEndTime != null) {
-                localDate.atTime(localEndTime).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
-            } else {
-                null
-            }
-        )
+        return DateParser.parse(dateText, timeText)
     }
 
 }

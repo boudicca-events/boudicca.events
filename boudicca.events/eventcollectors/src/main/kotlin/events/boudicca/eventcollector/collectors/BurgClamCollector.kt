@@ -2,16 +2,12 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.dateparser.dateparser.DateParser
+import base.boudicca.api.eventcollector.util.structuredEvent
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
-import base.boudicca.model.structured.dsl.structuredEvent
 import org.jsoup.Jsoup
-import java.time.LocalDate
-import java.time.OffsetDateTime
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.util.*
 
 class BurgClamCollector : TwoStepEventCollector<String>("burgclam") {
     private val fetcher = FetcherFactory.newFetcher()
@@ -24,12 +20,12 @@ class BurgClamCollector : TwoStepEventCollector<String>("burgclam") {
             .map { it.attr("href") }
     }
 
-    override fun parseStructuredEvent(event: String): StructuredEvent {
+    override fun parseMultipleStructuredEvents(event: String): List<StructuredEvent?> {
         val eventSite = Jsoup.parse(fetcher.fetchUrl(event))
 
         val name = eventSite.select("h1.eventTitle").text()
         val dateText = eventSite.select("div.eventDate").text()
-        val startDate = parseDate(dateText)
+        val startDate = DateParser.parse(dateText)
 
         var description = eventSite.select("section.eventSingle__description").text()
         val lineupElement = eventSite.select("li.lineupList__item")
@@ -49,20 +45,4 @@ class BurgClamCollector : TwoStepEventCollector<String>("burgclam") {
             withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Burg Clam")
         }
     }
-
-    private fun parseDate(dateText: String): OffsetDateTime {
-        var fixedDateText = dateText.replace("Jänner", "Januar")
-            .replace("JULI", "Juli") //why the heck is this case sensitive
-        if (fixedDateText.contains(", ")) {
-            fixedDateText = fixedDateText.split(", ")[1]
-        }
-
-        val date = LocalDate.parse(
-            fixedDateText,
-            DateTimeFormatter.ofPattern("d. LLL uuuu").withLocale(Locale.GERMAN)
-        )
-
-        return date.atStartOfDay().atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
-    }
-
 }

@@ -2,18 +2,14 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.dateparser.dateparser.DateParser
+import base.boudicca.dateparser.dateparser.DateParserResult
+import base.boudicca.api.eventcollector.util.structuredEvent
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
-import base.boudicca.model.structured.dsl.structuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
-import java.time.LocalDate
-import java.time.LocalTime
-import java.time.OffsetDateTime
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.util.*
 
 class ViperRoomCollector : TwoStepEventCollector<String>("viperroom") {
 
@@ -26,7 +22,7 @@ class ViperRoomCollector : TwoStepEventCollector<String>("viperroom") {
             .map { it.attr("href") }
     }
 
-    override fun parseStructuredEvent(event: String): StructuredEvent {
+    override fun parseMultipleStructuredEvents(event: String): List<StructuredEvent?>? {
         val eventSite = Jsoup.parse(fetcher.fetchUrl(event))
 
         val name = eventSite.select("h1.entry-title").text()
@@ -62,17 +58,9 @@ class ViperRoomCollector : TwoStepEventCollector<String>("viperroom") {
         }
     }
 
-    private fun parseDate(event: Element): OffsetDateTime {
-
+    private fun parseDate(event: Element): DateParserResult {
         val fullDateText = event.select("p.event_time").textNodes()[0].text()
-        val dateText = fullDateText.split(", ")[1].trim()
-
         val fullTimeText = event.select("span.event_doors").text()
-        val timeText = fullTimeText.removePrefix("Doors open ").trim()
-
-        val localDate = LocalDate.parse(dateText, DateTimeFormatter.ofPattern("dd.MM.uuuu", Locale.GERMAN))
-        val localTime = LocalTime.parse(timeText, DateTimeFormatter.ofPattern("kk:mm"))
-
-        return localDate.atTime(localTime).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
+        return DateParser.parse(fullDateText, fullTimeText)
     }
 }

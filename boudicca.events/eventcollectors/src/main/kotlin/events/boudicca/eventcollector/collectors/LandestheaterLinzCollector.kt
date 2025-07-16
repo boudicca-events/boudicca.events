@@ -2,36 +2,39 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.dateparser.dateparser.DateParser
+import base.boudicca.dateparser.dateparser.DateParserResult
+import base.boudicca.api.eventcollector.util.structuredEvent
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.fetcher.Fetcher
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
 import base.boudicca.model.structured.dsl.StructuredEventBuilder
-import base.boudicca.model.structured.dsl.structuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import java.time.LocalDate
-import java.time.LocalTime
-import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.util.*
 
 class LandestheaterLinzCollector :
     TwoStepEventCollector<LandestheaterLinzCollector.LandestheaderEventData>("landestheater linz") {
 
-    data class LandestheaderEventData(val eventItem: Element, val document: Pair<String, Document>, val date: LocalDate)
+    data class LandestheaderEventData(
+        val eventItem: Element,
+        val document: Pair<String, Document>,
+        val dateText: String
+    )
 
     override fun getAllUnparsedEvents(): List<LandestheaderEventData> {
         val fetcher = FetcherFactory.newFetcher()
-        val events = mutableListOf<Triple<Element, String, LocalDate>>()
+        val events = mutableListOf<Triple<Element, String, String>>()
 
         val document = fetchList(fetcher)
         document.select("section")
             .forEach { section ->
                 //sections
-                val date = parseDateFromSection(section)
+                val dateText = section.select("div.lth-section-title > div.lth-evitem-date > span.lth-book").text()
                 section.select("div.lth-section-content > div.lth-evitem")
                     .forEach { evitem ->
                         val link = evitem.select("div.lth-evitem-title > a")
@@ -40,7 +43,7 @@ class LandestheaterLinzCollector :
                         val linkRef = link.attr("data-lth-ref")
                         val url =
                             "https://www.landestheater-linz.at/stuecke/detail?EventSetID=${linkEventSetId}&ref=${linkRef}&spielzeit=${linkSeason}"
-                        events.add(Triple(evitem, url, date))
+                        events.add(Triple(evitem, url, dateText))
                     }
             }
 
@@ -66,12 +69,6 @@ class LandestheaterLinzCollector :
         }
     }
 
-    private fun parseDateFromSection(section: Element): LocalDate {
-        val dateText = section.select("div.lth-section-title > div.lth-evitem-date > span.lth-book").text()
-        val cleanedUpText = dateText.replace("Jänner", "Januar") //java does not parse Jänner...
-        return LocalDate.parse(cleanedUpText, DateTimeFormatter.ofPattern("dd. MMMM uuuu", Locale.GERMAN))
-    }
-
     private fun fetchList(fetcher: Fetcher): Document {
         val nowDate = LocalDate.now(ZoneId.of("Europe/Vienna"))
         val toDate = nowDate.plusMonths(6)
@@ -86,20 +83,19 @@ class LandestheaterLinzCollector :
         )
     }
 
-    override fun parseStructuredEvent(event: LandestheaderEventData): StructuredEvent {
+    override fun parseMultipleStructuredEvents(event: LandestheaderEventData): List<StructuredEvent?>? {
         val (overview, site, date) = event
 
         val name = overview.select("div.lth-evitem-title > a").text()
 
-        val (startDate, endDate) = parseDates(overview, date)
+        val dates = parseDates(overview, date)
 
         val locationName =
             site.second.select("div.lth-layout-ctr > div > div > span > span").get(1).text().substring(11).trim()
 
-        val structuredEvent = structuredEvent(name, startDate) {
+        val structuredEvent = structuredEvent(name, dates) {
             withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(site.first))
             withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(site.first))
-            withProperty(SemanticKeys.ENDDATE_PROPERTY, endDate)
             withProperty(
                 SemanticKeys.DESCRIPTION_TEXT_PROPERTY,
                 site.second.select("div.lth-layout-ctr section > h2").first { it.text() == "Stückinfo" }.parent()!!
@@ -141,25 +137,7 @@ class LandestheaterLinzCollector :
         }
     }
 
-    private fun parseDates(overview: Element, date: LocalDate): Pair<OffsetDateTime, OffsetDateTime?> {
-        val timeText = overview.select("div.lth-evitem-time").text()
-        if (timeText.length > 13) {
-            val startTimeText = timeText.substring(0, 5)
-            val endTimeText = timeText.substring(8, 13)
-            val startTime = LocalTime.parse(startTimeText, DateTimeFormatter.ofPattern("kk:mm"))
-            val endTime = LocalTime.parse(endTimeText, DateTimeFormatter.ofPattern("kk:mm"))
-            return Pair(
-                date.atTime(startTime).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime(),
-                date.atTime(endTime).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime(),
-            )
-        } else {
-            val startTimeText = timeText.substring(0, 5)
-            val startTime = LocalTime.parse(startTimeText, DateTimeFormatter.ofPattern("kk:mm"))
-            return Pair(
-                date.atTime(startTime).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime(),
-                null
-            )
-        }
+    private fun parseDates(overview: Element, dateText: String): DateParserResult {
+        return DateParser.parse(dateText, overview.select("div.lth-evitem-time").text())
     }
-
 }

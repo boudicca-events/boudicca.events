@@ -2,6 +2,7 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.dateparser.dateparser.DateParser
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
@@ -9,10 +10,8 @@ import base.boudicca.model.structured.dsl.structuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.time.LocalDate
-import java.time.LocalTime
 import java.time.OffsetDateTime
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 
 class WissensturmCollector : TwoStepEventCollector<Pair<String, Document>>("wissensturm") {
 
@@ -56,9 +55,9 @@ class WissensturmCollector : TwoStepEventCollector<Pair<String, Document>>("wiss
         }
 
         return datesAndLocations
-            .filter { it.first != null }
+            .filterNotNull()
             .map {
-                structuredEvent(name, it.first!!) {
+                structuredEvent(name, it.first) {
                     withProperty(SemanticKeys.PICTURE_URL_PROPERTY, pictureUrl)
                     withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
                     withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(url))
@@ -82,29 +81,18 @@ class WissensturmCollector : TwoStepEventCollector<Pair<String, Document>>("wiss
             }
     }
 
-    private fun parseDatesAndLocations(event: Document): List<Triple<OffsetDateTime?, OffsetDateTime?, String>> {
+    private fun parseDatesAndLocations(event: Document): List<Triple<OffsetDateTime, OffsetDateTime, String>?> {
         return event.select("table tbody tr")
             .toList()
             .map {
                 val fullDateText = it.child(0).text()
                 if (fullDateText.contains("ausfall", true) || fullDateText.contains("zusatz", true)) {
-                    Triple(null, null, it.child(it.childrenSize() - 1).text())
+                    null
                 } else {
-                    val date = fullDateText.substring(4, 14)
-                    val startTime = fullDateText.substring(15, 20)
-                    val endTime = fullDateText.substring(23, 28)
-
-                    val localDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("dd.MM.uuuu"))
-                    val localStartTime = LocalTime.parse(startTime, DateTimeFormatter.ofPattern("kk:mm"))
-                    val localEndTime = LocalTime.parse(endTime, DateTimeFormatter.ofPattern("kk:mm"))
-
+                    val result = DateParser.parse(fullDateText)
                     Triple(
-                        localDate.atTime(localStartTime)
-                            .atZone(ZoneId.of("Europe/Vienna"))
-                            .toOffsetDateTime(),
-                        localDate.atTime(localEndTime)
-                            .atZone(ZoneId.of("Europe/Vienna"))
-                            .toOffsetDateTime(),
+                        result.single().startDate,
+                        result.single().endDate!!,
                         it.child(it.childrenSize() - 1).text()
                     )
                 }

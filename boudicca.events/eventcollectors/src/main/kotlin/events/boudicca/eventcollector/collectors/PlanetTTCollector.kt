@@ -3,10 +3,12 @@ package events.boudicca.eventcollector.collectors
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
+import base.boudicca.api.eventcollector.util.structuredEvent
+import base.boudicca.dateparser.dateparser.DateParser
+import base.boudicca.dateparser.dateparser.DateParserResult
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
 import base.boudicca.model.structured.dsl.StructuredEventBuilder
-import base.boudicca.model.structured.dsl.structuredEvent
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -16,11 +18,6 @@ import org.jsoup.nodes.Element
 import java.io.StringReader
 import java.net.URI
 import java.net.URLDecoder
-import java.time.LocalDate
-import java.time.LocalTime
-import java.time.OffsetDateTime
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.regex.Pattern
 
@@ -57,8 +54,7 @@ class PlanetTTCollector : TwoStepEventCollector<Element>("planettt") {
         }
     }
 
-    override fun parseStructuredEvent(event: Element): StructuredEvent {
-
+    override fun parseMultipleStructuredEvents(event: Element): List<StructuredEvent?>? {
         val eventId = event.attr("data-eventid")
         val postId = event.attr("data-postid")
         val response = fetcher.fetchUrlPost(
@@ -133,14 +129,11 @@ class PlanetTTCollector : TwoStepEventCollector<Element>("planettt") {
         }
     }
 
-    private fun parseDate(event: Element): OffsetDateTime {
-        val date = event.select("span.date").text().split(',', ignoreCase = false, limit = 2)[1].trim()
-        val time = event.select("span.start").text().split(':', ignoreCase = false, limit = 2)[1].trim()
+    private fun parseDate(event: Element): DateParserResult {
+        val date = event.select("span.date").text()
+        val time = event.select("span.start").text()
 
-        return LocalDate.parse(date, DateTimeFormatter.ofPattern("dd. MMMM uuuu", Locale.GERMAN))
-            .atTime(LocalTime.parse(time, DateTimeFormatter.ofPattern("kk:mm", Locale.GERMAN)))
-            .atZone(ZoneId.of("Europe/Vienna"))
-            .toOffsetDateTime()
+        return DateParser.parse(date, time)
     }
 
     override fun cleanup() {

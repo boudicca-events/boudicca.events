@@ -3,15 +3,12 @@ package events.boudicca.eventcollector.collectors
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
+import base.boudicca.api.eventcollector.util.structuredEvent
+import base.boudicca.dateparser.dateparser.DateParser
+import base.boudicca.dateparser.dateparser.DateParserResult
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
-import base.boudicca.model.structured.dsl.structuredEvent
 import org.jsoup.Jsoup
-import java.time.LocalDateTime
-import java.time.OffsetDateTime
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.util.*
 
 class MuseumArbeitsweltCollector : TwoStepEventCollector<Pair<String, String>>("museumArbeitswelt") {
     private val fetcher = FetcherFactory.newFetcher()
@@ -30,7 +27,7 @@ class MuseumArbeitsweltCollector : TwoStepEventCollector<Pair<String, String>>("
         return events
     }
 
-    override fun parseStructuredEvent(event: Pair<String, String>): StructuredEvent {
+    override fun parseMultipleStructuredEvents(event: Pair<String, String>): List<StructuredEvent?>? {
         val (eventUrl, dateToParse) = event
         val eventSite = Jsoup.parse(fetcher.fetchUrl(eventUrl))
 
@@ -60,12 +57,8 @@ class MuseumArbeitsweltCollector : TwoStepEventCollector<Pair<String, String>>("
         }
     }
 
-    private fun parseDate(dateToParse: String): OffsetDateTime {
-        val localDateTime = LocalDateTime.parse(
-            dateToParse.replace("All Day Event", "00.00"),
-            DateTimeFormatter.ofPattern("d. MMMM uuuu k.mm", Locale.GERMAN)
-        )
-        return localDateTime.atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
+    private fun parseDate(dateToParse: String): DateParserResult {
+        return DateParser.parse(dateToParse)
     }
 
 }

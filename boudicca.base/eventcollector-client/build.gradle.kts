@@ -5,6 +5,7 @@ plugins {
 dependencies {
     api(project(":boudicca.base:common-model"))
     api(project(":boudicca.base:fetcher-lib"))
+    api(project(":boudicca.base:dateparser-lib"))
     api(libs.biweekly)
     api(libs.spring.boot.starter.web)
     api(libs.handlebars)

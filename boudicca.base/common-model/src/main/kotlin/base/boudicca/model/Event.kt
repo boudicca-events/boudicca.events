@@ -16,6 +16,9 @@ data class Event(
 ) {
 
     fun toStructuredEvent(): StructuredEvent {
+        //detekt does not like this
+        val magicNumber = 123345
+        println(magicNumber)
         return StructuredEvent(this)
     }
 

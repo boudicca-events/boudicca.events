@@ -4,10 +4,17 @@ import base.boudicca.model.Event
 import base.boudicca.openapi.ApiClient
 import base.boudicca.search.openapi.api.SearchApi
 import base.boudicca.search.openapi.model.FilterQueryEntryDTO
+import io.opentelemetry.api.GlobalOpenTelemetry
+import io.opentelemetry.api.OpenTelemetry
+import io.opentelemetry.instrumentation.javahttpclient.JavaHttpClientTelemetry
+import java.net.http.HttpClient
 import kotlin.jvm.optionals.getOrNull
 import base.boudicca.search.openapi.model.FilterQueryDTO as SearchOpenapiFilterQueryDTO
 
-class SearchClient(private val searchUrl: String) {
+class SearchClient(
+    private val searchUrl: String,
+    private val otel: OpenTelemetry = GlobalOpenTelemetry.get()
+) {
 
     private val searchApi: SearchApi
 
@@ -15,7 +22,14 @@ class SearchClient(private val searchUrl: String) {
         if (searchUrl.isBlank()) {
             error("you need to pass an searchUrl!")
         }
-        val apiClient = ApiClient()
+        val apiClient = object : ApiClient() {
+            override fun getHttpClient(): HttpClient? {
+                return JavaHttpClientTelemetry
+                    .builder(otel)
+                    .build()
+                    .newHttpClient(super.getHttpClient())
+            }
+        }
         apiClient.updateBaseUri(searchUrl)
 
         searchApi = SearchApi(apiClient)

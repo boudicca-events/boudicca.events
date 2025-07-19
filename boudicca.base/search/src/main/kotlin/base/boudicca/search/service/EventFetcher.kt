@@ -3,11 +3,13 @@ package base.boudicca.search.service
 import base.boudicca.api.eventdb.publisher.EventDbPublisherClient
 import base.boudicca.model.Entry
 import base.boudicca.search.BoudiccaSearchProperties
+import io.opentelemetry.api.OpenTelemetry
 import org.springframework.stereotype.Service
 
 @Service
 class EventDBEventFetcher(
-    private val boudiccaSearchProperties: BoudiccaSearchProperties
+    private val boudiccaSearchProperties: BoudiccaSearchProperties,
+    private val otel: OpenTelemetry
 ) : EventFetcher {
 
     private val publisherApi: EventDbPublisherClient = createEventPublisherApi()
@@ -17,7 +19,7 @@ class EventDBEventFetcher(
     }
 
     private fun createEventPublisherApi(): EventDbPublisherClient {
-        return EventDbPublisherClient(boudiccaSearchProperties.eventDB.url)
+        return EventDbPublisherClient(boudiccaSearchProperties.eventDB.url, otel)
     }
 }
 

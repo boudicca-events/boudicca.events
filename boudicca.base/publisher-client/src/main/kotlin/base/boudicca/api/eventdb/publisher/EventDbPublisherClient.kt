@@ -6,9 +6,16 @@ import base.boudicca.model.Event
 import base.boudicca.model.toEvent
 import base.boudicca.openapi.ApiClient
 import base.boudicca.openapi.ApiException
+import io.opentelemetry.api.GlobalOpenTelemetry
+import io.opentelemetry.api.OpenTelemetry
+import io.opentelemetry.instrumentation.javahttpclient.JavaHttpClientTelemetry
+import java.net.http.HttpClient
 import kotlin.jvm.optionals.getOrNull
 
-class EventDbPublisherClient(private val eventDbUrl: String) {
+class EventDbPublisherClient(
+    private val eventDbUrl: String,
+    private val otel: OpenTelemetry = GlobalOpenTelemetry.get()
+) {
 
     private val publisherApi: PublisherApi
 
@@ -16,7 +23,14 @@ class EventDbPublisherClient(private val eventDbUrl: String) {
         if (eventDbUrl.isBlank()) {
             error("you need to pass an eventDbUrl!")
         }
-        val apiClient = ApiClient()
+        val apiClient = object : ApiClient() {
+            override fun getHttpClient(): HttpClient? {
+                return JavaHttpClientTelemetry
+                    .builder(otel)
+                    .build()
+                    .newHttpClient(super.getHttpClient())
+            }
+        }
         apiClient.updateBaseUri(eventDbUrl)
         publisherApi = PublisherApi(apiClient)
     }

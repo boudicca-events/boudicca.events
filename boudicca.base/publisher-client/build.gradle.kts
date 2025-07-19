@@ -6,4 +6,5 @@ plugins {
 dependencies {
     api(project(":boudicca.base:common-model"))
     implementation(project(":boudicca.base:eventdb-openapi"))
+    implementation(libs.otel.java.httpclient)
 }

@@ -5,15 +5,29 @@ import base.boudicca.enricher.openapi.model.EnrichRequestDTO
 import base.boudicca.model.Event
 import base.boudicca.openapi.ApiClient
 import base.boudicca.openapi.ApiException
+import io.opentelemetry.api.GlobalOpenTelemetry
+import io.opentelemetry.api.OpenTelemetry
+import io.opentelemetry.instrumentation.javahttpclient.JavaHttpClientTelemetry
+import java.net.http.HttpClient
 import base.boudicca.enricher.openapi.model.Event as EnricherOpenApiEvent
 
-class EnricherClient(private val enricherUrl: String) {
+class EnricherClient(
+    private val enricherUrl: String,
+    private val otel: OpenTelemetry = GlobalOpenTelemetry.get()
+) {
 
     private val enricherApi: EnricherApi
 
     init {
         check(enricherUrl.isNotBlank()) { "you need to pass an enricherUrl!" }
-        val apiClient = ApiClient()
+        val apiClient = object : ApiClient() {
+            override fun getHttpClient(): HttpClient? {
+                return JavaHttpClientTelemetry
+                    .builder(otel)
+                    .build()
+                    .newHttpClient(super.getHttpClient())
+            }
+        }
         apiClient.updateBaseUri(enricherUrl)
 
         enricherApi = EnricherApi(apiClient)

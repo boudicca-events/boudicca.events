@@ -11,6 +11,7 @@ import biweekly.ICalVersion
 import biweekly.ICalendar
 import biweekly.component.VEvent
 import biweekly.property.*
+import io.opentelemetry.api.OpenTelemetry
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -19,9 +20,12 @@ import java.time.OffsetDateTime
 import java.util.*
 
 @Service
-class CalendarService @Autowired constructor(@Value("\${boudicca.search.url}") private val searchUrl: String) {
+class CalendarService @Autowired constructor(
+    @Value("\${boudicca.search.url}") private val searchUrl: String,
+    otel: OpenTelemetry
+) {
 
-    private val searchClient = SearchClient(searchUrl)
+    private val searchClient = SearchClient(searchUrl, otel)
 
     fun createCalendar(events: List<Event>): ByteArray {
         // create the calendar

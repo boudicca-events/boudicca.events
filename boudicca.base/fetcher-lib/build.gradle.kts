@@ -5,4 +5,5 @@ plugins {
 
 dependencies {
     api(project(":boudicca.base:common-model"))
+    implementation(libs.otel.java.httpclient)
 }

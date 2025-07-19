@@ -18,6 +18,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import events.boudicca.enricher.service.EnricherOrderConstants
 import io.github.oshai.kotlinlogging.KotlinLogging
+import io.opentelemetry.api.OpenTelemetry
 import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Service
 
@@ -27,8 +28,10 @@ private const val NOMINATIM_BASE_URL = "https://nominatim.boudicca.events"
 @Service
 @Order(EnricherOrderConstants.OsmEnricherOrder)
 class OsmEnricher(
-    private val fetcher: Fetcher = createDefaultFetcher()
+    otel: OpenTelemetry,
 ) : Enricher {
+
+    private val fetcher: Fetcher = createDefaultFetcher(otel)
 
     companion object {
         private val logger = KotlinLogging.logger {}
@@ -229,9 +232,10 @@ class OsmEnricher(
     private fun isValidOsmIdFormat(osmId: String): Boolean = osmId.matches(Regex("^[NRWnrw]?\\d+$"))
 }
 
-fun createDefaultFetcher(): Fetcher {
+fun createDefaultFetcher(otel: OpenTelemetry): Fetcher {
     return Fetcher(
         manualSetDelay = 0,
-        fetcherCache = InMemoryFetcherCache()
+        fetcherCache = InMemoryFetcherCache(),
+        otel = otel
     )
 }

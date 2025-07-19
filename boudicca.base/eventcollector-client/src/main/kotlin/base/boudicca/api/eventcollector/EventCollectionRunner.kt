@@ -7,55 +7,80 @@ import base.boudicca.api.eventcollector.runner.RunnerIngestionInterface
 import base.boudicca.fetcher.retry
 import base.boudicca.model.Event
 import io.github.oshai.kotlinlogging.KotlinLogging
+import io.opentelemetry.api.OpenTelemetry
+import io.opentelemetry.api.trace.Span
+import io.opentelemetry.api.trace.SpanKind
+import io.opentelemetry.context.Context
 import java.util.concurrent.Executors
+import java.util.concurrent.atomic.AtomicLong
 
 
 class EventCollectionRunner(
     private val eventCollectors: List<EventCollector>,
     private val ingestionInterface: RunnerIngestionInterface,
     private val enricherInterface: RunnerEnricherInterface,
+    otel: OpenTelemetry = OpenTelemetry.noop()
 ) {
 
     private val logger = KotlinLogging.logger {}
     private val executor = Executors.newVirtualThreadPerTaskExecutor()
+    private val tracer = otel.getTracer("EventCollectionRunner")
 
     /**
      * executes a full collection for all configured eventcollectors
      */
     fun run() {
         logger.info { "starting new full collection" }
+        val span = tracer.spanBuilder("full collection").setSpanKind(SpanKind.INTERNAL).startSpan()
         Collections.startFullCollection()
         try {
-            eventCollectors
-                .map {
-                    executor.submit { collect(it) }
-                }
-                .forEach { it.get() }
+            val totalEventsCollected = AtomicLong()
+            eventCollectors.map {
+                    executor.submit {
+                        val eventsCollected = collect(it, span)
+                        totalEventsCollected.updateAndGet { it + eventsCollected }
+                    }
+                }.forEach { it.get() }
+            span.setAttribute("collected_events", totalEventsCollected.get())
         } finally {
             Collections.endFullCollection()
+            span.end()
         }
         logger.info { "full collection done" }
     }
 
-    private fun collect(eventCollector: EventCollector) {
-        Collections.startSingleCollection(eventCollector)
-        try {
-            val events = eventCollector.collectEvents()
-            Collections.getCurrentSingleCollection()!!.totalEventsCollected = events.size
-            validateCollection(eventCollector, events)
+    private fun collect(eventCollector: EventCollector, parentSpan: Span): Long {
+        val span = tracer.spanBuilder("single collection")
+            .setSpanKind(SpanKind.INTERNAL)
+            .setAttribute("collector", eventCollector.getName())
+            .setParent(Context.current().with(parentSpan))
+            .startSpan()
+
+        return span.makeCurrent().use {
+            Collections.startSingleCollection(eventCollector)
             try {
-                val postProcessedEvents = events.map { postProcess(it, eventCollector.getName()) }
-                val enrichedEvents = enrich(postProcessedEvents)
-                retry(logger) {
-                    ingestionInterface.ingestEvents(enrichedEvents)
+                val events = eventCollector.collectEvents()
+                Collections.getCurrentSingleCollection()!!.totalEventsCollected = events.size
+                validateCollection(eventCollector, events)
+                try {
+                    val postProcessedEvents = events.map { postProcess(it, eventCollector.getName()) }
+                    val enrichedEvents = enrich(postProcessedEvents)
+                    retry(logger) {
+                        ingestionInterface.ingestEvents(enrichedEvents)
+                    }
+                    span.setAttribute("collected_events", events.size.toLong())
+                    return@use events.size.toLong()
+                } catch (e: RuntimeException) {
+                    logger.error(e) { "could not ingest events, is the eventdb/enricher available?" }
+                    return@use 0
                 }
-            } catch (e: RuntimeException) {
-                logger.error(e) { "could not ingest events, is the core available?" }
+            } catch (e: Exception) {
+                logger.error(e) { "collector threw exception while collecting" }
+                return@use 0
+            } finally {
+                Collections.endSingleCollection()
+                span.end()
             }
-        } catch (e: Exception) {
-            logger.error(e) { "collector threw exception while collecting" }
-        } finally {
-            Collections.endSingleCollection()
         }
     }
 
@@ -81,8 +106,7 @@ class EventCollectionRunner(
         }
         for (field in allFields.minus(nonBlankFields)) {
             logger.warn {
-                "eventcollector ${eventCollector.getName()} " +
-                        "has blank values for all events for field $field"
+                "eventcollector ${eventCollector.getName()} " + "has blank values for all events for field $field"
             }
         }
     }
@@ -103,8 +127,7 @@ class EventCollectionRunner(
             return Event(
                 event.name,
                 event.startDate,
-                event.data.toMutableMap().apply { put(SemanticKeys.COLLECTORNAME, collectorName) }
-            )
+                event.data.toMutableMap().apply { put(SemanticKeys.COLLECTORNAME, collectorName) })
         }
         return event
     }

@@ -9,14 +9,22 @@ import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.ConsoleAppender
 import ch.qos.logback.core.encoder.LayoutWrappingEncoder
 import ch.qos.logback.core.spi.ContextAwareBase
+import io.opentelemetry.instrumentation.logback.appender.v1_0.OpenTelemetryAppender
 
 
 class LoggingConfigurator : ContextAwareBase(), Configurator {
     override fun configure(context: LoggerContext?): Configurator.ExecutionStatus {
         addInfo("Setting up default configuration.")
 
-        val loggerContext = context as LoggerContext
+        val rootLogger = context!!.getLogger(Logger.ROOT_LOGGER_NAME)
+        rootLogger.level = Level.INFO
+        rootLogger.addAppender(createConsoleAppender(context))
+        rootLogger.addAppender(createOtelAppender(context))
 
+        return Configurator.ExecutionStatus.DO_NOT_INVOKE_NEXT_IF_ANY
+    }
+
+    private fun createConsoleAppender(context: LoggerContext): ConsoleAppender<ILoggingEvent> {
         val ca = ConsoleAppender<ILoggingEvent>()
         ca.context = context
         ca.name = "console"
@@ -36,11 +44,14 @@ class LoggingConfigurator : ContextAwareBase(), Configurator {
         ca.encoder = encoder
         ca.addFilter(CollectionsFilter(encoder))
         ca.start()
+        return ca
+    }
 
-        val rootLogger = loggerContext.getLogger(Logger.ROOT_LOGGER_NAME)
-        rootLogger.level = Level.INFO
-        rootLogger.addAppender(ca)
-
-        return Configurator.ExecutionStatus.DO_NOT_INVOKE_NEXT_IF_ANY
+    private fun createOtelAppender(context: LoggerContext): OpenTelemetryAppender {
+        val otelA = OpenTelemetryAppender()
+        otelA.context = context
+        otelA.name = "otel"
+        otelA.start()
+        return otelA
     }
 }

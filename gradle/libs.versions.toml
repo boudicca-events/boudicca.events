@@ -26,6 +26,8 @@ handlebars = "4.4.0"
 microsoft-playwright = "1.52.0"
 axe-core-playwright = "4.10.1"
 kotlin-logging = "7.0.5"
+otel = "1.52.0"
+otel-instrumentation = "2.18.0-alpha"
 
 [libraries]
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
@@ -36,6 +38,8 @@ spring-security-test = { module = "org.springframework.security:spring-security-
 spring-openapi-starter = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref = "spring-openapi-starter" }
 spring-boot-devtools = { module = "org.springframework.boot:spring-boot-devtools", version.ref = "spring-boot" }
 spring-boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test", version.ref = "spring-boot" }
+spring-boot-actuator = { module = "org.springframework.boot:spring-boot-starter-actuator", version.ref = "spring-boot" }
+spring-boot-starter = { module = "org.springframework.boot:spring-boot-starter", version.ref = "spring-boot" }
 
 findbugs = { module = "com.google.code.findbugs:jsr305", version.ref = "findbugs" }
 
@@ -87,6 +91,16 @@ google-auth-library-oauth2-http = { module = "com.google.auth:google-auth-librar
 google-api-services-sheets = { module = "com.google.apis:google-api-services-sheets", version = "v4-rev20250211-2.0.0" }
 
 kotlin-logging = { module = "io.github.oshai:kotlin-logging-jvm", version.ref = "kotlin-logging" }
+
+micrometer-core = { module = "io.micrometer:micrometer-core", version = "1.14.4" }
+micrometer-otel-bridge = { module = "io.micrometer:micrometer-tracing-bridge-otel", version = "1.5.2" }
+otel-api = { module = "io.opentelemetry:opentelemetry-api", version.ref = "otel" }
+otel-sdk = { module = "io.opentelemetry:opentelemetry-sdk", version.ref = "otel" }
+otel-exporter = { module = "io.opentelemetry:opentelemetry-exporter-otlp", version.ref = "otel" }
+otel-semconv = { module = "io.opentelemetry.semconv:opentelemetry-semconv", version = "1.32.0" }
+otel-java-httpclient = { module = "io.opentelemetry.instrumentation:opentelemetry-java-http-client", version.ref = "otel-instrumentation" }
+otel-micrometer = { module = "io.opentelemetry.instrumentation:opentelemetry-micrometer-1.5", version.ref = "otel-instrumentation" }
+otel-logback = { module = "io.opentelemetry.instrumentation:opentelemetry-logback-appender-1.0", version.ref = "otel-instrumentation" }
 
 [plugins]
 jmh = { id = "me.champeau.jmh", version = "0.7.3" }

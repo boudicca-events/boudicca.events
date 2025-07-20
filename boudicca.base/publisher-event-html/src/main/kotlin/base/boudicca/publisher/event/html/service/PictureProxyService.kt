@@ -1,6 +1,8 @@
 package base.boudicca.publisher.event.html.service
 
 import io.github.oshai.kotlinlogging.KotlinLogging
+import io.opentelemetry.api.OpenTelemetry
+import io.opentelemetry.instrumentation.javahttpclient.JavaHttpClientTelemetry
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import java.awt.image.BufferedImage
@@ -24,7 +26,7 @@ private const val WANTED_HEIGHT = 250
 private const val HOURS_TO_REFRESH = 22L
 
 @Service
-class PictureProxyService {
+class PictureProxyService(otel: OpenTelemetry) {
 
     private val logger = KotlinLogging.logger {}
 
@@ -33,9 +35,15 @@ class PictureProxyService {
 
     private val executorService = Executors.newVirtualThreadPerTaskExecutor()
 
-    private val httpClient = HttpClient.newBuilder()
-        .followRedirects(HttpClient.Redirect.NORMAL)
-        .build()
+    private val httpClient =
+        JavaHttpClientTelemetry
+            .builder(otel)
+            .build()
+            .newHttpClient(
+                HttpClient.newBuilder()
+                    .followRedirects(HttpClient.Redirect.NORMAL)
+                    .build()
+            )
 
     fun submitPicture(url: String): UUID {
         val cachedUUID = urlToIdCacheEntry[url]

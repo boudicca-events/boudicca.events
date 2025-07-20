@@ -3,33 +3,55 @@ package base.boudicca.dateparser.dateparser.impl
 import base.boudicca.dateparser.dateparser.DateParser
 import base.boudicca.dateparser.dateparser.DateParserConfig
 import base.boudicca.dateparser.dateparser.DateParserResult
+import io.opentelemetry.api.OpenTelemetry
+import io.opentelemetry.api.trace.SpanKind
+import io.opentelemetry.api.trace.StatusCode
 
 
-internal class DateParserImpl(private val dateParserConfig: DateParserConfig, private val inputTokens: List<String>) {
-
-    private val tokenGroups = inputTokens.map { Tokenizer.tokenize(it) }
+internal class DateParserImpl(
+    private val dateParserConfig: DateParserConfig,
+    private val inputTokens: List<String>,
+    private val otel: OpenTelemetry
+) {
 
     fun parse(): DateParserResult {
-        val tokens = tokenGroups.map { mapAndValidateTokens(it) }
-            .reduce { acc, tokens -> acc + Token.create("\n", emptySet()) + tokens }
+        val span = otel.getTracer("DateParser")
+            .spanBuilder("parse date")
+            .setSpanKind(SpanKind.INTERNAL)
+            .setAttribute("input", inputTokens.joinToString())
+            .setAttribute("config", dateParserConfig.toString())
+            .startSpan()
+        try {
+            span.makeCurrent().use {
+                val tokenGroups = inputTokens.map { Tokenizer.tokenize(it) }
+                val tokens = tokenGroups.map { mapAndValidateTokens(it) }
+                    .reduce { acc, tokens -> acc + Token.create("\n", emptySet()) + tokens }
 
-        val debugTracing = DebugTracing()
-        val result = GoodGuessesStep(
-            debugTracing.startOperationWithChild("parser start", Tokens(tokens)), Tokens(tokens)
-        ).solve()
-        debugTracing.endOperation(result)
+                val debugTracing = DebugTracing()
+                val result = GoodGuessesStep(
+                    debugTracing.startOperationWithChild("parser start", Tokens(tokens)), Tokens(tokens)
+                ).solve()
+                debugTracing.endOperation(result)
 
-        //mainly for tests
-        if (dateParserConfig.alwaysPrintDebugTracing) {
-            println(debugTracing.debugPrint())
-        }
+                //mainly for tests
+                if (dateParserConfig.alwaysPrintDebugTracing) {
+                    println(debugTracing.debugPrint())
+                }
 
-        if (result != null && result.isSolved() && result.datePairs.isNotEmpty()) {
-            DateParser.logger.debug { "did successfully parse inputs $inputTokens into result: $result\n${debugTracing.debugPrint()}" }
-            return result.toDateParserResult(dateParserConfig.timezone)
-        } else {
-            DateParser.logger.error { "could not parse inputs $inputTokens\n${debugTracing.debugPrint()}" }
-            throw IllegalArgumentException("could not parse any dates with following data: $inputTokens")
+                if (result != null && result.isSolved() && result.datePairs.isNotEmpty()) {
+                    val parserResult = result.toDateParserResult(dateParserConfig.timezone)
+                    span.setStatus(StatusCode.OK)
+                        .setAttribute("result", parserResult.toString())
+                    DateParser.logger.debug { "did successfully parse inputs $inputTokens into result: $parserResult\n${debugTracing.debugPrint()}" }
+                    return parserResult
+                } else {
+                    span.setStatus(StatusCode.ERROR)
+                    DateParser.logger.error { "could not parse inputs $inputTokens\n${debugTracing.debugPrint()}" }
+                    throw IllegalArgumentException("could not parse any dates with following data: $inputTokens")
+                }
+            }
+        } finally {
+            span.end()
         }
 
     }

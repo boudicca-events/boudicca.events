@@ -2,9 +2,16 @@ package base.boudicca.api.eventcollector
 
 import base.boudicca.api.eventcollector.runner.RunnerEnricherInterface
 import base.boudicca.api.eventcollector.runner.RunnerIngestionInterface
+import base.boudicca.api.eventcollector.util.FetcherFactory
+import io.opentelemetry.api.GlobalOpenTelemetry
+import io.opentelemetry.api.OpenTelemetry
 import java.time.Duration
 
-class EventCollectorCoordinatorBuilder {
+class EventCollectorCoordinatorBuilder(private val otel: OpenTelemetry = GlobalOpenTelemetry.get()) {
+
+    init {
+        FetcherFactory.otel = otel
+    }
 
     private val eventCollectors: MutableList<EventCollector> = mutableListOf()
     private var interval: Duration = Duration.ofDays(1)
@@ -43,9 +50,11 @@ class EventCollectorCoordinatorBuilder {
             finalEventCollectors,
             EventCollectionRunner(
                 finalEventCollectors,
-                runnerIngestionInterface ?: RunnerIngestionInterface.createFromConfiguration(),
-                runnerEnricherInterface ?: RunnerEnricherInterface.createFromConfiguration()
-            )
+                runnerIngestionInterface ?: RunnerIngestionInterface.createFromConfiguration(otel),
+                runnerEnricherInterface ?: RunnerEnricherInterface.createFromConfiguration(otel),
+                otel
+            ),
+            otel
         )
     }
 }

@@ -18,6 +18,8 @@ import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import events.boudicca.enricher.service.EnricherOrderConstants
 import io.github.oshai.kotlinlogging.KotlinLogging
+import io.opentelemetry.api.OpenTelemetry
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Service
 
@@ -27,8 +29,11 @@ private const val NOMINATIM_BASE_URL = "https://nominatim.boudicca.events"
 @Service
 @Order(EnricherOrderConstants.OsmEnricherOrder)
 class OsmEnricher(
-    private val fetcher: Fetcher = createDefaultFetcher()
+    private val fetcher: Fetcher
 ) : Enricher {
+
+    @Autowired
+    constructor(otel: OpenTelemetry) : this(createDefaultFetcher(otel))
 
     companion object {
         private val logger = KotlinLogging.logger {}
@@ -47,8 +52,7 @@ class OsmEnricher(
 
     @Suppress("detekt.LongMethod")
     private fun enrichEventFromOverpass(
-        osmId: String,
-        event: StructuredEvent
+        osmId: String, event: StructuredEvent
     ): StructuredEvent {
         val url = "$NOMINATIM_BASE_URL/lookup?format=jsonv2&extratags=1&namedetails=1&osm_ids=${osmId}"
         val response = synchronized(fetcher) {
@@ -83,62 +87,42 @@ class OsmEnricher(
             nominatimPlace["lon"].asDouble(),
         )
         builder.updatePropertyIfEmpty(
-            event,
-            SemanticKeys.LOCATION_NAME_PROPERTY,
-            nominatimPlace["name"]?.asText()
+            event, SemanticKeys.LOCATION_NAME_PROPERTY, nominatimPlace["name"]?.asText()
         )
         builder.updatePropertyIfEmpty(
-            event,
-            SemanticKeys.LOCATION_DESCRIPTION_PROPERTY,
-            nominatimPlace["category"]?.asText()
+            event, SemanticKeys.LOCATION_DESCRIPTION_PROPERTY, nominatimPlace["category"]?.asText()
         )
         builder.updatePropertyIfEmpty(
-            event,
-            SemanticKeys.LOCATION_OSM_ID_PROPERTY,
-            osmId
+            event, SemanticKeys.LOCATION_OSM_ID_PROPERTY, osmId
         )
         if (address != null) {
             builder.updatePropertyIfEmpty(
-                event,
-                SemanticKeys.LOCATION_ADDRESS_PROPERTY,
-                buildAddress(address)
+                event, SemanticKeys.LOCATION_ADDRESS_PROPERTY, buildAddress(address)
             )
             builder.updatePropertyIfEmpty(
-                event,
-                SemanticKeys.LOCATION_CITY_PROPERTY,
-                address["city"]?.asText()
+                event, SemanticKeys.LOCATION_CITY_PROPERTY, address["city"]?.asText()
             )
         }
         if (tags != null) {
             builder.updatePropertyIfEmpty(
-                event,
-                SemanticKeys.LOCATION_CONTACT_EMAIL_PROPERTY,
-                tags["contact:email"]?.asText()
+                event, SemanticKeys.LOCATION_CONTACT_EMAIL_PROPERTY, tags["contact:email"]?.asText()
             )
             builder.updatePropertyIfEmpty(
-                event,
-                SemanticKeys.LOCATION_CONTACT_PHONE_PROPERTY,
-                tags["contact:phone"]?.asText()
+                event, SemanticKeys.LOCATION_CONTACT_PHONE_PROPERTY, tags["contact:phone"]?.asText()
             )
             val websiteText = (tags["contact:website"] ?: tags["website"])?.asText()
             try {
                 builder.updatePropertyIfEmpty(
-                    event,
-                    SemanticKeys.LOCATION_URL_PROPERTY,
-                    UrlUtils.parse(websiteText)
+                    event, SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse(websiteText)
                 )
             } catch (_: IllegalArgumentException) {
                 logger.info { "Could not map $websiteText to URI" }
             }
             builder.updatePropertyIfEmpty(
-                event,
-                SemanticKeys.LOCATION_WIKIPEDIA_PROPERTY,
-                tags["wikipedia"]?.asText()
+                event, SemanticKeys.LOCATION_WIKIPEDIA_PROPERTY, tags["wikipedia"]?.asText()
             )
             builder.updatePropertyIfEmpty(
-                event,
-                SemanticKeys.LOCATION_WIKIDATA_PROPERTY,
-                tags["wikidata"]?.asText()
+                event, SemanticKeys.LOCATION_WIKIDATA_PROPERTY, tags["wikidata"]?.asText()
             )
         }
 
@@ -156,29 +140,20 @@ class OsmEnricher(
     }
 
     private fun searchOsmId(event: StructuredEvent): String? {
-        val locationNames = event
-            .getProperty(SemanticKeys.LOCATION_NAME_PROPERTY)
-            .map(Pair<Key, String>::second)
+        val locationNames = event.getProperty(SemanticKeys.LOCATION_NAME_PROPERTY).map(Pair<Key, String>::second)
         if (locationNames.isEmpty()) {
             return null
         }
-        val locationCities = event
-            .getProperty(SemanticKeys.LOCATION_CITY_PROPERTY)
-            .map(Pair<Key, String>::second)
+        val locationCities = event.getProperty(SemanticKeys.LOCATION_CITY_PROPERTY).map(Pair<Key, String>::second)
 
         val additionalQuery = locationCities.ifEmpty {
-            event
-                .getProperty(SemanticKeys.LOCATION_ADDRESS_PROPERTY)
-                .map(Pair<Key, String>::second)
+            event.getProperty(SemanticKeys.LOCATION_ADDRESS_PROPERTY).map(Pair<Key, String>::second)
         }
 
-        val locationQuery = (locationNames + additionalQuery)
-            .filter { it.isNotBlank() }
-            .joinToString(separator = ",")
+        val locationQuery = (locationNames + additionalQuery).filter { it.isNotBlank() }.joinToString(separator = ",")
 
         val query =
-            """$NOMINATIM_BASE_URL/search?accept-language=de,en&format=jsonv2&limit=1&q=${locationQuery.encodeURL()}"""
-                .trim()
+            """$NOMINATIM_BASE_URL/search?accept-language=de,en&format=jsonv2&limit=1&q=${locationQuery.encodeURL()}""".trim()
         val response = fetcher.fetchUrl(query)
 
         val json = mapper.readTree(response) as ArrayNode
@@ -211,16 +186,12 @@ class OsmEnricher(
     }
 
     private fun <P> StructuredEventBuilder.updatePropertyIfEmpty(
-        event: StructuredEvent,
-        property: Property<P>,
-        newValue: P?
+        event: StructuredEvent, property: Property<P>, newValue: P?
     ): StructuredEventBuilder {
         val newValueIsNotNullOrBlank = newValue != null && (newValue !is String || newValue.isNotBlank())
         if (event.data[property.getKey()].isNullOrBlank() && newValueIsNotNullOrBlank) {
             this.withProperty(
-                property = property,
-                value = newValue,
-                variants = listOf(Variant(SOURCE_VARIANT_NAME, "OSM"))
+                property = property, value = newValue, variants = listOf(Variant(SOURCE_VARIANT_NAME, "OSM"))
             )
         }
         return this
@@ -229,9 +200,8 @@ class OsmEnricher(
     private fun isValidOsmIdFormat(osmId: String): Boolean = osmId.matches(Regex("^[NRWnrw]?\\d+$"))
 }
 
-fun createDefaultFetcher(): Fetcher {
+fun createDefaultFetcher(otel: OpenTelemetry): Fetcher {
     return Fetcher(
-        manualSetDelay = 0,
-        fetcherCache = InMemoryFetcherCache()
+        manualSetDelay = 0, fetcherCache = InMemoryFetcherCache(), otel = otel
     )
 }

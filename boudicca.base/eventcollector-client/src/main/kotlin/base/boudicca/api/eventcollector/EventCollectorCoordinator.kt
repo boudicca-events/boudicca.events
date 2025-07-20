@@ -1,6 +1,8 @@
 package base.boudicca.api.eventcollector
 
 import io.github.oshai.kotlinlogging.KotlinLogging
+import io.opentelemetry.api.GlobalOpenTelemetry
+import io.opentelemetry.api.OpenTelemetry
 import java.time.Duration
 
 
@@ -8,6 +10,7 @@ class EventCollectorCoordinator(
     private val interval: Duration,
     private val eventCollectors: List<EventCollector>,
     private val eventCollectionRunner: EventCollectionRunner,
+    private val otel: OpenTelemetry = GlobalOpenTelemetry.get(),
 ) : AutoCloseable {
 
     private val logger = KotlinLogging.logger {}
@@ -22,7 +25,7 @@ class EventCollectorCoordinator(
         }
         synchronized(this) {
             if (eventCollectorWebUi == null) {
-                eventCollectorWebUi = EventCollectorWebUi(realPort, eventCollectors)
+                eventCollectorWebUi = EventCollectorWebUi(realPort, eventCollectors, otel)
                 eventCollectorWebUi!!.start()
             }
         }

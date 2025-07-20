@@ -5,9 +5,17 @@ import base.boudicca.model.Entry
 import base.boudicca.model.Event
 import base.boudicca.openapi.ApiClient
 import base.boudicca.openapi.ApiException
-import java.util.Base64
+import io.opentelemetry.api.GlobalOpenTelemetry
+import io.opentelemetry.api.OpenTelemetry
+import io.opentelemetry.instrumentation.javahttpclient.JavaHttpClientTelemetry
+import java.net.http.HttpClient
+import java.util.*
 
-class EventDbIngestClient(private val eventDbUrl: String, user: String, password: String) {
+class EventDbIngestClient(
+    private val eventDbUrl: String,
+    user: String, password: String,
+    private val otel: OpenTelemetry = GlobalOpenTelemetry.get()
+) {
 
     private val ingestApi: IngestionApi
 
@@ -21,7 +29,14 @@ class EventDbIngestClient(private val eventDbUrl: String, user: String, password
         if (password.isBlank()) {
             error("you need to pass an password!")
         }
-        val apiClient = ApiClient()
+        val apiClient = object : ApiClient() {
+            override fun getHttpClient(): HttpClient? {
+                return JavaHttpClientTelemetry
+                    .builder(otel)
+                    .build()
+                    .newHttpClient(super.getHttpClient())
+            }
+        }
         apiClient.updateBaseUri(eventDbUrl)
         apiClient.setRequestInterceptor {
             it.header(

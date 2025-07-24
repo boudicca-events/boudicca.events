@@ -95,17 +95,34 @@ internal data class DateSolution(
             day: Token?, month: Token?, year: Token?, hours: Token?, minutes: Token?, seconds: Token?,
             originalTokens: List<Tokens>
         ): DateSolution {
+            val parsedDay = day?.value?.toInt()
+            val parsedMonth = if (month != null) month.value.toIntOrNull() ?: MonthMappings.mapMonthToInt(month.value)
+            ?: throw IllegalArgumentException("cannot convert value $month to a month, this seems to be a parser bug, please report")
+            else null
             return DateSolution(
-                day?.value?.toInt(),
-                if (month != null) month.value.toIntOrNull() ?: MonthMappings.mapMonthToInt(month.value)
-                ?: throw IllegalArgumentException("cannot convert value $month to a month, this seems to be a parser bug, please report")
-                else null,
-                if (year != null) fixYear(year.value.toInt()) else null,
+                parsedDay,
+                parsedMonth,
+                if (year != null) fixYear(year.value.toInt()) else tryGuessYear(parsedDay, parsedMonth),
                 hours?.value?.toInt(),
                 minutes?.value?.toInt(),
                 seconds?.value?.toInt(),
                 originalTokens
             )
+        }
+
+        @Suppress("MagicNumber")
+        private fun tryGuessYear(day: Int?, month: Int?): Int? {
+            if (day == null || month == null) {
+                return null
+            }
+            val now = LocalDate.now()
+            val date = LocalDate.of(now.year, month, day)
+            //if the date with the current year would be in the past (with 2 months grace period) then it probably is next year
+            return if (date < now.minusMonths(2)) {
+                now.year + 1
+            } else {
+                now.year
+            }
         }
 
         @Suppress("MagicNumber")

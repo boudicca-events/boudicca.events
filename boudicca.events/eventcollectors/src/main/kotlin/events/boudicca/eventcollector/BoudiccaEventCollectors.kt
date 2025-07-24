@@ -52,6 +52,8 @@ fun main() {
         .addEventCollector(CCCEventsCollector())
         .addEventCollector(ClerieDeChaosEventsCollector())
         .addEventCollector(FamilienkarteEventCollector())
+        .addEventCollector(KunstuniversitaetLinzCollector())
+        .addEventCollector(AntonBrucknerUniversitaetLinzCollector())
         .build()
 
     eventCollectorCoordinator.startWebUi()

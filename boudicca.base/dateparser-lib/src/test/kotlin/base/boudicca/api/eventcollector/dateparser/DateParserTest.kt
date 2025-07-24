@@ -8,6 +8,9 @@ import base.boudicca.dateparser.dateparser.DateParserConfig
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.FieldSource
 import java.time.OffsetDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 class DateParserTest {
     companion object {
@@ -201,12 +204,10 @@ class DateParserTest {
 //            testDate("Sep. 22 09.00 – 24, 2025", pair("2025-09-22T09:00+02:00", "2025-09-24T00:00+02:00")),
 //            testDate("Juni 6 19.00 – 8, 2025", pair("2025-06-06T19:00+02:00", "2025-06-08T00:00+02:00")),
             testDate(
-                listOf("01.-04.09.25", "Einlass: 09:30 Uhr"),
-                pair("2025-09-01T09:30+02:00", "2025-09-04T09:30+02:00")
+                listOf("01.-04.09.25", "Einlass: 09:30 Uhr"), pair("2025-09-01T09:30+02:00", "2025-09-04T09:30+02:00")
             ),
             testDate(
-                "03.05.2024 19:00 - 04.05.2024",
-                pair("2024-05-03T19:00+02:00", "2024-05-04T00:00+02:00")
+                "03.05.2024 19:00 - 04.05.2024", pair("2024-05-03T19:00+02:00", "2024-05-04T00:00+02:00")
             ),
             testDate(
                 listOf("Date(s) - Do. 18.09.2025", "18:00 - 20:00"),
@@ -216,8 +217,18 @@ class DateParserTest {
                 listOf("Date(s) - So. 21.12.2025", "14:00 - 20:00"),
                 pair("2025-12-21T14:00+01:00", "2025-12-21T20:00+01:00")
             ),
+            getGuessYearTest(),
         )
 
+        fun getGuessYearTest(): Pair<List<String>, List<DatePair>> {
+            val zone = ZoneId.of("Europe/Vienna")
+            val now = OffsetDateTime.now(zone).withSecond(0).withNano(0)
+            val future = now.plusDays(2)
+            val formatter = DateTimeFormatter.ofPattern("dd. MMMM 'um' HH:mm", Locale.of("de/de"))
+            return testDate(
+                listOf("${formatter.format(now)} – ${formatter.format(future)}"), DatePair(now, future)
+            )
+        }
 
         fun testDate(dateText: String, expected: String): Pair<List<String>, List<DatePair>> {
             return testDate(listOf(dateText), listOf(DatePair(OffsetDateTime.parse(expected))))

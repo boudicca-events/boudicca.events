@@ -18,7 +18,7 @@ class KapuCollector : TwoStepEventCollector<String>("kapu") {
     override fun getAllUnparsedEvents(): List<String> {
         val document = Jsoup.parse(fetcher.fetchUrl("https://www.kapu.or.at/events"))
         return document.select("article.event")
-            .map { it.attr("about") }
+            .map { it.select("a").first()!!.attr("href") }
     }
 
     override fun parseMultipleStructuredEvents(event: String): List<StructuredEvent?> {

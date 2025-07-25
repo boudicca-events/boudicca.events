@@ -1,24 +1,11 @@
 <footer>
     <div>
         <ul>
-            <li>
-                <a target="_self" href="/about">Über uns</a>
-            </li>
-            <li>
-                <a target="_self" href="/sources">Sources</a>
-            </li>
-            <li>
-                <a target="_blank" href="https://github.com/boudicca-events/boudicca.events">GitHub</a>
-            </li>
-            <li>
-                <a target="_self" href="/data-privacy">Data Privacy</a>
-            </li>
-            <li>
-                <a target="_self" href="/erklarung-zur-barrierefreiheit">Erklärung zur Barrierefreiheit</a>
-            </li>
-            <li>
-                <a target="_self" href="/impressum">Impressum</a>
-            </li>
+            {{#each extensionFooters as |extensionFooter|}}
+                <li>
+                    <a href="{{extensionFooter.url}}" target="{{extensionFooter.target}}">{{extensionFooter.text}}</a>
+                </li>
+            {{/each}}
         </ul>
     </div>
     <div>

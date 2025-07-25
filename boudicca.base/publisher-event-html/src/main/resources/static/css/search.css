@@ -7,9 +7,6 @@
     margin: 0 0 24px 0;
     border-bottom: 1px solid var(--color-main-grey);
     gap: 20px 30px;
-    background-image: url("/img/logo_grey.svg");
-    background-repeat: no-repeat;
-    background-position: 117% 117px;
     justify-content: space-around;
 }
 

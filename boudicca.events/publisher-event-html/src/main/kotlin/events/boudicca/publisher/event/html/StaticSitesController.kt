@@ -42,6 +42,7 @@ class BoudiccaEventsExtension : Extension {
     override fun getHeaders(): List<LinkExtension> {
         return listOf(
             LinkExtension("Über uns", "/about"),
+            LinkExtension("Github", "https://github.com/boudicca-events/boudicca.events", "_blank", "github"),
         )
     }
 

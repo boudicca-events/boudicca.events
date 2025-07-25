@@ -34,6 +34,7 @@ class LinkExtensionValueResolver(extensions: List<Extension>) : ValueResolver {
                     "text" to header.text,
                     "url" to header.url,
                     "target" to header.target,
+                    "svgName" to header.svgName,
                 )
             }
     }

@@ -3,13 +3,16 @@
     <a href="/map" target="_self" class="wantsSearchQuery">Map</a>
     <a href="/sources" target="_self">Sources</a>
     {{#each extensionHeaders as |extensionHeader|}}
-        <a href="{{extensionHeader.url}}" target="{{extensionHeader.target}}">{{extensionHeader.text}}</a>
+        {{#if extensionHeader.svgName}}
+            <a href="{{extensionHeader.url}}" target="{{extensionHeader.target}}">
+                <svg height="22px" width="22px" title="{{extensionHeader.text}}" viewBox="0 0 512 512">
+                    <use xlink:href="#{{extensionHeader.svgName}}"></use>
+                </svg>
+            </a>
+        {{else}}
+            <a href="{{extensionHeader.url}}" target="{{extensionHeader.target}}">{{extensionHeader.text}}</a>
+        {{/if}}
     {{/each}}
-    <a href="https://github.com/boudicca-events/boudicca.events" target="_blank">
-        <svg height="22px" width="22px" title="Github Logo" viewBox="0 0 512 512" aria-label="Gehe zum Github Repository von boudicca.events">
-            <use xlink:href="#github"></use>
-        </svg>
-    </a>
 </nav>
 
 <nav class="header-mobile-menu">

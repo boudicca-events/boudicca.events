@@ -42,7 +42,6 @@ class BoudiccaEventsExtension : Extension {
     override fun getHeaders(): List<HeaderExtension> {
         return listOf(
             HeaderExtension("Über uns", "/about"),
-            HeaderExtension("Data Privacy", "/data-privacy"),
         )
     }
 }

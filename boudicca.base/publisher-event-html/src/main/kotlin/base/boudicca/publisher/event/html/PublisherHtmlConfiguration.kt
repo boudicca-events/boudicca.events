@@ -1,6 +1,6 @@
 package base.boudicca.publisher.event.html
 
-import base.boudicca.publisher.event.html.extension.HeaderExtensionValueResolver
+import base.boudicca.publisher.event.html.extension.LinkExtensionValueResolver
 import base.boudicca.publisher.event.html.extension.TitleValueResolver
 import com.github.jknack.handlebars.ValueResolver
 import com.github.jknack.handlebars.cache.NullTemplateCache
@@ -23,7 +23,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 class PublisherHtmlConfiguration(private val properties: PublisherHtmlProperties) : WebMvcConfigurer {
     @Bean
     fun handlebarsViewResolver(
-        headerExtensionValueResolver: HeaderExtensionValueResolver,
+        headerExtensionValueResolver: LinkExtensionValueResolver,
         titleValueResolver: TitleValueResolver
     ): ViewResolver {
         val viewResolver = HandlebarsViewResolver()

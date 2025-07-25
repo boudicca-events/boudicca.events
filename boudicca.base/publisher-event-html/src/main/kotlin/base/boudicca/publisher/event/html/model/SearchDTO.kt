@@ -7,7 +7,7 @@ data class SearchDTO(
     @RequestParam("offset", required = false) var offset: Int?,
     @RequestParam("fromDate", required = false) var fromDate: String?,
     @RequestParam("toDate", required = false) var toDate: String?,
-    @RequestParam("category", required = false) var category: String?,
+    @RequestParam("category", required = false) var category: List<String?>?,
     @RequestParam("locationNames", required = false) var locationNames: List<String?>?,
     @RequestParam("locationCities", required = false) var locationCities: List<String?>?,
     @RequestParam("flags", required = false) var flags: List<String?>?,

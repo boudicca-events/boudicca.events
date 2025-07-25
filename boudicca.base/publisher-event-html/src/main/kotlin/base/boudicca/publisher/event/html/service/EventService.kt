@@ -93,9 +93,7 @@ class EventService @Autowired constructor(
         if (!searchDTO.name.isNullOrBlank()) {
             queryParts.add(contains("*", searchDTO.name!!))
         }
-        if (!searchDTO.category.isNullOrBlank() && searchDTO.category != SEARCH_TYPE_ALL) {
-            queryParts.add(equals(SemanticKeys.CATEGORY, searchDTO.category!!))
-        }
+        addSubqueryOfFieldConnectedByOr(queryParts, SemanticKeys.CATEGORY, searchDTO.category)
         addSubqueryOfFieldConnectedByOr(queryParts, SemanticKeys.LOCATION_CITY, searchDTO.locationCities)
         addSubqueryOfFieldConnectedByOr(queryParts, SemanticKeys.LOCATION_NAME, searchDTO.locationNames)
         if (!searchDTO.fromDate.isNullOrBlank()) {

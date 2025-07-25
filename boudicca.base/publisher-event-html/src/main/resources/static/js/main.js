@@ -62,6 +62,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     searchForm.reset();
     drawer.reset();
+    // remove the category specific filters
+    categorySelect.forEach((checkbox) => onCategoryChange(checkbox));
   });
 
   closeDrawerButton.addEventListener("click", () => {
@@ -311,7 +313,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // TODO: could use `Proxy`
-  // TODO: make sure that music/sport filter are shown if pre selected with search url
   const params = new URLSearchParams(window.location.search);
   const hydrateFormValues = () => {
     params.forEach((value, key) => {
@@ -359,7 +360,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   categorySelect.forEach((checkbox) => checkbox.addEventListener("change", c => onCategoryChange(c.currentTarget)));
-//  onCategoryChange();
+  categorySelect.forEach((checkbox) => onCategoryChange(checkbox));
 
   const events = document.querySelectorAll(".event")
   initModals(events);

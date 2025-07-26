@@ -337,15 +337,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const onCategoryChange = (changedCategory) => {
 
     const changedCategoryName = changedCategory.value;
-    const allIsChecked = document.getElementById("category-ALL").checked;
     let fieldSets = document.querySelectorAll("[data-category-wanted='" + changedCategoryName + "']");
-    if (changedCategoryName === "ALL") {
-      fieldSets = document.querySelectorAll("[data-category-wanted]");
-    }
 
     for (fieldSet of fieldSets){
       let categoryIsChecked = document.getElementById("category-" + fieldSet.getAttribute("data-category-wanted")).checked;
-      if (categoryIsChecked || allIsChecked) {
+      if (categoryIsChecked) {
         fieldSet.classList.remove("hidden");
       } else {
         for (select of fieldSet.querySelectorAll("select")) {

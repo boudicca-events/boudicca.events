@@ -39,8 +39,6 @@ import kotlin.jvm.optionals.getOrNull
 // we do not want long-running events on our site, so we filter for events short then 30 days
 const val DEFAULT_DURATION_SHORTER_VALUE = 24 * 30
 
-private const val SEARCH_TYPE_ALL = "ALL"
-
 private const val MAP_SEARCH_RESULT_COUNT = 200
 
 //TODO we should think about reducing the size of this class, maybe we can split out all the property selecting methods
@@ -302,7 +300,6 @@ class EventService @Autowired constructor(
                     EventCategory.ART -> "miscArt"
                     EventCategory.TECH -> "tech"
                     EventCategory.SPORT -> "sport"
-                    EventCategory.ALL -> "???"
                     EventCategory.OTHER -> null
                 }
             }
@@ -320,7 +317,6 @@ class EventService @Autowired constructor(
             EventCategory.ART -> "Kunst"
             EventCategory.TECH -> "Technologie"
             EventCategory.SPORT -> "Sport"
-            EventCategory.ALL -> "Alle"
             EventCategory.OTHER -> "Andere"
             else -> "???"
         }

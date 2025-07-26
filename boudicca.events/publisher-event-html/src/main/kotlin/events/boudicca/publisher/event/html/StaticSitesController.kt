@@ -1,7 +1,7 @@
 package events.boudicca.publisher.event.html
 
 import base.boudicca.publisher.event.html.extension.Extension
-import base.boudicca.publisher.event.html.extension.HeaderExtension
+import base.boudicca.publisher.event.html.extension.LinkExtension
 import org.springframework.stereotype.Component
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
@@ -39,12 +39,20 @@ class StaticSitesController {
 
 @Component
 class BoudiccaEventsExtension : Extension {
-    override fun getHeaders(): List<HeaderExtension> {
+    override fun getHeaders(): List<LinkExtension> {
         return listOf(
-            HeaderExtension("Über uns", "/about"),
-            HeaderExtension("Impressum", "/impressum"),
-            HeaderExtension("Data Privacy", "/data-privacy"),
-            HeaderExtension("GitHub", "https://github.com/boudicca-events/boudicca.events", "_blank"),
+            LinkExtension("Über uns", "/about"),
+            LinkExtension("Github", "https://github.com/boudicca-events/boudicca.events", "_blank", "github"),
+        )
+    }
+
+    override fun getFooters(): List<LinkExtension> {
+        return listOf(
+            LinkExtension("Über uns", "/about"),
+            LinkExtension("Impressum", "/impressum"),
+            LinkExtension("Data Privacy", "/data-privacy"),
+            LinkExtension("GitHub", "https://github.com/boudicca-events/boudicca.events", "_blank"),
+            LinkExtension("Erklärung zur Barrierefreiheit", "/erklarung-zur-barrierefreiheit")
         )
     }
 }

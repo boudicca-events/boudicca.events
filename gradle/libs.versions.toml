@@ -27,7 +27,7 @@ microsoft-playwright = "1.52.0"
 axe-core-playwright = "4.10.1"
 kotlin-logging = "7.0.5"
 otel = "1.52.0"
-otel-instrumentation = "2.18.0-alpha"
+otel-instrumentation = "2.18.1-alpha"
 
 [libraries]
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }

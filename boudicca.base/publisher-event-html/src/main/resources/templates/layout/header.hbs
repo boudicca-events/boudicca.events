@@ -9,7 +9,10 @@
         </div>
     </a>
 
-    {{> layout/header_searchbar}}
+    {{#if showSearchbar}}
+        {{> layout/header_searchbar}}
+    {{/if}}
+
     {{> layout/header_links}}
 
     <!--TODO if did not work :( -->

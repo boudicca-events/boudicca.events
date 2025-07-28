@@ -388,7 +388,7 @@ class EventService @Autowired constructor(
         }
     }
 
-    private fun addSubqueryOfFieldConnectedByOr(queryParts: MutableList<String>, semanticKeyField: String, searchInput: List<String?>?) : MutableList<String> {
+    private fun addSubqueryOfFieldConnectedByOr(queryParts: MutableList<String>, semanticKeyField: String, searchInput: List<String?>?) {
         val subqueryParts = mutableListOf<String>()
         for (searchInputElement in (searchInput ?: emptyList()).filter { !it.isNullOrBlank() }) {
             subqueryParts.add(equals(semanticKeyField, searchInputElement!!))
@@ -396,7 +396,6 @@ class EventService @Autowired constructor(
         if(subqueryParts.isNotEmpty()) {
             queryParts.add(or(subqueryParts))
         }
-        return queryParts
     }
 
     data class Filters(

@@ -33,15 +33,15 @@ dependencies {
     implementation(versionCatalog.findBundle("openapi-generate-spec").get())
 }
 
-val openApiDefaultsTemplate = project.rootDir.resolve("openapi_defaults/openapi.yaml")
 
-val openApiDefaultsRendered = project.layout.buildDirectory.file("tmp/openapi/openapi.yaml").get().asFile
-val createTemplateTask = tasks.register("createOpenApiTemplate") {
-    outputs.files(openApiDefaultsRendered)
-    doFirst {
-        openApiDefaultsRendered.parentFile.mkdirs()
-        updateOpenApiFile(openApiDefaultsRendered)
-    }
+val generateSpecExtension = project.extensions.create<GenerateSpecExtension>("generateSpec")
+
+val createTemplateTask = tasks.register<CreateTemplateTask>("myTestTask") {
+    templateFile.set(project.rootDir.resolve("openapi_defaults/openapi.yaml"))
+    renderedOutput.set(project.layout.buildDirectory.file("tmp/openapi/openapi.yaml").get().asFile)
+    openApiVersion.set(project.version.toString())
+    openApiTitle = generateSpecExtension.title
+    openApiDescription = generateSpecExtension.description
 }
 
 val generateOpenApiSpecTask = tasks.named<ResolveTask>("resolve") {
@@ -52,7 +52,7 @@ val generateOpenApiSpecTask = tasks.named<ResolveTask>("resolve") {
     classpath = sourceSets.main.get().runtimeClasspath
     resourcePackages = setOf("base.boudicca.api")
     outputDir = project.layout.buildDirectory.dir("generated/openapi").get().asFile
-    openApiFile = openApiDefaultsRendered
+    openApiFile = createTemplateTask.get().renderedOutput.get().asFile
 }
 
 val openapiSpecFile = project.layout.buildDirectory.file("generated/openapi/${project.name}.json")
@@ -72,17 +72,38 @@ publishing {
     }
 }
 
-val generateSpecExtension = project.extensions.create<GenerateSpecExtension>("generateSpec")
-
-fun updateOpenApiFile(file: File) {
-    val text = openApiDefaultsTemplate.readText()
-        .replace("%TITLE%", generateSpecExtension.title ?: "")
-        .replace("%DESCRIPTION%", generateSpecExtension.description ?: "")
-        .replace("%VERSION%", project.version.toString())
-    file.writeText(text)
+interface GenerateSpecExtension {
+    val title: Property<String>
+    val description: Property<String>
 }
 
-open class GenerateSpecExtension(
-    var title: String? = null,
-    var description: String? = null,
-)
+abstract class CreateTemplateTask : DefaultTask() {
+
+    @get:InputFile
+    abstract val templateFile: RegularFileProperty
+
+    @get:OutputFile
+    abstract val renderedOutput: RegularFileProperty
+
+    @get:Input
+    @get:Optional
+    abstract val openApiVersion: Property<String>
+
+    @get:Input
+    @get:Optional
+    abstract val openApiTitle: Property<String>
+
+    @get:Input
+    @get:Optional
+    abstract val openApiDescription: Property<String>
+
+    @TaskAction
+    fun action() {
+        renderedOutput.get().asFile.parentFile.mkdirs()
+        val text = templateFile.get().asFile.readText()
+            .replace("%TITLE%", openApiTitle.getOrElse(""))
+            .replace("%DESCRIPTION%", openApiDescription.getOrElse(""))
+            .replace("%VERSION%", openApiVersion.getOrElse(""))
+        renderedOutput.get().asFile.writeText(text)
+    }
+}

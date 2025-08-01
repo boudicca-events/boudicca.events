@@ -27,10 +27,18 @@ dependencies {
     implementation(versionCatalog.findBundle("openapi-generate-client").get())
 }
 
+interface Injected {
+    @get:Inject
+    val fs: FileSystemOperations
+}
+
 val openApiPackageName = project.name.substring(0, project.name.lastIndexOf("-"))
 tasks.register<GenerateTask>("generateJavaClient") {
+    val injected = project.objects.newInstance<Injected>()
     doFirst {
-        delete(layout.buildDirectory.dir("generated/java").get())
+        injected.fs.delete {
+            delete(outputDir.get())
+        }
     }
     inputs.files(openapi)
     inputSpec.set(getInputSpecProvider())
@@ -47,8 +55,11 @@ tasks.register<GenerateTask>("generateJavaClient") {
 }
 
 tasks.register<GenerateTask>("generateTypescriptClient") {
+    val injected = project.objects.newInstance<Injected>()
     doFirst {
-        delete(layout.buildDirectory.dir("generated/typescript").get())
+        injected.fs.delete {
+            delete(outputDir.get())
+        }
     }
     inputs.files(openapi)
     inputSpec.set(getInputSpecProvider())

@@ -39,8 +39,6 @@ import kotlin.jvm.optionals.getOrNull
 // we do not want long-running events on our site, so we filter for events short then 30 days
 const val DEFAULT_DURATION_SHORTER_VALUE = 24 * 30
 
-private const val SEARCH_TYPE_ALL = "ALL"
-
 private const val MAP_SEARCH_RESULT_COUNT = 200
 
 //TODO we should think about reducing the size of this class, maybe we can split out all the property selecting methods
@@ -93,15 +91,9 @@ class EventService @Autowired constructor(
         if (!searchDTO.name.isNullOrBlank()) {
             queryParts.add(contains("*", searchDTO.name!!))
         }
-        if (!searchDTO.category.isNullOrBlank() && searchDTO.category != SEARCH_TYPE_ALL) {
-            queryParts.add(equals(SemanticKeys.CATEGORY, searchDTO.category!!))
-        }
-        if (!searchDTO.locationCity.isNullOrBlank()) {
-            queryParts.add(equals(SemanticKeys.LOCATION_CITY, searchDTO.locationCity!!))
-        }
-        if (!searchDTO.locationName.isNullOrBlank()) {
-            queryParts.add(equals(SemanticKeys.LOCATION_NAME, searchDTO.locationName!!))
-        }
+        addSubqueryOfFieldConnectedByOr(queryParts, SemanticKeys.CATEGORY, searchDTO.category)
+        addSubqueryOfFieldConnectedByOr(queryParts, SemanticKeys.LOCATION_CITY, searchDTO.locationCities)
+        addSubqueryOfFieldConnectedByOr(queryParts, SemanticKeys.LOCATION_NAME, searchDTO.locationNames)
         if (!searchDTO.fromDate.isNullOrBlank()) {
             queryParts.add(after(SemanticKeys.STARTDATE, LocalDate.parse(searchDTO.fromDate!!, localDateFormatter)))
         }
@@ -117,9 +109,7 @@ class EventService @Autowired constructor(
         for (flag in (searchDTO.flags ?: emptyList()).filter { !it.isNullOrBlank() }) {
             queryParts.add(equals(flag!!, "true"))
         }
-        if (!searchDTO.bandName.isNullOrBlank()) {
-            queryParts.add(equals(SemanticKeys.CONCERT_BANDLIST, searchDTO.bandName!!))
-        }
+        addSubqueryOfFieldConnectedByOr(queryParts, SemanticKeys.CONCERT_BANDLIST, searchDTO.bandNames)
         if (searchDTO.includeRecurring != true) {
             queryParts.add(
                 or(
@@ -150,11 +140,11 @@ class EventService @Autowired constructor(
         )
         return Filters(
             EventCategory.entries
-                .map { Pair(it.name, frontEndName(it)) }
+                .map { Triple(it.name, frontEndName(it), frontEndId(it.name)) }
                 .sortedWith(Comparator.comparing({ it.second }, String.CASE_INSENSITIVE_ORDER)),
-            filters[SemanticKeys.LOCATION_NAME]!!.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Pair(it, it) },
-            filters[SemanticKeys.LOCATION_CITY]!!.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Pair(it, it) },
-            filters[SemanticKeys.CONCERT_BANDLIST]!!.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Pair(it, it) },
+            filters[SemanticKeys.LOCATION_NAME]!!.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Triple(it, it, frontEndId(it)) },
+            filters[SemanticKeys.LOCATION_CITY]!!.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Triple(it, it, frontEndId(it)) },
+            filters[SemanticKeys.CONCERT_BANDLIST]!!.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Triple(it, it, frontEndId(it)) },
         )
     }
 
@@ -310,7 +300,6 @@ class EventService @Autowired constructor(
                     EventCategory.ART -> "miscArt"
                     EventCategory.TECH -> "tech"
                     EventCategory.SPORT -> "sport"
-                    EventCategory.ALL -> "???"
                     EventCategory.OTHER -> null
                 }
             }
@@ -328,10 +317,13 @@ class EventService @Autowired constructor(
             EventCategory.ART -> "Kunst"
             EventCategory.TECH -> "Technologie"
             EventCategory.SPORT -> "Sport"
-            EventCategory.ALL -> "Alle"
             EventCategory.OTHER -> "Andere"
             else -> "???"
         }
+    }
+
+    private fun frontEndId(name: String): String {
+        return name.trim().replace(Regex("\\s"), "-")
     }
 
     private fun setDefaults(searchDTO: SearchDTO) {
@@ -396,11 +388,21 @@ class EventService @Autowired constructor(
         }
     }
 
+    private fun addSubqueryOfFieldConnectedByOr(queryParts: MutableList<String>, semanticKeyField: String, searchInput: List<String?>?) {
+        val subqueryParts = mutableListOf<String>()
+        for (searchInputElement in (searchInput ?: emptyList()).filter { !it.isNullOrBlank() }) {
+            subqueryParts.add(equals(semanticKeyField, searchInputElement!!))
+        }
+        if(subqueryParts.isNotEmpty()) {
+            queryParts.add(or(subqueryParts))
+        }
+    }
+
     data class Filters(
-        val categories: List<Pair<String, String>>,
-        val locationNames: List<Pair<String, String>>,
-        val locationCities: List<Pair<String, String>>,
-        val bandNames: List<Pair<String, String>>,
+        val categories: List<Triple<String, String, String>>,
+        val locationNames: List<Triple<String, String, String>>,
+        val locationCities: List<Triple<String, String, String>>,
+        val bandNames: List<Triple<String, String, String>>,
     )
 
     data class RichText(val isMarkdown: Boolean, val value: String)

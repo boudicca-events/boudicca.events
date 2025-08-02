@@ -4,20 +4,29 @@ document.addEventListener("DOMContentLoaded", () => {
   const filterButton = document.getElementById("filterButton");
   const drawer = document.getElementById("drawer");
   const closeDrawerButton = document.getElementById("closeDrawerButton");
-  const filterSearchButton = document.getElementById("filterSearchButton");
   const resetSearchFormButton = document.getElementById("resetSearchForm");
   const loadMoreButton = document.getElementById("loadMoreButton");
-  const categorySelect = document.getElementById("categorySelect");
+  const categorySelect = document.getElementsByName("category");
   const categoryFieldSets = document.querySelectorAll("[data-category-wanted]");
   const searchInput = document.querySelector("input.search-input");
   const modal = document.getElementById("modal");
   const modalContent = modal.querySelector("#modal-content");
-  const closeModalButton = document.getElementById("modal-close");
+  const mobileMenu = document.getElementById("mobile-menu");
+  const openMenuButton = document.getElementById("openMenuButton");
+  const closeMenuButton = document.getElementById("closeMenuButton");
+  const header = document.querySelector("header");
+  const accessibilityFlags = document.getElementsByName("flags");
+  const map = document.getElementById("map");
+
 
   const openModal = (content) => {
     modalContent.innerHTML = content;
     modal.style.display = "block";
     document.body.style.overflow = "hidden";
+    const closeButton = modalContent.querySelector(".modal-close");
+    closeButton.addEventListener("click", () => {
+      closeModal();
+    })
   };
 
   const closeModal = () => {
@@ -39,16 +48,22 @@ document.addEventListener("DOMContentLoaded", () => {
     event.stopPropagation();
   });
 
-  loadMoreButton.addEventListener("click", () => {
-    onLoadMoreSearch();
-  });
+  if (loadMoreButton != null) {
+      loadMoreButton.addEventListener("click", () => {
+        onLoadMoreSearch();
+      });
+  }
 
   resetSearchFormButton.addEventListener("click", () => {
+    // toggle the checked labels to hide the chips before the rest of the form is reset
+    let checkedLabels = document.querySelectorAll("input[type=checkbox]:checked + label.chips");
+    for (checkedLabel of checkedLabels) {
+      toggleCheckboxLabels(checkedLabel);
+    }
     searchForm.reset();
-  });
-
-  filterSearchButton.addEventListener("click", () => {
-    closeDrawer();
+    drawer.reset();
+    // remove the category specific filters
+    categorySelect.forEach((checkbox) => onCategoryChange(checkbox));
   });
 
   closeDrawerButton.addEventListener("click", () => {
@@ -56,16 +71,65 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   filterButton.addEventListener("click", () => {
-    openDraw();
+    toggleDrawer();
   });
 
-  closeModalButton.addEventListener("click", () => {
-    closeModal();
-  })
+  const initCheckboxLabelToggle = () => {
+    const checkboxLabelsToToggle = document.querySelectorAll(".toggleFilterLabels");
+    for (label of checkboxLabelsToToggle) {
+      label.addEventListener("click", (label) => toggleCheckboxLabels(label.currentTarget));
+    }
+  }
+
+  const toggleCheckboxLabels = (clickedLabel) => {
+     if (clickedLabel) {
+       const currentForAttribute = clickedLabel.getAttribute('for');
+       const chipsLabel = document.querySelector('label.chips[for="'+currentForAttribute+'"]');
+       const listLabel = document.querySelector('li label[for="'+currentForAttribute+'"]');
+       toggleSingleCheckboxLabel(chipsLabel);
+       toggleSingleCheckboxLabel(listLabel);
+       const checkbox = document.getElementById(currentForAttribute);
+       setCheckboxAriaChecked(checkbox, true);
+     }
+  }
+
+  const toggleCheckboxLabelsByCheckbox = (checkbox) => {
+       if (checkbox) {
+         const chipsLabel = document.querySelector('label.chips[for="'+checkbox.id+'"]');
+         const listLabel = document.querySelector('li label[for="'+checkbox.id+'"]');
+         toggleSingleCheckboxLabel(chipsLabel);
+         toggleSingleCheckboxLabel(listLabel);
+         setCheckboxAriaChecked(checkbox, true);
+       }
+    }
+
+  const toggleSingleCheckboxLabel = (label) => {
+    if (label.style.position != "absolute") {
+       label.style.position = "absolute";
+       label.style.opacity = "0";
+     } else {
+       label.style.position = "relative";
+       label.style.opacity = "100";
+    }
+  }
+
+  const setCheckboxAriaChecked = (checkbox, negateChecked) => {
+    if (negateChecked){
+      // if checkbox is toggled automatically afterwards, !checked has to be used
+      checkbox.setAttribute('aria-checked', !checkbox.checked);
+    }
+    else{
+      checkbox.setAttribute('aria-checked', checkbox.checked);
+    }
+
+  }
+
+  accessibilityFlags.forEach((checkbox) => checkbox.addEventListener("change", c => setCheckboxAriaChecked(c.currentTarget, false)));
 
   document.addEventListener("click", (event) => {
     if (
       !drawer.contains(event.target) &&
+      !searchForm.contains(event.target) &&
       !filterButton.contains(event.target) &&
       !event.target.classList.contains("anchor-to-event")
     ) {
@@ -83,22 +147,41 @@ document.addEventListener("DOMContentLoaded", () => {
         drawerLastFocusableElement.focus()
         event.preventDefault();
       }
+    } else if (event.code === "Space" && document.activeElement.type === "checkbox"){
+        toggleCheckboxLabelsByCheckbox(document.activeElement);
     }
   })
 
-  const openDraw = () => {
-    drawer.classList.add("drawer-open");
-    document.body.style.overflow = "hidden";
+  const toggleDrawer = () => {
+    if (drawer.style.display != "flex") {
+      drawer.setAttribute("aria-hidden", false);
+      drawer.style.display = "flex";
+      // close mobile menu
+      mobileMenu.setAttribute("aria-hidden", true);
+      mobileMenu.style.display = "none";
+      openMenuButton.style.display = "block";
+      closeMenuButton.style.display = "none";
+      header.style.paddingBottom = "24px";
+      // set checkbox aria attributes in case they are already checked by the search url
+      accessibilityFlags.forEach((checkbox) => setCheckboxAriaChecked(checkbox, false));
+    } else {
+      closeDrawer();
+    }
   };
 
   const closeDrawer = () => {
-    drawer.classList.remove("drawer-open");
-    document.body.style.overflow = "initial";
+    drawer.setAttribute("aria-hidden", true);
+    drawer.style.display = "none";
   };
 
   const goToSearch = (paramsAsString) => {
     window.dispatchEvent(new CustomEvent("searchChanged", {detail: paramsAsString}))
-    goTo(`/search?${paramsAsString}`);
+    if (map != null){
+        goTo(`/map?${paramsAsString}`);
+        window.location.reload();
+    } else {
+        goTo(`/search?${paramsAsString}`);
+    }
   };
 
   const goTo = (url) => {
@@ -171,19 +254,30 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  const getSearchParams = () => {
+    const searchBar = new FormData(searchForm);
+    const detailFilter = new FormData(drawer);
+    for (fields of searchBar.entries()) {
+      detailFilter.append(fields[0], fields[1]);
+    }
+    const paramsAsString = new URLSearchParams(detailFilter).toString();
+    return paramsAsString;
+  }
+
   const onSearch = async (e) => {
     e.preventDefault();
-    const paramsAsString = new URLSearchParams(
-      new FormData(e.target)
-    ).toString();
+    const paramsAsString = getSearchParams();
     const apiUrl = `/api/search?${paramsAsString}&offset=0`;
+    closeDrawer();
 
     try {
       const response = await fetch(apiUrl);
       const ssrDomEventString = await response.text();
-      eventsContainer.innerHTML = ssrDomEventString;
-      onSearchButtonBehaviour(ssrDomEventString);
-      initModals(eventsContainer.querySelectorAll(".event"));
+      if (eventsContainer != null){
+        eventsContainer.innerHTML = ssrDomEventString;
+        onSearchButtonBehaviour(ssrDomEventString);
+        initModals(eventsContainer.querySelectorAll(".event"));
+      }
       goToSearch(paramsAsString);
     } catch (e) {
       console.error(e);
@@ -192,9 +286,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const parser = new DOMParser();
   const onLoadMoreSearch = async () => {
-    const paramsAsString = new URLSearchParams(
-      new FormData(searchForm)
-    ).toString();
+    const paramsAsString = getSearchParams();
     const apiUrl = `/api/search?${paramsAsString}&offset=${eventsContainer.children.length}`;
 
     try {
@@ -226,6 +318,12 @@ document.addEventListener("DOMContentLoaded", () => {
     params.forEach((value, key) => {
       if (key === "flags") {
         document.getElementById(value).checked = true;
+      } else if (key === "includeRecurring") {
+       document.getElementById(key).checked = true;
+      } else if (["category", "locationCities", "locationNames", "bandNames"].includes(key)) {
+        const checkbox = document.getElementById(key + "-" + value);
+        checkbox.checked = true;
+        toggleCheckboxLabelsByCheckbox(checkbox)
       } else {
         document.querySelector(`[name="${key}"]`).value = value;
       }
@@ -234,27 +332,33 @@ document.addEventListener("DOMContentLoaded", () => {
   hydrateFormValues();
 
   searchForm.addEventListener("submit", onSearch);
+  drawer.addEventListener("submit", onSearch);
 
-  const onCategoryChange = () => {
-    let category = categorySelect.value;
-    for (fieldSet of categoryFieldSets) {
-      if (fieldSet.dataset["categoryWanted"] === category) {
+  const onCategoryChange = (changedCategory) => {
+
+    const changedCategoryName = changedCategory.value;
+    let fieldSets = document.querySelectorAll("[data-category-wanted='" + changedCategoryName + "']");
+
+    for (fieldSet of fieldSets){
+      let categoryIsChecked = document.getElementById("category-" + fieldSet.getAttribute("data-category-wanted")).checked;
+      if (categoryIsChecked) {
         fieldSet.classList.remove("hidden");
       } else {
         for (select of fieldSet.querySelectorAll("select")) {
           select.selectedIndex = 0;
         }
         for (input of fieldSet.querySelectorAll("input")) {
-          input.value = "";
+          input.checked = false;
         }
         fieldSet.classList.add("hidden");
       }
     }
   };
 
-  categorySelect.addEventListener("change", onCategoryChange);
-  onCategoryChange();
+  categorySelect.forEach((checkbox) => checkbox.addEventListener("change", c => onCategoryChange(c.currentTarget)));
+  categorySelect.forEach((checkbox) => onCategoryChange(checkbox));
 
   const events = document.querySelectorAll(".event")
   initModals(events);
+  initCheckboxLabelToggle();
 });

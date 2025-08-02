@@ -18,7 +18,7 @@
 .event-title {
     font-size: 1.2em;
     margin-top: 18px;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
     font-weight: 600;
     /** https://stackoverflow.com/questions/3922739/limit-text-length-to-n-lines-using-css */
     overflow: hidden;
@@ -48,6 +48,8 @@
 .event-image-modal {
     height: 300px;
     width: 500px;
+    max-width: 100%;
+    padding: var(--space-large);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -80,6 +82,7 @@
     right: 8px;
     font-size: 14px;
     padding: 8px 24px;
+    margin-top: 10px;
     border: 1px solid var(--anchor-to-eventpage-border-color);
     background-color: var(--anchor-to-eventpage-background-color);
     bottom: -18px;
@@ -107,14 +110,14 @@
 .event-details {
     display: grid;
     grid-template-columns: max-content 1fr;
-    align-items: flex-start;
+    align-items: center;
     gap: 6px;
 }
 
 .event-details-wrapper {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 10px;
 }
 
 .modal .event-details-wrapper {
@@ -126,6 +129,8 @@
 .event-image-modal img {
     max-height: 300px;
     max-width: 500px;
+    height: 100%;
+    width: 100%;
     object-fit: contain;
 }
 

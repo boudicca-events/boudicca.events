@@ -6,18 +6,18 @@ jackson-databind-nullable = "0.2.6"
 jakarta-annotation = "3.0.0"
 javax-jaxrs = "2.1.1"
 findbugs = "3.0.2"
-spring-openapi-starter = "2.8.5"
-spring = "6.4.5"
+spring-openapi-starter = "2.8.9"
+spring = "6.5.2"
 spring-boot = "3.5.4"
 swagger-core-version = "2.2.20"
 org-springframework-boot-gradle-plugin = "3.4.3"
 org-openapi-generator-gradle-plugin = "7.2.0"
-junit-jupiter = "5.12.1"
+junit-jupiter = "5.13.4"
 assertk = "0.28.1"
 mockk = "1.14.5"
 spring-mockk = "4.0.2"
 biweekly = "0.6.8"
-jsoup = "1.19.1"
+jsoup = "1.21.1"
 rometools = "2.1.0"
 klaxon = "5.6"
 logback = "1.5.18"
@@ -97,7 +97,7 @@ micrometer-otel-bridge = { module = "io.micrometer:micrometer-tracing-bridge-ote
 otel-api = { module = "io.opentelemetry:opentelemetry-api", version.ref = "otel" }
 otel-sdk = { module = "io.opentelemetry:opentelemetry-sdk", version.ref = "otel" }
 otel-exporter = { module = "io.opentelemetry:opentelemetry-exporter-otlp", version.ref = "otel" }
-otel-semconv = { module = "io.opentelemetry.semconv:opentelemetry-semconv", version = "1.32.0" }
+otel-semconv = { module = "io.opentelemetry.semconv:opentelemetry-semconv", version = "1.34.0" }
 otel-java-httpclient = { module = "io.opentelemetry.instrumentation:opentelemetry-java-http-client", version.ref = "otel-instrumentation" }
 otel-micrometer = { module = "io.opentelemetry.instrumentation:opentelemetry-micrometer-1.5", version.ref = "otel-instrumentation" }
 otel-logback = { module = "io.opentelemetry.instrumentation:opentelemetry-logback-appender-1.0", version.ref = "otel-instrumentation" }

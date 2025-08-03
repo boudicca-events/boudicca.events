@@ -1,46 +1,66 @@
 package base.boudicca.dateparser.dateparser.impl
 
+import base.boudicca.dateparser.dateparser.DateParserConfig
+
 
 @Suppress("MagicNumber")
-internal class DateStep(private val debugTracing: DebugTracing, private val tokens: Tokens) {
+internal class DateStep(
+    private val config: DateParserConfig,
+    private val debugTracing: DebugTracing,
+    private val tokens: Tokens,
+    private val canGetMoreData: Boolean,
+) {
     fun solve(): DateSolution? {
         if (tokens.tokens.count { it.needSolving } > 6) {
             debugTracing.startOperation("too many tokens to solve", tokens)
             return null
         }
-        var result =
-            trySolve(listOf(tokens), debugTracing.startOperationWithChild("trying to solve without groupings", tokens))
+        var result = trySolve(
+            listOf(tokens),
+            debugTracing.startOperationWithChild("trying to solve without groupings", tokens),
+        )
         debugTracing.endOperation(result)
         if (result != null) {
             return result
         }
         val joinedSeparators = joinAllSeparators(tokens)
-        val allSeparatorValues = collectSeparatorValues(joinedSeparators)
+        val allSeparatorValues = collectSeparatorValues(joinedSeparators).sorted()
         for (separatorThreshold in allSeparatorValues) {
-            val groups = mutableListOf<Tokens>()
-            var currentGroup = mutableListOf<Token>()
-            for (component in joinedSeparators) {
-                if (!component.needSolving) {
-                    if (calculateSeparatorWeight(component.value) >= separatorThreshold) {
-                        if (currentGroup.isNotEmpty()) {
-                            groups.add(Tokens(currentGroup))
-                            currentGroup = mutableListOf()
+            var lastSeparator = -2
+            val separatingSeparators = mutableSetOf<Int>(0, joinedSeparators.size)
+            for (i in joinedSeparators.indices) {
+                val currentToken = joinedSeparators[i]
+                if (!currentToken.needSolving) {
+                    if (calculateSeparatorWeight(currentToken.value) > separatorThreshold) {
+                        if (lastSeparator == -1) {
+                            separatingSeparators.add(i)
                         }
+                        lastSeparator = i
                     } else {
-                        currentGroup.add(component)
+                        if (lastSeparator > 0) {
+                            separatingSeparators.add(lastSeparator)
+                        }
+                        lastSeparator = -1
                     }
-                } else {
-                    currentGroup.add(component)
                 }
             }
-            if (currentGroup.isNotEmpty()) {
-                groups.add(Tokens(currentGroup))
+
+            val groups = mutableListOf<Tokens>()
+            separatingSeparators.remove(-1)
+            val subListSeparators = separatingSeparators.toList().sorted()
+            for ((start, end) in subListSeparators.windowed(2)) {
+                groups.add(Tokens(joinedSeparators.subList(start, end)))
             }
 
-            result = trySolve(groups, debugTracing.startOperationWithChild("trying grouping with children", groups))
-            debugTracing.endOperation(result)
-            if (result != null) {
-                return result
+            if (groups.filter { it.isInteresting() }.size == 2) {
+                result = trySolve(
+                    groups,
+                    debugTracing.startOperationWithChild("trying grouping with children", groups),
+                )
+                debugTracing.endOperation(result)
+                if (result != null) {
+                    return result
+                }
             }
         }
         return null
@@ -85,20 +105,29 @@ internal class DateStep(private val debugTracing: DebugTracing, private val toke
             .toList()
     }
 
-    private fun trySolve(tokenGroups: List<Tokens>, debugTracing: DebugTracing): DateSolution? {
-        val solvedTokens = if (!tokens.tokens.all { it.isSolved() }) {
-            var lastTokens = tokenGroups
-            var nextTokens = applyPatternsAndElimination(lastTokens)
-            while (lastTokens != nextTokens) {
-                lastTokens = nextTokens
-                nextTokens = applyPatternsAndElimination(lastTokens)
-            }
-            lastTokens
-        } else {
-            tokenGroups
-        }
+    private fun trySolve(
+        tokenGroups: List<Tokens>,
+        debugTracing: DebugTracing,
+    ): DateSolution? {
+        return trySolve(tokenGroups, debugTracing, null) ?: trySolve(tokenGroups, debugTracing, config.dayMonthOrder)
+    }
 
-        debugTracing.startOperation("applying patterns", solvedTokens)
+    private fun trySolve(
+        tokenGroups: List<Tokens>, debugTracing: DebugTracing, dayMonthOrder: DateParserConfig.DayMonthOrder?
+    ): DateSolution? {
+        var solvedTokens = tokenGroups
+        var lastTokens: List<Tokens>
+        do {
+            lastTokens = solvedTokens
+            solvedTokens = applyPatternsAndElimination(lastTokens, dayMonthOrder)
+        } while (lastTokens != solvedTokens)
+
+        if (dayMonthOrder == null) {
+            debugTracing.startOperation("applying patterns", solvedTokens)
+        }
+        if (dayMonthOrder == null) {
+            debugTracing.startOperation("applying patterns + stricter patterns", solvedTokens)
+        }
 
         if (solvedTokens.any { it.tokens.any { token -> !token.isSolved() } }) {
             return null
@@ -123,13 +152,26 @@ internal class DateStep(private val debugTracing: DebugTracing, private val toke
             mappings[ResultTypes.SECONDS],
             tokenGroups
         )
-        debugTracing.endOperation(result)
-        return result
+        if (result.isSolved() || canGetMoreData) {
+            debugTracing.endOperation(result)
+            return result
+        } else {
+            debugTracing.endOperation(null)
+            return null
+        }
     }
 
-    private fun applyPatternsAndElimination(tokenGroups: List<Tokens>): List<Tokens> {
+    private fun applyPatternsAndElimination(
+        tokenGroups: List<Tokens>, dayMonthOrder: DateParserConfig.DayMonthOrder?
+    ): List<Tokens> {
         var result = applyElimination(tokenGroups)
-        result = result.map { Tokens(Patterns.applyCorrectPatternsAndMergeResult(it.tokens)) }
+        result = result.map {
+            var tokens = Patterns.applyExhaustivePatterns(it.tokens)
+            if (dayMonthOrder != null) {
+                tokens = Patterns.applyStricterPatternsAndMergeResult(it.tokens, dayMonthOrder)
+            }
+            Tokens(tokens)
+        }
         return result
     }
 

@@ -7,14 +7,13 @@ import base.boudicca.dateparser.dateparser.DateParser
 import base.boudicca.dateparser.dateparser.DateParserConfig
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.FieldSource
+import java.time.Clock
 import java.time.OffsetDateTime
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 
 class DateParserTest {
     companion object {
-        val testDates = listOf(
+        val testDates: List<Triple<List<String>, List<DatePair>, DateParserConfig>> = listOf(
             //simple dates
             testDate("25.04.1992", "1992-04-25T00:00+02:00"),
             testDate("25.04.1992", "1992-04-25T00:00+02:00"),
@@ -58,6 +57,8 @@ class DateParserTest {
             testDate(listOf("25.04.1992", "10 00 Uhr"), "1992-04-25T10:00+02:00"),
             testDate(listOf("25.04.1992", "Uhr 10 00"), "1992-04-25T10:00+02:00"),
             testDate("10.04.1992 10:05", "1992-04-10T10:05+02:00"),
+            testDate("11.04.1992 10:04:05", "1992-04-11T10:04:05+02:00"),
+            testDate("11:04:1992 10:04:05", "1992-04-11T10:04:05+02:00"), //this is weird, if it breaks remove test
 
             //some noise
             testDate("Sa, 25.04.1992", "1992-04-25T00:00+02:00"),
@@ -198,11 +199,38 @@ class DateParserTest {
                 )
             ),
 
+            //year guessing
+            testDateWithFixedClock(
+                "17. September – 3. Oktober",
+                pair("2025-09-17T00:00+02:00", "2025-10-03T00:00+02:00"),
+                "2025-07-17T19:00+02:00"
+            ),
+            testDateWithFixedClock(
+                "17. September – 3. Oktober",
+                pair("2026-09-17T00:00+02:00", "2026-10-03T00:00+02:00"),
+                "2025-12-31T19:00+02:00"
+            ),
+
+            //weird orders, but only parseable in one format (no D.M vs M.D issues)
+            testDate("Okt 1 2025", "2025-10-01T00:00+02:00"),
+            testDate("2025 Okt 1 19:00", "2025-10-01T19:00+02:00"),
+
+            //only solvable with a given day/month or month/day order
+            testDateWithDayMonthOrder(
+                "1 2 2025",
+                pair("2025-02-01T00:00+01:00", null),
+                DateParserConfig.DayMonthOrder.DAY_MONTH
+            ),
+            testDateWithDayMonthOrder(
+                "1 2 2025",
+                pair("2025-01-02T00:00+01:00", null),
+                DateParserConfig.DayMonthOrder.MONTH_DAY
+            ),
+
             //more misc tests found from collectors
-            //TODO found in MuseumArbeitswelt and wth are those even
-//            testDate("Sep. 29 – Okt. 3, 2025 All Day Event", pair("2025-09-29T00:00+02:00", "2025-10-03T00:00+02:00")),
-//            testDate("Sep. 22 09.00 – 24, 2025", pair("2025-09-22T09:00+02:00", "2025-09-24T00:00+02:00")),
-//            testDate("Juni 6 19.00 – 8, 2025", pair("2025-06-06T19:00+02:00", "2025-06-08T00:00+02:00")),
+            testDate("Sep. 29 – Okt. 3, 2025 All Day Event", pair("2025-09-29T00:00+02:00", "2025-10-03T00:00+02:00")),
+            testDate("Sep. 22 09.00 – 24, 2025", pair("2025-09-22T09:00+02:00", "2025-09-24T00:00+02:00")),
+            testDate("Juni 6 19.00 – 8, 2025", pair("2025-06-06T19:00+02:00", "2025-06-08T00:00+02:00")),
             testDate(
                 listOf("01.-04.09.25", "Einlass: 09:30 Uhr"), pair("2025-09-01T09:30+02:00", "2025-09-04T09:30+02:00")
             ),
@@ -217,50 +245,85 @@ class DateParserTest {
                 listOf("Date(s) - So. 21.12.2025", "14:00 - 20:00"),
                 pair("2025-12-21T14:00+01:00", "2025-12-21T20:00+01:00")
             ),
-            getGuessYearTest(),
+            testDateWithFixedClock(
+                "17. September um 19:00 – 3. Oktober um 18:00 CEST",
+                pair("2025-09-17T19:00+02:00", "2025-10-03T18:00+02:00"),
+                "2025-07-17T19:00+02:00"
+            )
         )
 
-        fun getGuessYearTest(): Pair<List<String>, List<DatePair>> {
-            val zone = ZoneId.of("Europe/Vienna")
-            val now = OffsetDateTime.now(zone).withSecond(0).withNano(0)
-            val future = now.plusDays(2)
-            val formatter = DateTimeFormatter.ofPattern("dd. MMMM 'um' HH:mm", Locale.of("de/de"))
-            return testDate(
-                listOf("${formatter.format(now)} – ${formatter.format(future)}"), DatePair(now, future)
-            )
-        }
-
-        fun testDate(dateText: String, expected: String): Pair<List<String>, List<DatePair>> {
+        fun testDate(
+            dateText: String,
+            expected: String
+        ): Triple<List<String>, List<DatePair>, DateParserConfig> {
             return testDate(listOf(dateText), listOf(DatePair(OffsetDateTime.parse(expected))))
         }
 
-        fun testDate(dateText: List<String>, expected: List<DatePair>): Pair<List<String>, List<DatePair>> {
-            return Pair(dateText, expected)
+        fun testDate(dateText: String, expected: DatePair): Triple<List<String>, List<DatePair>, DateParserConfig> {
+            return testDate(listOf(dateText), listOf(expected))
         }
 
-        fun testDate(dateText: String, expected: DatePair): Pair<List<String>, List<DatePair>> {
-            return Pair(listOf(dateText), listOf(expected))
+        fun testDate(
+            dateText: List<String>,
+            expected: DatePair
+        ): Triple<List<String>, List<DatePair>, DateParserConfig> {
+            return testDate(dateText, listOf(expected))
         }
 
-        fun testDate(dateText: List<String>, expected: DatePair): Pair<List<String>, List<DatePair>> {
-            return Pair(dateText, listOf(expected))
+        fun testDate(dateText: List<String>, expected: String): Triple<List<String>, List<DatePair>, DateParserConfig> {
+            return testDate(dateText, pair(expected, null))
         }
 
-        fun testDate(dateText: List<String>, expected: String): Pair<List<String>, List<DatePair>> {
-            return Pair(dateText, listOf(DatePair(OffsetDateTime.parse(expected))))
+        fun testDate(
+            dateText: List<String>,
+            expected: List<DatePair>,
+            config: DateParserConfig? = null
+        ): Triple<List<String>, List<DatePair>, DateParserConfig> {
+            return Triple(
+                dateText, expected, config ?: DateParserConfig(
+                    alwaysPrintDebugTracing = true
+                )
+            )
         }
 
         private fun pair(startDate: String, endDate: String?): DatePair {
             return DatePair(OffsetDateTime.parse(startDate), endDate?.run { OffsetDateTime.parse(this) })
+        }
+
+        private fun testDateWithFixedClock(
+            dateText: String,
+            expected: DatePair,
+            fixedClockDate: String
+        ): Triple<List<String>, List<DatePair>, DateParserConfig> {
+            val clock = Clock.fixed(OffsetDateTime.parse(fixedClockDate).toInstant(), ZoneId.of("Europe/Vienna"))
+            return testDate(
+                listOf(dateText), listOf(expected), DateParserConfig(
+                    alwaysPrintDebugTracing = true,
+                    clock = clock
+                )
+            )
+        }
+
+        private fun testDateWithDayMonthOrder(
+            dateText: String,
+            expected: DatePair,
+            dayMonthOrder: DateParserConfig.DayMonthOrder
+        ): Triple<List<String>, List<DatePair>, DateParserConfig> {
+            return testDate(
+                listOf(dateText), listOf(expected), DateParserConfig(
+                    dayMonthOrder = dayMonthOrder,
+                    alwaysPrintDebugTracing = true,
+                )
+            )
         }
     }
 
 
     @ParameterizedTest
     @FieldSource("testDates")
-    fun testDateParser(testCase: Pair<List<String>, List<DatePair>>) {
+    fun testDateParser(testCase: Triple<List<String>, List<DatePair>, DateParserConfig>) {
         val (actual, expected) = testCase
-        val result = DateParser.parse(actual, DateParserConfig(alwaysPrintDebugTracing = true))
+        val result = DateParser.parse(actual, testCase.third)
         assertThat(result.dates.size).isEqualTo(expected.size)
         for (i in expected.indices) {
             assertThat(result.dates[i].startDate).isEqualTo(expected[i].startDate)

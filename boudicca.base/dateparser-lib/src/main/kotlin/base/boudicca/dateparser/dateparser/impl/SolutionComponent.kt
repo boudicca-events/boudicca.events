@@ -2,10 +2,7 @@ package base.boudicca.dateparser.dateparser.impl
 
 import base.boudicca.dateparser.dateparser.DatePair
 import base.boudicca.dateparser.dateparser.DateParserResult
-import java.time.LocalDate
-import java.time.LocalTime
-import java.time.OffsetDateTime
-import java.time.ZoneId
+import java.time.*
 
 internal data class ListOfDatePairSolution(
     val datePairs: List<DatePairSolution>
@@ -14,8 +11,8 @@ internal data class ListOfDatePairSolution(
         return datePairs.isNotEmpty() && datePairs.all { it.isSolved() }
     }
 
-    fun toDateParserResult(timezone: ZoneId): DateParserResult {
-        return DateParserResult(datePairs.map { it.toDatePair(timezone) })
+    fun toDateParserResult(timezone: ZoneId, clock: Clock): DateParserResult {
+        return DateParserResult(datePairs.map { it.toDatePair(timezone, clock) })
     }
 }
 
@@ -23,16 +20,15 @@ internal data class DatePairSolution(
     val startDate: DateSolution?,
     val endDate: DateSolution?,
 ) {
-    fun toDatePair(timezone: ZoneId): DatePair {
+    fun toDatePair(timezone: ZoneId, clock: Clock): DatePair {
         return DatePair(
-            startDate!!.toOffsetDateTime(timezone), endDate?.toOffsetDateTime(timezone)
+            startDate!!.toOffsetDateTime(timezone, clock), endDate?.toOffsetDateTime(timezone, clock)
         )
     }
 
     fun plusDataFrom(other: DatePairSolution): DatePairSolution {
         return DatePairSolution(
-            startDate?.plusDateAndTimeFrom(other.startDate),
-            if (other.endDate != null) {
+            startDate?.plusDateAndTimeFrom(other.startDate), if (other.endDate != null) {
                 (endDate ?: startDate)?.plusDateAndTimeFrom(other.endDate)
             } else {
                 endDate
@@ -46,19 +42,24 @@ internal data class DatePairSolution(
 }
 
 internal data class DateSolution(
-    val day: Int?, val month: Int?, val year: Int?, val hours: Int?, val minutes: Int?, val seconds: Int?,
+    val day: Int?,
+    val month: Int?,
+    val year: Int?,
+    val hours: Int?,
+    val minutes: Int?,
+    val seconds: Int?,
     val originalTokens: List<Tokens>
 ) {
     fun isSolved(): Boolean {
-        return day != null && month != null && year != null
+        return day != null && month != null
     }
 
-    fun toOffsetDateTime(timezone: ZoneId): OffsetDateTime {
-        return toLocalDate().atTime(toLocalTime()).atZone(timezone).toOffsetDateTime()
+    fun toOffsetDateTime(timezone: ZoneId, clock: Clock): OffsetDateTime {
+        return toLocalDate(clock).atTime(toLocalTime()).atZone(timezone).toOffsetDateTime()
     }
 
-    private fun toLocalDate(): LocalDate {
-        return LocalDate.of(year!!, month!!, day!!)
+    private fun toLocalDate(clock: Clock): LocalDate {
+        return LocalDate.of(year ?: tryGuessYear(clock, day!!, month!!).toInt(), month!!, day!!)
     }
 
     private fun toLocalTime(): LocalTime {
@@ -89,20 +90,37 @@ internal data class DateSolution(
         )
     }
 
+    fun hasNothingInCommonWith(other: DateSolution): Boolean {
+        return !(
+                this.day != null && other.day != null
+                        || this.month != null && other.month != null
+                        || this.year != null && other.year != null
+                        || this.hours != null && other.hours != null
+                        || this.minutes != null && other.minutes != null
+                        || this.seconds != null && other.seconds != null
+                )
+    }
+
     @Suppress("LongParameterList")
     companion object {
         fun create(
-            day: Token?, month: Token?, year: Token?, hours: Token?, minutes: Token?, seconds: Token?,
+            day: Token?,
+            month: Token?,
+            year: Token?,
+            hours: Token?,
+            minutes: Token?,
+            seconds: Token?,
             originalTokens: List<Tokens>
         ): DateSolution {
             val parsedDay = day?.value?.toInt()
             val parsedMonth = if (month != null) month.value.toIntOrNull() ?: MonthMappings.mapMonthToInt(month.value)
             ?: throw IllegalArgumentException("cannot convert value $month to a month, this seems to be a parser bug, please report")
             else null
+            val parsedYear = if (year != null) fixYear(year.value.toInt()) else null
             return DateSolution(
                 parsedDay,
                 parsedMonth,
-                if (year != null) fixYear(year.value.toInt()) else tryGuessYear(parsedDay, parsedMonth),
+                parsedYear,
                 hours?.value?.toInt(),
                 minutes?.value?.toInt(),
                 seconds?.value?.toInt(),
@@ -111,11 +129,8 @@ internal data class DateSolution(
         }
 
         @Suppress("MagicNumber")
-        private fun tryGuessYear(day: Int?, month: Int?): Int? {
-            if (day == null || month == null) {
-                return null
-            }
-            val now = LocalDate.now()
+        private fun tryGuessYear(clock: Clock, day: Int, month: Int): Int {
+            val now = LocalDate.now(clock)
             val date = LocalDate.of(now.year, month, day)
             //if the date with the current year would be in the past (with 2 months grace period) then it probably is next year
             return if (date < now.minusMonths(2)) {

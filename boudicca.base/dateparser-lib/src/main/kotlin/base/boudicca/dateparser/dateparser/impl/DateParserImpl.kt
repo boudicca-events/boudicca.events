@@ -28,7 +28,8 @@ internal class DateParserImpl(
                     .reduce { acc, tokens -> acc + Token.create("\n", emptySet()) + tokens }
 
                 val debugTracing = DebugTracing()
-                val result = GoodGuessesStep(
+                val result = GuessesStep(
+                    dateParserConfig,
                     debugTracing.startOperationWithChild("parser start", Tokens(tokens)), Tokens(tokens)
                 ).solve()
                 debugTracing.endOperation(result)
@@ -39,7 +40,7 @@ internal class DateParserImpl(
                 }
 
                 if (result != null && result.isSolved() && result.datePairs.isNotEmpty()) {
-                    val parserResult = result.toDateParserResult(dateParserConfig.timezone)
+                    val parserResult = result.toDateParserResult(dateParserConfig.timezone, dateParserConfig.clock)
                     span.setStatus(StatusCode.OK)
                         .setAttribute("result", parserResult.toString())
                     DateParser.logger.debug { "did successfully parse inputs $inputTokens into result: $parserResult\n${debugTracing.debugPrint()}" }

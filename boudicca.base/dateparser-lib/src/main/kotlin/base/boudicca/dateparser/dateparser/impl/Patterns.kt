@@ -1,5 +1,8 @@
 package base.boudicca.dateparser.dateparser.impl
 
+import base.boudicca.dateparser.dateparser.DateParserConfig
+
+@Suppress("TooManyFunctions")
 internal object Patterns {
     //patterns which we are pretty certain about, those are not exhaustive
     val PATTERNS_GOOD_GUESSES = listOf(
@@ -114,8 +117,51 @@ internal object Patterns {
         )
     )
 
-    //TODO make order configurable
-    val DAY_DMY = Pattern(
+    val DATE_D = Pattern(
+        listOf(
+            type(ResultTypes.DAY),
+        )
+    )
+    val DATE_DY = Pattern(
+        listOf(
+            type(ResultTypes.DAY),
+            noise(1, Int.MAX_VALUE),
+            type(ResultTypes.YEAR),
+        )
+    )
+    val DATE_YD = Pattern(
+        listOf(
+            type(ResultTypes.YEAR),
+            noise(1, Int.MAX_VALUE),
+            type(ResultTypes.DAY),
+        )
+    )
+    val DATE_YDM = Pattern(
+        listOf(
+            type(ResultTypes.YEAR),
+            noise(1, Int.MAX_VALUE),
+            type(ResultTypes.DAY),
+            noise(1, Int.MAX_VALUE),
+            type(ResultTypes.MONTH),
+        )
+    )
+    val DATE_YMD = Pattern(
+        listOf(
+            type(ResultTypes.YEAR),
+            noise(1, Int.MAX_VALUE),
+            type(ResultTypes.MONTH),
+            noise(1, Int.MAX_VALUE),
+            type(ResultTypes.DAY),
+        )
+    )
+    val DATE_DM = Pattern(
+        listOf(
+            type(ResultTypes.DAY),
+            noise(1, Int.MAX_VALUE),
+            type(ResultTypes.MONTH),
+        )
+    )
+    val DATE_DMY = Pattern(
         listOf(
             type(ResultTypes.DAY),
             noise(1, Int.MAX_VALUE),
@@ -124,25 +170,40 @@ internal object Patterns {
             type(ResultTypes.YEAR),
         )
     )
-    val DAY_DM = Pattern(
+    val DATE_MD = Pattern(
         listOf(
-            type(ResultTypes.DAY),
-            noise(1, Int.MAX_VALUE),
             type(ResultTypes.MONTH),
+            noise(1, Int.MAX_VALUE),
+            type(ResultTypes.DAY),
         )
     )
-    val DAY_D = Pattern(
+    val DATE_MDY = Pattern(
         listOf(
+            type(ResultTypes.MONTH),
+            noise(1, Int.MAX_VALUE),
             type(ResultTypes.DAY),
+            noise(1, Int.MAX_VALUE),
+            type(ResultTypes.YEAR),
         )
     )
 
+    val EXHAUSTIVE_DATE_PATTERNS = listOf(
+        DATE_D,
+        DATE_DY,
+        DATE_YD,
+        DATE_DM,
+        DATE_DMY,
+        DATE_MD,
+        DATE_MDY,
+        DATE_YDM,
+        DATE_YMD,
+    )
+    val EXHAUSTIVE_TIME_PATTERNS = listOf(TIME_HMS, TIME_HM, TIME_H)
+
     fun type(
         resultTypes: ResultTypes,
-        minMatches: Int = 1,
-        maxMatches: Int = 1,
     ): Matcher {
-        return TypeMatcher(minMatches, maxMatches, resultTypes)
+        return TypeMatcher(resultTypes)
     }
 
     fun noise(minMatches: Int, maxMatches: Int): Matcher {
@@ -173,63 +234,179 @@ internal object Patterns {
         override val maxMatches: Int,
     ) : Matcher()
 
-    internal data class TypeMatcher(
+    @ConsistentCopyVisibility
+    internal data class TypeMatcher private constructor(
         override val minMatches: Int, override val maxMatches: Int, val resultTypes: ResultTypes
-    ) : Matcher()
+    ) : Matcher() {
+        constructor(resultTypes: ResultTypes) : this(1, 1, resultTypes)
+    }
 
     internal data class SeparatorMatcher(
         override val minMatches: Int, override val maxMatches: Int, val separator: String
     ) : Matcher()
 
     fun applyGoodGuesses(tokens: List<Token>): List<Token> {
-        return applyGuessesAndIntersect(tokens, PATTERNS_GOOD_GUESSES)
+        return applyPatternsAndMergeResult(PATTERNS_GOOD_GUESSES, tokens)
     }
 
     fun applyWeakGuesses(tokens: List<Token>): List<Token> {
         return applyGuessesAndIntersect(tokens, PATTERNS_WEAK_GUESSES)
     }
 
-    fun applyCorrectPatternsAndMergeResult(inputTokens: List<Token>): List<Token> {
+    fun applyExhaustivePatterns(
+        inputTokens: List<Token>,
+    ): List<Token> {
+        val patterns = EXHAUSTIVE_TIME_PATTERNS + EXHAUSTIVE_DATE_PATTERNS
+
+        val allMatchesPerPatterns = patterns.map { findAllReplacements(inputTokens, it, true) }
+
+        val allValidCombinations = findAllValidReplacements(inputTokens, allMatchesPerPatterns)
+
+        return mergeResultTypes(inputTokens, allValidCombinations, true)
+    }
+
+    fun applyStricterPatternsAndMergeResult(
+        inputTokens: List<Token>,
+        dayMonthOrder: DateParserConfig.DayMonthOrder
+    ): List<Token> {
         val countOfInterestingTokens = inputTokens.count { it.needSolving }
-        val patternsToApply = getPatternsForCount(countOfInterestingTokens)
+        val patternsToApply = getStricterPatternsForCount(countOfInterestingTokens, dayMonthOrder)
         return applyPatternsAndMergeResult(patternsToApply, inputTokens)
     }
 
     @Suppress("MagicNumber")
-    private fun getPatternsForCount(countOfInterestingTokens: Int): List<Pattern> {
+    private fun getStricterPatternsForCount(
+        countOfInterestingTokens: Int,
+        dayMonthOrder: DateParserConfig.DayMonthOrder
+    ): List<Pattern> {
+        val isDM = dayMonthOrder == DateParserConfig.DayMonthOrder.DAY_MONTH
         return when (countOfInterestingTokens) {
-            6 -> listOf(TIME_HMS, DAY_DMY)
-            5 -> listOf(TIME_HM, DAY_DMY)
-            4 -> listOf(TIME_H, DAY_DMY)
-            3 -> listOf(TIME_HMS, DAY_DMY)
-            2 -> listOf(TIME_HM, DAY_DM)
-            1 -> listOf(TIME_H, DAY_D)
+            6 -> listOf(TIME_HMS, if (isDM) DATE_DMY else DATE_MDY)
+            5 -> listOf(TIME_HM, if (isDM) DATE_DMY else DATE_MDY)
+            4 -> listOf(TIME_H, if (isDM) DATE_DMY else DATE_MDY)
+            3 -> listOf(TIME_HMS, if (isDM) DATE_DMY else DATE_MDY)
+            2 -> listOf(TIME_HM, if (isDM) DATE_DM else DATE_MD)
+            1 -> listOf(TIME_H, DATE_D)
             else -> emptyList()
         }
     }
 
-    //TODO probably rethink this merging again.. we want to leave ones without matches alone.. right? maybe also don't make empty if nothing matches?
-    private fun applyPatternsAndMergeResult(patterns: List<Pattern>, inputTokens: List<Token>): List<Token> {
-        val allReplacements = patterns.map { findAllReplacements(inputTokens, it, true) }.flatten()
-        if (allReplacements.isEmpty()) {
-            return inputTokens.map { it.withTypes(emptySet()) }
-        }
-        return mergeGuesserTypes(inputTokens, allReplacements)
+    private fun findAllValidReplacements(
+        inputTokens: List<Token>,
+        matchesPerPattern: List<List<Pair<Set<Int>, List<Token>>>>
+    ): List<List<Token>> {
+        val validCombinations = mutableListOf<List<Pair<Set<Int>, List<Token>>>>()
+        val neededTokenIndices =
+            inputTokens.count { it.needSolving }
+
+        findAllValidReplacementsRecursively(
+            neededTokenIndices,
+            validCombinations,
+            mutableListOf(),
+            matchesPerPattern.flatten().toMutableList(),
+            mutableSetOf<Int>(),
+            mutableSetOf<ResultTypes>()
+        )
+
+        return validCombinations.map { mergeResultTypes(inputTokens, it.map { it.second }, true) }
     }
 
-    private fun mergeGuesserTypes(inputGuesses: List<Token>, componentLists: List<List<Token>>): List<Token> {
+    @Suppress("LongParameterList")
+    private fun findAllValidReplacementsRecursively(
+        neededTokenIndicesCount: Int,
+        result: MutableList<List<Pair<Set<Int>, List<Token>>>>,
+        currentResult: MutableList<Pair<Set<Int>, List<Token>>>,
+        remainingMatches: MutableList<Pair<Set<Int>, List<Token>>>,
+        currentTokenIndices: MutableSet<Int>,
+        currentResultTypes: MutableSet<ResultTypes>
+    ) {
+        if (remainingMatches.isEmpty()) {
+            return
+        }
+        val currentMatch = remainingMatches.removeLast()
+        //first call without us
+        findAllValidReplacementsRecursively(
+            neededTokenIndicesCount,
+            result,
+            currentResult,
+            remainingMatches,
+            currentTokenIndices,
+            currentResultTypes
+        )
+
+        //do we match the same tokens?
+        if (currentMatch.first.intersect(currentTokenIndices).isEmpty()) {
+            val matchingResultTypes = currentMatch.first.map { currentMatch.second[it].possibleTypes }.flatten().toSet()
+            //do we match the same resulttypes?
+            if (matchingResultTypes.intersect(currentResultTypes).isEmpty()) {
+                //now can add ourselves as a matched pattern
+                currentTokenIndices.addAll(currentMatch.first)
+                currentResultTypes.addAll(matchingResultTypes)
+                currentResult.add(currentMatch)
+
+                //do we have a new match?
+                if (currentTokenIndices.size == neededTokenIndicesCount) {
+                    result.add(currentResult.toList())
+                    //can we still grow?
+                } else if (currentTokenIndices.size < neededTokenIndicesCount) {
+                    findAllValidReplacementsRecursively(
+                        neededTokenIndicesCount,
+                        result,
+                        currentResult,
+                        remainingMatches,
+                        currentTokenIndices,
+                        currentResultTypes
+                    )
+                }
+
+                currentTokenIndices.removeAll(currentMatch.first)
+                currentResultTypes.removeAll(matchingResultTypes)
+                currentResult.removeLast()
+            }
+        }
+
+        remainingMatches.add(currentMatch)
+    }
+
+    private fun applyPatternsAndMergeResult(
+        patterns: List<Pattern>,
+        inputTokens: List<Token>
+    ): List<Token> {
+        val allReplacements = patterns.map { findAllReplacements(inputTokens, it, true) }.flatten()
+        if (allReplacements.isEmpty()) {
+            return inputTokens
+        }
+        return mergeResultTypes(inputTokens, allReplacements.map { it.second }, false)
+    }
+
+    private fun mergeResultTypes(
+        inputTokens: List<Token>,
+        componentLists: List<List<Token>>,
+        exhaustive: Boolean
+    ): List<Token> {
         val result = mutableListOf<Token>()
 
-        for (i in inputGuesses.indices) {
+        for (i in inputTokens.indices) {
             var newTypes = setOf<ResultTypes>()
             for (list in componentLists) {
                 val component = list[i]
                 newTypes = newTypes.union(component.possibleTypes)
             }
-            result.add(inputGuesses[i].withTypes(newTypes))
+            result.add(inputTokens[i].withTypes(newTypes))
         }
 
-        return result
+        return if (exhaustive) {
+            result
+        } else {
+            inputTokens.mapIndexed { i, token ->
+                val mergedToken = result[i]
+                if (mergedToken.possibleTypes.isEmpty()) {
+                    token
+                } else {
+                    token.withTypes(mergedToken.possibleTypes)
+                }
+            }
+        }
     }
 
     private fun applyGuessesAndIntersect(
@@ -239,7 +416,7 @@ internal object Patterns {
         for (pattern in guesses) {
             val replacements = findAllReplacements(result, pattern, false)
             if (replacements.isNotEmpty()) {
-                result = intersectGuesserTypes(inputGuesses, replacements)
+                result = intersectGuesserTypes(inputGuesses, replacements.map { it.second })
             }
         }
         return result
@@ -260,8 +437,12 @@ internal object Patterns {
         return result
     }
 
-    private fun findAllReplacements(inputGuesses: List<Token>, pattern: Pattern, whiteout: Boolean): List<List<Token>> {
-        val result = mutableListOf<List<Token>>()
+    private fun findAllReplacements(
+        inputGuesses: List<Token>,
+        pattern: Pattern,
+        whiteout: Boolean
+    ): List<Pair<Set<Int>, List<Token>>> {
+        val result = mutableListOf<Pair<Set<Int>, List<Token>>>()
         for (i in inputGuesses.indices) {
             val replacement = tryMatchAndReplacePatternAtPosition(inputGuesses, pattern, whiteout, i)
             if (replacement != null) {
@@ -273,12 +454,15 @@ internal object Patterns {
 
     private fun tryMatchAndReplacePatternAtPosition(
         inputGuesses: List<Token>, pattern: Pattern, whiteout: Boolean, i: Int
-    ): List<Token>? {
+    ): Pair<Set<Int>, List<Token>>? {
         val matchedGroups = mutableListOf<List<Token>>()
+        val matchedTypeTokens = mutableSetOf<Int>()
         var matchedComponentsCount = 0
         for (matcher in pattern.matchers) {
-            val matchedGroup = tryMatchMatcherAtPosition(inputGuesses, matcher, i + matchedComponentsCount)
-            if (matchedGroup != null) {
+            val matchedResult = tryMatchMatcherAtPosition(inputGuesses, matcher, i + matchedComponentsCount)
+            if (matchedResult != null) {
+                matchedTypeTokens.addAll(matchedResult.first)
+                val matchedGroup = matchedResult.second
                 matchedGroups.add(matchedGroup)
                 matchedComponentsCount += matchedGroup.size
             } else {
@@ -291,12 +475,13 @@ internal object Patterns {
             pattern, matchedGroups
         )
 
-        return if (whiteout) {
-            whiteout(prefix) + replacement + whiteout(suffix)
-        } else {
-            prefix + replacement + suffix
-
-        }
+        return Pair(
+            matchedTypeTokens, if (whiteout) {
+                whiteout(prefix) + replacement + whiteout(suffix)
+            } else {
+                prefix + replacement + suffix
+            }
+        )
     }
 
     private fun whiteout(tokens: List<Token>): List<Token> {
@@ -305,11 +490,15 @@ internal object Patterns {
 
     private fun tryMatchMatcherAtPosition(
         inputGuesses: List<Token>, matcher: Matcher, i: Int
-    ): List<Token>? {
+    ): Pair<Set<Int>, List<Token>>? {
         val result = mutableListOf<Token>()
+        val matchedTypeIndices = mutableSetOf<Int>()
         var j = i
         @Suppress("LoopWithTooManyJumpStatements") while (j < inputGuesses.size) {
             if (matches(matcher, inputGuesses[j])) {
+                if (matcher is TypeMatcher) {
+                    matchedTypeIndices.add(j)
+                }
                 result.add(inputGuesses[j])
                 if (result.size == matcher.maxMatches) {
                     break
@@ -320,7 +509,7 @@ internal object Patterns {
             }
         }
         if (result.size >= matcher.minMatches && result.size <= matcher.maxMatches) {
-            return result
+            return Pair(matchedTypeIndices, result)
         }
         return null
     }

@@ -1,7 +1,13 @@
 package base.boudicca.dateparser.dateparser.impl
 
+import base.boudicca.dateparser.dateparser.DateParserConfig
 
-internal class ListOfDatePairStep(private val debugTracing: DebugTracing, private val tokens: Tokens) {
+
+internal class ListOfDatePairStep(
+    private val config: DateParserConfig,
+    private val debugTracing: DebugTracing,
+    private val tokens: Tokens
+) {
     fun solve(): ListOfDatePairSolution? {
         //TODO think if this could result in wrong results when we have the no list handling as first
         var result = trySolve(
@@ -44,11 +50,12 @@ internal class ListOfDatePairStep(private val debugTracing: DebugTracing, privat
     }
 
     private fun trySolve(debugTracing: DebugTracing, groups: List<Tokens>): ListOfDatePairSolution? {
-        var results = groups.map { DatePairStep(debugTracing, it).solve() }
+        val canHaveMoreData = groups.filter { it.isInteresting() }.size > 1
+        var results = groups.map { DatePairStep(config, debugTracing, it, canHaveMoreData).solve() }
 
         //type stealing
         results = results.mapIndexed { i, result ->
-            result ?: DatePairStep(debugTracing, Utils.tryTypeStealing(groups, i)).solve()
+            result ?: DatePairStep(config, debugTracing, Utils.tryTypeStealing(groups, i), canHaveMoreData).solve()
         }
 
         if (results.any { it == null }) {

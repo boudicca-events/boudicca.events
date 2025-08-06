@@ -1,24 +1,31 @@
-<style>
-    @layer default {
-    .header-links {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 24px;
-        padding: 12px 0;
-    }
-
-    @media only screen and (max-width: 970px) {
-        .header-links {
-            display: none;
-        }
-    }
-    }
-</style>
 <nav class="header-links">
     <a href="/search" target="_self" class="wantsSearchQuery">Events</a>
     <a href="/map" target="_self" class="wantsSearchQuery">Map</a>
     <a href="/sources" target="_self">Sources</a>
     {{#each extensionHeaders as |extensionHeader|}}
-        <a href="{{extensionHeader.url}}" target="{{extensionHeader.target}}">{{extensionHeader.text}}</a>
+        {{#if extensionHeader.svgName}}
+            <a href="{{extensionHeader.url}}" target="{{extensionHeader.target}}">
+                <svg height="22px" width="22px" title="{{extensionHeader.text}}" viewBox="0 0 512 512">
+                    <use xlink:href="#{{extensionHeader.svgName}}"></use>
+                </svg>
+            </a>
+        {{else}}
+            <a href="{{extensionHeader.url}}" target="{{extensionHeader.target}}">{{extensionHeader.text}}</a>
+        {{/if}}
     {{/each}}
 </nav>
+
+<nav class="header-mobile-menu">
+    <button id="openMenuButton" aria-label="Menu öffnen" aria-controls="mobile-menu" type="button">
+        <svg height="36px" width="36px" title="Menü Öffnen Logo" viewBox="0 0 512 512" aria-label="Menü öffnen">
+            <use xlink:href="#menu"></use>
+        </svg>
+    </button>
+    <button type="button" id="closeMenuButton" title="Filtersuche schließen" tabindex="0">
+        <svg title="Menü Schließen Logo" height="36px" width="36px" viewBox="0 0 512 512" aria-label="Menü schließen">
+            <use xlink:href="#close"></use>
+        </svg>
+    </button>
+</nav>
+
+{{> layout/menu}}

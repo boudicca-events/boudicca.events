@@ -6,8 +6,7 @@ import java.util.Locale
  * current event categories we support, with all their known event types
  */
 enum class EventCategory(val types: Set<String>) {
-    //ALL and OTHER are special cases needing special care
-    ALL(emptySet()),
+    //OTHER is a special cases needing special care
     OTHER(emptySet()),
     MUSIC(setOf("konzert", "concert", "alternative", "singer/songwriter", "party", "songwriter/alternative", "musik")),
     ART(

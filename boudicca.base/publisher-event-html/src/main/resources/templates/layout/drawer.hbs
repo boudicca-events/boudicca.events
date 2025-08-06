@@ -1,194 +1,79 @@
-<style>
-    @layer default {
-    .drawer {
-        z-index: 9999;
-        min-width: 500px;
-        display: flex;
-        height: 100%;
-        flex-direction: column;
-        background-color: var(--color-white);
-        padding: 32px;
-        opacity: 0;
-        position: fixed;
-        right: 0;
-        top: 0;
-        visibility: hidden;
-        border-left: 1px solid black;
-        box-shadow: 1px 0px 10px 11px #87878724;
-        overflow: scroll;
-    }
+<form id="drawer" class="drawer" aria-hidden="true">
+    <button type="button" id="closeDrawerButton" title="Filter schließen" tabindex="0">
+        &#x2715;
+    </button>
 
-    .hidden {
-        display: none;
-    }
+    {{> layout/multiselect_fieldset identifier="category" legend="Veranstaltungsart" entries=filters.categories }}
 
-    @media only screen and (max-width: 700px) {
-        .drawer {
-            width: 100vw;
-            border: none;
-            box-shadow: none;
-            min-width: 0;
-        }
-    }
-
-    .drawer-open {
-        visibility: visible;
-        opacity: 1;
-    }
-
-    fieldset {
-        padding: 0;
-        border: none;
-        margin-top: 10px;
-        margin-bottom: 10px;
-    }
-
-    legend {
-        margin-bottom: 12px;
-    }
-
-    .drawer-header {
-        display: flex;
-        justify-content: space-between;
-    }
-
-    #filterSearchButton {
-        padding: 12px 24px;
-        border: 1px solid var(--color-filterSearchButton);
-        margin-top: 24px;
-        font-size: 18px;
-    }
-
-    #resetSearchForm {
-        margin-top: 4px;
-        text-align: left;
-        width: max-content;
-    }
-
-    @media only screen and (max-width: 700px) { 
-        .header-accessibility-filter {
-            flex-direction: column;
-        }
-    }
-
-    .header-accessibility-filter {
-        display: flex;
-        flex: 1;
-        gap: 12px;
-    }
-
-    .header-date-search {
-        display: flex;
-        flex: 1;
-        gap: 12px;
-    }
-
-    @media only screen and (max-width: 700px) {
-        .header-date-search {
-            flex-direction: column;
-        }
-    }
-    }
-</style>
-
-<div id="drawer" class="drawer">
-    <div class="drawer-header">
-        <h2>Filtersuche</h2>
-        <button type="button" id="closeDrawerButton" title="Filtersuche schließen" tabindex="0">
-            <svg title="Schließen Logo" height="56px" width="56px" viewBox="0 0 512 512">
-                <use xlink:href="#close"></use>
-            </svg>
-        </button>
-    </div>
-
-    <fieldset>
-        <legend><strong>Allgemein</strong></legend>
-        <div class="header-search-filter">
-            <div class="header-date-search">
-                <div class="filter-input-wrapper">
-                    <label for="categorySelect" class="filter-label">Veranstaltungsart</label>
-                    <select name="category" id="categorySelect">
-                        {{#each filters.categories as |category|}}
-                            <option value="{{category.first}}">{{category.second}}</option>
-                        {{/each}}
-                    </select>
-                </div>
-                <div class="filter-input-wrapper">
-                    <label for="includeRecurring" class="filter-label">Zeige sich wiederholende Veranstaltungen</label>
-                    <input type="checkbox" id="includeRecurring" name="includeRecurring">
-                </div>
-            </div>
-        </div>
-    </fieldset>
-
-    <fieldset>
+    <fieldset class="dateFieldSet">
         <legend><strong>Datum</strong></legend>
-        <div class="header-search-filter">
-            <div class="header-date-search">
-                <div class="filter-input-wrapper">
-                    <label for="fromDate" class="filter-label">Von</label>
-                    <input id="fromDate" name="fromDate" type="date" class="date-input"/>
-                </div>
+        <div class="header-date-search">
+            <div class="filter-input-wrapper">
+                <label for="fromDate" class="filter-label">Datum von</label>
+                <input id="fromDate" name="fromDate" type="date"/>
+            </div>
 
-                <div class="filter-input-wrapper">
-                    <label for="toDate" class="filter-label">Bis</label>
-                    <input id="toDate" name="toDate" type="date" class="date-input"/>
-                </div>
+            <div class="filter-input-wrapper">
+                <label for="toDate" class="filter-label">Datum bis</label>
+                <input id="toDate" name="toDate" type="date"/>
+            </div>
+
+            <div class="filter-input-wrapper">
+                <label for="includeRecurring" class="filter-label">
+                    <input type="checkbox" id="includeRecurring" name="includeRecurring" aria-checked="false">
+                    Zeige wiederholende<br/>Veranstaltungen
+                </label>
             </div>
         </div>
     </fieldset>
 
-    <fieldset>
-        <legend><strong>Ort</strong></legend>
-        <div class="header-search-filter">
-            <div class="header-date-search">
-                <div class="filter-input-wrapper">
-                    <label for="locationName" class="filter-label">Veranstaltungsort</label>
-                    <select name="locationName" id="locationName">
-                        <option value="">Beliebig</option>
-                        {{#each filters.locationNames as |locationName|}}
-                            <option value="{{locationName.first}}">{{locationName.second}}</option>
-                        {{/each}}
-                    </select>
-                </div>
-
-                <div class="filter-input-wrapper">
-                    <label for="locationCity" class="filter-label">Stadt</label>
-                    <select name="locationCity" id="locationCity">
-                        <option value="">Beliebig</option>
-                        {{#each filters.locationCities as |locationCity|}}
-                            <option value="{{locationCity.first}}">{{locationCity.second}}</option>
-                        {{/each}}
-                    </select>
-                </div>
+    <fieldset class="accessibility">
+        <legend><strong>Accessibility</strong></legend>
+        <div class="header-accessibility-filter">
+            <div class="filter-input-wrapper">
+                <label for="accessibility.accessibleEntry" class="filter-label">
+                    <input type="checkbox" id="accessibility.accessibleEntry" value="accessibility.accessibleEntry" name="flags" aria-checked="false">
+                    Barrierefreier Zugang
+                </label>
+            </div>
+            <div class="filter-input-wrapper">
+                <label for="accessibility.accessibleSeats" class="filter-label">
+                    <input type="checkbox" id="accessibility.accessibleSeats" value="accessibility.accessibleSeats" name="flags" aria-checked="false">
+                    Rollstuhlplatz
+                </label>
+            </div>
+            <div class="filter-input-wrapper">
+                <label for="accessibility.accessibleToilets" class="filter-label">
+                    <input type="checkbox" id="accessibility.accessibleToilets" value="accessibility.accessibleToilets" name="flags" aria-checked="false">
+                    Barrierefreie Toiletten
+                </label>
+            </div>
+            <div class="filter-input-wrapper">
+                <label for="accessibility.accessibleAktivpassLinz" class="filter-label">
+                    <input type="checkbox" id="accessibility.accessibleAktivpassLinz" value="accessibility.accessibleAktivpassLinz" name="flags" aria-checked="false">
+                    Aktivpass möglich
+                </label>
+            </div>
+            <div class="filter-input-wrapper">
+                <label for="accessibility.accessibleKulturpass" class="filter-label">
+                    <input type="checkbox" id="accessibility.accessibleKulturpass" value="accessibility.accessibleKulturpass" name="flags" aria-checked="false">
+                    Kulturpass möglich
+                </label>
             </div>
         </div>
     </fieldset>
 
-    <fieldset data-category-wanted="MUSIC">
-        <legend><strong>Musik</strong></legend>
-        <div class="header-search-filter">
-            <div class="header-date-search">
-                <div class="filter-input-wrapper">
-                    <label for="bandName" class="filter-label">Bandname</label>
-                    <select name="bandName" id="bandName">
-                        <option value="">Beliebig</option>
-                        {{#each filters.bandNames as |bandName|}}
-                            <option value="{{bandName.first}}">{{bandName.second}}</option>
-                        {{/each}}
-                    </select>
-                </div>
-            </div>
-        </div>
-    </fieldset>
+    {{> layout/multiselect_fieldset identifier="locationCities" legend="Stadt" entries=filters.locationCities }}
+    {{> layout/multiselect_fieldset identifier="locationNames" legend="Veranstaltungsort" entries=filters.locationNames }}
+    {{> layout/multiselect_fieldset identifier="bandNames" legend="Musik" entries=filters.bandNames name="Bandname" data-category="MUSIC"}}
 
-    <fieldset data-category-wanted="SPORT">
+    <fieldset data-category-wanted="SPORT" class="hidden">
         <legend><strong>Sport</strong></legend>
         <div class="header-search-filter">
             <div class="header-date-search">
                 <div class="filter-input-wrapper">
                     <label for="sportParticipation" class="filter-label">Teilnahme</label>
-                    <select name="sportParticipation" id="sportParticipation">
+                    <select name="sportParticipation" id="sportParticipation" multiple>
                         <option value="">Beliebig</option>
                         <option value="active">Zum Mitmachen</option>
                         <option value="watch">Zum Zuschauen</option>
@@ -198,42 +83,15 @@
         </div>
     </fieldset>
 
-    <fieldset>
-        <legend><strong>Accessibility</strong></legend>
-        <div class="header-search-filter">
-            <div class="header-accessibility-filter">
-                <div class="filter-input-wrapper">
-                    <label for="accessibility.accessibleEntry" class="filter-label">Barrierefreier Zugang
-                        <input type="checkbox" id="accessibility.accessibleEntry" value="accessibility.accessibleEntry" name="flags">
-                    </label>
-                </div>
-                <div class="filter-input-wrapper">
-                    <label for="accessibility.accessibleSeats" class="filter-label">Rollstuhlplatz
-                        <input type="checkbox" id="accessibility.accessibleSeats" value="accessibility.accessibleSeats" name="flags">
-                    </label>
-                </div>
-                <div class="filter-input-wrapper">
-                    <label for="accessibility.accessibleToilets" class="filter-label">Barrierefreie Toiletten
-                        <input type="checkbox" id="accessibility.accessibleToilets" value="accessibility.accessibleToilets" name="flags">
-                    </label>
-                </div>
-                <div class="filter-input-wrapper">
-                    <label for="accessibility.accessibleAktivpassLinz" class="filter-label">Aktivpass möglich
-                        <input type="checkbox" id="accessibility.accessibleAktivpassLinz" value="accessibility.accessibleAktivpassLinz" name="flags">
-                    </label>
-                </div>
-                <div class="filter-input-wrapper">
-                    <label for="accessibility.accessibleKulturpass" class="filter-label">Kulturpass möglich
-                        <input type="checkbox" id="accessibility.accessibleKulturpass" value="accessibility.accessibleKulturpass" name="flags">
-                    </label>
-                </div>
-            </div>
-        </div>
-    </fieldset>
-
-    <button id="filterSearchButton" type="submit">
-        Suchen
-    </button>
-
-    <button id="resetSearchForm" type="button" data-drawer-last-focusable-element>Suche zurücksetzen</button>
-</div>
+    <div class="search-buttons">
+        <button id="filterSearchButton" aria-label="Events finden" type="submit">
+            <svg height="20px" width="20px" title="Suche Logo" viewBox="0 0 512 512" >
+                <use xlink:href="#search"></use>
+            </svg>
+            Suchen
+        </button>
+        <button id="resetSearchForm" type="button" data-drawer-last-focusable-element>
+            Suche zurücksetzen
+        </button>
+    </div>
+</form>

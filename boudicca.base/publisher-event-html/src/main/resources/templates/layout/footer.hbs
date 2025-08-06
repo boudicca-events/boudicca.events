@@ -1,55 +1,14 @@
-<style>
-    @layer default {
-    .footer {
-        margin: 124px 0 48px 0;
-        display: flex;
-        justify-content: space-between;
-        padding: 0 48px;
-    }
-
-    .footer-update-social-logo {
-        height: 75px;
-    }
-
-    @media only screen and (max-width: 970px) {
-        .footer {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            padding: 0 48px;
-            gap: 12px;
-        }
-    }
-
-    .footer-link {
-        font-size: var(--font-size-small);
-    }
-
-    .footer-list {
-        list-style: none;
-        padding: 0;
-        text-align: right;
-    }
-    }
-</style>
-<footer class="footer">
+<footer>
     <div>
-        <ul class="footer-list">
-            <li>
-                <a class="footer-link" target="_blank" href="https://github.com/boudicca-events/boudicca.events">GitHub</a>
-            </li>
-            <li>
-                <a class="footer-link" target="_self" href="/erklarung-zur-barrierefreiheit">Erklärung zur Barrierefreiheit</a>
-            </li>
-            <li>
-                <a class="footer-link" target="_self" href="/about">Über uns</a>
-            </li>
-            <li>
-                <a class="footer-link" target="_self" href="/impressum">Impressum</a>
-            </li>
+        <ul>
+            {{#each extensionFooters as |extensionFooter|}}
+                <li>
+                    <a href="{{extensionFooter.url}}" target="{{extensionFooter.target}}">{{extensionFooter.text}}</a>
+                </li>
+            {{/each}}
         </ul>
     </div>
     <div>
-        <a class="footer-link" href="#content-anchor">Nach oben</a>
+        <a href="#content-anchor">Nach oben</a>
     </div>
 </footer>

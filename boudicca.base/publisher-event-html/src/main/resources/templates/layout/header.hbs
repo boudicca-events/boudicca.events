@@ -1,179 +1,21 @@
-<style>
-    @layer default {
-    .header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 24px;
-    }
+<header>
 
-    @media only screen and (max-width: 700px) {
-        .header {
-            flex-direction: column;
-            align-items: flex-start;
-            margin-bottom: 24px;
-        }
-
-        #searchForm {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-    }
-
-    @media only screen and (max-width: 970px) {
-        .header-title {
-            font-size: var(--font-size-medium);
-        }
-
-        .header-subtitle {
-            font-size: var(--font-size-small);
-        }
-
-        /*TODO: replace !important with a higher specificity */
-        .header-left {
-            display: none !important;
-        }
-    }
-
-    .header-left {
-        display: flex;
-        align-items: center;
-        gap: 18px;
-        text-decoration: none;
-    }
-
-    .header-left h1 {
-        margin-top: 24px;
-    }
-
-    .header-left h3 {
-        margin: 0;
-    }
-
-    .header-left h1 {
-        margin-bottom: 0;
-    }
-
-    .header-right {
-        display: flex;
-        align-items: center;
-    }
-
-    .search-input {
-        padding: 4px;
-        min-width: 350px;
-        appearance: none;
-        height: 26px;
-        border: none;
-        border-bottom: 1px solid black;
-    }
-
-    .header-search-filter {
-        display: flex;
-
-        > button {
-            display: flex;
-        }
-    }
-
-    #searchForm {
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-    }
-
-    .date-input {
-        appearance: none;
-        min-width: 135px;
-    }
-
-    .header-search {
-        display: flex;
-    }
-
-    .header-search-wrapper {
-        position: relative;
-    }
-
-    #searchButton {
-        display: flex;
-        height: 100%;
-        align-items: center;
-        position: absolute;
-        right: 0;
-        top: 50%;
-        transform: translateY(-50%);
-        cursor: pointer;
-    }
-
-    #searchButton:focus-visible {
-        outline: auto;
-    }
-
-    @media only screen and (max-width: 700px) { 
-        .header-title {
-            display: none;
-        }
-
-        .header-subtitle {
-            display: none;
-        }
-
-        .search-input {
-            min-width: 200px;
-        }
-    }
-
-    .searchform-top {
-        display: flex;
-        width: 100%;
-        justify-content: space-between;
-    }
-
-    @media only screen and (max-width: 970px) {
-        .searchform-top {
-            justify-content: flex-end;
-        }
-    }
-
-    .filter-label {
-        font-size: 12px;
-        margin-bottom: 2px;
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-        gap: var(--space-small);
-    }
-
-    .filter-input-wrapper {
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-    }
-
-    #filterButton {
-        display: flex;
-        align-items: center;
-        /*border-bottom: 1px solid transparent;*/
-        margin-left: 12px;
-    }
-    }
-
-</style>
-<header class="header">
-    <form id="searchForm">
-        <div class="searchform-top">
-            <a href="/" class="header-left">
-                <img src="/img/logo_small.png" alt="Boudicca Logo - Ein rundes Schwarz-auf-Weiß-Bild. Ein stilisiertes Logo der Mondkrone des keltischen Volksstammes Iceni." height="56px" width="56px"/>
-                <div>
-                    <h1 class="header-title">{{headerTitle}}</h1>
-                    <p class="header-subtitle">Events in Österreich und Informationen zu deren Barrierefreiheit</p>
-                </div>
-            </a>
-
-            <!--TODO if did not work :( -->
-            {{> @partial-block }}
+    <a href="/" class="header-left">
+        <img src="/img/logo_small.png" height="48px" width="48px"
+             alt="Boudicca Logo - Ein rundes Schwarz-auf-Weiß-Bild. Ein stilisiertes Logo der Mondkrone des keltischen Volksstammes Iceni." />
+        <div>
+            <h1 class="header-title">{{headerTitle}}</h1>
+            <p class="header-subtitle">Events · für alle · in Österreich</p>
         </div>
-    </form>
+    </a>
+
+    {{#if showSearchbar}}
+        {{> layout/header_searchbar}}
+    {{/if}}
+
+    {{> layout/header_links}}
+
+    <!--TODO if did not work :( -->
+    {{> @partial-block }}
+
 </header>

@@ -54,6 +54,7 @@ class StartPageController @Autowired constructor(private val eventService: Event
     ): ModelAndView {
         val data: MutableMap<String, Any> = HashMap()
         SearchUtils.searchAndAddToModel(eventService, searchDTO, data)
+        data["filters"] = eventService.filters()
         return ModelAndView("map", data)
     }
 }

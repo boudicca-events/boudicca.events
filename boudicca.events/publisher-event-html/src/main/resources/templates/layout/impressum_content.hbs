@@ -1,40 +1,14 @@
-<style>
-    .home-link {
-        margin-top: 24px;
-        display: inline-block;
-    }
-
-    .about-content {
-        display: flex;
-        flex-direction: column;
-        gap: 24px;
-    }
-
-    .about-content p{
-        margin-top: 10px;
-    }
-
-    @media only screen and (max-width: 700px) {
-        h1 > span {
-            display: none;
-        }
-    }
-</style>
 {{#> layout/header }}{{/layout/header}}
 <main id="main-content" class="main">
-    <h1 class="header-title">Impressum</h1>
-    <div class="about-content">
-        <div>
-            <p>
-                Matthias Ableidinger, Kaarstraße 27 4040 Linz
-            </p>
+    <h1>Impressum</h1>
+    <div class="about-content no-gap">
+        <p>
+            Matthias Ableidinger, Kaarstraße 27 4040 Linz
+        </p>
 
-            <p>
-                <a href="mailto:team@boudicca.events">team@boudicca.events</a>
-            </p>
-        </div>
+        <a href="mailto:team@boudicca.events">team@boudicca.events</a>
 
     </div>
 
-    <a href="/" target="_self" class="home-link">Zur Einstiegsseite</a>
+    <a href="/" target="_self" class="home-link">Zu den Events</a>
 </main>

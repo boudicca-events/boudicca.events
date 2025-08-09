@@ -1,42 +1,7 @@
-<style>
-    .home-link {
-        margin-top: 24px;
-        display: inline-block;
-    }
-
-    .col-2 {
-        display: flex;
-        justify-content: space-between;
-        gap: 24px;
-        align-items: center;
-    }
-
-    @media only screen and (max-width: 700px) {
-       .col-2  {
-            flex-direction: column;
-        }
-    }
-
-    .accessibility-statement-content {
-        display: flex;
-        flex-direction: column;
-        gap: 24px;
-    }
-
-    .accessibility-statement-content p{
-        margin-top: 10px;
-    }
-
-    @media only screen and (max-width: 700px) {
-        h1 > span {
-            display: none;
-        }
-    }
-</style>
 {{#> layout/header }}{{/layout/header}}
 <main id="main-content" class="main">
     <h1>Erklärung zur Barrierefreiheit</h1>
-    <div class="accessibility-statement-content">
+    <div class="about-content">
         <div>
             <p>
                 Diese Erklärung gilt für Inhalte, die auf der Domain https://boudicca.events/ veröffentlicht werden.
@@ -51,13 +16,13 @@
             </p>
             <p>
                 Sie sollten dazu in der Lage sein:
-
-                <ul>
-                    <li>ohne Probleme bis zu 200% zoomen</li>
-                    <li>den größten Teil der Website nur mit der Tastatur zu bedienen</li>
-                    <li>den größten Teil der Website mit einem modernen Bildschirmlesegerät und einer Spracherkennungssoftware (auf Ihrem Computer oder Telefon) zu bedienen</li>
-                </ul>
             </p>
+            <ul>
+                <li>ohne Probleme bis zu 200 % zoomen</li>
+                <li>den größten Teil der Website nur mit der Tastatur zu bedienen</li>
+                <li>den größten Teil der Website mit einem modernen Bildschirmlesegerät und einer Spracherkennungssoftware (auf Ihrem Computer oder Telefon) zu bedienen</li>
+            </ul>
+
             <p>
                 Diese Website wurde gemäß der <a href="https://www.etsi.org/deliver/etsi_en/301500_301599/301549/03.02.01_60/en_301549v030201p.pdf" target="_blank">technischen Norm für Websites und mobile Anwendungen, EN 301 549 v.3.2.1</a>, entwickelt.
                 Dies entspricht der Stufe "AA" der <a href="https://www.w3.org/WAI/standards-guidelines/wcag/" target="_blank">Zugänglichkeitsrichtlinien für Webinhalte (WCAG) Version 2.1.</a>
@@ -80,31 +45,31 @@
                 Sollten Ihnen Barrieren auffallen, die Sie an der Nutzung unserer Website hindern - Probleme und/oder Mängel in Bezug auf die Einhaltung von Zugänglichkeitsanforderungen - teilen Sie uns dies bitte per E-Mail mit.
                 Wir werden Ihr Anliegen prüfen und uns so schnell wie möglich mit Ihnen in Verbindung setzen.
             </p>
-            <p>Kontakt:</p>
-            <p>Boudicca-Team</p>
+            <p>Kontakt: Boudicca-Team</p>
             <p>E-Mail: team@boudicca.events</p>
 
             <h2>Kompatibilität mit Browsern und unterstützenden Technologien</h2>
             <p>
                 Die Website Boudicca.events ist so konzipiert, dass sie mit den folgenden unterstützenden Technologien kompatibel ist:
-
-                <ul>
-                    <li>die neueste Version der Browser Google Chrome</li>
-                    <li>in Kombination mit den neuesten Versionen von VoiceOver.</li>
-                </ul>
             </p>
+            <ul>
+                <li>die neueste Version der Browser Google Chrome</li>
+                <li>in Kombination mit den neuesten Versionen von VoiceOver.</li>
+            </ul>
 
-            <h2>Nicht zugängliche Inhalte</h2>
+
+            <h2 id="non-accessible-content">Nicht zugängliche Inhalte</h2>
             <p>
                 Der unten aufgeführte Inhalt der Website Boudicca.events entspricht nicht vollständig der Konformitätsstufe AA der "Web Content Accessibility Guidelines - WCAG 2.1"
                 und/oder der geltenden europäischen Norm EN 301 549 V2.1.2 (2018-08) oder ist nicht zugänglich:
-
-                <h3>Farbkontrast</h3>
+            </p>
+            <h3>Farbkontrast</h3>
+            <p>
                 Beschreibung: In einigen Fällen entsprechen die Farbkontraste auf der Seite nicht den Anforderungen der WCAG.
                 Die Hintergrundfarbe der Event-Elemente ist davon betroffen.
             </p>
         </div>
     </div>
 
-    <a href="/" target="_self" class="home-link">Zur Einstiegsseite</a>
+    <a href="/" target="_self" class="home-link">Zu den Events</a>
 </main>

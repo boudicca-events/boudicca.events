@@ -1,0 +1,29 @@
+@layer default {
+
+.home-link {
+    display: inline-block;
+    margin-top: 36px;
+    padding: 12px 18px;
+    border-radius: 8px;
+    border: 1px solid var(--anchor-to-eventpage-border-color);
+    background-color: var(--anchor-to-eventpage-background-color);
+    font-weight: bold;
+    font-size: var(--font-size-small);
+    text-decoration: none;
+}
+
+.about-content {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.about-content p{
+    margin-top: 10px;
+}
+
+.no-gap {
+    gap: 0;
+}
+
+} /* default layer */

@@ -47,7 +47,7 @@ legend {
     width: 100%;
     margin-bottom: -24px;
     text-align: end;
-    font-size: 24px;
+    font-size: var(--font-size-xlarge);
     position: relative;
     top: -8px;
 }
@@ -56,7 +56,7 @@ legend {
     padding: 12px 24px;
     border-radius: 10px;
     margin-top: 24px;
-    font-size: 18px;
+    font-size: var(--font-size-medium);
     background-color: #eee;
     display: flex;
     gap: 6px;
@@ -83,7 +83,7 @@ legend {
 }
 
 .filter-label {
-    font-size: 12px;
+    font-size: var(--font-size-xsmall);
     margin-bottom: 2px;
     font-weight: 600;
     display: flex;

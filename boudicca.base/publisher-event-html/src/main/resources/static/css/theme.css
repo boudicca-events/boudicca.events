@@ -14,6 +14,7 @@
     --color-main-green-light: rgba(152,251,152,0.25);
     --color-main-grey: #ccc;
     --color-icon: inherit;
+    --color-button: #eee;
 
     /** font family */
     --font-family-open-sans: 'Open Sans', Arial, Helvetica, sans-serif;
@@ -47,6 +48,8 @@
 
     --input-background-color: inherit;
     --font-color: inherit;
+    --font-color-dark: #444;
+    --font-color-lighter: #999;
 
     --color-filterSearchButton: #ccc;
 }

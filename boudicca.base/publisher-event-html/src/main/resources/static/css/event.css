@@ -1,9 +1,5 @@
 @layer default {
 
-.events-page {
-    display: flex;
-}
-
 .events-grid {
     gap: 18px;
     display: grid;
@@ -140,16 +136,6 @@
     gap: 2rem;
 }
 
-@media only screen and (max-width: 970px) {
-    .event-image-modal {
-        width: -webkit-fill-available;
-    }
-    .modal-row-image {
-        gap: 1rem;
-        flex-direction: column;
-    }
-}
-
 .event-modal-chips {
     display: flex;
     gap: 6px;
@@ -168,6 +154,7 @@
     right: 0;
     padding: var(--space-large);
     top: 0;
+    z-index: 100;
 }
 
 .accessibility-details {
@@ -192,7 +179,6 @@
     display: flex;
     font-size: var(--font-size-large);
     margin-top: var(--space-xxlarge);
-    display: flex;
     flex-direction: column;
     gap: var(--space-medium);
 }
@@ -220,11 +206,6 @@
     border-radius: 4px 4px 0 0;
 }
 
-.modal-row {
-    display: flex;
-    flex-direction: row;
-}
-
 .modal-tabs {
     border-radius: 0 0 4px 4px;
     padding: 0 2rem 1.5rem 2rem;
@@ -245,18 +226,6 @@
     max-width: 970px;
     position: relative;
     border-radius: 4px;
-}
-
-.modal-close {
-    z-index: 100;
-}
-
-@media only screen and (max-width: 970px) {}
-@media only screen and (max-width: 700px) {
-    #modal-content {
-        margin: unset;
-        width: 100%;
-    }
 }
 
 .details-box {
@@ -301,6 +270,23 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+@media only screen and (max-width: 970px) {
+    .event-image-modal {
+        width: -webkit-fill-available;
+    }
+    .modal-row-image {
+        gap: 1rem;
+        flex-direction: column;
+    }
+}
+
+@media only screen and (max-width: 700px) {
+    #modal-content {
+        margin: unset;
+        width: 100%;
+    }
 }
 
 } /* default layer */

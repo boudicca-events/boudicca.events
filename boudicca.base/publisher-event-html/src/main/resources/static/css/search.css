@@ -20,7 +20,6 @@ fieldset {
     border: none;
     flex-basis: 30%;
     flex-grow: 5;
-    margin: 0;
     padding: 0;
     max-width: max-content;
 }
@@ -38,11 +37,6 @@ legend {
     margin: 0px 8px 0px -2px;
 }
 
-.drawer-header {
-    display: flex;
-    justify-content: space-between;
-}
-
 #closeDrawerButton {
     width: 100%;
     margin-bottom: -24px;
@@ -57,7 +51,7 @@ legend {
     border-radius: 10px;
     margin-top: 24px;
     font-size: var(--font-size-medium);
-    background-color: #eee;
+    background-color: var(--color-button);
     display: flex;
     gap: 6px;
 }
@@ -74,12 +68,12 @@ legend {
 #resetSearchForm::before {
     content: '\2715';
     border-radius: 10px;
-    color: #bbb;
+    color: var(--font-color-light);
     margin: 0px 6px;
 }
 
 #resetSearchForm:hover::before {
-    color: #555;
+    color: var(--font-color-dark);
 }
 
 .filter-label {
@@ -93,14 +87,6 @@ legend {
 .filter-input-wrapper {
     display: flex;
     flex-direction: column;
-}
-
-.header-search-filter {
-    display: flex;
-}
-
-.header-search-filter button {
-    display: flex;
 }
 
 .search-buttons {
@@ -180,7 +166,7 @@ legend {
 
 input[type=checkbox]:checked + label.chips {
     display: inline-block;
-    background-color: #eee;
+    background-color: var(--color-button);
     border-radius: 20px;
     padding: 4px 10px 4px 10px;
     margin-bottom: 3px;
@@ -190,12 +176,12 @@ input[type=checkbox]:checked + label.chips {
 input[type=checkbox]:checked + label.chips::before {
     content: '\2715';
     border-radius: 10px;
-    color: #bbb;
+    color: var(--font-color-light);
     margin-right: 8px;
 }
 
 input[type=checkbox]:checked + label.chips:hover::before {
-    color: #555;
+    color: var(--font-color-dark);
 }
 
 @media only screen and (max-width: 700px) {

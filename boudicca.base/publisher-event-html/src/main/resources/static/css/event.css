@@ -1,7 +1,7 @@
 @layer default {
 
 .events-grid {
-    gap: 18px;
+    gap: var(--space-large);
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(min(250px, 100%),1fr));
 }
@@ -13,8 +13,8 @@
 
 .event-title {
     font-size: var(--font-size-large);
-    margin-top: 18px;
-    margin-bottom: 12px;
+    margin-top: var(--space-large);
+    margin-bottom: var(--space-medium);
     font-weight: 600;
     /** https://stackoverflow.com/questions/3922739/limit-text-length-to-n-lines-using-css */
     overflow: hidden;
@@ -31,14 +31,14 @@
     align-items: center;
     justify-content: center;
     position: relative;
-    border-radius: 4px;
+    border-radius: var(--border-radius-small);
 }
 
 .event-image img {
     max-height: 180px;
     max-width: 180px;
     object-fit: contain;
-    border-radius: 4px;
+    border-radius: var(--border-radius-small);
 }
 
 .event-image-modal {
@@ -50,7 +50,7 @@
     align-items: center;
     justify-content: center;
     position: relative;
-    border-radius: 4px;
+    border-radius: var(--border-radius-small);
     background-color: var(--color-main);
 }
 
@@ -67,7 +67,7 @@
 }
 
 .event-description {
-    padding: 4px 8px;
+    padding: var(--space-small) var(--space-medium);
     font-size: var(--font-size-small);
 }
 
@@ -75,15 +75,14 @@
     color: inherit;
     position: absolute;
     text-decoration: none;
-    right: 8px;
+    right: var(--space-medium);
     font-size: var(--font-size-xsmall);
-    padding: 8px 24px;
-    margin-top: 10px;
+    padding: var(--space-medium) var(--space-xlarge);
     border: 1px solid var(--anchor-to-eventpage-border-color);
     background-color: var(--anchor-to-eventpage-background-color);
     bottom: -18px;
     font-weight: bold;
-    border-radius: 4px;
+    border-radius: var(--border-radius-small);
 }
 
 .anchor-to-eventpage:focus {
@@ -96,30 +95,30 @@
     text-decoration: none;
     text-align: center;
     font-size: var(--font-size-xsmall);
-    padding: 8px 24px;
+    padding: var(--space-medium) var(--space-xlarge);
     border: 1px solid var(--anchor-to-eventpage-border-color);
     background-color: var(--anchor-to-eventpage-background-color);
     font-weight: bold;
-    border-radius: 4px;
+    border-radius: var(--border-radius-small);
 }
 
 .event-details {
     display: grid;
     grid-template-columns: max-content 1fr;
     align-items: center;
-    gap: 6px;
+    gap: var(--space-medium);
 }
 
 .event-details-wrapper {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: var(--space-medium);
 }
 
 .modal .event-details-wrapper {
     height: 100%;
     justify-content: space-between;
-    margin-top: 12px;
+    margin-top: var(--space-large);
 }
 
 .event-image-modal img {
@@ -133,12 +132,12 @@
 .modal-row-image {
     display: flex;
     flex-direction: row;
-    gap: 2rem;
+    gap: var(--space-xxlarge);
 }
 
 .event-modal-chips {
     display: flex;
-    gap: 6px;
+    gap: var(--space-medium);
     flex-wrap: wrap;
 }
 
@@ -165,7 +164,7 @@
     padding: var(--space-medium);
     border: 1px solid black;
     top: var(--space-medium);
-    border-radius: 4px;
+    border-radius: var(--border-radius-small);
 }
 
 #loadMoreButton {
@@ -202,18 +201,18 @@
 .modal-flex {
     display: flex;
     flex-direction: column;
-    padding: 2rem;
-    border-radius: 4px 4px 0 0;
+    padding: var(--space-xxlarge);
+    border-radius: var(--border-radius-small) var(--border-radius-small) 0 0;
 }
 
 .modal-tabs {
-    border-radius: 0 0 4px 4px;
-    padding: 0 2rem 1.5rem 2rem;
+    border-radius: 0 0 var(--border-radius-small) var(--border-radius-small);
+    padding: 0 var(--space-xxlarge) var(--space-xlarge) var(--space-xxlarge);
 }
 
 .modal-column {
     display: flex;
-    gap: 12px;
+    gap: var(--space-large);
     flex-direction: column;
     width: -webkit-fill-available;
 }
@@ -225,7 +224,7 @@
     width: 80%;
     max-width: 970px;
     position: relative;
-    border-radius: 4px;
+    border-radius: var(--border-radius-small);
 }
 
 .details-box {
@@ -235,13 +234,10 @@
 
 .details-box ul {
     margin: 0;
-    padding: 12px 0 6px 0;
+    padding-top: var(--space-large);
+    padding-bottom: var(--space-small);
     overflow: hidden;
     list-style: none;
-}
-
-.details-box li {
-    float: left;
 }
 
 .details-box li a {
@@ -263,7 +259,8 @@
 }
 
 .details-box article {
-    margin: 10px 0px;
+    margin-top: var(--space-medium);
+    margin-bottom: var(--space-medium);
     display: -webkit-box;
     /* https://stackoverflow.com/questions/15909489/text-overflow-ellipsis-on-two-lines */
     -webkit-line-clamp: 10;
@@ -277,7 +274,7 @@
         width: -webkit-fill-available;
     }
     .modal-row-image {
-        gap: 1rem;
+        gap: var(--space-large);
         flex-direction: column;
     }
 }

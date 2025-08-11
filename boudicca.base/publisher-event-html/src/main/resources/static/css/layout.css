@@ -73,7 +73,7 @@ footer {
 footer a {
     font-size: var(--font-size-small);
     text-decoration: none;
-    padding: 4px;
+    padding: var(--space-small);
     display: block;
 }
 

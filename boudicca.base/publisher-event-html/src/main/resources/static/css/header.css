@@ -38,7 +38,6 @@ header {
 }
 
 .search-input {
-    padding: 4px;
     min-width: 150px;
     max-width: 250px;
     height: 26px;

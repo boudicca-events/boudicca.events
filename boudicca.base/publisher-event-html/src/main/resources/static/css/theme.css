@@ -38,8 +38,8 @@
     --space-small: 4px;
     --space-medium: 8px;
     --space-large: 16px;
-    --space-xlarge: 32px;
-    --space-xxlarge: 128px;
+    --space-xlarge: 24px;
+    --space-xxlarge: 32px;
 
     /** events **/
     --anchor-to-eventpage-border-color: black;
@@ -52,6 +52,8 @@
     --font-color-lighter: #999;
 
     --color-filterSearchButton: #ccc;
+
+    --border-radius-small: 4px;
 }
 
 html {

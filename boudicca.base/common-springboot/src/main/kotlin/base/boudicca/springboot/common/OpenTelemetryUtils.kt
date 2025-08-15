@@ -1,6 +1,7 @@
 package base.boudicca.springboot.common
 
 import io.opentelemetry.api.OpenTelemetry
+import io.opentelemetry.api.metrics.MeterProvider
 import io.opentelemetry.api.trace.propagation.W3CTraceContextPropagator
 import io.opentelemetry.context.propagation.ContextPropagators
 import io.opentelemetry.exporter.otlp.http.logs.OtlpHttpLogRecordExporter
@@ -18,6 +19,8 @@ import io.opentelemetry.sdk.trace.SdkTracerProvider
 import io.opentelemetry.sdk.trace.export.BatchSpanProcessor
 import io.opentelemetry.semconv.ServiceAttributes
 import java.time.Duration
+import java.util.concurrent.atomic.AtomicReference
+import java.util.function.Supplier
 import kotlin.io.encoding.Base64
 
 
@@ -31,10 +34,11 @@ object OpenTelemetryUtils {
         val resource = createResource(serviceName)
         val authHeader = createAuthHeader(user, password)
 
+        val meterProvider = createMeterProvider(resource, endpoint, authHeader)
         val otel = OpenTelemetrySdk.builder()
-            .setTracerProvider(createTracerProvider(resource, endpoint, authHeader))
-            .setMeterProvider(createMeterProvider(resource, endpoint, authHeader))
-            .setLoggerProvider(createLoggerProvider(resource, endpoint, authHeader))
+            .setMeterProvider(meterProvider)
+            .setTracerProvider(createTracerProvider(resource, endpoint, authHeader, meterProvider))
+            .setLoggerProvider(createLoggerProvider(resource, endpoint, authHeader, meterProvider))
             .setPropagators(ContextPropagators.create(W3CTraceContextPropagator.getInstance()))
             .build()
 
@@ -54,54 +58,66 @@ object OpenTelemetryUtils {
     }
 
     private fun createTracerProvider(
-        resource: Resource, endpoint: String, authHeader: String
+        resource: Resource, endpoint: String, authHeader: String, meterProvider: SdkMeterProvider
     ): SdkTracerProvider {
         return SdkTracerProvider.builder().setResource(resource).addSpanProcessor(
-            BatchSpanProcessor.builder(
-                OtlpHttpSpanExporter.builder()
-                    .setEndpoint(getCorrectEndpoint(endpoint, "traces"))
-                    .setTimeout(Duration.ofSeconds(10))
-                    .addHeader("Authorization", authHeader)
+                BatchSpanProcessor.builder(
+                        OtlpHttpSpanExporter.builder()
+                            .setMeterProvider(meterProvider)
+                            .setEndpoint(getCorrectEndpoint(endpoint, "traces"))
+                            .setTimeout(Duration.ofSeconds(10))
+                            .addHeader("Authorization", authHeader)
+                            .build()
+                    )
+                    .setMeterProvider(meterProvider)
+                    .setMaxQueueSize(2048 * 10)
+                    .setExporterTimeout(Duration.ofSeconds(30))
+                    .setScheduleDelay(Duration.ofSeconds(5))
                     .build()
-            )
-                .setMaxQueueSize(2048)
-                .setExporterTimeout(Duration.ofSeconds(30))
-                .setScheduleDelay(Duration.ofSeconds(5))
-                .build()
-        ).build()
+            ).build()
     }
 
     private fun createMeterProvider(
         resource: Resource, endpoint: String, authHeader: String
     ): SdkMeterProvider {
-        return SdkMeterProvider.builder().setResource(resource).registerMetricReader(
+        val ref = AtomicReference<MeterProvider>(null)
+        val meterProvider = SdkMeterProvider.builder().setResource(resource).registerMetricReader(
             PeriodicMetricReader.builder(
                 OtlpHttpMetricExporter.builder()
+                    .setMeterProvider(object : Supplier<MeterProvider> {
+                        override fun get(): MeterProvider {
+                            return ref.get()
+                        }
+                    })
                     .setEndpoint(getCorrectEndpoint(endpoint, "metrics"))
                     .setTimeout(Duration.ofSeconds(10))
                     .addHeader("Authorization", authHeader)
                     .build()
             ).setInterval(Duration.ofSeconds(60)).build()
         ).build()
+        ref.set(meterProvider)
+        return meterProvider
     }
 
     private fun createLoggerProvider(
-        resource: Resource, endpoint: String, authHeader: String
+        resource: Resource, endpoint: String, authHeader: String, meterProvider: SdkMeterProvider
     ): SdkLoggerProvider {
         return SdkLoggerProvider.builder().setResource(resource).addLogRecordProcessor(
             BatchLogRecordProcessor.builder(
                 OtlpHttpLogRecordExporter.builder()
+                    .setMeterProvider(meterProvider)
                     .setEndpoint(getCorrectEndpoint(endpoint, "logs"))
                     .setTimeout(Duration.ofSeconds(10))
                     .addHeader("Authorization", authHeader)
                     .build()
             )
+                .setMeterProvider(meterProvider)
                 .setMaxQueueSize(2048)
                 .setExporterTimeout(Duration.ofSeconds(30))
                 .setScheduleDelay(Duration.ofSeconds(1))
                 .build()
         ).setLogLimits {
-            LogLimits.builder().setMaxNumberOfAttributes(128).setMaxAttributeValueLength(1024).build()
+            LogLimits.builder().setMaxNumberOfAttributes(128).setMaxAttributeValueLength(1024 * 100).build()
         }.build()
     }
 

@@ -19,11 +19,11 @@ datasources:
     basicAuth: false
     jsonData:
       tracesToLogsV2:
-        datasourceUid: 'loki'
+        datasourceUid: 'lokidatasource'
         filterByTraceID: true
         filterBySpanID: false
       tracesToMetrics:
-        datasourceUid: 'mimir'
+        datasourceUid: 'mimirdatasource'
         spanStartTimeShift: '-1h'
         spanEndTimeShift: '1h'
       nodeGraph:
@@ -31,4 +31,4 @@ datasources:
       streamingEnabled:
         search: true
       serviceMap:
-        datasourceUid: 'mimir'
+        datasourceUid: 'mimirdatasource'

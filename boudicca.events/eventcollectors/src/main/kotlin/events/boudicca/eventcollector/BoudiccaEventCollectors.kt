@@ -54,6 +54,7 @@ fun main() {
         .addEventCollector(FamilienkarteEventCollector())
         .addEventCollector(KunstuniversitaetLinzCollector())
         .addEventCollector(AntonBrucknerUniversitaetLinzCollector())
+        .addEventCollector(TheatherPhoenixCollector())
         .build()
 
     eventCollectorCoordinator.startWebUi()

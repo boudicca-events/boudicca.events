@@ -28,6 +28,7 @@ axe-core-playwright = "4.10.1"
 kotlin-logging = "7.0.11"
 otel = "1.52.0"
 otel-instrumentation = "2.18.1-alpha"
+micrometer = "1.15.3"
 
 [libraries]
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
@@ -92,8 +93,8 @@ google-api-services-sheets = { module = "com.google.apis:google-api-services-she
 
 kotlin-logging = { module = "io.github.oshai:kotlin-logging-jvm", version.ref = "kotlin-logging" }
 
-micrometer-core = { module = "io.micrometer:micrometer-core", version = "1.15.2" }
-micrometer-otel-bridge = { module = "io.micrometer:micrometer-tracing-bridge-otel", version = "1.5.2" }
+micrometer-core = { module = "io.micrometer:micrometer-core", version.ref = "micrometer" }
+micrometer-otel-bridge = { module = "io.micrometer:micrometer-tracing-bridge-otel", version.ref = "micrometer" }
 otel-api = { module = "io.opentelemetry:opentelemetry-api", version.ref = "otel" }
 otel-sdk = { module = "io.opentelemetry:opentelemetry-sdk", version.ref = "otel" }
 otel-exporter = { module = "io.opentelemetry:opentelemetry-exporter-otlp", version.ref = "otel" }

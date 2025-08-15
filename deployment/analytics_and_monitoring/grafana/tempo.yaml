@@ -68,6 +68,8 @@ storage:
 
 overrides:
   defaults:
+    global:
+      max_bytes_per_trace: 0
     cost_attribution:
       dimensions:
         service.name: ""

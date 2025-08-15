@@ -51,7 +51,7 @@ fun main() {
         .addEventCollector(ZeroxACollector())
         .addEventCollector(CCCEventsCollector())
         .addEventCollector(ClerieDeChaosEventsCollector())
-        .addEventCollector(FamilienkarteEventCollector())
+//        .addEventCollector(FamilienkarteEventCollector())
         .addEventCollector(KunstuniversitaetLinzCollector())
         .addEventCollector(AntonBrucknerUniversitaetLinzCollector())
         .addEventCollector(TheatherPhoenixCollector())

@@ -172,6 +172,7 @@ class EventService @Autowired constructor(
         return mapOf(
             "name" to event.name,
             "startDate" to formatDate(event.startDate),
+            "startDateISO" to event.startDate.toString(),
             "description" to getRichTextProperty(event, SemanticKeys.DESCRIPTION),
             "url" to getTextProperty(event, SemanticKeys.URL),
             "locationName" to getTextProperty(event, SemanticKeys.LOCATION_NAME),

@@ -30,7 +30,7 @@
                 <svg height="24px" width="24px" title="Datum Logo" viewBox="0 0 512 512" aria-label="Startzeit des Events">
                     <use xlink:href="#time"></use>
                 </svg>
-                <p>{{event.startDate}}</p>
+                <p><time datetime="{{event.startDateISO}}">{{event.startDate}}</time></p>
             </div>
             {{#if event.locationName}}
                 <div class="event-details">
@@ -77,7 +77,7 @@
                                 <svg height="24px" width="24px" title="Datum Logo" viewBox="0 0 512 512" aria-label="Startzeit des Events">
                                     <use xlink:href="#time"></use>
                                 </svg>
-                                <p>{{event.startDate}}</p>
+                                <p><time datetime="{{event.startDateISO}}">{{event.startDate}}</time></p>
                             </div>
                             {{#if event.locationName}}
                                 <div class="event-details">

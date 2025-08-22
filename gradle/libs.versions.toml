@@ -28,6 +28,7 @@ axe-core-playwright = "4.10.1"
 kotlin-logging = "7.0.11"
 otel = "1.52.0"
 otel-instrumentation = "2.18.1-alpha"
+twelvemonkeys = "3.12.0"
 
 [libraries]
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
@@ -102,6 +103,23 @@ otel-java-httpclient = { module = "io.opentelemetry.instrumentation:opentelemetr
 otel-micrometer = { module = "io.opentelemetry.instrumentation:opentelemetry-micrometer-1.5", version.ref = "otel-instrumentation" }
 otel-logback = { module = "io.opentelemetry.instrumentation:opentelemetry-logback-appender-1.0", version.ref = "otel-instrumentation" }
 
+twelvemonkeys-jpeg = { module = "com.twelvemonkeys.imageio:imageio-jpeg", version.ref = "twelvemonkeys" }
+twelvemonkeys-xwd = { module = "com.twelvemonkeys.imageio:imageio-xwd", version.ref = "twelvemonkeys" }
+twelvemonkeys-webp = { module = "com.twelvemonkeys.imageio:imageio-webp", version.ref = "twelvemonkeys" }
+twelvemonkeys-tiff = { module = "com.twelvemonkeys.imageio:imageio-tiff", version.ref = "twelvemonkeys" }
+twelvemonkeys-thumbsdb = { module = "com.twelvemonkeys.imageio:imageio-thumbsdb", version.ref = "twelvemonkeys" }
+twelvemonkeys-tga = { module = "com.twelvemonkeys.imageio:imageio-tga", version.ref = "twelvemonkeys" }
+twelvemonkeys-sgi = { module = "com.twelvemonkeys.imageio:imageio-sgi", version.ref = "twelvemonkeys" }
+twelvemonkeys-psd = { module = "com.twelvemonkeys.imageio:imageio-psd", version.ref = "twelvemonkeys" }
+twelvemonkeys-pnm = { module = "com.twelvemonkeys.imageio:imageio-pnm", version.ref = "twelvemonkeys" }
+twelvemonkeys-pict = { module = "com.twelvemonkeys.imageio:imageio-pict", version.ref = "twelvemonkeys" }
+twelvemonkeys-pcx = { module = "com.twelvemonkeys.imageio:imageio-pcx", version.ref = "twelvemonkeys" }
+twelvemonkeys-iff = { module = "com.twelvemonkeys.imageio:imageio-iff", version.ref = "twelvemonkeys" }
+twelvemonkeys-icns = { module = "com.twelvemonkeys.imageio:imageio-icns", version.ref = "twelvemonkeys" }
+twelvemonkeys-hdr = { module = "com.twelvemonkeys.imageio:imageio-hdr", version.ref = "twelvemonkeys" }
+twelvemonkeys-dds = { module = "com.twelvemonkeys.imageio:imageio-dds", version.ref = "twelvemonkeys" }
+twelvemonkeys-bmp = { module = "com.twelvemonkeys.imageio:imageio-bmp", version.ref = "twelvemonkeys" }
+
 [plugins]
 jmh = { id = "me.champeau.jmh", version = "0.7.3" }
 
@@ -114,3 +132,22 @@ openapi-generate-client = ["findbugs", "jackson-core", "jackson-annotations", "j
 
 #all third-party plugins applied by our boudicca-* plugins
 boudicca-plugins = ["org-jetbrains-kotlin-jvm-gradle-plugin", "org-jetbrains-kotlin-plugin-spring-gradle-plugin", "io-gitlab-arturbosch-detekt-gradle-plugin", "org-springframework-boot-gradle-plugin", "org-openapi-generator-gradle-plugin", "io-swagger-core-v3-swagger-gradle-plugin"]
+
+twelvemonkeys = [
+    "twelvemonkeys-jpeg",
+    "twelvemonkeys-xwd",
+    "twelvemonkeys-webp",
+    "twelvemonkeys-tiff",
+    "twelvemonkeys-thumbsdb",
+    "twelvemonkeys-tga",
+    "twelvemonkeys-sgi",
+    "twelvemonkeys-psd",
+    "twelvemonkeys-pnm",
+    "twelvemonkeys-pict",
+    "twelvemonkeys-pcx",
+    "twelvemonkeys-iff",
+    "twelvemonkeys-icns",
+    "twelvemonkeys-hdr",
+    "twelvemonkeys-dds",
+    "twelvemonkeys-bmp",
+]

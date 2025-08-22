@@ -26,7 +26,7 @@ handlebars = "4.4.0"
 microsoft-playwright = "1.54.0"
 axe-core-playwright = "4.10.1"
 kotlin-logging = "7.0.11"
-otel = "1.52.0"
+otel = "1.53.0"
 otel-instrumentation = "2.18.1-alpha"
 twelvemonkeys = "3.12.0"
 

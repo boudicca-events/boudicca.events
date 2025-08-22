@@ -48,7 +48,6 @@ class RoedaCollector : TwoStepEventCollector<JsonObject>("roeda") {
             withProperty(SemanticKeys.TAGS_PROPERTY, tags)
             withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse("https://röda.at/"))
             withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(pictureUrl))
-            withProperty(SemanticKeys.PICTURE_ALT_TEXT_PROPERTY, pictureUrl)
             withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
             withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "kulturverein röda")
             withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse("https://röda.at/"))

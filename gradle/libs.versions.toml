@@ -22,11 +22,11 @@ rometools = "2.1.0"
 klaxon = "5.6"
 logback = "1.5.18"
 slf4j = "2.0.17"
-handlebars = "4.4.0"
+handlebars = "4.5.0"
 microsoft-playwright = "1.54.0"
 axe-core-playwright = "4.10.1"
-kotlin-logging = "7.0.11"
-otel = "1.52.0"
+kotlin-logging = "7.0.13"
+otel = "1.53.0"
 otel-instrumentation = "2.18.1-alpha"
 twelvemonkeys = "3.12.0"
 
@@ -93,8 +93,8 @@ google-api-services-sheets = { module = "com.google.apis:google-api-services-she
 
 kotlin-logging = { module = "io.github.oshai:kotlin-logging-jvm", version.ref = "kotlin-logging" }
 
-micrometer-core = { module = "io.micrometer:micrometer-core", version = "1.15.2" }
-micrometer-otel-bridge = { module = "io.micrometer:micrometer-tracing-bridge-otel", version = "1.5.2" }
+micrometer-core = { module = "io.micrometer:micrometer-core", version = "1.15.3" }
+micrometer-otel-bridge = { module = "io.micrometer:micrometer-tracing-bridge-otel", version = "1.5.3" }
 otel-api = { module = "io.opentelemetry:opentelemetry-api", version.ref = "otel" }
 otel-sdk = { module = "io.opentelemetry:opentelemetry-sdk", version.ref = "otel" }
 otel-exporter = { module = "io.opentelemetry:opentelemetry-exporter-otlp", version.ref = "otel" }

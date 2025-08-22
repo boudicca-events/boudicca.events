@@ -30,23 +30,28 @@ class EventCollectionRunner(
      * executes a full collection for all configured eventcollectors
      */
     fun run() {
-        logger.info { "starting new full collection" }
         val span = tracer.spanBuilder("full collection").setSpanKind(SpanKind.INTERNAL).startSpan()
-        Collections.startFullCollection()
         try {
-            val totalEventsCollected = AtomicLong()
-            eventCollectors.map {
-                    executor.submit {
-                        val eventsCollected = collect(it, span)
-                        totalEventsCollected.updateAndGet { it + eventsCollected }
-                    }
-                }.forEach { it.get() }
-            span.setAttribute("collected_events", totalEventsCollected.get())
+            span.makeCurrent().use {
+                logger.info { "starting new full collection" }
+                Collections.startFullCollection()
+                try {
+                    val totalEventsCollected = AtomicLong()
+                    eventCollectors.map {
+                        executor.submit {
+                            val eventsCollected = collect(it, span)
+                            totalEventsCollected.updateAndGet { it + eventsCollected }
+                        }
+                    }.forEach { it.get() }
+                    span.setAttribute("collected_events", totalEventsCollected.get())
+                } finally {
+                    Collections.endFullCollection()
+                }
+                logger.info { "full collection done" }
+            }
         } finally {
-            Collections.endFullCollection()
             span.end()
         }
-        logger.info { "full collection done" }
     }
 
     private fun collect(eventCollector: EventCollector, parentSpan: Span): Long {

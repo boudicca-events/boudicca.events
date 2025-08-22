@@ -109,6 +109,10 @@ class PictureProxyService(otel: OpenTelemetry) {
     private fun resize(picture: ByteArray): ByteArray {
         val bufferedImage = ImageIO.read(ByteArrayInputStream(picture))
 
+        if (bufferedImage == null) {
+            throw IllegalArgumentException("unsupported file format")
+        }
+
         val (width, height) = calcResizedDimensions(bufferedImage.width, bufferedImage.height)
 
         val scaledImage = bufferedImage.getScaledInstance(width, height, 0)

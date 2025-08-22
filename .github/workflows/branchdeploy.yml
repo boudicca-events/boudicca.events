@@ -1,0 +1,49 @@
+name: Deployment Branch
+
+on: workflow_dispatch
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency: branchdeploy
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment: branchdeploy
+
+    steps:
+      - uses: actions/checkout@v5
+      - name: Set up JDK 21
+        uses: actions/setup-java@v5
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@017a9effdb900e5b5b2fddfb590a105619dca3c3 # v4.4.2
+      - name: Execute Gradle build with tests
+        run: ./gradlew build
+      - name: Build Docker images with gradle
+        run: ./gradlew imageBuild
+      - name: Login to Docker Registry
+        uses: docker/login-action@184bdaa0721073962dff0199f1fb9940f07167d1
+        with:
+          registry: 'ghcr.io'
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Tag And Push Docker Images
+        run: ./deploy_branch.sh ${{ github.ref_name }}
+      - name: triggering deploy
+        id: triggerbranch
+        uses: fjogeleit/http-request-action@v1
+        with:
+          url: 'https://branchdeployer.boudicca.events/deploy'
+          method: 'POST'
+          username: ${{ secrets.BRANCHDEPLOY_USER }}
+          password: ${{ secrets.BRANCHDEPLOY_PASSWORD }}
+          customHeaders: '{"Content-Type": "application/json"}'
+          data: '{"branchName": "${{ github.ref_name }}"}'
+      - name: Deployed URL
+        run: |
+          echo ${{ fromJson(steps.triggerbranch.outputs.response).url }}

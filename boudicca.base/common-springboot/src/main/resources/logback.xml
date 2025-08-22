@@ -9,5 +9,6 @@
     <logger name="ch.qos.logback" level="WARN"/>
     <appender name="OpenTelemetry"
               class="io.opentelemetry.instrumentation.logback.appender.v1_0.OpenTelemetryAppender">
+        <captureMdcAttributes>errorId</captureMdcAttributes>
     </appender>
 </configuration>

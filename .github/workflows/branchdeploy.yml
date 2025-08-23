@@ -44,6 +44,7 @@ jobs:
           password: ${{ secrets.BRANCHDEPLOY_PASSWORD }}
           customHeaders: '{"Content-Type": "application/json"}'
           data: '{"branchName": "${{ github.ref_name }}"}'
+          timeout: 30000
       - name: Deployed URL
         run: |
           echo ${{ fromJson(steps.triggerbranch.outputs.response).url }}

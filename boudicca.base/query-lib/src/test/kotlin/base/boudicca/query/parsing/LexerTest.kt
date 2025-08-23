@@ -139,6 +139,20 @@ class LexerTest {
     }
 
     @Test
+    fun testIsInNextSecondsOperator() {
+        val tokens = callLexer(""" isInNextSeconds """)
+        assertEquals(1, tokens.size)
+        assertEquals(TokenType.IS_IN_NEXT_SECONDS, tokens[0].getType())
+    }
+
+    @Test
+    fun testIsInLastSecondsOperator() {
+        val tokens = callLexer(""" isInLastSeconds """)
+        assertEquals(1, tokens.size)
+        assertEquals(TokenType.IS_IN_LAST_SECONDS, tokens[0].getType())
+    }
+
+    @Test
     fun testVariousErrors() {
         assertThrows<QueryException> {
             callLexer(""" textwith!init """)

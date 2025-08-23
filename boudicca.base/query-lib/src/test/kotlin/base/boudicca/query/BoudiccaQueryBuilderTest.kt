@@ -8,6 +8,8 @@ import base.boudicca.query.BoudiccaQueryBuilder.durationLonger
 import base.boudicca.query.BoudiccaQueryBuilder.durationShorter
 import base.boudicca.query.BoudiccaQueryBuilder.equals
 import base.boudicca.query.BoudiccaQueryBuilder.escapeText
+import base.boudicca.query.BoudiccaQueryBuilder.isInLastSeconds
+import base.boudicca.query.BoudiccaQueryBuilder.isInNextSeconds
 import base.boudicca.query.BoudiccaQueryBuilder.not
 import base.boudicca.query.BoudiccaQueryBuilder.or
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -156,6 +158,20 @@ class BoudiccaQueryBuilderTest {
             """not ((("field" contains "value") or ("field2" contains "value2")) and ("field3" equals "value3"))""",
             query
         )
+    }
+
+    @Test
+    fun simpleIsInNextSeconds() {
+        val query = isInNextSeconds("startDate", 3600)
+
+        assertEquals("\"startDate\" isInNextSeconds 3600", query)
+    }
+
+    @Test
+    fun simpleIsInLastSeconds() {
+        val query = isInLastSeconds("startDate", 3600)
+
+        assertEquals("\"startDate\" isInLastSeconds 3600", query)
     }
 
     @Test

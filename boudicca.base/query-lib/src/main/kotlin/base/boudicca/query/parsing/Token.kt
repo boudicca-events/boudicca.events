@@ -35,4 +35,6 @@ enum class TokenType {
     LONGER,
     SHORTER,
     HAS_FIELD,
+    IS_IN_NEXT_SECONDS,
+    IS_IN_LAST_SECONDS,
 }

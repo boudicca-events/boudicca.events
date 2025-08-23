@@ -43,6 +43,14 @@ object BoudiccaQueryBuilder {
         return escapeText(dateFieldName) + " before " + escapeText(DateTimeFormatter.ISO_LOCAL_DATE.format(localDate))
     }
 
+    fun isInNextSeconds(dateFieldName: String, seconds: Long): String {
+        return escapeText(dateFieldName) + " isInNextSeconds " + seconds
+    }
+
+    fun isInLastSeconds(dateFieldName: String, seconds: Long): String {
+        return escapeText(dateFieldName) + " isInLastSeconds " + seconds
+    }
+
     @Suppress("detekt:ExceptionRaisedInUnexpectedLocation")
     fun equals(field: String, value: String): String {
         require(field.isNotEmpty()) { "field is not allowed to be empty" }

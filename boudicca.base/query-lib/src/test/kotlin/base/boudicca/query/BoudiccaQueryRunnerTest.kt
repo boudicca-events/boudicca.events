@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.time.Clock
 
 class BoudiccaQueryRunnerTest {
 
@@ -78,7 +79,7 @@ class BoudiccaQueryRunnerTest {
     }
 
     private fun evaluateQuery(query: String): Collection<Map<String, String>> {
-        return BoudiccaQueryRunner.evaluateQuery(query, PAGE_ALL, SimpleEvaluator(testData())).result
+        return BoudiccaQueryRunner.evaluateQuery(query, PAGE_ALL, SimpleEvaluator(testData(), Clock.systemDefaultZone())).result
     }
 
     private fun testData(): Collection<Map<String, String>> {

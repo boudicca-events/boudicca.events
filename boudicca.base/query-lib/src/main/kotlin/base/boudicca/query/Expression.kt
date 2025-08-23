@@ -63,6 +63,27 @@ abstract class FieldAndTextExpression(
     }
 }
 
+abstract class FieldAndNumberExpression(
+    private val name: String,
+    keyFilter: String,
+    private val number: Number,
+) : Expression {
+
+    private val keyFilter = parseKeyFilter(keyFilter)
+
+    fun getKeyFilter(): KeyFilter {
+        return keyFilter
+    }
+
+    fun getNumber(): Number {
+        return number
+    }
+
+    override fun toString(): String {
+        return "$name('${keyFilter.toKeyString()}',$number)"
+    }
+}
+
 abstract class FieldExpression(
     private val name: String,
     keyFilter: String,
@@ -188,3 +209,13 @@ class DurationLongerExpression(
 class HasFieldExpression(
     keyFilter: String,
 ) : FieldExpression("HASFIELD", keyFilter)
+
+class IsInNextSecondsExpression(
+    keyFilter: String,
+    number: Number
+) : FieldAndNumberExpression("ISINNEXTSECONDS", keyFilter, number)
+
+class IsInLastSecondsExpression(
+    keyFilter: String,
+    number: Number
+) : FieldAndNumberExpression("ISINLASTSECONDS", keyFilter, number)

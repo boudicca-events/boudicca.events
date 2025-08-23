@@ -10,14 +10,12 @@ import base.boudicca.model.structured.toFlatEntry
 import base.boudicca.model.toStructuredEntry
 import base.boudicca.query.*
 import base.boudicca.query.evaluator.util.EvaluatorUtil
-import java.time.LocalDate
-import java.time.OffsetDateTime
-import java.time.ZoneId
+import java.time.*
 import java.time.format.DateTimeParseException
 import java.util.concurrent.ConcurrentHashMap
 
 @Suppress("detekt:LongMethod", "detekt:CyclomaticComplexMethod")
-class SimpleEvaluator(rawEntries: Collection<Entry>) : Evaluator {
+class SimpleEvaluator(rawEntries: Collection<Entry>, private val clock: Clock) : Evaluator {
 
     private val dateCache = ConcurrentHashMap<String, OffsetDateTime>()
     private val events = Utils.order(rawEntries, dateCache).map { it.toStructuredEntry() }
@@ -126,9 +124,41 @@ class SimpleEvaluator(rawEntries: Collection<Entry>) : Evaluator {
                 return entry.filterKeys(expression.getKeyFilter()).any { it.second.isNotEmpty() }
             }
 
+            is IsInNextSecondsExpression -> {
+                val expressionStartDate = clock.instant()
+                val expressionEndDate = clock.instant().plusSeconds(expression.getNumber().toLong())
+                return isInRange(entry, expression, expressionStartDate, expressionEndDate)
+            }
+
+            is IsInLastSecondsExpression -> {
+                val expressionStartDate = clock.instant().minusSeconds(expression.getNumber().toLong())
+                val expressionEndDate = clock.instant()
+                return isInRange(entry, expression, expressionStartDate, expressionEndDate)
+            }
+
             else -> {
                 throw QueryException("unknown expression kind $expression")
             }
+        }
+    }
+
+    private fun isInRange(
+        entry: StructuredEntry,
+        expression: FieldAndNumberExpression,
+        expressionStartDate: Instant?,
+        expressionEndDate: Instant?
+    ): Boolean {
+        try {
+            val entryDates = EvaluatorUtil.getDateValues(entry, expression.getKeyFilter())
+            return entryDates
+                .any {
+                    val entryDate = getInstant(it)
+                    entryDate == expressionStartDate ||
+                            entryDate == expressionEndDate ||
+                            (entryDate.isAfter(expressionStartDate) && entryDate.isBefore(expressionEndDate))
+                }
+        } catch (e: DateTimeParseException) {
+            return false
         }
     }
 
@@ -138,7 +168,10 @@ class SimpleEvaluator(rawEntries: Collection<Entry>) : Evaluator {
 
     private fun getLocalStartDate(dateText: String): LocalDate =
         DateFormatAdapter().fromString(dateText)
-            .atZoneSameInstant(ZoneId.of("Europe/Vienna"))
+            .atZoneSameInstant(clock.zone)
             .toLocalDate()
+
+    private fun getInstant(dateText: String): Instant =
+        DateFormatAdapter().fromString(dateText).toInstant()
 
 }

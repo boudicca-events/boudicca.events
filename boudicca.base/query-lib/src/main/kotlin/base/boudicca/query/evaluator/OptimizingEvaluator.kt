@@ -7,33 +7,22 @@ import base.boudicca.model.structured.Key
 import base.boudicca.model.structured.KeyFilter
 import base.boudicca.model.structured.filterKeys
 import base.boudicca.model.toStructuredEntry
-import base.boudicca.query.AbstractDurationExpression
-import base.boudicca.query.AfterExpression
-import base.boudicca.query.AndExpression
-import base.boudicca.query.BeforeExpression
-import base.boudicca.query.ContainsExpression
-import base.boudicca.query.DurationLongerExpression
-import base.boudicca.query.DurationShorterExpression
-import base.boudicca.query.EqualsExpression
-import base.boudicca.query.Expression
-import base.boudicca.query.HasFieldExpression
-import base.boudicca.query.NotExpression
-import base.boudicca.query.OrExpression
-import base.boudicca.query.QueryException
-import base.boudicca.query.Utils
+import base.boudicca.query.*
 import base.boudicca.query.evaluator.util.EvaluatorUtil
 import base.boudicca.query.evaluator.util.FullTextIndex
 import base.boudicca.query.evaluator.util.SimpleIndex
+import java.time.Clock
+import java.time.Instant
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.format.DateTimeParseException
-import java.util.BitSet
+import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
 private const val SORTING_RATIO = 3
 
 @Suppress("detekt:TooManyFunctions")
-class OptimizingEvaluator(rawEntries: Collection<Entry>) : Evaluator {
+class OptimizingEvaluator(rawEntries: Collection<Entry>, private val clock: Clock) : Evaluator {
 
     private val dateCache = ConcurrentHashMap<String, OffsetDateTime>()
     private val entries = Utils.order(rawEntries, dateCache)
@@ -109,6 +98,14 @@ class OptimizingEvaluator(rawEntries: Collection<Entry>) : Evaluator {
                 return hasFieldExpression(expression)
             }
 
+            is IsInNextSecondsExpression -> {
+                return isInNextSecondsExpression(expression)
+            }
+
+            is IsInLastSecondsExpression -> {
+                return isInLastSecondsExpression(expression)
+            }
+
             else -> {
                 throw QueryException("unknown expression kind $expression")
             }
@@ -179,37 +176,15 @@ class OptimizingEvaluator(rawEntries: Collection<Entry>) : Evaluator {
     }
 
     private fun beforeExpression(expression: BeforeExpression): BitSet {
-        return keyFilterSearch(expression.getKeyFilter()) { field ->
-            val index = getOrCreateLocalDateIndex(field)
-            index.search {
-                if (it != null) {
-                    if (it.isEqual(expression.getDate()) || it.isBefore(expression.getDate())) {
-                        0
-                    } else {
-                        1
-                    }
-                } else {
-                    -1
-                }
-            }
-        }
+        val expressionStartDate = Instant.MIN
+        val expressionEndDate = toInstant(expression.getDate().plusDays(1))
+        return isInDateRangeQuery(expression.getKeyFilter(), expressionStartDate, expressionEndDate)
     }
 
     private fun afterExpression(expression: AfterExpression): BitSet {
-        return keyFilterSearch(expression.getKeyFilter()) { field ->
-            val index = getOrCreateLocalDateIndex(field)
-            index.search {
-                if (it != null) {
-                    if (it.isEqual(expression.getDate()) || it.isAfter(expression.getDate())) {
-                        0
-                    } else {
-                        -1
-                    }
-                } else {
-                    -1
-                }
-            }
-        }
+        val expressionStartDate = toInstant(expression.getDate())
+        val expressionEndDate = Instant.MAX
+        return isInDateRangeQuery(expression.getKeyFilter(), expressionStartDate, expressionEndDate)
     }
 
     private fun durationLongerExpression(expression: DurationLongerExpression): BitSet {
@@ -246,6 +221,43 @@ class OptimizingEvaluator(rawEntries: Collection<Entry>) : Evaluator {
         }
     }
 
+    private fun isInNextSecondsExpression(expression: IsInNextSecondsExpression): BitSet {
+        val expressionStartDate = clock.instant()
+        val expressionEndDate = clock.instant().plusSeconds(expression.getNumber().toLong())
+        return isInDateRangeQuery(expression.getKeyFilter(), expressionStartDate, expressionEndDate)
+    }
+
+    private fun isInLastSecondsExpression(expression: IsInLastSecondsExpression): BitSet {
+        val expressionStartDate = clock.instant().minusSeconds(expression.getNumber().toLong())
+        val expressionEndDate = clock.instant()
+        return isInDateRangeQuery(expression.getKeyFilter(), expressionStartDate, expressionEndDate)
+    }
+
+    private fun isInDateRangeQuery(
+        keyFilter: KeyFilter,
+        expressionStartDate: Instant,
+        expressionEndDate: Instant
+    ): BitSet {
+        return keyFilterSearch(keyFilter) { field ->
+            val index = getOrCreateInstantIndex(field)
+            index.search {
+                if (it != null) {
+                    if (it == expressionStartDate || it == expressionEndDate) {
+                        0
+                    } else if (!it.isAfter(expressionStartDate)) {
+                        -1
+                    } else if (!it.isBefore(expressionEndDate)) {
+                        1
+                    } else {
+                        0
+                    }
+                } else {
+                    -1
+                }
+            }
+        }
+    }
+
     private fun getDurationIndex(expression: AbstractDurationExpression): SimpleIndex<Double?> {
         //TODO this index name generation can be wrong when & are used in keys
         val index =
@@ -264,9 +276,13 @@ class OptimizingEvaluator(rawEntries: Collection<Entry>) : Evaluator {
         return index
     }
 
-    private fun getOrCreateLocalDateIndex(fieldName: String): SimpleIndex<LocalDate?> {
-        val index = getOrCreateSimpleIndex("localDate", fieldName) {
-            SimpleIndex.create(entries.map { safeGetLocalDate(it[fieldName], dateCache) }, Comparator.naturalOrder())
+    private fun toInstant(localDate: LocalDate): Instant {
+        return localDate.atStartOfDay().atZone(clock.zone).toInstant()
+    }
+
+    private fun getOrCreateInstantIndex(fieldName: String): SimpleIndex<Instant?> {
+        val index = getOrCreateSimpleIndex("instant", fieldName) {
+            SimpleIndex.create(entries.map { safeGetInstant(it[fieldName], dateCache) }, Comparator.naturalOrder())
         }
         return index
     }
@@ -321,24 +337,24 @@ class OptimizingEvaluator(rawEntries: Collection<Entry>) : Evaluator {
         }
     }
 
-    private fun safeGetLocalDate(dateText: String?, dateCache: ConcurrentHashMap<String, OffsetDateTime>): LocalDate? {
+    private fun safeGetInstant(dateText: String?, dateCache: ConcurrentHashMap<String, OffsetDateTime>): Instant? {
         if (dateText == null) {
             return null
         }
         try {//TODO cache null
-            return getLocalDate(dateText, dateCache)
+            return getInstant(dateText, dateCache)
         } catch (e: DateTimeParseException) {
             return null
         }
     }
 
-    private fun getLocalDate(dateText: String, dataCache: ConcurrentHashMap<String, OffsetDateTime>): LocalDate {
+    private fun getInstant(dateText: String, dataCache: ConcurrentHashMap<String, OffsetDateTime>): Instant {
         val offsetDateTime = if (dataCache.containsKey(dateText)) {
             dataCache[dateText]!!
         } else {
             EvaluatorUtil.parseDate(dateText, dataCache)
         }
-        return offsetDateTime.toLocalDate()
+        return offsetDateTime.toInstant()
     }
 
 

@@ -14,6 +14,8 @@ import io.opentelemetry.api.OpenTelemetry
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Service
+import java.time.Clock
+import java.time.ZoneId
 import java.util.concurrent.ConcurrentHashMap
 
 private const val DEFAULT_PAGE_SIZE = 30
@@ -23,7 +25,10 @@ class QueryService @Autowired constructor(
     private val boudiccaSearchProperties: BoudiccaSearchProperties, private val openTelemetry: OpenTelemetry
 ) {
 
-    private val logger = KotlinLogging.logger {}
+    companion object {
+        private val logger = KotlinLogging.logger {}
+        private var clock = Clock.system(ZoneId.of("Europe/Vienna")) //TODO make configurable
+    }
 
     @Volatile
     private var entries = emptyList<Entry>()
@@ -44,10 +49,10 @@ class QueryService @Autowired constructor(
         this.entries = Utils.order(event.entries, ConcurrentHashMap())
         if (boudiccaSearchProperties.devMode) {
             //for local mode we only want the simple, the optimizing has quite some startup
-            this.evaluator = SimpleEvaluator(event.entries)
+            this.evaluator = SimpleEvaluator(event.entries, clock)
         } else {
-            val optimizingEvaluator = OptimizingEvaluator(event.entries)
-            val fallbackEvaluator = SimpleEvaluator(event.entries)
+            val optimizingEvaluator = OptimizingEvaluator(event.entries, clock)
+            val fallbackEvaluator = SimpleEvaluator(event.entries, clock)
             this.evaluator = object : Evaluator {
                 override fun evaluate(expression: Expression, page: Page): QueryResult {
                     return try {

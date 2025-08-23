@@ -5,6 +5,7 @@ import base.boudicca.model.Entry
 import base.boudicca.query.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import java.time.Clock
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.time.ZoneId
@@ -133,10 +134,11 @@ abstract class AbstractEvaluatorTest {
             callEvaluator(
                 BeforeExpression("startDate", "2023-05-27"),
                 listOf(
-                    entry("event1", "2023-05-25T00:00:00"),
-                    entry("event2", "2023-05-28T00:00:00"),
-                    entry("event3", "2023-05-29T00:00:00"),
-                )
+                    entry("event1", "2023-05-25T00:00:00+02:00"),
+                    entry("event2", "2023-05-28T01:00:00+02:00"),
+                    entry("event3", "2023-05-29T00:00:00+02:00"),
+                ),
+                Clock.fixed(OffsetDateTime.parse("2024-05-31T01:00:00Z").toInstant(), ZoneId.of("Europe/Vienna"))
             )
         assertEquals(1, events.size)
         assertEquals("2023-05-25T00:00:00+02:00", events.first()["startDate"])
@@ -148,10 +150,11 @@ abstract class AbstractEvaluatorTest {
             callEvaluator(
                 AfterExpression("startDate", "2023-05-27"),
                 listOf(
-                    entry("event1", "2023-05-25T00:00:00"),
-                    entry("event2", "2023-05-26T00:00:00"),
-                    entry("event3", "2023-05-29T00:00:00"),
-                )
+                    entry("event1", "2023-05-25T00:00:00+02:00"),
+                    entry("event2", "2023-05-26T00:00:00+02:00"),
+                    entry("event3", "2023-05-29T00:00:00+02:00"),
+                ),
+                Clock.fixed(OffsetDateTime.parse("2024-05-31T01:00:00Z").toInstant(), ZoneId.of("Europe/Vienna"))
             )
         assertEquals(1, events.size)
         assertEquals("2023-05-29T00:00:00+02:00", events.first()["startDate"])
@@ -163,10 +166,11 @@ abstract class AbstractEvaluatorTest {
             callEvaluator(
                 BeforeExpression("startDate", "2023-05-27"),
                 listOf(
-                    entryWithNewFormat("event1", "2023-05-25T00:00:00"),
-                    entryWithNewFormat("event2", "2023-05-28T00:00:00"),
-                    entryWithNewFormat("event3", "2023-05-29T00:00:00"),
-                )
+                    entryWithNewFormat("event1", "2023-05-25T00:00:00+02:00"),
+                    entryWithNewFormat("event2", "2023-05-28T01:00:00+02:00"),
+                    entryWithNewFormat("event3", "2023-05-29T00:00:00+02:00"),
+                ),
+                Clock.fixed(OffsetDateTime.parse("2024-05-31T01:00:00Z").toInstant(), ZoneId.of("Europe/Vienna"))
             )
         assertEquals(1, events.size)
         assertEquals("2023-05-25T00:00:00+02:00", events.first()["startDate:format=date"])
@@ -178,10 +182,11 @@ abstract class AbstractEvaluatorTest {
             callEvaluator(
                 AfterExpression("startDate", "2023-05-27"),
                 listOf(
-                    entryWithNewFormat("event1", "2023-05-25T00:00:00"),
-                    entryWithNewFormat("event2", "2023-05-26T00:00:00"),
-                    entryWithNewFormat("event3", "2023-05-29T00:00:00"),
-                )
+                    entryWithNewFormat("event1", "2023-05-25T00:00:00+02:00"),
+                    entryWithNewFormat("event2", "2023-05-26T00:00:00+02:00"),
+                    entryWithNewFormat("event3", "2023-05-29T00:00:00+02:00"),
+                ),
+                Clock.fixed(OffsetDateTime.parse("2024-05-31T01:00:00Z").toInstant(), ZoneId.of("Europe/Vienna"))
             )
         assertEquals(1, events.size)
         assertEquals("2023-05-29T00:00:00+02:00", events.first()["startDate:format=date"])
@@ -193,11 +198,15 @@ abstract class AbstractEvaluatorTest {
             callEvaluator(
                 AfterExpression("startDate", "2023-05-25"),
                 listOf(
-                    entry("event1", "2023-05-25T00:00:00"),
-                    entry("event2", "2023-05-29T00:00:00"),
-                )
+                    entry("event1", "2023-05-24T20:00:00Z"),
+                    entry("event2", "2023-05-24T22:00:00Z"),
+                    entry("event3", "2023-05-25T00:00:00Z"),
+                    entry("event4", "2023-05-25T04:00:00Z"),
+                    entry("event5", "2023-05-29T04:00:00Z"),
+                ),
+                Clock.fixed(OffsetDateTime.parse("2024-05-31T01:00:00Z").toInstant(), ZoneId.of("Europe/Vienna"))
             )
-        assertEquals(2, events.size)
+        assertEquals(4, events.size)
     }
 
     @Test
@@ -206,9 +215,12 @@ abstract class AbstractEvaluatorTest {
             callEvaluator(
                 BeforeExpression("startDate", "2023-05-29"),
                 listOf(
-                    entry("event1", "2023-05-25T00:00:00"),
-                    entry("event2", "2023-05-29T00:00:00"),
-                )
+                    entry("event1", "2023-05-25T04:00:00Z"),
+                    entry("event2", "2023-05-28T22:00:00Z"),
+                    entry("event3", "2023-05-30T00:00:00Z"),
+                    entry("event4", "2023-05-30T04:00:00Z"),
+                ),
+                Clock.fixed(OffsetDateTime.parse("2024-05-31T01:00:00Z").toInstant(), ZoneId.of("Europe/Vienna"))
             )
         assertEquals(2, events.size)
     }
@@ -346,7 +358,7 @@ abstract class AbstractEvaluatorTest {
                     ),
                     mapOf(
                         SemanticKeys.NAME to "event2",
-                        SemanticKeys.STARTDATE+":format=date" to "2024-05-31T00:00:00Z",
+                        SemanticKeys.STARTDATE + ":format=date" to "2024-05-31T00:00:00Z",
                     ),
                     mapOf(
                         SemanticKeys.NAME to "event3",
@@ -388,6 +400,54 @@ abstract class AbstractEvaluatorTest {
         assertEquals("event1", events[2]["name"])
     }
 
+    @Test
+    fun isInNextSeconds() {
+        val events =
+            callEvaluator(
+                IsInNextSecondsExpression(SemanticKeys.STARTDATE + ":format=date", 3600),
+                listOf(
+                    mapOf(
+                        SemanticKeys.NAME to "event1",
+                    ),
+                    mapOf(
+                        SemanticKeys.NAME to "event2",
+                        SemanticKeys.STARTDATE + ":format=date" to "2024-05-31T00:30:00Z",
+                    ),
+                    mapOf(
+                        SemanticKeys.NAME to "event3",
+                        "random:format=date" to "2024-05-31T01:30:00Z",
+                    ),
+                ),
+                Clock.fixed(OffsetDateTime.parse("2024-05-31T00:00:00Z").toInstant(), ZoneId.of("Europe/Vienna"))
+            )
+        assertEquals(1, events.size)
+        assertEquals("event2", events[0]["name"])
+    }
+
+    @Test
+    fun isInLastSeconds() {
+        val events =
+            callEvaluator(
+                IsInLastSecondsExpression(SemanticKeys.STARTDATE + ":format=date", 3600),
+                listOf(
+                    mapOf(
+                        SemanticKeys.NAME to "event1",
+                    ),
+                    mapOf(
+                        SemanticKeys.NAME to "event2",
+                        SemanticKeys.STARTDATE + ":format=date" to "2024-05-31T00:30:00Z",
+                    ),
+                    mapOf(
+                        SemanticKeys.NAME to "event3",
+                        "random:format=date" to "2024-05-31T01:30:00Z",
+                    ),
+                ),
+                Clock.fixed(OffsetDateTime.parse("2024-05-31T01:00:00Z").toInstant(), ZoneId.of("Europe/Vienna"))
+            )
+        assertEquals(1, events.size)
+        assertEquals("event2", events[0]["name"])
+    }
+
 
     private fun callEvaluator(expression: Expression): Collection<Entry> {
         return callEvaluator(expression, testData())
@@ -395,14 +455,18 @@ abstract class AbstractEvaluatorTest {
 
     private fun callEvaluator(
         expression: Expression,
-        entries: Collection<Entry>
+        entries: Collection<Entry>,
+        clock: Clock = Clock.systemDefaultZone()
     ): List<Entry> {
-        return createEvaluator(entries)
+        return createEvaluator(entries, clock)
             .evaluate(expression, PAGE_ALL)
             .result
     }
 
-    abstract fun createEvaluator(entries: Collection<Map<String, String>>): Evaluator
+    abstract fun createEvaluator(
+        entries: Collection<Map<String, String>>,
+        clock: Clock = Clock.systemDefaultZone()
+    ): Evaluator
 
     private fun testData(): Collection<Entry> {
         return listOf(
@@ -431,8 +495,7 @@ abstract class AbstractEvaluatorTest {
     }
 
     private fun parseLocalDate(startDateAsString: String): OffsetDateTime {
-        return LocalDateTime.parse(startDateAsString, DateTimeFormatter.ISO_LOCAL_DATE_TIME).atZone(ZoneId.of("CET"))
-            .toOffsetDateTime()
+        return OffsetDateTime.parse(startDateAsString)
     }
 }
 

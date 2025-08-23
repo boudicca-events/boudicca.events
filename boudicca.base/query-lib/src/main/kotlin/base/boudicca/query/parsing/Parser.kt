@@ -87,7 +87,7 @@ class Parser(private val tokens: List<Token>) {
         }
     }
 
-    private fun parseTextExpression(): FieldAndTextExpression {
+    private fun parseTextExpression(): Expression {
         val firstText = checkText()
         when (getCurrentTokenType()) {
             TokenType.CONTAINS -> {
@@ -108,6 +108,16 @@ class Parser(private val tokens: List<Token>) {
             TokenType.AFTER -> {
                 i++
                 return AfterExpression(firstText, checkText())
+            }
+
+            TokenType.IS_IN_NEXT_SECONDS -> {
+                i++
+                return IsInNextSecondsExpression(firstText, checkNumber())
+            }
+
+            TokenType.IS_IN_LAST_SECONDS -> {
+                i++
+                return IsInLastSecondsExpression(firstText, checkNumber())
             }
 
             else -> throw QueryException("invalid token ${getCurrentTokenType()} following after text token")

@@ -243,6 +243,24 @@ class ParserTest {
         )
     }
 
+    @Test
+    fun testIsInNextSeconds() {
+        assertEquals(
+            "ISINNEXTSECONDS('field',3600)", callParser(
+                text("field"), isInNextSeconds(), number("3600")
+            )
+        )
+    }
+
+    @Test
+    fun testIsInLastSeconds() {
+        assertEquals(
+            "ISINLASTSECONDS('field',3600)", callParser(
+                text("field"), isInLastSeconds(), number("3600")
+            )
+        )
+    }
+
     private fun before(): Token {
         return Token(TokenType.BEFORE, null)
     }
@@ -301,6 +319,14 @@ class ParserTest {
 
     private fun hasField(): Token {
         return Token(TokenType.HAS_FIELD, null)
+    }
+
+    private fun isInNextSeconds(): Token {
+        return Token(TokenType.IS_IN_NEXT_SECONDS, null)
+    }
+
+    private fun isInLastSeconds(): Token {
+        return Token(TokenType.IS_IN_LAST_SECONDS, null)
     }
 
     private fun callParser(vararg tokens: Token): String {

@@ -9,13 +9,25 @@
         <legend><strong>Datum</strong></legend>
         <div class="header-date-search">
             <div class="filter-input-wrapper">
-                <label for="fromDate" class="filter-label">Datum von</label>
-                <input id="fromDate" name="fromDate" type="date"/>
+                <label for="rangeSelect" class="filter-label">Zeitfenster</label>
+                <select id="rangeSelect" name="rangeSelect">
+                    <option value="315360000">In der Zukunft</option>
+                    <option value="604800">Nächste Woche</option>
+                    <option value="1209600">Nächsten 2 Wochen</option>
+                    <option value="2419200">Nächsten Monat</option>
+                    <option value="0">Von - Bis</option>
+                </select>
             </div>
 
-            <div class="filter-input-wrapper">
-                <label for="toDate" class="filter-label">Datum bis</label>
-                <input id="toDate" name="toDate" type="date"/>
+            <div id="from-to-date" class="hidden">
+                <div class="filter-input-wrapper">
+                    <label for="fromDate" class="filter-label">Datum von</label>
+                    <input id="fromDate" name="fromDate" type="date"/>
+                </div>
+                <div class="filter-input-wrapper">
+                    <label for="toDate" class="filter-label">Datum bis</label>
+                    <input id="toDate" name="toDate" type="date"/>
+                </div>
             </div>
 
             <div class="filter-input-wrapper">

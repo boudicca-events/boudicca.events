@@ -7,7 +7,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const resetSearchFormButton = document.getElementById("resetSearchForm");
   const loadMoreButton = document.getElementById("loadMoreButton");
   const categorySelect = document.getElementsByName("category");
-  const categoryFieldSets = document.querySelectorAll("[data-category-wanted]");
   const searchInput = document.querySelector("input.search-input");
   const modal = document.getElementById("modal");
   const modalContent = modal.querySelector("#modal-content");
@@ -17,6 +16,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const header = document.querySelector("header");
   const accessibilityFlags = document.getElementsByName("flags");
   const map = document.getElementById("map");
+  const rangeSelect = document.getElementById("rangeSelect");
+  const fromToDateDiv = document.getElementById("from-to-date");
 
 
   const openModal = (content) => {
@@ -49,9 +50,9 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   if (loadMoreButton != null) {
-      loadMoreButton.addEventListener("click", () => {
-        onLoadMoreSearch();
-      });
+    loadMoreButton.addEventListener("click", () => {
+      onLoadMoreSearch();
+    });
   }
 
   resetSearchFormButton.addEventListener("click", () => {
@@ -82,43 +83,42 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   const toggleCheckboxLabels = (clickedLabel) => {
-     if (clickedLabel) {
-       const currentForAttribute = clickedLabel.getAttribute('for');
-       const chipsLabel = document.querySelector('label.chips[for="'+currentForAttribute+'"]');
-       const listLabel = document.querySelector('li label[for="'+currentForAttribute+'"]');
-       toggleSingleCheckboxLabel(chipsLabel);
-       toggleSingleCheckboxLabel(listLabel);
-       const checkbox = document.getElementById(currentForAttribute);
-       setCheckboxAriaChecked(checkbox, true);
-     }
+    if (clickedLabel) {
+      const currentForAttribute = clickedLabel.getAttribute('for');
+      const chipsLabel = document.querySelector('label.chips[for="' + currentForAttribute + '"]');
+      const listLabel = document.querySelector('li label[for="' + currentForAttribute + '"]');
+      toggleSingleCheckboxLabel(chipsLabel);
+      toggleSingleCheckboxLabel(listLabel);
+      const checkbox = document.getElementById(currentForAttribute);
+      setCheckboxAriaChecked(checkbox, true);
+    }
   }
 
   const toggleCheckboxLabelsByCheckbox = (checkbox) => {
-       if (checkbox) {
-         const chipsLabel = document.querySelector('label.chips[for="'+checkbox.id+'"]');
-         const listLabel = document.querySelector('li label[for="'+checkbox.id+'"]');
-         toggleSingleCheckboxLabel(chipsLabel);
-         toggleSingleCheckboxLabel(listLabel);
-         setCheckboxAriaChecked(checkbox, true);
-       }
+    if (checkbox) {
+      const chipsLabel = document.querySelector('label.chips[for="' + checkbox.id + '"]');
+      const listLabel = document.querySelector('li label[for="' + checkbox.id + '"]');
+      toggleSingleCheckboxLabel(chipsLabel);
+      toggleSingleCheckboxLabel(listLabel);
+      setCheckboxAriaChecked(checkbox, true);
     }
+  }
 
   const toggleSingleCheckboxLabel = (label) => {
     if (label.style.position != "absolute") {
-       label.style.position = "absolute";
-       label.style.opacity = "0";
-     } else {
-       label.style.position = "relative";
-       label.style.opacity = "100";
+      label.style.position = "absolute";
+      label.style.opacity = "0";
+    } else {
+      label.style.position = "relative";
+      label.style.opacity = "100";
     }
   }
 
   const setCheckboxAriaChecked = (checkbox, negateChecked) => {
-    if (negateChecked){
+    if (negateChecked) {
       // if checkbox is toggled automatically afterwards, !checked has to be used
       checkbox.setAttribute('aria-checked', !checkbox.checked);
-    }
-    else{
+    } else {
       checkbox.setAttribute('aria-checked', checkbox.checked);
     }
 
@@ -147,8 +147,8 @@ document.addEventListener("DOMContentLoaded", () => {
         drawerLastFocusableElement.focus()
         event.preventDefault();
       }
-    } else if (event.code === "Space" && document.activeElement.type === "checkbox"){
-        toggleCheckboxLabelsByCheckbox(document.activeElement);
+    } else if (event.code === "Space" && document.activeElement.type === "checkbox") {
+      toggleCheckboxLabelsByCheckbox(document.activeElement);
     }
   })
 
@@ -176,11 +176,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const goToSearch = (paramsAsString) => {
     window.dispatchEvent(new CustomEvent("searchChanged", {detail: paramsAsString}))
-    if (map != null){
-        goTo(`/map?${paramsAsString}`);
-        window.location.reload();
+    if (map != null) {
+      goTo(`/map?${paramsAsString}`);
+      window.location.reload();
     } else {
-        goTo(`/search?${paramsAsString}`);
+      goTo(`/search?${paramsAsString}`);
     }
   };
 
@@ -273,7 +273,7 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const response = await fetch(apiUrl);
       const ssrDomEventString = await response.text();
-      if (eventsContainer != null){
+      if (eventsContainer != null) {
         eventsContainer.innerHTML = ssrDomEventString;
         onSearchButtonBehaviour(ssrDomEventString);
         initModals(eventsContainer.querySelectorAll(".event"));
@@ -319,7 +319,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (key === "flags") {
         document.getElementById(value).checked = true;
       } else if (key === "includeRecurring") {
-       document.getElementById(key).checked = true;
+        document.getElementById(key).checked = true;
       } else if (["category", "locationCities", "locationNames", "bandNames"].includes(key)) {
         const checkbox = document.getElementById(key + "-" + value);
         checkbox.checked = true;
@@ -339,7 +339,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const changedCategoryName = changedCategory.value;
     let fieldSets = document.querySelectorAll("[data-category-wanted='" + changedCategoryName + "']");
 
-    for (fieldSet of fieldSets){
+    for (fieldSet of fieldSets) {
       let categoryIsChecked = document.getElementById("category-" + fieldSet.getAttribute("data-category-wanted")).checked;
       if (categoryIsChecked) {
         fieldSet.classList.remove("hidden");
@@ -355,10 +355,23 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
+  function rangeSelectChanged() {
+    if (rangeSelect.value === "0") {
+      fromToDateDiv.className = "";
+    } else {
+      fromToDateDiv.className = "hidden";
+    }
+  }
+
   categorySelect.forEach((checkbox) => checkbox.addEventListener("change", c => onCategoryChange(c.currentTarget)));
   categorySelect.forEach((checkbox) => onCategoryChange(checkbox));
+
+  rangeSelect.addEventListener("change", _ => {
+    rangeSelectChanged();
+  })
 
   const events = document.querySelectorAll(".event")
   initModals(events);
   initCheckboxLabelToggle();
+  rangeSelectChanged();
 });

@@ -1,7 +1,10 @@
 package base.boudicca.publisher.event.html.service
 
 import base.boudicca.SemanticKeys
-import base.boudicca.api.search.*
+import base.boudicca.api.search.FilterQueryDTO
+import base.boudicca.api.search.FilterQueryEntryDTO
+import base.boudicca.api.search.QueryDTO
+import base.boudicca.api.search.SearchResultDTO
 import base.boudicca.format.ListFormatAdapter
 import base.boudicca.format.NumberFormatAdapter
 import base.boudicca.keyfilters.KeySelector
@@ -22,6 +25,7 @@ import base.boudicca.query.BoudiccaQueryBuilder.durationLonger
 import base.boudicca.query.BoudiccaQueryBuilder.durationShorter
 import base.boudicca.query.BoudiccaQueryBuilder.equals
 import base.boudicca.query.BoudiccaQueryBuilder.hasField
+import base.boudicca.query.BoudiccaQueryBuilder.isInNextSeconds
 import base.boudicca.query.BoudiccaQueryBuilder.not
 import base.boudicca.query.BoudiccaQueryBuilder.or
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -29,6 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.net.URI
+import java.time.Duration
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.ZoneId
@@ -40,6 +45,8 @@ import kotlin.jvm.optionals.getOrNull
 const val DEFAULT_DURATION_SHORTER_VALUE = 24 * 30
 
 private const val MAP_SEARCH_RESULT_COUNT = 200
+
+private const val DEFAULT_FUTURE_DAYS = 365 * 10L //10 years in the future filter should be enough
 
 //TODO we should think about reducing the size of this class, maybe we can split out all the property selecting methods
 @Service
@@ -94,11 +101,15 @@ class EventService @Autowired constructor(
         addSubqueryOfFieldConnectedByOr(queryParts, SemanticKeys.CATEGORY, searchDTO.category)
         addSubqueryOfFieldConnectedByOr(queryParts, SemanticKeys.LOCATION_CITY, searchDTO.locationCities)
         addSubqueryOfFieldConnectedByOr(queryParts, SemanticKeys.LOCATION_NAME, searchDTO.locationNames)
-        if (!searchDTO.fromDate.isNullOrBlank()) {
-            queryParts.add(after(SemanticKeys.STARTDATE, LocalDate.parse(searchDTO.fromDate!!, localDateFormatter)))
-        }
-        if (!searchDTO.toDate.isNullOrBlank()) {
-            queryParts.add(before(SemanticKeys.STARTDATE, LocalDate.parse(searchDTO.toDate!!, localDateFormatter)))
+        if (searchDTO.rangeSelect == 0L) {
+            if (!searchDTO.fromDate.isNullOrBlank()) {
+                queryParts.add(after(SemanticKeys.STARTDATE, LocalDate.parse(searchDTO.fromDate!!, localDateFormatter)))
+            }
+            if (!searchDTO.toDate.isNullOrBlank()) {
+                queryParts.add(before(SemanticKeys.STARTDATE, LocalDate.parse(searchDTO.toDate!!, localDateFormatter)))
+            }
+        } else {
+            queryParts.add(isInNextSeconds(SemanticKeys.STARTDATE, searchDTO.rangeSelect!!))
         }
         if (searchDTO.durationShorter != null) {
             queryParts.add(durationShorter(SemanticKeys.STARTDATE, SemanticKeys.ENDDATE, searchDTO.durationShorter!!))
@@ -142,9 +153,12 @@ class EventService @Autowired constructor(
             EventCategory.entries
                 .map { Triple(it.name, frontEndName(it), frontEndId(it.name)) }
                 .sortedWith(Comparator.comparing({ it.second }, String.CASE_INSENSITIVE_ORDER)),
-            filters[SemanticKeys.LOCATION_NAME]!!.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Triple(it, it, frontEndId(it)) },
-            filters[SemanticKeys.LOCATION_CITY]!!.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Triple(it, it, frontEndId(it)) },
-            filters[SemanticKeys.CONCERT_BANDLIST]!!.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Triple(it, it, frontEndId(it)) },
+            filters[SemanticKeys.LOCATION_NAME]!!.sortedWith(String.CASE_INSENSITIVE_ORDER)
+                .map { Triple(it, it, frontEndId(it)) },
+            filters[SemanticKeys.LOCATION_CITY]!!.sortedWith(String.CASE_INSENSITIVE_ORDER)
+                .map { Triple(it, it, frontEndId(it)) },
+            filters[SemanticKeys.CONCERT_BANDLIST]!!.sortedWith(String.CASE_INSENSITIVE_ORDER)
+                .map { Triple(it, it, frontEndId(it)) },
         )
     }
 
@@ -328,6 +342,9 @@ class EventService @Autowired constructor(
     }
 
     private fun setDefaults(searchDTO: SearchDTO) {
+        if (searchDTO.rangeSelect == null) {
+            searchDTO.rangeSelect = Duration.ofDays(DEFAULT_FUTURE_DAYS).toSeconds()
+        }
         if (searchDTO.fromDate.isNullOrBlank()) {
             searchDTO.fromDate = LocalDate.now().format(localDateFormatter)
         }
@@ -389,12 +406,16 @@ class EventService @Autowired constructor(
         }
     }
 
-    private fun addSubqueryOfFieldConnectedByOr(queryParts: MutableList<String>, semanticKeyField: String, searchInput: List<String?>?) {
+    private fun addSubqueryOfFieldConnectedByOr(
+        queryParts: MutableList<String>,
+        semanticKeyField: String,
+        searchInput: List<String?>?
+    ) {
         val subqueryParts = mutableListOf<String>()
         for (searchInputElement in (searchInput ?: emptyList()).filter { !it.isNullOrBlank() }) {
             subqueryParts.add(equals(semanticKeyField, searchInputElement!!))
         }
-        if(subqueryParts.isNotEmpty()) {
+        if (subqueryParts.isNotEmpty()) {
             queryParts.add(or(subqueryParts))
         }
     }

@@ -22,7 +22,7 @@ jobs:
         id: init_comment
         uses: peter-evans/create-or-update-comment@v4
         with:
-          issue-number: ${{ github.event.number }}
+          issue-number: ${{ github.event.issue.number }}
           body: "Working on the branchdeploy... "
       - uses: actions/checkout@v5
       - name: Set up JDK 21
@@ -59,13 +59,13 @@ jobs:
         uses: peter-evans/create-or-update-comment@v4
         if: success()
         with:
-          issue-number: ${{ github.event.number }}
+          issue-number: ${{ github.event.issue.number }}
           comment-id: ${{ steps.init_comment.outputs.comment-id }}
           body: "Successfully deployed here: ${{ fromJson(steps.triggerbranch.outputs.response).url }}"
       - name: Update comment on error
         uses: peter-evans/create-or-update-comment@v4
         if: (!success())
         with:
-          issue-number: ${{ github.event.number }}
+          issue-number: ${{ github.event.issue.number }}
           comment-id: ${{ steps.init_comment.outputs.comment-id }}
           body: "Sorry, something went wrong :("

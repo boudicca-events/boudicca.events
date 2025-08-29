@@ -62,7 +62,7 @@ jobs:
           password: ${{ secrets.BRANCHDEPLOY_PASSWORD }}
           customHeaders: '{"Content-Type": "application/json"}'
           data: '{"branchName": "${{ fromJson(steps.pr.outputs.response).head.ref }}", "gitRepository": "${{ fromJson(steps.pr.outputs.response).head.repo.clone_url }}", "deploymentName": "search", "dockerImageName": "${{ steps.push_images.outputs.imageNameSearch }}"}'
-          timeout: 60000
+          timeout: 600000
       - name: triggering deploy
         id: triggerbranch_publisher
         uses: fjogeleit/http-request-action@v1
@@ -73,7 +73,7 @@ jobs:
           password: ${{ secrets.BRANCHDEPLOY_PASSWORD }}
           customHeaders: '{"Content-Type": "application/json"}'
           data: '{"branchName": "${{ fromJson(steps.pr.outputs.response).head.ref }}", "gitRepository": "${{ fromJson(steps.pr.outputs.response).head.repo.clone_url }}", "deploymentName": "publisher-html", "dockerImageName": "${{ steps.push_images.outputs.imageNamePublisher }}"}'
-          timeout: 60000
+          timeout: 600000
       - name: Update comment on success
         uses: peter-evans/create-or-update-comment@v4
         if: success()

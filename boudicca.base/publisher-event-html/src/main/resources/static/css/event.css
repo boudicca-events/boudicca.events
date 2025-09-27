@@ -21,7 +21,6 @@
 
 .event-title {
     font-size: var(--font-size-large);
-    margin-top: var(--space-large);
     margin-bottom: var(--space-medium);
     font-weight: 600;
     /** https://stackoverflow.com/questions/3922739/limit-text-length-to-n-lines-using-css */
@@ -43,8 +42,8 @@
 }
 
 .event-image img {
-    max-height: 200px;
-    max-width: 230px;
+    max-height: 85%;
+    max-width: 85%;
     object-fit: contain;
     border-radius: var(--border-radius-medium);
 }
@@ -58,7 +57,7 @@
     align-items: center;
     justify-content: center;
     position: relative;
-    border-radius: var(--border-radius-small);
+    border-radius: var(--border-radius-medium);
     background-color: var(--color-main);
 }
 
@@ -75,7 +74,7 @@
 }
 
 .event-description {
-    padding: 5px 20px 15px 20px;
+    padding: var(--space-large);
     font-size: var(--font-size-small);
 }
 
@@ -84,11 +83,13 @@
     text-decoration: none;
     text-align: center;
     font-size: var(--font-size-xsmall);
+    margin-top: var(--space-large);
     padding: var(--space-medium) var(--space-xlarge);
     background-color: var(--anchor-to-eventpage-background-color);
     font-weight: bold;
     border-radius: var(--border-radius-small);
     box-shadow: rgba(0, 0, 0, 0.2) 1px 2px 6px;
+    max-width: 300px;
 }
 
 .event-details {
@@ -111,10 +112,9 @@
 }
 
 .event-image-modal img {
-    max-height: 300px;
-    max-width: 500px;
-    height: 100%;
-    width: 100%;
+    max-height: 98%;
+    max-width: 98%;
+    border-radius: var(--border-radius-medium);
     object-fit: contain;
 }
 
@@ -142,7 +142,6 @@
     right: 0;
     padding: var(--space-large);
     top: 0;
-    z-index: 100;
 }
 
 .accessibility-details {
@@ -191,7 +190,7 @@
     display: flex;
     flex-direction: column;
     padding: var(--space-xxlarge);
-    border-radius: var(--border-radius-small) var(--border-radius-small) 0 0;
+    border-radius: var(--border-radius-medium) var(--border-radius-medium) 0 0;
 }
 
 .modal-tabs {
@@ -212,7 +211,7 @@
     width: 80%;
     max-width: 970px;
     position: relative;
-    border-radius: var(--border-radius-small);
+    border-radius: var(--border-radius-medium);
 }
 
 .details-box {
@@ -270,8 +269,9 @@
 
 @media only screen and (max-width: 700px) {
     #modal-content {
-        margin: unset;
+        margin: 0;
         width: 100%;
+        border-radius: 0 0 var(--border-radius-medium) var(--border-radius-medium);
     }
 }
 

@@ -109,7 +109,7 @@ legend {
     flex-wrap: wrap;
     flex-direction: column;
     color: var(--font-color-lighter);
-    margin-top: 4px;
+    margin-top: var(--space-small);
 }
 
 .header-date-search {

@@ -12,7 +12,7 @@
 
 .multiselect-labels, #drawer input, #drawer select {
     border: 1px #ccc solid;
-    border-radius: 10px;
+    border-radius: var(--border-radius-medium);
     margin-bottom: 10px;
 }
 
@@ -48,7 +48,7 @@ legend {
 
 #filterSearchButton {
     padding: 12px 24px;
-    border-radius: 10px;
+    border-radius: var(--border-radius-medium);
     margin-top: 24px;
     font-size: var(--font-size-medium);
     background-color: var(--color-button);
@@ -67,7 +67,7 @@ legend {
 
 #resetSearchForm::before {
     content: '\2715';
-    border-radius: 10px;
+    border-radius: var(--border-radius-medium);
     color: var(--font-color-light);
     margin: 0px 6px;
 }
@@ -77,9 +77,8 @@ legend {
 }
 
 .filter-label {
-    font-size: var(--font-size-xsmall);
+    font-size: var(--font-size-small);
     margin-bottom: 2px;
-    font-weight: 600;
     display: flex;
     align-items: center;
 }
@@ -87,6 +86,7 @@ legend {
 .filter-input-wrapper {
     display: flex;
     flex-direction: column;
+    color: var(--font-color-lighter);
 }
 
 .search-buttons {
@@ -99,6 +99,7 @@ legend {
 #drawer input:not([type='checkbox']), #drawer select {
     min-width: 150px;
     max-width: 300px;
+    box-shadow: #eee 2px 2px 5px;
 }
 
 .header-accessibility-filter {
@@ -107,6 +108,8 @@ legend {
     gap: 12px;
     flex-wrap: wrap;
     flex-direction: column;
+    color: var(--font-color-lighter);
+    margin-top: 4px;
 }
 
 .header-date-search {
@@ -142,6 +145,8 @@ legend {
     flex-shrink: 5;
     flex-basis: 90%;
     max-height: 230px;
+    box-shadow: #eee 2px 2px 5px;
+    color: var(--font-color-lighter);
 }
 
 .multiselect-labels ul {
@@ -175,7 +180,7 @@ input[type=checkbox]:checked + label.chips {
 
 input[type=checkbox]:checked + label.chips::before {
     content: '\2715';
-    border-radius: 10px;
+    border-radius: var(--border-radius-medium);
     color: var(--font-color-light);
     margin-right: 8px;
 }

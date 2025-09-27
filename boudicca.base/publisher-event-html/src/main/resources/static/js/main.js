@@ -131,7 +131,7 @@ document.addEventListener("DOMContentLoaded", () => {
       !drawer.contains(event.target) &&
       !searchForm.contains(event.target) &&
       !filterButton.contains(event.target) &&
-      !event.target.classList.contains("anchor-to-event")
+      !event.target.classList.contains("event")
     ) {
       closeDrawer();
     }
@@ -304,9 +304,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const initModals = (events) => {
     events.forEach(event => {
-      const anchor = event.querySelector(".anchor-to-event");
       const content = event.querySelector(".modal-content");
-      anchor.addEventListener("click", () => {
+      event.addEventListener("click", () => {
         openModal(content.innerHTML)
       });
     })

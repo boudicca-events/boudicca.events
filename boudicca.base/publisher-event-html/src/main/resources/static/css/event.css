@@ -1,7 +1,7 @@
 @layer default {
 
 .events-grid {
-    gap: var(--space-large);
+    gap: var(--space-xlarge);
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(min(250px, 100%),1fr));
 }
@@ -9,6 +9,14 @@
 .event {
     display: flex;
     flex-direction: column;
+    box-shadow: rgba(0, 0, 0, 0.1) 1px 2px 9px;
+    background-color: white;
+    border-radius: var(--border-radius-medium);
+    cursor: pointer;
+}
+
+.event:hover {
+    box-shadow: rgba(0, 0, 0, 0.3) 1px 2px 9px;
 }
 
 .event-title {
@@ -25,20 +33,20 @@
 }
 
 .event-image {
-    height: 250px;
+    height: 220px;
     background-color: var(--color-main);
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
-    border-radius: var(--border-radius-small);
+    border-radius: var(--border-radius-medium) var(--border-radius-medium) 0 0;
 }
 
 .event-image img {
-    max-height: 180px;
-    max-width: 180px;
+    max-height: 200px;
+    max-width: 230px;
     object-fit: contain;
-    border-radius: var(--border-radius-small);
+    border-radius: var(--border-radius-medium);
 }
 
 .event-image-modal {
@@ -67,28 +75,9 @@
 }
 
 .event-description {
-    padding: var(--space-small) var(--space-medium);
+    padding: 5px 20px 15px 20px;
     font-size: var(--font-size-small);
 }
-
-.anchor-to-event {
-    color: inherit;
-    position: absolute;
-    text-decoration: none;
-    right: var(--space-medium);
-    font-size: var(--font-size-xsmall);
-    padding: var(--space-medium) var(--space-xlarge);
-    border: 1px solid var(--anchor-to-eventpage-border-color);
-    background-color: var(--anchor-to-eventpage-background-color);
-    bottom: -18px;
-    font-weight: bold;
-    border-radius: var(--border-radius-small);
-}
-
-.anchor-to-eventpage:focus {
-    background-color: var(--color-main-yellow-focus);
-}
-
 
 .anchor-to-eventmodal {
     color: inherit;
@@ -96,10 +85,10 @@
     text-align: center;
     font-size: var(--font-size-xsmall);
     padding: var(--space-medium) var(--space-xlarge);
-    border: 1px solid var(--anchor-to-eventpage-border-color);
     background-color: var(--anchor-to-eventpage-background-color);
     font-weight: bold;
     border-radius: var(--border-radius-small);
+    box-shadow: rgba(0, 0, 0, 0.2) 1px 2px 6px;
 }
 
 .event-details {
@@ -162,7 +151,7 @@
     position: absolute;
     left: var(--space-medium);
     padding: var(--space-medium);
-    border: 1px solid black;
+    box-shadow: rgba(0, 0, 0, 0.1) 1px 2px 2px;
     top: var(--space-medium);
     border-radius: var(--border-radius-small);
 }
@@ -220,7 +209,6 @@
 #modal-content {
     background-color: var(--color-white);
     margin: 5% auto;
-    border: 1px solid var(--anchor-to-eventpage-border-color);
     width: 80%;
     max-width: 970px;
     position: relative;
@@ -238,6 +226,7 @@
     padding-bottom: var(--space-small);
     overflow: hidden;
     list-style: none;
+    padding-left: 0;
 }
 
 .details-box li a {

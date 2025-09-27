@@ -33,6 +33,7 @@
     --font-size-medium: 1em;
     --font-size-large: 1.25em;
     --font-size-xlarge: 1.4em;
+    --font-size-xxlarge: 1.5em;
 
     /** spacing */
     --space-small: 4px;
@@ -49,11 +50,12 @@
     --input-background-color: inherit;
     --font-color: inherit;
     --font-color-dark: #444;
-    --font-color-lighter: #999;
+    --font-color-lighter: #333;
 
     --color-filterSearchButton: #ccc;
 
     --border-radius-small: 4px;
+    --border-radius-medium: 8px;
 }
 
 html {

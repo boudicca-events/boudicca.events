@@ -2,6 +2,7 @@
 
 body {
     background-color: var(--color-white);
+    margin: 0 var(--space-xlarge);
 }
 
 .content {
@@ -80,6 +81,11 @@ footer a {
 footer ul {
     list-style: none;
     text-align: right;
+}
+
+footer span, footer svg {
+    vertical-align: middle;
+    margin-left: var(--space-small);
 }
 
 @media only screen and (max-width: 970px) {

@@ -65,6 +65,10 @@ header button {
     color: var(--font-color-lighter);
 }
 
+.header-links svg {
+    fill: var(--font-color-lighter);
+}
+
 .header-mobile-menu {
     display: none;
 }

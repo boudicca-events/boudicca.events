@@ -149,6 +149,10 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     } else if (event.code === "Space" && document.activeElement.type === "checkbox"){
         toggleCheckboxLabelsByCheckbox(document.activeElement);
+    } else if (event.key === "Escape" && modal.style.display != "none") {
+        closeModal();
+    } else if (event.key === "Escape" && drawer.style.display != "none") {
+        closeDrawer();
     }
   })
 

@@ -91,6 +91,7 @@ button {
 
 svg {
     color: var(--color-icon);
+    fill: var(--color-icon);
 }
 
 .visible-hidden {

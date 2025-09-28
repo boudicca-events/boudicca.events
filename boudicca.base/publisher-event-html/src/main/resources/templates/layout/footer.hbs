@@ -3,7 +3,16 @@
         <ul>
             {{#each extensionFooters as |extensionFooter|}}
                 <li>
-                    <a href="{{extensionFooter.url}}" target="{{extensionFooter.target}}">{{extensionFooter.text}}</a>
+                    {{#if extensionFooter.svgName}}
+                        <a href="{{extensionFooter.url}}" target="{{extensionFooter.target}}">
+                            <svg height="16px" width="16px" title="{{extensionFooter.text}}" viewBox="0 0 512 512">
+                                <use xlink:href="#{{extensionFooter.svgName}}"></use>
+                            </svg>
+                            <span>{{extensionFooter.text}}</span>
+                        </a>
+                    {{else}}
+                        <a href="{{extensionFooter.url}}" target="{{extensionFooter.target}}">{{extensionFooter.text}}</a>
+                    {{/if}}
                 </li>
             {{/each}}
         </ul>

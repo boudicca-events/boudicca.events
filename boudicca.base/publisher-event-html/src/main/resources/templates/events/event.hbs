@@ -1,4 +1,4 @@
-<div class="event">
+<div class="event" tabindex="0">
     <div class="event-image {{#if event.category}}event-image-{{event.category}}{{/if}}">
         {{#if event.pictureUuid}}
             <img src="/picture?uuid={{event.pictureUuid}}" alt="{{#if event.pictureAltText}}{{event.pictureAltText}}{{else}}Event Bild{{/if}}" aria-label="Event Bild" aria-labelledby="image" />
@@ -41,16 +41,16 @@
     </div>
 
     <div class="modal-content" style="display: none" aria-modal="true">
-        <button class="modal-close">
-            <svg height="32px" width="32px" viewBox="0 0 512 512" aria-label="Schließe Eventdetails">
-                <use xlink:href="#close"></use>
-            </svg>
-        </button>
-
         <div class="modal-flex {{#if event.category}}event-modal-{{event.category}}{{/if}}">
             <div class="modal-column">
-                <h2>{{event.name}}</h2>
+                <h2 tabindex="0">{{event.name}}</h2>
             </div>
+            <button class="modal-close">
+                <svg height="32px" width="32px" viewBox="0 0 512 512" aria-label="Schließe Eventdetails">
+                    <use xlink:href="#close"></use>
+                </svg>
+            </button>
+
             <div class="modal-row-image">
                 <div class="modal-column">
                     <div class="event-image-modal {{#if event.category}}event-image-modal-{{event.category}}{{/if}}">

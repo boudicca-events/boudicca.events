@@ -17,13 +17,17 @@ document.addEventListener("DOMContentLoaded", () => {
   const header = document.querySelector("header");
   const accessibilityFlags = document.getElementsByName("flags");
   const map = document.getElementById("map");
+  let lastFocusedEventCard = null;
 
 
-  const openModal = (content) => {
+  const openModal = (eventCard) => {
+    const content = eventCard.querySelector(".modal-content").innerHTML;
     modalContent.innerHTML = content;
     modal.style.display = "block";
     document.body.style.overflow = "hidden";
     const closeButton = modalContent.querySelector(".modal-close");
+    lastFocusedEventCard = eventCard;
+    modalContent.querySelector("h2").focus();
     closeButton.addEventListener("click", () => {
       closeModal();
     })
@@ -32,6 +36,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const closeModal = () => {
     modal.style.display = "none";
     document.body.style.overflow = "initial";
+    if (lastFocusedEventCard != null) {
+        lastFocusedEventCard.focus();
+    }
   };
 
   modal.addEventListener('click', (event) => {
@@ -153,6 +160,8 @@ document.addEventListener("DOMContentLoaded", () => {
         closeModal();
     } else if (event.key === "Escape" && drawer.style.display != "none") {
         closeDrawer();
+    } else if (event.key === "Enter" && event.target.classList.contains("event")) {
+        openModal(event.target);
     }
   })
 
@@ -308,9 +317,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const initModals = (events) => {
     events.forEach(event => {
-      const content = event.querySelector(".modal-content");
       event.addEventListener("click", () => {
-        openModal(content.innerHTML)
+        openModal(event)
       });
     })
   }

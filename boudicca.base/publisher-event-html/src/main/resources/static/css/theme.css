@@ -14,6 +14,7 @@
     --color-main-green-light: rgba(152,251,152,0.25);
     --color-main-grey: #ccc;
     --color-icon: inherit;
+    --color-button: #eee;
 
     /** font family */
     --font-family-open-sans: 'Open Sans', Arial, Helvetica, sans-serif;
@@ -27,26 +28,34 @@
     /** --max-tablet-width: 970px; */
 
     /** font size */
+    --font-size-xsmall: 0.75em;
     --font-size-small: 0.85em;
     --font-size-medium: 1em;
     --font-size-large: 1.25em;
+    --font-size-xlarge: 1.4em;
+    --font-size-xxlarge: 1.5em;
 
     /** spacing */
     --space-small: 4px;
     --space-medium: 8px;
     --space-large: 16px;
-    --space-xlarge: 32px;
-    --space-xxlarge: 128px;
+    --space-xlarge: 24px;
+    --space-xxlarge: 32px;
 
     /** events **/
     --anchor-to-eventpage-border-color: black;
-    --anchor-to-eventpage-background-color: var(--color-white);;
+    --anchor-to-eventpage-background-color: var(--color-white);
     --event-card-size: 220px;
 
     --input-background-color: inherit;
     --font-color: inherit;
+    --font-color-dark: #444;
+    --font-color-lighter: #333;
 
     --color-filterSearchButton: #ccc;
+
+    --border-radius-small: 4px;
+    --border-radius-medium: 8px;
 }
 
 html {
@@ -82,6 +91,7 @@ button {
 
 svg {
     color: var(--color-icon);
+    fill: var(--color-icon);
 }
 
 .visible-hidden {
@@ -129,6 +139,18 @@ input:focus-visible, button:focus-visible, select:focus-visible {
 
 a {
     color: black;
+}
+
+h1 {
+    font-size: var(--font-size-xlarge);
+}
+
+h2 {
+    font-size: var(--font-size-large);
+}
+
+h3 {
+    font-size: var(--font-size-medium);
 }
 
 } /* default layer */

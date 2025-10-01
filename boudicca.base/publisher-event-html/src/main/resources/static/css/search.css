@@ -12,7 +12,7 @@
 
 .multiselect-labels, #drawer input, #drawer select {
     border: 1px #ccc solid;
-    border-radius: 10px;
+    border-radius: var(--border-radius-medium);
     margin-bottom: 10px;
 }
 
@@ -20,7 +20,6 @@ fieldset {
     border: none;
     flex-basis: 30%;
     flex-grow: 5;
-    margin: 0;
     padding: 0;
     max-width: max-content;
 }
@@ -38,26 +37,21 @@ legend {
     margin: 0px 8px 0px -2px;
 }
 
-.drawer-header {
-    display: flex;
-    justify-content: space-between;
-}
-
 #closeDrawerButton {
     width: 100%;
     margin-bottom: -24px;
     text-align: end;
-    font-size: 24px;
+    font-size: var(--font-size-xlarge);
     position: relative;
     top: -8px;
 }
 
 #filterSearchButton {
     padding: 12px 24px;
-    border-radius: 10px;
+    border-radius: var(--border-radius-medium);
     margin-top: 24px;
-    font-size: 18px;
-    background-color: #eee;
+    font-size: var(--font-size-medium);
+    background-color: var(--color-button);
     display: flex;
     gap: 6px;
 }
@@ -73,19 +67,18 @@ legend {
 
 #resetSearchForm::before {
     content: '\2715';
-    border-radius: 10px;
-    color: #bbb;
+    border-radius: var(--border-radius-medium);
+    color: var(--font-color-light);
     margin: 0px 6px;
 }
 
 #resetSearchForm:hover::before {
-    color: #555;
+    color: var(--font-color-dark);
 }
 
 .filter-label {
-    font-size: 12px;
+    font-size: var(--font-size-small);
     margin-bottom: 2px;
-    font-weight: 600;
     display: flex;
     align-items: center;
 }
@@ -93,14 +86,7 @@ legend {
 .filter-input-wrapper {
     display: flex;
     flex-direction: column;
-}
-
-.header-search-filter {
-    display: flex;
-}
-
-.header-search-filter button {
-    display: flex;
+    color: var(--font-color-lighter);
 }
 
 .search-buttons {
@@ -113,6 +99,7 @@ legend {
 #drawer input:not([type='checkbox']), #drawer select {
     min-width: 150px;
     max-width: 300px;
+    box-shadow: #eee 2px 2px 5px;
 }
 
 .header-accessibility-filter {
@@ -121,6 +108,8 @@ legend {
     gap: 12px;
     flex-wrap: wrap;
     flex-direction: column;
+    color: var(--font-color-lighter);
+    margin-top: var(--space-small);
 }
 
 .header-date-search {
@@ -156,6 +145,8 @@ legend {
     flex-shrink: 5;
     flex-basis: 90%;
     max-height: 230px;
+    box-shadow: #eee 2px 2px 5px;
+    color: var(--font-color-lighter);
 }
 
 .multiselect-labels ul {
@@ -180,7 +171,7 @@ legend {
 
 input[type=checkbox]:checked + label.chips {
     display: inline-block;
-    background-color: #eee;
+    background-color: var(--color-button);
     border-radius: 20px;
     padding: 4px 10px 4px 10px;
     margin-bottom: 3px;
@@ -189,13 +180,13 @@ input[type=checkbox]:checked + label.chips {
 
 input[type=checkbox]:checked + label.chips::before {
     content: '\2715';
-    border-radius: 10px;
-    color: #bbb;
+    border-radius: var(--border-radius-medium);
+    color: var(--font-color-light);
     margin-right: 8px;
 }
 
 input[type=checkbox]:checked + label.chips:hover::before {
-    color: #555;
+    color: var(--font-color-dark);
 }
 
 @media only screen and (max-width: 700px) {

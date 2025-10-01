@@ -24,11 +24,8 @@ header {
 
 .header-title {
     margin: 0;
-    font-size: 1.8em;
-}
-
-.header-subtitle {
-    margin-top: -4px;
+    font-size: var(--font-size-xxlarge);
+    line-height: var(--font-size-medium);
 }
 
 #searchForm {
@@ -42,7 +39,6 @@ header {
 }
 
 .search-input {
-    padding: 4px;
     min-width: 150px;
     max-width: 250px;
     height: 26px;
@@ -53,6 +49,7 @@ header {
 
 header button {
     padding: 0;
+    color: var(--font-color-lighter);
 }
 
 .header-links {
@@ -65,6 +62,11 @@ header button {
 
 .header-links a {
     text-decoration: none;
+    color: var(--font-color-lighter);
+}
+
+.header-links svg {
+    fill: var(--font-color-lighter);
 }
 
 .header-mobile-menu {
@@ -77,7 +79,7 @@ header button {
 
 @media only screen and (max-width: 970px) {
     .header-title {
-        font-size: var(--font-size-medium);
+        font-size: var(--font-size-large);
     }
 
     .header-subtitle {
@@ -113,7 +115,7 @@ header button {
     }
 
     .header-title {
-        font-size: var(--font-size-small);
+        font-size: var(--font-size-medium);
     }
 
     .header-subtitle {

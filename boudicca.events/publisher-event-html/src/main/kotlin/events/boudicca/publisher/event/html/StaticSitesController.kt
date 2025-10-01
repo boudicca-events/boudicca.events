@@ -39,10 +39,15 @@ class StaticSitesController {
 
 @Component
 class BoudiccaEventsExtension : Extension {
+
+    val urlGithub = "https://github.com/boudicca-events/boudicca.events"
+    val urlDiscord = "https://discord.gg/dwtsPZWCVA"
+
     override fun getHeaders(): List<LinkExtension> {
         return listOf(
             LinkExtension("Über uns", "/about"),
-            LinkExtension("Github", "https://github.com/boudicca-events/boudicca.events", "_blank", "github"),
+            LinkExtension("Github", urlGithub, "_blank", "github"),
+            LinkExtension("Discord", urlDiscord, "_blank", "discord"),
         )
     }
 
@@ -51,7 +56,8 @@ class BoudiccaEventsExtension : Extension {
             LinkExtension("Über uns", "/about"),
             LinkExtension("Impressum", "/impressum"),
             LinkExtension("Data Privacy", "/data-privacy"),
-            LinkExtension("GitHub", "https://github.com/boudicca-events/boudicca.events", "_blank"),
+            LinkExtension("GitHub", urlGithub, "_blank", "github"),
+            LinkExtension("Discord", urlDiscord, "_blank", "discord"),
             LinkExtension("Erklärung zur Barrierefreiheit", "/erklarung-zur-barrierefreiheit")
         )
     }

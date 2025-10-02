@@ -20,7 +20,7 @@ jobs:
     steps:
       - name: Create initial comment
         id: init_comment
-        uses: peter-evans/create-or-update-comment@v4
+        uses: peter-evans/create-or-update-comment@v5
         with:
           issue-number: ${{ github.event.issue.number }}
           body: "Working on the branchdeploy... "
@@ -75,14 +75,14 @@ jobs:
           data: '{"branchName": "${{ fromJson(steps.pr.outputs.response).head.ref }}", "gitRepository": "${{ fromJson(steps.pr.outputs.response).head.repo.clone_url }}", "deploymentName": "publisher-html", "dockerImageName": "${{ steps.push_images.outputs.imageNamePublisher }}"}'
           timeout: 600000
       - name: Update comment on success
-        uses: peter-evans/create-or-update-comment@v4
+        uses: peter-evans/create-or-update-comment@v5
         if: success()
         with:
           issue-number: ${{ github.event.issue.number }}
           comment-id: ${{ steps.init_comment.outputs.comment-id }}
           body: "Successfully deployed here: ${{ fromJson(steps.triggerbranch_publisher.outputs.response).url }}"
       - name: Update comment on error
-        uses: peter-evans/create-or-update-comment@v4
+        uses: peter-evans/create-or-update-comment@v5
         if: (!success())
         with:
           issue-number: ${{ github.event.issue.number }}

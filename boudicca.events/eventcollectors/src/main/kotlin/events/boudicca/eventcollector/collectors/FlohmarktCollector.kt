@@ -18,30 +18,38 @@ class FlohmarktCollector : TwoStepEventCollector<String>("flohmarkt") {
 
     private val fetcher = FetcherFactory.newFetcher()
     private val baseUrl = "https://www.flohmarkt.at/"
+    private val pagesToFetchPerState = 3 // limit the amount of pages to fetch for each area
 
     override fun getAllUnparsedEvents(): List<String> {
 
-        val document = Jsoup.parse(fetcher.fetchUrl(baseUrl + "flohmaerkte/oberoesterreich"))
-        val eventUrls = document.select("div.terminTitel")
+        val stateUrls = Jsoup.parse(fetcher.fetchUrl(baseUrl + "termine/"))
+            .select(".navInhalt:nth-child(2) li:not(.navsub) a")
             .mapNotNull { it.select("a").first()?.attr("href") }
 
-        // TODO: other states
-        // TODO: other pages?
-//        val eventUrls = mutableListOf<String>()
-//
-//        val document = Jsoup.parse(fetcher.fetchUrl(baseUrl + "termine/"))
-//
-//        val stateUrls = document.select(".navInhalt:nth-child(2) li:not(.navsub) a")
-//            .mapNotNull { it.select("a").first()?.attr("href") }
-//
-//        stateUrls.forEach {
-//            stateUrl ->
-//            eventUrls.addAll(Jsoup.parse(fetcher.fetchUrl(baseUrl + stateUrl.replace("../", "")))
-//                .select("div.terminTitel")
-//                .mapNotNull { it.select("a").first()?.attr("href") })
-//        }
+        val eventUrls = mutableListOf<String>()
+        stateUrls.forEach {
+            eventUrls.addAll(getEventUrlsOfEachState(it))
+        }
 
+        return eventUrls.distinct()
+    }
+
+    fun getEventUrlsOfEachState(stateUrl: String) : List<String> {
+        val eventUrls = mutableListOf<String>()
+        var pageUrls = Jsoup.parse(fetcher.fetchUrl(baseUrl + stateUrl.replace("../", "")))
+            .select("div.weiterblaettern a")
+            .mapNotNull { it.attr("href") }
+        if (pageUrls.size > pagesToFetchPerState) {
+            pageUrls = pageUrls.subList(0, pagesToFetchPerState)
+        }
+        pageUrls.forEach { eventUrls.addAll(getEventUrlsOfEachPage(it)) }
         return eventUrls
+    }
+
+    fun getEventUrlsOfEachPage(statePageUrl: String) : List<String> {
+        return Jsoup.parse(fetcher.fetchUrl(statePageUrl))
+            .select("div.terminTitel a")
+            .mapNotNull { it.attr("href") }
     }
 
     override fun parseStructuredEvent(event: String): StructuredEvent {
@@ -55,37 +63,32 @@ class FlohmarktCollector : TwoStepEventCollector<String>("flohmarkt") {
         val description = StringBuilder()
         detailNodes.forEach { description.append(it.nodeValue().trim()).append("\n") }
 
-        val cityRegex = """in\s\d{4}\s(?<city>[\w\s]+)""".toRegex()
+        val cityRegex = """in\s\d{4,5}\s(?<city>[\w\s]+)""".toRegex()
         val cityMatchResult = cityRegex.find(name)
-        if (cityMatchResult == null) {
-            throw Exception("")
-        }
-        val city = cityMatchResult.groups["city"]!!.value.trimEnd()
+        val city = cityMatchResult?.groups["city"]?.value?.trim()
 
-//        val dateNode = detailNodes.first().nodeValue().trim()
-        val dateRegex = """(?<startDate>\d{1,2}\.\s+\w*\s+\d{2,4})\D*(?<endDate>\d{1,2}\.\s+\w*\s+\d{2,4})?""".toRegex()
+        val dateRegex = """(?<startDate>\d{1,2}\.\s+[\wä]*\s+\d{2,4})\D*(?<endDate>\d{1,2}\.\s+[\wä]*\s+\d{2,4})?""".toRegex()
         val dateMatchResult = dateRegex.find(description)
-        val startDateString = dateMatchResult?.groups["startDate"]!!.value.trim()
-        val endDateString = dateMatchResult.groups["endDate"]?.value
+        val startDateString = dateMatchResult?.groups["startDate"]?.value?.trim()
+        val endDateString = dateMatchResult?.groups["endDate"]?.value?.trim()
 
-//        val locationAndTime = detailNodes[2].nodeValue().trim()
-        val timeRegex = """(?<address>[^\d,]+\.?\s?\d+),.*?(?<start>\d{1,2}:?\d{0,2})-(?<end>\d{1,2}:?\d{0,2})[\sUhr]*""".toRegex()
+        val timeRegex = """(?<address>[^\d,]+\.?\s?\d+),.*?(?<start>\d{1,2}:?\d{0,2}):?-(?<end>\d{1,2}:?\d{0,2})[\sUhr]*""".toRegex()
         val timeMatchResult = timeRegex.find(description)
-        val address = timeMatchResult?.groups["address"]!!.value.trim()
-        val startTimeString = timeMatchResult.groups["start"]!!.value.trim()
-        val endTimeString = timeMatchResult.groups["end"]!!.value.trim()
+        val address = timeMatchResult?.groups["address"]?.value
+        val startTimeString = timeMatchResult?.groups["start"]?.value
+        val endTimeString = timeMatchResult?.groups["end"]?.value
 
         val startTime = parseTime(startTimeString)
-        val startDate = LocalDate.parse(startDateString.trim().replace("  ", " "),
+        val startDate = LocalDate.parse(startDateString!!.replace("  ", " "),
             DateTimeFormatter.ofPattern("d. MMMM yyyy").withLocale(Locale.GERMAN))
             .atTime(startTime).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
 
         var endDate: OffsetDateTime = OffsetDateTime.now()
         var endDateWasFound = false
-        if (endDateString != null && endTimeString.isNotBlank()) {
+        if (endDateString != null && endTimeString != null) {
             val endTime = parseTime(endTimeString)
             endDate = LocalDate.parse(
-                endDateString.trim().replace("  ", " "),
+                endDateString.replace("  ", " "),
                 DateTimeFormatter.ofPattern("d. MMMM yyyy").withLocale(Locale.GERMAN)
                 ).atTime(endTime).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
             endDateWasFound = true
@@ -109,7 +112,10 @@ class FlohmarktCollector : TwoStepEventCollector<String>("flohmarkt") {
         }
     }
 
-    fun parseTime(timeToParse: String) : LocalTime {
+    fun parseTime(timeToParse: String?) : LocalTime {
+        if (timeToParse == null){
+            return LocalTime.MIN
+        }
         val timeWithoutDelimiterRegex = """\d{3}""".toRegex()
 
         var timePattern = "H"

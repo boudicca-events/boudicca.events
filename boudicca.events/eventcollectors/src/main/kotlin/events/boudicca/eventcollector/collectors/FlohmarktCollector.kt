@@ -18,7 +18,6 @@ class FlohmarktCollector : TwoStepEventCollector<String>("flohmarkt") {
 
     private val fetcher = FetcherFactory.newFetcher()
     private val baseUrl = "https://www.flohmarkt.at/"
-    private val pagesToFetchPerState = 3 // limit the amount of pages to fetch for each area
 
     override fun getAllUnparsedEvents(): List<String> {
 
@@ -36,12 +35,9 @@ class FlohmarktCollector : TwoStepEventCollector<String>("flohmarkt") {
 
     fun getEventUrlsOfEachState(stateUrl: String) : List<String> {
         val eventUrls = mutableListOf<String>()
-        var pageUrls = Jsoup.parse(fetcher.fetchUrl(baseUrl + stateUrl.replace("../", "")))
+        val pageUrls = Jsoup.parse(fetcher.fetchUrl(baseUrl + stateUrl.replace("../", "")))
             .select("div.weiterblaettern a")
             .mapNotNull { it.attr("href") }
-        if (pageUrls.size > pagesToFetchPerState) {
-            pageUrls = pageUrls.subList(0, pagesToFetchPerState)
-        }
         pageUrls.forEach { eventUrls.addAll(getEventUrlsOfEachPage(it)) }
         return eventUrls
     }
@@ -50,6 +46,7 @@ class FlohmarktCollector : TwoStepEventCollector<String>("flohmarkt") {
         return Jsoup.parse(fetcher.fetchUrl(statePageUrl))
             .select("div.terminTitel a")
             .mapNotNull { it.attr("href") }
+            .filter{ !it.contains("ß") } // exclude urls with ß, as they result in 404 error
     }
 
     override fun parseStructuredEvent(event: String): StructuredEvent {
@@ -67,7 +64,7 @@ class FlohmarktCollector : TwoStepEventCollector<String>("flohmarkt") {
         val cityMatchResult = cityRegex.find(name)
         val city = cityMatchResult?.groups["city"]?.value?.trim()
 
-        val dateRegex = """(?<startDate>\d{1,2}\.\s+[\wä]*\s+\d{2,4})\D*(?<endDate>\d{1,2}\.\s+[\wä]*\s+\d{2,4})?""".toRegex()
+        val dateRegex = """(?<startDate>\d{1,2}\.\s+[\wä]*\s+\d{4})\D*(?<endDate>\d{1,2}\.\s+[\wä]*\s+\d{4})?""".toRegex()
         val dateMatchResult = dateRegex.find(description)
         val startDateString = dateMatchResult?.groups["startDate"]?.value?.trim()
         val endDateString = dateMatchResult?.groups["endDate"]?.value?.trim()
@@ -79,7 +76,8 @@ class FlohmarktCollector : TwoStepEventCollector<String>("flohmarkt") {
         val endTimeString = timeMatchResult?.groups["end"]?.value
 
         val startTime = parseTime(startTimeString)
-        val startDate = LocalDate.parse(startDateString!!.replace("  ", " "),
+        val startDate = LocalDate.parse(
+            startDateString!!.replace("  ", " ").replace("Jänner", "Januar"),
             DateTimeFormatter.ofPattern("d. MMMM yyyy").withLocale(Locale.GERMAN))
             .atTime(startTime).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
 
@@ -88,7 +86,7 @@ class FlohmarktCollector : TwoStepEventCollector<String>("flohmarkt") {
         if (endDateString != null && endTimeString != null) {
             val endTime = parseTime(endTimeString)
             endDate = LocalDate.parse(
-                endDateString.replace("  ", " "),
+                endDateString.replace("  ", " ").replace("Jänner", "Januar"),
                 DateTimeFormatter.ofPattern("d. MMMM yyyy").withLocale(Locale.GERMAN)
                 ).atTime(endTime).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
             endDateWasFound = true

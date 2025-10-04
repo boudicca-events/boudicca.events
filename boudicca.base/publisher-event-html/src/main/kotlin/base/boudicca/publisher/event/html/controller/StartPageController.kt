@@ -2,8 +2,8 @@ package base.boudicca.publisher.event.html.controller
 
 import base.boudicca.publisher.event.html.model.SearchDTO
 import base.boudicca.publisher.event.html.service.EventService
+import base.boudicca.publisher.event.html.service.SourcesService
 import base.boudicca.publisher.event.html.util.SearchUtils
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -13,7 +13,10 @@ import org.springframework.web.servlet.view.RedirectView
 
 @Controller
 @RequestMapping("/")
-class StartPageController @Autowired constructor(private val eventService: EventService) {
+class StartPageController(
+    private val eventService: EventService,
+    private val sourcesService: SourcesService
+) {
 
     @GetMapping("/")
     fun getIndex(): RedirectView {
@@ -43,7 +46,7 @@ class StartPageController @Autowired constructor(private val eventService: Event
     @ResponseBody
     fun sources(): ModelAndView {
         val data: MutableMap<String, Any> = HashMap()
-        data["sources"] = eventService.getSources()
+        data["sources"] = sourcesService.getSources()
         return ModelAndView("sources", data)
     }
 

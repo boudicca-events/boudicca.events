@@ -148,15 +148,6 @@ class EventService @Autowired constructor(
         )
     }
 
-    fun getSources(): List<String> {
-        val allSources =
-            caller.getFiltersFor(FilterQueryDTO(listOf(FilterQueryEntryDTO(SemanticKeys.SOURCES))))
-        return allSources[SemanticKeys.SOURCES]!!
-            .map { normalize(it) }
-            .distinct()
-            .sortedBy { it }
-    }
-
     private fun mapEvents(result: SearchResultDTO): List<Map<String, Any?>> {
         checkResult(result)
         return result.result.map { mapEvent(it.toStructuredEvent()) }
@@ -333,20 +324,6 @@ class EventService @Autowired constructor(
         }
         if (searchDTO.durationShorter == null) {
             searchDTO.durationShorter = DEFAULT_DURATION_SHORTER_VALUE.toDouble()
-        }
-    }
-
-    private fun normalize(value: String): String {
-        return if (value.startsWith("http")) {
-            //treat as url
-            try {
-                URI.create(value).normalize().host
-            } catch (ignored: IllegalArgumentException) {
-                //hm, no url?
-                value
-            }
-        } else {
-            value
         }
     }
 

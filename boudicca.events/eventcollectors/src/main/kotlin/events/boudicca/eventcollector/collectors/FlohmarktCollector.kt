@@ -75,24 +75,12 @@ class FlohmarktCollector : TwoStepEventCollector<String>("flohmarkt") {
         val startTimeString = timeMatchResult?.groups["start"]?.value
         val endTimeString = timeMatchResult?.groups["end"]?.value
 
-        val startTime = parseTime(startTimeString)
-        val startDate = LocalDate.parse(
-            startDateString!!.replace("  ", " ").replace("Jänner", "Januar"),
-            DateTimeFormatter.ofPattern("d. MMMM yyyy").withLocale(Locale.GERMAN))
-            .atTime(startTime).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
-
-        var endDate: OffsetDateTime? = null
-        if (endDateString != null && endTimeString != null) {
-            val endTime = parseTime(endTimeString)
-            endDate = LocalDate.parse(
-                endDateString.replace("  ", " ").replace("Jänner", "Januar"),
-                DateTimeFormatter.ofPattern("d. MMMM yyyy").withLocale(Locale.GERMAN)
-                ).atTime(endTime).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
-        }
+        val startDate = parseDate(startDateString, startTimeString)
+        val endDate = parseDate(endDateString, endTimeString)
 
         val imgSrc = document.select("div#termineDetail img").attr("src")
 
-        return structuredEvent(name, startDate) {
+        return structuredEvent(name, startDate!!) {
             withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(event))
             withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(event))
             withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description.toString())
@@ -108,7 +96,18 @@ class FlohmarktCollector : TwoStepEventCollector<String>("flohmarkt") {
         }
     }
 
-    fun parseTime(timeToParse: String?) : LocalTime {
+    private fun parseDate(dateToParse: String?, timeToParse: String?) : OffsetDateTime?{
+        if (dateToParse == null){
+            return null
+        }
+        val time = parseTime(timeToParse)
+        return LocalDate.parse(
+            dateToParse.replace("  ", " ").replace("Jänner", "Januar"),
+            DateTimeFormatter.ofPattern("d. MMMM yyyy").withLocale(Locale.GERMAN)
+        ).atTime(time).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
+    }
+
+    private fun parseTime(timeToParse: String?) : LocalTime {
         if (timeToParse == null){
             return LocalTime.MIN
         }

@@ -3,16 +3,13 @@ package events.boudicca.eventcollector.collectors
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
+import base.boudicca.api.eventcollector.util.structuredEvent
+import base.boudicca.dateparser.dateparser.DatePair
+import base.boudicca.dateparser.dateparser.DateParser
+import base.boudicca.dateparser.dateparser.DateParserResult
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
-import base.boudicca.model.structured.dsl.structuredEvent
 import org.jsoup.Jsoup
-import java.time.LocalDate
-import java.time.LocalTime
-import java.time.OffsetDateTime
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.util.*
 
 class FlohmarktCollector : TwoStepEventCollector<String>("flohmarkt") {
 
@@ -49,7 +46,7 @@ class FlohmarktCollector : TwoStepEventCollector<String>("flohmarkt") {
             .filter{ !it.contains("ß") } // exclude urls with ß, as they result in 404 error
     }
 
-    override fun parseStructuredEvent(event: String): StructuredEvent {
+    override fun parseMultipleStructuredEvents(event: String):  List<StructuredEvent?>?  {
         val document = Jsoup.parse(fetcher.fetchUrl(event))
         val name = document.select("div.terminTitel").text()
 
@@ -75,8 +72,11 @@ class FlohmarktCollector : TwoStepEventCollector<String>("flohmarkt") {
         val startTimeString = timeMatchResult?.groups["start"]?.value
         val endTimeString = timeMatchResult?.groups["end"]?.value
 
-        val startDate = parseDate(startDateString, startTimeString)
+        var startDate = parseDate(startDateString, startTimeString)
         val endDate = parseDate(endDateString, endTimeString)
+        if (endDate != null) {
+            startDate = DateParserResult(listOf(DatePair(startDate!!.dates[0].startDate, endDate.dates[0].startDate)))
+        }
 
         val imgSrc = document.select("div#termineDetail img").attr("src")
 
@@ -87,7 +87,6 @@ class FlohmarktCollector : TwoStepEventCollector<String>("flohmarkt") {
             withProperty(SemanticKeys.TYPE_PROPERTY, "others")
             withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, city)
             withProperty(SemanticKeys.LOCATION_ADDRESS_PROPERTY, address)
-            if (endDate != null) withProperty(SemanticKeys.ENDDATE_PROPERTY, endDate)
             if (imgSrc.isNotBlank()) withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(imgSrc))
             withProperty(
                 SemanticKeys.TAGS_PROPERTY,
@@ -96,33 +95,15 @@ class FlohmarktCollector : TwoStepEventCollector<String>("flohmarkt") {
         }
     }
 
-    private fun parseDate(dateToParse: String?, timeToParse: String?) : OffsetDateTime?{
+    private fun parseDate(dateToParse: String?, timeToParseParam: String?) : DateParserResult? {
         if (dateToParse == null){
             return null
         }
-        val time = parseTime(timeToParse)
-        return LocalDate.parse(
-            dateToParse.replace("  ", " ").replace("Jänner", "Januar"),
-            DateTimeFormatter.ofPattern("d. MMMM yyyy").withLocale(Locale.GERMAN)
-        ).atTime(time).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
-    }
-
-    private fun parseTime(timeToParse: String?) : LocalTime {
-        if (timeToParse == null){
-            return LocalTime.MIN
-        }
+        var timeToParse = timeToParseParam ?: ""
         val timeWithoutDelimiterRegex = """\d{3}""".toRegex()
-
-        var timePattern = "H"
-        if (timeToParse.contains(":")){
-            timePattern = "H:mm"
-        } else if (timeWithoutDelimiterRegex.containsMatchIn(timeToParse)) {
-            timePattern = "Hmm"
+        if (!timeToParse.contains(":") && timeWithoutDelimiterRegex.containsMatchIn(timeToParse)) {
+            timeToParse = timeToParse[0] + ":" + timeToParse.substring(1) // make 330 parseable by converting it to 3:30
         }
-
-        return LocalTime.parse(
-            timeToParse,
-            DateTimeFormatter.ofPattern(timePattern).withLocale(Locale.GERMAN)
-        )
+        return DateParser.parse(dateToParse, timeToParse)
     }
 }

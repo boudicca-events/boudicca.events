@@ -60,16 +60,16 @@ class FlohmarktCollector : TwoStepEventCollector<String>("flohmarkt") {
         val description = StringBuilder()
         detailNodes.forEach { description.append(it.nodeValue().trim()).append("\n") }
 
-        val cityRegex = """in\s\d{4,5}\s(?<city>[\w\s]+)""".toRegex()
-        val cityMatchResult = cityRegex.find(name)
-        val city = cityMatchResult?.groups["city"]?.value?.trim()
+        val cityRegex = """in\s[\d\s]*(?<city>[^\d,]+),?\D*$""".toRegex()
+        val cityMatchResult = cityRegex.findAll(name).map { it.groupValues[1] }.toList()
+        val city = if(cityMatchResult.isNotEmpty()) cityMatchResult.last() else null
 
         val dateRegex = """(?<startDate>\d{1,2}\.\s+[\wä]*\s+\d{4})\D*(?<endDate>\d{1,2}\.\s+[\wä]*\s+\d{4})?""".toRegex()
         val dateMatchResult = dateRegex.find(description)
         val startDateString = dateMatchResult?.groups["startDate"]?.value?.trim()
         val endDateString = dateMatchResult?.groups["endDate"]?.value?.trim()
 
-        val timeRegex = """(?<address>[^\d,]+\.?\s?\d+),.*?(?<start>\d{1,2}:?\d{0,2}):?-(?<end>\d{1,2}:?\d{0,2})[\sUhr]*""".toRegex()
+        val timeRegex = """\n(?<address>[^\d,]+\.?\s?\d+),.*?(?<start>\d{1,2}:?\d{0,2}):?-(?<end>\d{1,2}:?\d{0,2})[\sUhr]*""".toRegex()
         val timeMatchResult = timeRegex.find(description)
         val address = timeMatchResult?.groups["address"]?.value
         val startTimeString = timeMatchResult?.groups["start"]?.value
@@ -81,15 +81,13 @@ class FlohmarktCollector : TwoStepEventCollector<String>("flohmarkt") {
             DateTimeFormatter.ofPattern("d. MMMM yyyy").withLocale(Locale.GERMAN))
             .atTime(startTime).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
 
-        var endDate: OffsetDateTime = OffsetDateTime.now()
-        var endDateWasFound = false
+        var endDate: OffsetDateTime? = null
         if (endDateString != null && endTimeString != null) {
             val endTime = parseTime(endTimeString)
             endDate = LocalDate.parse(
                 endDateString.replace("  ", " ").replace("Jänner", "Januar"),
                 DateTimeFormatter.ofPattern("d. MMMM yyyy").withLocale(Locale.GERMAN)
                 ).atTime(endTime).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
-            endDateWasFound = true
         }
 
         val imgSrc = document.select("div#termineDetail img").attr("src")
@@ -101,7 +99,7 @@ class FlohmarktCollector : TwoStepEventCollector<String>("flohmarkt") {
             withProperty(SemanticKeys.TYPE_PROPERTY, "others")
             withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, city)
             withProperty(SemanticKeys.LOCATION_ADDRESS_PROPERTY, address)
-            if (endDateWasFound) withProperty(SemanticKeys.ENDDATE_PROPERTY, endDate)
+            if (endDate != null) withProperty(SemanticKeys.ENDDATE_PROPERTY, endDate)
             if (imgSrc.isNotBlank()) withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(imgSrc))
             withProperty(
                 SemanticKeys.TAGS_PROPERTY,

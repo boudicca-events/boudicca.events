@@ -58,6 +58,7 @@ fun main() {
         .addEventCollector(RoedaCollector())
         .addEventCollector(ParlamentCollector())
         .addEventCollector(FlohmarktCollector())
+        .addEventCollector(FraeuleinFlorentineCollector())
         .build()
 
     eventCollectorCoordinator.startWebUi()

@@ -59,6 +59,7 @@ fun main() {
         .addEventCollector(ParlamentCollector())
         .addEventCollector(FlohmarktCollector())
         .addEventCollector(FraeuleinFlorentineCollector())
+        .addEventCollector(ChelseaCollector())
         .build()
 
     eventCollectorCoordinator.startWebUi()

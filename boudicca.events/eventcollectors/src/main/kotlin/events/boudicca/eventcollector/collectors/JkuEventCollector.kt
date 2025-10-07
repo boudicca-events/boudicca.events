@@ -16,11 +16,16 @@ class JkuEventCollector : IcalCollector("jku") {
 
         return eventUrls
             .flatMap {
-                val eventJson = Jsoup.parse(fetcher.fetchUrl("https://www.jku.at$it"))
-                eventJson.select("a").eachAttr("href")
+                try {
+                    val eventJson = Jsoup.parse(fetcher.fetchUrl("https://www.jku.at$it"))
+                    eventJson.select("a").eachAttr("href")
+                } catch (_: RuntimeException) {
+                    mutableListOf<String>() // skip faulty links that result in 404
+                }
             }
             .filter { it.endsWith(".ics") }
             .map { fetcher.fetchUrl("https://www.jku.at$it") }
+            .distinct()
     }
 
     override fun postProcess(event: StructuredEvent): StructuredEvent {

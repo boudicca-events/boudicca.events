@@ -61,6 +61,7 @@ fun main() {
         .addEventCollector(FraeuleinFlorentineCollector())
         .addEventCollector(ChelseaCollector())
         .addEventCollector(LastSpaceCollector())
+        .addEventCollector(TheaterInDerInnenstadtCollector())
         .build()
 
     eventCollectorCoordinator.startWebUi()

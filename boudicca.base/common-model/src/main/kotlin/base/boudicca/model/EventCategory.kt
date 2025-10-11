@@ -31,7 +31,7 @@ enum class EventCategory(val types: Set<String>) {
         )
     ),
     TECH(setOf("techmeetup", "technology", "technologie", "chaosevent")),
-    SPORT(setOf("sport", "football", "soccer"));
+    SPORT(setOf("sport", "football", "soccer", "actionsport", "esports"));
 
     companion object {
         fun getForType(type: String?): EventCategory? {

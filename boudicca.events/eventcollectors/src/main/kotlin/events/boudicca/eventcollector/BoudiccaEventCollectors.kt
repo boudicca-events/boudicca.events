@@ -60,6 +60,7 @@ fun main() {
         .addEventCollector(FlohmarktCollector())
         .addEventCollector(FraeuleinFlorentineCollector())
         .addEventCollector(ChelseaCollector())
+        .addEventCollector(LastSpaceCollector())
         .build()
 
     eventCollectorCoordinator.startWebUi()

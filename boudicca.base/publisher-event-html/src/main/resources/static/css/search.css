@@ -172,6 +172,8 @@ legend {
 .multiselect-wrapper input[type=checkbox], .chips {
     position: absolute;
     opacity: 0;
+    max-width: 0;
+    overflow: hidden;
 }
 
 input[type=checkbox]:checked + label.chips {

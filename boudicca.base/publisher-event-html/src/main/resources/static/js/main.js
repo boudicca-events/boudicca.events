@@ -115,9 +115,11 @@ document.addEventListener("DOMContentLoaded", () => {
     if (label.style.position != "absolute") {
        label.style.position = "absolute";
        label.style.opacity = "0";
+       label.style.maxWidth = "0"
      } else {
        label.style.position = "relative";
-       label.style.opacity = "100";
+       label.style.opacity = "1";
+       label.style.maxWidth = "100%"
     }
   }
 

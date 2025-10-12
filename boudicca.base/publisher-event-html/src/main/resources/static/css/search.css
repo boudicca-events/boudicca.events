@@ -102,6 +102,11 @@ legend {
     box-shadow: #eee 2px 2px 5px;
 }
 
+#drawer input.filter {
+    max-width: 400px;
+    margin-bottom: 0;
+}
+
 .header-accessibility-filter {
     display: flex;
     flex: 1;
@@ -125,7 +130,7 @@ legend {
     min-width: 180px;
     display: flex;
     flex-direction: column;
-    max-height: 250px;
+    max-height: 300px;
     gap: 5px;
 }
 
@@ -167,6 +172,8 @@ legend {
 .multiselect-wrapper input[type=checkbox], .chips {
     position: absolute;
     opacity: 0;
+    max-width: 0;
+    overflow: hidden;
 }
 
 input[type=checkbox]:checked + label.chips {

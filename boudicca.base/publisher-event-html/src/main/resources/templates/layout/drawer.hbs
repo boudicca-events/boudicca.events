@@ -3,7 +3,7 @@
         &#x2715;
     </button>
 
-    {{> layout/multiselect_fieldset identifier="category" legend="Veranstaltungsart" entries=filters.categories }}
+    {{> layout/multiselect_fieldset identifier="category" legend="Veranstaltungsart" entries=filters.categories filter=false }}
 
     <fieldset class="dateFieldSet">
         <legend><strong>Datum</strong></legend>
@@ -63,9 +63,9 @@
         </div>
     </fieldset>
 
-    {{> layout/multiselect_fieldset identifier="locationCities" legend="Stadt" entries=filters.locationCities }}
-    {{> layout/multiselect_fieldset identifier="locationNames" legend="Veranstaltungsort" entries=filters.locationNames }}
-    {{> layout/multiselect_fieldset identifier="bandNames" legend="Musik" entries=filters.bandNames name="Bandname" data-category="MUSIC"}}
+    {{> layout/multiselect_fieldset identifier="locationCities" legend="Stadt" entries=filters.locationCities filter=true }}
+    {{> layout/multiselect_fieldset identifier="locationNames" legend="Veranstaltungsort" entries=filters.locationNames filter=true }}
+    {{> layout/multiselect_fieldset identifier="bandNames" legend="Musik" entries=filters.bandNames name="Bandname" data-category="MUSIC" filter=true }}
 
     <fieldset data-category-wanted="SPORT" class="hidden">
         <legend><strong>Sport</strong></legend>

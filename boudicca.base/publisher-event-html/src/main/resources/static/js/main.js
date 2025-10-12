@@ -17,6 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const header = document.querySelector("header");
   const accessibilityFlags = document.getElementsByName("flags");
   const map = document.getElementById("map");
+  const multiselectFilterInputs = ["locationCities", "locationNames", "bandNames"];
   let lastFocusedEventCard = null;
 
 
@@ -114,9 +115,11 @@ document.addEventListener("DOMContentLoaded", () => {
     if (label.style.position != "absolute") {
        label.style.position = "absolute";
        label.style.opacity = "0";
+       label.style.maxWidth = "0"
      } else {
        label.style.position = "relative";
-       label.style.opacity = "100";
+       label.style.opacity = "1";
+       label.style.maxWidth = "100%"
     }
   }
 
@@ -372,4 +375,20 @@ document.addEventListener("DOMContentLoaded", () => {
   const events = document.querySelectorAll(".event")
   initModals(events);
   initCheckboxLabelToggle();
+
+  const filterMultiselectFieldsByInput = (identifier) => {
+      filter = document.getElementById("filter-" + identifier).value.toLowerCase();;
+      labels = document.getElementById("ul-" + identifier).getElementsByTagName("label");
+      for (const label of labels) {
+          if (label.textContent.toLowerCase().includes(filter)) {
+              label.style.display = "";
+          } else {
+              label.style.display = "none";
+          }
+      }
+  }
+
+  multiselectFilterInputs.forEach( (identifier) => {
+    document.getElementById("filter-" + identifier).addEventListener("input", () => filterMultiselectFieldsByInput(identifier));
+  })
 });

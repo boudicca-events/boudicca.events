@@ -1,4 +1,4 @@
-package base.boudicca.eventdb.model
+package base.boudicca.entrydb.model
 
 typealias EntryKey = Map<String, String>
 

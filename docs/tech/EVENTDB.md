@@ -6,13 +6,13 @@ It is a simple SpringBoot app you can find [here](../../boudicca.base/eventdb)
 
 ## Ingestion API
 
-This API is responsible for ingesting new Entries, it is implemented as a Spring RestController you can find it [here](../../boudicca.base/eventdb/src/main/kotlin/base/boudicca/eventdb/controller/IngestionController.kt)
+This API is responsible for ingesting new Entries, it is implemented as a Spring RestController you can find it [here](../../boudicca.base/eventdb/src/main/kotlin/base/boudicca/entrydb/controller/IngestionController.kt)
 
 This is the only API currently secured by a password in the whole Boudicca Platform.
 
 ## Publisher API
 
-This API is responsible for publishing all available Entries, it is also implemented as a Spring RestController you can find it [here](../../boudicca.base/eventdb/src/main/kotlin/base/boudicca/eventdb/controller/PublisherController.kt)
+This API is responsible for publishing all available Entries, it is also implemented as a Spring RestController you can find it [here](../../boudicca.base/eventdb/src/main/kotlin/base/boudicca/entrydb/controller/PublisherController.kt)
 
 Currently, this only has a "get all" method, which maybe will be extended in the future.
 

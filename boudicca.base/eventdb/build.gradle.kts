@@ -1,11 +1,9 @@
 plugins {
-    id("boudicca-springboot-rest-app")
+    id("boudicca-springboot-rest-lib")
 }
 
 
 dependencies {
-    implementation(libs.spring.boot.starter.security)
-    implementation(project(":boudicca.base:common-model"))
-    implementation(project(":boudicca.base:eventdb-api"))
+    api(project(":boudicca.base:entrydb"))
     testImplementation(libs.spring.security.test)
 }

@@ -4,6 +4,7 @@ import base.boudicca.format.*
 import base.boudicca.model.structured.*
 import java.net.URI
 import java.time.OffsetDateTime
+import java.util.*
 
 /**
  * Properties are helpers allowing you to easier work with getting/setting values in their correct type for events/entries.
@@ -71,7 +72,9 @@ class ListProperty(propertyName: String) : GenericProperty<List<String>>(propert
 
 class NumberProperty(propertyName: String) : GenericProperty<Number>(propertyName, NumberFormatAdapter())
 
-class EnumProperty<E : Enum<E>>(propertyName: String, private val enumClass: Class<E>) :
+class EnumProperty<E : Enum<E>>(propertyName: String, enumClass: Class<E>) :
     GenericProperty<E>(propertyName, EnumFormatAdapter(enumClass))
 
 class BooleanProperty(propertyName: String) : GenericProperty<Boolean>(propertyName, BooleanFormatAdapter())
+
+class UuidProperty(propertyName: String) : GenericProperty<UUID>(propertyName, UuidFormatAdapter())

@@ -12,6 +12,9 @@ object SemanticKeys {
 
     // general properties
 
+    const val BOUDICCA_ID = "boudicca.id"
+    val BOUDICCA_ID_PROPERTY = UuidProperty(BOUDICCA_ID)
+
     const val NAME = "name"
     val NAME_PROPERTY = TextProperty(NAME)
 

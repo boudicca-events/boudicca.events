@@ -1,9 +1,9 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="LocalEventDB" type="JetRunConfigurationType">
-    <option name="MAIN_CLASS_NAME" value="base.boudicca.entrydb.EventDBApplicationKt" />
+    <option name="MAIN_CLASS_NAME" value="base.boudicca.eventdb.EventDBApplicationKt" />
     <module name="boudicca.boudicca.base.eventdb-app.main" />
     <shortenClasspath name="NONE" />
-    <option name="VM_PARAMETERS" value="-Dboudicca.store.path=boudicca.store -Dboudicca.entryKeyNames=name,startDate" />
+    <option name="VM_PARAMETERS" value="-Dboudicca.store.path=boudicca.store -Dboudicca.entryKeyNames=collectorName,startDate,name" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
     <extension name="net.ashald.envfile">
       <option name="IS_ENABLED" value="false" />

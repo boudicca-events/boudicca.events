@@ -20,17 +20,19 @@ Earlier Format Variants are selected over later ones.
 * `list (format=list)`: A list of text elements
 * `enum<?> (format=text)`: Has to be one of the specified distinct values
 * `boolean (format=text)`: The text "true" or "false"
+* `uuid (format=uuid)`: A UUID
 
 Note: publishers have to be able to handle invalid values by for example simply ignoring them.
 
 ### Property List
 
-**Events have only two required properties: `name` and `startDate`**
+**Events have only three required properties: `name`, `startDate`, `collectorName`**
 
 | PropertyName                                   | Meaning                                                                                                                               | [Data Type](#data-types) | [Usage](#usage-explanation) |
 |------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------|--------------------------|-----------------------------|
 | name                                           | The name of the event                                                                                                                 | text                     | MANDATORY                   |
 | startDate                                      | Time of start for the event                                                                                                           | date                     | MANDATORY                   |
+| collectorName                                  | Name of the collector which collected this event                                                                                      | text                     | MANDATORY                   |
 | endDate                                        | Time of end for the event                                                                                                             | date                     | OPTIONAL                    |
 | url                                            | A link to the specific source page for this event. If the user wants to see more details about the event, he should find them here    | url                      | RECOMMENDED                 |
 | [type](#type-property)                         | The type of event, for example `concert`, `????` more examples please                                                                 | text                     | RECOMMENDED                 |           
@@ -41,7 +43,6 @@ Note: publishers have to be able to handle invalid values by for example simply 
 | pictureUrl                                     | Url to a picture to be shown                                                                                                          | url                      | RECOMMENDED                 |
 | pictureAltText                                 | Alt text for the picture                                                                                                              | text                     | RECOMMENDED                 |
 | pictureCopyright                               | Copyright attribution to be shown                                                                                                     | text                     | OPTIONAL                    |
-| collectorName                                  | Name of the collector which collected this event                                                                                      | text                     | OPTIONAL                    |
 | sources                                        | A list of all sources that were used to gather info for this event, line by line. This should include all URLs or other sources used. | list                     | RECOMMENDED                 |
 | additionalEventsFromSourceUrl                  | an url to page on the event source website where other events can be found (e.g. Termine or Veranstaltungen pages) (if available)     | url                      | OPTIONAL                    |
 | location.name                                  | The name of the location the event is held in                                                                                         | text                     | RECOMMENDED                 |
@@ -124,5 +125,5 @@ Examples:
 
 ### Internal Properties
 
-The property name prefix `internal.*` is reserved by Boudicca for internal properties needed and will be silently
+The property name prefix `boudicca.*` is reserved by Boudicca for internal properties needed and will be silently
 discarded if ingested.

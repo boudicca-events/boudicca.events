@@ -1,8 +1,8 @@
 package base.boudicca.entrydb.service
 
 import base.boudicca.SemanticKeys
+import base.boudicca.UuidV5
 import base.boudicca.entrydb.BoudiccaEntryDbProperties
-import base.boudicca.entrydb.model.EntryKey
 import base.boudicca.entrydb.model.InternalEventProperties
 import base.boudicca.model.Entry
 import base.boudicca.model.Event
@@ -24,6 +24,7 @@ import java.io.IOException
 import java.nio.file.Path
 import java.nio.file.StandardOpenOption
 import java.time.Duration
+import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
@@ -42,12 +43,13 @@ class EntryService @Autowired constructor(
 ) {
 
     private val logger = KotlinLogging.logger {}
-    private val entries = ConcurrentHashMap<EntryKey, Pair<Entry, InternalEventProperties>>()
+    private val entries = ConcurrentHashMap<UUID, Pair<Entry, InternalEventProperties>>()
     private val lastSeenCollectors = ConcurrentHashMap<String, Long>()
     private val persistLock = ReentrantLock()
     private val needsPersist = AtomicBoolean(false)
     private val objectMapper = JsonMapper.builder().addModule(JavaTimeModule())
         .addModule(KotlinModule.Builder().build()).build()
+    private val uuidV5Generator = UuidV5(UUID.fromString(boudiccaEntryDbProperties.uuidv5Namespace))
 
     init {
         if (!boudiccaEntryDbProperties.store.path.isNullOrBlank()) {
@@ -114,13 +116,18 @@ class EntryService @Autowired constructor(
     }
 
     fun add(entry: Entry) {
-        val structuredEntry = entry.toStructuredEntry()
+        //TODO we should do UTF8 normalization on all keys and values
+        //TODO we should do some kind of validation on the keys and types/formats
+        val structuredEntry = entry
+            .filterKeys { !it.startsWith("boudicca.") }
+            .toStructuredEntry()
 
-        val eventKey = getEntryKey(structuredEntry)
+        val boudiccaId = getEntryKey(structuredEntry)
+        val modifiedEntry = structuredEntry.toBuilder()
+            .withProperty(SemanticKeys.BOUDICCA_ID_PROPERTY, boudiccaId)
 
-        //TODO should we do format validation here?
         //we reflatten the entry to make sure keys are canonical
-        entries[eventKey] = Pair(structuredEntry.toFlatEntry(), InternalEventProperties(System.currentTimeMillis()))
+        entries[boudiccaId] = Pair(modifiedEntry.build().toFlatEntry(), InternalEventProperties(System.currentTimeMillis()))
 
         val collectorName = structuredEntry.getProperty(SemanticKeys.COLLECTORNAME_PROPERTY)
         if (collectorName.isNotEmpty()) {
@@ -190,7 +197,7 @@ class EntryService @Autowired constructor(
         }
     }
 
-    private fun getEntryKey(entry: StructuredEntry): EntryKey {
+    private fun getEntryKey(entry: StructuredEntry): UUID {
         val keys =
             if (!boudiccaEntryDbProperties.entryKeyNames.isNullOrEmpty()) {
                 boudiccaEntryDbProperties.entryKeyNames
@@ -198,12 +205,11 @@ class EntryService @Autowired constructor(
                 entry.keys.map { it.toKeyString() }
             }
 
-        @Suppress("UNCHECKED_CAST")
-        return keys
-            .map {
-                it to entry.filterKeys(KeyFilter.parse(it)).firstOrNull()?.second
+        val values = keys
+            .mapNotNull { key ->
+                entry.filterKeys(KeyFilter.parse(key)).firstOrNull()?.second
             }
-            .filter { it.second != null }
-            .toMap() as EntryKey
+
+        return uuidV5Generator.from(values)
     }
 }

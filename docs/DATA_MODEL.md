@@ -34,7 +34,7 @@ At this point we need to specify some terminology a bit better. Also have a look
 help you understand those definitions better.
 
 * Entry: One generic entry in our database, which consists of multiple `Key`->`Value` pairs
-* Event: A specialised `Entry`, which represents an event and has two mandatory keys: `name` and `startDate`.
+* Event: A specialised `Entry`, which represents an event and has three mandatory keys: `name`, `startDate`, `collectorName`.
   See [Semantic Conventions](SEMANTIC_CONVENTIONS.md) for more information.
 * FieldName: Name of one `Key` of an `Entry`. Can only consist of letters, numbers and `.`. Can have multiple `Variants`
 * Variant: Specifying what kind of Variant (for example what language or what format) this key is. Format

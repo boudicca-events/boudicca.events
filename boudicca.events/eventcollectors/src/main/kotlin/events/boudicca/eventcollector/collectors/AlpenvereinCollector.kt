@@ -8,6 +8,7 @@ import base.boudicca.api.eventcollector.util.structuredEvent
 import base.boudicca.dateparser.dateparser.DateParser
 import base.boudicca.dateparser.dateparser.DateParserResult
 import base.boudicca.format.UrlUtils
+import base.boudicca.model.EventCategory
 import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -15,12 +16,10 @@ import java.net.URI
 import java.util.concurrent.TimeUnit
 
 class AlpenvereinCollector : TwoStepEventCollector<String>("alpenverein") {
-
-    private val delay: Long = TimeUnit.SECONDS.toMillis(12) //they request a crawl-delay of 12 seconds
+    private val delay: Long = TimeUnit.SECONDS.toMillis(12) // they request a crawl-delay of 12 seconds
     private val fetcher = FetcherFactory.newFetcher(manualSetDelay = delay)
 
     override fun getAllUnparsedEvents(): List<String> {
-
         val mainSearchPage = Jsoup.parse(fetcher.fetchUrl("https://www.alpenverein.at/portal/termine/suche.php"))
 
         val allSearchPages = mainSearchPage.select("div.pager a")
@@ -61,6 +60,7 @@ class AlpenvereinCollector : TwoStepEventCollector<String>("alpenverein") {
         return structuredEvent(name, parseDates(eventSite)) {
             withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(event))
             withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(event))
+            withProperty(SemanticKeys.CATEGORY_PROPERTY, EventCategory.SPORT)
             withProperty(SemanticKeys.TYPE_PROPERTY, "sport")
             withProperty(TextProperty("sport.participation"), "active")
             withProperty(
@@ -69,6 +69,7 @@ class AlpenvereinCollector : TwoStepEventCollector<String>("alpenverein") {
             )
             withProperty(SemanticKeys.PICTURE_URL_PROPERTY, getPictureUrl(eventSite))
             withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, getLocationCity(eventSite))
+            withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, "Alpenverein")
         }
     }
 
@@ -81,10 +82,13 @@ class AlpenvereinCollector : TwoStepEventCollector<String>("alpenverein") {
     }
 
     private fun getPictureUrl(eventSite: Document): URI? {
-        val imageElements = eventSite.select("div.elementBoxSheet dl#officeveranstaltung_bild1 img")
+        var imageElements = eventSite.select("div.elementBoxSheet dl#officeveranstaltung_bild1 img")
+        if (imageElements.isEmpty()) {
+            imageElements = eventSite.select("a#logo img")
+        }
         if (imageElements.isNotEmpty()) {
             val pictureUrl = imageElements.first()!!.attr("src")
-            if (!pictureUrl.isNullOrEmpty()) {
+            if (pictureUrl.isNotBlank()) {
                 return UrlUtils.parse(normalizeUrl(pictureUrl))
             }
         }
@@ -109,5 +113,4 @@ class AlpenvereinCollector : TwoStepEventCollector<String>("alpenverein") {
             "https://www.alpenverein.at$secureUrl"
         }
     }
-
 }

@@ -62,6 +62,7 @@ fun main() {
         .addEventCollector(ChelseaCollector())
         .addEventCollector(LastSpaceCollector())
         .addEventCollector(TheaterInDerInnenstadtCollector())
+        .addEventCollector(TabakfabrikLinzCollector())
         .build()
 
     eventCollectorCoordinator.startWebUi()

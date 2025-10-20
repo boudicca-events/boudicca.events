@@ -111,9 +111,9 @@ class EntryService @Autowired constructor(
         needsPersist.set(false)
     }
 
-    fun all(): Set<Entry> {
-        return entries.values.map { it.first }.toSet()
-    }
+    fun all(): Set<Entry> = entries.values.map { it.first }.toSet()
+
+    fun get(boudiccaId: UUID): Entry? = entries[boudiccaId]?.first
 
     fun add(entry: Entry) {
         //TODO we should do UTF8 normalization on all keys and values

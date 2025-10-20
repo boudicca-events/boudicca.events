@@ -1,13 +1,13 @@
-package base.boudicca.eventdb
+package base.boudicca.entrydb
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition
 import io.swagger.v3.oas.annotations.info.Info
 import io.swagger.v3.oas.annotations.info.License
 import io.swagger.v3.oas.annotations.servers.Server
-import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.autoconfigure.AutoConfiguration
 import org.springframework.boot.context.properties.EnableConfigurationProperties
-import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.ComponentScan
 import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.security.config.Customizer.withDefaults
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -30,10 +30,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
         )
     ),
 )
-@SpringBootApplication
+@AutoConfiguration
+@ComponentScan
 @EnableScheduling
-@EnableConfigurationProperties(BoudiccaEventDbProperties::class)
-class EventDBApplication : WebMvcConfigurer {
+@EnableConfigurationProperties(BoudiccaEntryDbProperties::class)
+class EntryDBConfiguration : WebMvcConfigurer {
 
     @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
@@ -52,16 +53,12 @@ class EventDBApplication : WebMvcConfigurer {
 
     //TODO this really should be done better....
     @Bean
-    fun users(boudiccaEventDbProperties: BoudiccaEventDbProperties): UserDetailsService {
+    fun users(boudiccaEntryDbProperties: BoudiccaEntryDbProperties): UserDetailsService {
         val ingestUser = User.builder()
             .username("ingest")
-            .password("{noop}" + boudiccaEventDbProperties.ingest.password)
+            .password("{noop}" + boudiccaEntryDbProperties.ingest.password)
             .roles("INGEST")
             .build()
         return InMemoryUserDetailsManager(ingestUser)
     }
-}
-
-fun main(args: Array<String>) {
-    runApplication<EventDBApplication>(*args)
 }

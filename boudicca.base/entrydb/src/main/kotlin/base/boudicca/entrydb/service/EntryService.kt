@@ -1,9 +1,9 @@
-package base.boudicca.eventdb.service
+package base.boudicca.entrydb.service
 
 import base.boudicca.SemanticKeys
-import base.boudicca.eventdb.BoudiccaEventDbProperties
-import base.boudicca.eventdb.model.EntryKey
-import base.boudicca.eventdb.model.InternalEventProperties
+import base.boudicca.entrydb.BoudiccaEntryDbProperties
+import base.boudicca.entrydb.model.EntryKey
+import base.boudicca.entrydb.model.InternalEventProperties
 import base.boudicca.model.Entry
 import base.boudicca.model.Event
 import base.boudicca.model.structured.*
@@ -38,7 +38,7 @@ private val MAX_AGE = Duration.ofDays(MAX_AGE_IN_DAYS).toMillis()
 @Service
 @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON) //even if this is the default, we REALLY have to make sure there is only one
 class EntryService @Autowired constructor(
-    private val boudiccaEventDbProperties: BoudiccaEventDbProperties
+    private val boudiccaEntryDbProperties: BoudiccaEntryDbProperties
 ) {
 
     private val logger = KotlinLogging.logger {}
@@ -50,8 +50,8 @@ class EntryService @Autowired constructor(
         .addModule(KotlinModule.Builder().build()).build()
 
     init {
-        if (!boudiccaEventDbProperties.store.path.isNullOrBlank()) {
-            val store = Path.of(boudiccaEventDbProperties.store.path)
+        if (!boudiccaEntryDbProperties.store.path.isNullOrBlank()) {
+            val store = Path.of(boudiccaEntryDbProperties.store.path)
             if (store.exists()) {
                 try {
                     loadStoreV3(store)
@@ -169,7 +169,7 @@ class EntryService @Autowired constructor(
     }
 
     fun persist() {
-        if (boudiccaEventDbProperties.store.path.isNullOrBlank()) {
+        if (boudiccaEntryDbProperties.store.path.isNullOrBlank()) {
             return
         }
         persistLock.lock()
@@ -178,7 +178,7 @@ class EntryService @Autowired constructor(
                 val bytes = objectMapper.writeValueAsBytes(entries.values)
                 try {
                     //TODO make more resilient saving, aka save then move
-                    Path.of(boudiccaEventDbProperties.store.path)
+                    Path.of(boudiccaEntryDbProperties.store.path)
                         .writeBytes(bytes, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE)
                 } catch (e: IOException) {
                     logger.error(e) { "error persisting store" }
@@ -192,8 +192,8 @@ class EntryService @Autowired constructor(
 
     private fun getEntryKey(entry: StructuredEntry): EntryKey {
         val keys =
-            if (!boudiccaEventDbProperties.entryKeyNames.isNullOrEmpty()) {
-                boudiccaEventDbProperties.entryKeyNames
+            if (!boudiccaEntryDbProperties.entryKeyNames.isNullOrEmpty()) {
+                boudiccaEntryDbProperties.entryKeyNames
             } else {
                 entry.keys.map { it.toKeyString() }
             }

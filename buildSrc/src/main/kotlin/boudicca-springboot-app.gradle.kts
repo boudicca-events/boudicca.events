@@ -10,3 +10,7 @@ val versionCatalog = versionCatalogs.named("libs")
 dependencies {
     developmentOnly(versionCatalog.findLibrary("spring-boot-devtools").get())
 }
+
+tasks.named<Jar>("jar") {
+    enabled = false
+}

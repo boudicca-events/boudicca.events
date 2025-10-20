@@ -53,7 +53,7 @@ class TabakfabrikLinzCollector : TwoStepEventCollector<String>("tabakfabriklinz"
             withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(event))
             withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(baseUrl))
             withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
-            if (imgSrc.isNotBlank()) withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(imgSrc))
+            withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(imgSrc))
             withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse(baseUrl))
             withProperty(SemanticKeys.LOCATION_ADDRESS_PROPERTY, location)
             withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Linz")

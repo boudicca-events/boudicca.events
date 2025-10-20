@@ -60,6 +60,9 @@
                             aria-label="Event Bild"
                             aria-labelledby="image"
                             />
+                            {{#if event.pictureCopyright}}
+                                <span class="image-copyright-info">&#169; {{event.pictureCopyright}}</span>
+                            {{/if}}
                         {{else}}
                             <svg title="Event Bild" viewBox="0 0 512 512" height="100px" aria-label="Event Bild">
                                 <use xlink:href="#{{#if event.category}}{{event.category}}{{else}}image{{/if}}"></use>

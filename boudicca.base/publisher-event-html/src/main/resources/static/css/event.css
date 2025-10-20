@@ -144,6 +144,16 @@
     top: 0;
 }
 
+.image-copyright-info {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    padding: var(--space-small);
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: var(--border-radius-medium) 0 0 0;
+    font-size: var(--font-size-xxsmall);
+}
+
 .accessibility-details {
     display: flex;
     background-color: var(--color-white);

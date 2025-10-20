@@ -173,6 +173,7 @@ class EventService @Autowired constructor(
             "pictureUuid" to getPictureUuid(event),
             "pictureAltText" to getTextProperty(event, SemanticKeys.PICTURE_ALT_TEXT),
             "accessibilityProperties" to getAllAccessibilityValues(event),
+            "pictureCopyright" to getTextProperty(event, SemanticKeys.PICTURE_COPYRIGHT),
         )
     }
 

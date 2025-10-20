@@ -3,19 +3,15 @@ package events.boudicca.eventcollector.collectors
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
+import base.boudicca.api.eventcollector.util.structuredEvent
+import base.boudicca.dateparser.dateparser.DateParser
+import base.boudicca.dateparser.dateparser.DateParserResult
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
 import base.boudicca.model.structured.dsl.StructuredEventBuilder
-import base.boudicca.model.structured.dsl.structuredEvent
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
-import java.time.LocalDate
-import java.time.LocalTime
-import java.time.OffsetDateTime
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.util.*
 
 class CafeTraxlmayrCollector : TwoStepEventCollector<Element>("cafetraxlmayr") {
     private val logger = KotlinLogging.logger {}
@@ -31,18 +27,17 @@ class CafeTraxlmayrCollector : TwoStepEventCollector<Element>("cafetraxlmayr") {
             .map { document.select(it).first()!! }
     }
 
-    override fun parseMultipleStructuredEvents(eventData: Element): List<StructuredEvent> {
-
-        val title = eventData.select("h3").text()
+    override fun parseMultipleStructuredEvents(event: Element): List<StructuredEvent?>? {
+        val title = event.select("h3").text()
         return if (title.contains("|")) {
-            parseConcert(title, eventData)
+            parseConcert(title, event)
         } else if (title == "Die nächsten Lesungen im Café Traxlmayr") {
-            parseLesungen(eventData)
+            parseLesungen(event)
         } else if (title.contains("aktuelle Ausstellung im Café Traxlmayr")) {
-            //ignore
+            // ignore
             emptyList()
         } else {
-            logger.error { "unknown event format: $eventData" }
+            logger.error { "unknown event format: $event" }
             emptyList()
         }
     }
@@ -60,6 +55,7 @@ class CafeTraxlmayrCollector : TwoStepEventCollector<Element>("cafetraxlmayr") {
             SemanticKeys.PICTURE_URL_PROPERTY,
             UrlUtils.parse(eventData.select("img").attr("src"))
         )
+        withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, "Cafe Traxlmayr")
     }
 
     private fun parseConcert(
@@ -72,48 +68,51 @@ class CafeTraxlmayrCollector : TwoStepEventCollector<Element>("cafetraxlmayr") {
 
         val fullDateText = bodyLines.first { it.text().contains("Uhr") }
 
-        val startDate = parseDateForConcert(fullDateText.text().trim())
+        val startDate = DateParser.parse(fullDateText.text().trim())
 
         val event = structuredEvent(name, startDate) {
             applyCommonProperties(eventData)
             withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, eventData.select(".modal-body").text())
         }
-        return listOf(event)
+        return event
     }
 
     private fun parseLesungen(eventData: Element): List<StructuredEvent> {
         val contentBlocks = eventData.select(".modal-body > *")
-        var startDate = OffsetDateTime.MIN
+        var startDate: DateParserResult? = null
         var name = ""
         var description = ""
         var pictureSrc = ""
-        val events = ArrayList<StructuredEvent>();
+        val events = ArrayList<StructuredEvent>()
 
         for (block in contentBlocks) {
             val text = block.text()
             if (block.select("img").isNotEmpty()) {
                 pictureSrc = block.select("img").attr("src")
             } else if (text.contains("Uhr")) {
-                startDate = parseDateForLesung(text)
+                startDate = DateParser.parse(text)
             } else if (text.contains("„")) {
                 name = text
             } else {
                 description += text
             }
-            if (startDate != OffsetDateTime.MIN && name.isNotEmpty() && description.isNotEmpty() && pictureSrc.isNotEmpty()) {
+            if (name.isEmpty()) {
+                name = block.select("strong").joinToString(" ") { it.text() }
+            }
+            if (startDate != null && name.isNotEmpty() && description.isNotEmpty() && pictureSrc.isNotEmpty()) {
                 val pictureUrl = if (pictureSrc.isNotBlank()) {
                     UrlUtils.parse(baseUrl + pictureSrc)
                 } else {
                     null
                 }
-                events.add(
+                events.addAll(
                     structuredEvent(name, startDate) {
                         applyCommonProperties(eventData)
                         withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
                         withProperty(SemanticKeys.PICTURE_URL_PROPERTY, pictureUrl)
                     }
                 )
-                startDate = OffsetDateTime.MIN
+                startDate = null
                 name = ""
                 description = ""
                 pictureSrc = ""
@@ -121,39 +120,4 @@ class CafeTraxlmayrCollector : TwoStepEventCollector<Element>("cafetraxlmayr") {
         }
         return events
     }
-
-    private fun parseDateForLesung(fullDateText: String): OffsetDateTime {
-        val split = fullDateText.split(',')
-        val dateText = split[0].trim()
-        val timeText = split[1].trim().substringBefore("Uhr").trim()
-
-        val date = LocalDate.parse(
-            dateText,
-            DateTimeFormatter.ofPattern("d. LLLL uuuu").withLocale(Locale.GERMAN)
-        )
-        val time = LocalTime.parse(
-            timeText.replace(".", ":"),
-            DateTimeFormatter.ofPattern("kk:mm").withLocale(Locale.GERMAN)
-        )
-
-        return date.atTime(time).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
-    }
-
-    private fun parseDateForConcert(fullDateText: String): OffsetDateTime {
-        val split = fullDateText.split(',', '|')
-        val dateText = split[1].trim()
-        val timeText = split[2].trim()
-
-        val date = LocalDate.parse(
-            dateText.replace("Jänner", "Januar"),
-            DateTimeFormatter.ofPattern("d. LLLL uuuu").withLocale(Locale.GERMAN)
-        )
-        val time = LocalTime.parse(
-            timeText,
-            DateTimeFormatter.ofPattern("kk.mm 'Uhr'").withLocale(Locale.GERMAN)
-        )
-
-        return date.atTime(time).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
-    }
-
 }

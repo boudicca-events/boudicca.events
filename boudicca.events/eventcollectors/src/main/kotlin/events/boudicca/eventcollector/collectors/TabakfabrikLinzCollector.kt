@@ -19,7 +19,7 @@ class TabakfabrikLinzCollector : TwoStepEventCollector<String>("tabakfabriklinz"
 
     override fun getAllUnparsedEvents(): List<String> {
         return Jsoup
-            .parse(fetcher.fetchUrl(baseUrl + "events/#events-upcoming"))
+            .parse(fetcher.fetchUrl(baseUrl + "events"))
             .select(".events-upcoming h1.entry-title a")
             .mapNotNull { it.attr("href") }
             .distinct()

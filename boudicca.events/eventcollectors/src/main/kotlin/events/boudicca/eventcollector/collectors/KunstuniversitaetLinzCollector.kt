@@ -16,10 +16,18 @@ class KunstuniversitaetLinzCollector : TwoStepEventCollector<String>("kunstunili
     private val fetcher = FetcherFactory.newFetcher()
 
     override fun getAllUnparsedEvents(): List<String> {
-        val document =
-            Jsoup.parse(fetcher.fetchUrl("https://events.kunstuni-linz.at/"))
-        return document.select("div.tribe-events-calendar-list h3.tribe-events-calendar-list__event-title a")
-            .map { it.attr("href") }
+        var document = Jsoup.parse(fetcher.fetchUrl("https://events.kunstuni-linz.at/"))
+
+        val eventLinks = mutableListOf<String>()
+        while (true) {
+            eventLinks.addAll(document.select("h3.tribe-events-calendar-list__event-title a").map { it.attr("href") })
+            val nextPageButtons = document.select("a.tribe-events-c-nav__next").map { it.attr("href") }
+            if (nextPageButtons.isEmpty()) {
+                break
+            }
+            document = Jsoup.parse(fetcher.fetchUrl(nextPageButtons.first()))
+        }
+        return eventLinks
     }
 
     override fun parseMultipleStructuredEvents(event: String): List<StructuredEvent?> {
@@ -29,7 +37,7 @@ class KunstuniversitaetLinzCollector : TwoStepEventCollector<String>("kunstunili
         val name = eventSite.select("h1.tribe-events-single-event-title").text()
         val startDate = parseDate(eventSite)
 
-        var description = eventSite.select("div.tribe-events-single-event-description").text()
+        val description = eventSite.select("div.tribe-events-single-event-description").text()
 
         val imgSrc = eventSite.select("div.tribe-events-event-image img").attr("src")
 
@@ -57,6 +65,7 @@ class KunstuniversitaetLinzCollector : TwoStepEventCollector<String>("kunstunili
                 )
             )
             withProperty(SemanticKeys.LOCATION_ADDRESS_PROPERTY, locationAddress)
+            withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, "Kunstuniversität Linz")
         }
     }
 

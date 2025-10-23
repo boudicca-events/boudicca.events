@@ -28,7 +28,12 @@ class StadthalleWienCollector : TwoStepEventCollector<String>("stadthallewien") 
         val imgTag = eventSite.select("div.img-ad img")
         var srcAttr = imgTag.attr("src")
         if (srcAttr.isBlank()) {
-            srcAttr = eventSite.select("h1#logo img").attr("src")
+            val bgImgStyle = eventSite.select(".bg-img").attr("style")
+            srcAttr = if (bgImgStyle.contains("url(")) {
+                bgImgStyle.split("url(")[1].split(")")[0]
+            } else {
+                eventSite.select("h1#logo img").attr("src")
+            }
         }
         val pictureUrl = UrlUtils.parse(baseUrl + srcAttr)
 

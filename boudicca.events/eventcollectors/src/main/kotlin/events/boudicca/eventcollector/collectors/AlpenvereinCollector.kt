@@ -56,6 +56,7 @@ class AlpenvereinCollector : TwoStepEventCollector<String>("alpenverein") {
         }
 
         val name = eventSite.select("div.elementBoxSheet h2").text()
+        val (imgUrl, imgAltText) = getPictureUrlAndAltText(eventSite)
 
         return structuredEvent(name, parseDates(eventSite)) {
             withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(event))
@@ -67,8 +68,9 @@ class AlpenvereinCollector : TwoStepEventCollector<String>("alpenverein") {
                 SemanticKeys.DESCRIPTION_TEXT_PROPERTY,
                 eventSite.select("div.elementBoxSheet div.elementText").text()
             )
-            withProperty(SemanticKeys.PICTURE_URL_PROPERTY, getPictureUrl(eventSite))
             withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, getLocationCity(eventSite))
+            withProperty(SemanticKeys.PICTURE_URL_PROPERTY, imgUrl)
+            withProperty(SemanticKeys.PICTURE_ALT_TEXT_PROPERTY, imgAltText)
             withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, "Alpenverein")
         }
     }
@@ -81,18 +83,19 @@ class AlpenvereinCollector : TwoStepEventCollector<String>("alpenverein") {
         return null
     }
 
-    private fun getPictureUrl(eventSite: Document): URI? {
+    private fun getPictureUrlAndAltText(eventSite: Document): Pair<URI?, String?> {
         var imageElements = eventSite.select("div.elementBoxSheet dl#officeveranstaltung_bild1 img")
-        if (imageElements.isEmpty()) {
+        if (imageElements.isEmpty() || imageElements.attr("src").isBlank()) {
             imageElements = eventSite.select("a#logo img")
         }
         if (imageElements.isNotEmpty()) {
-            val pictureUrl = imageElements.first()!!.attr("src")
+            val pictureUrl = imageElements.attr("src")
+            val altText = imageElements.attr("alt")
             if (pictureUrl.isNotBlank()) {
-                return UrlUtils.parse(normalizeUrl(pictureUrl))
+                return Pair(UrlUtils.parse(normalizeUrl(pictureUrl)), altText)
             }
         }
-        return null
+        return Pair(null, null)
     }
 
     private fun parseDates(eventSite: Document): DateParserResult {

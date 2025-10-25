@@ -28,6 +28,7 @@ enum class EventCategory(val types: Set<String>) {
             "ausstellung",
             "musical",
             "brauchtum",
+            "schauspiel"
         )
     ),
     TECH(setOf("techmeetup", "technology", "technologie", "chaosevent")),

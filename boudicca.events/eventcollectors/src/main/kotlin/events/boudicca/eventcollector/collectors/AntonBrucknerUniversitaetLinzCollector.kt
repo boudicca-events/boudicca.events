@@ -5,14 +5,11 @@ import base.boudicca.api.eventcollector.TwoStepEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.api.eventcollector.util.structuredEvent
 import base.boudicca.dateparser.dateparser.DateParser
-import base.boudicca.dateparser.dateparser.DateParserResult
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Element
 
 class AntonBrucknerUniversitaetLinzCollector : TwoStepEventCollector<String>("antonbrucknerunilinz") {
-
     private val baseUrl = "https://www.bruckneruni.ac.at"
     private val fetcher = FetcherFactory.newFetcher()
 
@@ -66,10 +63,11 @@ class AntonBrucknerUniversitaetLinzCollector : TwoStepEventCollector<String>("an
         val dateAndLocation = eventSite.select("div#person-detail-intro > div > div > div > p")
             .first { it.text().startsWith("Wann und Wo:") }
             .text()
-        val split = dateAndLocation.indexOf("-", dateAndLocation.indexOf("-") + 1) //get the second "-"
+        val split = dateAndLocation.indexOf("-", dateAndLocation.indexOf("-") + 1) // get the second "-"
 
         val startDate = DateParser.parse(dateAndLocation.substring(0, split))
         val location = dateAndLocation.substring(split + 2)
+        val (city, locationUrl) = getCityAndUrlOfLocation(location)
 
         return structuredEvent(name, startDate) {
             withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(url))
@@ -78,10 +76,28 @@ class AntonBrucknerUniversitaetLinzCollector : TwoStepEventCollector<String>("an
             if (tags.isNotEmpty()) withProperty(SemanticKeys.TAGS_PROPERTY, tags)
             withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
             if (imgSrc.isNotBlank()) withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse("$baseUrl/$imgSrc"))
+            withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, "Anton Bruckner Privatuniversität Linz")
+            withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, city)
+            withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse(locationUrl))
             withProperty(
                 SemanticKeys.LOCATION_NAME_PROPERTY,
-                if (location.isBlank()) "Anton Bruckner Privatuniversität Linz" else location
+                location.ifBlank { "Anton Bruckner Privatuniversität Linz" }
             )
         }
+    }
+
+    private fun getCityAndUrlOfLocation(location: String): Pair<String?, String?> {
+        val roomsAtBrucknerUni = listOf("Großer Saal", "Sonic Lab", "Reinhart-von-Gutzeit-Saal", "Studiobühne")
+        if (roomsAtBrucknerUni.any { it in location }) {
+            return Pair("Linz", baseUrl)
+        }
+
+        val cityRegex = """,\s\d{4}\s(?<city>.*)""".toRegex()
+        val cityMatchResult = cityRegex.find(location)
+        if (cityMatchResult != null) {
+            return Pair(cityMatchResult.groupValues.last(), null)
+        }
+
+        return Pair(null, null)
     }
 }

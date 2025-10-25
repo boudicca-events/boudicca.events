@@ -8,6 +8,7 @@ import base.boudicca.dateparser.dateparser.DatePair
 import base.boudicca.dateparser.dateparser.DateParser
 import base.boudicca.dateparser.dateparser.DateParserResult
 import base.boudicca.format.UrlUtils
+import base.boudicca.model.EventCategory
 import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
 
@@ -85,10 +86,11 @@ class FlohmarktCollector : TwoStepEventCollector<String>("flohmarkt") {
             withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(event))
             withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(event))
             withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description.toString())
-            withProperty(SemanticKeys.TYPE_PROPERTY, "others")
+            withProperty(SemanticKeys.CATEGORY_PROPERTY, EventCategory.OTHER)
             withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, city)
             withProperty(SemanticKeys.LOCATION_ADDRESS_PROPERTY, address)
             withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(imgSrc))
+            withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, "flohmarkt.at")
             withProperty(SemanticKeys.TAGS_PROPERTY, listOf("Flea market", "Thrifting", "Second Hand"))
         }
     }

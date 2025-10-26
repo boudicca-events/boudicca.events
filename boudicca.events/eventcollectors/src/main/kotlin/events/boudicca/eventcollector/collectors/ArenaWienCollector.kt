@@ -18,7 +18,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 class ArenaWienCollector : TwoStepEventCollector<ArenaWienCollector.HalfEvent>("arenawien") {
-
+    private val baseUrl = "https://arena.wien"
     private val fetcher = FetcherFactory.newFetcher()
     private val jsonParser = Parser.default()
 
@@ -46,6 +46,7 @@ class ArenaWienCollector : TwoStepEventCollector<ArenaWienCollector.HalfEvent>("
             withProperty(SemanticKeys.TYPE_PROPERTY, "concert")
             withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, eventSite.select("div.suite_VAdescr").text())
             withProperty(SemanticKeys.PICTURE_URL_PROPERTY, getPictureUrl(eventSite))
+            withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, "Arena Wien")
             withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Arena Wien")
             withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(event.url))
         }
@@ -53,8 +54,11 @@ class ArenaWienCollector : TwoStepEventCollector<ArenaWienCollector.HalfEvent>("
 
     private fun getPictureUrl(eventSite: Document): URI? {
         val img = eventSite.select("div.suite_imageContainer img")
+        val logo = eventSite.select(".navbar-header img")
         return if (!img.isEmpty()) {
-            UrlUtils.parse("https://arena.wien/" + img.first()!!.attr("src"))
+            UrlUtils.parse(baseUrl + img.first()!!.attr("src"))
+        } else if (!logo.isEmpty()) {
+            UrlUtils.parse(baseUrl + logo.first()!!.attr("src"))
         } else {
             null
         }
@@ -83,8 +87,8 @@ class ArenaWienCollector : TwoStepEventCollector<ArenaWienCollector.HalfEvent>("
     }
 
     private fun getAjaxUrl(page: Int): String {
-        return "https://arena.wien/DesktopModules/WebAPI/API/Event/Search?searchTerm=&day=1&month=-1&year=-1&" +
-                "page=${page}&pageSize=20&eventCategory=-1&abonnement=-1&cultureCode=de-AT&locationId=0"
+        return "$baseUrl/DesktopModules/WebAPI/API/Event/Search?searchTerm=&day=1&month=-1&year=-1&" +
+            "page=$page&pageSize=20&eventCategory=-1&abonnement=-1&cultureCode=de-AT&locationId=0"
     }
 
     data class HalfEvent(

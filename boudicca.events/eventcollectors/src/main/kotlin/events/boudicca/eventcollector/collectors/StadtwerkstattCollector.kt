@@ -12,11 +12,11 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 
 class StadtwerkstattCollector : TwoStepEventCollector<String>("stadtwerkstatt") {
-
+    private val baseUrl = "https://club.stwst.at/"
     private val fetcher = FetcherFactory.newFetcher()
 
     override fun getAllUnparsedEvents(): List<String> {
-        val document = Jsoup.parse(fetcher.fetchUrl("https://club.stwst.at/"))
+        val document = Jsoup.parse(fetcher.fetchUrl(baseUrl))
         return document.select("div.single-event a")
             .map { it.attr("href") }
     }
@@ -34,8 +34,11 @@ class StadtwerkstattCollector : TwoStepEventCollector<String>("stadtwerkstatt") 
         val description = eventSite.select("div.event-text").text()
 
         val img = eventSite.select("div.event-text img")
+        val logo = eventSite.selectFirst(".brand img")
         val pictureUrl = if (!img.isEmpty()) {
             UrlUtils.parse(img.first()!!.attr("src"))
+        } else if (logo != null) {
+            UrlUtils.parse(logo.attr("src"))
         } else {
             null
         }
@@ -51,8 +54,9 @@ class StadtwerkstattCollector : TwoStepEventCollector<String>("stadtwerkstatt") 
             withProperty(SemanticKeys.TYPE_PROPERTY, type)
             withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
             withProperty(SemanticKeys.PICTURE_URL_PROPERTY, pictureUrl)
+            withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, "Stadtwerkstatt")
             withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Stadtwerkstatt")
-            withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse("https://club.stwst.at"))
+            withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse(baseUrl))
             withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Linz")
             withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(event))
         }
@@ -63,5 +67,4 @@ class StadtwerkstattCollector : TwoStepEventCollector<String>("stadtwerkstatt") 
         val locationAndTime = element.select("div.location_time").text()
         return DateParser.parse(fullDate, locationAndTime)
     }
-
 }

@@ -2,9 +2,9 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
-import base.boudicca.dateparser.dateparser.DateParser
-import base.boudicca.api.eventcollector.util.structuredEvent
 import base.boudicca.api.eventcollector.util.FetcherFactory
+import base.boudicca.api.eventcollector.util.structuredEvent
+import base.boudicca.dateparser.dateparser.DateParser
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
@@ -13,7 +13,6 @@ class BurgClamCollector : TwoStepEventCollector<String>("burgclam") {
     private val fetcher = FetcherFactory.newFetcher()
 
     override fun getAllUnparsedEvents(): List<String> {
-
         val document = Jsoup.parse(fetcher.fetchUrl("https://clamlive.at/shows/#/"))
         return document
             .select("section.eventCollection a")
@@ -34,15 +33,18 @@ class BurgClamCollector : TwoStepEventCollector<String>("burgclam") {
             description = lineup + description
         }
 
+        val imgTag = eventSite.select(".eventSingle__headerBanner noscript img")
+        val imgAltText = imgTag.attr("alt")
+
         return structuredEvent(name, startDate) {
             withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(event))
             withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(event))
-            withProperty(
-                SemanticKeys.PICTURE_URL_PROPERTY,
-                UrlUtils.parse(eventSite.select("eventSingle__headerBanner img").attr("src"))
-            )
+            withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(imgTag.attr("src")))
+            withProperty(SemanticKeys.PICTURE_ALT_TEXT_PROPERTY, imgAltText)
+            withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, "Burg Clam")
             withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
             withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Burg Clam")
+            withProperty(SemanticKeys.TYPE_PROPERTY, "concert")
         }
     }
 }

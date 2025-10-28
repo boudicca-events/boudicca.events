@@ -14,11 +14,11 @@ import java.time.OffsetDateTime
 import java.time.ZoneId
 
 class RoedaCollector : TwoStepEventCollector<JsonObject>("roeda") {
-
+    private val baseUrl = "https://röda.at/"
     private val fetcher = FetcherFactory.newFetcher()
 
     override fun getAllUnparsedEvents(): List<JsonObject> {
-        //uh boy, this is ugly
+        // uh boy, this is ugly
         val pageSource = fetcher.fetchUrl("https://xn--rda-sna.at")
         val jsonLine = pageSource
             .lines()
@@ -29,16 +29,19 @@ class RoedaCollector : TwoStepEventCollector<JsonObject>("roeda") {
     }
 
     override fun parseStructuredEvent(event: JsonObject): StructuredEvent {
-
         val name = event.string("title")!!
 
         val description = htmlToText(event.string("excerpt")!!)
 
-        //the manage to have a timestamp with timezone offset, but the offset is always wrong and 0 -.-
+        // they manage to have a timestamp with timezone offset, but the offset is always wrong and 0 -.-
         val start = OffsetDateTime.parse(event.string("start")!!).fixTimeZone()
         val end = OffsetDateTime.parse(event.string("end")!!).fixTimeZone()
 
         val pictureUrl = event.string("thumbnail")!!
+        var copyright = "kulturverein röda"
+        if (pictureUrl.contains("Copyright-by-")) {
+            copyright = pictureUrl.split("Copyright-by-")[1].split("-")[0]
+        }
         val types = event.obj("terms")!!.array<JsonObject>("wcs_type")!!
         val tags = types.map { it.string("name") }.toList().filterNotNull()
 
@@ -46,20 +49,20 @@ class RoedaCollector : TwoStepEventCollector<JsonObject>("roeda") {
             withProperty(SemanticKeys.ENDDATE_PROPERTY, end)
             withProperty(SemanticKeys.TYPE_PROPERTY, tags.first())
             withProperty(SemanticKeys.TAGS_PROPERTY, tags)
-            withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse("https://röda.at/"))
+            withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(baseUrl))
             withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(pictureUrl))
+            withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, copyright)
             withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
             withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "kulturverein röda")
-            withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse("https://röda.at/"))
+            withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse(baseUrl))
             withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Steyr")
-            withProperty(SemanticKeys.SOURCES_PROPERTY, listOf("https://röda.at/"))
+            withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(baseUrl))
         }
     }
 
     private fun htmlToText(html: String): String {
         return Jsoup.parse(html).text()
     }
-
 }
 
 private fun OffsetDateTime.fixTimeZone(): OffsetDateTime {

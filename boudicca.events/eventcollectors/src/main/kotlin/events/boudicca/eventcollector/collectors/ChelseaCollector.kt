@@ -11,9 +11,7 @@ import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 
-
 class ChelseaCollector : TwoStepEventCollector<Element>("chelsea") {
-
     private val fetcher = FetcherFactory.newFetcher()
     private val baseUrl = "https://www.chelsea.co.at/"
 
@@ -35,6 +33,7 @@ class ChelseaCollector : TwoStepEventCollector<Element>("chelsea") {
             withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse(baseUrl))
             withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
             if (!imageSource.isNullOrBlank()) withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(baseUrl + imageSource))
+            withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, "Chelsea")
             withProperty(SemanticKeys.CONCERT_BANDLIST_PROPERTY, bandNames)
             withProperty(SemanticKeys.CATEGORY_PROPERTY, EventCategory.MUSIC)
             withProperty(SemanticKeys.TYPE_PROPERTY, "concert")

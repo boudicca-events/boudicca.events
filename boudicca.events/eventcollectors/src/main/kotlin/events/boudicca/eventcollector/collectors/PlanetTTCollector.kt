@@ -18,11 +18,9 @@ import org.jsoup.nodes.Element
 import java.io.StringReader
 import java.net.URI
 import java.net.URLDecoder
-import java.util.*
 import java.util.regex.Pattern
 
 class PlanetTTCollector : TwoStepEventCollector<Element>("planettt") {
-
     private val logger = KotlinLogging.logger {}
     private val fetcher = FetcherFactory.newFetcher()
     private var modalNonce: String? = null
@@ -60,7 +58,7 @@ class PlanetTTCollector : TwoStepEventCollector<Element>("planettt") {
         val response = fetcher.fetchUrlPost(
             "https://planet.tt/wp-admin/admin-ajax.php",
             "application/x-www-form-urlencoded; charset=UTF-8",
-            "action=pl_events_modal&_ajax_nonce=${modalNonce}&eventid=$eventId&postid=$postId"
+            "action=pl_events_modal&_ajax_nonce=$modalNonce&eventid=$eventId&postid=$postId"
         )
         val jsonResponse = Parser.default().parse(StringReader(response)) as JsonObject
         val fullEvent = Jsoup.parse(jsonResponse.string("data")!!)
@@ -69,13 +67,18 @@ class PlanetTTCollector : TwoStepEventCollector<Element>("planettt") {
 
         val name = fullEvent.select("div.pl-modal-name").text()
         val url = parseUrl(fullEvent)
-        val pictureUrl = fullEvent.select("div.pl-modal-thumbnail img").attr("src")
 
-        //TODO you could parse acts from this site
+        val imgTag = fullEvent.selectFirst("div.pl-modal-thumbnail img")
+        val pictureUrl = imgTag?.attr("src")
+        val pictureAltText = imgTag?.attr("alt")
+
+        // TODO you could parse acts from this site
 
         return structuredEvent(name, startDate) {
             withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(url))
             withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(pictureUrl))
+            withProperty(SemanticKeys.PICTURE_ALT_TEXT_PROPERTY, pictureAltText)
+            withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, "Planet Music")
             withProperty(
                 SemanticKeys.DESCRIPTION_TEXT_PROPERTY,
                 fullEvent.select("div.pl-modal-desc > p")

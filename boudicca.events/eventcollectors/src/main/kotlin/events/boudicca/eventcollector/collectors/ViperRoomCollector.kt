@@ -2,17 +2,16 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.api.eventcollector.util.FetcherFactory
+import base.boudicca.api.eventcollector.util.structuredEvent
 import base.boudicca.dateparser.dateparser.DateParser
 import base.boudicca.dateparser.dateparser.DateParserResult
-import base.boudicca.api.eventcollector.util.structuredEvent
-import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 
 class ViperRoomCollector : TwoStepEventCollector<String>("viperroom") {
-
     private val fetcher = FetcherFactory.newFetcher()
 
     override fun getAllUnparsedEvents(): List<String> {
@@ -41,18 +40,18 @@ class ViperRoomCollector : TwoStepEventCollector<String>("viperroom") {
             .filter { it.isNotBlank() }
             .joinToString("\n")
 
-        val img = eventSite.select("div#em-event-6 p img")
-        val pictureUrl = if (!img.isEmpty()) {
-            UrlUtils.parse(img.first()!!.attr("src"))
-        } else {
-            null
-        }
+        var img = eventSite.select("div#em-event-6 p img").first()
+        img = img ?: eventSite.select("a.navbar-brand img").first() // logo
+        val pictureUrl = UrlUtils.parse(img?.attr("src"))
+        val pictureAltText = img?.attr("alt")
 
         return structuredEvent(name, startDate) {
             withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(event))
             withProperty(SemanticKeys.TYPE_PROPERTY, "concert")
             withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
             withProperty(SemanticKeys.PICTURE_URL_PROPERTY, pictureUrl)
+            withProperty(SemanticKeys.PICTURE_ALT_TEXT_PROPERTY, pictureAltText)
+            withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, "Viper Room")
             withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Viper Room")
             withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(event))
         }

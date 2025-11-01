@@ -40,15 +40,24 @@ class OKHVoecklabruckCollector : TwoStepEventCollector<Pair<String, String>>("ok
         val locationInfo = eventSite.select("p.ort").text()
         val accessibleEntry = locationInfo.contains("Barrierefreier Zugang")
 
+        val imgTag = eventSite.select("div#headerpic img.header")
+        val pictureAltText = imgTag.attr("alt")
+        var pictureUrl = imgTag.attr("src").trim()
+        if (!pictureUrl.startsWith("http")) {
+            pictureUrl = baseUrl + pictureUrl
+        }
+        val pictureCopyright = eventSite.select("div.credit p").text()
+            .ifBlank { "Offenes Kulturhaus Vöcklabruck" }
+            .replace("""(Foto:)|(\(c\))|©""".toRegex(), "").trim()
+
         return structuredEvent(name, dates) {
             withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(url))
             withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(url))
             withProperty(SemanticKeys.TYPE_PROPERTY, eventType)
             withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, eventSite.select("div.box_3").text())
-            withProperty(
-                SemanticKeys.PICTURE_URL_PROPERTY,
-                UrlUtils.parse(baseUrl + eventSite.select("div#headerpic img.header").attr("src").trim())
-            )
+            withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(pictureUrl))
+            withProperty(SemanticKeys.PICTURE_ALT_TEXT_PROPERTY, pictureAltText)
+            withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, pictureCopyright)
             withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Offenes Kulturhaus Vöcklabruck")
             withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse(baseUrl))
             withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Vöcklabruck")
@@ -66,5 +75,4 @@ class OKHVoecklabruckCollector : TwoStepEventCollector<Pair<String, String>>("ok
             DateParser.parse(dateText)
         }
     }
-
 }

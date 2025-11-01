@@ -2,10 +2,10 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.api.eventcollector.util.FetcherFactory
+import base.boudicca.api.eventcollector.util.structuredEvent
 import base.boudicca.dateparser.dateparser.DateParser
 import base.boudicca.dateparser.dateparser.DateParserResult
-import base.boudicca.api.eventcollector.util.structuredEvent
-import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
@@ -13,7 +13,6 @@ import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 
 class FuerUnsCollector : TwoStepEventCollector<String>("fueruns") {
-
     private val fetcher = FetcherFactory.newFetcher()
     private val baseUrl = "https://www.fuer-uns.at/"
 
@@ -37,7 +36,8 @@ class FuerUnsCollector : TwoStepEventCollector<String>("fueruns") {
         events.addAll(
             document.select("a.event.event_list_item.event_list_item_link")
                 .toList()
-                .filter { !it.attr("href").startsWith("http") }) // exclude events from others than fuer uns
+                .filter { !it.attr("href").startsWith("http") } // exclude events from others than fuer uns
+        )
     }
 
     override fun parseMultipleStructuredEvents(event: String): List<StructuredEvent?>? {
@@ -54,13 +54,16 @@ class FuerUnsCollector : TwoStepEventCollector<String>("fueruns") {
         } else {
             null
         }
+        val pictureAltText = img.first()?.attr("alt")
 
-        val locationName = eventSite.select("div.location").not("div.location.link-google-maps").text()
+        val locationName = eventSite.select(".details_info .location").not("div.location.link-google-maps").text()
 
         return structuredEvent(name, startDate) {
             withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(fullEventLink))
             withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, eventSite.select("div.field-text").text())
             withProperty(SemanticKeys.PICTURE_URL_PROPERTY, pictureUrl)
+            withProperty(SemanticKeys.PICTURE_ALT_TEXT_PROPERTY, pictureAltText)
+            withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, "füruns - Zentrum für Zivilgesellschaft ")
             withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(fullEventLink))
             if (locationName.isNotEmpty()) {
                 val regex = """(?<name>.*?)[,|\s]*(?<zip>\d{4}) (?<city>[\w\s]+)""".toRegex()

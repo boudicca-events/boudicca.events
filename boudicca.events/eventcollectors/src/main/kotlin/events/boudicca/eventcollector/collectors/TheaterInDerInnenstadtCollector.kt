@@ -18,9 +18,11 @@ class TheaterInDerInnenstadtCollector : TwoStepEventCollector<Element>("theateri
     private val eventUrl = baseUrl + "spielplan/"
 
     override fun getAllUnparsedEvents(): List<Element> {
-        return Jsoup
-            .parse(fetcher.fetchUrl(eventUrl))
-            .select("div.event")
+        val document = Jsoup.parse(fetcher.fetchUrl(eventUrl))
+        val events = document.select("div.event")
+        val logo = document.selectFirst("a.tm-logo img")
+        events.forEach { it.append(logo.toString()) }
+        return events
     }
 
     override fun parseMultipleStructuredEvents(event: Element): List<StructuredEvent?>? {
@@ -35,7 +37,10 @@ class TheaterInDerInnenstadtCollector : TwoStepEventCollector<Element>("theateri
         val startTime = dateInfos.select(".time").text()
         val startDateTime = DateParser.parse(startDate, startTime)
 
-        val imgSrc = event.select(".evocard_main_image img").attr("src")
+        var imgSrc = event.select(".evocard_main_image img").attr("src")
+        if (imgSrc.isBlank()) {
+            imgSrc = event.select("img").attr("src")
+        }
 
         var type: String? = null
         if (description.lowercase().contains("theater")) {
@@ -52,7 +57,8 @@ class TheaterInDerInnenstadtCollector : TwoStepEventCollector<Element>("theateri
             withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
             withProperty(SemanticKeys.CATEGORY_PROPERTY, EventCategory.ART)
             withProperty(SemanticKeys.TYPE_PROPERTY, type)
-            if (imgSrc.isNotBlank()) withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(imgSrc))
+            withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(imgSrc))
+            withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, "Theater in der Innenstadt")
             withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Linz")
             withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Theater in der Innenstadt")
             withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse(baseUrl))

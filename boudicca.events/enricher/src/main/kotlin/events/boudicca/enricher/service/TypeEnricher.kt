@@ -26,6 +26,7 @@ private val KNOWN_MUSIC_TYPES: Set<String> = setOf(
     "folk",
     "dub",
     "klassik",
+    "blues",
 )
 
 @Service

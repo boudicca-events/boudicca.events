@@ -2,9 +2,9 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
-import base.boudicca.dateparser.dateparser.DateParser
-import base.boudicca.api.eventcollector.util.structuredEvent
 import base.boudicca.api.eventcollector.util.FetcherFactory
+import base.boudicca.api.eventcollector.util.structuredEvent
+import base.boudicca.dateparser.dateparser.DateParser
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.EventCategory
 import base.boudicca.model.Registration
@@ -12,7 +12,6 @@ import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
 
 class MetalCornerCollector : TwoStepEventCollector<Pair<String, String>>("metalcorner") {
-
     private val fetcher = FetcherFactory.newFetcher()
     private val baseUrl = "https://www.escape-metalcorner.at/"
 
@@ -51,6 +50,7 @@ class MetalCornerCollector : TwoStepEventCollector<Pair<String, String>>("metalc
                 UrlUtils.parse(document.select("div#content img").attr("src"))
             )
             withProperty(SemanticKeys.PICTURE_ALT_TEXT_PROPERTY, document.select("div#content img").attr("alt"))
+            withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, "Escape Metalcorner")
             withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(baseUrl + url))
             withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Escape Metalcorner")
             withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Wien")

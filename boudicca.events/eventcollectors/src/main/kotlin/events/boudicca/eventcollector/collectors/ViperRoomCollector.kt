@@ -32,16 +32,14 @@ class ViperRoomCollector : TwoStepEventCollector<String>("viperroom") {
             .toList()
             .filter {
                 (it.tagName() == "div" &&
-                        !(it.classNames().contains("event_price") || it.classNames().contains("event_actions")))
-                        ||
-                        (it.tagName() == "p" && !it.classNames().contains("event_time"))
+                    !(it.classNames().contains("event_price") || it.classNames().contains("event_actions"))
+                ) || (it.tagName() == "p" && !it.classNames().contains("event_time"))
             }
             .map { it.text() }
             .filter { it.isNotBlank() }
             .joinToString("\n")
 
-        var img = eventSite.select("div#em-event-6 p img").first()
-        img = img ?: eventSite.select("a.navbar-brand img").first() // logo
+        val img = eventSite.select("div#em-event-6 p img").first() ?: eventSite.select("a.navbar-brand img").first()
         val pictureUrl = UrlUtils.parse(img?.attr("src"))
         val pictureAltText = img?.attr("alt")
 

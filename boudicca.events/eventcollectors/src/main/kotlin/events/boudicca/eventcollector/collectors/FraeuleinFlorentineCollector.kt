@@ -15,29 +15,30 @@ import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-class FraeuleinFlorentineCollector : TwoStepEventCollector<Element>("fraeuleinflorentine") {
+class FraeuleinFlorentineCollector : TwoStepEventCollector<Pair<Element, String?>>("fraeuleinflorentine") {
     private val fetcher = FetcherFactory.newFetcher()
     private val baseUrl = "https://frl-florentine.at/eventkalender/"
 
-    override fun getAllUnparsedEvents(): List<Element> {
+    override fun getAllUnparsedEvents(): List<Pair<Element, String?>> {
         val eventSite = Jsoup.parse(fetcher.fetchUrl(baseUrl))
-        val logo = eventSite.select(".page-content img")
+        val logoSrc = eventSite.selectFirst(".page-content img")?.attr("src")
+
         return eventSite
             .select("ul.simcal-events li")
-            .append(logo.toString()) // add logo of header to each event
             .distinctBy { it.text() } // multi-day events have the same text in multiple entries
+            .map { Pair(it, logoSrc) }
     }
 
-    override fun parseMultipleStructuredEvents(event: Element): List<StructuredEvent?> {
-        val nameAndTime = event.select(".simcal-event-title").text().split("|")
+    override fun parseMultipleStructuredEvents(event: Pair<Element, String?>): List<StructuredEvent?> {
+        val (eventSite, logoSrc) = event
+        val nameAndTime = eventSite.select(".simcal-event-title").text().split("|")
         val name = nameAndTime.first().trim()
-        val description = event.select(".simcal-event-description").text()
-        var startDate = parseStartDate(event, nameAndTime)
-        val endDate = parseEndDate(event, startDate)
+        val description = eventSite.select(".simcal-event-description").text()
+        var startDate = parseStartDate(eventSite, nameAndTime)
+        val endDate = parseEndDate(eventSite, startDate)
         if (endDate != null) {
             startDate = DateParserResult(listOf(DatePair(startDate.dates[0].startDate, endDate.dates[0].startDate)))
         }
-        val pictureUrl = event.select("img").attr("src")
 
         return structuredEvent(name, startDate) {
             withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(baseUrl))
@@ -46,7 +47,7 @@ class FraeuleinFlorentineCollector : TwoStepEventCollector<Element>("fraeuleinfl
             withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Salonschiff Fräulein Florentine")
             withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse("https://frl-florentine.at"))
             withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Linz")
-            withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(pictureUrl))
+            withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(logoSrc))
             withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, "Salonschiff Fräulein Florentine")
         }
     }

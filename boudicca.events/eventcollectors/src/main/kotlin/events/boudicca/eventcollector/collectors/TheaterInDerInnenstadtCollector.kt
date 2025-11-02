@@ -12,24 +12,24 @@ import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 
-class TheaterInDerInnenstadtCollector : TwoStepEventCollector<Element>("theaterinderinnenstadt") {
+class TheaterInDerInnenstadtCollector : TwoStepEventCollector<Pair<Element, String?>>("theaterinderinnenstadt") {
     private val fetcher = FetcherFactory.newFetcher()
     private val baseUrl = "https://theater-innenstadt.at/"
     private val eventUrl = baseUrl + "spielplan/"
 
-    override fun getAllUnparsedEvents(): List<Element> {
+    override fun getAllUnparsedEvents(): List<Pair<Element, String?>> {
         val document = Jsoup.parse(fetcher.fetchUrl(eventUrl))
         val events = document.select("div.event")
-        val logo = document.selectFirst("a.tm-logo img")
-        events.forEach { it.append(logo.toString()) }
-        return events
+        val logoSrc = document.selectFirst("a.tm-logo img")?.attr("src")
+        return events.map { Pair(it, logoSrc) }
     }
 
-    override fun parseMultipleStructuredEvents(event: Element): List<StructuredEvent?>? {
-        val name = event.select("span.evcal_event_title").text()
-        val description = event.select("[itemprop=description]").text()
+    override fun parseMultipleStructuredEvents(event: Pair<Element, String?>): List<StructuredEvent?> {
+        val (eventSite, logoSrc) = event
+        val name = eventSite.select("span.evcal_event_title").text()
+        val description = eventSite.select("[itemprop=description]").text()
 
-        val dateInfos = event.select("span.evoet_dayblock")
+        val dateInfos = eventSite.select("span.evoet_dayblock")
         val date = dateInfos.select(".date").text()
         val month = dateInfos.select(".month").text()
         val year = dateInfos.attr("data-syr")
@@ -37,9 +37,9 @@ class TheaterInDerInnenstadtCollector : TwoStepEventCollector<Element>("theateri
         val startTime = dateInfos.select(".time").text()
         val startDateTime = DateParser.parse(startDate, startTime)
 
-        var imgSrc = event.select(".evocard_main_image img").attr("src")
-        if (imgSrc.isBlank()) {
-            imgSrc = event.select("img").attr("src")
+        var imgSrc = eventSite.select(".evocard_main_image img").attr("src")
+        if (imgSrc.isBlank() && !logoSrc.isNullOrBlank()) {
+            imgSrc = logoSrc
         }
 
         var type: String? = null

@@ -30,6 +30,7 @@ class UrlUtilsTest {
     fun invalidEscaping() {
         //some urls we find are invalid because they are not escaped properly, we try to fix it
         runTest("https://www.posthof.at/weird%5B%20%5Durl", "https://www.posthof.at/weird[ ]url")
+        runTest("https://www.posthof.at/weird%7Curl", "https://www.posthof.at/weird|url")
     }
 
     @Test

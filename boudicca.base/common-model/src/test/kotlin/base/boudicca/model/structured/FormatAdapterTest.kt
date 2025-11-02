@@ -44,7 +44,7 @@ class FormatAdapterTest {
         val date = LocalDateTime.of(2025, 3, 8, 0, 45, 25, 0).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
 
         val prop = DateProperty("test")
-        val dateStr = prop.parseToString(date)
+        val dateStr = prop.parseToString(date)!!
         val dateValue = prop.parseFromString(dateStr)
 
         assertThat(dateValue).isEqualTo(date)
@@ -54,9 +54,9 @@ class FormatAdapterTest {
     fun `EnumProperty should be able to convert to data value and back`() {
         val prop = EnumProperty("test", TestEnum::class.java)
 
-        assertThat(prop.parseFromString(prop.parseToString(TestEnum.asdf))).isEqualTo(TestEnum.asdf)
-        assertThat(prop.parseFromString(prop.parseToString(TestEnum.Bsdf))).isEqualTo(TestEnum.Bsdf)
-        assertThat(prop.parseFromString(prop.parseToString(TestEnum.CSDF_TEST))).isEqualTo(TestEnum.CSDF_TEST)
+        assertThat(prop.parseFromString(prop.parseToString(TestEnum.asdf)!!)).isEqualTo(TestEnum.asdf)
+        assertThat(prop.parseFromString(prop.parseToString(TestEnum.Bsdf)!!)).isEqualTo(TestEnum.Bsdf)
+        assertThat(prop.parseFromString(prop.parseToString(TestEnum.CSDF_TEST)!!)).isEqualTo(TestEnum.CSDF_TEST)
     }
 
     @Test
@@ -98,7 +98,7 @@ class FormatAdapterTest {
 
         val prop = NumberProperty("test")
 
-        val numStrValue = prop.parseToString(num)
+        val numStrValue = prop.parseToString(num)!!
         val numValue = prop.parseFromString(numStrValue)
 
         assertThat(numValue.toFloat()).isEqualTo(num.toFloat())

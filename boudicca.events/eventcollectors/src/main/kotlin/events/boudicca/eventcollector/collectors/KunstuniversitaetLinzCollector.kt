@@ -51,7 +51,7 @@ class KunstuniversitaetLinzCollector : TwoStepEventCollector<String>("kunstunili
             withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(url))
             withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(url))
             withProperty(SemanticKeys.TYPE_PROPERTY, type)
-            if (tags.isNotEmpty()) withProperty(SemanticKeys.TAGS_PROPERTY, tags)
+            withProperty(SemanticKeys.TAGS_PROPERTY, tags)
             withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
             withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(imgSrc))
             withProperty(

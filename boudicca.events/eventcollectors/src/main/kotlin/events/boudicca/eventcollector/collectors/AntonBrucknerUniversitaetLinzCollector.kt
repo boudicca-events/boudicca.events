@@ -73,7 +73,7 @@ class AntonBrucknerUniversitaetLinzCollector : TwoStepEventCollector<String>("an
             withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(url))
             withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(url))
             withProperty(SemanticKeys.TYPE_PROPERTY, type)
-            if (tags.isNotEmpty()) withProperty(SemanticKeys.TAGS_PROPERTY, tags)
+            withProperty(SemanticKeys.TAGS_PROPERTY, tags)
             withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
             withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(baseUrl, imgSrc))
             withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, "Anton Bruckner Privatuniversität Linz")

@@ -6,6 +6,14 @@ import java.net.URI
  * some utils for working with URIs for properties
  */
 object UrlUtils {
+
+    fun parse(baseUrl: String, string: String?): URI? {
+        if (string.isNullOrEmpty()) {
+            return null
+        }
+        return parse(baseUrl.removeSuffix("/").trim() + "/" + string.removePrefix("/").trim())
+    }
+
     fun parse(string: String?): URI? {
         if (string.isNullOrEmpty()) {
             return null

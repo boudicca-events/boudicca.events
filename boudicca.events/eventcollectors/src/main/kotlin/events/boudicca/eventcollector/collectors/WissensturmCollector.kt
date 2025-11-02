@@ -2,8 +2,8 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
-import base.boudicca.dateparser.dateparser.DateParser
 import base.boudicca.api.eventcollector.util.FetcherFactory
+import base.boudicca.dateparser.dateparser.DateParser
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
 import base.boudicca.model.structured.dsl.structuredEvent
@@ -21,13 +21,13 @@ class WissensturmCollector : TwoStepEventCollector<Pair<String, Document>>("wiss
         val eventUrls = mutableListOf<String>()
         var date = LocalDate.now(ZoneId.of("Europe/Vienna"))
 
-        //only collect 6 months for now
+        // only collect 6 months for now
         for (ignored in 1..6) {
             val monthlyOverview =
                 Jsoup.parse(
                     fetcher.fetchUrl(
                         "https://vhskurs.linz.at/index.php?kathaupt=109&blkeep=1" +
-                                "&month=${date.monthValue}&year=${date.year}"
+                            "&month=${date.monthValue}&year=${date.year}"
                     )
                 )
             eventUrls.addAll(monthlyOverview.select("div.kurse_demn article a").eachAttr("href"))
@@ -48,10 +48,12 @@ class WissensturmCollector : TwoStepEventCollector<Pair<String, Document>>("wiss
         val description = eventDoc.select("div.kw-kurdetails div.content-txt:nth-child(2)").text()
 
         val img = eventDoc.select("div.kw-kurdetails div.content-txt:nth-child(2) img")
-        val pictureUrl = if (img.isNotEmpty()) {
-            UrlUtils.parse(img.attr("src"))
+        val pictureUrl = UrlUtils.parse(img.attr("src"))
+        val pictureAltText = img.attr("alt")
+        val pictureCopyright = if (pictureAltText.contains("Grafik:")) {
+            pictureAltText.split("Grafik:").last().trim()
         } else {
-            null
+            "Wissensturm"
         }
 
         return datesAndLocations
@@ -59,14 +61,16 @@ class WissensturmCollector : TwoStepEventCollector<Pair<String, Document>>("wiss
             .map {
                 structuredEvent(name, it.first) {
                     withProperty(SemanticKeys.PICTURE_URL_PROPERTY, pictureUrl)
+                    withProperty(SemanticKeys.PICTURE_ALT_TEXT_PROPERTY, pictureAltText)
+                    withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, pictureCopyright)
                     withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
                     withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(url))
                     withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(url))
                     withProperty(SemanticKeys.ENDDATE_PROPERTY, it.second)
 
                     if (
-                        it.third.contains("wissensturm", ignoreCase = true)
-                        || it.third.contains("WT;", ignoreCase = false)
+                        it.third.contains("wissensturm", ignoreCase = true) ||
+                        it.third.contains("WT;", ignoreCase = false)
                     ) {
                         withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Wissensturm")
                         withProperty(
@@ -98,5 +102,4 @@ class WissensturmCollector : TwoStepEventCollector<Pair<String, Document>>("wiss
                 }
             }
     }
-
 }

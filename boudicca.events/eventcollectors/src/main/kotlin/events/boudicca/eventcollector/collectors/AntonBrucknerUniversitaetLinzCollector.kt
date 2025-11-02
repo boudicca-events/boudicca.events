@@ -66,8 +66,8 @@ class AntonBrucknerUniversitaetLinzCollector : TwoStepEventCollector<String>("an
         val split = dateAndLocation.indexOf("-", dateAndLocation.indexOf("-") + 1) // get the second "-"
 
         val startDate = DateParser.parse(dateAndLocation.substring(0, split))
-        val location = dateAndLocation.substring(split + 2)
-        val (city, locationUrl) = getCityAndUrlOfLocation(location)
+        val location = if (dateAndLocation.length > split + 2) dateAndLocation.substring(split + 2) else null
+        val (city, locationUrl) = location?.run { getCityAndUrlOfLocation(location) } ?: Pair(null, null)
 
         return structuredEvent(name, startDate) {
             withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(url))
@@ -81,7 +81,7 @@ class AntonBrucknerUniversitaetLinzCollector : TwoStepEventCollector<String>("an
             withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse(locationUrl))
             withProperty(
                 SemanticKeys.LOCATION_NAME_PROPERTY,
-                location.ifBlank { "Anton Bruckner Privatuniversität Linz" }
+                location?.ifBlank { "Anton Bruckner Privatuniversität Linz" }
             )
         }
     }

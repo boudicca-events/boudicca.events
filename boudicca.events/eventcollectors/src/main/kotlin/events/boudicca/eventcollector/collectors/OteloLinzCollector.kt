@@ -13,7 +13,6 @@ import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 
 class OteloLinzCollector : TwoStepEventCollector<String>("otelolinz") {
-
     private val fetcher = FetcherFactory.newFetcher()
 
     override fun getAllUnparsedEvents(): List<String> {
@@ -27,18 +26,16 @@ class OteloLinzCollector : TwoStepEventCollector<String>("otelolinz") {
 
         val name = eventSite.select("div.article-inner h1").text()
 
-        val img = eventSite.select("div.entry-content img")
-        val pictureUrl = if (!img.isEmpty()) {
-            UrlUtils.parse(img.first()!!.attr("src"))
-        } else {
-            null
-        }
+        val img = eventSite.select("div.entry-content img").first() ?: eventSite.select("#logo img").first()
+        val pictureUrl = UrlUtils.parse(img?.attr("src"))
 
         return structuredEvent(name, parseDates(eventSite)) {
             withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(event))
             withProperty(SemanticKeys.TYPE_PROPERTY, "technology")
             withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, getDescription(eventSite))
             withProperty(SemanticKeys.PICTURE_URL_PROPERTY, pictureUrl)
+            withProperty(SemanticKeys.PICTURE_ALT_TEXT_PROPERTY, img?.attr("alt"))
+            withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, "Otelo Linz")
             withProperty(
                 SemanticKeys.LOCATION_NAME_PROPERTY,
                 eventSite.select("div#em-event-6>p")[1].select("a").text()
@@ -74,5 +71,4 @@ class OteloLinzCollector : TwoStepEventCollector<String>("otelolinz") {
 
         return DateParser.parse(dateText, timeText)
     }
-
 }

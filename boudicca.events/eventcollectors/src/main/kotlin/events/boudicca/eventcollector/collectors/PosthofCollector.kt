@@ -2,9 +2,9 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
-import base.boudicca.dateparser.dateparser.DateParser
-import base.boudicca.api.eventcollector.util.structuredEvent
 import base.boudicca.api.eventcollector.util.FetcherFactory
+import base.boudicca.api.eventcollector.util.structuredEvent
+import base.boudicca.dateparser.dateparser.DateParser
 import base.boudicca.model.Registration
 import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
@@ -12,9 +12,7 @@ import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 import java.net.URI
 
-
 class PosthofCollector : TwoStepEventCollector<String>("posthof") {
-
     private val fetcher = FetcherFactory.newFetcher()
     private val baseUrl = "https://www.posthof.at"
 
@@ -59,13 +57,16 @@ class PosthofCollector : TwoStepEventCollector<String>("posthof") {
             description += child.text() + "\n"
         }
 
-        val imgUrl = baseUrl + eventSite.select("div.tx-posthof-events>:not(ul) img").attr("src")
+        val imgTag = eventSite.select("div.tx-posthof-events>:not(ul) .cell img")
+        val imgUrl = baseUrl + imgTag.attr("src")
+        val pictureCopyright = imgTag.attr("title").split("(c)").last().trim().ifBlank { "Posthof" }
 
         return structuredEvent(name, startDate) {
             withProperty(SemanticKeys.TYPE_PROPERTY, dateAndTypeSpans[2].text())
             withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
             withProperty(SemanticKeys.PICTURE_URL_PROPERTY, URI.create(imgUrl))
-            withProperty(SemanticKeys.REGISTRATION_PROPERTY, Registration.TICKET) //are there free events in posthof?
+            withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, pictureCopyright)
+            withProperty(SemanticKeys.REGISTRATION_PROPERTY, Registration.TICKET) // are there free events in posthof?
             withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Posthof")
             withProperty(SemanticKeys.LOCATION_URL_PROPERTY, URI.create("https://www.posthof.at"))
             withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Linz")

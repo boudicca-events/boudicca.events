@@ -12,22 +12,24 @@ import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 
-class TheaterInDerInnenstadtCollector : TwoStepEventCollector<Element>("theaterinderinnenstadt") {
+class TheaterInDerInnenstadtCollector : TwoStepEventCollector<Pair<Element, String?>>("theaterinderinnenstadt") {
     private val fetcher = FetcherFactory.newFetcher()
     private val baseUrl = "https://theater-innenstadt.at/"
     private val eventUrl = baseUrl + "spielplan/"
 
-    override fun getAllUnparsedEvents(): List<Element> {
-        return Jsoup
-            .parse(fetcher.fetchUrl(eventUrl))
-            .select("div.event")
+    override fun getAllUnparsedEvents(): List<Pair<Element, String?>> {
+        val document = Jsoup.parse(fetcher.fetchUrl(eventUrl))
+        val events = document.select("div.event")
+        val logoSrc = document.selectFirst("a.tm-logo img")?.attr("src")
+        return events.map { Pair(it, logoSrc) }
     }
 
-    override fun parseMultipleStructuredEvents(event: Element): List<StructuredEvent?>? {
-        val name = event.select("span.evcal_event_title").text()
-        val description = event.select("[itemprop=description]").text()
+    override fun parseMultipleStructuredEvents(event: Pair<Element, String?>): List<StructuredEvent?> {
+        val (eventSite, logoSrc) = event
+        val name = eventSite.select("span.evcal_event_title").text()
+        val description = eventSite.select("[itemprop=description]").text()
 
-        val dateInfos = event.select("span.evoet_dayblock")
+        val dateInfos = eventSite.select("span.evoet_dayblock")
         val date = dateInfos.select(".date").text()
         val month = dateInfos.select(".month").text()
         val year = dateInfos.attr("data-syr")
@@ -35,7 +37,10 @@ class TheaterInDerInnenstadtCollector : TwoStepEventCollector<Element>("theateri
         val startTime = dateInfos.select(".time").text()
         val startDateTime = DateParser.parse(startDate, startTime)
 
-        val imgSrc = event.select(".evocard_main_image img").attr("src")
+        var imgSrc = eventSite.select(".evocard_main_image img").attr("src")
+        if (imgSrc.isBlank() && !logoSrc.isNullOrBlank()) {
+            imgSrc = logoSrc
+        }
 
         var type: String? = null
         if (description.lowercase().contains("theater")) {
@@ -52,7 +57,8 @@ class TheaterInDerInnenstadtCollector : TwoStepEventCollector<Element>("theateri
             withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
             withProperty(SemanticKeys.CATEGORY_PROPERTY, EventCategory.ART)
             withProperty(SemanticKeys.TYPE_PROPERTY, type)
-            if (imgSrc.isNotBlank()) withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(imgSrc))
+            withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(imgSrc))
+            withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, "Theater in der Innenstadt")
             withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Linz")
             withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Theater in der Innenstadt")
             withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse(baseUrl))

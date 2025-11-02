@@ -6,7 +6,7 @@ import java.util.Locale
  * current event categories we support, with all their known event types
  */
 enum class EventCategory(val types: Set<String>) {
-    //OTHER is a special cases needing special care
+    // OTHER is a special cases needing special care
     OTHER(emptySet()),
     MUSIC(setOf("konzert", "concert", "alternative", "singer/songwriter", "party", "songwriter/alternative", "musik")),
     ART(
@@ -27,7 +27,9 @@ enum class EventCategory(val types: Set<String>) {
             "museum",
             "ausstellung",
             "musical",
+            "oper",
             "brauchtum",
+            "schauspiel"
         )
     ),
     TECH(setOf("techmeetup", "technology", "technologie", "chaosevent")),

@@ -11,12 +11,10 @@ import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
 
 class LastSpaceCollector : TwoStepEventCollector<String>("lastspace") {
-
     private val fetcher = FetcherFactory.newFetcher()
     private val baseUrl = "https://last-space.at/"
 
     override fun getAllUnparsedEvents(): List<String> {
-
         val pages = Jsoup.parse(fetcher.fetchUrl(baseUrl + "page/event"))
             .select(".pagination li a")
             .mapNotNull { it.attr("href") }
@@ -30,15 +28,17 @@ class LastSpaceCollector : TwoStepEventCollector<String>("lastspace") {
         return eventUrls
     }
 
-    private fun fetchEventUrlsOfSinglePage(page: String) : List<String> {
+    private fun fetchEventUrlsOfSinglePage(page: String): List<String> {
         return Jsoup.parse(fetcher.fetchUrl(baseUrl + page))
             .select("tr>td>div>div")
-            .mapNotNull { baseUrl + it.attr("onClick")
-                .replace("'", "")
-                .replace("window.location.href=/", "") }
+            .mapNotNull {
+                baseUrl + it.attr("onClick")
+                    .replace("'", "")
+                    .replace("window.location.href=/", "")
+            }
     }
 
-    override fun parseMultipleStructuredEvents(event: String):  List<StructuredEvent?>?  {
+    override fun parseMultipleStructuredEvents(event: String): List<StructuredEvent?>? {
         val document = Jsoup.parse(fetcher.fetchUrl(event))
         val name = document.select("h1").text()
         val description = document.select("div.event-description").text()
@@ -52,9 +52,9 @@ class LastSpaceCollector : TwoStepEventCollector<String>("lastspace") {
             .map { it.replace("#", "").trim() }
             .filter { it.isNotBlank() }
 
-        val type = eventInfos[3].text()
+        val type = eventInfos[3].text().trim()
         var category = EventCategory.OTHER
-        if (type.lowercase().contains("sport")){
+        if (type.lowercase().contains("sport")) {
             category = EventCategory.SPORT
         }
 
@@ -66,9 +66,9 @@ class LastSpaceCollector : TwoStepEventCollector<String>("lastspace") {
             withProperty(SemanticKeys.TYPE_PROPERTY, type)
             if (tags.isNotEmpty()) withProperty(SemanticKeys.TAGS_PROPERTY, tags)
             if (imgSrc.isNotBlank()) withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(baseUrl + imgSrc))
+            withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, "last")
             withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Linz")
             withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "last")
         }
     }
-
 }

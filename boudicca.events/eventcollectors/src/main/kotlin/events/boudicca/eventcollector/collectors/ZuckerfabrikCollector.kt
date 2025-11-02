@@ -2,10 +2,10 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.api.eventcollector.util.FetcherFactory
+import base.boudicca.api.eventcollector.util.structuredEvent
 import base.boudicca.dateparser.dateparser.DateParser
 import base.boudicca.dateparser.dateparser.DateParserResult
-import base.boudicca.api.eventcollector.util.structuredEvent
-import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
@@ -13,7 +13,6 @@ import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 
 class ZuckerfabrikCollector : TwoStepEventCollector<String>("zuckerfabrik") {
-
     private val fetcher = FetcherFactory.newFetcher()
 
     override fun getAllUnparsedEvents(): List<String> {
@@ -34,12 +33,19 @@ class ZuckerfabrikCollector : TwoStepEventCollector<String>("zuckerfabrik") {
         val (dates, type) = parseTypeAndDate(storycontent[dateIndex])
         val description = ((dateIndex + 1) until storycontent.size).joinToString("\n") { storycontent[it].text() }
 
-        val pictureUrl = eventSite.select("div#storycontent img").attr("src")
+        val figure = eventSite.select("div#storycontent figure")
+        var pictureCopyright = figure.selectFirst("figcaption")?.text() ?: "Zuckerfabrik"
+        pictureCopyright = pictureCopyright.replace("(c)", "").trim()
+        var pictureUrl = figure.selectFirst("img")?.attr("src")
+        if (pictureUrl.isNullOrBlank()) {
+            pictureUrl = eventSite.selectFirst("div#storycontent img")?.attr("src")
+        }
 
         return structuredEvent(name, dates) {
             withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(event))
             withProperty(SemanticKeys.TYPE_PROPERTY, type)
             withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(pictureUrl))
+            withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, pictureCopyright)
             withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
             withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Zuckerfabrik")
             withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse("https://www.zuckerfabrik.at"))
@@ -63,5 +69,4 @@ class ZuckerfabrikCollector : TwoStepEventCollector<String>("zuckerfabrik") {
         val dates = DateParser.parse(split[1])
         return Pair(dates, type)
     }
-
 }

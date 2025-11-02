@@ -8,16 +8,15 @@ import base.boudicca.dateparser.dateparser.DatePair
 import base.boudicca.dateparser.dateparser.DateParser
 import base.boudicca.dateparser.dateparser.DateParserResult
 import base.boudicca.format.UrlUtils
+import base.boudicca.model.EventCategory
 import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
 
 class FlohmarktCollector : TwoStepEventCollector<String>("flohmarkt") {
-
     private val fetcher = FetcherFactory.newFetcher()
     private val baseUrl = "https://www.flohmarkt.at/"
 
     override fun getAllUnparsedEvents(): List<String> {
-
         val stateUrls = Jsoup.parse(fetcher.fetchUrl(baseUrl + "termine/"))
             .select(".navInhalt:nth-child(2) li:not(.navsub) a")
             .mapNotNull { it.select("a").first()?.attr("href") }
@@ -30,7 +29,7 @@ class FlohmarktCollector : TwoStepEventCollector<String>("flohmarkt") {
         return eventUrls.distinct()
     }
 
-    fun getEventUrlsOfEachState(stateUrl: String) : List<String> {
+    fun getEventUrlsOfEachState(stateUrl: String): List<String> {
         val eventUrls = mutableListOf<String>()
         val pageUrls = Jsoup.parse(fetcher.fetchUrl(baseUrl + stateUrl.replace("../", "")))
             .select("div.weiterblaettern a")
@@ -39,14 +38,14 @@ class FlohmarktCollector : TwoStepEventCollector<String>("flohmarkt") {
         return eventUrls
     }
 
-    fun getEventUrlsOfEachPage(statePageUrl: String) : List<String> {
+    fun getEventUrlsOfEachPage(statePageUrl: String): List<String> {
         return Jsoup.parse(fetcher.fetchUrl(statePageUrl))
             .select("div.terminTitel a")
             .mapNotNull { it.attr("href") }
-            .filter{ !it.contains("ß") } // exclude urls with ß, as they result in 404 error
+            .filter { !it.contains("ß") } // exclude urls with ß, as they result in 404 error
     }
 
-    override fun parseMultipleStructuredEvents(event: String):  List<StructuredEvent?>?  {
+    override fun parseMultipleStructuredEvents(event: String): List<StructuredEvent?>? {
         val document = Jsoup.parse(fetcher.fetchUrl(event))
         val name = document.select("div.terminTitel").text()
 
@@ -59,14 +58,14 @@ class FlohmarktCollector : TwoStepEventCollector<String>("flohmarkt") {
 
         val cityRegex = """in\s[\d\s]*(?<city>[^\d,]+),?\D*$""".toRegex()
         val cityMatchResult = cityRegex.findAll(name).map { it.groupValues[1] }.toList()
-        val city = if(cityMatchResult.isNotEmpty()) cityMatchResult.last() else null
+        val city = if (cityMatchResult.isNotEmpty()) cityMatchResult.last() else null
 
         val dateRegex = """(?<startDate>\d{1,2}\.\s+[\wä]*\s+\d{4})\D*(?<endDate>\d{1,2}\.\s+[\wä]*\s+\d{4})?""".toRegex()
         val dateMatchResult = dateRegex.find(description)
         val startDateString = dateMatchResult?.groups["startDate"]?.value?.trim()
         val endDateString = dateMatchResult?.groups["endDate"]?.value?.trim()
 
-        val timeRegex = """\n(?<address>[^\d,]+\.?\s?\d+),.*?(?<start>\d{1,2}:?\d{0,2}):?-(?<end>\d{1,2}:?\d{0,2})[\sUhr]*""".toRegex()
+        val timeRegex = """\n(?<address>\D*\d{0,3}).*,.*?(?<start>\d{1,2}:?\d{0,2}):?[–-](?<end>\d{1,2}:?\d{0,2})[\sUhr]*""".toRegex()
         val timeMatchResult = timeRegex.find(description)
         val address = timeMatchResult?.groups["address"]?.value
         val startTimeString = timeMatchResult?.groups["start"]?.value
@@ -78,25 +77,26 @@ class FlohmarktCollector : TwoStepEventCollector<String>("flohmarkt") {
             startDate = DateParserResult(listOf(DatePair(startDate!!.dates[0].startDate, endDate.dates[0].startDate)))
         }
 
-        val imgSrc = document.select("div#termineDetail img").attr("src")
+        var imgSrc = document.select("div#termineDetail img").attr("src")
+        if (imgSrc.isBlank()) {
+            imgSrc = document.select("img.logo").attr("src")
+        }
 
         return structuredEvent(name, startDate!!) {
             withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(event))
             withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(event))
             withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description.toString())
-            withProperty(SemanticKeys.TYPE_PROPERTY, "others")
+            withProperty(SemanticKeys.CATEGORY_PROPERTY, EventCategory.OTHER)
             withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, city)
             withProperty(SemanticKeys.LOCATION_ADDRESS_PROPERTY, address)
-            if (imgSrc.isNotBlank()) withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(imgSrc))
-            withProperty(
-                SemanticKeys.TAGS_PROPERTY,
-                listOf("Flea market", "Thrifting", "Second Hand")
-            )
+            withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(imgSrc))
+            withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, "flohmarkt.at")
+            withProperty(SemanticKeys.TAGS_PROPERTY, listOf("Flea market", "Thrifting", "Second Hand"))
         }
     }
 
-    private fun parseDate(dateToParse: String?, timeToParseParam: String?) : DateParserResult? {
-        if (dateToParse == null){
+    private fun parseDate(dateToParse: String?, timeToParseParam: String?): DateParserResult? {
+        if (dateToParse == null) {
             return null
         }
         var timeToParse = timeToParseParam ?: ""

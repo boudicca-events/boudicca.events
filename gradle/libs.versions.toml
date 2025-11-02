@@ -7,10 +7,10 @@ jakarta-annotation = "3.0.0"
 javax-jaxrs = "2.1.1"
 findbugs = "3.0.2"
 spring-openapi-starter = "2.8.9"
-spring = "6.5.2"
+spring = "6.5.6"
 spring-boot = "3.5.6"
 swagger-core-version = "2.2.20"
-org-springframework-boot-gradle-plugin = "3.5.4"
+org-springframework-boot-gradle-plugin = "3.5.7"
 org-openapi-generator-gradle-plugin = "7.2.0"
 junit-jupiter = "5.13.4"
 assertk = "0.28.1"
@@ -23,7 +23,7 @@ klaxon = "5.6"
 logback = "1.5.18"
 slf4j = "2.0.17"
 handlebars = "4.5.0"
-microsoft-playwright = "1.54.0"
+microsoft-playwright = "1.56.0"
 axe-core-playwright = "4.10.1"
 kotlin-logging = "7.0.13"
 otel = "1.53.0"
@@ -88,13 +88,13 @@ axe-core-playwright = { module = "com.deque.html.axe-core:playwright", version.r
 json = { module = "org.json:json", version = "20250517" }
 
 google-api-client = { module = "com.google.api-client:google-api-client", version = "2.8.0" }
-google-auth-library-oauth2-http = { module = "com.google.auth:google-auth-library-oauth2-http", version = "1.37.1" }
+google-auth-library-oauth2-http = { module = "com.google.auth:google-auth-library-oauth2-http", version = "1.40.0" }
 google-api-services-sheets = { module = "com.google.apis:google-api-services-sheets", version = "v4-rev20250616-2.0.0" }
 
 kotlin-logging = { module = "io.github.oshai:kotlin-logging-jvm", version.ref = "kotlin-logging" }
 
 micrometer-core = { module = "io.micrometer:micrometer-core", version = "1.15.3" }
-micrometer-otel-bridge = { module = "io.micrometer:micrometer-tracing-bridge-otel", version = "1.5.3" }
+micrometer-otel-bridge = { module = "io.micrometer:micrometer-tracing-bridge-otel", version = "1.5.5" }
 otel-api = { module = "io.opentelemetry:opentelemetry-api", version.ref = "otel" }
 otel-sdk = { module = "io.opentelemetry:opentelemetry-sdk", version.ref = "otel" }
 otel-exporter = { module = "io.opentelemetry:opentelemetry-exporter-otlp", version.ref = "otel" }

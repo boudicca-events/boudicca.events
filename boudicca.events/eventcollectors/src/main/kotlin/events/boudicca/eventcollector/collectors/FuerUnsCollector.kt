@@ -49,12 +49,8 @@ class FuerUnsCollector : TwoStepEventCollector<String>("fueruns") {
         val startDate = parseDate(eventSite)
 
         val img = eventSite.select("div.event picture img")
-        val pictureUrl = if (!img.isEmpty()) {
-            UrlUtils.parse(baseUrl + img.first()!!.attr("src"))
-        } else {
-            null
-        }
-        val pictureAltText = img.first()?.attr("alt")
+        val pictureUrl = UrlUtils.parse(baseUrl, img.attr("src"))
+        val pictureAltText = img.attr("alt")
 
         val locationName = eventSite.select(".details_info .location").not("div.location.link-google-maps").text()
 

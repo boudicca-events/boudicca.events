@@ -55,13 +55,8 @@ class ArenaWienCollector : TwoStepEventCollector<ArenaWienCollector.HalfEvent>("
     private fun getPictureUrl(eventSite: Document): URI? {
         val img = eventSite.select("div.suite_imageContainer img")
         val logo = eventSite.select(".navbar-header img")
-        return if (!img.isEmpty()) {
-            UrlUtils.parse(baseUrl + img.first()!!.attr("src"))
-        } else if (!logo.isEmpty()) {
-            UrlUtils.parse(baseUrl + logo.first()!!.attr("src"))
-        } else {
-            null
-        }
+        return UrlUtils.parse(baseUrl, img.attr("src"))
+            ?: UrlUtils.parse(baseUrl, logo.attr("src"))
     }
 
     private fun parseDate(dateText: String): OffsetDateTime {
@@ -88,7 +83,7 @@ class ArenaWienCollector : TwoStepEventCollector<ArenaWienCollector.HalfEvent>("
 
     private fun getAjaxUrl(page: Int): String {
         return "$baseUrl/DesktopModules/WebAPI/API/Event/Search?searchTerm=&day=1&month=-1&year=-1&" +
-            "page=$page&pageSize=20&eventCategory=-1&abonnement=-1&cultureCode=de-AT&locationId=0"
+                "page=$page&pageSize=20&eventCategory=-1&abonnement=-1&cultureCode=de-AT&locationId=0"
     }
 
     data class HalfEvent(

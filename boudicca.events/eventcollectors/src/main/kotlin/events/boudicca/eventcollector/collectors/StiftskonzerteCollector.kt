@@ -41,11 +41,7 @@ class StiftskonzerteCollector : TwoStepEventCollector<String>("stiftskonzerte") 
         val location = locationAndTime.subList(1, locationAndTime.lastIndex + 1).joinToString(", ")
 
         val img = eventSite.select("div.entry-content img")
-        val pictureUrl = if (!img.isEmpty()) {
-            UrlUtils.parse(img.first()!!.attr("src"))
-        } else {
-            null
-        }
+        val pictureUrl = UrlUtils.parse(img.attr("src"))
 
         return structuredEvent(name, startDate) {
             withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(event))

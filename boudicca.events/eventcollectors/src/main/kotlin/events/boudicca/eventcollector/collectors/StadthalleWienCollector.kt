@@ -35,7 +35,7 @@ class StadthalleWienCollector : TwoStepEventCollector<String>("stadthallewien") 
                 eventSite.select("h1#logo img").attr("src")
             }
         }
-        val pictureUrl = UrlUtils.parse(baseUrl + srcAttr)
+        val pictureUrl = UrlUtils.parse(baseUrl, srcAttr)
 
         val altText = imgTag.attr("alt")
         var copyright = "Stadthalle Wien"

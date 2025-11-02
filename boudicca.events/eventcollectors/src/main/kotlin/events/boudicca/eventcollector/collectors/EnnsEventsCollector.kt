@@ -30,11 +30,7 @@ class EnnsEventsCollector : TwoStepEventCollector<JsonObject>("ennsevents") {
         val url = "${baseUrl}events/e/" + event.string("id")
         val description = (event.string("subtitle") + "\n" + event.string("description")).trim()
 
-        val locationUrl = if (event.containsKey("website") && !event.string("website").isNullOrBlank()) {
-            UrlUtils.parse(event.string("website")!!)
-        } else {
-            null
-        }
+        val locationUrl = UrlUtils.parse(event.string("website"))
 
         var city = event.string("city")
         if (city != null && city.contains("-")) { // fix city "4470 ENNS - Enns"
@@ -49,9 +45,7 @@ class EnnsEventsCollector : TwoStepEventCollector<JsonObject>("ennsevents") {
         val lat = event.double("lat")
         val lon = event.double("lon")
 
-        val pictureUrl = if (event.containsKey("picture")) UrlUtils.parse(
-            "${baseUrl}uploads/images/thumbs_square/" + event.string("picture")
-        ) else null
+        val pictureUrl = UrlUtils.parse("${baseUrl}uploads/images/thumbs_square/", event.string("picture"))
 
         return structuredEvent(name, dates) {
             withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(url))

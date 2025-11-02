@@ -43,7 +43,7 @@ class MetalCornerCollector : TwoStepEventCollector<Pair<String, String>>("metalc
 
         return structuredEvent(name, eventStartDate) {
             withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, document.select("div#content p").text())
-            withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(baseUrl + url))
+            withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(baseUrl, url))
             withProperty(SemanticKeys.TYPE_PROPERTY, eventType)
             withProperty(
                 SemanticKeys.PICTURE_URL_PROPERTY,

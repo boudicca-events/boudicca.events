@@ -43,7 +43,7 @@ class SchlachthofCollector : TwoStepEventCollector<Element>("schlachthof") {
             withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse(baseUrl))
             withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Wels")
             withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(url))
-            if (tags.isNotEmpty()) withProperty(SemanticKeys.TAGS_PROPERTY, tags)
+            withProperty(SemanticKeys.TAGS_PROPERTY, tags)
         }
     }
 

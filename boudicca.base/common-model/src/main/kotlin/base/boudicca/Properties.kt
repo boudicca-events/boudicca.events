@@ -14,7 +14,7 @@ import java.util.*
  * All our [SemanticKeys] already have properties defined for them that you can use, but you can create also create new ones on the fly just by calling the constructor like `TextProperty("newProperty")`
  */
 interface Property<T> {
-    fun parseToString(value: T): String
+    fun parseToString(value: T): String?
 
     fun parseFromString(string: String): T
 
@@ -55,7 +55,7 @@ abstract class AbstractProperty<T>(
 
 open class GenericProperty<T>(propertyName: String, private val adapter: AbstractFormatAdapter<T>) :
     AbstractProperty<T>(propertyName, adapter) {
-    override fun parseToString(value: T): String = adapter.convertToString(value)
+    override fun parseToString(value: T): String? = adapter.convertToString(value)
 
     override fun parseFromString(string: String): T = adapter.fromString(string)
 }
@@ -68,7 +68,14 @@ class UriProperty(propertyName: String) : GenericProperty<URI>(propertyName, Uri
 
 class DateProperty(propertyName: String) : GenericProperty<OffsetDateTime>(propertyName, DateFormatAdapter())
 
-class ListProperty(propertyName: String) : GenericProperty<List<String>>(propertyName, ListFormatAdapter())
+class ListProperty(propertyName: String) : GenericProperty<List<String>>(propertyName, ListFormatAdapter()) {
+    override fun parseToString(value: List<String>): String? {
+        if (value.isEmpty()) {
+            return null
+        }
+        return super.parseToString(value)
+    }
+}
 
 class NumberProperty(propertyName: String) : GenericProperty<Number>(propertyName, NumberFormatAdapter())
 

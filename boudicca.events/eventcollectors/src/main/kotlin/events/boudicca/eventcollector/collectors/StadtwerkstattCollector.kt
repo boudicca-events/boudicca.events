@@ -35,15 +35,10 @@ class StadtwerkstattCollector : TwoStepEventCollector<String>("stadtwerkstatt") 
 
         val img = eventSite.select("div.event-text img")
         val logo = eventSite.selectFirst(".brand img")
-        val pictureUrl = if (!img.isEmpty()) {
-            UrlUtils.parse(img.first()!!.attr("src"))
-        } else if (logo != null) {
-            UrlUtils.parse(logo.attr("src"))
-        } else {
-            null
-        }
+        val pictureUrl = UrlUtils.parse(img.attr("src"))
+            ?: UrlUtils.parse(logo?.attr("src"))
 
-        if (name.isNullOrEmpty()) {
+        if (name.isEmpty()) {
             name = description
         }
 

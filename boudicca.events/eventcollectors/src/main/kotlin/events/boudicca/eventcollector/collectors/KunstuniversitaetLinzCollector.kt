@@ -60,9 +60,7 @@ class KunstuniversitaetLinzCollector : TwoStepEventCollector<String>("kunstunili
             )
             withProperty(
                 SemanticKeys.LOCATION_URL_PROPERTY,
-                if (locationUrl.isBlank()) UrlUtils.parse("https://www.kunstuni-linz.at/") else UrlUtils.parse(
-                    locationUrl
-                )
+                UrlUtils.parse(locationUrl.ifBlank { "https://www.kunstuni-linz.at/" })
             )
             withProperty(SemanticKeys.LOCATION_ADDRESS_PROPERTY, locationAddress)
             withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, "Kunstuniversität Linz")

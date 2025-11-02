@@ -32,7 +32,7 @@ class ChelseaCollector : TwoStepEventCollector<Element>("chelsea") {
             withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(baseUrl))
             withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse(baseUrl))
             withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
-            if (!imageSource.isNullOrBlank()) withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(baseUrl + imageSource))
+            withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(baseUrl, imageSource))
             withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, "Chelsea")
             withProperty(SemanticKeys.CONCERT_BANDLIST_PROPERTY, bandNames)
             withProperty(SemanticKeys.CATEGORY_PROPERTY, EventCategory.MUSIC)

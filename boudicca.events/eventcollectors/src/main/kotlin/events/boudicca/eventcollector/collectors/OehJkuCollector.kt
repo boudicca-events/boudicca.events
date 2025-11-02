@@ -34,7 +34,7 @@ class OehJkuCollector : TwoStepEventCollector<String>("oehjku") {
         val location = findTextByIconHref(eventSite, "icon-pin")
 
         return structuredEvent(name, startDate) {
-            withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(baseUrl + event))
+            withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(baseUrl, event))
             withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, location)
             withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse("https://www.jku.at/"))
             withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Linz")

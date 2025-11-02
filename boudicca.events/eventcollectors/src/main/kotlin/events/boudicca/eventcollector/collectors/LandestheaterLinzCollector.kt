@@ -104,9 +104,7 @@ class LandestheaterLinzCollector :
             )
             withProperty(
                 SemanticKeys.PICTURE_URL_PROPERTY,
-                UrlUtils.parse(
-                    baseUrl + site.second.select("div.lth-slide img").first()!!.attr("src")
-                )
+                UrlUtils.parse(baseUrl, site.second.select("div.lth-slide img").attr("src"))
             )
             withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, "Landestheater Linz")
             withProperty(

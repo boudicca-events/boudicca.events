@@ -65,7 +65,7 @@ class LastSpaceCollector : TwoStepEventCollector<String>("lastspace") {
             withProperty(SemanticKeys.CATEGORY_PROPERTY, category)
             withProperty(SemanticKeys.TYPE_PROPERTY, type)
             if (tags.isNotEmpty()) withProperty(SemanticKeys.TAGS_PROPERTY, tags)
-            if (imgSrc.isNotBlank()) withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(baseUrl + imgSrc))
+            withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(baseUrl, imgSrc))
             withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, "last")
             withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Linz")
             withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "last")

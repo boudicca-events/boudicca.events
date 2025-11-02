@@ -99,17 +99,12 @@ class CafeTraxlmayrCollector : TwoStepEventCollector<Element>("cafetraxlmayr") {
             if (name.isEmpty()) {
                 name = block.select("strong").joinToString(" ") { it.text() }
             }
-            if (startDate != null && name.isNotEmpty() && description.isNotEmpty() && pictureSrc.isNotEmpty()) {
-                val pictureUrl = if (pictureSrc.isNotBlank()) {
-                    UrlUtils.parse(baseUrl + pictureSrc)
-                } else {
-                    null
-                }
+            if (startDate != null && name.isNotEmpty() && description.isNotEmpty()) {
                 events.addAll(
                     structuredEvent(name, startDate) {
                         applyCommonProperties(eventData)
                         withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
-                        withProperty(SemanticKeys.PICTURE_URL_PROPERTY, pictureUrl)
+                        withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(baseUrl, pictureSrc))
                     }
                 )
                 startDate = null

@@ -36,6 +36,13 @@
                     </svg>
                     <p>{{event.locationName}}{{#if event.city}}, {{event.city}} {{/if}} </p>
                 </div>
+            {{else if event.locationAddress}}
+                <div class="event-details">
+                    <svg height="24px" width="24px" title="Ort Logo" viewBox="0 0 512 512" aria-label="Adresse des Events">
+                        <use xlink:href="#location"></use>
+                    </svg>
+                    <p>{{event.locationAddress}}{{#if event.city}}, {{event.city}} {{/if}} </p>
+                </div>
             {{/if}}
         </div>
     </div>
@@ -79,14 +86,23 @@
                                 </svg>
                                 <p><time datetime="{{event.startDateISO}}">{{event.startDate}}</time></p>
                             </div>
-                            {{#if event.locationName}}
+                            {{#or event.locationName event.locationAddress event.city}}
                                 <div class="event-details">
                                     <svg height="24px" width="24px" title="Ort Logo" viewBox="0 0 512 512" aria-label="Ort des Events">
                                         <use xlink:href="#location"></use>
                                     </svg>
-                                    <p>{{event.locationName}}{{#if event.city}}, {{event.city}} {{/if}} </p>
+                                    <div>
+                                        {{#if event.locationName}}
+                                            <p>{{event.locationName}}</p>
+                                        {{/if}}
+                                        {{#if event.locationAddress}}
+                                            <p>{{event.locationAddress}}</p>
+                                        {{else if event.city}}
+                                            <p>{{event.city}}</p>
+                                        {{/if}}
+                                    </div>
                                 </div>
-                            {{/if}}
+                            {{/or}}
                             {{#if event.category}}
                                 <div class="event-details">
                                     <svg height="24px" width="24px" title="Kategorie Logo" viewBox="0 0 512 512" aria-label="Kategorie des Events">

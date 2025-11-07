@@ -170,6 +170,7 @@ class EventService @Autowired constructor(
             "description" to getRichTextProperty(event, SemanticKeys.DESCRIPTION),
             "url" to getTextProperty(event, SemanticKeys.URL),
             "locationName" to getTextProperty(event, SemanticKeys.LOCATION_NAME),
+            "locationAddress" to getTextProperty(event, SemanticKeys.LOCATION_ADDRESS),
             "city" to getTextProperty(event, SemanticKeys.LOCATION_CITY),
             "tags" to getListProperty(event, SemanticKeys.TAGS),
             "category" to mapCategory(getTextProperty(event, SemanticKeys.CATEGORY)),

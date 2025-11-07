@@ -99,7 +99,7 @@
 .event-details {
     display: grid;
     grid-template-columns: max-content 1fr;
-    align-items: center;
+    align-items: start;
     gap: var(--space-medium);
 }
 
@@ -113,6 +113,10 @@
     height: 100%;
     justify-content: space-between;
     margin-top: var(--space-large);
+}
+
+.modal .event-details svg {
+    margin-top: 2px;
 }
 
 .event-image-modal img {

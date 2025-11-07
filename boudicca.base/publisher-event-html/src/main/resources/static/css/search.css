@@ -167,6 +167,9 @@ legend {
 .multiselect-labels ul li label {
     width: 100%;
     display: block;
+    border-radius: var(--border-radius-medium);
+    padding-left: 8px;
+    margin-left: -5px;
 }
 
 .multiselect-wrapper input[type=checkbox], .chips {

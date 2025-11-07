@@ -73,6 +73,10 @@
     background-color: var(--color-main-red);
 }
 
+.event-image-sport, .event-image-modal-sport {
+    background-color: var(--color-main-sand);
+}
+
 .event-description {
     padding: var(--space-large);
     font-size: var(--font-size-small);
@@ -244,16 +248,24 @@
     font-weight: bold;
 }
 
-.event-details-miscArt, .event-modal-chip-miscArt {
+#category-OTHER-chip, #category-OTHER-label {
+    background-color: var(--color-main-light);
+}
+
+.event-details-miscArt, .event-modal-chip-miscArt, #category-ART-chip, #category-ART-label {
     background-color: var(--color-main-yellow-light);
 }
 
-.event-details-tech, .event-modal-chip-tech {
+.event-details-tech, .event-modal-chip-tech, #category-TECH-chip, #category-TECH-label {
     background-color: var(--color-main-green-light);
 }
 
-.event-details-music, .event-modal-chip-music {
+.event-details-music, .event-modal-chip-music, #category-MUSIC-chip, #category-MUSIC-label {
     background-color: var(--color-main-red-light);
+}
+
+.event-details-sport, .event-modal-chip-sport, #category-SPORT-chip, #category-SPORT-label {
+    background-color: var(--color-main-sand-light);
 }
 
 .details-box article {

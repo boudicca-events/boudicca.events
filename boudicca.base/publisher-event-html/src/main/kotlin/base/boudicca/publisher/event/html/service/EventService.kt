@@ -109,6 +109,7 @@ class EventService @Autowired constructor(
         for (flag in (searchDTO.flags ?: emptyList()).filter { !it.isNullOrBlank() }) {
             queryParts.add(equals(flag!!, "true"))
         }
+        addSubqueryOfFieldConnectedByOr(queryParts, SemanticKeys.TAGS, searchDTO.tags)
         addSubqueryOfFieldConnectedByOr(queryParts, SemanticKeys.CONCERT_BANDLIST, searchDTO.bandNames)
         if (searchDTO.includeRecurring != true) {
             queryParts.add(
@@ -134,6 +135,7 @@ class EventService @Autowired constructor(
                 listOf(
                     FilterQueryEntryDTO(SemanticKeys.LOCATION_NAME),
                     FilterQueryEntryDTO(SemanticKeys.LOCATION_CITY),
+                    FilterQueryEntryDTO(SemanticKeys.TAGS),
                     FilterQueryEntryDTO(SemanticKeys.CONCERT_BANDLIST),
                 )
             )
@@ -144,6 +146,7 @@ class EventService @Autowired constructor(
                 .sortedWith(Comparator.comparing({ it.second }, String.CASE_INSENSITIVE_ORDER)),
             filters[SemanticKeys.LOCATION_NAME]!!.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Triple(it, it, frontEndId(it)) },
             filters[SemanticKeys.LOCATION_CITY]!!.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Triple(it, it, frontEndId(it)) },
+            filters[SemanticKeys.TAGS]!!.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Triple(it, it, frontEndId(it)) },
             filters[SemanticKeys.CONCERT_BANDLIST]!!.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Triple(it, it, frontEndId(it)) },
         )
     }
@@ -381,6 +384,7 @@ class EventService @Autowired constructor(
         val categories: List<Triple<String, String, String>>,
         val locationNames: List<Triple<String, String, String>>,
         val locationCities: List<Triple<String, String, String>>,
+        val tags: List<Triple<String, String, String>>,
         val bandNames: List<Triple<String, String, String>>,
     )
 

@@ -63,6 +63,7 @@
         </div>
     </fieldset>
 
+    {{> layout/multiselect_fieldset identifier="tags" legend="Tags" entries=filters.tags filter=true }}
     {{> layout/multiselect_fieldset identifier="locationCities" legend="Stadt" entries=filters.locationCities filter=true }}
     {{> layout/multiselect_fieldset identifier="locationNames" legend="Veranstaltungsort" entries=filters.locationNames filter=true }}
     {{> layout/multiselect_fieldset identifier="bandNames" legend="Musik" entries=filters.bandNames name="Bandname" data-category="MUSIC" filter=true }}

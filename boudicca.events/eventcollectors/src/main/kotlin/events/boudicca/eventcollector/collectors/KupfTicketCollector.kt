@@ -10,16 +10,19 @@ import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
 import com.beust.klaxon.lookup
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
+import org.jsoup.safety.Safelist
 import java.io.StringReader
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
 class KupfTicketCollector : TwoStepEventCollector<String>("kupfticket") {
+    private val baseUrl = "https://kupfticket.com/events"
     private val fetcher = FetcherFactory.newFetcher()
 
     override fun getAllUnparsedEvents(): List<String> {
         val eventSlugs = mutableSetOf<String>()
-        var currentUrl: String? = "https://kupfticket.com/events"
+        var currentUrl: String? = baseUrl
 
         while (currentUrl != null) {
             val document = Jsoup.parse(fetcher.fetchUrl(currentUrl))
@@ -30,7 +33,7 @@ class KupfTicketCollector : TwoStepEventCollector<String>("kupfticket") {
 
             val hasNext = jsonObject.lookup<Boolean>("props.pageProps.events.pageInfo.hasNextPage").first()
             currentUrl = if (hasNext) {
-                "https://kupfticket.com/events/cursor/after/" +
+                "$baseUrl/cursor/after/" +
                     jsonObject.lookup<String>("props.pageProps.events.pageInfo.endCursor").first()
             } else {
                 null
@@ -41,14 +44,14 @@ class KupfTicketCollector : TwoStepEventCollector<String>("kupfticket") {
     }
 
     override fun parseStructuredEvent(event: String): StructuredEvent {
-        val eventSite = Jsoup.parse(fetcher.fetchUrl("https://kupfticket.com/events/$event"))
+        val eventSite = Jsoup.parse(fetcher.fetchUrl("$baseUrl/$event"))
         val nextData = eventSite.select("body script#__NEXT_DATA__").first()!!.data()
         val jsonObject = Parser.default().parse(StringReader(nextData)) as JsonObject
         val eventJson = jsonObject.lookup<JsonObject>("props.pageProps.event").first()
 
         val name = eventJson["title"] as String
-        val description = eventJson["description"] as String
-        val url = "https://kupfticket.com/events/" + (eventJson["slug"] as String)
+        val description = htmlToCleanTextWithLineBreaks(eventJson["description"].toString())
+        val url = "$baseUrl/" + (eventJson["slug"] as String)
         val location = eventJson.lookup<String>("location.title").first()
         val startDate = parseDate(eventJson.lookup<String>("date.start").first())
         val endDate = parseDate(eventJson.lookup<String>("date.end").first())
@@ -87,5 +90,12 @@ class KupfTicketCollector : TwoStepEventCollector<String>("kupfticket") {
 
     private fun parseDate(date: String): OffsetDateTime {
         return OffsetDateTime.parse(date, DateTimeFormatter.ISO_DATE_TIME)
+    }
+
+    private fun htmlToCleanTextWithLineBreaks(html: String): String {
+        val doc = Jsoup.parse(html)
+        doc.select("br, p, div, li, tr, h1, h2, h3, h4, h5, h6").append("\\n")
+        val cleaned = Jsoup.clean(doc.html(), "", Safelist.none(), Document.OutputSettings().prettyPrint(false))
+        return cleaned.replace("\\n", "\n").replace("\\s+".toRegex()) { it.value[0].toString() }.trim()
     }
 }

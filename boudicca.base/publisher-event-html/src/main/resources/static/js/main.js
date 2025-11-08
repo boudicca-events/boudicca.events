@@ -25,6 +25,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const content = eventCard.querySelector(".modal-content").innerHTML;
     modalContent.innerHTML = content;
     modal.style.display = "block";
+    // whitespace pre-line property in css allows line breaks in text but also
+    // adds leading ones we don't need, so we have to trim the text here
+    const articleText = modal.querySelector("article p");
+    articleText.innerHTML = articleText.innerHTML.trim();
     document.body.style.overflow = "hidden";
     const closeButton = modalContent.querySelector(".modal-close");
     lastFocusedEventCard = eventCard;

@@ -267,6 +267,10 @@
     text-overflow: ellipsis;
 }
 
+.details-box article p {
+    white-space: pre-line;
+}
+
 @media only screen and (max-width: 970px) {
     .event-image-modal {
         width: -webkit-fill-available;

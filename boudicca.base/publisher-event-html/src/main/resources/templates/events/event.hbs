@@ -27,7 +27,13 @@
                 <svg height="24px" width="24px" title="Datum Logo" viewBox="0 0 512 512" aria-label="Startzeit des Events">
                     <use xlink:href="#time"></use>
                 </svg>
-                <p><time datetime="{{event.startDateISO}}">{{event.startDate}}</time></p>
+                <p><time datetime="{{event.startDateISO}}">
+                    {{#eq event.startTime "00:00"}}
+                        {{event.startDateWithoutTime}}
+                    {{else}}
+                        {{event.startDate}}
+                    {{/eq}}
+                </time></p>
             </div>
             {{#if event.locationName}}
                 <div class="event-details">
@@ -81,10 +87,26 @@
                     <div class="event-details-wrapper">
                         <div class="modal-column">
                             <div class="event-details">
-                                <svg height="24px" width="24px" title="Datum Logo" viewBox="0 0 512 512" aria-label="Startzeit des Events">
+                                <svg height="24px" width="24px" title="Datum Logo" viewBox="0 0 512 512" aria-label="Zeit und Datum des Events">
                                     <use xlink:href="#time"></use>
                                 </svg>
-                                <p><time datetime="{{event.startDateISO}}">{{event.startDate}}</time></p>
+                                <div>
+                                    <p><time datetime="{{event.startDateISO}}">
+                                        {{#eq event.startTime "00:00"}}
+                                            {{event.startDateWithoutTime}}
+                                        {{else}}
+                                            {{event.startDate}}
+                                        {{/eq}}
+                                    </time></p>
+                                    {{#if event.endDate}}
+                                        <p><time datetime="{{event.endDateISO}}">bis
+                                            {{#eq event.endTime "00:00"}}
+                                                {{event.endDateWithoutTime}}
+                                            {{else}}
+                                                {{event.endDate}}
+                                            {{/eq}}</time></p>
+                                    {{/if}}
+                                </div>
                             </div>
                             {{#or event.locationName event.locationAddress event.city}}
                                 <div class="event-details">

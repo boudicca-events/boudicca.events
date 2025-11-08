@@ -1,7 +1,11 @@
 package base.boudicca.publisher.event.html.service
 
 import base.boudicca.SemanticKeys
-import base.boudicca.api.search.*
+import base.boudicca.api.search.FilterQueryDTO
+import base.boudicca.api.search.FilterQueryEntryDTO
+import base.boudicca.api.search.QueryDTO
+import base.boudicca.api.search.SearchResultDTO
+import base.boudicca.format.DateFormatAdapter
 import base.boudicca.format.ListFormatAdapter
 import base.boudicca.format.NumberFormatAdapter
 import base.boudicca.keyfilters.KeySelector
@@ -28,12 +32,12 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
-import java.net.URI
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.util.*
+import java.util.Locale
+import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 // we do not want long-running events on our site, so we filter for events short then 30 days
@@ -51,6 +55,8 @@ class EventService @Autowired constructor(
 ) {
     companion object {
         private val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy 'um' HH:mm 'Uhr'", Locale.GERMAN)
+        private val formatterDateWithoutTime = DateTimeFormatter.ofPattern("dd.MM.yyyy", Locale.GERMAN)
+        private val formatterTime = DateTimeFormatter.ofPattern("HH:mm", Locale.GERMAN)
         private val localDateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         private val additionalMapQueryParts = listOf(hasField(SemanticKeys.LOCATION_OSM_ID))
         private val logger = KotlinLogging.logger {}
@@ -165,8 +171,14 @@ class EventService @Autowired constructor(
     private fun mapEvent(event: StructuredEvent): Map<String, Any?> {
         return mapOf(
             "name" to event.name,
-            "startDate" to formatDate(event.startDate),
+            "startDate" to formatDate(event.startDate, formatter),
             "startDateISO" to event.startDate.toString(),
+            "startDateWithoutTime" to formatDate(event.startDate, formatterDateWithoutTime),
+            "startTime" to formatDate(event.startDate, formatterTime),
+            "endDate" to formatDate(getDateProperty(event, SemanticKeys.ENDDATE), formatter),
+            "endDateISO" to getDateProperty(event, SemanticKeys.ENDDATE).toString(),
+            "endDateWithoutTime" to formatDate(getDateProperty(event, SemanticKeys.ENDDATE), formatterDateWithoutTime),
+            "endTime" to formatDate(getDateProperty(event, SemanticKeys.ENDDATE), formatterTime),
             "description" to getRichTextProperty(event, SemanticKeys.DESCRIPTION),
             "url" to getTextProperty(event, SemanticKeys.URL),
             "locationName" to getTextProperty(event, SemanticKeys.LOCATION_NAME),
@@ -228,6 +240,13 @@ class EventService @Autowired constructor(
                 }
             }
             .orElseGet { null }
+    }
+
+    private fun getDateProperty(event: StructuredEvent, propertyName: String): OffsetDateTime? {
+        return getPropertyForFormats(event, propertyName, listOf(FormatVariantConstants.DATE_FORMAT_NAME))
+            .map { it.second }
+            .map { DateFormatAdapter().fromString(it) }
+            .getOrNull()
     }
 
     private fun getPropertyForFormats(
@@ -304,8 +323,11 @@ class EventService @Autowired constructor(
         return null
     }
 
-    private fun formatDate(startDate: OffsetDateTime): String {
-        return formatter.format(startDate.atZoneSameInstant(ZoneId.of("Europe/Vienna")))
+    private fun formatDate(startDate: OffsetDateTime?, dateFormatter: DateTimeFormatter): String? {
+        if (startDate == null) {
+            return null
+        }
+        return dateFormatter.format(startDate.atZoneSameInstant(ZoneId.of("Europe/Vienna")))
     }
 
     private fun frontEndName(category: EventCategory): String {

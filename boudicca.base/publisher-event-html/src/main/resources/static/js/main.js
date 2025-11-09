@@ -27,8 +27,8 @@ document.addEventListener("DOMContentLoaded", () => {
     modal.style.display = "block";
     // whitespace pre-line property in css allows line breaks in text but also
     // adds leading ones we don't need, so we have to trim the text here
-    const articleText = modal.querySelector("article p");
-    articleText.innerHTML = articleText.innerHTML.trim();
+    const articleContent = modal.querySelector("article>*");
+    articleContent.innerHTML = articleContent.innerHTML.trim();
     document.body.style.overflow = "hidden";
     const closeButton = modalContent.querySelector(".modal-close");
     lastFocusedEventCard = eventCard;
@@ -395,4 +395,9 @@ document.addEventListener("DOMContentLoaded", () => {
   multiselectFilterInputs.forEach( (identifier) => {
     document.getElementById("filter-" + identifier).addEventListener("input", () => filterMultiselectFieldsByInput(identifier));
   })
+
+  document.querySelectorAll(".markdown").forEach(mdContainer => {
+    mdContainer.innerHTML = marked.parse(mdContainer.textContent.trim());
+  });
+
 });

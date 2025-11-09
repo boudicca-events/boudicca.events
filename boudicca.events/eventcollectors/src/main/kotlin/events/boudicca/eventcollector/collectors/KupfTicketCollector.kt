@@ -9,6 +9,7 @@ import base.boudicca.model.structured.dsl.structuredEvent
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
 import com.beust.klaxon.lookup
+import com.vladsch.flexmark.html2md.converter.FlexmarkHtmlConverter
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.safety.Safelist
@@ -51,6 +52,7 @@ class KupfTicketCollector : TwoStepEventCollector<String>("kupfticket") {
 
         val name = eventJson["title"] as String
         val description = htmlToCleanTextWithLineBreaks(eventJson["description"].toString())
+        val markdownDescription = htmlToMarkdown(eventJson["description"].toString())
         val url = "$baseUrl/" + (eventJson["slug"] as String)
         val location = eventJson.lookup<String>("location.title").first()
         val startDate = parseDate(eventJson.lookup<String>("date.start").first())
@@ -67,6 +69,7 @@ class KupfTicketCollector : TwoStepEventCollector<String>("kupfticket") {
 
         return structuredEvent(name, startDate) {
             withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
+            withProperty(SemanticKeys.DESCRIPTION_MARKDOWN_PROPERTY, markdownDescription)
             withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(url))
             withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, locationName)
             withProperty(SemanticKeys.LOCATION_ADDRESS_PROPERTY, locationAddress)
@@ -97,5 +100,9 @@ class KupfTicketCollector : TwoStepEventCollector<String>("kupfticket") {
         doc.select("br, p, div, li, tr, h1, h2, h3, h4, h5, h6").append("\\n")
         val cleaned = Jsoup.clean(doc.html(), "", Safelist.none(), Document.OutputSettings().prettyPrint(false))
         return cleaned.replace("\\n", "\n").replace("\\s+".toRegex()) { it.value[0].toString() }.trim()
+    }
+
+    private fun htmlToMarkdown(html: String): String {
+        return FlexmarkHtmlConverter.builder().build().convert(html)
     }
 }

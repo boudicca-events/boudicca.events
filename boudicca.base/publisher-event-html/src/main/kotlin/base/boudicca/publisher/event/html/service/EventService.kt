@@ -191,11 +191,14 @@ class EventService @Autowired constructor(
             "locationAddress" to getTextProperty(event, SemanticKeys.LOCATION_ADDRESS),
             "city" to getTextProperty(event, SemanticKeys.LOCATION_CITY),
             "tags" to getListProperty(event, SemanticKeys.TAGS),
+            "types" to getListProperty(event, SemanticKeys.TYPE),
             "category" to mapCategory(getTextProperty(event, SemanticKeys.CATEGORY)),
             "pictureUuid" to getPictureUuid(event),
             "pictureAltText" to getTextProperty(event, SemanticKeys.PICTURE_ALT_TEXT),
             "accessibilityProperties" to getAllAccessibilityValues(event),
             "pictureCopyright" to getTextProperty(event, SemanticKeys.PICTURE_COPYRIGHT),
+            "bandNames" to getListProperty(event, SemanticKeys.CONCERT_BANDLIST),
+            "concertGenres" to getListProperty(event, SemanticKeys.CONCERT_GENRE),
         )
     }
 

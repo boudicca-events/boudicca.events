@@ -125,15 +125,23 @@
                                     </div>
                                 </div>
                             {{/or}}
-                            {{#if event.category}}
+
+                            {{#or event.category event.types}}
                                 <div class="event-details">
                                     <svg height="24px" width="24px" title="Kategorie Logo" viewBox="0 0 512 512" aria-label="Kategorie des Events">
                                         <use xlink:href="#category"></use>
                                     </svg>
                                     <!--TODO we need to have two properties here, one for logos, one for displaying-->
-                                    <p>{{event.category}}</p>
+                                    <div class="event-modal-chips">
+                                        {{#if event.category}}
+                                            <span class="event-modal-chip event-modal-chip-{{event.category}}">{{event.category}}</span>
+                                        {{/if}}
+                                        {{#each event.types}}
+                                            <span class="event-modal-chip event-modal-chip-{{event.category}}">{{this}}</span>
+                                        {{/each}}
+                                    </div>
                                 </div>
-                            {{/if}}
+                            {{/or}}
 
                             {{#if event.accessibilityProperties}}
                                 <div class="event-details">
@@ -161,6 +169,32 @@
                                 </div>
                             {{/if}}
                         </div>
+
+                        {{#if event.concertGenres}}
+                            <div class="event-details">
+                                <svg height="24px" width="24px" title="Event-Typ Logo" viewBox="0 0 512 512" aria-label="Kategorie des Events">
+                                    <use xlink:href="#music"></use>
+                                </svg>
+                                <div class="event-modal-chips">
+                                    {{#each event.concertGenres}}
+                                        <span class="event-modal-chip event-modal-chip-{{event.category}}">{{this}}</span>
+                                    {{/each}}
+                                </div>
+                            </div>
+                        {{/if}}
+
+                        {{#if event.bandNames}}
+                            <div class="event-details">
+                                <svg height="24px" width="24px" title="Event-Typ Logo" viewBox="0 0 512 512" aria-label="Kategorie des Events">
+                                    <use xlink:href="#music"></use>
+                                </svg>
+                                <div class="event-modal-chips">
+                                    {{#each event.bandNames}}
+                                        <span class="event-modal-chip event-modal-chip-{{event.category}}">{{this}}</span>
+                                    {{/each}}
+                                </div>
+                            </div>
+                        {{/if}}
 
                         {{#if event.url}}
                             <a class="anchor-to-eventmodal" href="{{event.url}}" target="_blank" data-modal-last-focusable-element aria-label="Zur Eventseite von {{event.name}} (neues Fenster wird geöffnet)">

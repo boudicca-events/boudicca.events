@@ -18,7 +18,10 @@ class E2EGeneralTestData : ArgumentsProvider {
                 mapOf(
                     SemanticKeys.LOCATION_NAME to listOf("Location1", "Location2", "Location3"),
                     SemanticKeys.LOCATION_CITY to listOf("City1", "City2", "City3"),
-                    SemanticKeys.CONCERT_BANDLIST to listOf("Band1", "Band2", "Band3")
+                    SemanticKeys.CONCERT_BANDLIST to listOf("Band1", "Band2", "Band3"),
+                    SemanticKeys.TAGS to emptyList(),
+                    SemanticKeys.TYPE to emptyList(),
+                    SemanticKeys.CONCERT_GENRE to emptyList()
                 )
             )
         )
@@ -39,7 +42,10 @@ class E2ESingleEventTestData : ArgumentsProvider {
                 mapOf(
                     SemanticKeys.LOCATION_NAME to listOf("Location1", "Location2", "Location3"),
                     SemanticKeys.LOCATION_CITY to listOf("City1", "City2", "City3"),
-                    SemanticKeys.CONCERT_BANDLIST to listOf("Band1", "Band2", "Band3")
+                    SemanticKeys.CONCERT_BANDLIST to listOf("Band1", "Band2", "Band3"),
+                    SemanticKeys.TAGS to emptyList(),
+                    SemanticKeys.TYPE to emptyList(),
+                    SemanticKeys.CONCERT_GENRE to emptyList()
                 )
             )
         )
@@ -72,7 +78,10 @@ class E2ESingleEventWithoutURL : ArgumentsProvider {
                 mapOf(
                     SemanticKeys.LOCATION_NAME to listOf("Location1", "Location2", "Location3"),
                     SemanticKeys.LOCATION_CITY to listOf("City1", "City2", "City3"),
-                    SemanticKeys.CONCERT_BANDLIST to listOf("Band1", "Band2", "Band3")
+                    SemanticKeys.CONCERT_BANDLIST to listOf("Band1", "Band2", "Band3"),
+                    SemanticKeys.TAGS to emptyList(),
+                    SemanticKeys.TYPE to emptyList(),
+                    SemanticKeys.CONCERT_GENRE to emptyList()
                 )
             )
         )
@@ -104,7 +113,10 @@ class SingleEventWithA11YInformation : ArgumentsProvider {
                 mapOf(
                     SemanticKeys.LOCATION_NAME to listOf("Location1", "Location2", "Location3"),
                     SemanticKeys.LOCATION_CITY to listOf("City1", "City2", "City3"),
-                    SemanticKeys.CONCERT_BANDLIST to listOf("Band1", "Band2", "Band3")
+                    SemanticKeys.CONCERT_BANDLIST to listOf("Band1", "Band2", "Band3"),
+                    SemanticKeys.TAGS to emptyList(),
+                    SemanticKeys.TYPE to emptyList(),
+                    SemanticKeys.CONCERT_GENRE to emptyList()
                 )
             )
         )
@@ -137,7 +149,10 @@ class ListOfEventWithDifferentNameToBeSearchable : ArgumentsProvider {
                 mapOf(
                     SemanticKeys.LOCATION_NAME to listOf("Location1", "Location2", "Location3"),
                     SemanticKeys.LOCATION_CITY to listOf("City1", "City2", "City3"),
-                    SemanticKeys.CONCERT_BANDLIST to listOf("Band1", "Band2", "Band3")
+                    SemanticKeys.CONCERT_BANDLIST to listOf("Band1", "Band2", "Band3"),
+                    SemanticKeys.TAGS to emptyList(),
+                    SemanticKeys.TYPE to emptyList(),
+                    SemanticKeys.CONCERT_GENRE to emptyList()
                 )
             )
         )
@@ -170,7 +185,10 @@ class ListOfFilterableEvents : ArgumentsProvider {
                 mapOf(
                     SemanticKeys.LOCATION_NAME to listOf("Theater", "Cinema", "Sport Complex"),
                     SemanticKeys.LOCATION_CITY to listOf("Linz", "Graz", "Wien"),
-                    SemanticKeys.CONCERT_BANDLIST to listOf("Imagine Dragons", "Beatles", "Metallica")
+                    SemanticKeys.CONCERT_BANDLIST to listOf("Imagine Dragons", "Beatles", "Metallica"),
+                    SemanticKeys.TAGS to emptyList(),
+                    SemanticKeys.TYPE to emptyList(),
+                    SemanticKeys.CONCERT_GENRE to emptyList()
                 )
             )
         )

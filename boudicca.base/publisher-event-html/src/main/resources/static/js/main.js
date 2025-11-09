@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const header = document.querySelector("header");
   const accessibilityFlags = document.getElementsByName("flags");
   const map = document.getElementById("map");
-  const multiselectFilterInputs = ["locationCities", "locationNames", "bandNames", "tags"];
+  const multiselectFilterInputs = ["locationCities", "locationNames", "bandNames", "tags", "types", "concertGenres"];
   let lastFocusedEventCard = null;
 
 

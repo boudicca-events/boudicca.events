@@ -116,7 +116,9 @@ class EventService @Autowired constructor(
             queryParts.add(equals(flag!!, "true"))
         }
         addSubqueryOfFieldConnectedByOr(queryParts, SemanticKeys.TAGS, searchDTO.tags)
+        addSubqueryOfFieldConnectedByOr(queryParts, SemanticKeys.TYPE, searchDTO.types)
         addSubqueryOfFieldConnectedByOr(queryParts, SemanticKeys.CONCERT_BANDLIST, searchDTO.bandNames)
+        addSubqueryOfFieldConnectedByOr(queryParts, SemanticKeys.CONCERT_GENRE, searchDTO.concertGenres)
         if (searchDTO.includeRecurring != true) {
             queryParts.add(
                 or(
@@ -142,7 +144,9 @@ class EventService @Autowired constructor(
                     FilterQueryEntryDTO(SemanticKeys.LOCATION_NAME),
                     FilterQueryEntryDTO(SemanticKeys.LOCATION_CITY),
                     FilterQueryEntryDTO(SemanticKeys.TAGS),
+                    FilterQueryEntryDTO(SemanticKeys.TYPE),
                     FilterQueryEntryDTO(SemanticKeys.CONCERT_BANDLIST),
+                    FilterQueryEntryDTO(SemanticKeys.CONCERT_GENRE),
                 )
             )
         )
@@ -153,7 +157,9 @@ class EventService @Autowired constructor(
             filters[SemanticKeys.LOCATION_NAME]!!.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Triple(it, it, frontEndId(it)) },
             filters[SemanticKeys.LOCATION_CITY]!!.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Triple(it, it, frontEndId(it)) },
             filters[SemanticKeys.TAGS]!!.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Triple(it, it, frontEndId(it)) },
+            filters[SemanticKeys.TYPE]!!.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Triple(it, it, frontEndId(it)) },
             filters[SemanticKeys.CONCERT_BANDLIST]!!.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Triple(it, it, frontEndId(it)) },
+            filters[SemanticKeys.CONCERT_GENRE]!!.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Triple(it, it, frontEndId(it)) },
         )
     }
 
@@ -408,7 +414,9 @@ class EventService @Autowired constructor(
         val locationNames: List<Triple<String, String, String>>,
         val locationCities: List<Triple<String, String, String>>,
         val tags: List<Triple<String, String, String>>,
+        val types: List<Triple<String, String, String>>,
         val bandNames: List<Triple<String, String, String>>,
+        val concertGenres: List<Triple<String, String, String>>,
     )
 
     data class RichText(val isMarkdown: Boolean, val value: String)

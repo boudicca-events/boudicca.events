@@ -397,7 +397,7 @@ document.addEventListener("DOMContentLoaded", () => {
   })
 
   document.querySelectorAll(".markdown").forEach(mdContainer => {
-    mdContainer.innerHTML = marked.parse(mdContainer.textContent.trim());
+    mdContainer.innerHTML = DOMPurify.sanitize(marked.parse(mdContainer.textContent.trim()));
   });
 
 });

@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const header = document.querySelector("header");
   const accessibilityFlags = document.getElementsByName("flags");
   const map = document.getElementById("map");
-  const multiselectFilterInputs = ["locationCities", "locationNames", "bandNames"];
+  const multiselectFilterInputs = ["locationCities", "locationNames", "bandNames", "tags", "types", "concertGenres"];
   let lastFocusedEventCard = null;
 
 
@@ -338,8 +338,8 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById(value).checked = true;
       } else if (key === "includeRecurring") {
        document.getElementById(key).checked = true;
-      } else if (["category", "locationCities", "locationNames", "bandNames"].includes(key)) {
-        const checkbox = document.getElementById(key + "-" + value);
+      } else if (key === "category" || multiselectFilterInputs.includes(key)) {
+        const checkbox = document.getElementById(key + "-" + value.replaceAll(" ", "-"));
         checkbox.checked = true;
         toggleCheckboxLabelsByCheckbox(checkbox)
       } else {

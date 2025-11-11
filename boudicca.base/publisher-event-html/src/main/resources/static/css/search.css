@@ -6,7 +6,7 @@
     flex-wrap: wrap;
     margin: 0 0 24px 0;
     border-bottom: 1px solid var(--color-main-grey);
-    gap: 20px 30px;
+    gap: 40px;
     justify-content: space-around;
 }
 
@@ -18,15 +18,21 @@
 
 fieldset {
     border: none;
-    flex-basis: 30%;
-    flex-grow: 5;
     padding: 0;
     max-width: max-content;
+    flex-basis: 40%;
 }
 
 fieldset[data-category-wanted="SPORT"], .dateFieldSet {
-    flex-basis: 10%;
-    flex-grow: 1;
+    min-width: max-content;
+}
+
+#fieldset-category {
+    max-width: min-content;
+}
+
+#fieldset-category .multiselect-labels {
+    height: max-content;
 }
 
 legend {
@@ -39,7 +45,7 @@ legend {
 
 #closeDrawerButton {
     width: 100%;
-    margin-bottom: -24px;
+    margin-bottom: -34px;
     text-align: end;
     font-size: var(--font-size-xlarge);
     position: relative;
@@ -103,7 +109,7 @@ legend {
 }
 
 #drawer input.filter {
-    max-width: 400px;
+    max-width: 350px;
     margin-bottom: 0;
 }
 
@@ -126,19 +132,17 @@ legend {
 
 .multiselect-wrapper {
     font-size: var(--font-size-small);
-    max-width: 400px;
-    min-width: 180px;
+    max-width: 350px;
+    min-width: 200px;
+    max-height: 250px;
     display: flex;
     flex-direction: column;
-    max-height: 300px;
     gap: 5px;
 }
 
 .multiselect-chips {
     width: 100%;
     overflow: scroll;
-    flex-grow: 5;
-    flex-basis: 20%;
     max-height: 150px;
     padding-bottom: 5px;
     display: inline-block;
@@ -147,9 +151,7 @@ legend {
 .multiselect-labels {
     width: 100%;
     overflow: scroll;
-    flex-shrink: 5;
-    flex-basis: 90%;
-    max-height: 230px;
+    height: 250px;
     box-shadow: #eee 2px 2px 5px;
     color: var(--font-color-lighter);
 }
@@ -167,6 +169,9 @@ legend {
 .multiselect-labels ul li label {
     width: 100%;
     display: block;
+    border-radius: var(--border-radius-medium);
+    padding-left: 8px;
+    margin-left: -5px;
 }
 
 .multiselect-wrapper input[type=checkbox], .chips {
@@ -200,9 +205,11 @@ input[type=checkbox]:checked + label.chips:hover::before {
     .header-date-search {
         flex-direction: column;
     }
+}
 
-    fieldset {
-        flex-basis: 40%;
+@media only screen and (max-width: 500px) {
+     fieldset {
+        flex-basis: 90%;
     }
 }
 

@@ -13,9 +13,12 @@ data class SearchDTO(
     @RequestParam("flags", required = false) var flags: List<String?>?,
     @RequestParam("durationShorter", required = false) var durationShorter: Double?,
     @RequestParam("durationLonger", required = false) var durationLonger: Double?,
+    @RequestParam("tags", required = false) var tags: List<String?>?,
+    @RequestParam("types", required = false) var types: List<String?>?,
     @RequestParam("bandNames", required = false) var bandNames: List<String?>?,
+    @RequestParam("concertGenres", required = false) var concertGenres: List<String?>?,
     @RequestParam("includeRecurring", required = false) var includeRecurring: Boolean?,
     @RequestParam("sportParticipation", required = false) var sportParticipation: String?,
 ) {
-    constructor() : this(null, null, null, null, null, null, null, null, null, null, null, null, null)
+    constructor() : this(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null)
 }

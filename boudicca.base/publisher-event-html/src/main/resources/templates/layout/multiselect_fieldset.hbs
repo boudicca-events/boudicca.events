@@ -1,8 +1,8 @@
 
 {{#if data-category}}
-    <fieldset data-category-wanted="{{data-category}}" class="hidden">
+    <fieldset id="fieldset-{{identifier}}" data-category-wanted="{{data-category}}" class="hidden">
 {{else}}
-    <fieldset>
+    <fieldset id="fieldset-{{identifier}}">
 {{/if}}
 
     {{#if legend}}

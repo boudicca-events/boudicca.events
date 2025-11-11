@@ -5,7 +5,11 @@ import base.boudicca.api.search.SearchResultDTO
 import base.boudicca.model.Event
 import base.boudicca.publisher.event.html.fixture.E2ETestFixture
 import base.boudicca.publisher.event.html.service.SearchServiceCaller
-import base.boudicca.publisher.event.html.testdata.*
+import base.boudicca.publisher.event.html.testdata.E2EGeneralTestData
+import base.boudicca.publisher.event.html.testdata.E2ESingleEventTestData
+import base.boudicca.publisher.event.html.testdata.ListOfEventWithDifferentNameToBeSearchable
+import base.boudicca.publisher.event.html.testdata.ListOfFilterableEvents
+import base.boudicca.publisher.event.html.testdata.SingleEventWithA11YInformation
 import com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
@@ -67,7 +71,8 @@ class PublisherHtmlApplicationE2ETests : E2ETestFixture() {
         page.navigate("http://localhost:$port/")
 
         assertThat(page.locator(".event-details").first()).containsText("01.01.2023 um 13:00 Uhr")
-        assertThat(page.locator(".event-details").last()).containsText("Theater, Linz")
+        assertThat(page.locator(".event-details").last()).containsText("Theater")
+        assertThat(page.locator(".event-details").last()).containsText("Linz")
         assertThat(page.locator(".event-title")).equals("Musical Event in Innenstadt")
     }
 

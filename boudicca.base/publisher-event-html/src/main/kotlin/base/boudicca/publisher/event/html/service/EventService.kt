@@ -1,7 +1,11 @@
 package base.boudicca.publisher.event.html.service
 
 import base.boudicca.SemanticKeys
-import base.boudicca.api.search.*
+import base.boudicca.api.search.FilterQueryDTO
+import base.boudicca.api.search.FilterQueryEntryDTO
+import base.boudicca.api.search.QueryDTO
+import base.boudicca.api.search.SearchResultDTO
+import base.boudicca.format.DateFormatAdapter
 import base.boudicca.format.ListFormatAdapter
 import base.boudicca.format.NumberFormatAdapter
 import base.boudicca.keyfilters.KeySelector
@@ -28,12 +32,12 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
-import java.net.URI
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.util.*
+import java.util.Locale
+import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 // we do not want long-running events on our site, so we filter for events short then 30 days
@@ -51,6 +55,8 @@ class EventService @Autowired constructor(
 ) {
     companion object {
         private val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy 'um' HH:mm 'Uhr'", Locale.GERMAN)
+        private val formatterDateWithoutTime = DateTimeFormatter.ofPattern("dd.MM.yyyy", Locale.GERMAN)
+        private val formatterTime = DateTimeFormatter.ofPattern("HH:mm", Locale.GERMAN)
         private val localDateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         private val additionalMapQueryParts = listOf(hasField(SemanticKeys.LOCATION_OSM_ID))
         private val logger = KotlinLogging.logger {}
@@ -109,7 +115,10 @@ class EventService @Autowired constructor(
         for (flag in (searchDTO.flags ?: emptyList()).filter { !it.isNullOrBlank() }) {
             queryParts.add(equals(flag!!, "true"))
         }
+        addSubqueryOfFieldConnectedByOr(queryParts, SemanticKeys.TAGS, searchDTO.tags)
+        addSubqueryOfFieldConnectedByOr(queryParts, SemanticKeys.TYPE, searchDTO.types)
         addSubqueryOfFieldConnectedByOr(queryParts, SemanticKeys.CONCERT_BANDLIST, searchDTO.bandNames)
+        addSubqueryOfFieldConnectedByOr(queryParts, SemanticKeys.CONCERT_GENRE, searchDTO.concertGenres)
         if (searchDTO.includeRecurring != true) {
             queryParts.add(
                 or(
@@ -134,7 +143,10 @@ class EventService @Autowired constructor(
                 listOf(
                     FilterQueryEntryDTO(SemanticKeys.LOCATION_NAME),
                     FilterQueryEntryDTO(SemanticKeys.LOCATION_CITY),
+                    FilterQueryEntryDTO(SemanticKeys.TAGS),
+                    FilterQueryEntryDTO(SemanticKeys.TYPE),
                     FilterQueryEntryDTO(SemanticKeys.CONCERT_BANDLIST),
+                    FilterQueryEntryDTO(SemanticKeys.CONCERT_GENRE),
                 )
             )
         )
@@ -144,7 +156,10 @@ class EventService @Autowired constructor(
                 .sortedWith(Comparator.comparing({ it.second }, String.CASE_INSENSITIVE_ORDER)),
             filters[SemanticKeys.LOCATION_NAME]!!.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Triple(it, it, frontEndId(it)) },
             filters[SemanticKeys.LOCATION_CITY]!!.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Triple(it, it, frontEndId(it)) },
+            filters[SemanticKeys.TAGS]!!.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Triple(it, it, frontEndId(it)) },
+            filters[SemanticKeys.TYPE]!!.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Triple(it, it, frontEndId(it)) },
             filters[SemanticKeys.CONCERT_BANDLIST]!!.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Triple(it, it, frontEndId(it)) },
+            filters[SemanticKeys.CONCERT_GENRE]!!.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Triple(it, it, frontEndId(it)) },
         )
     }
 
@@ -162,18 +177,28 @@ class EventService @Autowired constructor(
     private fun mapEvent(event: StructuredEvent): Map<String, Any?> {
         return mapOf(
             "name" to event.name,
-            "startDate" to formatDate(event.startDate),
+            "startDate" to formatDate(event.startDate, formatter),
             "startDateISO" to event.startDate.toString(),
+            "startDateWithoutTime" to formatDate(event.startDate, formatterDateWithoutTime),
+            "startTime" to formatDate(event.startDate, formatterTime),
+            "endDate" to formatDate(getDateProperty(event, SemanticKeys.ENDDATE), formatter),
+            "endDateISO" to getDateProperty(event, SemanticKeys.ENDDATE).toString(),
+            "endDateWithoutTime" to formatDate(getDateProperty(event, SemanticKeys.ENDDATE), formatterDateWithoutTime),
+            "endTime" to formatDate(getDateProperty(event, SemanticKeys.ENDDATE), formatterTime),
             "description" to getRichTextProperty(event, SemanticKeys.DESCRIPTION),
             "url" to getTextProperty(event, SemanticKeys.URL),
             "locationName" to getTextProperty(event, SemanticKeys.LOCATION_NAME),
+            "locationAddress" to getTextProperty(event, SemanticKeys.LOCATION_ADDRESS),
             "city" to getTextProperty(event, SemanticKeys.LOCATION_CITY),
             "tags" to getListProperty(event, SemanticKeys.TAGS),
+            "types" to getListProperty(event, SemanticKeys.TYPE),
             "category" to mapCategory(getTextProperty(event, SemanticKeys.CATEGORY)),
             "pictureUuid" to getPictureUuid(event),
             "pictureAltText" to getTextProperty(event, SemanticKeys.PICTURE_ALT_TEXT),
             "accessibilityProperties" to getAllAccessibilityValues(event),
             "pictureCopyright" to getTextProperty(event, SemanticKeys.PICTURE_COPYRIGHT),
+            "bandNames" to getListProperty(event, SemanticKeys.CONCERT_BANDLIST),
+            "concertGenres" to getListProperty(event, SemanticKeys.CONCERT_GENRE),
         )
     }
 
@@ -224,6 +249,13 @@ class EventService @Autowired constructor(
                 }
             }
             .orElseGet { null }
+    }
+
+    private fun getDateProperty(event: StructuredEvent, propertyName: String): OffsetDateTime? {
+        return getPropertyForFormats(event, propertyName, listOf(FormatVariantConstants.DATE_FORMAT_NAME))
+            .map { it.second }
+            .map { DateFormatAdapter().fromString(it) }
+            .getOrNull()
     }
 
     private fun getPropertyForFormats(
@@ -300,8 +332,11 @@ class EventService @Autowired constructor(
         return null
     }
 
-    private fun formatDate(startDate: OffsetDateTime): String {
-        return formatter.format(startDate.atZoneSameInstant(ZoneId.of("Europe/Vienna")))
+    private fun formatDate(startDate: OffsetDateTime?, dateFormatter: DateTimeFormatter): String? {
+        if (startDate == null) {
+            return null
+        }
+        return dateFormatter.format(startDate.atZoneSameInstant(ZoneId.of("Europe/Vienna")))
     }
 
     private fun frontEndName(category: EventCategory): String {
@@ -381,7 +416,10 @@ class EventService @Autowired constructor(
         val categories: List<Triple<String, String, String>>,
         val locationNames: List<Triple<String, String, String>>,
         val locationCities: List<Triple<String, String, String>>,
+        val tags: List<Triple<String, String, String>>,
+        val types: List<Triple<String, String, String>>,
         val bandNames: List<Triple<String, String, String>>,
+        val concertGenres: List<Triple<String, String, String>>,
     )
 
     data class RichText(val isMarkdown: Boolean, val value: String)

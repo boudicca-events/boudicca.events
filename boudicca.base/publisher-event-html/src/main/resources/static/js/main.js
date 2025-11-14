@@ -19,6 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const map = document.getElementById("map");
   const multiselectFilterInputs = ["locationCities", "locationNames", "bandNames"];
   let lastFocusedEventCard = null;
+  const markdownForbiddenTags = ['img'];
 
 
   const openModal = (eventCard) => {
@@ -29,6 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // adds leading ones we don't need, so we have to trim the text here
     const articleContent = modal.querySelector("article>*");
     articleContent.innerHTML = articleContent.innerHTML.trim();
+    parseMarkdownInModal();
     document.body.style.overflow = "hidden";
     const closeButton = modalContent.querySelector(".modal-close");
     lastFocusedEventCard = eventCard;
@@ -37,6 +39,13 @@ document.addEventListener("DOMContentLoaded", () => {
       closeModal();
     })
   };
+
+  const parseMarkdownInModal = () => {
+    const mdContainer = modal.querySelector(".markdown");
+    if (mdContainer != null){
+      mdContainer.innerHTML = DOMPurify.sanitize(marked.parse(mdContainer.innerHTML), {FORBID_TAGS: markdownForbiddenTags});
+    }
+  }
 
   const closeModal = () => {
     modal.style.display = "none";
@@ -395,9 +404,5 @@ document.addEventListener("DOMContentLoaded", () => {
   multiselectFilterInputs.forEach( (identifier) => {
     document.getElementById("filter-" + identifier).addEventListener("input", () => filterMultiselectFieldsByInput(identifier));
   })
-
-  document.querySelectorAll(".markdown").forEach(mdContainer => {
-    mdContainer.innerHTML = DOMPurify.sanitize(marked.parse(mdContainer.textContent.trim()));
-  });
 
 });

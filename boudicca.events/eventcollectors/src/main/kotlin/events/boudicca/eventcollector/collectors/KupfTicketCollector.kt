@@ -103,7 +103,8 @@ class KupfTicketCollector : TwoStepEventCollector<String>("kupfticket") {
     }
 
     private fun htmlToMarkdown(html: String): String {
-        val cleanHtml = Jsoup.clean(html, Safelist.relaxed()) // remove unsafe tags like script, iframe, embed, etc.
+        // remove unsafe tags like script, iframe, embed, etc.
+        val cleanHtml = Jsoup.clean(html, Safelist.relaxed().removeTags("img"))
         return FlexmarkHtmlConverter.builder().build().convert(cleanHtml)
     }
 }

@@ -1,8 +1,7 @@
 {{#if property}}
     {{#if property.isMarkdown}}
-        THIS IS MARKDOWN!!!! <!--TODO render markdown-->
-        {{property.value}}
+        <div class="markdown">{{property.value}}</div>
     {{else}}
-        {{property.value}}
+        <p>{{property.value}}</p>
     {{/if}}
 {{/if}}

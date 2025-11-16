@@ -13,3 +13,7 @@ dependencies {
     jmh(libs.jackson.databind.jsr310)
     jmh(libs.jackson.databind)
 }
+
+tasks.named("assemble") {
+    dependsOn(tasks.named("jmhClasses"))
+}

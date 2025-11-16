@@ -36,7 +36,7 @@ import java.util.concurrent.ConcurrentHashMap
 private const val SORTING_RATIO = 3
 
 @Suppress("detekt:TooManyFunctions")
-class OptimizingEvaluator(rawEntries: Collection<Entry>, private val clock: Clock) : Evaluator {
+class OptimizingEvaluator(rawEntries: Collection<Entry>, private val clock: Clock = Clock.systemDefaultZone()) : Evaluator {
 
     private val dateCache = ConcurrentHashMap<String, OffsetDateTime>()
     private val entries = Utils.order(rawEntries, dateCache)

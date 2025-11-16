@@ -33,7 +33,7 @@ import java.time.format.DateTimeParseException
 import java.util.concurrent.ConcurrentHashMap
 
 @Suppress("detekt:LongMethod", "detekt:CyclomaticComplexMethod")
-class SimpleEvaluator(rawEntries: Collection<Entry>, private val clock: Clock) : Evaluator {
+class SimpleEvaluator(rawEntries: Collection<Entry>, private val clock: Clock = Clock.systemDefaultZone()) : Evaluator {
 
     private val dateCache = ConcurrentHashMap<String, OffsetDateTime>()
     private val events = Utils.order(rawEntries, dateCache).map { it.toStructuredEntry() }

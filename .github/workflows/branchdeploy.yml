@@ -30,7 +30,7 @@ jobs:
         with:
           url: ${{ github.event.issue.pull_request.url }}
           method: GET
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v5.0.1
         with:
           repository: ${{ fromJson(steps.pr.outputs.response).head.repo.full_name }}
           ref: ${{ fromJson(steps.pr.outputs.response).head.ref }}

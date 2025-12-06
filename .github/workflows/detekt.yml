@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6.0.1
 
       - name: detekt
         uses: alaegin/Detekt-Action@b43f1c93f8b0e1aedb1bf41719220eee3b2cd49b # v1.23.7

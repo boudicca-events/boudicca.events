@@ -2,7 +2,7 @@ package base.boudicca.dateparser.dateparser.impl
 
 import base.boudicca.dateparser.dateparser.DateParserConfig
 
-@Suppress("TooManyFunctions")
+@Suppress("TooManyFunctions", "MagicNumber")
 internal object Patterns {
     //patterns which we are pretty certain about, those are not exhaustive
     val PATTERNS_GOOD_GUESSES = listOf(

@@ -71,60 +71,20 @@ class OptimizingEvaluator(rawEntries: Collection<Entry>, private val clock: Cloc
         )
     }
 
-    private fun evaluateExpression(expression: Expression): BitSet {
-        when (expression) {
-            is EqualsExpression -> {
-                return equalsExpression(expression)
-            }
-
-            is ContainsExpression -> {
-                return containsExpression(expression)
-            }
-
-            is NotExpression -> {
-                return notExpression(expression)
-            }
-
-            is AndExpression -> {
-                return andExpression(expression)
-            }
-
-            is OrExpression -> {
-                return orExpression(expression)
-            }
-
-            is BeforeExpression -> {
-                return beforeExpression(expression)
-            }
-
-            is AfterExpression -> {
-                return afterExpression(expression)
-            }
-
-            is DurationLongerExpression -> {
-                return durationLongerExpression(expression)
-            }
-
-            is DurationShorterExpression -> {
-                return durationShorterExpression(expression)
-            }
-
-            is HasFieldExpression -> {
-                return hasFieldExpression(expression)
-            }
-
-            is IsInNextSecondsExpression -> {
-                return isInNextSecondsExpression(expression)
-            }
-
-            is IsInLastSecondsExpression -> {
-                return isInLastSecondsExpression(expression)
-            }
-
-            else -> {
-                throw QueryException("unknown expression kind $expression")
-            }
-        }
+    private fun evaluateExpression(expression: Expression): BitSet = when (expression) {
+        is EqualsExpression -> equalsExpression(expression)
+        is ContainsExpression -> containsExpression(expression)
+        is NotExpression -> notExpression(expression)
+        is AndExpression -> andExpression(expression)
+        is OrExpression -> orExpression(expression)
+        is BeforeExpression -> beforeExpression(expression)
+        is AfterExpression -> afterExpression(expression)
+        is DurationLongerExpression -> durationLongerExpression(expression)
+        is DurationShorterExpression -> durationShorterExpression(expression)
+        is HasFieldExpression -> hasFieldExpression(expression)
+        is IsInNextSecondsExpression -> isInNextSecondsExpression(expression)
+        is IsInLastSecondsExpression -> isInLastSecondsExpression(expression)
+        else -> throw QueryException("unknown expression kind $expression")
     }
 
     private fun hasFieldExpression(expression: HasFieldExpression): BitSet {

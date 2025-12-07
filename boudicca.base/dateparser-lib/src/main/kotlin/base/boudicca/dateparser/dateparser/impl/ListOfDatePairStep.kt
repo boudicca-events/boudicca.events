@@ -8,6 +8,7 @@ internal class ListOfDatePairStep(
     private val debugTracing: DebugTracing,
     private val tokens: Tokens
 ) {
+    @Suppress("ReturnCount")
     fun solve(): ListOfDatePairSolution? {
         //TODO think if this could result in wrong results when we have the no list handling as first
         var result = trySolve(

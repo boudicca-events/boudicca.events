@@ -57,7 +57,7 @@ internal class DateParserImpl(
 
     }
 
-    @Suppress("CyclomaticComplexMethod", "MagicNumber")
+    @Suppress("CyclomaticComplexMethod", "MagicNumber", "ComplexCondition")
     private fun mapAndValidateTokens(tokens: List<Pair<TokenizerType, String>>): List<Token> {
         return tokens.map {
             val possibleTypes = mutableSetOf<ResultTypes>()

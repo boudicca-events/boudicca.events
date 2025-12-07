@@ -4,6 +4,7 @@ import base.boudicca.SemanticKeys
 import base.boudicca.TextProperty
 import base.boudicca.enricher.service.Enricher
 import base.boudicca.enricher.service.ForceUpdateEvent
+import base.boudicca.model.structured.Key
 import base.boudicca.model.structured.StructuredEvent
 import events.boudicca.enricher.service.EnricherOrderConstants
 import org.springframework.beans.factory.annotation.Autowired
@@ -38,20 +39,18 @@ class LocationEnricher @Autowired constructor(
     }
 
     private fun matches(event: StructuredEvent, locationData: Map<String, List<String>>): Boolean {
-        for (property in listOf(SemanticKeys.LOCATION_NAME_PROPERTY, SemanticKeys.LOCATION_ADDRESS_PROPERTY)) {
-            val locationDatumValue = locationData[property.getKey().name]
-            if (locationDatumValue != null) {
-                val eventData = event.getProperty(property)
-                for (eventDatum in eventData) {
-                    for (locationDatumLine in locationDatumValue) {
-                        if (eventDatum.second == locationDatumLine) {
-                            return true
-                        }
-                    }
-                }
+        return listOf(
+            SemanticKeys.LOCATION_NAME_PROPERTY,
+            SemanticKeys.LOCATION_ADDRESS_PROPERTY
+        ).any { property ->
+            val location = locationData[property.getKey().name] ?: return@any false
+
+            event.getProperty(property)
+                .map(Pair<Key, String>::second)
+                .any { eventLocation ->
+                eventLocation in location
             }
         }
-        return false
     }
 
     @EventListener

@@ -51,9 +51,9 @@ class SimpleEvaluator(rawEntries: Collection<Entry>, private val clock: Clock) :
     }
 
     private fun matchesExpression(expression: Expression, entry: StructuredEntry): Boolean {
-        when (expression) {
+        return when (expression) {
             is EqualsExpression -> {
-                return entry
+                entry
                     .filterKeys(expression.getKeyFilter())
                     .filter { EvaluatorUtil.isTextMarkdownOrList(it.first) }
                     .any {
@@ -66,7 +66,7 @@ class SimpleEvaluator(rawEntries: Collection<Entry>, private val clock: Clock) :
             }
 
             is ContainsExpression -> {
-                return entry
+                entry
                     .filterKeys(expression.getKeyFilter())
                     .filter { EvaluatorUtil.isTextMarkdownOrList(it.first) }
                     .any {
@@ -79,43 +79,49 @@ class SimpleEvaluator(rawEntries: Collection<Entry>, private val clock: Clock) :
             }
 
             is NotExpression -> {
-                return !matchesExpression(expression.getChild(), entry)
+                !matchesExpression(expression.getChild(), entry)
             }
 
             is AndExpression -> {
-                return matchesExpression(expression.getLeftChild(), entry)
+                matchesExpression(expression.getLeftChild(), entry)
                         && matchesExpression(expression.getRightChild(), entry)
             }
 
             is OrExpression -> {
-                return matchesExpression(expression.getLeftChild(), entry)
+                matchesExpression(expression.getLeftChild(), entry)
                         || matchesExpression(expression.getRightChild(), entry)
             }
 
             is BeforeExpression -> {
-                try {
-                    val dateTexts = EvaluatorUtil.getDateValues(entry, expression.getKeyFilter())
-                    return dateTexts
-                        .any {
-                            val startDate = getLocalStartDate(it)
-                            startDate.isEqual(expression.getDate()) || startDate.isBefore(expression.getDate())
-                        }
-                } catch (_: DateTimeParseException) {
-                    return false
+                fun matchBeforeExpression(expression: BeforeExpression, entry: StructuredEntry): Boolean {
+                    return try {
+                        val dateTexts = EvaluatorUtil.getDateValues(entry, expression.getKeyFilter())
+                        dateTexts
+                            .any {
+                                val startDate = getLocalStartDate(it)
+                                startDate.isEqual(expression.getDate()) || startDate.isBefore(expression.getDate())
+                            }
+                    } catch (_: DateTimeParseException) {
+                        false
+                    }
                 }
+                matchBeforeExpression(expression, entry)
             }
 
             is AfterExpression -> {
-                try {
-                    val dateTexts = EvaluatorUtil.getDateValues(entry, expression.getKeyFilter())
-                    return dateTexts
-                        .any {
-                            val startDate = getLocalStartDate(it)
-                            startDate.isEqual(expression.getDate()) || startDate.isAfter(expression.getDate())
-                        }
-                } catch (_: DateTimeParseException) {
-                    return false
+                fun matchAfterExpression(expression: AfterExpression, entry: StructuredEntry): Boolean {
+                    try {
+                        val dateTexts = EvaluatorUtil.getDateValues(entry, expression.getKeyFilter())
+                        return dateTexts
+                            .any {
+                                val startDate = getLocalStartDate(it)
+                                startDate.isEqual(expression.getDate()) || startDate.isAfter(expression.getDate())
+                            }
+                    } catch (_: DateTimeParseException) {
+                        return false
+                    }
                 }
+                matchAfterExpression(expression, entry)
             }
 
             is DurationLongerExpression -> {
@@ -125,7 +131,7 @@ class SimpleEvaluator(rawEntries: Collection<Entry>, private val clock: Clock) :
                         expression.getEndDateKeyFilter(),
                         entry, dateCache
                     )
-                return duration >= expression.getDuration().toDouble()
+                duration >= expression.getDuration().toDouble()
             }
 
             is DurationShorterExpression -> {
@@ -135,28 +141,26 @@ class SimpleEvaluator(rawEntries: Collection<Entry>, private val clock: Clock) :
                         expression.getEndDateKeyFilter(),
                         entry, dateCache
                     )
-                return duration <= expression.getDuration().toDouble()
+                duration <= expression.getDuration().toDouble()
             }
 
             is HasFieldExpression -> {
-                return entry.filterKeys(expression.getKeyFilter()).any { it.second.isNotEmpty() }
+                entry.filterKeys(expression.getKeyFilter()).any { it.second.isNotEmpty() }
             }
 
             is IsInNextSecondsExpression -> {
                 val expressionStartDate = clock.instant()
                 val expressionEndDate = clock.instant().plusSeconds(expression.getNumber().toLong())
-                return isInRange(entry, expression, expressionStartDate, expressionEndDate)
+                isInRange(entry, expression, expressionStartDate, expressionEndDate)
             }
 
             is IsInLastSecondsExpression -> {
                 val expressionStartDate = clock.instant().minusSeconds(expression.getNumber().toLong())
                 val expressionEndDate = clock.instant()
-                return isInRange(entry, expression, expressionStartDate, expressionEndDate)
+                isInRange(entry, expression, expressionStartDate, expressionEndDate)
             }
 
-            else -> {
-                throw QueryException("unknown expression kind $expression")
-            }
+            else -> throw QueryException("unknown expression kind $expression")
         }
     }
 

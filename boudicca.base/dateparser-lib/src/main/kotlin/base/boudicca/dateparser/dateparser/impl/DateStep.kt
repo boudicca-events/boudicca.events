@@ -3,7 +3,7 @@ package base.boudicca.dateparser.dateparser.impl
 import base.boudicca.dateparser.dateparser.DateParserConfig
 
 
-@Suppress("MagicNumber")
+@Suppress("MagicNumber", "NestedBlockDepth", "ReturnCount") // todo refactor this
 internal class DateStep(
     private val config: DateParserConfig,
     private val debugTracing: DebugTracing,

@@ -39,10 +39,7 @@ class AlpenvereinCollector : TwoStepEventCollector<String>("alpenverein") {
 
     override fun parseMultipleStructuredEvents(event: String): List<StructuredEvent?>? {
         val uri = URI.create(event)
-        if (uri.host.contains("alpenverein-edelweiss")) { //TODO fix those
-            return emptyList()
-        }
-        if (uri.host.contains("programm.alpenverein.wien")) { //TODO fix those
+        if (uri.host.contains("alpenverein-edelweiss") || uri.host.contains("programm.alpenverein.wien")) { //TODO fix those
             return emptyList()
         }
 

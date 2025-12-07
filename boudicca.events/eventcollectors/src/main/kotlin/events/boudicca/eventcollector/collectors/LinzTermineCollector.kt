@@ -2,8 +2,8 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.EventCollector
-import base.boudicca.dateparser.dateparser.DateParser
 import base.boudicca.api.eventcollector.util.FetcherFactory
+import base.boudicca.dateparser.dateparser.DateParser
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.Registration
 import base.boudicca.model.structured.Key
@@ -55,7 +55,7 @@ class LinzTermineCollector : EventCollector {
             .mapNotNull {
                 try {
                     Pair(it, Jsoup.parse(fetcher.fetchUrl(it.replace("http://", "https://"))))
-                } catch (ignored: RuntimeException) {
+                } catch (_: RuntimeException) {
                     //some linztermine.at links just 404 and go nowhere... not sure what this is supposed to mean
                     null
                 }
@@ -137,7 +137,7 @@ class LinzTermineCollector : EventCollector {
 
         var date = LocalDate.now(ZoneId.of("Europe/Vienna")).atStartOfDay()
         val links = mutableListOf<String>()
-        for (ignored in 1..(4 * 6)) {
+        (1..(4 * 6)).forEach { _ ->
             links.add(
                 "$eventsBaseUrl?lt_datefrom=" +
                         URLEncoder.encode(
@@ -188,7 +188,7 @@ class LinzTermineCollector : EventCollector {
 
     private fun findLocationId(event: Element): Int? {
         val idAttr = event.select("location").attr("id")
-        return if (!idAttr.isNullOrBlank()) {
+        return if (idAttr.isNotBlank()) {
             idAttr.toInt()
         } else {
             null
@@ -221,13 +221,11 @@ class LinzTermineCollector : EventCollector {
     }
 
     private fun mapEventType(eventType: Pair<Int, String>?): String {
-        if (eventType == null) {
-            return ""
+        return when {
+            eventType == null -> ""
+            eventType.first == 401 || eventType.first == 402 -> "sport"
+            else -> eventType.second
         }
-        if (eventType.first == 401 || eventType.first == 402) {
-            return "sport"
-        }
-        return eventType.second
     }
 
     private fun loadXml(s: String): Document {

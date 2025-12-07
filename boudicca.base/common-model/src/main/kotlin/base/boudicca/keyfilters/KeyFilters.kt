@@ -37,6 +37,7 @@ object KeyFilters {
 
     private fun isWildcard(keyFilter: KeyFilter) = keyFilter.name == "*"
 
+    @Suppress("ReturnCount")
     fun containsVariant(key: Key, variant: Variant): Boolean {
         if (variant.variantValue == "*") {
             return doesContainVariantName(key, variant.variantName)

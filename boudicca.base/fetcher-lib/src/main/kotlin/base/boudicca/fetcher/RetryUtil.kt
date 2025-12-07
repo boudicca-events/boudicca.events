@@ -12,7 +12,6 @@ fun <T> retry(logger: KLogger, function: () -> T): T {
 fun <T> retry(logger: KLogger, sleeper: Sleeper, function: () -> T): T {
     var lastException: Throwable? = null
     repeat(MAX_RETRIES) { _ ->
-        @Suppress("detekt.TooGenericExceptionCaught") //it is rethrown if needed
         try {
             return function()
         } catch (e: Exception) {

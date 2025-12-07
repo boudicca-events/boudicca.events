@@ -36,8 +36,7 @@ import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.util.Locale
-import java.util.Optional
+import java.util.*
 import kotlin.jvm.optionals.getOrNull
 
 // we do not want long-running events on our site, so we filter for events short then 30 days
@@ -285,6 +284,7 @@ class EventService @Autowired constructor(
         return format.variantValue == FormatVariantConstants.MARKDOWN_FORMAT_NAME
     }
 
+    @Suppress("FunctionOnlyReturningConstant") // remove this when fixing the todo
     private fun getPreferredLanguage(): String {
         return "de" //TODO make user be able to choose this
     }
@@ -346,7 +346,6 @@ class EventService @Autowired constructor(
             EventCategory.TECH -> "Technologie"
             EventCategory.SPORT -> "Sport"
             EventCategory.OTHER -> "Andere"
-            else -> "???"
         }
     }
 

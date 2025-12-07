@@ -24,7 +24,8 @@ import java.util.*
  * You can use existing properties, where each property supports a different format variant, like the [TextProperty] or [ListProperty],
  * but you can also easily create support for a new format/type by extending [GenericProperty] or [Property].
  *
- * All our [SemanticKeys] already have properties defined for them that you can use, but you can create also create new ones on the fly just by calling the constructor like `TextProperty("newProperty")`
+ * All our [SemanticKeys] already have properties defined for them that you can use, but you can create also create new ones on the fly
+ * just by calling the constructor like `TextProperty("newProperty")`
  */
 interface Property<T> {
     fun parseToString(value: T): String?

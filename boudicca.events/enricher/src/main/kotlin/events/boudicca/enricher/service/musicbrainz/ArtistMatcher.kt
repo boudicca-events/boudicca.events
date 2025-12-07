@@ -47,6 +47,7 @@ class ArtistMatcher(private val artists: List<Artist>, private val index: ByteBu
         return matchedArtists
     }
 
+    @Suppress("ReturnCount")
     private fun compare(string: String, stringIndex: Int, indexIndex: Int): Int {
         val artistName = artists[index.getInt(indexIndex * 4)].lowercaseName
 

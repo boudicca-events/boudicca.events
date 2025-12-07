@@ -51,33 +51,21 @@ class Parser(private val tokens: List<Token>) {
 
     //NotExpression = [ not ] FieldExpression
     private fun parseNotExpression(): Expression {
-        if (getCurrentTokenType() == TokenType.NOT) {
+        return if (getCurrentTokenType() == TokenType.NOT) {
             i++
-            return NotExpression(parseFieldExpression())
+            NotExpression(parseFieldExpression())
         } else {
-            return parseFieldExpression()
+            parseFieldExpression()
         }
     }
 
     //FieldExpression = grouping_open Expression grouping_close |  <all other terminal operators>
     private fun parseFieldExpression(): Expression {
-        when (getCurrentTokenType()) {
-            TokenType.GROUPING_OPEN -> {
-                return parseGrouping()
-            }
-
-            TokenType.TEXT -> {
-                return parseTextExpression()
-            }
-
-            TokenType.DURATION -> {
-                return parseDuration()
-            }
-
-            TokenType.HAS_FIELD -> {
-                return parseHasField()
-            }
-
+        return when (getCurrentTokenType()) {
+            TokenType.GROUPING_OPEN -> parseGrouping()
+            TokenType.TEXT -> parseTextExpression()
+            TokenType.DURATION -> parseDuration()
+            TokenType.HAS_FIELD -> parseHasField()
             else -> throw QueryException("invalid token ${getCurrentTokenType()}")
         }
     }
@@ -86,15 +74,15 @@ class Parser(private val tokens: List<Token>) {
         i++
         val startField = checkText()
         val endField = checkText()
-        when (getCurrentTokenType()) {
+        return when (getCurrentTokenType()) {
             TokenType.LONGER -> {
                 i++
-                return DurationLongerExpression(startField, endField, checkNumber())
+                DurationLongerExpression(startField, endField, checkNumber())
             }
 
             TokenType.SHORTER -> {
                 i++
-                return DurationShorterExpression(startField, endField, checkNumber())
+                DurationShorterExpression(startField, endField, checkNumber())
             }
 
             else -> throw QueryException("invalid duration mode ${getCurrentTokenType()}, expected longer or shorter")
@@ -103,35 +91,35 @@ class Parser(private val tokens: List<Token>) {
 
     private fun parseTextExpression(): Expression {
         val firstText = checkText()
-        when (getCurrentTokenType()) {
+        return when (getCurrentTokenType()) {
             TokenType.CONTAINS -> {
                 i++
-                return ContainsExpression(firstText, checkText())
+                ContainsExpression(firstText, checkText())
             }
 
             TokenType.EQUALS -> {
                 i++
-                return EqualsExpression(firstText, checkText())
+                EqualsExpression(firstText, checkText())
             }
 
             TokenType.BEFORE -> {
                 i++
-                return BeforeExpression(firstText, checkText())
+                BeforeExpression(firstText, checkText())
             }
 
             TokenType.AFTER -> {
                 i++
-                return AfterExpression(firstText, checkText())
+                AfterExpression(firstText, checkText())
             }
 
             TokenType.IS_IN_NEXT_SECONDS -> {
                 i++
-                return IsInNextSecondsExpression(firstText, checkNumber())
+                IsInNextSecondsExpression(firstText, checkNumber())
             }
 
             TokenType.IS_IN_LAST_SECONDS -> {
                 i++
-                return IsInLastSecondsExpression(firstText, checkNumber())
+                IsInLastSecondsExpression(firstText, checkNumber())
             }
 
             else -> throw QueryException("invalid token ${getCurrentTokenType()} following after text token")
@@ -173,9 +161,7 @@ class Parser(private val tokens: List<Token>) {
     }
 
     private fun getCurrentTokenType(): TokenType? {
-        if (i >= tokens.size) {
-            return null
-        }
-        return tokens[i].getType()
+        return if (i >= tokens.size) null
+        else tokens[i].getType()
     }
 }

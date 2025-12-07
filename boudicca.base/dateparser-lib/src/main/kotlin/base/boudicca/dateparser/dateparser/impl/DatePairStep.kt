@@ -47,6 +47,7 @@ internal class DatePairStep(
         return setOf("-", "bis", "–", "―", "—").any { value.contains(it) }
     }
 
+    @Suppress("ReturnCount")
     private fun trySolve(debugTracing: DebugTracing, groups: List<Tokens>): DatePairSolution? {
         if (groups.size == 1) {
             val startDate = DateStep(config, debugTracing, groups.single(), canGetMoreData).solve()

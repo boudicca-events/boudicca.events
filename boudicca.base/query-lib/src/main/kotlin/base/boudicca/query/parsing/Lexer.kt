@@ -56,7 +56,7 @@ class Lexer(private val query: String) {
         i = tokenEnd
     }
     
-    @Suppress("detekt:CyclomaticComplexMethod")
+    @Suppress("detekt:CyclomaticComplexMethod", "detekt:ThrowsCount")
     private fun readToken() {
         var tokenEnd = i
         while (tokenEnd < query.length) {
@@ -92,6 +92,7 @@ class Lexer(private val query: String) {
         i = tokenEnd
     }
 
+    @Suppress("ThrowsCount")
     private fun readEscapedTextToken() {
         val sb = StringBuilder()
         i++

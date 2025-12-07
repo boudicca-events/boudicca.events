@@ -3,6 +3,7 @@ package base.boudicca.dateparser.dateparser.impl
 const val MIN_MONTH_LENGTH_TO_MATCH = 3
 
 internal object MonthMappings {
+    @Suppress("MagicNumber")
     private val MONTH_MAPPINGS = mapOf(
         "januar" to 1,
         "jänner" to 1,

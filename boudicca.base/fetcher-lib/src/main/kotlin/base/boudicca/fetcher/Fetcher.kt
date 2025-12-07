@@ -99,7 +99,6 @@ class Fetcher(
             eventListeners.forEach { it.callStarted(url, content) }
             val start = clock.millis()
 
-            @Suppress("detekt.TooGenericExceptionCaught") //it will be rethrown
             val response = try {
                 request.call()
             } catch (e: Exception) {

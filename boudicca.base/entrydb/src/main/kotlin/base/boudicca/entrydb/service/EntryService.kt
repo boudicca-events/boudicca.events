@@ -6,7 +6,12 @@ import base.boudicca.entrydb.BoudiccaEntryDbProperties
 import base.boudicca.entrydb.model.InternalEventProperties
 import base.boudicca.model.Entry
 import base.boudicca.model.Event
-import base.boudicca.model.structured.*
+import base.boudicca.model.structured.KeyFilter
+import base.boudicca.model.structured.StructuredEntry
+import base.boudicca.model.structured.filterKeys
+import base.boudicca.model.structured.getProperty
+import base.boudicca.model.structured.toBuilder
+import base.boudicca.model.structured.toFlatEntry
 import base.boudicca.model.toStructuredEntry
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.DatabindException
@@ -24,7 +29,7 @@ import java.io.IOException
 import java.nio.file.Path
 import java.nio.file.StandardOpenOption
 import java.time.Duration
-import java.util.UUID
+import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
@@ -57,11 +62,11 @@ class EntryService @Autowired constructor(
             if (store.exists()) {
                 try {
                     loadStoreV3(store)
-                } catch (ignored: DatabindException) {
+                } catch (_: DatabindException) {
                     logger.info { "store had wrong format, retrying with old format v2" }
                     try {
                         loadStoreV2(store)
-                    } catch (ignored: DatabindException) {
+                    } catch (_: DatabindException) {
                         logger.info { "store had wrong format, retrying with old format v1" }
                         loadStoreV1(store)
                     }
@@ -127,7 +132,8 @@ class EntryService @Autowired constructor(
             .withProperty(SemanticKeys.BOUDICCA_ID_PROPERTY, boudiccaId)
 
         //we reflatten the entry to make sure keys are canonical
-        entries[boudiccaId] = Pair(modifiedEntry.build().toFlatEntry(), InternalEventProperties(System.currentTimeMillis()))
+        entries[boudiccaId] =
+            Pair(modifiedEntry.build().toFlatEntry(), InternalEventProperties(System.currentTimeMillis()))
 
         val collectorName = structuredEntry.getProperty(SemanticKeys.COLLECTORNAME_PROPERTY)
         if (collectorName.isNotEmpty()) {

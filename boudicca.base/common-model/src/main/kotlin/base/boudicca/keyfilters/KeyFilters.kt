@@ -1,6 +1,10 @@
 package base.boudicca.keyfilters
 
-import base.boudicca.model.structured.*
+import base.boudicca.model.structured.Key
+import base.boudicca.model.structured.KeyFilter
+import base.boudicca.model.structured.StructuredEntry
+import base.boudicca.model.structured.StructuredEvent
+import base.boudicca.model.structured.Variant
 
 /**
  * utility methods for filtering keys of Events/Entries. you can use a Key as a KeyFilter to select only matching keys of an event/entry.

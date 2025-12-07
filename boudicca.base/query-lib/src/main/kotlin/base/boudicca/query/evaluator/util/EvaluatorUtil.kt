@@ -3,7 +3,11 @@ package base.boudicca.query.evaluator.util
 import base.boudicca.format.DateFormatAdapter
 import base.boudicca.keyfilters.KeyFilters
 import base.boudicca.keyfilters.KeySelector
-import base.boudicca.model.structured.*
+import base.boudicca.model.structured.Key
+import base.boudicca.model.structured.KeyFilter
+import base.boudicca.model.structured.StructuredEntry
+import base.boudicca.model.structured.VariantConstants
+import base.boudicca.model.structured.filterKeys
 import java.time.Duration
 import java.time.OffsetDateTime
 import java.time.format.DateTimeParseException
@@ -31,7 +35,7 @@ object EvaluatorUtil {
             Duration.of(endDate.toEpochSecond() - startDate.toEpochSecond(), ChronoUnit.SECONDS)
                 .toMillis()
                 .toDouble() / MILLIS_PER_HOUR
-        } catch (e: DateTimeParseException) {
+        } catch (_: DateTimeParseException) {
             0.0
         }
     }

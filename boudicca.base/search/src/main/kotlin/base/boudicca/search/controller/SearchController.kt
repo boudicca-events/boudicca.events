@@ -1,14 +1,20 @@
 package base.boudicca.search.controller
 
 import base.boudicca.api.search.SearchApi
-import base.boudicca.api.search.model.*
+import base.boudicca.api.search.model.FilterQueryDTO
+import base.boudicca.api.search.model.FilterResultDTO
+import base.boudicca.api.search.model.QueryDTO
+import base.boudicca.api.search.model.ResultDTO
 import base.boudicca.search.BoudiccaSearchProperties
-import base.boudicca.search.service.QueryService
 import base.boudicca.search.service.FiltersService
+import base.boudicca.search.service.QueryService
 import base.boudicca.search.service.SynchronizationService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.ResponseBody
+import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class SearchController @Autowired constructor(

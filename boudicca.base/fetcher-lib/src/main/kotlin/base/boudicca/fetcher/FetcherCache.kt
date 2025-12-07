@@ -1,6 +1,13 @@
 package base.boudicca.fetcher
 
-import java.io.*
+import java.io.BufferedInputStream
+import java.io.BufferedOutputStream
+import java.io.DataInputStream
+import java.io.DataOutputStream
+import java.io.EOFException
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -72,7 +79,7 @@ class FileBackedFetcherCache(private val file: File) : FetcherCache {
                         cache[key] = entry
                     }
                 }
-        } catch (expected: EOFException) {
+        } catch (_: EOFException) {
             //just means we read all lines, the api of this stream is weird...
         }
     }

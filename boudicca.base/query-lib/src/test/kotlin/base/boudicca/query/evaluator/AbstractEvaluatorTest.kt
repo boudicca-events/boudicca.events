@@ -2,11 +2,22 @@ package base.boudicca.query.evaluator
 
 import base.boudicca.SemanticKeys
 import base.boudicca.model.Entry
-import base.boudicca.query.*
+import base.boudicca.query.AfterExpression
+import base.boudicca.query.AndExpression
+import base.boudicca.query.BeforeExpression
+import base.boudicca.query.ContainsExpression
+import base.boudicca.query.DurationLongerExpression
+import base.boudicca.query.DurationShorterExpression
+import base.boudicca.query.EqualsExpression
+import base.boudicca.query.Expression
+import base.boudicca.query.HasFieldExpression
+import base.boudicca.query.IsInLastSecondsExpression
+import base.boudicca.query.IsInNextSecondsExpression
+import base.boudicca.query.NotExpression
+import base.boudicca.query.OrExpression
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.time.Clock
-import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter

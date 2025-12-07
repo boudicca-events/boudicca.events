@@ -1,0 +1,18 @@
+style:
+  MaxLineLength:
+    maxLineLength: 120
+  ForbiddenComment:
+    active: false
+  MagicNumber:
+    excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/androidUnitTest/**', '**/androidInstrumentedTest/**', '**/jsTest/**', '**/iosTest/**', '**/*.kts', '**/eventcollector/collectors/**']
+    ignoreNumbers: ['-1', '0', '1', '2']
+    ignoreHashCodeFunction: true
+    ignorePropertyDeclaration: false
+    ignoreLocalVariableDeclaration: false
+    ignoreConstantDeclaration: true
+    ignoreCompanionObjectPropertyDeclaration: true
+    ignoreAnnotation: false
+    ignoreNamedArgument: true
+    ignoreEnums: false
+    ignoreRanges: false
+    ignoreExtensionFunctions: true

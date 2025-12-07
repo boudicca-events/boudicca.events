@@ -1,6 +1,6 @@
 [versions]
 kotlin = "2.2.20"
-detekt = "1.23.8"
+detekt = "2.0.0-alpha.1"
 jackson = "2.19.2"
 jackson-databind-nullable = "0.2.6"
 jakarta-annotation = "3.0.0"
@@ -60,7 +60,7 @@ swagger-annotations = { module = "io.swagger.core.v3:swagger-annotations", versi
 io-swagger-core-v3-swagger-gradle-plugin = { module = "io.swagger.core.v3.swagger-gradle-plugin:io.swagger.core.v3.swagger-gradle-plugin.gradle.plugin", version.ref = "swagger-core-version" }
 org-jetbrains-kotlin-jvm-gradle-plugin = { module = "org.jetbrains.kotlin.jvm:org.jetbrains.kotlin.jvm.gradle.plugin", version.ref = "kotlin" }
 org-jetbrains-kotlin-plugin-spring-gradle-plugin = { module = "org.jetbrains.kotlin.plugin.spring:org.jetbrains.kotlin.plugin.spring.gradle.plugin", version.ref = "kotlin" }
-io-gitlab-arturbosch-detekt-gradle-plugin = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
+io-gitlab-arturbosch-detekt-gradle-plugin = { module = "dev.detekt:detekt-gradle-plugin", version.ref = "detekt" }
 org-springframework-boot-gradle-plugin = { module = "org.springframework.boot:org.springframework.boot.gradle.plugin", version.ref = "org-springframework-boot-gradle-plugin" }
 org-openapi-generator-gradle-plugin = { module = "org.openapi.generator:org.openapi.generator.gradle.plugin", version.ref = "org-openapi-generator-gradle-plugin" }
 

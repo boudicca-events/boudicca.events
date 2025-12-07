@@ -1,7 +1,20 @@
 package base.boudicca
 
-import base.boudicca.format.*
-import base.boudicca.model.structured.*
+import base.boudicca.format.AbstractFormatAdapter
+import base.boudicca.format.BooleanFormatAdapter
+import base.boudicca.format.DateFormatAdapter
+import base.boudicca.format.EnumFormatAdapter
+import base.boudicca.format.ListFormatAdapter
+import base.boudicca.format.MarkdownFormatAdapter
+import base.boudicca.format.NumberFormatAdapter
+import base.boudicca.format.TextFormatAdapter
+import base.boudicca.format.UriFormatAdapter
+import base.boudicca.format.UuidFormatAdapter
+import base.boudicca.model.structured.AbstractKey
+import base.boudicca.model.structured.AbstractKeyBuilder
+import base.boudicca.model.structured.Key
+import base.boudicca.model.structured.KeyFilter
+import base.boudicca.model.structured.VariantConstants
 import java.net.URI
 import java.time.OffsetDateTime
 import java.util.*

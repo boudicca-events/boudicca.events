@@ -7,7 +7,12 @@ import assertk.assertions.isEqualTo
 import base.boudicca.SemanticKeys
 import base.boudicca.TextProperty
 import base.boudicca.model.structured.KeyFilter
-import base.boudicca.model.structured.dsl.*
+import base.boudicca.model.structured.dsl.lang
+import base.boudicca.model.structured.dsl.listFormat
+import base.boudicca.model.structured.dsl.markdownFormat
+import base.boudicca.model.structured.dsl.modify
+import base.boudicca.model.structured.dsl.structuredEvent
+import base.boudicca.model.structured.dsl.textFormat
 import org.junit.jupiter.api.Test
 import java.time.OffsetDateTime
 

@@ -10,7 +10,12 @@ import biweekly.Biweekly
 import biweekly.ICalVersion
 import biweekly.ICalendar
 import biweekly.component.VEvent
-import biweekly.property.*
+import biweekly.property.DateEnd
+import biweekly.property.DateStart
+import biweekly.property.Description
+import biweekly.property.Location
+import biweekly.property.Uid
+import biweekly.property.Url
 import io.opentelemetry.api.OpenTelemetry
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value

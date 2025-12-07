@@ -8,9 +8,27 @@ import base.boudicca.model.structured.StructuredEntry
 import base.boudicca.model.structured.filterKeys
 import base.boudicca.model.structured.toFlatEntry
 import base.boudicca.model.toStructuredEntry
-import base.boudicca.query.*
+import base.boudicca.query.AfterExpression
+import base.boudicca.query.AndExpression
+import base.boudicca.query.BeforeExpression
+import base.boudicca.query.ContainsExpression
+import base.boudicca.query.DurationLongerExpression
+import base.boudicca.query.DurationShorterExpression
+import base.boudicca.query.EqualsExpression
+import base.boudicca.query.Expression
+import base.boudicca.query.FieldAndNumberExpression
+import base.boudicca.query.HasFieldExpression
+import base.boudicca.query.IsInLastSecondsExpression
+import base.boudicca.query.IsInNextSecondsExpression
+import base.boudicca.query.NotExpression
+import base.boudicca.query.OrExpression
+import base.boudicca.query.QueryException
+import base.boudicca.query.Utils
 import base.boudicca.query.evaluator.util.EvaluatorUtil
-import java.time.*
+import java.time.Clock
+import java.time.Instant
+import java.time.LocalDate
+import java.time.OffsetDateTime
 import java.time.format.DateTimeParseException
 import java.util.concurrent.ConcurrentHashMap
 
@@ -82,7 +100,7 @@ class SimpleEvaluator(rawEntries: Collection<Entry>, private val clock: Clock) :
                             val startDate = getLocalStartDate(it)
                             startDate.isEqual(expression.getDate()) || startDate.isBefore(expression.getDate())
                         }
-                } catch (e: DateTimeParseException) {
+                } catch (_: DateTimeParseException) {
                     return false
                 }
             }
@@ -95,7 +113,7 @@ class SimpleEvaluator(rawEntries: Collection<Entry>, private val clock: Clock) :
                             val startDate = getLocalStartDate(it)
                             startDate.isEqual(expression.getDate()) || startDate.isAfter(expression.getDate())
                         }
-                } catch (e: DateTimeParseException) {
+                } catch (_: DateTimeParseException) {
                     return false
                 }
             }
@@ -157,7 +175,7 @@ class SimpleEvaluator(rawEntries: Collection<Entry>, private val clock: Clock) :
                             entryDate == expressionEndDate ||
                             (entryDate.isAfter(expressionStartDate) && entryDate.isBefore(expressionEndDate))
                 }
-        } catch (e: DateTimeParseException) {
+        } catch (_: DateTimeParseException) {
             return false
         }
     }

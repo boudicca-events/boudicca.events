@@ -5,7 +5,14 @@ import assertk.assertions.hasSize
 import assertk.assertions.isEqualTo
 import assertk.assertions.isFalse
 import assertk.assertions.isTrue
-import base.boudicca.*
+import base.boudicca.BooleanProperty
+import base.boudicca.DateProperty
+import base.boudicca.EnumProperty
+import base.boudicca.ListProperty
+import base.boudicca.MarkdownProperty
+import base.boudicca.NumberProperty
+import base.boudicca.TextProperty
+import base.boudicca.UriProperty
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import java.time.ZoneId

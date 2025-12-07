@@ -2,7 +2,7 @@ package events.boudicca.eventcollector
 
 import base.boudicca.api.eventcollector.debugger.EventCollectorDebugger
 import base.boudicca.fetcher.FileBackedFetcherCache
-import events.boudicca.eventcollector.collectors.*
+import events.boudicca.eventcollector.collectors.ZuckerfabrikCollector
 import java.io.File
 
 /**

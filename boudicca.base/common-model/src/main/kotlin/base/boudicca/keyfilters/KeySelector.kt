@@ -1,7 +1,11 @@
 package base.boudicca.keyfilters
 
 import base.boudicca.model.Event
-import base.boudicca.model.structured.*
+import base.boudicca.model.structured.Key
+import base.boudicca.model.structured.KeyFilter
+import base.boudicca.model.structured.StructuredEntry
+import base.boudicca.model.structured.StructuredEvent
+import base.boudicca.model.structured.Variant
 import base.boudicca.model.toStructuredEntry
 import java.util.*
 

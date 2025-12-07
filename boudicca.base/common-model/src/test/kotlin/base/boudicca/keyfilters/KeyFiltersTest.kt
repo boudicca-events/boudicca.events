@@ -3,7 +3,11 @@ package base.boudicca.keyfilters
 import assertk.assertThat
 import assertk.assertions.hasSize
 import base.boudicca.SemanticKeys
-import base.boudicca.model.structured.*
+import base.boudicca.model.structured.Key
+import base.boudicca.model.structured.KeyFilter
+import base.boudicca.model.structured.StructuredEntry
+import base.boudicca.model.structured.StructuredEvent
+import base.boudicca.model.structured.toEvent
 import base.boudicca.model.toStructuredEntry
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue

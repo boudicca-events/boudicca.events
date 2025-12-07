@@ -1,6 +1,10 @@
 package base.boudicca.publisher.event.html.service
 
-import base.boudicca.api.search.*
+import base.boudicca.api.search.FilterQueryDTO
+import base.boudicca.api.search.FilterResultDTO
+import base.boudicca.api.search.QueryDTO
+import base.boudicca.api.search.SearchClient
+import base.boudicca.api.search.SearchResultDTO
 import io.opentelemetry.api.OpenTelemetry
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value

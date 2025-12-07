@@ -1,18 +1,18 @@
 name: detekt
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-  schedule:
-     - cron: '42 1 * * 0'
+#  push:
+#    branches: [ "main" ]
+#  pull_request:
+#    branches: [ "main" ]
+#  schedule:
+#     - cron: '42 1 * * 0'
 
   workflow_dispatch:
 
-permissions:
-  contents: read
-  pull-requests: write
+#permissions:
+#  contents: read
+#  pull-requests: write
 
 jobs:
   detekt:
@@ -20,9 +20,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v6.0.1
-
-      - name: detekt
-        uses: alaegin/Detekt-Action@b43f1c93f8b0e1aedb1bf41719220eee3b2cd49b # v1.23.7
+      - name: Setup detekt
+        uses: peter-murray/setup-detekt@v3
         with:
-          github_token: ${{ secrets.github_token }}
+          detekt_version: v2.0.0-alpha.1
+
+      - name: Run detekt
+        run: detekt-cli --build-upon-default-config --config detekt-config.yml
+#          github_token: ${{ secrets.github_token }}

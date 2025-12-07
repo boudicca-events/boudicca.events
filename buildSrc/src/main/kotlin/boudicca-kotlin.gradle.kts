@@ -5,7 +5,7 @@
 plugins {
     id("boudicca-base")
     kotlin("jvm")
-    id("io.gitlab.arturbosch.detekt")
+    id("dev.detekt")
 }
 
 kotlin {
@@ -16,7 +16,8 @@ kotlin {
 }
 
 detekt {
-    config.setFrom("${project.rootDir}/default-detekt-config.yml")
+    buildUponDefaultConfig = true
+    config.setFrom("${project.rootDir}/detekt-config.yml")
 }
 
 val versionCatalog = versionCatalogs.named("libs")

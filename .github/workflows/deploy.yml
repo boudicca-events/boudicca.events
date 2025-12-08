@@ -35,7 +35,7 @@ jobs:
       - name: Tag And Push Docker Images
         run: ./deploy_images.sh
       - name: triggering deploy
-        uses: appleboy/ssh-action@2ead5e36573f08b82fbfce1504f1a4b05a647c6f
+        uses: appleboy/ssh-action@823bd89e131d8d508129f9443cad5855e9ba96f0
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}

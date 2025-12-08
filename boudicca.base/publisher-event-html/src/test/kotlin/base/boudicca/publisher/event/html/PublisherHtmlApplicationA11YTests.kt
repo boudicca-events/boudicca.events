@@ -1,5 +1,6 @@
 package base.boudicca.publisher.event.html
 
+import base.boudicca.api.search.FilterResultDTO
 import base.boudicca.api.search.SearchResultDTO
 import base.boudicca.model.Event
 import base.boudicca.publisher.event.html.fixture.E2ETestFixture
@@ -9,7 +10,7 @@ import com.deque.html.axecore.playwright.AxeBuilder
 import com.deque.html.axecore.results.AxeResults
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
@@ -35,21 +36,23 @@ class PublisherHtmlApplicationA11YTests : E2ETestFixture() {
     @ArgumentsSource(A11YTestData::class)
     fun shouldNotHaveAutomaticallyDetectableAccessibilityIssues(
         events: List<Event>,
-        filters: Map<String, List<String>>
+        filters: FilterResultDTO
     ) {
         setupSearchServiceCaller(events, filters)
 
         page.navigate("http://localhost:$port/")
 
         val accessibilityScanResults: AxeResults = AxeBuilder(page).analyze()
-        assertEquals(listOf<Any>(), accessibilityScanResults.violations)
+        assertThat(accessibilityScanResults.violations)
+            .withFailMessage("Found accessibility violations: %s", accessibilityScanResults.violations)
+            .isEmpty()
     }
 
     @ParameterizedTest
     @ArgumentsSource(A11YTestData::class)
     fun drawerShouldNotHaveAutomaticallyDetectableAccessibilityViolations(
         events: List<Event>,
-        filters: Map<String, List<String>>
+        filters: FilterResultDTO
     ) {
         setupSearchServiceCaller(events, filters)
 
@@ -66,10 +69,12 @@ class PublisherHtmlApplicationA11YTests : E2ETestFixture() {
             .include(Arrays.asList("#drawer"))
             .analyze()
 
-        assertEquals(listOf<Any>(), accessibilityScanResults.violations)
+        assertThat(accessibilityScanResults.violations)
+            .withFailMessage("Found accessibility violations: %s", accessibilityScanResults.violations)
+            .isEmpty()
     }
 
-    private fun setupSearchServiceCaller(events: List<Event>, filters: Map<String, List<String>>) {
+    private fun setupSearchServiceCaller(events: List<Event>, filters: FilterResultDTO) {
         every { searchServiceCaller.search(any()) } returns SearchResultDTO(events, 1, null)
         every { searchServiceCaller.getFiltersFor(any()) } returns filters
     }

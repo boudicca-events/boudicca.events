@@ -4,14 +4,12 @@ import base.boudicca.api.search.model.QueryDTO
 import base.boudicca.api.search.model.ResultDTO
 import base.boudicca.model.Entry
 import base.boudicca.query.BoudiccaQueryRunner
-import base.boudicca.query.Expression
 import base.boudicca.query.QueryException
 import base.boudicca.query.Utils
 import base.boudicca.query.evaluator.Evaluator
 import base.boudicca.query.evaluator.NoopEvaluator
 import base.boudicca.query.evaluator.OptimizingEvaluator
 import base.boudicca.query.evaluator.Page
-import base.boudicca.query.evaluator.QueryResult
 import base.boudicca.query.evaluator.SimpleEvaluator
 import base.boudicca.search.BoudiccaSearchProperties
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -58,15 +56,14 @@ class QueryService @Autowired constructor(
         } else {
             val optimizingEvaluator = OptimizingEvaluator(event.entries, clock)
             val fallbackEvaluator = SimpleEvaluator(event.entries, clock)
-            this.evaluator = object : Evaluator {
-                override fun evaluate(expression: Expression, page: Page): QueryResult {
-                    return try {
-                        optimizingEvaluator.evaluate(expression, page)
-                    } catch (e: Exception) {
-                        logger.error(e) { "optimizing evaluator threw exception" }
-                        fallbackEvaluator.evaluate(expression, page)
-                    }
+            this.evaluator = Evaluator { expression, page ->
+                try {
+                    optimizingEvaluator.evaluate(expression, page)
+                } catch (e: Exception) {
+                    logger.error(e) { "optimizing evaluator threw exception" }
+                    fallbackEvaluator.evaluate(expression, page)
                 }
+
             }
         }
     }

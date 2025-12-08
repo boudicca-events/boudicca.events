@@ -6,11 +6,10 @@ jackson = "2.19.2"
 jackson-databind-nullable = "0.2.8"
 jakarta-annotation = "3.0.0"
 javax-jaxrs = "2.1.1"
-spring-openapi-starter = "2.8.9"
-spring = "6.5.6"
-spring-boot = "3.5.6"
+spring-openapi-starter = "3.0.0"
+spring = "7.0.0"
+spring-boot = "4.0.0"
 swagger-core-version = "2.2.20"
-org-springframework-boot-gradle-plugin = "3.5.7"
 org-openapi-generator-gradle-plugin = "7.2.0"
 junit-jupiter = "5.13.4"
 assertk = "0.28.1"
@@ -39,6 +38,7 @@ spring-security-test = { module = "org.springframework.security:spring-security-
 spring-openapi-starter = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref = "spring-openapi-starter" }
 spring-boot-devtools = { module = "org.springframework.boot:spring-boot-devtools", version.ref = "spring-boot" }
 spring-boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test", version.ref = "spring-boot" }
+spring-boot-starter-webmvc-test = { module = "org.springframework.boot:spring-boot-starter-webmvc-test", version.ref = "spring-boot" }
 spring-boot-actuator = { module = "org.springframework.boot:spring-boot-starter-actuator", version.ref = "spring-boot" }
 spring-boot-starter = { module = "org.springframework.boot:spring-boot-starter", version.ref = "spring-boot" }
 
@@ -60,7 +60,7 @@ io-swagger-core-v3-swagger-gradle-plugin = { module = "io.swagger.core.v3.swagge
 org-jetbrains-kotlin-jvm-gradle-plugin = { module = "org.jetbrains.kotlin.jvm:org.jetbrains.kotlin.jvm.gradle.plugin", version.ref = "kotlin" }
 org-jetbrains-kotlin-plugin-spring-gradle-plugin = { module = "org.jetbrains.kotlin.plugin.spring:org.jetbrains.kotlin.plugin.spring.gradle.plugin", version.ref = "kotlin" }
 io-gitlab-arturbosch-detekt-gradle-plugin = { module = "dev.detekt:detekt-gradle-plugin", version.ref = "detekt" }
-org-springframework-boot-gradle-plugin = { module = "org.springframework.boot:org.springframework.boot.gradle.plugin", version.ref = "org-springframework-boot-gradle-plugin" }
+org-springframework-boot-gradle-plugin = { module = "org.springframework.boot:org.springframework.boot.gradle.plugin", version.ref = "spring-boot" }
 org-openapi-generator-gradle-plugin = { module = "org.openapi.generator:org.openapi.generator.gradle.plugin", version.ref = "org-openapi-generator-gradle-plugin" }
 
 junit-jupiter-bom = { module = "org.junit:junit-bom", version.ref = "junit-jupiter" }

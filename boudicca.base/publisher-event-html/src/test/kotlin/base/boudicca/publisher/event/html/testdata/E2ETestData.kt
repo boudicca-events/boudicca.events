@@ -6,12 +6,13 @@ import base.boudicca.publisher.event.html.util.buildEventList
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.ArgumentsProvider
+import org.junit.jupiter.params.support.ParameterDeclarations
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import java.util.stream.Stream
 
 class E2EGeneralTestData : ArgumentsProvider {
-    override fun provideArguments(p0: ExtensionContext?): Stream<Arguments> {
+    override fun provideArguments(parameterDeclarations: ParameterDeclarations, extensionContext: ExtensionContext): Stream<Arguments> {
         return Stream.of(
             Arguments.of(
                 buildEventList(30),
@@ -29,7 +30,7 @@ class E2EGeneralTestData : ArgumentsProvider {
 }
 
 class E2ESingleEventTestData : ArgumentsProvider {
-    override fun provideArguments(p0: ExtensionContext?): Stream<out Arguments> {
+    override fun provideArguments(parameterDeclarations: ParameterDeclarations, extensionContext: ExtensionContext): Stream<Arguments> {
         return Stream.of(
             Arguments.of(
                 listOf(
@@ -65,7 +66,7 @@ class E2ESingleEventTestData : ArgumentsProvider {
 }
 
 class E2ESingleEventWithoutURL : ArgumentsProvider {
-    override fun provideArguments(p0: ExtensionContext?): Stream<out Arguments> {
+    override fun provideArguments(parameterDeclarations: ParameterDeclarations, extensionContext: ExtensionContext): Stream<Arguments> {
         return Stream.of(
             Arguments.of(
                 listOf(
@@ -100,7 +101,7 @@ class E2ESingleEventWithoutURL : ArgumentsProvider {
 }
 
 class SingleEventWithA11YInformation : ArgumentsProvider {
-    override fun provideArguments(p0: ExtensionContext?): Stream<out Arguments> {
+    override fun provideArguments(parameterDeclarations: ParameterDeclarations, extensionContext: ExtensionContext): Stream<Arguments> {
         return Stream.of(
             Arguments.of(
                 listOf(
@@ -138,7 +139,7 @@ class SingleEventWithA11YInformation : ArgumentsProvider {
 }
 
 class ListOfEventWithDifferentNameToBeSearchable : ArgumentsProvider {
-    override fun provideArguments(p0: ExtensionContext?): Stream<out Arguments> {
+    override fun provideArguments(parameterDeclarations: ParameterDeclarations, extensionContext: ExtensionContext): Stream<Arguments> {
         return Stream.of(
             Arguments.of(
                 listOf(
@@ -174,7 +175,7 @@ class ListOfEventWithDifferentNameToBeSearchable : ArgumentsProvider {
 }
 
 class ListOfFilterableEvents : ArgumentsProvider {
-    override fun provideArguments(p0: ExtensionContext?): Stream<out Arguments> {
+    override fun provideArguments(parameterDeclarations: ParameterDeclarations, extensionContext: ExtensionContext): Stream<Arguments> {
         return Stream.of(
             Arguments.of(
                 listOf(

@@ -27,13 +27,14 @@ class PublisherHtmlConfiguration(private val properties: PublisherHtmlProperties
         titleValueResolver: TitleValueResolver
     ): ViewResolver {
         val viewResolver = HandlebarsViewResolver()
-        viewResolver.order = 0 //we have to decrease the order so ours is first (default is Int.MAX_VALUE)
+        viewResolver.order = 0
 
         for (helper in ConditionalHelpers.entries) {
             viewResolver.registerHelper(helper.name, helper)
         }
 
         viewResolver.setPrefix("classpath:/templates")
+        viewResolver.setFailOnMissingFile(false)
 
         if (properties.devMode) {
             viewResolver.setCacheFilter { _, _, _ -> false }

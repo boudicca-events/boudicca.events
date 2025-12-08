@@ -17,5 +17,6 @@ dependencies {
     implementation(versionCatalog.findLibrary("spring-boot-actuator").get())
     implementation(versionCatalog.findLibrary("kotlin-reflect").get())
     testImplementation(versionCatalog.findLibrary("spring-boot-starter-test").get())
+    testImplementation(versionCatalog.findLibrary("spring-boot-starter-webmvc-test").get())
     testImplementation(versionCatalog.findLibrary("spring-mockk").get())
 }

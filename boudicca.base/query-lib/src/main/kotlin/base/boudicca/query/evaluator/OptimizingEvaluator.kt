@@ -30,7 +30,6 @@ import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
 import java.time.OffsetDateTime
-import java.time.format.DateTimeParseException
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
@@ -56,9 +55,9 @@ class OptimizingEvaluator(rawEntries: Collection<Entry>, private val clock: Cloc
         val resultSet = evaluateExpression(expression)
         val resultSize = resultSet.cardinality()
         val orderedResult = if (resultSize > entries.size / SORTING_RATIO) {
-            // roughly, if the resultset is bigger then a third of the total entries,
-            // it is faster to iterate over all entries then to sort the resultset
-            entries.filterIndexed { i, _ -> resultSet.get(i) }
+            // roughly, if the resultset is bigger than a third of the total entries,
+            // it is faster to iterate over all entries than to sort the resultset
+            entries.filterIndexed { i, _ -> resultSet[i] }
         } else {
             Utils.order(resultSet.stream().mapToObj { entries[it] }.toList(), dateCache)
         }
@@ -167,14 +166,9 @@ class OptimizingEvaluator(rawEntries: Collection<Entry>, private val clock: Cloc
         val index = getDurationIndex(expression)
         val duration = expression.getDuration().toDouble()
         return index.search {
-            if (it != null) {
-                if (it >= duration) {
-                    0
-                } else {
-                    -1
-                }
-            } else {
-                -1
+            when {
+                it != null && it >= duration -> 0
+                else -> -1
             }
         }
     }
@@ -184,14 +178,10 @@ class OptimizingEvaluator(rawEntries: Collection<Entry>, private val clock: Cloc
         val index = getDurationIndex(expression)
         val duration = expression.getDuration().toDouble()
         return index.search {
-            if (it != null) {
-                if (it <= duration) {
-                    0
-                } else {
-                    1
-                }
-            } else {
-                -1
+            when {
+                it != null && it <= duration -> 0
+                it != null -> 1
+                else -> -1
             }
         }
     }
@@ -216,18 +206,12 @@ class OptimizingEvaluator(rawEntries: Collection<Entry>, private val clock: Cloc
         return keyFilterSearch(keyFilter) { field ->
             val index = getOrCreateInstantIndex(field)
             index.search {
-                if (it != null) {
-                    if (it == expressionStartDate || it == expressionEndDate) {
-                        0
-                    } else if (!it.isAfter(expressionStartDate)) {
-                        -1
-                    } else if (!it.isBefore(expressionEndDate)) {
-                        1
-                    } else {
-                        0
-                    }
-                } else {
-                    -1
+                when {
+                    it != null && (it == expressionStartDate || it == expressionEndDate) -> 0
+                    it != null && !it.isAfter(expressionStartDate) -> -1
+                    it != null && !it.isBefore(expressionEndDate) -> 1
+                    it != null -> 0
+                    else -> -1
                 }
             }
         }
@@ -278,57 +262,28 @@ class OptimizingEvaluator(rawEntries: Collection<Entry>, private val clock: Cloc
         indexCreator: () -> SimpleIndex<T>
     ): SimpleIndex<T> {
         val operationCache = synchronized(simpleIndexCache) {
-            if (!simpleIndexCache.containsKey(operation)) {
-                val newCache = mutableMapOf<String, SimpleIndex<*>>()
-                simpleIndexCache[operation] = newCache
-                newCache
-            } else {
-                simpleIndexCache[operation]!!
-            }
+            simpleIndexCache.getOrPut(operation) { mutableMapOf() }
         }
 
-        synchronized(operationCache) {
-            val index = if (!operationCache.containsKey(fieldName)) {
-                val index = indexCreator()
-                operationCache[fieldName] = index
-                index
-            } else {
-                operationCache[fieldName]!!
-            }
-
-            return index as SimpleIndex<T>
+        return synchronized(operationCache) {
+            operationCache.getOrPut(fieldName) { indexCreator() } as SimpleIndex<T>
         }
     }
 
     private fun getOrCreateFullTextIndex(fieldName: String): FullTextIndex {
-        synchronized(fullTextIndexCache) {
-            if (fullTextIndexCache.containsKey(fieldName)) {
-                return fullTextIndexCache[fieldName]!!
-            } else {
-                val index = FullTextIndex(entries, fieldName)
-                fullTextIndexCache[fieldName] = index
-                return index
-            }
+        return synchronized(fullTextIndexCache) {
+            fullTextIndexCache.getOrPut(fieldName) { FullTextIndex(entries, fieldName) }
         }
     }
 
     private fun safeGetInstant(dateText: String?, dateCache: ConcurrentHashMap<String, OffsetDateTime>): Instant? {
-        if (dateText == null) {
-            return null
-        }
-        try {//TODO cache null
-            return getInstant(dateText, dateCache)
-        } catch (_: DateTimeParseException) {
-            return null
+        return dateText?.let {
+            runCatching { getInstant(it, dateCache) }.getOrNull()
         }
     }
 
     private fun getInstant(dateText: String, dataCache: ConcurrentHashMap<String, OffsetDateTime>): Instant {
-        val offsetDateTime = if (dataCache.containsKey(dateText)) {
-            dataCache[dateText]!!
-        } else {
-            EvaluatorUtil.parseDate(dateText, dataCache)
-        }
+        val offsetDateTime = dataCache[dateText] ?: EvaluatorUtil.parseDate(dateText, dataCache)
         return offsetDateTime.toInstant()
     }
 

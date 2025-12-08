@@ -149,16 +149,22 @@ class EventService @Autowired constructor(
                 )
             )
         )
+
+        fun String.getFilterAndSortAndTransformToTriple(): List<Triple<String, String, String>> =
+            filters[this]?.sortedWith(String.CASE_INSENSITIVE_ORDER)
+                ?.map { Triple(it, it, frontEndId(it)) }
+                ?: throw IllegalStateException("no filters found for key '${this}'")
+
         return Filters(
             EventCategory.entries
                 .map { Triple(it.name, frontEndName(it), frontEndId(it.name)) }
                 .sortedWith(Comparator.comparing({ it.second }, String.CASE_INSENSITIVE_ORDER)),
-            filters[SemanticKeys.LOCATION_NAME]!!.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Triple(it, it, frontEndId(it)) },
-            filters[SemanticKeys.LOCATION_CITY]!!.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Triple(it, it, frontEndId(it)) },
-            filters[SemanticKeys.TAGS]!!.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Triple(it, it, frontEndId(it)) },
-            filters[SemanticKeys.TYPE]!!.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Triple(it, it, frontEndId(it)) },
-            filters[SemanticKeys.CONCERT_BANDLIST]!!.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Triple(it, it, frontEndId(it)) },
-            filters[SemanticKeys.CONCERT_GENRE]!!.sortedWith(String.CASE_INSENSITIVE_ORDER).map { Triple(it, it, frontEndId(it)) },
+            SemanticKeys.LOCATION_NAME.getFilterAndSortAndTransformToTriple(),
+            SemanticKeys.LOCATION_CITY.getFilterAndSortAndTransformToTriple(),
+            SemanticKeys.TAGS.getFilterAndSortAndTransformToTriple(),
+            SemanticKeys.TYPE.getFilterAndSortAndTransformToTriple(),
+            SemanticKeys.CONCERT_BANDLIST.getFilterAndSortAndTransformToTriple(),
+            SemanticKeys.CONCERT_GENRE.getFilterAndSortAndTransformToTriple(),
         )
     }
 
@@ -363,8 +369,8 @@ class EventService @Autowired constructor(
     }
 
     private fun mapMapSearch(result: SearchResultDTO): MapSearchResultDTO {
-        if (!result.error.isNullOrEmpty()) {
-            return MapSearchResultDTO(result.error, emptyList())
+        return if (!result.error.isNullOrEmpty()) {
+            MapSearchResultDTO(result.error, emptyList())
         } else {
             val events = result.result.map { it.toStructuredEvent() }
 
@@ -374,7 +380,7 @@ class EventService @Autowired constructor(
                 return events.firstNotNullOfOrNull(lookup)
             }
 
-            return MapSearchResultDTO(null, byLocationName.mapNotNull {
+            MapSearchResultDTO(null, byLocationName.mapNotNull {
                 val locationName = it.key
                 val locationUrl = findFirst(it.value) { event -> getTextProperty(event, SemanticKeys.LOCATION_URL) }
                 val locationLat =
@@ -406,7 +412,7 @@ class EventService @Autowired constructor(
         for (searchInputElement in (searchInput ?: emptyList()).filter { !it.isNullOrBlank() }) {
             subqueryParts.add(equals(semanticKeyField, searchInputElement!!))
         }
-        if(subqueryParts.isNotEmpty()) {
+        if (subqueryParts.isNotEmpty()) {
             queryParts.add(or(subqueryParts))
         }
     }

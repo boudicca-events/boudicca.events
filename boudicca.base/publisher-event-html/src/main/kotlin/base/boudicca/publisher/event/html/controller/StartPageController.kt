@@ -24,7 +24,6 @@ class StartPageController(
     }
 
     @GetMapping("/search")
-    @ResponseBody
     fun search(
         searchDTO: SearchDTO
     ): ModelAndView {
@@ -43,7 +42,6 @@ class StartPageController(
     }
 
     @GetMapping("/sources")
-    @ResponseBody
     fun sources(): ModelAndView {
         val data: MutableMap<String, Any> = HashMap()
         data["sources"] = sourcesService.getSources()
@@ -51,7 +49,6 @@ class StartPageController(
     }
 
     @GetMapping("/map")
-    @ResponseBody
     fun map(
         searchDTO: SearchDTO
     ): ModelAndView {

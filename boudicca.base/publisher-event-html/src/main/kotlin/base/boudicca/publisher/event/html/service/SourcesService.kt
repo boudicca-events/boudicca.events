@@ -13,10 +13,11 @@ class SourcesService(
     fun getSources(): List<String> {
         val allSources =
             caller.getFiltersFor(FilterQueryDTO(listOf(FilterQueryEntryDTO(SemanticKeys.SOURCES))))
-        return allSources[SemanticKeys.SOURCES]!!
-            .map { normalize(it) }
-            .distinct()
-            .sortedBy { it }
+        return allSources[SemanticKeys.SOURCES]
+            ?.map(::normalize)
+            ?.distinct()
+            ?.sortedBy { it }
+            ?: listOf("no Sources found")
     }
 
     private fun normalize(value: String): String {

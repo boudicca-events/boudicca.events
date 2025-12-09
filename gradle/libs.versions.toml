@@ -1,5 +1,5 @@
 [versions]
-kotlin = "2.2.20"
+kotlin = "2.2.21"
 detekt = "2.0.0-alpha.1"
 jackson = "2.19.2"
 jackson-databind-nullable = "0.2.8"

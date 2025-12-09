@@ -152,12 +152,13 @@ internal class DateStep(
             mappings[ResultTypes.SECONDS],
             tokenGroups
         )
-        if (result.isSolved() || canGetMoreData) {
+        return if (result.isSolved() || canGetMoreData) {
             debugTracing.endOperation(result)
-            return result
-        } else {
+            result
+        }
+        else {
             debugTracing.endOperation(null)
-            return null
+            null
         }
     }
 

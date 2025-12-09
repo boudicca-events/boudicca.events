@@ -70,7 +70,5 @@ abstract class TwoStepEventCollector<T>(private val name: String) : EventCollect
     /**
      * will be called after all events are parsed, so you can clean up caches and whatnot
      */
-    open fun cleanup() {
-
-    }
+    open fun cleanup() {  /* default nothing */ }
 }

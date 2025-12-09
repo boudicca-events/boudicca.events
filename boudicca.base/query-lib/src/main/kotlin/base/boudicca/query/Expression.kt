@@ -5,7 +5,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 
-interface Expression {
+fun interface Expression {
     override fun toString(): String
 }
 
@@ -111,7 +111,7 @@ abstract class DateExpression(
     init {
         try {
             date = LocalDate.parse(dateText, DateTimeFormatter.ISO_LOCAL_DATE)
-        } catch (e: DateTimeParseException) {
+        } catch (_: DateTimeParseException) {
             throw QueryException("date in wrong format $dateText")
         }
     }

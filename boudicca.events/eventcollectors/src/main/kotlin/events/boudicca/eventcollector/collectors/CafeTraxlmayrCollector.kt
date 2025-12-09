@@ -29,16 +29,24 @@ class CafeTraxlmayrCollector : TwoStepEventCollector<Element>("cafetraxlmayr") {
 
     override fun parseMultipleStructuredEvents(event: Element): List<StructuredEvent?>? {
         val title = event.select("h3").text()
-        return if (title.contains("|")) {
-            parseConcert(title, event)
-        } else if (title == "Die nächsten Lesungen im Café Traxlmayr") {
-            parseLesungen(event)
-        } else if (title.contains("aktuelle Ausstellung im Café Traxlmayr")) {
-            // ignore
-            emptyList()
-        } else {
-            logger.error { "unknown event format: $event" }
-            emptyList()
+        return when {
+            title.contains("|") -> {
+                parseConcert(title, event)
+            }
+
+            title == "Die nächsten Lesungen im Café Traxlmayr" -> {
+                parseLesungen(event)
+            }
+
+            title.contains("aktuelle Ausstellung im Café Traxlmayr") -> {
+                // ignore
+                emptyList()
+            }
+
+            else -> {
+                logger.error { "unknown event format: $event" }
+                emptyList()
+            }
         }
     }
 
@@ -64,7 +72,7 @@ class CafeTraxlmayrCollector : TwoStepEventCollector<Element>("cafetraxlmayr") {
     ): List<StructuredEvent> {
         val split = title.split(" | ")
         val name = split[0].trim()
-        val bodyLines = eventData.select(".modal-body p strong").textNodes()
+        val bodyLines = eventData.select(".modal-body p strong").textNodes().toList()
 
         val fullDateText = bodyLines.first { it.text().contains("Uhr") }
 
@@ -87,14 +95,11 @@ class CafeTraxlmayrCollector : TwoStepEventCollector<Element>("cafetraxlmayr") {
 
         for (block in contentBlocks) {
             val text = block.text()
-            if (block.select("img").isNotEmpty()) {
-                pictureSrc = block.select("img").attr("src")
-            } else if (text.contains("Uhr")) {
-                startDate = DateParser.parse(text)
-            } else if (text.contains("„")) {
-                name = text
-            } else {
-                description += text
+            when {
+                block.select("img").isNotEmpty() -> pictureSrc = block.select("img").attr("src")
+                text.contains("Uhr") -> startDate = DateParser.parse(text)
+                text.contains("„") -> name = text
+                else -> description += text
             }
             if (name.isEmpty()) {
                 name = block.select("strong").joinToString(" ") { it.text() }

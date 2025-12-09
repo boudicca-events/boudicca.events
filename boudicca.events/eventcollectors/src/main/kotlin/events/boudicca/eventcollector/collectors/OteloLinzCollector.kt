@@ -21,7 +21,7 @@ class OteloLinzCollector : TwoStepEventCollector<String>("otelolinz") {
             .map { it.attr("href") }
     }
 
-    override fun parseMultipleStructuredEvents(event: String): List<StructuredEvent?>? {
+    override fun parseMultipleStructuredEvents(event: String): List<StructuredEvent?> {
         val eventSite = Jsoup.parse(fetcher.fetchUrl(event))
 
         val name = eventSite.select("div.article-inner h1").text()
@@ -66,8 +66,9 @@ class OteloLinzCollector : TwoStepEventCollector<String>("otelolinz") {
     }
 
     private fun parseDates(element: Element): DateParserResult {
-        val dateText = element.select("div#em-event-6>p").first()!!.textNodes()[1].text().trim()
-        val timeText = element.select("div#em-event-6>p").first()!!.select("i").text()
+        val dateTimeBlock = element.select("div#em-event-6>p").first()!!
+        val dateText = dateTimeBlock.textNodes()[1].text().trim()
+        val timeText = dateTimeBlock.select("i").text()
 
         return DateParser.parse(dateText, timeText)
     }

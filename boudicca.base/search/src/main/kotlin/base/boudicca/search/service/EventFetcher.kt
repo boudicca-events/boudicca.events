@@ -23,6 +23,6 @@ class EventDBEventFetcher(
     }
 }
 
-interface EventFetcher {
+fun interface EventFetcher {
     fun fetchAllEvents(): Set<Entry>
 }

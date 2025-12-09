@@ -15,10 +15,8 @@ class ArtistMatcher(private val artists: List<Artist>, private val index: ByteBu
         val foundArtists = mutableListOf<Artist>()
         foundArtists.addAll(matchArtistsFrom(lowerString, 0))
         for (i in lowerString.indices) {
-            if (!lowerString[i].isLetterOrDigit()) {
-                if (i + 1 < lowerString.length) {
-                    foundArtists.addAll(matchArtistsFrom(lowerString, i + 1))
-                }
+            if (!lowerString[i].isLetterOrDigit() && i + 1 < lowerString.length) {
+                foundArtists.addAll(matchArtistsFrom(lowerString, i + 1))
             }
         }
 

@@ -84,7 +84,7 @@ class LandestheaterLinzCollector :
         )
     }
 
-    override fun parseMultipleStructuredEvents(event: LandestheaterEventData): List<StructuredEvent?>? {
+    override fun parseMultipleStructuredEvents(event: LandestheaterEventData): List<StructuredEvent?> {
         val (overview, site, date) = event
 
         val name = overview.select("div.lth-evitem-title > a").text()
@@ -118,17 +118,18 @@ class LandestheaterLinzCollector :
     }
 
     private fun StructuredEventBuilder.withLocationData(locationName: String) {
-        if (locationName.contains("musiktheater", ignoreCase = true)) {
-            this.withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Musiktheater Linz")
-        } else if (locationName == "Studiobühne") {
-            // there is no dedicated page for it, but it is in the same building, so....
-            this.withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Studiobühne Linz")
-        } else if (locationName == "Schauspielhaus") {
-            this.withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Schauspielhaus Linz")
-        } else if (locationName == "Kammerspiele") {
-            this.withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Kammerspiele Linz")
-        } else if (locationName.isNotBlank()) {
-            this.withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, locationName)
+        when {
+            locationName.contains("musiktheater", ignoreCase = true) ->
+                this.withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Musiktheater Linz")
+            locationName == "Studiobühne" ->
+                // there is no dedicated page for it, but it is in the same building, so....
+                this.withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Studiobühne Linz")
+            locationName == "Schauspielhaus" ->
+                this.withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Schauspielhaus Linz")
+            locationName == "Kammerspiele" ->
+                this.withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Kammerspiele Linz")
+            locationName.isNotBlank() ->
+                this.withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, locationName)
         }
     }
 

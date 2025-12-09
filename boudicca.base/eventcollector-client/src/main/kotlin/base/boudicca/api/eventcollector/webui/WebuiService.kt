@@ -98,8 +98,8 @@ class WebuiService(
     }
 
     private fun mapSingleCollectionToFrontend(name: String, it: SingleCollection?): Map<String, *> {
-        if (it != null) {
-            return mapOf(
+        return if (it != null) {
+            mapOf(
                 "id" to it.id.toString(),
                 "name" to HtmlUtils.htmlEscape(it.collectorName),
                 "duration" to formatDuration(it.startTime, it.endTime),
@@ -111,7 +111,7 @@ class WebuiService(
                 "totalEventsCollected" to (it.totalEventsCollected).toString(),
             )
         } else {
-            return mapOf(
+            mapOf(
                 "id" to null,
                 "name" to name,
                 "duration" to "-",
@@ -156,7 +156,7 @@ class WebuiService(
         }
 
         val endTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(endTimeInMillis), zoneId)
-        return if (startTime.toLocalDate().equals(endTime.toLocalDate())) {
+        return if (startTime.toLocalDate() == endTime.toLocalDate()) {
             formattedStartTime +
                     " / " +
                     DateTimeFormatter.ofPattern("HH:mm").format(endTime)

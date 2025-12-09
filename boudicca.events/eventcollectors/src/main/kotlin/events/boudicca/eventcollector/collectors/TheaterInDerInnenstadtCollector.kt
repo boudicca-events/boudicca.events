@@ -42,13 +42,11 @@ class TheaterInDerInnenstadtCollector : TwoStepEventCollector<Pair<Element, Stri
             imgSrc = logoSrc
         }
 
-        var type: String? = null
-        if (description.lowercase().contains("theater")) {
-            type = "theater"
-        } else if (description.lowercase().contains("musical")) {
-            type = "musical"
-        } else if (description.lowercase().contains("comedy")) {
-            type = "comedy"
+        val type: String? = when {
+            description.lowercase().contains("theater") -> "theater"
+            description.lowercase().contains("musical") -> "musical"
+            description.lowercase().contains("comedy") -> "comedy"
+            else -> null
         }
 
         return structuredEvent(name, startDateTime) {

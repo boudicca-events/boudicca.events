@@ -13,22 +13,36 @@ class Lexer(private val query: String) {
 
         while (i < query.length) {
             val c = query[i]
-            if (c == '"') {
-                readEscapedTextToken()
-            } else if (c == '(') {
-                tokens.add(Token(TokenType.GROUPING_OPEN, null))
-                i++
-            } else if (c == ')') {
-                tokens.add(Token(TokenType.GROUPING_CLOSE, null))
-                i++
-            } else if (c == '-' || c.isDigit()) {
-                readNumber()
-            } else if (c.isLetter()) {
-                readToken()
-            } else if (c.isWhitespace()) {
-                i++
-            } else {
-                throw QueryException("invalid character $c at index $i")
+            when {
+                c == '"' -> {
+                    readEscapedTextToken()
+                }
+
+                c == '(' -> {
+                    tokens.add(Token(TokenType.GROUPING_OPEN, null))
+                    i++
+                }
+
+                c == ')' -> {
+                    tokens.add(Token(TokenType.GROUPING_CLOSE, null))
+                    i++
+                }
+
+                c == '-' || c.isDigit() -> {
+                    readNumber()
+                }
+
+                c.isLetter() -> {
+                    readToken()
+                }
+
+                c.isWhitespace() -> {
+                    i++
+                }
+
+                else -> {
+                    throw QueryException("invalid character $c at index $i")
+                }
             }
         }
 
@@ -55,7 +69,7 @@ class Lexer(private val query: String) {
         }
         i = tokenEnd
     }
-    
+
     @Suppress("detekt:CyclomaticComplexMethod", "detekt:ThrowsCount")
     private fun readToken() {
         var tokenEnd = i

@@ -35,14 +35,14 @@ class TypeEnricher : Enricher {
 
     override fun enrich(event: StructuredEvent): StructuredEvent {
         val types = event.getProperty(SemanticKeys.TYPE_PROPERTY)
-        if (types.isNotEmpty()) {
+        return if (types.isNotEmpty()) {
             val builder = event.toBuilder()
             for (type in types) {
                 mapType(builder, type.first, type.second)
             }
-            return builder.build()
+            builder.build()
         } else {
-            return event
+            event
         }
     }
 

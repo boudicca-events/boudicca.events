@@ -51,7 +51,7 @@ class OOESeniorenbundCollector : TwoStepEventCollector<Pair<Document, String>>("
     private fun cleanupUrl(url: String): String {
         //https://servicebroker.media-data.at/detail.html;jsessionid=B20D66D14ABACD0C9357ECC77CA10E48?evkey=11774&resize=true&key=QVKSBOOE
 
-        val sessionIdPattern = Pattern.compile("\\;jsessionid\\=[\\d\\w]+\\?")
+        val sessionIdPattern = Pattern.compile(";jsessionid=\\w+\\?")
         val matcher = sessionIdPattern.matcher(url)
 
         return if (matcher.find()) {

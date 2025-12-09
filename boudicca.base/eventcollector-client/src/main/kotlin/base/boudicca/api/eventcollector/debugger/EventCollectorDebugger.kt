@@ -13,7 +13,7 @@ import base.boudicca.api.eventcollector.debugger.color.yellow
 import base.boudicca.api.eventcollector.logging.CollectionsFilter
 import base.boudicca.api.eventcollector.runner.BoudiccaRunnerEnricherInterface
 import base.boudicca.api.eventcollector.runner.BoudiccaRunnerIngestionInterface
-import base.boudicca.api.eventcollector.runner.NoopRunnerEnricherInterface
+import base.boudicca.api.eventcollector.runner.NoopRunnerEnricher
 import base.boudicca.api.eventcollector.runner.RunnerEnricherInterface
 import base.boudicca.api.eventcollector.runner.RunnerIngestionInterface
 import base.boudicca.api.eventcollector.util.FetcherFactory
@@ -101,7 +101,7 @@ class EventCollectorDebugger(
                     runnerIngestionInterface!!.ingestEvents(it)
                 }
             },
-            runnerEnricherInterface ?: NoopRunnerEnricherInterface
+            runnerEnricherInterface ?: NoopRunnerEnricher
         )
         runner.run()
 
@@ -137,7 +137,7 @@ class EventCollectorDebugger(
     ): EventCollectorDebugger {
         allEvents.forEach { event ->
             println("=========================================================================")
-            println("${event.data.get(SemanticKeys.COLLECTORNAME)} - ${event.startDate} ${event.name}")
+            println("${event.data[SemanticKeys.COLLECTORNAME]} - ${event.startDate} ${event.name}")
             val highestSeverity = validations.minOfOrNull { validation ->
                 validation.validate(event, verboseValidation)
             }

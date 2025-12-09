@@ -9,7 +9,7 @@ import javax.ws.rs.Path
 import javax.ws.rs.Produces
 
 @OpenAPIDefinition
-interface RemoteCollectorApi {
+fun interface RemoteCollectorApi {
     @Operation(
         responses = [
             ApiResponse(

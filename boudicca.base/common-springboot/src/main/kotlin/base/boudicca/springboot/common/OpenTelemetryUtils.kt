@@ -48,7 +48,7 @@ object OpenTelemetryUtils {
     }
 
     private fun createAuthHeader(user: String, password: String): String {
-        return "Basic " + Base64.Default.encode(("$user:$password").encodeToByteArray())
+        return "Basic " + Base64.encode(("$user:$password").encodeToByteArray())
     }
 
     private fun createResource(serviceName: String): Resource {
@@ -61,20 +61,20 @@ object OpenTelemetryUtils {
         resource: Resource, endpoint: String, authHeader: String, meterProvider: SdkMeterProvider
     ): SdkTracerProvider {
         return SdkTracerProvider.builder().setResource(resource).addSpanProcessor(
-                BatchSpanProcessor.builder(
-                        OtlpHttpSpanExporter.builder()
-                            .setMeterProvider(meterProvider)
-                            .setEndpoint(getCorrectEndpoint(endpoint, "traces"))
-                            .setTimeout(Duration.ofSeconds(10))
-                            .addHeader("Authorization", authHeader)
-                            .build()
-                    )
+            BatchSpanProcessor.builder(
+                OtlpHttpSpanExporter.builder()
                     .setMeterProvider(meterProvider)
-                    .setMaxQueueSize(2048 * 10)
-                    .setExporterTimeout(Duration.ofSeconds(30))
-                    .setScheduleDelay(Duration.ofSeconds(5))
+                    .setEndpoint(getCorrectEndpoint(endpoint, "traces"))
+                    .setTimeout(Duration.ofSeconds(10))
+                    .addHeader("Authorization", authHeader)
                     .build()
-            ).build()
+            )
+                .setMeterProvider(meterProvider)
+                .setMaxQueueSize(2048 * 10)
+                .setExporterTimeout(Duration.ofSeconds(30))
+                .setScheduleDelay(Duration.ofSeconds(5))
+                .build()
+        ).build()
     }
 
     private fun createMeterProvider(
@@ -84,11 +84,7 @@ object OpenTelemetryUtils {
         val meterProvider = SdkMeterProvider.builder().setResource(resource).registerMetricReader(
             PeriodicMetricReader.builder(
                 OtlpHttpMetricExporter.builder()
-                    .setMeterProvider(object : Supplier<MeterProvider> {
-                        override fun get(): MeterProvider {
-                            return ref.get()
-                        }
-                    })
+                    .setMeterProvider(Supplier(ref::get))
                     .setEndpoint(getCorrectEndpoint(endpoint, "metrics"))
                     .setTimeout(Duration.ofSeconds(10))
                     .addHeader("Authorization", authHeader)

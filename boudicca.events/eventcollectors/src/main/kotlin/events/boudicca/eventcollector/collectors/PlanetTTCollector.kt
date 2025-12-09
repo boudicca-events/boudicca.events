@@ -41,9 +41,9 @@ class PlanetTTCollector : TwoStepEventCollector<Element>("planettt") {
     private fun fetchNonces(): Pair<String, String> {
         val mainSite = fetcher.fetchUrl("https://planet.tt/")
         val javascript = Jsoup.parse(mainSite).select("script#em-events-script-js-extra").html()
-        val listPattern = Pattern.compile(".*\"list_nonce\":\"([\\w\\d]+)\".*")
+        val listPattern = Pattern.compile(".*\"list_nonce\":\"(\\w+)\".*")
         val listMatcher = listPattern.matcher(javascript)
-        val modalPattern = Pattern.compile(".*\"modal_nonce\":\"([\\w\\d]+)\".*")
+        val modalPattern = Pattern.compile(".*\"modal_nonce\":\"(\\w+)\".*")
         val modalMatcher = modalPattern.matcher(javascript)
         if (listMatcher.find() && modalMatcher.find()) {
             return Pair(listMatcher.group(1), modalMatcher.group(1))
@@ -52,7 +52,7 @@ class PlanetTTCollector : TwoStepEventCollector<Element>("planettt") {
         }
     }
 
-    override fun parseMultipleStructuredEvents(event: Element): List<StructuredEvent?>? {
+    override fun parseMultipleStructuredEvents(event: Element): List<StructuredEvent?> {
         val eventId = event.attr("data-eventid")
         val postId = event.attr("data-postid")
         val response = fetcher.fetchUrlPost(

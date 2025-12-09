@@ -87,7 +87,6 @@ fun serialize(artists: List<Artist>): JSONArray {
         for (alias in artist.aliases) {
             aliasesArray.put(alias)
         }
-//        artistObject.put("aliases", aliasesArray)
         array.put(artistObject)
     }
     return array

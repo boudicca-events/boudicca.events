@@ -11,7 +11,7 @@ fun interface RunnerEnricherInterface {
         fun createFromConfiguration(otel: OpenTelemetry = OpenTelemetry.noop()): RunnerEnricherInterface {
             val enricherUrl = Configuration.getProperty("boudicca.enricher.url")
             if (enricherUrl.isNullOrBlank()) {
-                return NoopRunnerEnricherInterface
+                return NoopRunnerEnricher
             }
             val enricher = EnricherClient(enricherUrl, otel)
             return BoudiccaRunnerEnricherInterface(enricher)

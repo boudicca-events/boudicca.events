@@ -308,7 +308,7 @@ class DateParserTest {
         ): Triple<List<String>, List<DatePair>, DateParserConfig> {
             return Triple(
                 dateText, expected, config ?: DateParserConfig(
-                    alwaysPrintDebugTracing = true
+                    alwaysPrintDebugTracing = false // set true to get more debug info
                 )
             )
         }
@@ -325,8 +325,8 @@ class DateParserTest {
             val clock = Clock.fixed(OffsetDateTime.parse(fixedClockDate).toInstant(), ZoneId.of("Europe/Vienna"))
             return testDate(
                 listOf(dateText), listOf(expected), DateParserConfig(
-                    alwaysPrintDebugTracing = true,
-                    clock = clock
+                    clock = clock,
+                    alwaysPrintDebugTracing = false // set true to get more debug info
                 )
             )
         }
@@ -339,7 +339,7 @@ class DateParserTest {
             return testDate(
                 listOf(dateText), listOf(expected), DateParserConfig(
                     dayMonthOrder = dayMonthOrder,
-                    alwaysPrintDebugTracing = true,
+                    alwaysPrintDebugTracing = false // set true to get more debug info
                 )
             )
         }

@@ -6,6 +6,7 @@ plugins {
     id("boudicca-base")
     kotlin("jvm")
     id("dev.detekt")
+    id("boudicca-jacoco")
 }
 
 kotlin {
@@ -30,8 +31,4 @@ dependencies {
     testRuntimeOnly(versionCatalog.findLibrary("junit-platform-launcher").get())
     testImplementation(versionCatalog.findLibrary("assertk").get())
     testImplementation(versionCatalog.findLibrary("mockk").get())
-}
-
-tasks.withType<Test> {
-    useJUnitPlatform()
 }

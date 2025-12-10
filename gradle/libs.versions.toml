@@ -1,6 +1,7 @@
 [versions]
 kotlin = "2.2.21"
 detekt = "2.0.0-alpha.1"
+jacoco = "0.8.14"
 jackson = "2.19.2"
 jackson-databind-nullable = "0.2.8"
 jakarta-annotation = "3.0.0"
@@ -120,6 +121,7 @@ twelvemonkeys-bmp = { module = "com.twelvemonkeys.imageio:imageio-bmp", version.
 
 [plugins]
 jmh = { id = "me.champeau.jmh", version = "0.7.3" }
+sonarqube = { id = "org.sonarqube", version = "7.2.0.6526" }
 
 [bundles]
 

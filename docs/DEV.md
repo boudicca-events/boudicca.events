@@ -40,3 +40,33 @@ clean our EventDB, stop it, delete the file and restart it.
 ## Developing your own Collector
 
 see [here](tech/EVENTCOLLECTORS.md#developing-your-own-collector)
+
+## SonarCloud Analysis
+
+We use SonarCloud for continuous code quality and security analysis. SonarCloud defines and manages all quality rules independently.
+
+**View analysis results:**
+https://sonarcloud.io/project/overview?id=boudicca-events_boudicca.events
+
+- Automatically analyzes every merge request
+- Maintains quality metrics for the main branch
+- Provides detailed reports on code smells, bugs, vulnerabilities, and coverage
+
+## Code Coverage
+
+We use JaCoCo for code coverage. Reports are automatically generated when running tests.
+
+**Per-module reports:**
+```bash
+./gradlew test
+# Reports: <module>/build/reports/jacoco/test/html/index.html
+```
+
+**Aggregated report (all modules):**
+```bash
+./gradlew testCodeCoverageReport
+# XML Report: build/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml
+# HTML Report: build/reports/jacoco/testCodeCoverageReport/html/index.html
+```
+
+The aggregated report uses Gradle's `jacoco-report-aggregation` plugin, which automatically collects coverage from all subprojects. OpenAPI-generated code is excluded from coverage analysis.

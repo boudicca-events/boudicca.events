@@ -91,7 +91,7 @@ google-api-services-sheets = { module = "com.google.apis:google-api-services-she
 
 kotlin-logging = { module = "io.github.oshai:kotlin-logging-jvm", version.ref = "kotlin-logging" }
 
-micrometer-core = { module = "io.micrometer:micrometer-core", version = "1.15.3" }
+micrometer-core = { module = "io.micrometer:micrometer-core", version = "1.16.1" }
 micrometer-otel-bridge = { module = "io.micrometer:micrometer-tracing-bridge-otel", version = "1.6.1" }
 otel-api = { module = "io.opentelemetry:opentelemetry-api", version.ref = "otel" }
 otel-sdk = { module = "io.opentelemetry:opentelemetry-sdk", version.ref = "otel" }

@@ -1,11 +1,10 @@
-import org.gradle.jvm.toolchain.JavaLanguageVersion
-
 /**
  * plugin for applying the correct java version
  */
 plugins {
     id("boudicca-base")
     `java-library`
+    id("boudicca-jacoco")
 }
 
 java {

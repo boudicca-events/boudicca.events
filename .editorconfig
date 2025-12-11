@@ -1,8 +1,39 @@
 root = true
 
-[*.{kt,kts}]
-insert_final_newline = true
+# All files
+[*]
+charset = utf-8
+end_of_line = lf
 max_line_length = 180
-# Always use explicit imports (never use wildcard imports)
+indent_size = 4
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+
+[*.{kt,kts}]
+# ktlint rules: https://pinterest.github.io/ktlint/latest/rules/standard/
+ktlint_code_style = intellij_idea
+# discouraged-comment-location: https://pinterest.github.io/ktlint/latest/rules/standard/#discouraged-comment-location
+ktlint_standard_discouraged-comment-location = disabled
+# comment-wrapping: https://pinterest.github.io/ktlint/latest/rules/standard/#comment-wrapping
+ktlint_standard_comment-wrapping = disabled
+
+# IntelliJ-specific settings
+# Code style defaults - align with Kotlin official conventions
+ij_kotlin_code_style_defaults = KOTLIN_OFFICIAL
+# Trailing commas - cleaner git diffs, fewer merge conflicts
+ij_kotlin_allow_trailing_comma = true
+ij_kotlin_allow_trailing_comma_on_call_site = true
+# Comment formatting
+ij_kotlin_line_comment_add_space = true
+ij_kotlin_line_comment_at_first_column = false
+# Import settings - discourage wildcard imports
 ij_kotlin_name_count_to_use_star_import = 999
 ij_kotlin_name_count_to_use_star_import_for_members = 999
+ij_kotlin_packages_to_use_import_on_demand = java.util.*, kotlinx.android.synthetic.**
+# Import layout order (used by both ktlint and IntelliJ)
+ij_kotlin_imports_layout = *, java.**, javax.**, kotlin.**, kotlinx.**, ^
+
+# Markdown
+[*.md]
+trim_trailing_whitespace = false

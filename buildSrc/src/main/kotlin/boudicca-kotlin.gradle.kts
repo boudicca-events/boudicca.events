@@ -7,6 +7,7 @@ plugins {
     kotlin("jvm")
     id("dev.detekt")
     id("boudicca-jacoco")
+    id("org.jlleitschuh.gradle.ktlint")
 }
 
 kotlin {

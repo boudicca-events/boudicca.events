@@ -16,9 +16,15 @@ reporting {
         val testCodeCoverageReport by creating(JacocoCoverageReport::class) {
             testSuiteName = "test"
             reportTask {
-                classDirectories.setFrom(files(classDirectories.files.map { fileTree(it) {
-                    exclude("**/openapi/**")
-                }}))
+                classDirectories.setFrom(
+                    files(
+                        classDirectories.files.map {
+                            fileTree(it) {
+                                exclude("**/openapi/**")
+                            }
+                        },
+                    ),
+                )
             }
         }
     }
@@ -30,7 +36,7 @@ sonar {
         property("sonar.organization", "boudicca-events")
         property(
             "sonar.coverage.jacoco.xmlReportPaths",
-            "${layout.buildDirectory.get()}/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml"
+            "${layout.buildDirectory.get()}/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml",
         )
     }
 }

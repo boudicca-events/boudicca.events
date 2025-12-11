@@ -2,7 +2,9 @@ config:
   warningsAsErrors: true
 style:
   MaxLineLength:
-    maxLineLength: 180 # same as editorconfig now
+    # NOTE: Also configured in .editorconfig (detekt doesn't read .editorconfig yet)
+    # See: https://github.com/detekt/detekt/issues/8815
+    maxLineLength: 180
   ForbiddenComment:
     active: false # todo and stuff, this could be hardened by allowing todo's that reference a ticket instead of allowing all
   ReturnCount:

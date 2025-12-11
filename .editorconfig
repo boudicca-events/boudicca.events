@@ -1,8 +1,21 @@
 root = true
 
-[*.{kt,kts}]
-insert_final_newline = true
+# All files
+[*]
+charset = utf-8
+end_of_line = lf
 max_line_length = 180
+indent_size = 4
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+
+[*.{kt,kts}]
+kotlin_imports_layout = *, java., javax., kotlin., kotlinx.
 # Always use explicit imports (never use wildcard imports)
 ij_kotlin_name_count_to_use_star_import = 999
 ij_kotlin_name_count_to_use_star_import_for_members = 999
+
+# Markdown
+[*.md]
+trim_trailing_whitespace = false

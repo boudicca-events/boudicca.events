@@ -7,6 +7,7 @@ plugins {
     kotlin("jvm")
     id("dev.detekt")
     id("boudicca-jacoco")
+    id("org.jlleitschuh.gradle.ktlint")
 }
 
 kotlin {
@@ -21,6 +22,10 @@ detekt {
     config.setFrom("${project.rootDir}/detekt-config.yml")
 }
 
+ktlint {
+    ignoreFailures.set(true)
+}
+
 val versionCatalog = versionCatalogs.named("libs")
 dependencies {
     implementation(versionCatalog.findLibrary("slf4j").get())
@@ -31,4 +36,5 @@ dependencies {
     testRuntimeOnly(versionCatalog.findLibrary("junit-platform-launcher").get())
     testImplementation(versionCatalog.findLibrary("assertk").get())
     testImplementation(versionCatalog.findLibrary("mockk").get())
+    detektPlugins(versionCatalog.findLibrary("dev-detekt-rules-ktlint-wrapper").get())
 }

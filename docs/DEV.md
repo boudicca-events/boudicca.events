@@ -41,6 +41,61 @@ clean our EventDB, stop it, delete the file and restart it.
 
 see [here](tech/EVENTCOLLECTORS.md#developing-your-own-collector)
 
+## Linting and Code Style
+
+Our `.editorconfig` file at the project root defines the code style rules.
+IntelliJ & ktlint automatically pick this up, ensuring consistency across all developers.
+
+We use a dual linting setup with ktlint and detekt to balance continuous feedback with quality gates:
+
+### ktlint (Continuous Feedback)
+
+- **Runs:** Automatically on every build
+- **Behavior:** Reports style violations but never fails the build (`ignoreFailures = true`)
+- **Purpose:** Provides immediate feedback during development without blocking your workflow
+
+**Auto-fix style issues:**
+
+```bash
+./gradlew ktlintFormat
+```
+
+This automatically fixes most style violations (spacing, newlines, trailing commas, etc.).
+
+**Check only (no auto-fix):**
+
+```bash
+./gradlew ktlintCheck
+```
+
+### detekt (Quality Gate)
+
+- **Runs:** Automatically on every build (in check lifecycle step)
+- **Behavior:** Fails on violations (both detekt rules & ktlint) - acts as a quality gate
+- **Purpose:** Enforces code quality standards before merging
+- **Includes:** Static analysis + ktlint rules via detekt-rules-ktlint-wrapper
+- **Suppress:** Can be excluded from a build by adding `-x detekt`
+
+**Run detekt:**
+
+```bash
+./gradlew detekt
+```
+
+### Intellij Integration
+
+You can also integrate ktlint into your local Intellij (or maybe another IDE) by installing the
+[Ktlint](https://plugins.jetbrains.com/plugin/15057-ktlint) plugin and setting up the auto format on save:
+
+- Go to `File` → `Settings` → `Tools` → `KtLint`
+- Enable `Distraction Free Mode`
+- Enable Options: `on save`
+
+Optional:
+
+- Go to `File` → `Settings` → `Tools` → `Actions on Save`
+- Enable `Optimize imports`
+
 ## SonarCloud Analysis
 
 We use SonarCloud for continuous code quality and security analysis. SonarCloud defines and manages all quality rules independently.
@@ -52,21 +107,36 @@ https://sonarcloud.io/project/overview?id=boudicca-events_boudicca.events
 - Maintains quality metrics for the main branch
 - Provides detailed reports on code smells, bugs, vulnerabilities, and coverage
 
+### Intellij Integration
+
+You can also integrate sonar analysis in your local Intellij (or maybe another IDE) by installing the
+[SonarQube for IDE](https://plugins.jetbrains.com/plugin/7973-sonarqube-for-ide) plugin and
+connecting to our sonar cloud instance by configuring:
+
+- **sonarCloudOrganization**: `boudicca-events`
+- **projectKey**: `boudicca-events_boudicca.events`
+- **region**: `EU`
+
+this should be auto configured by the plugin by reading the `.sonarlint\connectedMode.json` file
+
 ## Code Coverage
 
 We use JaCoCo for code coverage. Reports are automatically generated when running tests.
 
 **Per-module reports:**
+
 ```bash
 ./gradlew test
 # Reports: <module>/build/reports/jacoco/test/html/index.html
 ```
 
 **Aggregated report (all modules):**
+
 ```bash
 ./gradlew testCodeCoverageReport
 # XML Report: build/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml
 # HTML Report: build/reports/jacoco/testCodeCoverageReport/html/index.html
 ```
 
-The aggregated report uses Gradle's `jacoco-report-aggregation` plugin, which automatically collects coverage from all subprojects. OpenAPI-generated code is excluded from coverage analysis.
+The aggregated report uses Gradle's `jacoco-report-aggregation` plugin, which automatically collects coverage from all subprojects.
+OpenAPI-generated code is excluded from coverage analysis.

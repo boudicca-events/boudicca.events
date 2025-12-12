@@ -4,7 +4,7 @@ detekt = "2.0.0-alpha.1"
 jackson = "2.19.2"
 jackson-databind-nullable = "0.2.8"
 jakarta-annotation = "3.0.0"
-javax-jaxrs = "2.1.1"
+jakarta-jaxrs = "3.1.0"
 spring-openapi-starter = "2.8.9"
 spring = "6.5.6"
 spring-boot = "3.5.6"
@@ -51,7 +51,7 @@ jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-
 jackson-databind-nullable = { module = "org.openapitools:jackson-databind-nullable", version.ref = "jackson-databind-nullable" }
 
 jakarta-annotation = { module = "jakarta.annotation:jakarta.annotation-api", version.ref = "jakarta-annotation" }
-javax-jaxrs = { module = "javax.ws.rs:javax.ws.rs-api", version.ref = "javax-jaxrs" }
+jakarta-jaxrs = { module = "jakarta.ws.rs:jakarta.ws.rs-api", version.ref = "jakarta-jaxrs" }
 
 swagger-annotations = { module = "io.swagger.core.v3:swagger-annotations", version.ref = "swagger-core-version" }
 
@@ -124,7 +124,7 @@ jmh = { id = "me.champeau.jmh", version = "0.7.3" }
 [bundles]
 
 #following bundles are applied by the plugins with the same name
-openapi-generate-spec = ["swagger-annotations", "javax-jaxrs"]
+openapi-generate-spec = ["swagger-annotations", "jakarta-jaxrs"]
 #TODO test if those dependencies are really necessary
 openapi-generate-client = ["jackson-core", "jackson-annotations", "jackson-databind", "jackson-databind-jsr310", "jackson-databind-nullable", "jakarta-annotation"]
 

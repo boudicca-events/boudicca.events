@@ -33,7 +33,7 @@ jobs:
       - uses: actions/checkout@v6.0.1
         with:
           repository: ${{ fromJson(steps.pr.outputs.response).head.repo.full_name }}
-          ref: ${{ fromJson(steps.pr.outputs.response).head.ref }}
+          ref: ${{ fromJson(steps.pr.outputs.response).head.sha }}
       - name: Set up JDK 21
         uses: actions/setup-java@v5
         with:
@@ -51,7 +51,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Tag And Push Docker Images
         id: push_images
-        run: ./deploy_branch.sh ${{ fromJson(steps.pr.outputs.response).head.ref }}
+        run: ./deploy_branch.sh ${{ fromJson(steps.pr.outputs.response).head.sha }}
       - name: triggering deploy publisher
         id: triggerbranch_search
         uses: fjogeleit/http-request-action@v1

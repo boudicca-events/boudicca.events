@@ -20,22 +20,22 @@ jobs:
     steps:
       - name: Create initial comment
         id: init_comment
-        uses: peter-evans/create-or-update-comment@v5
+        uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5.0.0
         with:
           issue-number: ${{ github.event.issue.number }}
           body: "Working on the branchdeploy... "
       - name: fetch pullrequest
         id: pr
-        uses: fjogeleit/http-request-action@v1
+        uses: fjogeleit/http-request-action@c0b95d02a088b47c1f2f4db04fd8af8bd19eee54 # v1.16.6
         with:
           url: ${{ github.event.issue.pull_request.url }}
           method: GET
-      - uses: actions/checkout@v6.0.1
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           repository: ${{ fromJson(steps.pr.outputs.response).head.repo.full_name }}
           ref: ${{ fromJson(steps.pr.outputs.response).head.ref }}
       - name: Set up JDK 21
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@dded0888837ed1f317902acf8a20df0ad188d165 # v5.0.0
         with:
           java-version: '21'
           distribution: 'temurin'
@@ -54,7 +54,7 @@ jobs:
         run: ./deploy_branch.sh ${{ fromJson(steps.pr.outputs.response).head.ref }}
       - name: triggering deploy publisher
         id: triggerbranch_search
-        uses: fjogeleit/http-request-action@v1
+        uses: fjogeleit/http-request-action@c0b95d02a088b47c1f2f4db04fd8af8bd19eee54 # v1.16.6
         with:
           url: 'https://branchdeployer.boudicca.events/deploy'
           method: 'POST'
@@ -65,7 +65,7 @@ jobs:
           timeout: 600000
       - name: triggering deploy
         id: triggerbranch_publisher
-        uses: fjogeleit/http-request-action@v1
+        uses: fjogeleit/http-request-action@c0b95d02a088b47c1f2f4db04fd8af8bd19eee54 # v1.16.6
         with:
           url: 'https://branchdeployer.boudicca.events/deploy'
           method: 'POST'
@@ -75,14 +75,14 @@ jobs:
           data: '{"branchName": "${{ fromJson(steps.pr.outputs.response).head.ref }}", "gitRepository": "${{ fromJson(steps.pr.outputs.response).head.repo.clone_url }}", "deploymentName": "publisher-html", "dockerImageName": "${{ steps.push_images.outputs.imageNamePublisher }}"}'
           timeout: 600000
       - name: Update comment on success
-        uses: peter-evans/create-or-update-comment@v5
+        uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5.0.0
         if: success()
         with:
           issue-number: ${{ github.event.issue.number }}
           comment-id: ${{ steps.init_comment.outputs.comment-id }}
           body: "Successfully deployed here: ${{ fromJson(steps.triggerbranch_publisher.outputs.response).url }}"
       - name: Update comment on error
-        uses: peter-evans/create-or-update-comment@v5
+        uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5.0.0
         if: (!success())
         with:
           issue-number: ${{ github.event.issue.number }}

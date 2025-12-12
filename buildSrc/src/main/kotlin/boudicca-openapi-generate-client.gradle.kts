@@ -42,7 +42,12 @@ tasks.register<GenerateTask>("generateJavaClient") {
     }
     inputs.files(openapi)
     inputSpec.set(getInputSpecProvider())
-    outputDir.set(layout.buildDirectory.dir("generated/java").get().toString())
+    outputDir.set(
+        layout.buildDirectory
+            .dir("generated/java")
+            .get()
+            .toString(),
+    )
     generatorName.set("java")
     library.set("native")
     additionalProperties.put("supportUrlQuery", "false")
@@ -50,8 +55,8 @@ tasks.register<GenerateTask>("generateJavaClient") {
     generateApiTests.set(false)
     generateModelTests.set(false)
     invokerPackage.set("base.boudicca.openapi")
-    apiPackage.set("base.boudicca.${openApiPackageName}.openapi.api")
-    modelPackage.set("base.boudicca.${openApiPackageName}.openapi.model")
+    apiPackage.set("base.boudicca.$openApiPackageName.openapi.api")
+    modelPackage.set("base.boudicca.$openApiPackageName.openapi.model")
 }
 
 tasks.register<GenerateTask>("generateTypescriptClient") {
@@ -63,22 +68,34 @@ tasks.register<GenerateTask>("generateTypescriptClient") {
     }
     inputs.files(openapi)
     inputSpec.set(getInputSpecProvider())
-    outputDir.set(layout.buildDirectory.dir("generated/typescript").get().toString())
+    outputDir.set(
+        layout.buildDirectory
+            .dir("generated/typescript")
+            .get()
+            .toString(),
+    )
     generatorName.set("typescript-axios")
     templateDir.set(project.rootDir.resolve("typescript_generator_overrides").path)
     configOptions.putAll(
         mapOf(
-            "npmName" to "@boudicca/${openApiPackageName}",
+            "npmName" to "@boudicca/$openApiPackageName",
             "npmVersion" to "${project.version}",
             "supportsES6" to "true",
-        )
+        ),
     )
 }
 
 sourceSets {
     main {
         java {
-            srcDir(file(layout.buildDirectory.dir("generated/java/src/main/java").get().toString()))
+            srcDir(
+                file(
+                    layout.buildDirectory
+                        .dir("generated/java/src/main/java")
+                        .get()
+                        .toString(),
+                ),
+            )
         }
     }
 }
@@ -91,8 +108,14 @@ tasks.named("sourcesJar") {
     inputs.files(tasks.named("generateJavaClient"))
 }
 
-fun getInputSpecProvider(): Provider<String> {
-    return provider {
-        openapi.files.firstOrNull()?.path
+tasks.withType<Javadoc>().configureEach {
+    (options as StandardJavadocDocletOptions).apply {
+        addBooleanOption("Xdoclint:none", true)
+        addBooleanOption("quiet", true)
     }
 }
+
+fun getInputSpecProvider(): Provider<String> =
+    provider {
+        openapi.files.firstOrNull()?.path
+    }

@@ -121,7 +121,7 @@ twelvemonkeys-bmp = { module = "com.twelvemonkeys.imageio:imageio-bmp", version.
 
 [plugins]
 jmh = { id = "me.champeau.jmh", version = "0.7.3" }
-sonarqube = { id = "org.sonarqube", version = "7.2.1.6560" }
+sonarqube = { id = "org.sonarqube", version = "7.2.2.6593" }
 
 [bundles]
 

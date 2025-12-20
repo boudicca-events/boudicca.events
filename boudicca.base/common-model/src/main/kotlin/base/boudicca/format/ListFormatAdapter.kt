@@ -5,7 +5,8 @@ import base.boudicca.model.structured.VariantConstants
 /**
  * parsing utils to get string values to format list and back
  *
- * list format is a "," seperated list, meaning all "," and "\" occurring in list values must be escaped by an "\"
+ * list format is a "," separated list, meaning all "," and "\" occurring in list values must be escaped by an "\"
+ * if your list ends with an empty element you need to add another "," because trailing empty values are ignored
  *
  * all methods may throw exceptions on wrong formatted values
  */
@@ -38,12 +39,18 @@ class ListFormatAdapter :
                 }
             }
         }
-        result.add(currentValue.toString())
+        if (currentValue.toString() != "") {
+            result.add(currentValue.toString())
+        }
         return result
     }
 
     override fun convertToString(value: List<String>): String {
-        require(value.isNotEmpty()) { "an empty list cannot be parsed to a string value" }
-        return value.joinToString(",") { it.replace("\\", "\\\\").replace(",", "\\,") }
+        val stringValue = value.joinToString(",") { it.replace("\\", "\\\\").replace(",", "\\,") }
+        return if (value.isNotEmpty() && value.last() == "") {
+            "$stringValue,"
+        } else {
+            stringValue
+        }
     }
 }

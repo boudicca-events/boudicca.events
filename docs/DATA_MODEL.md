@@ -266,18 +266,23 @@ Searching: Works with Equals, After, Before and Duration queries.
 
 Format: The format is a comma (`,`) seperated list of values. That means that commas occurring in a value have to be
 escaped by a backslash "\" and occurring backslashes also have to be escaped by a backslash.
+If the last trailing value is an empty string it is ignored, so if your last list entry should be an empty value, add
+another "," at the end.
 
 Examples:
 
 * `value1` (this is a list consisting only of one value "value1")
+* `value1,` (this is also a list consisting of one value "value1", because the last empty string was ignored)
 * `value1,value2` (this is a list consisting of two values "value1" and "value2")
 * `val\\ue1,val\,ue2` (this is a list consisting of two values with escaped characters in them "val\\ue1" and "
   val,ue2")
-* `value1,,value2` (this is a list consisting of three values "value1", "" (an empty strimg) and "value2")
+* `value1,,value2` (this is a list consisting of three values "value1", "" (an empty string) and "value2")
 * `value1, value2` (this is a list consisting of two values "value1" and " value2" (please note the preceding whitespace
   in the second value))
-* ` ` (the empty string -> a list with a single empty value)
-* `,` (this is a list consisting of two empty values)
+* ` ` (an empty string -> an empty list)
+* `,` (this is a list consisting one empty string, since the last empty string got ignored)
+* `,,` (this is a list consisting of two empty strings)
+* `value,,` (this is a list consisting of two values, "value" and an empty string)
 
 Please note that there is no way to specify an empty list, you need to remove the Value for this.
 

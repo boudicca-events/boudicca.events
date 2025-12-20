@@ -8,14 +8,16 @@ class ListFormatAdapterParseToStringTest {
 
     @Test
     fun testEmptyList() {
-        assertThrows<IllegalArgumentException> { convertToString(listOf()) }
+        val result = convertToString(listOf())
+
+        assertEquals("", result)
     }
 
     @Test
     fun testListWithEmptyString() {
         val result = convertToString(listOf(""))
 
-        assertEquals("", result)
+        assertEquals(",", result)
     }
 
     @Test
@@ -51,6 +53,13 @@ class ListFormatAdapterParseToStringTest {
         val result = convertToString(listOf("1,", ",2", "\\3", "4\\"))
 
         assertEquals("1\\,,\\,2,\\\\3,4\\\\", result)
+    }
+
+    @Test
+    fun testValueWithTrailingEmptyString() {
+        val result = convertToString(listOf("value", ""))
+
+        assertEquals("value,,", result)
     }
 
     private fun convertToString(value: List<String>): String {

@@ -9,19 +9,40 @@ class ListFormatAdapterParseFromStringTest {
     fun testFromStringOrNull() {
         val result = ListFormatAdapter().fromStringOrNull(null)
 
-        assertEquals(0, result.size)
+        assertEquals(listOf<String>(), result)
     }
 
     @Test
     fun testEmptyString() {
         val result = parseFromString("")
 
+        assertEquals(listOf<String>(), result)
+    }
+
+    @Test
+    fun testSingleComma() {
+        val result = parseFromString(",")
+
         assertEquals(listOf(""), result)
+    }
+
+    @Test
+    fun testTrailingDoubleComma() {
+        val result = parseFromString("value,,")
+
+        assertEquals(listOf("value", ""), result)
     }
 
     @Test
     fun testSingleValue() {
         val result = parseFromString("value")
+
+        assertEquals(listOf("value"), result)
+    }
+
+    @Test
+    fun testTrailingComma() {
+        val result = parseFromString("value,")
 
         assertEquals(listOf("value"), result)
     }
@@ -70,7 +91,7 @@ class ListFormatAdapterParseFromStringTest {
 
     @Test
     fun testTwoEmptyValues() {
-        val result = parseFromString(",")
+        val result = parseFromString(",,")
 
         assertEquals(listOf("", ""), result)
     }

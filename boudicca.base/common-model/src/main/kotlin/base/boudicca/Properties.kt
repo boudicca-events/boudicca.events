@@ -82,14 +82,7 @@ class UriProperty(propertyName: String) : GenericProperty<URI>(propertyName, Uri
 
 class DateProperty(propertyName: String) : GenericProperty<OffsetDateTime>(propertyName, DateFormatAdapter())
 
-class ListProperty(propertyName: String) : GenericProperty<List<String>>(propertyName, ListFormatAdapter()) {
-    override fun parseToString(value: List<String>): String? {
-        if (value.isEmpty()) {
-            return null
-        }
-        return super.parseToString(value)
-    }
-}
+class ListProperty(propertyName: String) : GenericProperty<List<String>>(propertyName, ListFormatAdapter())
 
 class NumberProperty(propertyName: String) : GenericProperty<Number>(propertyName, NumberFormatAdapter())
 

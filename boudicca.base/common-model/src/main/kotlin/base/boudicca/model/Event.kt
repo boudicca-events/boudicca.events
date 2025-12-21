@@ -12,9 +12,8 @@ import java.util.Optional
 data class Event(
     val name: String,
     val startDate: OffsetDateTime,
-    val data: Map<String, String> = mapOf()
+    val data: Map<String, String> = mapOf(),
 ) {
-
     fun toStructuredEvent(): StructuredEvent {
         return StructuredEvent(this)
     }

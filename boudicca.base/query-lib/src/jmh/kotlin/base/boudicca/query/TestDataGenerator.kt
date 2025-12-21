@@ -14,6 +14,7 @@ import kotlin.math.min
 import kotlin.random.Random
 
 const val WANTED_EVENTS = 100_000
+
 fun main() {
     val startTime = System.currentTimeMillis()
     val testData = TestDataGenerator.getTestData()
@@ -24,8 +25,9 @@ fun main() {
 }
 
 private fun writeTestData(testData: Pair<List<Map<String, String>>, Map<String, TestDataGenerator.Metadata>>) {
-    val objectMapper = JsonMapper.builder().addModule(JavaTimeModule())
-        .addModule(KotlinModule.Builder().build()).build()
+    val objectMapper =
+        JsonMapper.builder().addModule(JavaTimeModule())
+            .addModule(KotlinModule.Builder().build()).build()
 
     val bytes = objectMapper.writeValueAsBytes(testData.first)
     Path.of("C:\\projects\\boudicca\\testdata.dump")
@@ -33,7 +35,6 @@ private fun writeTestData(testData: Pair<List<Map<String, String>>, Map<String, 
 }
 
 object TestDataGenerator {
-
     fun getTestData(): Pair<List<Map<String, String>>, Map<String, Metadata>> {
         val publisherClient = EventDbPublisherClient("https://eventdb.boudicca.events")
 
@@ -88,9 +89,10 @@ object TestDataGenerator {
         events
             .mapNotNull { it[field] }
             .forEach {
-                val fieldWords = it
-                    .split(" ", "\t", "\n", "\r\n")
-                    .filter(String::isNotBlank) //meh, good enough for this
+                val fieldWords =
+                    it
+                        .split(" ", "\t", "\n", "\r\n")
+                        .filter(String::isNotBlank) // meh, good enough for this
 
                 count++
                 words.addAll(fieldWords)
@@ -101,8 +103,10 @@ object TestDataGenerator {
             words = words.take(5).toMutableSet()
         }
         return Metadata(
-            count.toFloat() / events.size.toFloat(), words.toList(), min,
-            wordCounts.sorted()[wordCounts.size / 2]
+            count.toFloat() / events.size.toFloat(),
+            words.toList(),
+            min,
+            wordCounts.sorted()[wordCounts.size / 2],
         )
     }
 

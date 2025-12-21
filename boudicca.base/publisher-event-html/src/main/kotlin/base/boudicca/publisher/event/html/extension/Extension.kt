@@ -14,5 +14,5 @@ data class LinkExtension(
     val text: String,
     val url: String,
     val target: String = "_self",
-    val svgName: String = ""
+    val svgName: String = "",
 )

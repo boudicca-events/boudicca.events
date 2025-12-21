@@ -18,13 +18,12 @@ import java.util.*
 
 private const val CUTOFF_TO_HIGHER_UNIT = 5L
 
-@Suppress("SpringJavaInjectionPointsAutowiringInspection") //this bean is added dynamically
+@Suppress("SpringJavaInjectionPointsAutowiringInspection") // this bean is added dynamically
 @Service
 class WebuiService(
     @Qualifier("eventCollectors") private val eventCollectors: List<EventCollector>,
-    @Value("\${boudicca.collector.webui.timeZoneId:Europe/Vienna}") timeZoneId: String
+    @Value("\${boudicca.collector.webui.timeZoneId:Europe/Vienna}") timeZoneId: String,
 ) {
-
     private val zoneId = ZoneId.of(timeZoneId)
 
     fun getIndexData(): Map<String, Any> {
@@ -43,26 +42,29 @@ class WebuiService(
     }
 
     fun getSingleCollectionData(uuid: UUID): Map<String, Any> {
-        val singleCollection = requireNotNull(findSingleCollection(uuid)) {
-            "unable to find single collection with uuid $uuid"
-        }
+        val singleCollection =
+            requireNotNull(findSingleCollection(uuid)) {
+                "unable to find single collection with uuid $uuid"
+            }
 
         val data = mutableMapOf<String, Any>()
         data["singleCollection"] = mapSingleCollectionToFrontend(singleCollection)
-        data["httpCalls"] = singleCollection.httpCalls
-            .sortedBy { it.startTime }
-            .map {
-                mapHttpCallToFrontend(it)
-            }
+        data["httpCalls"] =
+            singleCollection.httpCalls
+                .sortedBy { it.startTime }
+                .map {
+                    mapHttpCallToFrontend(it)
+                }
         data["logs"] = formatLogLines(singleCollection.logLines)
 
         return data
     }
 
     fun getFullCollectionData(uuid: UUID): Map<String, Any> {
-        val fullCollection = requireNotNull(findFullCollection(uuid)) {
-            "unable to find full collection with uuid $uuid"
-        }
+        val fullCollection =
+            requireNotNull(findFullCollection(uuid)) {
+                "unable to find full collection with uuid $uuid"
+            }
 
         val data = mutableMapOf<String, Any>()
         data["fullCollection"] = mapFullCollectionToFrontEnd(fullCollection)
@@ -84,12 +86,12 @@ class WebuiService(
             "hasWarnings" to (fullCollection.getTotalWarningCount() > 0),
             "totalEventsCollected" to fullCollection.singleCollections.sumOf { it.totalEventsCollected },
             "singleCollections" to
-                    eventCollectors
-                        .map { it.getName() }
-                        .sorted()
-                        .map {
-                            mapSingleCollectionToFrontend(it, singleCollections[it])
-                        }
+                eventCollectors
+                    .map { it.getName() }
+                    .sorted()
+                    .map {
+                        mapSingleCollectionToFrontend(it, singleCollections[it])
+                    },
         )
     }
 
@@ -152,18 +154,18 @@ class WebuiService(
 
         if (endTimeInMillis == 0L) {
             return formattedStartTime +
-                    " / ..."
+                " / ..."
         }
 
         val endTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(endTimeInMillis), zoneId)
         return if (startTime.toLocalDate() == endTime.toLocalDate()) {
             formattedStartTime +
-                    " / " +
-                    DateTimeFormatter.ofPattern("HH:mm").format(endTime)
+                " / " +
+                DateTimeFormatter.ofPattern("HH:mm").format(endTime)
         } else {
             formattedStartTime +
-                    " / " +
-                    DateTimeFormatter.ofPattern("d.M.uu HH:mm").format(endTime)
+                " / " +
+                DateTimeFormatter.ofPattern("d.M.uu HH:mm").format(endTime)
         }
     }
 
@@ -180,7 +182,5 @@ class WebuiService(
         }
     }
 
-    private fun formatLogLines(logLines: List<String>): String =
-        HtmlUtils.htmlEscape(logLines.joinToString("\n"))
-
+    private fun formatLogLines(logLines: List<String>): String = HtmlUtils.htmlEscape(logLines.joinToString("\n"))
 }

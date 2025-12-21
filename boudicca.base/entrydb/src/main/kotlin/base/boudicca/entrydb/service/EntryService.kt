@@ -42,18 +42,23 @@ private const val MAX_AGE_IN_DAYS = 3L
 private val MAX_AGE = Duration.ofDays(MAX_AGE_IN_DAYS).toMillis()
 
 @Service
-@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON) //even if this is the default, we REALLY have to make sure there is only one
-class EntryService @Autowired constructor(
-    private val boudiccaEntryDbProperties: BoudiccaEntryDbProperties
+@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON) // even if this is the default, we REALLY have to make sure there is only one
+class EntryService
+@Autowired
+constructor(
+    private val boudiccaEntryDbProperties: BoudiccaEntryDbProperties,
 ) {
-
     private val logger = KotlinLogging.logger {}
     private val entries = ConcurrentHashMap<UUID, Pair<Entry, InternalEventProperties>>()
     private val lastSeenCollectors = ConcurrentHashMap<String, Long>()
     private val persistLock = ReentrantLock()
     private val needsPersist = AtomicBoolean(false)
-    private val objectMapper = JsonMapper.builder().addModule(JavaTimeModule())
-        .addModule(KotlinModule.Builder().build()).build()
+    private val objectMapper =
+        JsonMapper
+            .builder()
+            .addModule(JavaTimeModule())
+            .addModule(KotlinModule.Builder().build())
+            .build()
     private val uuidV5Generator = UuidV5(UUID.fromString(boudiccaEntryDbProperties.uuidv5Namespace))
 
     init {
@@ -80,34 +85,40 @@ class EntryService @Autowired constructor(
     }
 
     private fun loadStoreV1(store: Path) {
-        val storeRead = objectMapper.readValue(
-            store.readBytes(),
-            object : TypeReference<List<Event>>() {})
+        val storeRead =
+            objectMapper.readValue(
+                store.readBytes(),
+                object : TypeReference<List<Event>>() {},
+            )
 
         storeRead.forEach {
             add(Event.toEntry(it))
         }
 
-        needsPersist.set(true) //to write in the new format
+        needsPersist.set(true) // to write in the new format
     }
 
     private fun loadStoreV2(store: Path) {
-        val storeRead = objectMapper.readValue(
-            store.readBytes(),
-            object : TypeReference<List<Pair<Event, InternalEventProperties>>>() {})
+        val storeRead =
+            objectMapper.readValue(
+                store.readBytes(),
+                object : TypeReference<List<Pair<Event, InternalEventProperties>>>() {},
+            )
 
         storeRead.forEach {
             val entry = Event.toEntry(it.first)
             entries[getEntryKey(entry.toStructuredEntry())] = Pair(entry, it.second)
         }
 
-        needsPersist.set(true) //to write in the new format
+        needsPersist.set(true) // to write in the new format
     }
 
     private fun loadStoreV3(store: Path) {
-        val storeRead = objectMapper.readValue(
-            store.readBytes(),
-            object : TypeReference<List<Pair<Entry, InternalEventProperties>>>() {})
+        val storeRead =
+            objectMapper.readValue(
+                store.readBytes(),
+                object : TypeReference<List<Pair<Entry, InternalEventProperties>>>() {},
+            )
 
         storeRead.forEach {
             entries[getEntryKey(it.first.toStructuredEntry())] = it
@@ -121,17 +132,20 @@ class EntryService @Autowired constructor(
     fun get(boudiccaId: UUID): Entry? = entries[boudiccaId]?.first
 
     fun add(entry: Entry) {
-        //TODO we should do UTF8 normalization on all keys and values
-        //TODO we should do some kind of validation on the keys and types/formats
-        val structuredEntry = entry
-            .filterKeys { !it.startsWith("boudicca.") }
-            .toStructuredEntry()
+        // TODO we should do UTF8 normalization on all keys and values
+        // TODO we should do some kind of validation on the keys and types/formats
+        val structuredEntry =
+            entry
+                .filterKeys { !it.startsWith("boudicca.") }
+                .toStructuredEntry()
 
         val boudiccaId = getEntryKey(structuredEntry)
-        val modifiedEntry = structuredEntry.toBuilder()
-            .withProperty(SemanticKeys.BOUDICCA_ID_PROPERTY, boudiccaId)
+        val modifiedEntry =
+            structuredEntry
+                .toBuilder()
+                .withProperty(SemanticKeys.BOUDICCA_ID_PROPERTY, boudiccaId)
 
-        //we reflatten the entry to make sure keys are canonical
+        // we reflatten the entry to make sure keys are canonical
         entries[boudiccaId] =
             Pair(modifiedEntry.build().toFlatEntry(), InternalEventProperties(System.currentTimeMillis()))
 
@@ -145,16 +159,17 @@ class EntryService @Autowired constructor(
 
     @Scheduled(fixedRate = 1, timeUnit = TimeUnit.DAYS)
     fun cleanup() {
-        val toRemoveEvents = entries.entries
-            .filter {
-                val entry = it.value.first
-                if (entry.containsKey(SemanticKeys.COLLECTORNAME)) {
-                    val collectorName = entry[SemanticKeys.COLLECTORNAME]!!
-                    it.value.second.timeAdded + MAX_AGE < (lastSeenCollectors[collectorName] ?: Long.MIN_VALUE)
-                } else {
-                    false
+        val toRemoveEvents =
+            entries.entries
+                .filter {
+                    val entry = it.value.first
+                    if (entry.containsKey(SemanticKeys.COLLECTORNAME)) {
+                        val collectorName = entry[SemanticKeys.COLLECTORNAME]!!
+                        it.value.second.timeAdded + MAX_AGE < (lastSeenCollectors[collectorName] ?: Long.MIN_VALUE)
+                    } else {
+                        false
+                    }
                 }
-            }
 
         toRemoveEvents.forEach {
             logger.debug { "removing event because it got too old: ${it.value.first}" }
@@ -174,11 +189,13 @@ class EntryService @Autowired constructor(
     }
 
     init {
-        Runtime.getRuntime().addShutdownHook(object : Thread() {
-            override fun run() {
-                persist()
-            }
-        })
+        Runtime.getRuntime().addShutdownHook(
+            object : Thread() {
+                override fun run() {
+                    persist()
+                }
+            },
+        )
     }
 
     fun persist() {
@@ -190,8 +207,9 @@ class EntryService @Autowired constructor(
             if (needsPersist.get()) {
                 val bytes = objectMapper.writeValueAsBytes(entries.values)
                 try {
-                    //TODO make more resilient saving, aka save then move
-                    Path.of(boudiccaEntryDbProperties.store.path)
+                    // TODO make more resilient saving, aka save then move
+                    Path
+                        .of(boudiccaEntryDbProperties.store.path)
                         .writeBytes(bytes, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE)
                 } catch (e: IOException) {
                     logger.error(e) { "error persisting store" }
@@ -211,10 +229,11 @@ class EntryService @Autowired constructor(
                 entry.keys.map { it.toKeyString() }
             }
 
-        val values = keys
-            .mapNotNull { key ->
-                entry.filterKeys(KeyFilter.parse(key)).firstOrNull()?.second
-            }
+        val values =
+            keys
+                .mapNotNull { key ->
+                    entry.filterKeys(KeyFilter.parse(key)).firstOrNull()?.second
+                }
 
         return uuidV5Generator.from(values)
     }

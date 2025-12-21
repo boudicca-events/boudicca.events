@@ -1,35 +1,31 @@
 package base.boudicca.query
 
 import base.boudicca.model.Entry
-import base.boudicca.query.evaluator.*
+import base.boudicca.query.evaluator.Evaluator
+import base.boudicca.query.evaluator.NoopEvaluator
+import base.boudicca.query.evaluator.OptimizingEvaluator
+import base.boudicca.query.evaluator.PAGE_ALL
+import base.boudicca.query.evaluator.QueryResult
+import base.boudicca.query.evaluator.SimpleEvaluator
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import org.openjdk.jmh.annotations.*
+import org.openjdk.jmh.annotations.Benchmark
+import org.openjdk.jmh.annotations.Fork
+import org.openjdk.jmh.annotations.Measurement
+import org.openjdk.jmh.annotations.Param
+import org.openjdk.jmh.annotations.Scope
+import org.openjdk.jmh.annotations.Setup
+import org.openjdk.jmh.annotations.State
+import org.openjdk.jmh.annotations.Warmup
 import java.nio.file.Path
 import java.util.concurrent.TimeUnit
 import kotlin.io.path.exists
 import kotlin.io.path.readBytes
 
-
 @State(Scope.Benchmark)
 open class EvaluatorTest {
-
-//    @Param(
-//        """ "name" contains "rock" """,
-//        """ "description" contains "rock" """,
-//        """ "whatever" contains "rock" """,
-//    )
-//    var query: String? = null
-
-//    @Param(
-//        """ "category" equals "music" """,
-//        """ "name" equals "music" """,
-//        """ "whatever" equals "music" """,
-//    )
-//    var query: String? = null
-
     @Param(
 //        """ "category" equals "music" """,
 //        """ "name" contains "rock" """,
@@ -51,12 +47,13 @@ open class EvaluatorTest {
     @Setup
     fun setup() {
         expression = BoudiccaQueryRunner.parseQuery(query!!)
-        evaluator = when (mode) {
-            "noop" -> NoopEvaluator()
-            "simple" -> SimpleEvaluator(loadTestData(testDataSize))
-            "optimizing" -> OptimizingEvaluator(loadTestData(testDataSize))
-            else -> throw IllegalArgumentException("illegal mode $mode")
-        }
+        evaluator =
+            when (mode) {
+                "noop" -> NoopEvaluator()
+                "simple" -> SimpleEvaluator(loadTestData(testDataSize))
+                "optimizing" -> OptimizingEvaluator(loadTestData(testDataSize))
+                else -> throw IllegalArgumentException("illegal mode $mode")
+            }
     }
 
     @Benchmark
@@ -65,20 +62,15 @@ open class EvaluatorTest {
 //    @OutputTimeUnit(TimeUnit.MILLISECONDS)
     @Warmup(iterations = 2, time = 5000, timeUnit = TimeUnit.MILLISECONDS)
     @Measurement(iterations = 2, time = 5000, timeUnit = TimeUnit.MILLISECONDS)
-    fun testEvaluator(): QueryResult {
-        return evaluator!!.evaluate(expression!!, PAGE_ALL)
-    }
+    fun testEvaluator(): QueryResult = evaluator!!.evaluate(expression!!, PAGE_ALL)
 }
 
 fun main() {
-
 //    Thread.sleep(20000)
     val testData: List<Map<String, String>> = loadTestData(100_000)
 
-
     val evaluator = OptimizingEvaluator(testData.toList())
 //    val evaluator = SimpleEvaluator(testData.toList())
-
 
 //    val expression = BoudiccaQueryRunner.parseQuery(""" "name" contains "rock" """)
 //    val expression = BoudiccaQueryRunner.parseQuery(""" "description" contains "rock" """)
@@ -106,19 +98,16 @@ fun main() {
 //
 //    println(sum)
 
-
     val optimizingEvaluator = OptimizingEvaluator(loadTestData(100_000))
-
 
     println(
         BoudiccaQueryRunner.evaluateQuery(
-            """ "name" equals "music" """, PAGE_ALL, optimizingEvaluator
-        ).totalResults
+            """ "name" equals "music" """,
+            PAGE_ALL,
+            optimizingEvaluator,
+        ).totalResults,
     )
-
-
 }
-
 
 private fun loadTestData(testDataSize: Int? = null): List<Map<String, String>> {
 //        return listOf(
@@ -135,9 +124,11 @@ private fun loadTestData(testDataSize: Int? = null): List<Map<String, String>> {
     if (!path.exists()) {
         path = Path.of("../../testdata.dump")
     }
-    val testData = objectMapper.readValue(
-        path.readBytes(), object : TypeReference<List<Entry>>() {})
-
+    val testData =
+        objectMapper.readValue(
+            path.readBytes(),
+            object : TypeReference<List<Entry>>() {},
+        )
 
 //    val testData = EventDbPublisherClient("https://eventdb.boudicca.events").getAllEntries()
 

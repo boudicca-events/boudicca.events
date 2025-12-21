@@ -8,7 +8,6 @@ import io.opentelemetry.api.OpenTelemetry
 import java.time.Duration
 
 class EventCollectorCoordinatorBuilder(private val otel: OpenTelemetry = GlobalOpenTelemetry.get()) {
-
     init {
         FetcherFactory.otel = otel
     }
@@ -52,9 +51,9 @@ class EventCollectorCoordinatorBuilder(private val otel: OpenTelemetry = GlobalO
                 finalEventCollectors,
                 runnerIngestionInterface ?: RunnerIngestionInterface.createFromConfiguration(otel),
                 runnerEnricherInterface ?: RunnerEnricherInterface.createFromConfiguration(otel),
-                otel
+                otel,
             ),
-            otel
+            otel,
         )
     }
 }

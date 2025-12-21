@@ -17,7 +17,6 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.function.Function
 
 object Utils {
-
     private val logger = KotlinLogging.logger {}
 
     private const val DEFAULT_SIZE = 30
@@ -32,24 +31,22 @@ object Utils {
             .sortedWith(
                 Comparator
                     .comparing<Pair<Entry, OffsetDateTime>, OffsetDateTime> { it.second }
-                    .thenComparing(Function { it.first[SemanticKeys.NAME] ?: "" })
+                    .thenComparing(Function { it.first[SemanticKeys.NAME] ?: "" }),
             )
             .map { it.first }
     }
 
-    private fun getStartDate(
-        entry: Entry,
-        startDateCache: ConcurrentHashMap<String, OffsetDateTime>
-    ): OffsetDateTime {
-        val optionalDateText = entry.toStructuredEntry().selectKey(
-            KeySelector.builder(SemanticKeys.STARTDATE).thenVariant(
-                VariantConstants.FORMAT_VARIANT_NAME,
-                listOf(
-                    VariantConstants.FormatVariantConstants.DATE_FORMAT_NAME,
-                    VariantConstants.FormatVariantConstants.TEXT_FORMAT_NAME
-                )
-            ).build()
-        )
+    private fun getStartDate(entry: Entry, startDateCache: ConcurrentHashMap<String, OffsetDateTime>): OffsetDateTime {
+        val optionalDateText =
+            entry.toStructuredEntry().selectKey(
+                KeySelector.builder(SemanticKeys.STARTDATE).thenVariant(
+                    VariantConstants.FORMAT_VARIANT_NAME,
+                    listOf(
+                        VariantConstants.FormatVariantConstants.DATE_FORMAT_NAME,
+                        VariantConstants.FormatVariantConstants.TEXT_FORMAT_NAME,
+                    ),
+                ).build(),
+            )
         if (optionalDateText.isEmpty) {
             return Instant.ofEpochMilli(0).atOffset(ZoneOffset.MIN)
         }
@@ -58,9 +55,10 @@ object Utils {
             return startDateCache[dateText]!!
         }
         return try {
-            val offsetDateTime = OffsetDateTime.parse(dateText, DateTimeFormatter.ISO_DATE_TIME)
-                .atZoneSameInstant(ZoneId.of("Europe/Vienna"))
-                .toOffsetDateTime()
+            val offsetDateTime =
+                OffsetDateTime.parse(dateText, DateTimeFormatter.ISO_DATE_TIME)
+                    .atZoneSameInstant(ZoneId.of("Europe/Vienna"))
+                    .toOffsetDateTime()
             startDateCache[dateText] = offsetDateTime
             offsetDateTime
         } catch (e: DateTimeParseException) {

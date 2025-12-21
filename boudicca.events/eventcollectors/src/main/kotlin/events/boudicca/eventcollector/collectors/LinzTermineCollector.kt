@@ -39,91 +39,84 @@ class LinzTermineCollector : EventCollector {
     }
 
     private fun filterEvents(events: List<LinzTermineEvent>): List<LinzTermineEvent> {
-        //448552 is the locationId of casino linz, i do not want gambling in my events
+        // 448552 is the locationId of casino linz, i do not want gambling in my events
         return events.filter { it.locationId != 448552 }
     }
 
     private fun getEventWebsites(events: List<LinzTermineEvent>): Map<String, Document> {
-        //TODO we may loose some events because either they do not have a linztermine.at link or the linztermine.at link points to a 404... not sure what to do about that
+        // TODO we may loose some events because either they do not have a linztermine.at link or the linztermine.at link points to a 404... not sure what to do about that
         return events
             .asSequence()
             .map { it.url }
             .filter {
                 it.contains("linztermine.at")
             }
-            .toSet() //filter duplicates
+            .toSet() // filter duplicates
             .mapNotNull {
                 try {
                     Pair(it, Jsoup.parse(fetcher.fetchUrl(it.replace("http://", "https://"))))
                 } catch (_: RuntimeException) {
-                    //some linztermine.at links just 404 and go nowhere... not sure what this is supposed to mean
+                    // some linztermine.at links just 404 and go nowhere... not sure what this is supposed to mean
                     null
                 }
             }
             .associate { Pair(it.first, it.second) }
     }
 
-    private fun mapEvents(
-        eventList: List<LinzTermineEvent>,
-        locations: Map<Int, Location>,
-        eventWebsites: Map<String, Document>
-    ): List<StructuredEvent> {
-        val mappedEvents = eventList.flatMap { event ->
-            if (event.dates.isEmpty()) {
-                logger.warn { "event does not contain any dates: $event" }
-                return@flatMap emptyList()
-            }
-            val website = eventWebsites[event.url] ?: return@flatMap emptyList()
+    private fun mapEvents(eventList: List<LinzTermineEvent>, locations: Map<Int, Location>, eventWebsites: Map<String, Document>): List<StructuredEvent> {
+        val mappedEvents =
+            eventList.flatMap { event ->
+                if (event.dates.isEmpty()) {
+                    logger.warn { "event does not contain any dates: $event" }
+                    return@flatMap emptyList()
+                }
+                val website = eventWebsites[event.url] ?: return@flatMap emptyList()
 
-            var location = locations[event.locationId]
-            while (location?.subOf != null && locations[location.subOf] != null) {
-                location = locations[location.subOf]
-            }
-            val description = website.select("span.content-description").text()
-            val pictureUrl = if (!website.select("div.letterbox > img").isEmpty()) {
-                "https://www.linztermine.at" + website.select("div.letterbox > img").attr("src")
-            } else {
-                ""
-            }
+                var location = locations[event.locationId]
+                while (location?.subOf != null && locations[location.subOf] != null) {
+                    location = locations[location.subOf]
+                }
+                val description = website.select("span.content-description").text()
+                val pictureUrl =
+                    if (!website.select("div.letterbox > img").isEmpty()) {
+                        "https://www.linztermine.at" + website.select("div.letterbox > img").attr("src")
+                    } else {
+                        ""
+                    }
 
-            event.dates.map { date ->
-                structuredEvent(event.name, date.first) {
-                    withCommonProperties(event, description, pictureUrl, location)
-                    withProperty(SemanticKeys.ENDDATE_PROPERTY, date.second)
+                event.dates.map { date ->
+                    structuredEvent(event.name, date.first) {
+                        withCommonProperties(event, description, pictureUrl, location)
+                        withProperty(SemanticKeys.ENDDATE_PROPERTY, date.second)
+                    }
                 }
             }
-        }
         return mappedEvents
     }
 
-    private fun StructuredEventBuilder.withCommonProperties(
-        event: LinzTermineEvent,
-        description: String?,
-        pictureUrl: String,
-        location: Location?
-    ) {
+    private fun StructuredEventBuilder.withCommonProperties(event: LinzTermineEvent, description: String?, pictureUrl: String, location: Location?) {
         withProperty(SemanticKeys.TYPE_PROPERTY, mapEventType(event.type))
         withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
         withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(pictureUrl))
         withProperty(
             SemanticKeys.REGISTRATION_PROPERTY,
-            (if (event.freeOfCharge) Registration.FREE else Registration.TICKET)
+            (if (event.freeOfCharge) Registration.FREE else Registration.TICKET),
         )
         withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(event.url))
         withProperty(
             SemanticKeys.LOCATION_NAME_PROPERTY,
-            (location?.name ?: event.locationFallbackName)
-        ) //they do not include all locations in their location.xml files -.-
+            (location?.name ?: event.locationFallbackName),
+        ) // they do not include all locations in their location.xml files -.-
         withProperty(
             SemanticKeys.LOCATION_CITY_PROPERTY,
-            (location?.city)
+            (location?.city),
         )
         withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(event.url, eventsBaseUrl, locationBaseUrl))
         withAdditionalProperties(event)
     }
 
     private fun StructuredEventBuilder.withAdditionalProperties(event: LinzTermineEvent) {
-        //TODO make a semantic key out of this
+        // TODO make a semantic key out of this
         if (event.type?.first == 401) {
             this.withKeyValuePair(Key.builder("sport.participation").build(), "watch")
         }
@@ -140,10 +133,10 @@ class LinzTermineCollector : EventCollector {
         for (ignored in 1..(4 * 6)) {
             links.add(
                 "$eventsBaseUrl?lt_datefrom=" +
-                        URLEncoder.encode(
-                            date.format(urlFormatter),
-                            Charsets.UTF_8
-                        )
+                    URLEncoder.encode(
+                        date.format(urlFormatter),
+                        Charsets.UTF_8,
+                    ),
             )
             date = date.plusWeeks(1)
         }
@@ -152,7 +145,7 @@ class LinzTermineCollector : EventCollector {
                 loadXml(it)
             } catch (e: RuntimeException) {
                 logger.error(e) { "error fetching xml" }
-                //booooh
+                // booooh
                 null
             }
         }.flatMap {
@@ -165,13 +158,13 @@ class LinzTermineCollector : EventCollector {
                         it.select("date").map {
                             Pair(
                                 DateParser.parse(it.attr("dFrom")).single().startDate,
-                                DateParser.parse(it.attr("dTo")).single().startDate
+                                DateParser.parse(it.attr("dTo")).single().startDate,
                             )
                         },
                         it.attr("freeofcharge") == "1",
                         findLink(it),
                         findLocationId(it),
-                        it.select("location").text()
+                        it.select("location").text(),
                     )
                 }
         }.distinctBy { it.id }

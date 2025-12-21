@@ -4,32 +4,31 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class EvaluatorUtilSortTest {
-
     @Test
     fun testEmptyList() {
         testWithList(
-            listOf()
+            listOf(),
         )
     }
 
     @Test
     fun testSingleList() {
         testWithList(
-            listOf(1)
+            listOf(1),
         )
     }
 
     @Test
     fun testSmallList() {
         testWithList(
-            listOf(6, 1, 4)
+            listOf(6, 1, 4),
         )
     }
 
     @Test
     fun testBiggerList() {
         testWithList(
-            listOf(6, 1, 4, 5, 7, 1, 65, 9, 0, 3, 7, 2, 5, 57, 45, 23, 53, 3, 345, 1, 52, 2)
+            listOf(6, 1, 4, 5, 7, 1, 65, 9, 0, 3, 7, 2, 5, 57, 45, 23, 53, 3, 345, 1, 52, 2),
         )
     }
 
@@ -66,7 +65,5 @@ class EvaluatorUtilSortTest {
             val otherList = src.get()
             list[i] = otherList[j]
         }
-
     }
-
 }

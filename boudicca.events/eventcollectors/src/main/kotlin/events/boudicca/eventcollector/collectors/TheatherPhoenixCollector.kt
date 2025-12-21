@@ -41,7 +41,7 @@ class TheatherPhoenixCollector : TwoStepEventCollector<Pair<Element, Element>>("
         return structuredEvent(name, date) {
             withProperty(
                 SemanticKeys.URL_PROPERTY,
-                UrlUtils.parse(baseUrl, link.attr("rel"))
+                UrlUtils.parse(baseUrl, link.attr("rel")),
             )
             withProperty(SemanticKeys.TYPE_PROPERTY, "theater")
             withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(pictureUrl))

@@ -5,23 +5,14 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import io.opentelemetry.api.GlobalOpenTelemetry
 import io.opentelemetry.api.OpenTelemetry
 
-
 object DateParser {
     internal val logger = KotlinLogging.logger {}
 
-    fun parse(
-        vararg tokens: String,
-        dateParserConfig: DateParserConfig = DateParserConfig(),
-        otel: OpenTelemetry = GlobalOpenTelemetry.get()
-    ): DateParserResult {
+    fun parse(vararg tokens: String, dateParserConfig: DateParserConfig = DateParserConfig(), otel: OpenTelemetry = GlobalOpenTelemetry.get()): DateParserResult {
         return parse(tokens.toList(), dateParserConfig, otel)
     }
 
-    fun parse(
-        tokens: List<String>,
-        dateParserConfig: DateParserConfig = DateParserConfig(),
-        otel: OpenTelemetry = GlobalOpenTelemetry.get()
-    ): DateParserResult {
+    fun parse(tokens: List<String>, dateParserConfig: DateParserConfig = DateParserConfig(), otel: OpenTelemetry = GlobalOpenTelemetry.get()): DateParserResult {
         return DateParserImpl(dateParserConfig, tokens, otel).parse()
     }
 }

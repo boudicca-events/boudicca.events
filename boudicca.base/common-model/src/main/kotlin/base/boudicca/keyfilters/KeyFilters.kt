@@ -12,7 +12,6 @@ import base.boudicca.model.structured.Variant
  * see DATA_MODEL.md docs for more information on key filters
  */
 object KeyFilters {
-
     fun filterKeys(keyFilter: KeyFilter, event: StructuredEvent): List<Pair<Key, String>> {
         return filterKeys(keyFilter, event.toEntry())
     }
@@ -24,16 +23,14 @@ object KeyFilters {
             .sortedBy { it.first }
     }
 
-    fun doesKeyMatchFilter(
-        key: Key,
-        keyFilter: KeyFilter
-    ): Boolean {
-        return ((isWildcard(keyFilter) || keyFilter.name == key.name) &&
-                keyContainsAllVariants(keyFilter, key))
+    fun doesKeyMatchFilter(key: Key, keyFilter: KeyFilter): Boolean {
+        return (
+            (isWildcard(keyFilter) || keyFilter.name == key.name) &&
+                keyContainsAllVariants(keyFilter, key)
+            )
     }
 
-    private fun keyContainsAllVariants(keyFilter: KeyFilter, key: Key) =
-        keyFilter.variants.all { variant -> containsVariant(key, variant) }
+    private fun keyContainsAllVariants(keyFilter: KeyFilter, key: Key) = keyFilter.variants.all { variant -> containsVariant(key, variant) }
 
     private fun isWildcard(keyFilter: KeyFilter) = keyFilter.name == "*"
 
@@ -50,7 +47,6 @@ object KeyFilters {
                 variant.variantValue == selfVariant.variantValue
             ) {
                 return true
-
             }
         }
         return false

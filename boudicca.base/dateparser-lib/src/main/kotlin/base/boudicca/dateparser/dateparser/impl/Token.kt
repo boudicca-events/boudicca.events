@@ -4,7 +4,7 @@ package base.boudicca.dateparser.dateparser.impl
 internal data class Token private constructor(
     val value: String,
     val needSolving: Boolean,
-    val possibleTypes: Set<ResultTypes>
+    val possibleTypes: Set<ResultTypes>,
 ) {
     fun isSolved(): Boolean {
         return !needSolving || possibleTypes.size == 1

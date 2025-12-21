@@ -9,12 +9,11 @@ private const val EVENTDB_URL = "http://localhost:8081"
 private const val ENRICHER_URL = "http://localhost:8085"
 
 fun main() {
-
     var startTime = System.currentTimeMillis()
     val events = getEvents()
     println("fetch all events took ${System.currentTimeMillis() - startTime}ms")
 
-    val filteredEvents = events//.filter { it.data[SemanticKeys.COLLECTORNAME] == "posthof" }
+    val filteredEvents = events // .filter { it.data[SemanticKeys.COLLECTORNAME] == "posthof" }
 
     startTime = System.currentTimeMillis()
     val enrichedEvents = enrich(filteredEvents)
@@ -40,7 +39,7 @@ fun printDiff(event: Event, enrichedEvent: Event) {
         printValues(
             "startDate",
             event.startDate.toString(),
-            enrichedEvent.startDate.toString()
+            enrichedEvent.startDate.toString(),
         )
     }
     val oldValues = event.data

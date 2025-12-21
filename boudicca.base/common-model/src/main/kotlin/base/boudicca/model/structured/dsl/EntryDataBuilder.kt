@@ -6,7 +6,8 @@ import base.boudicca.model.structured.Variant
 import base.boudicca.model.structured.VariantConstants
 
 class EntryDataBuilder<T>(
-    private val name: String, private var defaultFormatAdapter: AbstractFormatAdapter<T>? = null
+    private val name: String,
+    private var defaultFormatAdapter: AbstractFormatAdapter<T>? = null,
 ) {
     // all combinations of the form
     // description
@@ -45,7 +46,6 @@ class EntryDataBuilder<T>(
             Key(name, entry.key) to entry.value
         }.toMap()
     }
-
 }
 
 private fun <U> MutableList<Variant>.addFormatVariant(formatAdapter: AbstractFormatAdapter<U>) {

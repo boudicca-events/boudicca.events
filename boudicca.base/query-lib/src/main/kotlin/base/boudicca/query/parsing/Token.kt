@@ -5,7 +5,6 @@ class Token(
     private val token: String? = null,
     private val number: Number? = null,
 ) {
-
     fun getType(): TokenType {
         return type
     }

@@ -37,7 +37,6 @@ private const val SORTING_RATIO = 3
 
 @Suppress("detekt:TooManyFunctions")
 class OptimizingEvaluator(rawEntries: Collection<Entry>, private val clock: Clock = Clock.systemDefaultZone()) : Evaluator {
-
     private val dateCache = ConcurrentHashMap<String, OffsetDateTime>()
     private val entries = Utils.order(rawEntries, dateCache)
     private val fullTextIndexCache = mutableMapOf<String, FullTextIndex>()
@@ -54,19 +53,20 @@ class OptimizingEvaluator(rawEntries: Collection<Entry>, private val clock: Cloc
     override fun evaluate(expression: Expression, page: Page): QueryResult {
         val resultSet = evaluateExpression(expression)
         val resultSize = resultSet.cardinality()
-        val orderedResult = if (resultSize > entries.size / SORTING_RATIO) {
-            // roughly, if the resultset is bigger than a third of the total entries,
-            // it is faster to iterate over all entries than to sort the resultset
-            entries.filterIndexed { i, _ -> resultSet[i] }
-        } else {
-            Utils.order(resultSet.stream().mapToObj { entries[it] }.toList(), dateCache)
-        }
+        val orderedResult =
+            if (resultSize > entries.size / SORTING_RATIO) {
+                // roughly, if the resultset is bigger than a third of the total entries,
+                // it is faster to iterate over all entries than to sort the resultset
+                entries.filterIndexed { i, _ -> resultSet[i] }
+            } else {
+                Utils.order(resultSet.stream().mapToObj { entries[it] }.toList(), dateCache)
+            }
         return QueryResult(
             orderedResult
                 .drop(page.offset)
                 .take(page.size)
                 .toList(),
-            resultSize
+            resultSize,
         )
     }
 
@@ -89,7 +89,7 @@ class OptimizingEvaluator(rawEntries: Collection<Entry>, private val clock: Cloc
     private fun hasFieldExpression(expression: HasFieldExpression): BitSet {
         val resultSet = BitSet()
         entries.forEachIndexed { i, entry ->
-            //TODO this is not performant at all...
+            // TODO this is not performant at all...
             if (entry.toStructuredEntry().filterKeys(expression.getKeyFilter()).any { it.second.isNotEmpty() }) {
                 resultSet.set(i)
             }
@@ -99,7 +99,7 @@ class OptimizingEvaluator(rawEntries: Collection<Entry>, private val clock: Cloc
 
     private fun notExpression(expression: NotExpression): BitSet {
         val subEvents = evaluateExpression(expression.getChild())
-        subEvents.flip(0, entries.size) //TODO this modifies the set, is that ok? can cause problems with caching
+        subEvents.flip(0, entries.size) // TODO this modifies the set, is that ok? can cause problems with caching
         return subEvents
     }
 
@@ -120,33 +120,33 @@ class OptimizingEvaluator(rawEntries: Collection<Entry>, private val clock: Cloc
     private fun equalsExpression(expression: EqualsExpression): BitSet {
         val lowerCase = expression.getText().lowercase()
         return keyFilterSearch(expression.getKeyFilter()) { field ->
-            val index = getOrCreateSimpleIndex("equals", field) {
-                SimpleIndex<String?>(
-                    entries.flatMapIndexed { entryIndex, entry ->
-                        val value = entry[field]
-                        if (EvaluatorUtil.isList(Key.parse(field))) {
-                            if (value == null) {
-                                emptyList()
+            val index =
+                getOrCreateSimpleIndex("equals", field) {
+                    SimpleIndex<String?>(
+                        entries.flatMapIndexed { entryIndex, entry ->
+                            val value = entry[field]
+                            if (EvaluatorUtil.isList(Key.parse(field))) {
+                                if (value == null) {
+                                    emptyList()
+                                } else {
+                                    ListFormatAdapter()
+                                        .fromString(value)
+                                        .map { Pair(entryIndex, it.lowercase()) }
+                                }
                             } else {
-                                ListFormatAdapter()
-                                    .fromString(value)
-                                    .map { Pair(entryIndex, it.lowercase()) }
+                                listOf(Pair(entryIndex, value?.lowercase()))
                             }
-                        } else {
-                            listOf(Pair(entryIndex, value?.lowercase()))
-                        }
-                    }, Comparator.naturalOrder<String?>()
-                )
-            }
+                        },
+                        Comparator.naturalOrder<String?>(),
+                    )
+                }
             index.search { it?.compareTo(lowerCase) ?: -1 }
         }
     }
 
-    private fun containsExpression(expression: ContainsExpression): BitSet {
-        return keyFilterSearch(expression.getKeyFilter()) { field ->
-            val index = getOrCreateFullTextIndex(field)
-            index.containsSearch(expression.getText())
-        }
+    private fun containsExpression(expression: ContainsExpression): BitSet = keyFilterSearch(expression.getKeyFilter()) { field ->
+        val index = getOrCreateFullTextIndex(field)
+        index.containsSearch(expression.getText())
     }
 
     private fun beforeExpression(expression: BeforeExpression): BitSet {
@@ -162,7 +162,7 @@ class OptimizingEvaluator(rawEntries: Collection<Entry>, private val clock: Cloc
     }
 
     private fun durationLongerExpression(expression: DurationLongerExpression): BitSet {
-        //TODO this still does not work 100%, we need a completely different handling here
+        // TODO this still does not work 100%, we need a completely different handling here
         val index = getDurationIndex(expression)
         val duration = expression.getDuration().toDouble()
         return index.search {
@@ -174,7 +174,7 @@ class OptimizingEvaluator(rawEntries: Collection<Entry>, private val clock: Cloc
     }
 
     private fun durationShorterExpression(expression: DurationShorterExpression): BitSet {
-        //TODO this still does not work 100%, we need a completely different handling here
+        // TODO this still does not work 100%, we need a completely different handling here
         val index = getDurationIndex(expression)
         val duration = expression.getDuration().toDouble()
         return index.search {
@@ -198,51 +198,48 @@ class OptimizingEvaluator(rawEntries: Collection<Entry>, private val clock: Cloc
         return isInDateRangeQuery(expression.getKeyFilter(), expressionStartDate, expressionEndDate)
     }
 
-    private fun isInDateRangeQuery(
-        keyFilter: KeyFilter,
-        expressionStartDate: Instant,
-        expressionEndDate: Instant
-    ): BitSet {
-        return keyFilterSearch(keyFilter) { field ->
-            val index = getOrCreateInstantIndex(field)
-            index.search {
-                when {
-                    it != null && (it == expressionStartDate || it == expressionEndDate) -> 0
-                    it != null && !it.isAfter(expressionStartDate) -> -1
-                    it != null && !it.isBefore(expressionEndDate) -> 1
-                    it != null -> 0
-                    else -> -1
-                }
+    private fun isInDateRangeQuery(keyFilter: KeyFilter, expressionStartDate: Instant, expressionEndDate: Instant): BitSet = keyFilterSearch(keyFilter) { field ->
+        val index = getOrCreateInstantIndex(field)
+        index.search {
+            when {
+                it != null && (it == expressionStartDate || it == expressionEndDate) -> 0
+                it != null && !it.isAfter(expressionStartDate) -> -1
+                it != null && !it.isBefore(expressionEndDate) -> 1
+                it != null -> 0
+                else -> -1
             }
         }
     }
 
     private fun getDurationIndex(expression: AbstractDurationExpression): SimpleIndex<Double?> {
-        //TODO this index name generation can be wrong when & are used in keys
+        // TODO this index name generation can be wrong when & are used in keys
         val index =
             getOrCreateSimpleIndex(
                 "duration",
-                expression.getStartDateKeyFilter().toKeyString() + "&" + expression.getEndDateKeyFilter()
+                expression.getStartDateKeyFilter().toKeyString() + "&" + expression.getEndDateKeyFilter(),
             ) {
-                SimpleIndex.create(entries.map {
-                    EvaluatorUtil.getDuration(
-                        expression.getStartDateKeyFilter(),
-                        expression.getEndDateKeyFilter(),
-                        it.toStructuredEntry(), dateCache
-                    )
-                }, Comparator.naturalOrder())
+                SimpleIndex.create(
+                    entries.map {
+                        EvaluatorUtil.getDuration(
+                            expression.getStartDateKeyFilter(),
+                            expression.getEndDateKeyFilter(),
+                            it.toStructuredEntry(),
+                            dateCache,
+                        )
+                    },
+                    Comparator.naturalOrder(),
+                )
             }
         return index
     }
 
-    private fun toInstant(localDate: LocalDate): Instant {
-        return localDate.atStartOfDay().atZone(clock.zone).toInstant()
-    }
+    private fun toInstant(localDate: LocalDate): Instant = localDate.atStartOfDay().atZone(clock.zone).toInstant()
 
     private fun getOrCreateInstantIndex(fieldName: String): SimpleIndex<Instant?> {
-        val index = getOrCreateSimpleIndex("instant", fieldName) {
-            SimpleIndex.create(entries.map { safeGetInstant(it[fieldName], dateCache) }, Comparator.naturalOrder())
-        }
+        val index =
+            getOrCreateSimpleIndex("instant", fieldName) {
+                SimpleIndex.create(entries.map { safeGetInstant(it[fieldName], dateCache) }, Comparator.naturalOrder())
+            }
         return index
     }
 
@@ -256,37 +253,29 @@ class OptimizingEvaluator(rawEntries: Collection<Entry>, private val clock: Cloc
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun <T> getOrCreateSimpleIndex(
-        operation: String,
-        fieldName: String,
-        indexCreator: () -> SimpleIndex<T>
-    ): SimpleIndex<T> {
-        val operationCache = synchronized(simpleIndexCache) {
-            simpleIndexCache.getOrPut(operation) { mutableMapOf() }
-        }
+    private fun <T> getOrCreateSimpleIndex(operation: String, fieldName: String, indexCreator: () -> SimpleIndex<T>): SimpleIndex<T> {
+        val operationCache =
+            synchronized(simpleIndexCache) {
+                simpleIndexCache.getOrPut(operation) { mutableMapOf() }
+            }
 
         return synchronized(operationCache) {
             operationCache.getOrPut(fieldName) { indexCreator() } as SimpleIndex<T>
         }
     }
 
-    private fun getOrCreateFullTextIndex(fieldName: String): FullTextIndex {
-        return synchronized(fullTextIndexCache) {
-            fullTextIndexCache.getOrPut(fieldName) { FullTextIndex(entries, fieldName) }
-        }
+    private fun getOrCreateFullTextIndex(fieldName: String): FullTextIndex = synchronized(fullTextIndexCache) {
+        fullTextIndexCache.getOrPut(fieldName) { FullTextIndex(entries, fieldName) }
     }
 
-    private fun safeGetInstant(dateText: String?, dateCache: ConcurrentHashMap<String, OffsetDateTime>): Instant? {
-        return dateText?.let {
-            runCatching { getInstant(it, dateCache) }.getOrNull()
-        }
+    private fun safeGetInstant(dateText: String?, dateCache: ConcurrentHashMap<String, OffsetDateTime>): Instant? = dateText?.let {
+        runCatching { getInstant(it, dateCache) }.getOrNull()
     }
 
     private fun getInstant(dateText: String, dataCache: ConcurrentHashMap<String, OffsetDateTime>): Instant {
         val offsetDateTime = dataCache[dateText] ?: EvaluatorUtil.parseDate(dateText, dataCache)
         return offsetDateTime.toInstant()
     }
-
 
     private fun getAllFields(entries: List<Map<String, String>>): Set<String> {
         val allFields = mutableSetOf<String>()
@@ -299,5 +288,4 @@ class OptimizingEvaluator(rawEntries: Collection<Entry>, private val clock: Cloc
 
         return allFields
     }
-
 }

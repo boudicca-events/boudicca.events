@@ -10,7 +10,6 @@ import org.junit.jupiter.api.assertThrows
 import java.time.Clock
 
 class BoudiccaQueryRunnerTest {
-
     @Test
     fun emptyQuery() {
         assertThrows<QueryException> {
@@ -89,29 +88,30 @@ class BoudiccaQueryRunnerTest {
                 "field" to "value1",
                 SemanticKeys.STARTDATE to "2023-05-26T00:00:00Z",
                 SemanticKeys.ENDDATE to "2023-05-26T03:00:00Z",
-                SemanticKeys.TYPE to "konzert"
+                SemanticKeys.TYPE to "konzert",
             ),
             mapOf(
                 "name" to "event2",
                 "field" to "value2",
                 SemanticKeys.STARTDATE to "2023-05-29T00:00:00Z",
                 SemanticKeys.TYPE to "theater",
-                SemanticKeys.RECURRENCE_TYPE to "REGULARLY"
+                SemanticKeys.RECURRENCE_TYPE to "REGULARLY",
             ),
             mapOf(
-                "name" to "somethingelse", "field" to "wuuut",
-                SemanticKeys.STARTDATE to "2023-05-31T00:00:00Z"
+                "name" to "somethingelse",
+                "field" to "wuuut",
+                SemanticKeys.STARTDATE to "2023-05-31T00:00:00Z",
             ),
             mapOf(
                 "name" to "somethingelse2",
                 "field" to "wuuut",
                 SemanticKeys.STARTDATE to "2024-05-31T00:00:00Z",
-                SemanticKeys.TYPE to "konzert"
+                SemanticKeys.TYPE to "konzert",
             ),
             mapOf(
                 "name" to "somethingelse3",
                 "field" to "this is a\\longer text",
-                SemanticKeys.STARTDATE to "2024-05-31T00:00:00Z"
+                SemanticKeys.STARTDATE to "2024-05-31T00:00:00Z",
             ),
         )
     }

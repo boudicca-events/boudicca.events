@@ -7,7 +7,6 @@ import org.junit.jupiter.api.assertThrows
 import java.math.BigDecimal
 
 class LexerTest {
-
     @Test
     fun testEmpty() {
         callLexer("""  """).isEmpty()
@@ -218,12 +217,14 @@ class LexerTest {
         assertEquals(1, tokens.size)
         assertEquals(TokenType.DURATION, tokens[0].getType())
     }
+
     @Test
     fun testShorterKeyword() {
         val tokens = callLexer(""" shorter """)
         assertEquals(1, tokens.size)
         assertEquals(TokenType.SHORTER, tokens[0].getType())
     }
+
     @Test
     fun testLongerKeyword() {
         val tokens = callLexer(""" longer """)

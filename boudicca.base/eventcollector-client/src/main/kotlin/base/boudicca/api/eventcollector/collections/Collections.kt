@@ -6,7 +6,6 @@ import java.util.Collections
 import java.util.concurrent.atomic.AtomicReference
 
 object Collections {
-
     private val currentFullCollection = AtomicReference<FullCollection>()
     private val currentSingleCollections = ThreadLocal<SingleCollection>()
     private val currentHttpCalls = ThreadLocal<HttpCall>()

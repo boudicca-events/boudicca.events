@@ -14,7 +14,6 @@ import java.time.OffsetDateTime
 import java.time.ZoneId
 
 class WissensturmCollector : TwoStepEventCollector<Pair<String, Document>>("wissensturm") {
-
     override fun getAllUnparsedEvents(): List<Pair<String, Document>> {
         val fetcher = FetcherFactory.newFetcher()
 
@@ -27,8 +26,8 @@ class WissensturmCollector : TwoStepEventCollector<Pair<String, Document>>("wiss
                 Jsoup.parse(
                     fetcher.fetchUrl(
                         "https://vhskurs.linz.at/index.php?kathaupt=109&blkeep=1" +
-                            "&month=${date.monthValue}&year=${date.year}"
-                    )
+                            "&month=${date.monthValue}&year=${date.year}",
+                    ),
                 )
             eventUrls.addAll(monthlyOverview.select("div.kurse_demn article a").eachAttr("href"))
             date = date.plusMonths(1)
@@ -50,11 +49,12 @@ class WissensturmCollector : TwoStepEventCollector<Pair<String, Document>>("wiss
         val img = eventDoc.select("div.kw-kurdetails div.content-txt:nth-child(2) img")
         val pictureUrl = UrlUtils.parse(img.attr("src"))
         val pictureAltText = img.attr("alt")
-        val pictureCopyright = if (pictureAltText.contains("Grafik:")) {
-            pictureAltText.split("Grafik:").last().trim()
-        } else {
-            "Wissensturm"
-        }
+        val pictureCopyright =
+            if (pictureAltText.contains("Grafik:")) {
+                pictureAltText.split("Grafik:").last().trim()
+            } else {
+                "Wissensturm"
+            }
 
         return datesAndLocations
             .filterNotNull()
@@ -75,7 +75,7 @@ class WissensturmCollector : TwoStepEventCollector<Pair<String, Document>>("wiss
                         withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Wissensturm")
                         withProperty(
                             SemanticKeys.LOCATION_URL_PROPERTY,
-                            UrlUtils.parse("https://wissensturm.linz.at/")
+                            UrlUtils.parse("https://wissensturm.linz.at/"),
                         )
                         withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Linz")
                     } else {
@@ -97,7 +97,7 @@ class WissensturmCollector : TwoStepEventCollector<Pair<String, Document>>("wiss
                     Triple(
                         result.single().startDate,
                         result.single().endDate!!,
-                        it.child(it.childrenSize() - 1).text()
+                        it.child(it.childrenSize() - 1).text(),
                     )
                 }
             }

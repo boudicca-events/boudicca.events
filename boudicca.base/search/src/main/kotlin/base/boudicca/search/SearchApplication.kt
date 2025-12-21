@@ -11,14 +11,16 @@ import org.springframework.scheduling.annotation.EnableScheduling
 
 @OpenAPIDefinition(
     servers = [
-        Server(url = "/", description = "Default Server URL")
+        Server(url = "/", description = "Default Server URL"),
     ],
-    info = Info(
+    info =
+    Info(
         title = "Boudicca EventDB",
         version = "0.1",
-        license = License(
-            name = "GPL v3"
-        )
+        license =
+        License(
+            name = "GPL v3",
+        ),
     ),
 )
 @SpringBootApplication

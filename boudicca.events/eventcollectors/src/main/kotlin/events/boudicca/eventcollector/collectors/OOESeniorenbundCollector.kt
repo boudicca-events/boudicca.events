@@ -16,7 +16,6 @@ import java.util.regex.Pattern
  * the actual eventlist on https://ooesb.at/veranstaltungen is an iframe pointing to https://servicebroker.media-data.at/overview.html?key=QVKSBOOE so we parse that
  */
 class OOESeniorenbundCollector : TwoStepEventCollector<Pair<Document, String>>("ooesb") {
-
     override fun getAllUnparsedEvents(): List<Pair<Document, String>> {
         val fetcher = FetcherFactory.newFetcher()
         val document = Jsoup.parse(fetcher.fetchUrl("https://servicebroker.media-data.at/overview.html?key=QVKSBOOE"))
@@ -40,8 +39,8 @@ class OOESeniorenbundCollector : TwoStepEventCollector<Pair<Document, String>>("
                 withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(url))
                 withProperty(
                     SemanticKeys.LOCATION_NAME_PROPERTY,
-                    eventDoc.select("div.venue").text()
-                ) //TODO location name and city here are not seperated at all -.-
+                    eventDoc.select("div.venue").text(),
+                ) // TODO location name and city here are not seperated at all -.-
                 withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
                 withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(url))
             }
@@ -49,7 +48,7 @@ class OOESeniorenbundCollector : TwoStepEventCollector<Pair<Document, String>>("
     }
 
     private fun cleanupUrl(url: String): String {
-        //https://servicebroker.media-data.at/detail.html;jsessionid=B20D66D14ABACD0C9357ECC77CA10E48?evkey=11774&resize=true&key=QVKSBOOE
+        // https://servicebroker.media-data.at/detail.html;jsessionid=B20D66D14ABACD0C9357ECC77CA10E48?evkey=11774&resize=true&key=QVKSBOOE
 
         val sessionIdPattern = Pattern.compile(";jsessionid=\\w+\\?")
         val matcher = sessionIdPattern.matcher(url)

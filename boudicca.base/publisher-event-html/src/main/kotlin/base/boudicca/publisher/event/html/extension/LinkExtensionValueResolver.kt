@@ -5,7 +5,6 @@ import org.springframework.stereotype.Component
 
 @Component
 class LinkExtensionValueResolver(extensions: List<Extension>) : ValueResolver {
-
     private val headers: List<Map<String, String>> = getAllExtensionHeaders(extensions)
     private val footers: List<Map<String, String>> = getAllExtensionFooters(extensions)
 
@@ -46,9 +45,8 @@ class LinkExtensionValueResolver(extensions: List<Extension>) : ValueResolver {
                     "text" to header.text,
                     "url" to header.url,
                     "target" to header.target,
-                    "svgName" to header.svgName
+                    "svgName" to header.svgName,
                 )
             }
     }
-
 }

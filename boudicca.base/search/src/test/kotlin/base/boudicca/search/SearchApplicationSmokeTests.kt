@@ -17,7 +17,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @SpringBootTest
 @AutoConfigureMockMvc
 class SearchApplicationSmokeTests {
-
     @Autowired
     private lateinit var mockMvc: MockMvc
 
@@ -35,15 +34,16 @@ class SearchApplicationSmokeTests {
 
     @Test
     fun baseWorkflow() {
-        every { eventFetcher.fetchAllEvents() } returns setOf(
-            mapOf("name" to "coolband"),
-            mapOf("name" to "theatre")
-        )
+        every { eventFetcher.fetchAllEvents() } returns
+            setOf(
+                mapOf("name" to "coolband"),
+                mapOf("name" to "theatre"),
+            )
         synchronizationService.update()
 
         mockMvc.perform(
             post("/queryEntries").content("""{"query":"\"name\" contains \"band\""}""")
-                .addDefaultContentType()
+                .addDefaultContentType(),
         ).andExpect(status().isOk())
             .andExpect(content().json("""{"result":[{"name":"coolband"}],"totalResults":1,"error":null}"""))
     }

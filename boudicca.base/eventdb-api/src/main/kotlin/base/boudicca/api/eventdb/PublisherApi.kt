@@ -17,10 +17,10 @@ interface PublisherApi {
             ApiResponse(
                 responseCode = "200",
                 description = "returns all entries from the event db",
-                useReturnTypeSchema = true
-            )
+                useReturnTypeSchema = true,
+            ),
         ],
-        tags = ["publisher"]
+        tags = ["publisher"],
     )
     @GET
     @Path("entries")
@@ -32,14 +32,14 @@ interface PublisherApi {
             ApiResponse(
                 responseCode = "200",
                 description = "returns a single entry by id from the db",
-                useReturnTypeSchema = true
+                useReturnTypeSchema = true,
             ),
             ApiResponse(
                 responseCode = "404",
-                description = "entry not found"
-            )
+                description = "entry not found",
+            ),
         ],
-        tags = ["publisher"]
+        tags = ["publisher"],
     )
     @GET
     @Path("entry/{boudiccaId}")

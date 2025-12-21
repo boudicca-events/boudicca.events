@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test
 import java.time.OffsetDateTime
 
 class LocationEnricherTest {
-
     @Test
     fun testNoop() {
         val event = createTestEvent()
@@ -20,14 +19,15 @@ class LocationEnricherTest {
     @Test
     fun testSimpleLocationMatch() {
         val event = createTestEvent()
-        val locationEnricher = createTestEnricher(
-            listOf(
-                mapOf(
-                    SemanticKeys.LOCATION_NAME to listOf("location"),
-                    "test.data" to listOf("data"),
-                )
+        val locationEnricher =
+            createTestEnricher(
+                listOf(
+                    mapOf(
+                        SemanticKeys.LOCATION_NAME to listOf("location"),
+                        "test.data" to listOf("data"),
+                    ),
+                ),
             )
-        )
         val enrichedEvent = callEnrich(locationEnricher, event)
 
         assertEquals(event.name, enrichedEvent.name)
@@ -38,14 +38,15 @@ class LocationEnricherTest {
     @Test
     fun testSimpleAddressMatch() {
         val event = createTestEvent()
-        val locationEnricher = createTestEnricher(
-            listOf(
-                mapOf(
-                    SemanticKeys.LOCATION_ADDRESS to listOf("address"),
-                    "test.data" to listOf("data"),
-                )
+        val locationEnricher =
+            createTestEnricher(
+                listOf(
+                    mapOf(
+                        SemanticKeys.LOCATION_ADDRESS to listOf("address"),
+                        "test.data" to listOf("data"),
+                    ),
+                ),
             )
-        )
         val enrichedEvent = callEnrich(locationEnricher, event)
 
         assertEquals(event.name, enrichedEvent.name)
@@ -56,15 +57,16 @@ class LocationEnricherTest {
     @Test
     fun testNoMatch() {
         val event = createTestEvent()
-        val locationEnricher = createTestEnricher(
-            listOf(
-                mapOf(
-                    SemanticKeys.LOCATION_NAME to listOf("location2"),
-                    SemanticKeys.LOCATION_ADDRESS to listOf("address2"),
-                    "test.data" to listOf("data"),
-                )
+        val locationEnricher =
+            createTestEnricher(
+                listOf(
+                    mapOf(
+                        SemanticKeys.LOCATION_NAME to listOf("location2"),
+                        SemanticKeys.LOCATION_ADDRESS to listOf("address2"),
+                        "test.data" to listOf("data"),
+                    ),
+                ),
             )
-        )
         val enrichedEvent = callEnrich(locationEnricher, event)
 
         assertEquals(event, enrichedEvent)
@@ -73,14 +75,15 @@ class LocationEnricherTest {
     @Test
     fun testLocationAliasMatch() {
         val event = createTestEvent()
-        val locationEnricher = createTestEnricher(
-            listOf(
-                mapOf(
-                    SemanticKeys.LOCATION_NAME to listOf("location2", "location"),
-                    "test.data" to listOf("data"),
-                )
+        val locationEnricher =
+            createTestEnricher(
+                listOf(
+                    mapOf(
+                        SemanticKeys.LOCATION_NAME to listOf("location2", "location"),
+                        "test.data" to listOf("data"),
+                    ),
+                ),
             )
-        )
         val enrichedEvent = callEnrich(locationEnricher, event)
 
         assertEquals(event.name, enrichedEvent.name)
@@ -88,10 +91,7 @@ class LocationEnricherTest {
         assertEquals("data", enrichedEvent.data["test.data"])
     }
 
-    private fun callEnrich(
-        locationEnricher: LocationEnricher,
-        event: Event
-    ): Event {
+    private fun callEnrich(locationEnricher: LocationEnricher, event: Event): Event {
         return locationEnricher.enrich(event.toStructuredEvent()).toFlatEvent()
     }
 
@@ -109,11 +109,12 @@ class LocationEnricherTest {
 
     private fun createTestEvent(): Event {
         return Event(
-            "test", OffsetDateTime.now(),
+            "test",
+            OffsetDateTime.now(),
             mapOf(
                 SemanticKeys.LOCATION_NAME to "location",
                 SemanticKeys.LOCATION_ADDRESS to "address",
-            )
+            ),
         )
     }
 }

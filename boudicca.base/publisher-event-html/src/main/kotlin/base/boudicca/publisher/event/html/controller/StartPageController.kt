@@ -15,18 +15,15 @@ import org.springframework.web.servlet.view.RedirectView
 @RequestMapping("/")
 class StartPageController(
     private val eventService: EventService,
-    private val sourcesService: SourcesService
+    private val sourcesService: SourcesService,
 ) {
-
     @GetMapping("/")
     fun getIndex(): RedirectView {
         return RedirectView("/search")
     }
 
     @GetMapping("/search")
-    fun search(
-        searchDTO: SearchDTO
-    ): ModelAndView {
+    fun search(searchDTO: SearchDTO): ModelAndView {
         val data: MutableMap<String, Any> = HashMap()
         SearchUtils.searchAndAddToModel(eventService, searchDTO, data)
         data["filters"] = eventService.filters()
@@ -35,9 +32,7 @@ class StartPageController(
 
     @GetMapping("/generate", produces = ["text/plain"])
     @ResponseBody
-    fun generateQuery(
-        searchDTO: SearchDTO
-    ): String {
+    fun generateQuery(searchDTO: SearchDTO): String {
         return eventService.generateQuery(searchDTO)
     }
 
@@ -49,17 +44,10 @@ class StartPageController(
     }
 
     @GetMapping("/map")
-    fun map(
-        searchDTO: SearchDTO
-    ): ModelAndView {
+    fun map(searchDTO: SearchDTO): ModelAndView {
         val data: MutableMap<String, Any> = HashMap()
         SearchUtils.searchAndAddToModel(eventService, searchDTO, data)
         data["filters"] = eventService.filters()
         return ModelAndView("map", data)
     }
 }
-
-
-
-
-

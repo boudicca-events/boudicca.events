@@ -7,4 +7,3 @@ class SimpleEvaluatorTest : AbstractEvaluatorTest() {
         return SimpleEvaluator(entries, clock)
     }
 }
-

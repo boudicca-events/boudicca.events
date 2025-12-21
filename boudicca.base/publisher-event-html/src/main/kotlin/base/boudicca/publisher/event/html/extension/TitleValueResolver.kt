@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component
 
 @Component
 class TitleValueResolver(private val properties: PublisherHtmlProperties) : ValueResolver {
-
     override fun resolve(context: Any?, name: String?): Any {
         return when (name) {
             "pageTitle" -> {
@@ -29,7 +28,6 @@ class TitleValueResolver(private val properties: PublisherHtmlProperties) : Valu
 
     override fun propertySet(context: Any?) = mutableMapOf(
         "pageTitle" to properties.pageTitle,
-        "headerTitle" to properties.headerTitle
+        "headerTitle" to properties.headerTitle,
     ).entries
-
 }

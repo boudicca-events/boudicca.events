@@ -25,11 +25,12 @@ import java.time.OffsetDateTime
 import java.util.*
 
 @Service
-class CalendarService @Autowired constructor(
+class CalendarService
+@Autowired
+constructor(
     @Value("\${boudicca.search.url}") private val searchUrl: String,
-    otel: OpenTelemetry
+    otel: OpenTelemetry,
 ) {
-
     private val searchClient = SearchClient(searchUrl, otel)
 
     fun createCalendar(events: List<Event>): ByteArray {
@@ -45,9 +46,7 @@ class CalendarService @Autowired constructor(
         return Biweekly.write(calendar).go().toByteArray()
     }
 
-    fun createEvent(
-        event: StructuredEvent
-    ): VEvent {
+    fun createEvent(event: StructuredEvent): VEvent {
         val vEvent = VEvent()
         vEvent.setSummary(event.name)
         vEvent.dateStart = DateStart(event.startDate.toDate())

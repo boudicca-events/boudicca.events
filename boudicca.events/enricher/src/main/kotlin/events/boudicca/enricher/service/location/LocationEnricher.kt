@@ -15,13 +15,11 @@ import org.springframework.stereotype.Service
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.ReentrantLock
 
-
 @Service
-@Order(EnricherOrderConstants.LocationEnricherOrder)
-class LocationEnricher @Autowired constructor(
-    private val updater: LocationEnricherUpdater
-) : Enricher {
-
+@Order(EnricherOrderConstants.LOCATION_ENRICHER_ORDER)
+class LocationEnricher
+@Autowired
+constructor(private val updater: LocationEnricherUpdater) : Enricher {
     private val updateLock = ReentrantLock()
     private var data = emptyList<LocationData>()
 
@@ -41,15 +39,15 @@ class LocationEnricher @Autowired constructor(
     private fun matches(event: StructuredEvent, locationData: Map<String, List<String>>): Boolean {
         return listOf(
             SemanticKeys.LOCATION_NAME_PROPERTY,
-            SemanticKeys.LOCATION_ADDRESS_PROPERTY
+            SemanticKeys.LOCATION_ADDRESS_PROPERTY,
         ).any { property ->
             val location = locationData[property.getKey().name] ?: return@any false
 
             event.getProperty(property)
                 .map(Pair<Key, String>::second)
                 .any { eventLocation ->
-                eventLocation in location
-            }
+                    eventLocation in location
+                }
         }
     }
 

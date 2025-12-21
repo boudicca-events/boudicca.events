@@ -13,10 +13,11 @@ import java.util.*
 
 @RestController
 @RequestMapping()
-class PublisherController @Autowired constructor(
+class PublisherController
+@Autowired
+constructor(
     private val entryService: EntryService,
 ) : PublisherApi {
-
     @GetMapping("/entries")
     @ResponseBody
     override fun all(): Set<Entry> {

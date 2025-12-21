@@ -1,10 +1,7 @@
 package base.boudicca.dateparser.dateparser.impl
 
 object Utils {
-    internal fun tryTypeStealing(
-        groups: List<Tokens>,
-        groupToTypeSteal: Int
-    ): Tokens {
+    internal fun tryTypeStealing(groups: List<Tokens>, groupToTypeSteal: Int): Tokens {
         val defaultReturn = groups[groupToTypeSteal]
         if (groupToTypeSteal + 1 == groups.size) {
             return defaultReturn

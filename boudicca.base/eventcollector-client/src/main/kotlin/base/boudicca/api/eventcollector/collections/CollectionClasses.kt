@@ -19,20 +19,21 @@ data class FullCollection(
         Collections.synchronizedList(mutableListOf()),
         Collections.synchronizedList(mutableListOf()),
         0,
-        0
+        0,
     )
 
     override fun toString(): String {
         return """
-                FullCollection(
-                    id=$id, 
-                    startTime=$startTime, 
-                    endTime=$endTime, 
-                    singleCollections=$singleCollections, 
-                    logLines=$logLines, 
-                    errorCount=$errorCount, 
-                    warningCount=$warningCount
-                )""".trimIndent()
+            FullCollection(
+                id=$id,
+                startTime=$startTime,
+                endTime=$endTime,
+                singleCollections=$singleCollections,
+                logLines=$logLines,
+                errorCount=$errorCount,
+                warningCount=$warningCount
+            )
+        """.trimIndent()
     }
 
     /**
@@ -56,7 +57,6 @@ data class FullCollection(
     fun getAllLogLines(): List<String> {
         return logLines + singleCollections.flatMap { it.logLines }
     }
-
 }
 
 data class SingleCollection(
@@ -79,22 +79,23 @@ data class SingleCollection(
         mutableListOf(),
         mutableListOf(),
         0,
-        0
+        0,
     )
 
     override fun toString(): String {
         return """
             SingleCollection(
-                id=$id, 
-                collectorName='$collectorName', 
-                startTime=$startTime, 
-                endTime=$endTime, 
-                totalEventsCollected=$totalEventsCollected, 
-                httpCalls=$httpCalls, 
-                logLines=$logLines, 
-                errorCount=$errorCount, 
+                id=$id,
+                collectorName='$collectorName',
+                startTime=$startTime,
+                endTime=$endTime,
+                totalEventsCollected=$totalEventsCollected,
+                httpCalls=$httpCalls,
+                logLines=$logLines,
+                errorCount=$errorCount,
                 warningCount=$warningCount
-            )""".trimIndent()
+            )
+        """.trimIndent()
     }
 }
 

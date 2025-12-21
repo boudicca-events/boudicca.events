@@ -13,7 +13,6 @@ import java.net.URI
  * Händisch zusammengesuchte Chaosnahe Events
  */
 class ClerieDeChaosEventsCollector : IcalCollector("chaosevents.clerie.de") {
-
     private val fetcher = FetcherFactory.newFetcher()
     private val baseUrl = "https://chaosevents.clerie.de/"
     private val icsUrl = "${baseUrl}chaosevents.ics"
@@ -23,20 +22,22 @@ class ClerieDeChaosEventsCollector : IcalCollector("chaosevents.clerie.de") {
     }
 
     override fun postProcess(event: StructuredEvent): StructuredEvent {
-        val eventUrl = event.getProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY)
-            .firstOrNull()
-            ?.second
-            ?.splitAtNewline()
-            ?.findFirstParsableUrl()
+        val eventUrl =
+            event.getProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY)
+                .firstOrNull()
+                ?.second
+                ?.splitAtNewline()
+                ?.findFirstParsableUrl()
 
-        val structuredEvent = event.toBuilder()
-            .withProperty(
-                SemanticKeys.TAGS_PROPERTY,
-                listOf("Chaos", "CCC", "tech", "privacy", "hacking", "making", "programming")
-            )
-            .withProperty(SemanticKeys.CATEGORY_PROPERTY, EventCategory.TECH)
-            .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(baseUrl, icsUrl))
-            .withProperty(SemanticKeys.TYPE_PROPERTY, "chaosevent")
+        val structuredEvent =
+            event.toBuilder()
+                .withProperty(
+                    SemanticKeys.TAGS_PROPERTY,
+                    listOf("Chaos", "CCC", "tech", "privacy", "hacking", "making", "programming"),
+                )
+                .withProperty(SemanticKeys.CATEGORY_PROPERTY, EventCategory.TECH)
+                .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(baseUrl, icsUrl))
+                .withProperty(SemanticKeys.TYPE_PROPERTY, "chaosevent")
 
         if (eventUrl != null) {
             structuredEvent.withProperty(SemanticKeys.URL_PROPERTY, eventUrl)

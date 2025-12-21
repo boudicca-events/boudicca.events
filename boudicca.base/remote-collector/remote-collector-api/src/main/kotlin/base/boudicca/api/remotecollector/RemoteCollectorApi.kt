@@ -15,10 +15,10 @@ fun interface RemoteCollectorApi {
             ApiResponse(
                 responseCode = "200",
                 description = "trigger a EventCollection",
-                useReturnTypeSchema = true
-            )
+                useReturnTypeSchema = true,
+            ),
         ],
-        tags = ["remote-collector"]
+        tags = ["remote-collector"],
     )
     @GET
     @Path("collectEvents")

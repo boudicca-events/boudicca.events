@@ -7,7 +7,7 @@ data class DateParserConfig(
     val dayMonthOrder: DayMonthOrder = DayMonthOrder.DAY_MONTH,
     val timezone: ZoneId = ZoneId.of("Europe/Vienna"),
     val alwaysPrintDebugTracing: Boolean = false,
-    val clock: Clock = Clock.system(timezone)
+    val clock: Clock = Clock.system(timezone),
 ) {
     enum class DayMonthOrder {
         DAY_MONTH,

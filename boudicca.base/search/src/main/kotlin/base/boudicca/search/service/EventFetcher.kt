@@ -9,9 +9,8 @@ import org.springframework.stereotype.Service
 @Service
 class EventDBEventFetcher(
     private val boudiccaSearchProperties: BoudiccaSearchProperties,
-    private val otel: OpenTelemetry
+    private val otel: OpenTelemetry,
 ) : EventFetcher {
-
     private val publisherApi: EventDbPublisherClient = createEventPublisherApi()
 
     override fun fetchAllEvents(): Set<Entry> {

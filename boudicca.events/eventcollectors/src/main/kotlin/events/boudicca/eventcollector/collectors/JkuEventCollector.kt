@@ -35,5 +35,4 @@ class JkuEventCollector : IcalCollector("jku") {
             .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(baseUrl))
             .build()
     }
-
 }

@@ -15,7 +15,6 @@ import java.util.*
  * represents a parsed event, in the sense that all its keys have been parsed, and it has a lot of methods for filtering/selecting keys
  */
 data class StructuredEvent(val name: String, val startDate: OffsetDateTime, val data: Map<Key, String> = emptyMap()) {
-
     private val logger = KotlinLogging.logger {}
 
     constructor(event: Event) : this(event.name, event.startDate, KeyUtils.toStructuredKeyValuePairs(event.data))
@@ -68,10 +67,12 @@ data class StructuredEvent(val name: String, val startDate: OffsetDateTime, val 
         fun toEntry(event: StructuredEvent): StructuredEntry {
             val entry = event.data.toMutableMap()
             entry[Key.builder(SemanticKeys.NAME).build()] = event.name
-            entry[Key.builder(SemanticKeys.STARTDATE).withVariant(
-                VariantConstants.FORMAT_VARIANT_NAME,
-                VariantConstants.FormatVariantConstants.DATE_FORMAT_NAME
-            ).build()] =
+            entry[
+                Key.builder(SemanticKeys.STARTDATE).withVariant(
+                    VariantConstants.FORMAT_VARIANT_NAME,
+                    VariantConstants.FormatVariantConstants.DATE_FORMAT_NAME,
+                ).build(),
+            ] =
                 DateFormatAdapter().convertToString(event.startDate)
             return entry
         }
@@ -84,9 +85,9 @@ data class StructuredEvent(val name: String, val startDate: OffsetDateTime, val 
                         VariantConstants.FORMAT_VARIANT_NAME,
                         listOf(
                             VariantConstants.FormatVariantConstants.DATE_FORMAT_NAME,
-                            //we fall back to text here mainly for backwards compatibility
-                            VariantConstants.FormatVariantConstants.TEXT_FORMAT_NAME
-                        )
+                            // we fall back to text here mainly for backwards compatibility
+                            VariantConstants.FormatVariantConstants.TEXT_FORMAT_NAME,
+                        ),
                     )
                     .build()
                     .selectSingle(entry)
@@ -99,17 +100,16 @@ data class StructuredEvent(val name: String, val startDate: OffsetDateTime, val 
                 return Optional.empty()
             }
             val name = namePair.get().second
-            val startDate = try {
-                DateFormatAdapter().fromString(startDatePair.get().second)
-            } catch (_: IllegalArgumentException) {
-                return Optional.empty()
-            }
+            val startDate =
+                try {
+                    DateFormatAdapter().fromString(startDatePair.get().second)
+                } catch (_: IllegalArgumentException) {
+                    return Optional.empty()
+                }
             val data = entry.toMutableMap()
             data.remove(namePair.get().first)
             data.remove(startDatePair.get().first)
             return Optional.of(StructuredEvent(name, startDate, data))
         }
     }
-
-
 }

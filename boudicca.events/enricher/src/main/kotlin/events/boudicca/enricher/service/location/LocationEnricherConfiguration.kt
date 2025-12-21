@@ -11,11 +11,11 @@ class LocationEnricherConfiguration {
     @Bean
     @ConditionalOnProperty(
         "boudicca.enricher.location.googleCredentialsPath",
-        "boudicca.enricher.location.spreadsheetId"
+        "boudicca.enricher.location.spreadsheetId",
     )
     fun googleUpdater(
         @Value("\${boudicca.enricher.location.googleCredentialsPath:}") googleCredentialsPath: String,
-        @Value("\${boudicca.enricher.location.spreadsheetId:}") spreadsheetId: String
+        @Value("\${boudicca.enricher.location.spreadsheetId:}") spreadsheetId: String,
     ): LocationEnricherUpdater {
         return LocationEnricherGoogleSheetsUpdater(googleCredentialsPath, spreadsheetId)
     }

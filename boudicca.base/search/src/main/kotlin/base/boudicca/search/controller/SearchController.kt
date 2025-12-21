@@ -17,13 +17,14 @@ import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-class SearchController @Autowired constructor(
+class SearchController
+@Autowired
+constructor(
     private val filtersService: FiltersService,
     private val queryService: QueryService,
     private val synchronizationService: SynchronizationService,
-    private val boudiccaSearchProperties: BoudiccaSearchProperties
+    private val boudiccaSearchProperties: BoudiccaSearchProperties,
 ) : SearchApi {
-
     @PostMapping(
         "filtersFor",
         consumes = [MediaType.APPLICATION_JSON_VALUE],

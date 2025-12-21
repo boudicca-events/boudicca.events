@@ -11,7 +11,7 @@ class ArtistMatcher(private val artists: List<Artist>, private val index: ByteBu
 
         val lowerString = string.lowercase()
 
-        //TODO duplicated artists found?
+        // TODO duplicated artists found?
         val foundArtists = mutableListOf<Artist>()
         foundArtists.addAll(matchArtistsFrom(lowerString, 0))
         for (i in lowerString.indices) {
@@ -32,7 +32,7 @@ class ArtistMatcher(private val artists: List<Artist>, private val index: ByteBu
             val next = (min + max) / 2
             val compare = compare(string, stringIndex, next)
             if (compare == 0) {
-                //TODO what about multiple matches?
+                // TODO what about multiple matches?
                 matchedArtists.add(artists[index.getInt(next * 4)])
                 break
             } else if (compare < 0) {
@@ -62,7 +62,7 @@ class ArtistMatcher(private val artists: List<Artist>, private val index: ByteBu
             }
         }
 
-        //substrings matches! now look if we are at a word boundary
+        // substrings matches! now look if we are at a word boundary
         if (stringIndex + artistName.length == string.length) {
             return 0
         }

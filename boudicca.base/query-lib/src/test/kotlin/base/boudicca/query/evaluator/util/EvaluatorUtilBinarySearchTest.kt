@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class EvaluatorUtilBinarySearchTest {
-
     @Test
     fun testEmptyList() {
         assertEquals(-1, testWithList("a", listOf()))
@@ -23,6 +22,4 @@ class EvaluatorUtilBinarySearchTest {
     private fun testWithList(item: String, list: List<String>): Int {
         return EvaluatorUtil.binarySearch(0, list.size) { list[it].compareTo(item) }
     }
-
-
 }

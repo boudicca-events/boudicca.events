@@ -18,7 +18,6 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 class ParlamentCollector : TwoStepEventCollector<JsonObject>("parlament") {
-
     private val fetcher = FetcherFactory.newFetcher()
     private val baseUrl = "https://www.parlament.gv.at/"
 
@@ -27,19 +26,20 @@ class ParlamentCollector : TwoStepEventCollector<JsonObject>("parlament") {
         val dateFrom = LocalDate.now().format(dateTimeFormatter)
         val dateTo = LocalDate.now().plusMonths(1).format(dateTimeFormatter)
 
-        val response = fetcher.fetchUrlPost(
-            baseUrl + "Filter/api/filter/data/600?showAll=true",
-            "application/json",
-            "{'DATERANGE':['${dateFrom}','${dateTo}']}"
-        )
+        val response =
+            fetcher.fetchUrlPost(
+                baseUrl + "Filter/api/filter/data/600?showAll=true",
+                "application/json",
+                "{'DATERANGE':['$dateFrom','$dateTo']}",
+            )
         val jsonResponse = Parser.default().parse(StringReader(response)) as JsonObject
 
         return extractEventsFromJson(jsonResponse["rows"] as List<JsonArray<List<String>>>)
     }
 
-    private fun extractEventsFromJson(eventArrays: List<JsonArray<List<String>>>) : List<JsonObject>{
+    private fun extractEventsFromJson(eventArrays: List<JsonArray<List<String>>>): List<JsonObject> {
         val events = mutableListOf<JsonObject>()
-        for (eventArray in eventArrays){
+        for (eventArray in eventArrays) {
             val event = JsonObject()
             event.put("name", eventArray[3])
             event.put("url", baseUrl + eventArray[4])

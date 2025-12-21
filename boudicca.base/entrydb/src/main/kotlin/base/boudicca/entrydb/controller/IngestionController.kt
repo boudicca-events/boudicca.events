@@ -12,8 +12,9 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/ingest")
-class IngestionController @Autowired constructor(private val entryService: EntryService) : IngestionApi {
-
+class IngestionController
+@Autowired
+constructor(private val entryService: EntryService) : IngestionApi {
     @PostMapping(
         "/entry",
         consumes = [MediaType.APPLICATION_JSON_VALUE],
@@ -33,5 +34,4 @@ class IngestionController @Autowired constructor(private val entryService: Entry
             entryService.add(entry)
         }
     }
-
 }

@@ -13,24 +13,17 @@ import java.util.UUID
 
 @Controller
 @RequestMapping("/")
-class PictureProxyController @Autowired constructor(
-    private val pictureProxyService: PictureProxyService
+class PictureProxyController
+@Autowired
+constructor(
+    private val pictureProxyService: PictureProxyService,
 ) {
-
     @GetMapping(
         value = ["/picture"],
-        produces = [MediaType.IMAGE_JPEG_VALUE]
+        produces = [MediaType.IMAGE_JPEG_VALUE],
     )
     @ResponseBody
-    fun getAbout(
-        @RequestParam("uuid") uuid: UUID,
-    ): ResponseEntity<ByteArray> {
+    fun getAbout(@RequestParam("uuid") uuid: UUID): ResponseEntity<ByteArray> {
         return ResponseEntity.of(pictureProxyService.getPicture(uuid))
     }
-
 }
-
-
-
-
-

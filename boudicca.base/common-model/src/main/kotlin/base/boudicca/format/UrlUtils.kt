@@ -6,7 +6,6 @@ import java.net.URI
  * some utils for working with URIs for properties
  */
 object UrlUtils {
-
     fun parse(baseUrl: String, string: String?): URI? {
         if (string.isNullOrEmpty()) {
             return null
@@ -27,7 +26,7 @@ object UrlUtils {
         }
     }
 
-    //invalid urls everywhere -.-
+    // invalid urls everywhere -.-
     private fun tryFixUrl(url: String): String {
         return url
             .replace("[", "%5B")

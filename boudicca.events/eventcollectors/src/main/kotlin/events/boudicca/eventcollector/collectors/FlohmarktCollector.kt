@@ -17,9 +17,10 @@ class FlohmarktCollector : TwoStepEventCollector<String>("flohmarkt") {
     private val baseUrl = "https://www.flohmarkt.at/"
 
     override fun getAllUnparsedEvents(): List<String> {
-        val stateUrls = Jsoup.parse(fetcher.fetchUrl(baseUrl + "termine/"))
-            .select(".navInhalt:nth-child(2) li:not(.navsub) a")
-            .mapNotNull { it.select("a").first()?.attr("href") }
+        val stateUrls =
+            Jsoup.parse(fetcher.fetchUrl(baseUrl + "termine/"))
+                .select(".navInhalt:nth-child(2) li:not(.navsub) a")
+                .mapNotNull { it.select("a").first()?.attr("href") }
 
         val eventUrls = mutableListOf<String>()
         stateUrls.forEach {
@@ -31,9 +32,10 @@ class FlohmarktCollector : TwoStepEventCollector<String>("flohmarkt") {
 
     fun getEventUrlsOfEachState(stateUrl: String): List<String> {
         val eventUrls = mutableListOf<String>()
-        val pageUrls = Jsoup.parse(fetcher.fetchUrl(baseUrl + stateUrl.replace("../", "")))
-            .select("div.weiterblaettern a")
-            .mapNotNull { it.attr("href") }
+        val pageUrls =
+            Jsoup.parse(fetcher.fetchUrl(baseUrl + stateUrl.replace("../", "")))
+                .select("div.weiterblaettern a")
+                .mapNotNull { it.attr("href") }
         pageUrls.forEach { eventUrls.addAll(getEventUrlsOfEachPage(it)) }
         return eventUrls
     }
@@ -49,8 +51,9 @@ class FlohmarktCollector : TwoStepEventCollector<String>("flohmarkt") {
         val document = Jsoup.parse(fetcher.fetchUrl(event))
         val name = document.select("div.terminTitel").text()
 
-        val detailNodes = document.select("div#termineDetail").first()!!.childNodes()
-            .filter { node -> node.nodeValue().isNotBlank() && !node.nameIs("br")}
+        val detailNodes =
+            document.select("div#termineDetail").first()!!.childNodes()
+                .filter { node -> node.nodeValue().isNotBlank() && !node.nameIs("br") }
 
         // adding up all the text lines which are in the description with and without any tags
         val description = StringBuilder()

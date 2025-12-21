@@ -33,7 +33,6 @@ class ListFormatAdapter :
                 if (c == ',') {
                     result.add(currentValue.toString())
                     currentValue.clear()
-
                 } else {
                     currentValue.append(c)
                 }

@@ -33,11 +33,13 @@ interface Property<T> {
     fun parseFromString(string: String): T
 
     fun getKey(language: String? = null): Key
+
     fun getKeyFilter(language: String? = null): KeyFilter
 }
 
 abstract class AbstractProperty<T>(
-    private val propertyName: String, private val adapter: AbstractFormatAdapter<T>
+    private val propertyName: String,
+    private val adapter: AbstractFormatAdapter<T>,
 ) : Property<T> {
     override fun getKey(language: String?): Key {
         return internalGetKey(false, language) {
@@ -51,11 +53,7 @@ abstract class AbstractProperty<T>(
         }
     }
 
-    private fun <T : AbstractKey<T>> internalGetKey(
-        alwaysIncludeFormat: Boolean,
-        language: String?,
-        builderFunction: (String) -> AbstractKeyBuilder<T>
-    ): T {
+    private fun <T : AbstractKey<T>> internalGetKey(alwaysIncludeFormat: Boolean, language: String?, builderFunction: (String) -> AbstractKeyBuilder<T>): T {
         val builder = builderFunction(propertyName)
         if (!language.isNullOrEmpty()) {
             builder.withVariant(VariantConstants.LANGUAGE_VARIANT_NAME, language)

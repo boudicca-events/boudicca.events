@@ -10,7 +10,6 @@ import base.boudicca.model.structured.StructuredEvent
  * Events from the CCC Event Blog
  */
 class CCCEventsCollector : IcalCollector("events.ccc.de") {
-
     private val fetcher = FetcherFactory.newFetcher()
     private val baseUrl = "https://events.ccc.de/"
     private val icsUrl = "${baseUrl}calendar/events.ics"
@@ -23,7 +22,7 @@ class CCCEventsCollector : IcalCollector("events.ccc.de") {
         return event.toBuilder()
             .withProperty(
                 SemanticKeys.TAGS_PROPERTY,
-                listOf("Chaos", "CCC", "tech", "privacy", "hacking", "making", "programming")
+                listOf("Chaos", "CCC", "tech", "privacy", "hacking", "making", "programming"),
             )
             .withProperty(SemanticKeys.CATEGORY_PROPERTY, EventCategory.TECH)
             .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(baseUrl, icsUrl))

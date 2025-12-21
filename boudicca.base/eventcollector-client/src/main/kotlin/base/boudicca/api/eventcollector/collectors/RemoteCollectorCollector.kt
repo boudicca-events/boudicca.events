@@ -18,20 +18,22 @@ class RemoteCollectorCollector(private val url: String, private val name: String
 
     override fun collectEvents(): List<Event> {
         Collections.startHttpCall(url)
-        val eventCollection = try {
-            val eventCollection = RemoteCollectorClient(url).collectEvents()
-            Collections.endHttpCall(HttpURLConnection.HTTP_OK)
-            eventCollection
-        } catch (e: Exception) {
-            Collections.endHttpCall(-1)
-            throw e
-        }
+        val eventCollection =
+            try {
+                val eventCollection = RemoteCollectorClient(url).collectEvents()
+                Collections.endHttpCall(HttpURLConnection.HTTP_OK)
+                eventCollection
+            } catch (e: Exception) {
+                Collections.endHttpCall(-1)
+                throw e
+            }
 
         val currentSingleCollection = Collections.getCurrentSingleCollection()
         if (currentSingleCollection != null) {
             currentSingleCollection.logLines.addAll(eventCollection.logLines ?: emptyList())
             currentSingleCollection.httpCalls.addAll(
-                eventCollection.httpCalls?.map { toCollectionsHttpCall(it) } ?: emptyList())
+                eventCollection.httpCalls?.map { toCollectionsHttpCall(it) } ?: emptyList(),
+            )
             currentSingleCollection.errorCount = eventCollection.errorCount ?: 0
             currentSingleCollection.warningCount = eventCollection.warningCount ?: 0
         }
@@ -45,7 +47,7 @@ class RemoteCollectorCollector(private val url: String, private val name: String
             httpCall.endTime.toInstant().toEpochMilli(),
             httpCall.url,
             httpCall.postParams,
-            httpCall.responseCode
+            httpCall.responseCode,
         )
     }
 }

@@ -18,12 +18,7 @@ import kotlin.jvm.optionals.getOrNull
 private val MILLIS_PER_HOUR = Duration.ofHours(1).toMillis()
 
 object EvaluatorUtil {
-    fun getDuration(
-        startDateKeyFilter: KeyFilter,
-        endDateKeyFilter: KeyFilter,
-        entry: StructuredEntry,
-        dataCache: ConcurrentHashMap<String, OffsetDateTime>
-    ): Double {
+    fun getDuration(startDateKeyFilter: KeyFilter, endDateKeyFilter: KeyFilter, entry: StructuredEntry, dataCache: ConcurrentHashMap<String, OffsetDateTime>): Double {
         val startDateText = selectDateValue(entry, startDateKeyFilter)
         val endDateText = selectDateValue(entry, endDateKeyFilter)
         if (startDateText.isNullOrEmpty() || endDateText.isNullOrEmpty()) {
@@ -46,8 +41,8 @@ object EvaluatorUtil {
                 VariantConstants.FORMAT_VARIANT_NAME,
                 listOf(
                     VariantConstants.FormatVariantConstants.DATE_FORMAT_NAME,
-                    VariantConstants.FormatVariantConstants.TEXT_FORMAT_NAME
-                )
+                    VariantConstants.FormatVariantConstants.TEXT_FORMAT_NAME,
+                ),
             ).build()
             .selectSingle(entry)
             .map { it.second }
@@ -61,10 +56,7 @@ object EvaluatorUtil {
             .map { it.second }
     }
 
-    fun parseDate(
-        dateText: String,
-        dataCache: ConcurrentHashMap<String, OffsetDateTime>
-    ): OffsetDateTime {
+    fun parseDate(dateText: String, dataCache: ConcurrentHashMap<String, OffsetDateTime>): OffsetDateTime {
         return if (dataCache.containsKey(dateText)) {
             dataCache[dateText]!!
         } else {
@@ -97,7 +89,7 @@ object EvaluatorUtil {
         return -1
     }
 
-    //impl copied from Arrays.mergeSort....
+    // impl copied from Arrays.mergeSort....
     fun <T> sort(start: Int, length: Int, sortable: Sortable<T>) {
         val aux = sortable.copy()
         mergeSort(aux, sortable, start, start + length, -start)
@@ -105,21 +97,19 @@ object EvaluatorUtil {
 
     interface Sortable<T> {
         fun get(): T
+
         fun copy(): Sortable<T>
+
         fun compare(i: Int, j: Int): Int
+
         fun swap(i: Int, j: Int)
+
         fun setFrom(i: Int, src: Sortable<T>, j: Int)
     }
 
     private const val INSERTIONSORT_THRESHOLD = 7
 
-    private fun <T> mergeSort(
-        src: Sortable<T>,
-        dest: Sortable<T>,
-        low: Int,
-        high: Int,
-        off: Int
-    ) {
+    private fun <T> mergeSort(src: Sortable<T>, dest: Sortable<T>, low: Int, high: Int, off: Int) {
         var low = low
         var high = high
         val length = high - low
@@ -145,7 +135,7 @@ object EvaluatorUtil {
         mergeSort(dest, src, low, mid, -off)
         mergeSort(dest, src, mid, high, -off)
 
-        //TODO maybe?
+        // TODO maybe?
         // If list is already sorted, just copy from src to dest.  This is an
         // optimization that results in faster sorts for nearly ordered lists.
 //        if ((src[mid - 1] as Comparable<*>).compareTo(src[mid]) <= 0) {
@@ -158,39 +148,45 @@ object EvaluatorUtil {
         var p = low
         var q = mid
         while (i < destHigh) {
-            if (q >= high || p < mid && (src.compare(p, q) <= 0)) dest.setFrom(i, src, p++)
-            else dest.setFrom(i, src, q++)
+            if (q >= high || p < mid && (src.compare(p, q) <= 0)) {
+                dest.setFrom(i, src, p++)
+            } else {
+                dest.setFrom(i, src, q++)
+            }
             i++
         }
     }
 
     fun isTextMarkdownOrList(key: Key): Boolean {
         return KeyFilters.doesContainVariantValue(
-            key, VariantConstants.FORMAT_VARIANT_NAME,
+            key,
+            VariantConstants.FORMAT_VARIANT_NAME,
             listOf(
                 VariantConstants.FormatVariantConstants.TEXT_FORMAT_NAME,
                 VariantConstants.FormatVariantConstants.MARKDOWN_FORMAT_NAME,
                 VariantConstants.FormatVariantConstants.LIST_FORMAT_NAME,
-            )
+            ),
         )
     }
 
     fun isList(key: Key): Boolean {
         return KeyFilters.doesContainVariantValue(
-            key, VariantConstants.FORMAT_VARIANT_NAME,
+            key,
+            VariantConstants.FORMAT_VARIANT_NAME,
             listOf(
                 VariantConstants.FormatVariantConstants.LIST_FORMAT_NAME,
-            )
+            ),
         )
     }
 
     fun isDate(key: Key): Boolean {
         return KeyFilters.doesContainVariantValue(
-            key, VariantConstants.FORMAT_VARIANT_NAME,
+            key,
+            VariantConstants.FORMAT_VARIANT_NAME,
             listOf(
                 VariantConstants.FormatVariantConstants.DATE_FORMAT_NAME,
-                VariantConstants.FormatVariantConstants.TEXT_FORMAT_NAME, //fallback for now...
-            )
+                VariantConstants.FormatVariantConstants.TEXT_FORMAT_NAME, // fallback for now...
+            ),
         )
     }
 }

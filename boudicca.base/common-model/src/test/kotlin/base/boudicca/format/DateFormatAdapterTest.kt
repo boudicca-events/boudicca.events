@@ -20,7 +20,7 @@ class DateFormatAdapterTest {
     fun testParseFromStringValidValues() {
         assertEquals(
             OffsetDateTime.of(2024, 10, 21, 11, 12, 34, 0, ZoneOffset.ofHours(2)),
-            parseFromString("2024-10-21T11:12:34+02:00")
+            parseFromString("2024-10-21T11:12:34+02:00"),
         )
     }
 
@@ -33,8 +33,8 @@ class DateFormatAdapterTest {
         assertEquals(
             "2024-10-21T11:12:34+02:00",
             parseToString(
-                OffsetDateTime.of(2024, 10, 21, 11, 12, 34, 0, ZoneOffset.ofHours(2))
-            )
+                OffsetDateTime.of(2024, 10, 21, 11, 12, 34, 0, ZoneOffset.ofHours(2)),
+            ),
         )
     }
 

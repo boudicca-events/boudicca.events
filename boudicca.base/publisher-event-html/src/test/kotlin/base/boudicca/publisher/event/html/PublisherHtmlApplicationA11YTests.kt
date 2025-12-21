@@ -25,7 +25,6 @@ import java.util.*
 @ExtendWith(SpringExtension::class)
 @Tag("a11ytests")
 class PublisherHtmlApplicationA11YTests : E2ETestFixture() {
-
     @LocalServerPort
     private val port = 0
 
@@ -34,10 +33,7 @@ class PublisherHtmlApplicationA11YTests : E2ETestFixture() {
 
     @ParameterizedTest
     @ArgumentsSource(A11YTestData::class)
-    fun shouldNotHaveAutomaticallyDetectableAccessibilityIssues(
-        events: List<Event>,
-        filters: FilterResultDTO
-    ) {
+    fun shouldNotHaveAutomaticallyDetectableAccessibilityIssues(events: List<Event>, filters: FilterResultDTO) {
         setupSearchServiceCaller(events, filters)
 
         page.navigate("http://localhost:$port/")
@@ -50,10 +46,7 @@ class PublisherHtmlApplicationA11YTests : E2ETestFixture() {
 
     @ParameterizedTest
     @ArgumentsSource(A11YTestData::class)
-    fun drawerShouldNotHaveAutomaticallyDetectableAccessibilityViolations(
-        events: List<Event>,
-        filters: FilterResultDTO
-    ) {
+    fun drawerShouldNotHaveAutomaticallyDetectableAccessibilityViolations(events: List<Event>, filters: FilterResultDTO) {
         setupSearchServiceCaller(events, filters)
 
         page.navigate("http://localhost:$port/")
@@ -65,9 +58,10 @@ class PublisherHtmlApplicationA11YTests : E2ETestFixture() {
         // find all the elements your test expects it to scan.
         page.locator("#drawer").waitFor()
 
-        val accessibilityScanResults: AxeResults = AxeBuilder(page)
-            .include(Arrays.asList("#drawer"))
-            .analyze()
+        val accessibilityScanResults: AxeResults =
+            AxeBuilder(page)
+                .include(Arrays.asList("#drawer"))
+                .analyze()
 
         assertThat(accessibilityScanResults.violations)
             .withFailMessage("Found accessibility violations: %s", accessibilityScanResults.violations)

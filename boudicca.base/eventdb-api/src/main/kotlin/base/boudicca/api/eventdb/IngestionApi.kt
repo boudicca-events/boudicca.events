@@ -11,34 +11,33 @@ import javax.ws.rs.Path
 @OpenAPIDefinition
 @Path("/ingest")
 interface IngestionApi {
-
     @Operation(
         responses = [
             ApiResponse(
                 responseCode = "200",
                 description = "adds an entry to the eventdb",
-                useReturnTypeSchema = true
-            )
+                useReturnTypeSchema = true,
+            ),
         ],
-        tags = ["ingestion"]
+        tags = ["ingestion"],
     )
     @POST
     @Path("entry")
     @Consumes("application/json")
-    fun addEntry( entry: Entry)
+    fun addEntry(entry: Entry)
 
     @Operation(
         responses = [
             ApiResponse(
                 responseCode = "200",
                 description = "adds multiple entries to the eventdb",
-                useReturnTypeSchema = true
-            )
+                useReturnTypeSchema = true,
+            ),
         ],
-        tags = ["ingestion"]
+        tags = ["ingestion"],
     )
     @POST
     @Path("entries")
     @Consumes("application/json")
-    fun addEntries( entries: List<Entry>)
+    fun addEntries(entries: List<Entry>)
 }

@@ -13,7 +13,7 @@ class NoopLoggingSystemFactory : LoggingSystemFactory {
     override fun getLoggingSystem(classLoader: ClassLoader): LoggingSystem {
         return object : LoggingSystem() {
             override fun beforeInitialize() {
-                //nothing
+                // nothing
             }
         }
     }

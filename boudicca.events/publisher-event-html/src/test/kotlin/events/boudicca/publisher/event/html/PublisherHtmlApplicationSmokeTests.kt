@@ -11,7 +11,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @SpringBootTest
 @AutoConfigureMockMvc
 class PublisherHtmlApplicationSmokeTests {
-
     @Autowired
     private lateinit var mockMvc: MockMvc
 
@@ -24,21 +23,21 @@ class PublisherHtmlApplicationSmokeTests {
     @Test
     fun aboutUs() {
         mockMvc.perform(
-            get("/about")
+            get("/about"),
         ).andExpect(status().isOk())
     }
 
     @Test
     fun impressum() {
         mockMvc.perform(
-            get("/impressum")
+            get("/impressum"),
         ).andExpect(status().isOk())
     }
 
     @Test
     fun accessibility() {
         mockMvc.perform(
-            get("/erklarung-zur-barrierefreiheit")
+            get("/erklarung-zur-barrierefreiheit"),
         ).andExpect(status().isOk())
     }
 }

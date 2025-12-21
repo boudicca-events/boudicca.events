@@ -4,7 +4,6 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import java.io.File
 import java.util.*
 
-
 object Configuration {
     private val properties: Properties = Properties()
     private val logger = KotlinLogging.logger {}

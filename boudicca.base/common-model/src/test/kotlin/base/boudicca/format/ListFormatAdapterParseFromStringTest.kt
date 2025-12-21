@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class ListFormatAdapterParseFromStringTest {
-
     @Test
     fun testFromStringOrNull() {
         val result = ListFormatAdapter().fromStringOrNull(null)

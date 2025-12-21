@@ -22,9 +22,9 @@ class E2EGeneralTestData : ArgumentsProvider {
                     SemanticKeys.CONCERT_BANDLIST to listOf("Band1", "Band2", "Band3"),
                     SemanticKeys.TAGS to emptyList(),
                     SemanticKeys.TYPE to emptyList(),
-                    SemanticKeys.CONCERT_GENRE to emptyList()
-                )
-            )
+                    SemanticKeys.CONCERT_GENRE to emptyList(),
+                ),
+            ),
         )
     }
 }
@@ -37,8 +37,8 @@ class E2ESingleEventTestData : ArgumentsProvider {
                     Event(
                         "Musical Event in Innenstadt",
                         OffsetDateTime.of(2023, 1, 1, 12, 0, 0, 0, ZoneOffset.UTC),
-                        generateEventData()
-                    )
+                        generateEventData(),
+                    ),
                 ),
                 mapOf(
                     SemanticKeys.LOCATION_NAME to listOf("Location1", "Location2", "Location3"),
@@ -46,9 +46,9 @@ class E2ESingleEventTestData : ArgumentsProvider {
                     SemanticKeys.CONCERT_BANDLIST to listOf("Band1", "Band2", "Band3"),
                     SemanticKeys.TAGS to emptyList(),
                     SemanticKeys.TYPE to emptyList(),
-                    SemanticKeys.CONCERT_GENRE to emptyList()
-                )
-            )
+                    SemanticKeys.CONCERT_GENRE to emptyList(),
+                ),
+            ),
         )
     }
 
@@ -73,8 +73,8 @@ class E2ESingleEventWithoutURL : ArgumentsProvider {
                     Event(
                         "Musical Event in Innenstadt",
                         OffsetDateTime.of(2023, 1, 1, 12, 0, 0, 0, ZoneOffset.UTC),
-                        generateEventData()
-                    )
+                        generateEventData(),
+                    ),
                 ),
                 mapOf(
                     SemanticKeys.LOCATION_NAME to listOf("Location1", "Location2", "Location3"),
@@ -82,9 +82,9 @@ class E2ESingleEventWithoutURL : ArgumentsProvider {
                     SemanticKeys.CONCERT_BANDLIST to listOf("Band1", "Band2", "Band3"),
                     SemanticKeys.TAGS to emptyList(),
                     SemanticKeys.TYPE to emptyList(),
-                    SemanticKeys.CONCERT_GENRE to emptyList()
-                )
-            )
+                    SemanticKeys.CONCERT_GENRE to emptyList(),
+                ),
+            ),
         )
     }
 
@@ -108,8 +108,8 @@ class SingleEventWithA11YInformation : ArgumentsProvider {
                     Event(
                         "Musical Event in Innenstadt",
                         OffsetDateTime.of(2023, 1, 1, 12, 0, 0, 0, ZoneOffset.UTC),
-                        generateEventData()
-                    )
+                        generateEventData(),
+                    ),
                 ),
                 mapOf(
                     SemanticKeys.LOCATION_NAME to listOf("Location1", "Location2", "Location3"),
@@ -117,9 +117,9 @@ class SingleEventWithA11YInformation : ArgumentsProvider {
                     SemanticKeys.CONCERT_BANDLIST to listOf("Band1", "Band2", "Band3"),
                     SemanticKeys.TAGS to emptyList(),
                     SemanticKeys.TYPE to emptyList(),
-                    SemanticKeys.CONCERT_GENRE to emptyList()
-                )
-            )
+                    SemanticKeys.CONCERT_GENRE to emptyList(),
+                ),
+            ),
         )
     }
 
@@ -145,7 +145,7 @@ class ListOfEventWithDifferentNameToBeSearchable : ArgumentsProvider {
                 listOf(
                     Event("Musical Event In Innenstadt", OffsetDateTime.now(), generateEventData()),
                     Event("Sport Event at JKU", OffsetDateTime.now(), generateEventData()),
-                    Event("Cultural Event at Posthof", OffsetDateTime.now(), generateEventData())
+                    Event("Cultural Event at Posthof", OffsetDateTime.now(), generateEventData()),
                 ),
                 mapOf(
                     SemanticKeys.LOCATION_NAME to listOf("Location1", "Location2", "Location3"),
@@ -153,9 +153,9 @@ class ListOfEventWithDifferentNameToBeSearchable : ArgumentsProvider {
                     SemanticKeys.CONCERT_BANDLIST to listOf("Band1", "Band2", "Band3"),
                     SemanticKeys.TAGS to emptyList(),
                     SemanticKeys.TYPE to emptyList(),
-                    SemanticKeys.CONCERT_GENRE to emptyList()
-                )
-            )
+                    SemanticKeys.CONCERT_GENRE to emptyList(),
+                ),
+            ),
         )
     }
 
@@ -181,7 +181,7 @@ class ListOfFilterableEvents : ArgumentsProvider {
                 listOf(
                     Event("Musical Event In Innenstadt", OffsetDateTime.now(), musicalEventData()),
                     Event("Sport Event at JKU", OffsetDateTime.now(), sportEventData()),
-                    Event("Cultural Event at Posthof", OffsetDateTime.now(), culturalEventData())
+                    Event("Cultural Event at Posthof", OffsetDateTime.now(), culturalEventData()),
                 ),
                 mapOf(
                     SemanticKeys.LOCATION_NAME to listOf("Theater", "Cinema", "Sport Complex"),
@@ -189,9 +189,9 @@ class ListOfFilterableEvents : ArgumentsProvider {
                     SemanticKeys.CONCERT_BANDLIST to listOf("Imagine Dragons", "Beatles", "Metallica"),
                     SemanticKeys.TAGS to emptyList(),
                     SemanticKeys.TYPE to emptyList(),
-                    SemanticKeys.CONCERT_GENRE to emptyList()
-                )
-            )
+                    SemanticKeys.CONCERT_GENRE to emptyList(),
+                ),
+            ),
         )
     }
 

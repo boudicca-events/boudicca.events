@@ -2,7 +2,6 @@ plugins {
     id("boudicca-springboot-rest-lib")
 }
 
-
 dependencies {
     implementation(libs.spring.boot.starter.security)
     api(project(":boudicca.base:common-model"))

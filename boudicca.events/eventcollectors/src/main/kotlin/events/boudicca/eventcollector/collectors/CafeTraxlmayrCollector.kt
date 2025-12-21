@@ -56,20 +56,17 @@ class CafeTraxlmayrCollector : TwoStepEventCollector<Element>("cafetraxlmayr") {
         withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Café Traxlmayr")
         withProperty(
             SemanticKeys.LOCATION_URL_PROPERTY,
-            UrlUtils.parse("https://www.cafe-traxlmayr.at/")
+            UrlUtils.parse("https://www.cafe-traxlmayr.at/"),
         )
         withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Linz")
         withProperty(
             SemanticKeys.PICTURE_URL_PROPERTY,
-            UrlUtils.parse(eventData.select("img").attr("src"))
+            UrlUtils.parse(eventData.select("img").attr("src")),
         )
         withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, "Cafe Traxlmayr")
     }
 
-    private fun parseConcert(
-        title: String,
-        eventData: Element,
-    ): List<StructuredEvent> {
+    private fun parseConcert(title: String, eventData: Element): List<StructuredEvent> {
         val split = title.split(" | ")
         val name = split[0].trim()
         val bodyLines = eventData.select(".modal-body p strong").textNodes().toList()
@@ -78,10 +75,11 @@ class CafeTraxlmayrCollector : TwoStepEventCollector<Element>("cafetraxlmayr") {
 
         val startDate = DateParser.parse(fullDateText.text().trim())
 
-        val event = structuredEvent(name, startDate) {
-            applyCommonProperties(eventData)
-            withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, eventData.select(".modal-body").text())
-        }
+        val event =
+            structuredEvent(name, startDate) {
+                applyCommonProperties(eventData)
+                withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, eventData.select(".modal-body").text())
+            }
         return event
     }
 
@@ -110,7 +108,7 @@ class CafeTraxlmayrCollector : TwoStepEventCollector<Element>("cafetraxlmayr") {
                         applyCommonProperties(eventData)
                         withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
                         withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(baseUrl, pictureSrc))
-                    }
+                    },
                 )
                 startDate = null
                 name = ""

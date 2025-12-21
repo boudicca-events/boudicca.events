@@ -1,6 +1,5 @@
 package base.boudicca.dateparser.dateparser.impl
 
-
 internal data class Tokens(val tokens: List<Token>) {
     fun isInteresting(): Boolean {
         return tokens.any { it.needSolving }

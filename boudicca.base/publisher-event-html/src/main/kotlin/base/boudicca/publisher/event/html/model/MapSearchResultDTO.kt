@@ -1,9 +1,8 @@
 package base.boudicca.publisher.event.html.model
 
-
 data class MapSearchResultDTO(
     val error: String?,
-    val locations: List<Location>
+    val locations: List<Location>,
 )
 
 data class Location(
@@ -11,7 +10,7 @@ data class Location(
     val url: String?,
     val latitude: Double,
     val longitude: Double,
-    val events: List<LocationEvent>
+    val events: List<LocationEvent>,
 )
 
 data class LocationEvent(

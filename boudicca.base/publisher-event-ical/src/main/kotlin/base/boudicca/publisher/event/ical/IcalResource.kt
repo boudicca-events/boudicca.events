@@ -8,8 +8,9 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-class IcalResource @Autowired constructor(private val calendarService: CalendarService) {
-
+class IcalResource
+@Autowired
+constructor(private val calendarService: CalendarService) {
     @GetMapping(
         "/calendar.ics",
         produces = [MediaType.APPLICATION_OCTET_STREAM_VALUE],
@@ -19,6 +20,5 @@ class IcalResource @Autowired constructor(private val calendarService: CalendarS
         return ResponseEntity.ok()
             .header("Content-Disposition", "attachment;filename=calendar.ics")
             .body(calendarFile)
-
     }
 }

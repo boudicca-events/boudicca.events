@@ -21,9 +21,10 @@ class AntonBrucknerUniversitaetLinzCollector : TwoStepEventCollector<String>("an
         while (true) {
             eventUrls.addAll(page.select("div.event-list > div > a").map { it.attr("href") })
 
-            val nextPageLink = page.select("nav li.page-item a.page-link")
-                .filter { it.text().isNotBlank() }
-                .filter { it.text().toInt() == wantedPage }
+            val nextPageLink =
+                page.select("nav li.page-item a.page-link")
+                    .filter { it.text().isNotBlank() }
+                    .filter { it.text().toInt() == wantedPage }
             if (nextPageLink.isEmpty()) {
                 break
             }
@@ -53,16 +54,18 @@ class AntonBrucknerUniversitaetLinzCollector : TwoStepEventCollector<String>("an
         }
         description = description.trim()
 
-        val tags = eventSite.select("div#person-detail-intro > div > div > p")
-            .first { it.text().startsWith("Themen:") }
-            .text().removePrefix("Themen:").split(",").map { it.trim() }
+        val tags =
+            eventSite.select("div#person-detail-intro > div > div > p")
+                .first { it.text().startsWith("Themen:") }
+                .text().removePrefix("Themen:").split(",").map { it.trim() }
         val type = tags.firstOrNull()
 
         val imgSrc = eventSite.select("div#person-detail-intro figure img").attr("src")
 
-        val dateAndLocation = eventSite.select("div#person-detail-intro > div > div > div > p")
-            .first { it.text().startsWith("Wann und Wo:") }
-            .text()
+        val dateAndLocation =
+            eventSite.select("div#person-detail-intro > div > div > div > p")
+                .first { it.text().startsWith("Wann und Wo:") }
+                .text()
         val split = dateAndLocation.indexOf("-", dateAndLocation.indexOf("-") + 1) // get the second "-"
 
         val startDate = DateParser.parse(dateAndLocation.substring(0, split))
@@ -81,7 +84,7 @@ class AntonBrucknerUniversitaetLinzCollector : TwoStepEventCollector<String>("an
             withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse(locationUrl))
             withProperty(
                 SemanticKeys.LOCATION_NAME_PROPERTY,
-                location?.ifBlank { "Anton Bruckner Privatuniversität Linz" }
+                location?.ifBlank { "Anton Bruckner Privatuniversität Linz" },
             )
         }
     }

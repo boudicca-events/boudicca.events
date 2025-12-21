@@ -24,13 +24,15 @@ import java.util.concurrent.ConcurrentHashMap
 private const val DEFAULT_PAGE_SIZE = 30
 
 @Service
-class QueryService @Autowired constructor(
-    private val boudiccaSearchProperties: BoudiccaSearchProperties, private val openTelemetry: OpenTelemetry
+class QueryService
+@Autowired
+constructor(
+    private val boudiccaSearchProperties: BoudiccaSearchProperties,
+    private val openTelemetry: OpenTelemetry,
 ) {
-
     companion object {
         private val logger = KotlinLogging.logger {}
-        private var clock = Clock.system(ZoneId.of("Europe/Vienna")) //TODO make configurable
+        private var clock = Clock.system(ZoneId.of("Europe/Vienna")) // TODO make configurable
     }
 
     @Volatile
@@ -51,20 +53,20 @@ class QueryService @Autowired constructor(
     fun onEventsUpdate(event: EntriesUpdatedEvent) {
         this.entries = Utils.order(event.entries, ConcurrentHashMap())
         if (boudiccaSearchProperties.devMode) {
-            //for local mode we only want the simple, the optimizing has quite some startup
+            // for local mode we only want the simple, the optimizing has quite some startup
             this.evaluator = SimpleEvaluator(event.entries, clock)
         } else {
             val optimizingEvaluator = OptimizingEvaluator(event.entries, clock)
             val fallbackEvaluator = SimpleEvaluator(event.entries, clock)
-            this.evaluator = Evaluator { expression, page ->
-                try {
-                    optimizingEvaluator.evaluate(expression, page)
-                } catch (e: Exception) {
-                    logger.error(e) { "optimizing evaluator threw exception" }
-                    fallbackEvaluator.evaluate(expression, page)
+            this.evaluator =
+                Evaluator { expression, page ->
+                    try {
+                        optimizingEvaluator.evaluate(expression, page)
+                    } catch (e: Exception) {
+                        logger.error(e) { "optimizing evaluator threw exception" }
+                        fallbackEvaluator.evaluate(expression, page)
+                    }
                 }
-
-            }
         }
     }
 
@@ -73,7 +75,7 @@ class QueryService @Autowired constructor(
             val queryResult = BoudiccaQueryRunner.evaluateQuery(query, page, evaluator, openTelemetry)
             ResultDTO(queryResult.result, queryResult.totalResults, queryResult.error)
         } catch (e: QueryException) {
-            //TODO this should return a 400 error or something, not a 200 message with an error message...
+            // TODO this should return a 400 error or something, not a 200 message with an error message...
             ResultDTO(emptyList(), 0, e.message)
         }
     }

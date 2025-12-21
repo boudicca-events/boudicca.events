@@ -4,7 +4,6 @@ package base.boudicca.model.structured
  * represents a parsed Key of a Key-Value pair which consists of the name and all the variants (which are sorted canonically)
  */
 class Key(name: String, variants: List<Variant> = emptyList()) : AbstractKey<Key>(name, variants) {
-
     override fun validate() {
         require(name != "*") { "key name is not allowed to be '*'" }
         variants.forEach {
@@ -28,5 +27,4 @@ class Key(name: String, variants: List<Variant> = emptyList()) : AbstractKey<Key
     }
 
     override fun toBuilder() = KeyBuilder(name).withVariants(variants)
-
 }

@@ -44,10 +44,12 @@ const val DEFAULT_DURATION_SHORTER_VALUE = 24 * 30
 
 private const val MAP_SEARCH_RESULT_COUNT = 200
 
-//TODO we should think about reducing the size of this class, maybe we can split out all the property selecting methods
+// TODO we should think about reducing the size of this class, maybe we can split out all the property selecting methods
 @Service
 @Suppress("detekt:TooManyFunctions")
-class EventService @Autowired constructor(
+class EventService
+@Autowired
+constructor(
     private val pictureProxyService: PictureProxyService,
     private val caller: SearchServiceCaller,
     @Value("\${boudicca.search.additionalFilter:}") private val additionalFilter: String,
@@ -72,21 +74,23 @@ class EventService @Autowired constructor(
         val searchResultDTO =
             caller.search(
                 QueryDTO(
-                    generateQuery(searchDTO, additionalMapQueryParts), searchDTO.offset ?: 0,
-                    MAP_SEARCH_RESULT_COUNT
-                )
+                    generateQuery(searchDTO, additionalMapQueryParts),
+                    searchDTO.offset ?: 0,
+                    MAP_SEARCH_RESULT_COUNT,
+                ),
             )
         return mapMapSearch(searchResultDTO)
     }
 
     fun generateQuery(searchDTO: SearchDTO, additionalQueryParts: List<String> = emptyList()): String {
         val name = searchDTO.name
-        val query = if (name != null && name.startsWith('!')) {
-            name.substring(1)
-        } else {
-            setDefaults(searchDTO)
-            buildQuery(searchDTO, additionalQueryParts)
-        }
+        val query =
+            if (name != null && name.startsWith('!')) {
+                name.substring(1)
+            } else {
+                setDefaults(searchDTO)
+                buildQuery(searchDTO, additionalQueryParts)
+            }
         return query
     }
 
@@ -122,8 +126,8 @@ class EventService @Autowired constructor(
             queryParts.add(
                 or(
                     not(hasField(SemanticKeys.RECURRENCE_TYPE)),
-                    equals(SemanticKeys.RECURRENCE_TYPE, "ONCE")
-                )
+                    equals(SemanticKeys.RECURRENCE_TYPE, "ONCE"),
+                ),
             )
         }
         if (additionalFilter.isNotBlank()) {
@@ -137,23 +141,23 @@ class EventService @Autowired constructor(
     }
 
     fun filters(): Filters {
-        val filters = caller.getFiltersFor(
-            FilterQueryDTO(
-                listOf(
-                    FilterQueryEntryDTO(SemanticKeys.LOCATION_NAME),
-                    FilterQueryEntryDTO(SemanticKeys.LOCATION_CITY),
-                    FilterQueryEntryDTO(SemanticKeys.TAGS),
-                    FilterQueryEntryDTO(SemanticKeys.TYPE),
-                    FilterQueryEntryDTO(SemanticKeys.CONCERT_BANDLIST),
-                    FilterQueryEntryDTO(SemanticKeys.CONCERT_GENRE),
-                )
+        val filters =
+            caller.getFiltersFor(
+                FilterQueryDTO(
+                    listOf(
+                        FilterQueryEntryDTO(SemanticKeys.LOCATION_NAME),
+                        FilterQueryEntryDTO(SemanticKeys.LOCATION_CITY),
+                        FilterQueryEntryDTO(SemanticKeys.TAGS),
+                        FilterQueryEntryDTO(SemanticKeys.TYPE),
+                        FilterQueryEntryDTO(SemanticKeys.CONCERT_BANDLIST),
+                        FilterQueryEntryDTO(SemanticKeys.CONCERT_GENRE),
+                    ),
+                ),
             )
-        )
 
-        fun String.getFilterAndSortAndTransformToTriple(): List<Triple<String, String, String>> =
-            filters[this]?.sortedWith(String.CASE_INSENSITIVE_ORDER)
-                ?.map { Triple(it, it, frontEndId(it)) }
-                ?: throw IllegalStateException("no filters found for key '${this}'")
+        fun String.getFilterAndSortAndTransformToTriple(): List<Triple<String, String, String>> = filters[this]?.sortedWith(String.CASE_INSENSITIVE_ORDER)
+            ?.map { Triple(it, it, frontEndId(it)) }
+            ?: throw IllegalStateException("no filters found for key '$this'")
 
         return Filters(
             EventCategory.entries
@@ -233,7 +237,7 @@ class EventService @Autowired constructor(
         return getPropertyForFormats(
             event,
             propertyName,
-            listOf(FormatVariantConstants.MARKDOWN_FORMAT_NAME, FormatVariantConstants.TEXT_FORMAT_NAME)
+            listOf(FormatVariantConstants.MARKDOWN_FORMAT_NAME, FormatVariantConstants.TEXT_FORMAT_NAME),
         )
             .map { RichText(getIsMarkdownFromFormat(it.first), it.second) }
             .getOrNull()
@@ -243,8 +247,8 @@ class EventService @Autowired constructor(
         return getPropertyForFormats(
             event,
             propertyName,
-            listOf(FormatVariantConstants.LIST_FORMAT_NAME, FormatVariantConstants.TEXT_FORMAT_NAME)
-        ) //use text as a wonky fallback for now
+            listOf(FormatVariantConstants.LIST_FORMAT_NAME, FormatVariantConstants.TEXT_FORMAT_NAME),
+        ) // use text as a wonky fallback for now
             .map {
                 try {
                     ListFormatAdapter().fromString(it.second)
@@ -263,19 +267,15 @@ class EventService @Autowired constructor(
             .getOrNull()
     }
 
-    private fun getPropertyForFormats(
-        event: StructuredEvent,
-        propertyName: String,
-        formatVariants: List<String>
-    ): Optional<Pair<Key, String>> {
+    private fun getPropertyForFormats(event: StructuredEvent, propertyName: String, formatVariants: List<String>): Optional<Pair<Key, String>> {
         return KeySelector.builder(propertyName)
             .thenVariant(
                 VariantConstants.LANGUAGE_VARIANT_NAME,
                 listOf(
                     getPreferredLanguage(),
                     VariantConstants.LanguageVariantConstants.DEFAULT_LANGUAGE_NAME,
-                    VariantConstants.ANY_VARIANT_SELECTOR
-                )
+                    VariantConstants.ANY_VARIANT_SELECTOR,
+                ),
             )
             .thenVariant(VariantConstants.FORMAT_VARIANT_NAME, formatVariants)
             .build()
@@ -292,7 +292,7 @@ class EventService @Autowired constructor(
 
     @Suppress("FunctionOnlyReturningConstant") // remove this when fixing the todo
     private fun getPreferredLanguage(): String {
-        return "de" //TODO make user be able to choose this
+        return "de" // TODO make user be able to choose this
     }
 
     private fun getAllAccessibilityValues(event: StructuredEvent): List<String> {
@@ -309,7 +309,7 @@ class EventService @Autowired constructor(
                             SemanticKeys.ACCESSIBILITY_AKTIVPASSLINZ -> "Aktivpass möglich"
                             SemanticKeys.ACCESSIBILITY_KULTURPASS -> "Kulturpass möglich"
                             else -> keyValuePair.key.name
-                        }
+                        },
                     )
                 }
             }
@@ -319,12 +319,13 @@ class EventService @Autowired constructor(
 
     private fun mapCategory(categoryString: String?): String? {
         if (categoryString != null) {
-            val category = try {
-                EventCategory.valueOf(categoryString)
-            } catch (e: IllegalArgumentException) {
-                logger.warn(e) { "$categoryString is not a valid category" }
-                null
-            }
+            val category =
+                try {
+                    EventCategory.valueOf(categoryString)
+                } catch (e: IllegalArgumentException) {
+                    logger.warn(e) { "$categoryString is not a valid category" }
+                    null
+                }
             if (category != null) {
                 return when (category) {
                     EventCategory.MUSIC -> "music"
@@ -380,30 +381,33 @@ class EventService @Autowired constructor(
                 return events.firstNotNullOfOrNull(lookup)
             }
 
-            MapSearchResultDTO(null, byLocationName.mapNotNull {
-                val locationName = it.key
-                val locationUrl = findFirst(it.value) { event -> getTextProperty(event, SemanticKeys.LOCATION_URL) }
-                val locationLat =
-                    findFirst(it.value) { event -> getNumberProperty(event, SemanticKeys.LOCATION_COORDINATES_LAT) }
-                val locationLon =
-                    findFirst(it.value) { event -> getNumberProperty(event, SemanticKeys.LOCATION_COORDINATES_LON) }
-                if (locationLat == null || locationLon == null) {
-                    null
-                } else {
-                    Location(
-                        locationName,
-                        locationUrl,
-                        locationLat.toDouble(),
-                        locationLon.toDouble(),
-                        it.value.sortedBy { event -> event.startDate }.map { event ->
-                            LocationEvent(
-                                getTextProperty(event, SemanticKeys.NAME) ?: "",
-                                getTextProperty(event, SemanticKeys.URL)
-                            )
-                        }
-                    )
-                }
-            })
+            MapSearchResultDTO(
+                null,
+                byLocationName.mapNotNull {
+                    val locationName = it.key
+                    val locationUrl = findFirst(it.value) { event -> getTextProperty(event, SemanticKeys.LOCATION_URL) }
+                    val locationLat =
+                        findFirst(it.value) { event -> getNumberProperty(event, SemanticKeys.LOCATION_COORDINATES_LAT) }
+                    val locationLon =
+                        findFirst(it.value) { event -> getNumberProperty(event, SemanticKeys.LOCATION_COORDINATES_LON) }
+                    if (locationLat == null || locationLon == null) {
+                        null
+                    } else {
+                        Location(
+                            locationName,
+                            locationUrl,
+                            locationLat.toDouble(),
+                            locationLon.toDouble(),
+                            it.value.sortedBy { event -> event.startDate }.map { event ->
+                                LocationEvent(
+                                    getTextProperty(event, SemanticKeys.NAME) ?: "",
+                                    getTextProperty(event, SemanticKeys.URL),
+                                )
+                            },
+                        )
+                    }
+                },
+            )
         }
     }
 

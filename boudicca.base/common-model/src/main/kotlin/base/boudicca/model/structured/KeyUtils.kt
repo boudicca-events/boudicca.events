@@ -36,12 +36,13 @@ object KeyUtils {
         val trimmedPropertyKey = propertyKey.trim()
         require(trimmedPropertyKey.isNotEmpty()) { "given keyfilter was empty" }
         val split = trimmedPropertyKey.split(":")
-        val variants = split.drop(1).map {
-            val splittedVariant = it.split("=")
-            require(splittedVariant.size > 1) { "variant $it does not contain a \"=\"" }
-            require(splittedVariant.size <= 2) { "variant $it does contain too many \"=\"" }
-            Variant(splittedVariant[0], splittedVariant[1])
-        }.sorted()
+        val variants =
+            split.drop(1).map {
+                val splittedVariant = it.split("=")
+                require(splittedVariant.size > 1) { "variant $it does not contain a \"=\"" }
+                require(splittedVariant.size <= 2) { "variant $it does contain too many \"=\"" }
+                Variant(splittedVariant[0], splittedVariant[1])
+            }.sorted()
         val resultPair = Pair(split[0], variants)
         return resultPair
     }

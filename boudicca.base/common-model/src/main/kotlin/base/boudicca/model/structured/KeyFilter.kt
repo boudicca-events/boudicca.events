@@ -5,7 +5,6 @@ package base.boudicca.model.structured
  * similar to a Key, but a KeyFilter also allows "*" as a propertyName and "*", "" (the empty string) as values for variants
  */
 class KeyFilter(name: String, variants: List<Variant> = emptyList()) : AbstractKey<KeyFilter>(name, variants) {
-
     companion object {
         fun parse(keyFilter: String): KeyFilter {
             return KeyUtils.parseKeyFilter(keyFilter)
@@ -17,5 +16,4 @@ class KeyFilter(name: String, variants: List<Variant> = emptyList()) : AbstractK
     }
 
     override fun toBuilder() = KeyFilterBuilder(name).withVariants(variants)
-
 }

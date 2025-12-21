@@ -56,4 +56,3 @@ fun StructuredEntry.filterKeys(keyFilter: KeyFilter): List<Pair<Key, String>> {
 fun StructuredEntry.selectKey(keySelector: KeySelector): Optional<Pair<Key, String>> {
     return keySelector.selectSingle(this)
 }
-

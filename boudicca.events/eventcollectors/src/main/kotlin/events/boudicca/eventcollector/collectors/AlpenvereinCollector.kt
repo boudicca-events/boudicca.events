@@ -22,24 +22,26 @@ class AlpenvereinCollector : TwoStepEventCollector<String>("alpenverein") {
     override fun getAllUnparsedEvents(): List<String> {
         val mainSearchPage = Jsoup.parse(fetcher.fetchUrl("https://www.alpenverein.at/portal/termine/suche.php"))
 
-        val allSearchPages = mainSearchPage.select("div.pager a")
-            .map { normalizeUrl(it.attr("href")) }
-            .distinct()
-            .filter { !it.endsWith("=1") }
-            .map { Jsoup.parse(fetcher.fetchUrl(it)) }
-            .plus(mainSearchPage)
-
-        val allLinks = allSearchPages.flatMap { doc ->
-            doc.select("div.elementList h2.listEntryTitle a")
+        val allSearchPages =
+            mainSearchPage.select("div.pager a")
                 .map { normalizeUrl(it.attr("href")) }
-        }.distinct()
+                .distinct()
+                .filter { !it.endsWith("=1") }
+                .map { Jsoup.parse(fetcher.fetchUrl(it)) }
+                .plus(mainSearchPage)
+
+        val allLinks =
+            allSearchPages.flatMap { doc ->
+                doc.select("div.elementList h2.listEntryTitle a")
+                    .map { normalizeUrl(it.attr("href")) }
+            }.distinct()
 
         return allLinks
     }
 
     override fun parseMultipleStructuredEvents(event: String): List<StructuredEvent?>? {
         val uri = URI.create(event)
-        if (uri.host.contains("alpenverein-edelweiss") || uri.host.contains("programm.alpenverein.wien")) { //TODO fix those
+        if (uri.host.contains("alpenverein-edelweiss") || uri.host.contains("programm.alpenverein.wien")) { // TODO fix those
             return emptyList()
         }
 
@@ -63,7 +65,7 @@ class AlpenvereinCollector : TwoStepEventCollector<String>("alpenverein") {
             withProperty(TextProperty("sport.participation"), "active")
             withProperty(
                 SemanticKeys.DESCRIPTION_TEXT_PROPERTY,
-                eventSite.select("div.elementBoxSheet div.elementText").text()
+                eventSite.select("div.elementBoxSheet div.elementText").text(),
             )
             withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, getLocationCity(eventSite))
             withProperty(SemanticKeys.PICTURE_URL_PROPERTY, imgUrl)
@@ -97,11 +99,12 @@ class AlpenvereinCollector : TwoStepEventCollector<String>("alpenverein") {
 
     private fun parseDates(eventSite: Document): DateParserResult {
         val times = eventSite.select("div.elementBoxSheet dl#officeveranstaltung_zeitraum1 h3")
-        val timeText = if (times.isNotEmpty()) {
-            times.text()
-        } else {
-            eventSite.select("div.elementBoxSheet div.elementText > p.subline").text()
-        }
+        val timeText =
+            if (times.isNotEmpty()) {
+                times.text()
+            } else {
+                eventSite.select("div.elementBoxSheet div.elementText > p.subline").text()
+            }
         return DateParser.parse(timeText)
     }
 

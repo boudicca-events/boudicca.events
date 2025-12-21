@@ -40,7 +40,7 @@ class ArenaWienCollector : TwoStepEventCollector<ArenaWienCollector.HalfEvent>("
         return structuredEvent(event.title!!, parseDate(event.dateBegin!!)) {
             withProperty(
                 SemanticKeys.ENDDATE_PROPERTY,
-                if (!event.dateEnd.isNullOrBlank()) parseDate(event.dateEnd) else null
+                if (!event.dateEnd.isNullOrBlank()) parseDate(event.dateEnd) else null,
             )
             withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(event.url))
             withProperty(SemanticKeys.TYPE_PROPERTY, "concert")
@@ -83,7 +83,7 @@ class ArenaWienCollector : TwoStepEventCollector<ArenaWienCollector.HalfEvent>("
 
     private fun getAjaxUrl(page: Int): String {
         return "$baseUrl/DesktopModules/WebAPI/API/Event/Search?searchTerm=&day=1&month=-1&year=-1&" +
-                "page=$page&pageSize=20&eventCategory=-1&abonnement=-1&cultureCode=de-AT&locationId=0"
+            "page=$page&pageSize=20&eventCategory=-1&abonnement=-1&cultureCode=de-AT&locationId=0"
     }
 
     data class HalfEvent(

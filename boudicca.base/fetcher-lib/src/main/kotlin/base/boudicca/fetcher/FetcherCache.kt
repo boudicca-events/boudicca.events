@@ -15,7 +15,9 @@ import java.util.concurrent.ConcurrentHashMap
  */
 interface FetcherCache {
     fun containsEntry(key: String): Boolean
+
     fun getEntry(key: String): String
+
     fun putEntry(key: String, entry: String)
 }
 
@@ -29,12 +31,11 @@ object NoopFetcherCache : FetcherCache {
     }
 
     override fun putEntry(key: String, entry: String) {
-        //do nothing
+        // do nothing
     }
 }
 
 class InMemoryFetcherCache : FetcherCache {
-
     private val cache = ConcurrentHashMap<String, String>()
 
     override fun containsEntry(key: String): Boolean {
@@ -80,7 +81,7 @@ class FileBackedFetcherCache(private val file: File) : FetcherCache {
                     }
                 }
         } catch (_: EOFException) {
-            //just means we read all lines, the api of this stream is weird...
+            // just means we read all lines, the api of this stream is weird...
         }
     }
 

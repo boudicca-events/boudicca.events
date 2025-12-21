@@ -7,34 +7,36 @@ import io.opentelemetry.api.OpenTelemetry
 import io.opentelemetry.api.trace.SpanKind
 import io.opentelemetry.api.trace.StatusCode
 
-
 internal class DateParserImpl(
     private val dateParserConfig: DateParserConfig,
     private val inputTokens: List<String>,
-    private val otel: OpenTelemetry
+    private val otel: OpenTelemetry,
 ) {
-
     fun parse(): DateParserResult {
-        val span = otel.getTracer("DateParser")
-            .spanBuilder("parse date")
-            .setSpanKind(SpanKind.INTERNAL)
-            .setAttribute("input", inputTokens.joinToString())
-            .setAttribute("config", dateParserConfig.toString())
-            .startSpan()
+        val span =
+            otel.getTracer("DateParser")
+                .spanBuilder("parse date")
+                .setSpanKind(SpanKind.INTERNAL)
+                .setAttribute("input", inputTokens.joinToString())
+                .setAttribute("config", dateParserConfig.toString())
+                .startSpan()
         try {
             span.makeCurrent().use {
                 val tokenGroups = inputTokens.map { Tokenizer.tokenize(it) }
-                val tokens = tokenGroups.map { mapAndValidateTokens(it) }
-                    .reduce { acc, tokens -> acc + Token.create("\n", emptySet()) + tokens }
+                val tokens =
+                    tokenGroups.map { mapAndValidateTokens(it) }
+                        .reduce { acc, tokens -> acc + Token.create("\n", emptySet()) + tokens }
 
                 val debugTracing = DebugTracing()
-                val result = GuessesStep(
-                    dateParserConfig,
-                    debugTracing.startOperationWithChild("parser start", Tokens(tokens)), Tokens(tokens)
-                ).solve()
+                val result =
+                    GuessesStep(
+                        dateParserConfig,
+                        debugTracing.startOperationWithChild("parser start", Tokens(tokens)),
+                        Tokens(tokens),
+                    ).solve()
                 debugTracing.endOperation(result)
 
-                //mainly for tests
+                // mainly for tests
                 if (dateParserConfig.alwaysPrintDebugTracing) {
                     println(debugTracing.debugPrint())
                 }
@@ -54,7 +56,6 @@ internal class DateParserImpl(
         } finally {
             span.end()
         }
-
     }
 
     @Suppress("CyclomaticComplexMethod", "MagicNumber", "ComplexCondition")
@@ -68,7 +69,7 @@ internal class DateParserImpl(
             } else if (it.first == TokenizerType.INT) {
                 val num = it.second.toIntOrNull()
                 if (num != null) {
-                    if (0 <= num && num <= 99 || 1900 <= num && num <= 3000) { //shortform 0-99 + longform 1900-3000
+                    if (0 <= num && num <= 99 || 1900 <= num && num <= 3000) { // shortform 0-99 + longform 1900-3000
                         possibleTypes.add(ResultTypes.YEAR)
                     }
                     if (1 <= num && num <= 12) {
@@ -89,5 +90,4 @@ internal class DateParserImpl(
             Token.create(it.second, possibleTypes)
         }
     }
-
 }

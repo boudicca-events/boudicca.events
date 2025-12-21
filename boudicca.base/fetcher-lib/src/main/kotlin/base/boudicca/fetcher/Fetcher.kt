@@ -32,7 +32,7 @@ class Fetcher(
     private val httpClient: HttpClientWrapper = createDefaultHttpClientWrapper(userAgent, otel),
     private val eventListeners: List<FetcherEventListener> = emptyList(),
     private val fetcherCache: FetcherCache = NoopFetcherCache,
-    private val disableRetries: Boolean = false
+    private val disableRetries: Boolean = false,
 ) {
     private val logger = KotlinLogging.logger {}
     private val tracer = otel.getTracer("fetcher")
@@ -47,23 +47,18 @@ class Fetcher(
     }
 
     fun fetchUrlPost(url: String, contentType: String, content: String): String {
-        return fetch("POST", "$url|${contentType}|${content}", url, content) {
+        return fetch("POST", "$url|$contentType|$content", url, content) {
             httpClient.doPost(url, contentType, content)
         }
     }
 
-    private fun fetch(
-        httpMethod: String,
-        cacheKey: String,
-        url: String,
-        content: String?,
-        executeRequestAction: () -> Pair<Int, String>
-    ): String {
-        val span = tracer.spanBuilder("fetcher")
-            .setSpanKind(SpanKind.CLIENT)
-            .setAttribute("http.request.method", httpMethod)
-            .setAttribute("url.full", url)
-            .startSpan()
+    private fun fetch(httpMethod: String, cacheKey: String, url: String, content: String?, executeRequestAction: () -> Pair<Int, String>): String {
+        val span =
+            tracer.spanBuilder("fetcher")
+                .setSpanKind(SpanKind.CLIENT)
+                .setAttribute("http.request.method", httpMethod)
+                .setAttribute("url.full", url)
+                .startSpan()
         try {
             span.makeCurrent().use {
                 if (fetcherCache.containsEntry(cacheKey)) {
@@ -88,33 +83,30 @@ class Fetcher(
         }
     }
 
-    private fun executeRequest(
-        span: Span,
-        url: String,
-        content: String?,
-        request: Callable<Pair<Int, String>>
-    ): String {
+    private fun executeRequest(span: Span, url: String, content: String?, request: Callable<Pair<Int, String>>): String {
         doSleep(span)
-        val response = retry {
-            eventListeners.forEach { it.callStarted(url, content) }
-            val start = clock.millis()
+        val response =
+            retry {
+                eventListeners.forEach { it.callStarted(url, content) }
+                val start = clock.millis()
 
-            val response = try {
-                request.call()
-            } catch (e: Exception) {
-                eventListeners.forEach { it.callEnded(-1) }
-                throw e
-            } finally {
-                val end = clock.millis()
-                lastRequestEnd = end
-                lastRequestDuration = end - start
+                val response =
+                    try {
+                        request.call()
+                    } catch (e: Exception) {
+                        eventListeners.forEach { it.callEnded(-1) }
+                        throw e
+                    } finally {
+                        val end = clock.millis()
+                        lastRequestEnd = end
+                        lastRequestDuration = end - start
+                    }
+                eventListeners.forEach { it.callEnded(response.first) }
+                if (response.first != HttpURLConnection.HTTP_OK) {
+                    throw FetcherException("request to $url failed with status code ${response.first}")
+                }
+                response
             }
-            eventListeners.forEach { it.callEnded(response.first) }
-            if (response.first != HttpURLConnection.HTTP_OK) {
-                throw FetcherException("request to $url failed with status code ${response.first}")
-            }
-            response
-        }
         return response.second
     }
 
@@ -154,30 +146,33 @@ class Fetcher(
 class FetcherException(reason: String) : RuntimeException(reason)
 
 private fun createDefaultHttpClientWrapper(userAgent: String, otel: OpenTelemetry): HttpClientWrapper {
-    val httpClient = JavaHttpClientTelemetry
-        .builder(otel)
-        .build()
-        .newHttpClient(
-            HttpClient.newBuilder()
-                .followRedirects(HttpClient.Redirect.NORMAL)
-                .build()
-        )
+    val httpClient =
+        JavaHttpClientTelemetry
+            .builder(otel)
+            .build()
+            .newHttpClient(
+                HttpClient.newBuilder()
+                    .followRedirects(HttpClient.Redirect.NORMAL)
+                    .build(),
+            )
 
     return object : HttpClientWrapper {
         override fun doGet(url: String): Pair<Int, String> {
-            val request = HttpRequest.newBuilder(URI.create(url))
-                .GET()
-                .header("User-Agent", userAgent)
-                .build()
+            val request =
+                HttpRequest.newBuilder(URI.create(url))
+                    .GET()
+                    .header("User-Agent", userAgent)
+                    .build()
             return doRequest(request)
         }
 
         override fun doPost(url: String, contentType: String, content: String): Pair<Int, String> {
-            val request = HttpRequest.newBuilder(URI.create(url))
-                .POST(BodyPublishers.ofString(content))
-                .header("User-Agent", userAgent)
-                .header("Content-Type", contentType)
-                .build()
+            val request =
+                HttpRequest.newBuilder(URI.create(url))
+                    .POST(BodyPublishers.ofString(content))
+                    .header("User-Agent", userAgent)
+                    .header("Content-Type", contentType)
+                    .build()
 
             return doRequest(request)
         }

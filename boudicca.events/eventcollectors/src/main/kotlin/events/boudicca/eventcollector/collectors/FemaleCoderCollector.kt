@@ -12,20 +12,21 @@ import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.util.*
+import java.util.Locale
 
 class FemaleCoderCollector : TwoStepEventCollector<String>("femalecoder") {
-
     private val fetcher = FetcherFactory.newFetcher()
     private val baseUrl = "https://female-coders.at/"
 
     override fun getAllUnparsedEvents(): List<String> {
         val document = Jsoup.parse(fetcher.fetchUrl(baseUrl))
 
-        val eventsUrls = document.select("div.et_pb_section_3 .event_details")
-            .mapNotNull {
-                it.select("a").first()?.attr("href")
-            }
+        val eventsUrls =
+            document
+                .select("div.et_pb_section_3 .event_details")
+                .mapNotNull {
+                    it.select("a").first()?.attr("href")
+                }
 
         return eventsUrls
     }
@@ -54,10 +55,19 @@ class FemaleCoderCollector : TwoStepEventCollector<String>("femalecoder") {
         // Linz, In, AT, 4020
         // Hagenberg im Mühlkreis, AT, 4232
         val city =
-            document.select("div.venue > p").last()?.text()!!.substringBefore(",", missingDelimiterValue = "Linz")
+            document
+                .select("div.venue > p")
+                .last()
+                ?.text()!!
+                .substringBefore(",", missingDelimiterValue = "Linz")
 
         val date = document.select("div.details p").first()?.text()
-        val startTime = document.select("div.details p").last()?.text()?.substring(0, 8)!!
+        val startTime =
+            document
+                .select("div.details p")
+                .last()
+                ?.text()
+                ?.substring(0, 8)!!
 
         val currentYear = LocalDate.now().year
 
@@ -66,9 +76,11 @@ class FemaleCoderCollector : TwoStepEventCollector<String>("femalecoder") {
         val localStartTime =
             LocalTime.parse(startTime.uppercase(Locale.ENGLISH), DateTimeFormatter.ofPattern("hh:mm a"))
 
-        val startDate = localDate.atTime(localStartTime)
-            .atZone(ZoneId.of("Europe/Vienna"))
-            .toOffsetDateTime()
+        val startDate =
+            localDate
+                .atTime(localStartTime)
+                .atZone(ZoneId.of("Europe/Vienna"))
+                .toOffsetDateTime()
 
         return structuredEvent(name, startDate) {
             withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(url))
@@ -76,12 +88,12 @@ class FemaleCoderCollector : TwoStepEventCollector<String>("femalecoder") {
             withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description.toString())
             withProperty(
                 SemanticKeys.PICTURE_URL_PROPERTY,
-                UrlUtils.parse(document.select("div.container > div#content-area img").attr("src"))
+                UrlUtils.parse(document.select("div.container > div#content-area img").attr("src")),
             )
             withProperty(SemanticKeys.TYPE_PROPERTY, "technology")
             withProperty(
                 SemanticKeys.TAGS_PROPERTY,
-                listOf("Study Group", "Coding", "Mentorship", "TechCommunity", "Socializing", "Networking")
+                listOf("Study Group", "Coding", "Mentorship", "TechCommunity", "Socializing", "Networking"),
             )
             withProperty(SemanticKeys.REGISTRATION_PROPERTY, Registration.FREE)
             withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, document.select("div.venue > p").first()?.text()!!)

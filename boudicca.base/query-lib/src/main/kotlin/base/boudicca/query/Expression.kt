@@ -13,7 +13,6 @@ abstract class HasOneChild(
     private val name: String,
     private val child: Expression,
 ) : Expression {
-
     fun getChild(): Expression {
         return child
     }
@@ -28,7 +27,6 @@ abstract class HasTwoChildren(
     private val leftChild: Expression,
     private val rightChild: Expression,
 ) : Expression {
-
     fun getLeftChild(): Expression {
         return leftChild
     }
@@ -47,7 +45,6 @@ abstract class FieldAndTextExpression(
     keyFilter: String,
     private val text: String,
 ) : Expression {
-
     private val keyFilter = parseKeyFilter(keyFilter)
 
     fun getKeyFilter(): KeyFilter {
@@ -68,7 +65,6 @@ abstract class FieldAndNumberExpression(
     keyFilter: String,
     private val number: Number,
 ) : Expression {
-
     private val keyFilter = parseKeyFilter(keyFilter)
 
     fun getKeyFilter(): KeyFilter {
@@ -88,7 +84,6 @@ abstract class FieldExpression(
     private val name: String,
     keyFilter: String,
 ) : Expression {
-
     private val keyFilter = parseKeyFilter(keyFilter)
 
     fun getKeyFilter(): KeyFilter {
@@ -105,7 +100,6 @@ abstract class DateExpression(
     dateKeyFilter: String,
     dateText: String,
 ) : FieldAndTextExpression(name, dateKeyFilter, dateText) {
-
     private val date: LocalDate
 
     init {
@@ -131,7 +125,6 @@ abstract class AbstractDurationExpression(
     endDateKeyFilter: String,
     private val duration: Number,
 ) : Expression {
-
     private val startDateKeyFilter = parseKeyFilter(startDateKeyFilter)
     private val endDateKeyFilter = parseKeyFilter(endDateKeyFilter)
 
@@ -148,7 +141,7 @@ abstract class AbstractDurationExpression(
     }
 
     override fun toString(): String {
-        return "$name('${startDateKeyFilter.toKeyString()}','${endDateKeyFilter.toKeyString()}',${duration})"
+        return "$name('${startDateKeyFilter.toKeyString()}','${endDateKeyFilter.toKeyString()}',$duration)"
     }
 }
 
@@ -212,10 +205,10 @@ class HasFieldExpression(
 
 class IsInNextSecondsExpression(
     keyFilter: String,
-    number: Number
+    number: Number,
 ) : FieldAndNumberExpression("ISINNEXTSECONDS", keyFilter, number)
 
 class IsInLastSecondsExpression(
     keyFilter: String,
-    number: Number
+    number: Number,
 ) : FieldAndNumberExpression("ISINLASTSECONDS", keyFilter, number)

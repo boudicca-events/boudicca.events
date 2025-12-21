@@ -20,8 +20,8 @@ class MuseumArbeitsweltCollector : TwoStepEventCollector<Pair<String, String>>("
             events.add(
                 Pair(
                     it.select("a.act-view-more").attr("href"),
-                    it.select("div.decm-show-detail-center").text()
-                )
+                    it.select("div.decm-show-detail-center").text(),
+                ),
             )
         }
         return events

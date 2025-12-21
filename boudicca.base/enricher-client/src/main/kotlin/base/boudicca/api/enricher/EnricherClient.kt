@@ -13,21 +13,21 @@ import base.boudicca.enricher.openapi.model.Event as EnricherOpenApiEvent
 
 class EnricherClient(
     private val enricherUrl: String,
-    private val otel: OpenTelemetry = GlobalOpenTelemetry.get()
+    private val otel: OpenTelemetry = GlobalOpenTelemetry.get(),
 ) {
-
     private val enricherApi: EnricherApi
 
     init {
         check(enricherUrl.isNotBlank()) { "you need to pass an enricherUrl!" }
-        val apiClient = object : ApiClient() {
-            override fun getHttpClient(): HttpClient? {
-                return JavaHttpClientTelemetry
-                    .builder(otel)
-                    .build()
-                    .newHttpClient(super.getHttpClient())
+        val apiClient =
+            object : ApiClient() {
+                override fun getHttpClient(): HttpClient? {
+                    return JavaHttpClientTelemetry
+                        .builder(otel)
+                        .build()
+                        .newHttpClient(super.getHttpClient())
+                }
             }
-        }
         apiClient.updateBaseUri(enricherUrl)
 
         enricherApi = EnricherApi(apiClient)

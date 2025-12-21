@@ -11,7 +11,6 @@ import org.springframework.web.servlet.ModelAndView
 @Controller
 @RequestMapping("/")
 class StaticSitesController {
-
     @GetMapping("/about")
     fun getAbout(): ModelAndView {
         val data: MutableMap<String, Any> = HashMap()
@@ -39,7 +38,6 @@ class StaticSitesController {
 
 @Component
 class BoudiccaEventsExtension : Extension {
-
     val urlGithub = "https://github.com/boudicca-events/boudicca.events"
     val urlDiscord = "https://discord.gg/dwtsPZWCVA"
 
@@ -58,7 +56,7 @@ class BoudiccaEventsExtension : Extension {
             LinkExtension("Data Privacy", "/data-privacy"),
             LinkExtension("GitHub", urlGithub, "_blank", "github"),
             LinkExtension("Discord", urlDiscord, "_blank", "discord"),
-            LinkExtension("Erklärung zur Barrierefreiheit", "/erklarung-zur-barrierefreiheit")
+            LinkExtension("Erklärung zur Barrierefreiheit", "/erklarung-zur-barrierefreiheit"),
         )
     }
 }

@@ -18,11 +18,12 @@ import java.nio.ByteBuffer
 import java.util.zip.GZIPInputStream
 
 @Service
-class MusicBrainzArtistEnricher @Autowired constructor(
+class MusicBrainzArtistEnricher
+@Autowired
+constructor(
     @Value("\${boudicca.enricher.musicbrainz.data.path:}") musicBrainzDataPath: String?,
     @Value("\${boudicca.enricher.musicbrainz.index.path:}") musicBrainzIndexPath: String?,
 ) : Enricher {
-
     private val logger = KotlinLogging.logger {}
 
     private val objectMapper = ObjectMapper().registerModule(KotlinModule.Builder().build())
@@ -41,9 +42,10 @@ class MusicBrainzArtistEnricher @Autowired constructor(
         }
         val foundArtists = artistMatcher.findArtists(event.name)
         if (foundArtists.isNotEmpty()) {
-            val nonSubstringArtists = foundArtists.filter { artist ->
-                foundArtists.none { it.name.length != artist.name.length && it.name.contains(artist.name, true) }
-            }
+            val nonSubstringArtists =
+                foundArtists.filter { artist ->
+                    foundArtists.none { it.name.length != artist.name.length && it.name.contains(artist.name, true) }
+                }
             return insertArtistData(event, nonSubstringArtists)
         }
         return event
@@ -85,7 +87,8 @@ class MusicBrainzArtistEnricher @Autowired constructor(
         return objectMapper
             .readValue(
                 BufferedInputStream(GZIPInputStream(FileInputStream(file))),
-                object : TypeReference<List<Artist>?>() {})
+                object : TypeReference<List<Artist>?>() {},
+            )
     }
 
     private fun loadIndex(musicBrainzIndexPath: String?): ByteBuffer? {
@@ -99,5 +102,4 @@ class MusicBrainzArtistEnricher @Autowired constructor(
         }
         return ByteBuffer.wrap(BufferedInputStream(GZIPInputStream(FileInputStream(file))).readBytes())
     }
-
 }

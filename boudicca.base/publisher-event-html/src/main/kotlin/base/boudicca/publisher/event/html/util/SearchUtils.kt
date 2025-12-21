@@ -6,7 +6,6 @@ import base.boudicca.publisher.event.html.service.EventServiceException
 import io.github.oshai.kotlinlogging.KotlinLogging
 
 object SearchUtils {
-
     private val logger = KotlinLogging.logger {}
 
     fun searchAndAddToModel(eventService: EventService, searchDTO: SearchDTO, data: MutableMap<String, Any>) {
@@ -25,7 +24,7 @@ object SearchUtils {
 
     private fun throwException(e: Exception) {
         val newException = RuntimeException("error calling eventservice", e)
-        //spring hides all the interesting bits so log it here
+        // spring hides all the interesting bits so log it here
         logger.error(newException) { "error calling eventservice" }
         throw newException
     }

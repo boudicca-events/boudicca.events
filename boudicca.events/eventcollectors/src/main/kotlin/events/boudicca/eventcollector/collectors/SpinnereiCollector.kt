@@ -37,11 +37,12 @@ class SpinnereiCollector : TwoStepEventCollector<String>("spinnerei") {
 
         val (startDate, type) = parseTypeAndDate(doc.select("div.vng-details div.vng-detail-content-beginn").text())
         val picture = doc.select("div.vng-details div.bg-image").first()
-        val pictureUrl = if (picture != null) {
-            baseUrl + parsePictureUrl(picture.attr("style"))
-        } else {
-            null
-        }
+        val pictureUrl =
+            if (picture != null) {
+                baseUrl + parsePictureUrl(picture.attr("style"))
+            } else {
+                null
+            }
 
         return structuredEvent(name, startDate) {
             withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(event))

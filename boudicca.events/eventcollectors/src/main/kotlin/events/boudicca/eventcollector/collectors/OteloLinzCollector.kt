@@ -38,7 +38,7 @@ class OteloLinzCollector : TwoStepEventCollector<String>("otelolinz") {
             withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, "Otelo Linz")
             withProperty(
                 SemanticKeys.LOCATION_NAME_PROPERTY,
-                eventSite.select("div#em-event-6>p")[1].select("a").text()
+                eventSite.select("div#em-event-6>p")[1].select("a").text(),
             )
             withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(event))
         }

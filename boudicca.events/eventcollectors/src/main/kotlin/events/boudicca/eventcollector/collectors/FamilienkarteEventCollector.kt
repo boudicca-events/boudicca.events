@@ -15,7 +15,6 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 class FamilienkarteEventCollector : TwoStepEventCollector<String>("familienkarte") {
-
     // TODO: handle pagination, currently only the first 25 answers are parsed
     // TODO: handle other categories and locations (and adjust the type respectively)
 
@@ -53,11 +52,11 @@ class FamilienkarteEventCollector : TwoStepEventCollector<String>("familienkarte
         }
     }
 
-
     private fun parseStartAndEndDateTime(element: Element): Pair<OffsetDateTime, OffsetDateTime?> {
-        val fullDateString = element.select("div.eventDetailWrapper").first()?.text() ?: throw IllegalArgumentException(
-            "Could not find element containing start date"
-        )
+        val fullDateString =
+            element.select("div.eventDetailWrapper").first()?.text() ?: throw IllegalArgumentException(
+                "Could not find element containing start date",
+            )
 
         val localDate = parseDate(fullDateString)
         val (startTime, endTime) = parseStartAndEndtime(fullDateString)
@@ -82,8 +81,9 @@ class FamilienkarteEventCollector : TwoStepEventCollector<String>("familienkarte
 
     private fun parseStartAndEndtime(fullDateString: String): Pair<LocalTime?, LocalTime?> {
         val timeRegex = """\b(\d{2}:\d{2})(?:\s*-\s*(\d{2}:\d{2}))?\b""".toRegex()
-        val timeMatch = timeRegex.find(fullDateString)
-            ?: throw IllegalArgumentException("Could not find start (& endtime) in $fullDateString")
+        val timeMatch =
+            timeRegex.find(fullDateString)
+                ?: throw IllegalArgumentException("Could not find start (& endtime) in $fullDateString")
         val (startTimeString, endTimeString) = timeMatch.destructured
 
         val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")

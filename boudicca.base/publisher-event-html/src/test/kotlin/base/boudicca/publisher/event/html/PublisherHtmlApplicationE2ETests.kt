@@ -23,12 +23,10 @@ import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import java.time.OffsetDateTime
 
-
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(SpringExtension::class)
 @Tag("uitest")
 class PublisherHtmlApplicationE2ETests : E2ETestFixture() {
-
     @LocalServerPort
     private val port = 0
 
@@ -37,10 +35,7 @@ class PublisherHtmlApplicationE2ETests : E2ETestFixture() {
 
     @ParameterizedTest
     @ArgumentsSource(E2EGeneralTestData::class)
-    fun pageShouldHaveCorrectTitle(
-        events: List<Event>,
-        filters: Map<String, List<String>>
-    ) {
+    fun pageShouldHaveCorrectTitle(events: List<Event>, filters: Map<String, List<String>>) {
         setupSearchServiceCaller(events, filters)
 
         page.navigate("http://localhost:$port/")
@@ -49,10 +44,7 @@ class PublisherHtmlApplicationE2ETests : E2ETestFixture() {
 
     @ParameterizedTest
     @ArgumentsSource(E2ESingleEventTestData::class)
-    fun eventShouldBeVisibleInViewport(
-        events: List<Event>,
-        filters: Map<String, List<String>>
-    ) {
+    fun eventShouldBeVisibleInViewport(events: List<Event>, filters: Map<String, List<String>>) {
         setupSearchServiceCaller(events, filters)
 
         page.navigate("http://localhost:$port/")
@@ -62,10 +54,7 @@ class PublisherHtmlApplicationE2ETests : E2ETestFixture() {
 
     @ParameterizedTest
     @ArgumentsSource(E2ESingleEventTestData::class)
-    fun eventDetailsShouldBeCorrect(
-        events: List<Event>,
-        filters: Map<String, List<String>>
-    ) {
+    fun eventDetailsShouldBeCorrect(events: List<Event>, filters: Map<String, List<String>>) {
         setupSearchServiceCaller(events, filters)
 
         page.navigate("http://localhost:$port/")
@@ -78,10 +67,7 @@ class PublisherHtmlApplicationE2ETests : E2ETestFixture() {
 
     @ParameterizedTest
     @ArgumentsSource(SingleEventWithA11YInformation::class)
-    fun shouldDisplayA11YIconWhenTheEventIsAccessible(
-        events: List<Event>,
-        filters: Map<String, List<String>>
-    ) {
+    fun shouldDisplayA11YIconWhenTheEventIsAccessible(events: List<Event>, filters: Map<String, List<String>>) {
         setupSearchServiceCaller(events, filters)
 
         page.navigate("http://localhost:$port/")
@@ -91,10 +77,7 @@ class PublisherHtmlApplicationE2ETests : E2ETestFixture() {
 
     @ParameterizedTest
     @ArgumentsSource(E2EGeneralTestData::class)
-    fun shouldListCorrectNumberOfEvents(
-        events: List<Event>,
-        filters: Map<String, List<String>>
-    ) {
+    fun shouldListCorrectNumberOfEvents(events: List<Event>, filters: Map<String, List<String>>) {
         setupSearchServiceCaller(events, filters)
 
         page.navigate("http://localhost:$port/")
@@ -107,10 +90,7 @@ class PublisherHtmlApplicationE2ETests : E2ETestFixture() {
 
     @ParameterizedTest
     @ArgumentsSource(E2ESingleEventTestData::class)
-    fun shouldHaveEventUrl(
-        events: List<Event>,
-        filters: Map<String, List<String>>
-    ) {
+    fun shouldHaveEventUrl(events: List<Event>, filters: Map<String, List<String>>) {
         setupSearchServiceCaller(events, filters)
 
         page.navigate("http://localhost:$port/")
@@ -120,25 +100,22 @@ class PublisherHtmlApplicationE2ETests : E2ETestFixture() {
 
     @ParameterizedTest
     @ArgumentsSource(ListOfEventWithDifferentNameToBeSearchable::class)
-    fun shouldBeAbleToSearchBetweenEvents(
-        events: List<Event>,
-        filters: Map<String, List<String>>
-    ) {
+    fun shouldBeAbleToSearchBetweenEvents(events: List<Event>, filters: Map<String, List<String>>) {
         every { searchServiceCaller.search(any()) } answers {
             val queryArgument = it.invocation.args.first() as QueryDTO
             if (queryArgument.query.contains("Cultural")) {
                 SearchResultDTO(
                     listOf(
-                        Event("Cultural Event at Posthof", OffsetDateTime.now(), mapOf())
+                        Event("Cultural Event at Posthof", OffsetDateTime.now(), mapOf()),
                     ),
                     1,
-                    null
+                    null,
                 )
             } else {
                 SearchResultDTO(
                     events,
                     events.size,
-                    null
+                    null,
                 )
             }
         }
@@ -158,25 +135,22 @@ class PublisherHtmlApplicationE2ETests : E2ETestFixture() {
 
     @ParameterizedTest
     @ArgumentsSource(ListOfFilterableEvents::class)
-    fun shouldBeAbleToFilterEvents(
-        events: List<Event>,
-        filters: Map<String, List<String>>
-    ) {
+    fun shouldBeAbleToFilterEvents(events: List<Event>, filters: Map<String, List<String>>) {
         every { searchServiceCaller.search(any()) } answers {
             val queryArgument = it.invocation.args.first() as QueryDTO
             if (queryArgument.query.contains("Linz")) {
                 SearchResultDTO(
                     listOf(
-                        Event("Cultural Event at Posthof", OffsetDateTime.now(), mapOf("city" to "Linz"))
+                        Event("Cultural Event at Posthof", OffsetDateTime.now(), mapOf("city" to "Linz")),
                     ),
                     1,
-                    null
+                    null,
                 )
             } else {
                 SearchResultDTO(
                     events,
                     events.size,
-                    null
+                    null,
                 )
             }
         }
@@ -184,17 +158,17 @@ class PublisherHtmlApplicationE2ETests : E2ETestFixture() {
 
         page.navigate("http://localhost:$port")
 
-    page.locator("button[id='filterButton']").click()
+        page.locator("button[id='filterButton']").click()
 
         // It is important to waitFor() the page to be in the desired
         // state *before* running analyze(). Otherwise, axe might not
         // find all the elements your test expects it to scan.
         page.locator("#drawer").waitFor()
 
-    page.locator("xpath=//label[@for='locationCities-Linz' and @class='toggleFilterLabels']").click()
-    page.locator("button[id='filterSearchButton']").click()
+        page.locator("xpath=//label[@for='locationCities-Linz' and @class='toggleFilterLabels']").click()
+        page.locator("button[id='filterSearchButton']").click()
 
-    assertThat(page.locator("#drawer")).isHidden()
+        assertThat(page.locator("#drawer")).isHidden()
 
         val events = page.querySelectorAll(".event")
         val eventSize = events.size
@@ -205,25 +179,22 @@ class PublisherHtmlApplicationE2ETests : E2ETestFixture() {
 
     @ParameterizedTest
     @ArgumentsSource(ListOfFilterableEvents::class)
-    fun shouldBeAbleToResetFilteredEvents(
-        events: List<Event>,
-        filters: Map<String, List<String>>
-    ) {
+    fun shouldBeAbleToResetFilteredEvents(events: List<Event>, filters: Map<String, List<String>>) {
         every { searchServiceCaller.search(any()) } answers {
             val queryArgument = it.invocation.args.first() as QueryDTO
             if (queryArgument.query.contains("Linz")) {
                 SearchResultDTO(
                     listOf(
-                        Event("Cultural Event at Posthof", OffsetDateTime.now(), mapOf("city" to "Linz"))
+                        Event("Cultural Event at Posthof", OffsetDateTime.now(), mapOf("city" to "Linz")),
                     ),
                     1,
-                    null
+                    null,
                 )
             } else {
                 SearchResultDTO(
                     events,
                     events.size,
-                    null
+                    null,
                 )
             }
         }
@@ -231,13 +202,13 @@ class PublisherHtmlApplicationE2ETests : E2ETestFixture() {
 
         page.navigate("http://localhost:$port")
 
-    page.locator("button[id='filterButton']").click()
-    page.locator("#drawer").waitFor()
+        page.locator("button[id='filterButton']").click()
+        page.locator("#drawer").waitFor()
 
-    page.locator("xpath=//label[@for='locationCities-Linz' and @class='toggleFilterLabels']").click()
-    page.locator("button[id='filterSearchButton']").click()
+        page.locator("xpath=//label[@for='locationCities-Linz' and @class='toggleFilterLabels']").click()
+        page.locator("button[id='filterSearchButton']").click()
 
-    assertThat(page.locator("#drawer")).isHidden()
+        assertThat(page.locator("#drawer")).isHidden()
 
         val events = page.querySelectorAll(".event")
         val eventSize = events.size
@@ -245,28 +216,25 @@ class PublisherHtmlApplicationE2ETests : E2ETestFixture() {
         assertEquals(eventSize, 1) { "Expected 1 event, but found $eventSize events." }
         assertThat(page.locator(".event")).containsText("Cultural")
 
-    // reopen the drawer and reset the filter
-    page.locator("button[id='filterButton']").click()
-    page.locator("#drawer").waitFor()
+        // reopen the drawer and reset the filter
+        page.locator("button[id='filterButton']").click()
+        page.locator("#drawer").waitFor()
 
         page.locator("button[id='resetSearchForm']").click()
         page.locator("button[id='filterSearchButton']").click()
 
-    val eventsAfterResettingFilter = page.querySelectorAll(".event")
-    val eventSizeAfterRestingFilter = eventsAfterResettingFilter.size
+        val eventsAfterResettingFilter = page.querySelectorAll(".event")
+        val eventSizeAfterRestingFilter = eventsAfterResettingFilter.size
 
         assertEquals(
             eventSizeAfterRestingFilter,
-            3
+            3,
         ) { "Expected 3 event, but found $eventSizeAfterRestingFilter events." }
     }
 
     @ParameterizedTest
     @ArgumentsSource(E2EGeneralTestData::class)
-    fun shouldBeAbleToLoadMoreEvents(
-        events: List<Event>,
-        filters: Map<String, List<String>>
-    ) {
+    fun shouldBeAbleToLoadMoreEvents(events: List<Event>, filters: Map<String, List<String>>) {
         every { searchServiceCaller.search(any()) } answers {
             val queryArgument = it.invocation.args.first() as QueryDTO
             if (queryArgument.offset == 30) {
@@ -275,17 +243,17 @@ class PublisherHtmlApplicationE2ETests : E2ETestFixture() {
                         Event(
                             "Cultural Event at Posthof",
                             OffsetDateTime.now(),
-                            mapOf("city" to "Linz", "url" to "http://url.com")
-                        )
+                            mapOf("city" to "Linz", "url" to "http://url.com"),
+                        ),
                     ),
                     1,
-                    null
+                    null,
                 )
             } else {
                 SearchResultDTO(
                     events,
                     events.size,
-                    null
+                    null,
                 )
             }
         }

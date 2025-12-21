@@ -29,7 +29,6 @@ class EventCollectorDebugger(
     val verboseValidation: Boolean = true,
     val startWebUi: Boolean = true,
 ) {
-
     init {
         CollectionsFilter.alsoLog = true
         FetcherFactory.disableRetries = true
@@ -85,24 +84,26 @@ class EventCollectorDebugger(
         val configuredWebUiPort = Configuration.getProperty("server.port")?.toInt() ?: DEFAULT_PORT
         var eventCollectorWebUi: EventCollectorWebUi? = null
         if (startWebUi) {
-            eventCollectorWebUi = EventCollectorWebUi(
-                configuredWebUiPort,
-                eventCollectorAsList,
-                OpenTelemetry.noop()
-            )
+            eventCollectorWebUi =
+                EventCollectorWebUi(
+                    configuredWebUiPort,
+                    eventCollectorAsList,
+                    OpenTelemetry.noop(),
+                )
             eventCollectorWebUi.start()
         }
 
-        val runner = EventCollectionRunner(
-            eventCollectorAsList,
-            {
-                collectedEvents.addAll(it)
-                if (runnerIngestionInterface != null) {
-                    runnerIngestionInterface!!.ingestEvents(it)
-                }
-            },
-            runnerEnricherInterface ?: NoopRunnerEnricher
-        )
+        val runner =
+            EventCollectionRunner(
+                eventCollectorAsList,
+                {
+                    collectedEvents.addAll(it)
+                    if (runnerIngestionInterface != null) {
+                        runnerIngestionInterface!!.ingestEvents(it)
+                    }
+                },
+                runnerEnricherInterface ?: NoopRunnerEnricher,
+            )
         runner.run()
 
         if (verboseDebugging) {
@@ -132,15 +133,14 @@ class EventCollectorDebugger(
         return this
     }
 
-    fun validate(
-        validations: List<EventCollectorValidation>
-    ): EventCollectorDebugger {
+    fun validate(validations: List<EventCollectorValidation>): EventCollectorDebugger {
         allEvents.forEach { event ->
             println("=========================================================================")
             println("${event.data[SemanticKeys.COLLECTORNAME]} - ${event.startDate} ${event.name}")
-            val highestSeverity = validations.minOfOrNull { validation ->
-                validation.validate(event, verboseValidation)
-            }
+            val highestSeverity =
+                validations.minOfOrNull { validation ->
+                    validation.validate(event, verboseValidation)
+                }
             if (highestSeverity == ValidationResult.Error) {
                 println("Validation: CHECK FAILED".red())
             } else if (highestSeverity == ValidationResult.Warn) {
@@ -158,5 +158,4 @@ class EventCollectorDebugger(
         allEvents.clear()
         return this
     }
-
 }

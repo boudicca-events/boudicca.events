@@ -32,12 +32,13 @@ class KupfTicketCollector : TwoStepEventCollector<String>("kupfticket") {
             eventSlugs.addAll(jsonObject.lookup("props.pageProps.events.edges.node.slug"))
 
             val hasNext = jsonObject.lookup<Boolean>("props.pageProps.events.pageInfo.hasNextPage").first()
-            currentUrl = if (hasNext) {
-                "$baseUrl/cursor/after/" +
-                    jsonObject.lookup<String>("props.pageProps.events.pageInfo.endCursor").first()
-            } else {
-                null
-            }
+            currentUrl =
+                if (hasNext) {
+                    "$baseUrl/cursor/after/" +
+                        jsonObject.lookup<String>("props.pageProps.events.pageInfo.endCursor").first()
+                } else {
+                    null
+                }
         }
 
         return eventSlugs.toList()

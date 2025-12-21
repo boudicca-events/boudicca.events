@@ -8,7 +8,6 @@ import base.boudicca.model.Registration
 import base.boudicca.model.structured.StructuredEvent
 
 class ZeroxACollector : IcalCollector("ZeroxA") {
-
     private val fetcher = FetcherFactory.newFetcher()
     private val baseUrl = "https://0xa.at/"
     private val icsUrl = "${baseUrl}events.ics"

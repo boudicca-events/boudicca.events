@@ -1,4 +1,4 @@
-package base.boudicca.model;
+package base.boudicca.model
 
 import base.boudicca.model.structured.KeyUtils
 import base.boudicca.model.structured.StructuredEntry

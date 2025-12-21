@@ -13,7 +13,6 @@ import java.util.Optional
  * implementations also can overwrite the #postProcess method to add custom properties or similar to the parsed events
  */
 abstract class IcalCollector(private val name: String) : EventCollector {
-
     override fun getName(): String {
         return name
     }

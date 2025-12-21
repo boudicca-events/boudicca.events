@@ -20,9 +20,9 @@ class A11YTestData : ArgumentsProvider {
                     SemanticKeys.CONCERT_BANDLIST to listOf("Band1", "Band2", "Band3"),
                     SemanticKeys.TAGS to emptyList(),
                     SemanticKeys.TYPE to emptyList(),
-                    SemanticKeys.CONCERT_GENRE to emptyList()
-                )
-            )
+                    SemanticKeys.CONCERT_GENRE to emptyList(),
+                ),
+            ),
         ).stream()
     }
 }

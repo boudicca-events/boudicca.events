@@ -21,11 +21,11 @@ class Parser(private val tokens: List<Token>) {
 
     fun parse(): Expression {
         val expression = parseExpression()
-        check(null) //check eof
+        check(null) // check eof
         return expression
     }
 
-    //Expression = AndExpression { or AndExpression }
+    // Expression = AndExpression { or AndExpression }
     private fun parseExpression(): Expression {
         var expression = parseAndExpression()
 
@@ -37,7 +37,7 @@ class Parser(private val tokens: List<Token>) {
         return expression
     }
 
-    //AndExpression = NotExpression { and NotExpression }
+    // AndExpression = NotExpression { and NotExpression }
     private fun parseAndExpression(): Expression {
         var expression = parseNotExpression()
 
@@ -49,7 +49,7 @@ class Parser(private val tokens: List<Token>) {
         return expression
     }
 
-    //NotExpression = [ not ] FieldExpression
+    // NotExpression = [ not ] FieldExpression
     private fun parseNotExpression(): Expression {
         return if (getCurrentTokenType() == TokenType.NOT) {
             i++
@@ -59,7 +59,7 @@ class Parser(private val tokens: List<Token>) {
         }
     }
 
-    //FieldExpression = grouping_open Expression grouping_close |  <all other terminal operators>
+    // FieldExpression = grouping_open Expression grouping_close |  <all other terminal operators>
     private fun parseFieldExpression(): Expression {
         return when (getCurrentTokenType()) {
             TokenType.GROUPING_OPEN -> parseGrouping()
@@ -139,7 +139,6 @@ class Parser(private val tokens: List<Token>) {
         return expression
     }
 
-
     private fun checkNumber(): Number {
         check(TokenType.NUMBER)
         val token = tokens[i - 1]
@@ -161,7 +160,10 @@ class Parser(private val tokens: List<Token>) {
     }
 
     private fun getCurrentTokenType(): TokenType? {
-        return if (i >= tokens.size) null
-        else tokens[i].getType()
+        return if (i >= tokens.size) {
+            null
+        } else {
+            tokens[i].getType()
+        }
     }
 }

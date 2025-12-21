@@ -18,7 +18,6 @@ import java.util.Date
 import java.util.Optional
 
 class IcalParserTest {
-
     @Test
     fun testEmptyIcal() {
         assertTrue(IcalParser.parseAndMapToEvents("").isEmpty())
@@ -40,7 +39,7 @@ class IcalParserTest {
         assertEquals(OffsetDateTime.of(2007, 12, 14, 1, 0, 0, 0, ZoneOffset.ofHours(1)), event.startDate)
         assertEquals(
             "a840b839819203073326e820176eb4ba757cc96cca71f43f8d34946a917dafe6@events.valug.at",
-            data["ics.event.uid"]
+            data["ics.event.uid"],
         )
         assertEquals("https://valug.at/events/2007-12-14/", data[SemanticKeys.URL])
         assertFalse(data.containsKey(SemanticKeys.DESCRIPTION))
@@ -59,7 +58,7 @@ class IcalParserTest {
         assertEquals("2007-12-14T01:10:00+01:00", data[SemanticKeys.ENDDATE + ":format=date"])
         assertEquals(
             "a840b839819203073326e820176eb4ba757cc96cca71f43f8d34946a917dafe6@events.valug.at",
-            data["ics.event.uid"]
+            data["ics.event.uid"],
         )
         assertEquals("https://valug.at/events/2007-12-14/", data[SemanticKeys.URL])
         assertEquals("Some description", data[SemanticKeys.DESCRIPTION])
@@ -92,14 +91,15 @@ class IcalParserTest {
         assertEquals(1, vEvents.size)
         assertEquals(
             "a840b839819203073326e820176eb4ba757cc96cca71f43f8d34946a917dafe6@events.valug.at",
-            vEvents[0].uid.value
+            vEvents[0].uid.value,
         )
     }
 
     @Test
     fun testMapVEventToEvent() {
-        val now = ZonedDateTime.now(ZoneId.of("Europe/Vienna")).withNano(0) //conversion to date does not keep nanos
-            .toOffsetDateTime()
+        val now =
+            ZonedDateTime.now(ZoneId.of("Europe/Vienna")).withNano(0) // conversion to date does not keep nanos
+                .toOffsetDateTime()
         val vEvent = VEvent()
         vEvent.uid = Uid("myUid")
         vEvent.summary = Summary("mySummary")
@@ -123,7 +123,7 @@ class IcalParserTest {
 
     @Test
     fun testMapVEventsToEvent() {
-        val now = OffsetDateTime.now().withNano(0) //conversion to date does not keep nanos
+        val now = OffsetDateTime.now().withNano(0) // conversion to date does not keep nanos
         val vEvent = VEvent()
         vEvent.uid = Uid("myUid")
         vEvent.summary = Summary("mySummary")
@@ -149,6 +149,5 @@ class IcalParserTest {
         return IcalParser.parseAndMapToEvents(loadTestData(testFile)).map { it.toFlatEvent() }
     }
 
-    private fun loadTestData(testFile: String) =
-        String(this.javaClass.getResourceAsStream("/ical/$testFile").readAllBytes())
+    private fun loadTestData(testFile: String) = String(this.javaClass.getResourceAsStream("/ical/$testFile").readAllBytes())
 }

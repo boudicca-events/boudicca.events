@@ -4,8 +4,7 @@ package base.boudicca.model.structured
  * a variant in the form of variantName=variantValue, but already parsed
  */
 data class Variant(val variantName: String, val variantValue: String) : Comparable<Variant> {
-
-    init{
+    init {
         validate()
     }
 
@@ -19,7 +18,7 @@ data class Variant(val variantName: String, val variantValue: String) : Comparab
     }
 
     fun toKeyString(): String {
-        return "${variantName}=${variantValue}"
+        return "$variantName=$variantValue"
     }
 
     companion object {

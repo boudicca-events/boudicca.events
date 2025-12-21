@@ -15,17 +15,13 @@ import org.springframework.web.servlet.ViewResolver
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
-
 @EnableScheduling
 @ComponentScan
 @EnableConfigurationProperties(PublisherHtmlProperties::class)
 @AutoConfiguration
 class PublisherHtmlConfiguration(private val properties: PublisherHtmlProperties) : WebMvcConfigurer {
     @Bean
-    fun handlebarsViewResolver(
-        headerExtensionValueResolver: LinkExtensionValueResolver,
-        titleValueResolver: TitleValueResolver
-    ): ViewResolver {
+    fun handlebarsViewResolver(headerExtensionValueResolver: LinkExtensionValueResolver, titleValueResolver: TitleValueResolver): ViewResolver {
         val viewResolver = HandlebarsViewResolver()
         viewResolver.order = 0
 

@@ -14,14 +14,12 @@ import io.opentelemetry.context.Context
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicLong
 
-
 class EventCollectionRunner(
     private val eventCollectors: List<EventCollector>,
     private val ingestionInterface: RunnerIngestionInterface,
     private val enricherInterface: RunnerEnricherInterface,
-    otel: OpenTelemetry = OpenTelemetry.noop()
+    otel: OpenTelemetry = OpenTelemetry.noop(),
 ) {
-
     private val logger = KotlinLogging.logger {}
     private val executor = Executors.newVirtualThreadPerTaskExecutor()
     private val tracer = otel.getTracer("EventCollectionRunner")
@@ -55,11 +53,12 @@ class EventCollectionRunner(
     }
 
     private fun collect(eventCollector: EventCollector, parentSpan: Span): Long {
-        val span = tracer.spanBuilder("single collection")
-            .setSpanKind(SpanKind.INTERNAL)
-            .setAttribute("collector", eventCollector.getName())
-            .setParent(Context.current().with(parentSpan))
-            .startSpan()
+        val span =
+            tracer.spanBuilder("single collection")
+                .setSpanKind(SpanKind.INTERNAL)
+                .setAttribute("collector", eventCollector.getName())
+                .setParent(Context.current().with(parentSpan))
+                .startSpan()
 
         return span.makeCurrent().use {
             Collections.startSingleCollection(eventCollector)
@@ -132,9 +131,9 @@ class EventCollectionRunner(
             return Event(
                 event.name,
                 event.startDate,
-                event.data.toMutableMap().apply { put(SemanticKeys.COLLECTORNAME, collectorName) })
+                event.data.toMutableMap().apply { put(SemanticKeys.COLLECTORNAME, collectorName) },
+            )
         }
         return event
     }
-
 }

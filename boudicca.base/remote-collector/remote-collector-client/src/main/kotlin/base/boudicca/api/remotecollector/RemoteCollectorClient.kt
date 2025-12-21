@@ -8,7 +8,6 @@ import base.boudicca.openapi.ApiException
 import base.boudicca.remote_collector.openapi.api.RemoteCollectorApi
 
 class RemoteCollectorClient(private val remoteCollectorUrl: String) {
-
     private val remoteCollectorApi: RemoteCollectorApi
 
     init {
@@ -49,7 +48,7 @@ class RemoteCollectorClient(private val remoteCollectorUrl: String) {
             httpCall.responseCode!!,
             httpCall.startTime!!,
             httpCall.endTime!!,
-            httpCall.postParams
+            httpCall.postParams,
         )
     }
 }

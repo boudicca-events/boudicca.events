@@ -5,11 +5,12 @@ import java.net.URISyntaxException
 
 fun String.toUri(): URI = URI(this)
 
-fun String?.tryParseToUriOrNull(): URI? = try {
-    this?.toUri()
-} catch (_: URISyntaxException) {
-    null
-}
+fun String?.tryParseToUriOrNull(): URI? =
+    try {
+        this?.toUri()
+    } catch (_: URISyntaxException) {
+        null
+    }
 
 /**
  * Should work with any combination of '\n' or '\r' or '\r\n' used for newline

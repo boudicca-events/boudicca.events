@@ -21,12 +21,13 @@ open class E2ETestFixture {
 
     @BeforeAll
     fun launchBrowser() {
-        browser = playwright.chromium().launch(
-            BrowserType
-                .LaunchOptions()
-                .setHeadless(true)
-                .setSlowMo(100.0)
-        )
+        browser =
+            playwright.chromium().launch(
+                BrowserType
+                    .LaunchOptions()
+                    .setHeadless(true)
+                    .setSlowMo(100.0),
+            )
     }
 
     @BeforeEach

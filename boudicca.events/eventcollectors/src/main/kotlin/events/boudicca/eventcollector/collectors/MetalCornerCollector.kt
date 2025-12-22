@@ -19,13 +19,14 @@ class MetalCornerCollector : TwoStepEventCollector<Pair<String, String>>("metalc
         val eventUrls = mutableListOf<Pair<String, String>>()
 
         val document = Jsoup.parse(fetcher.fetchUrl(baseUrl + "de/events"))
-        document.select("div#content > div#events .event")
+        document
+            .select("div#content > div#events .event")
             .forEach {
                 eventUrls.add(
                     Pair(
                         it.select(".head").text(),
-                        it.select("a.overlay").attr("href").substring(2)
-                    )
+                        it.select("a.overlay").attr("href").substring(2),
+                    ),
                 )
             }
 
@@ -47,7 +48,7 @@ class MetalCornerCollector : TwoStepEventCollector<Pair<String, String>>("metalc
             withProperty(SemanticKeys.TYPE_PROPERTY, eventType)
             withProperty(
                 SemanticKeys.PICTURE_URL_PROPERTY,
-                UrlUtils.parse(document.select("div#content img").attr("src"))
+                UrlUtils.parse(document.select("div#content img").attr("src")),
             )
             withProperty(SemanticKeys.PICTURE_ALT_TEXT_PROPERTY, document.select("div#content img").attr("alt"))
             withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, "Escape Metalcorner")
@@ -56,7 +57,7 @@ class MetalCornerCollector : TwoStepEventCollector<Pair<String, String>>("metalc
             withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Wien")
             withProperty(
                 SemanticKeys.LOCATION_ADDRESS_PROPERTY,
-                "Escape Metalcorner, Neustiftgasse 116-118, 1070 Wien"
+                "Escape Metalcorner, Neustiftgasse 116-118, 1070 Wien",
             )
             withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse("https://www.escape-metalcorner.at/"))
             withProperty(SemanticKeys.REGISTRATION_PROPERTY, Registration.TICKET)

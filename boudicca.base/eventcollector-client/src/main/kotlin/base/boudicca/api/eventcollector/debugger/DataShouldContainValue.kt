@@ -10,17 +10,23 @@ class DataShouldContainValue(
     private val format: Regex,
     private val severity: ValidationSeverity,
 ) : EventCollectorValidation {
-    override fun validate(event: Event, verbose: Boolean): ValidationResult {
+    override fun validate(
+        event: Event,
+        verbose: Boolean,
+    ): ValidationResult {
         if (!event.data[key]?.contains(format)!!) {
             when (severity) {
-                ValidationSeverity.Info ->
+                ValidationSeverity.Info -> {
                     println("INFO: key $key expected to match format $format".blue())
+                }
 
-                ValidationSeverity.Warn ->
+                ValidationSeverity.Warn -> {
                     println("WARN: key $key expected to match format $format".yellow())
+                }
 
-                ValidationSeverity.Error ->
+                ValidationSeverity.Error -> {
                     println("ERR: key $key expected to match format $format".red())
+                }
             }
             return severity.result
         }

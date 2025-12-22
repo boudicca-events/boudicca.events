@@ -10,13 +10,12 @@ import java.time.OffsetDateTime
 class StructuredEventBuilder(
     private val name: String,
     private val startDate: OffsetDateTime,
-    data: Map<Key, String> = emptyMap()
+    data: Map<Key, String> = emptyMap(),
 ) : AbstractStructuredBuilder<StructuredEvent, StructuredEventBuilder>(data.toMutableMap()) {
-
     fun withTextData(
         name: String,
         data: String,
-        init: EntryDataBuilder<String>.() -> Unit = {}
+        init: EntryDataBuilder<String>.() -> Unit = {},
     ) {
         val builder = EntryDataBuilder(name, TextFormatAdapter())
         builder.data(data)
@@ -30,7 +29,7 @@ class StructuredEventBuilder(
         name: String,
         format: AbstractFormatAdapter<T>,
         data: T? = null,
-        init: EntryDataBuilder<T>.() -> Unit = {}
+        init: EntryDataBuilder<T>.() -> Unit = {},
     ) {
         val builder = EntryDataBuilder(name, format)
         if (data != null) {
@@ -44,14 +43,14 @@ class StructuredEventBuilder(
 
     fun withText(
         name: String,
-        init: EntryDataBuilder<String>.() -> Unit = {}
+        init: EntryDataBuilder<String>.() -> Unit = {},
     ) {
         with(name, TextFormatAdapter(), init)
     }
 
     fun <T> with(
         name: String,
-        init: EntryDataBuilder<T>.() -> Unit = {}
+        init: EntryDataBuilder<T>.() -> Unit = {},
     ) {
         val builder = EntryDataBuilder<T>(name)
         builder.init()
@@ -63,7 +62,7 @@ class StructuredEventBuilder(
     fun <T> with(
         name: String,
         defaultFormatAdapter: AbstractFormatAdapter<T>,
-        init: EntryDataBuilder<T>.() -> Unit = {}
+        init: EntryDataBuilder<T>.() -> Unit = {},
     ) {
         val builder = EntryDataBuilder(name, defaultFormatAdapter)
         builder.init()
@@ -72,12 +71,10 @@ class StructuredEventBuilder(
         this.data.putAll(dataEntries)
     }
 
-    override fun build(): StructuredEvent {
-        return StructuredEvent(
+    override fun build(): StructuredEvent =
+        StructuredEvent(
             name,
             startDate,
-            data.toMap()
+            data.toMap(),
         )
-    }
 }
-

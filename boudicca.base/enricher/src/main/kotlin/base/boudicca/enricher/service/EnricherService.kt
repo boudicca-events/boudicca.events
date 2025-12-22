@@ -10,7 +10,6 @@ class EnricherService(
     private val enrichers: List<Enricher>,
     private val eventPublisher: ApplicationEventPublisher,
 ) {
-
     fun enrich(enrichRequestDTO: EnrichRequestDTO): List<Event> {
         var enrichedEvents = enrichRequestDTO.events?.map { it.toStructuredEvent() } ?: emptyList()
         for (enricher in enrichers) {
@@ -22,7 +21,6 @@ class EnricherService(
     fun forceUpdate() {
         eventPublisher.publishEvent(ForceUpdateEvent())
     }
-
 }
 
 class ForceUpdateEvent

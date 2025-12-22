@@ -1,11 +1,13 @@
 package base.boudicca.model
 
-import java.util.Locale
+import java.util.*
 
 /**
  * current event categories we support, with all their known event types
  */
-enum class EventCategory(val types: Set<String>) {
+enum class EventCategory(
+    val types: Set<String>,
+) {
     // OTHER is a special cases needing special care
     OTHER(emptySet()),
     MUSIC(setOf("konzert", "concert", "alternative", "singer/songwriter", "party", "songwriter/alternative", "musik")),
@@ -29,11 +31,12 @@ enum class EventCategory(val types: Set<String>) {
             "musical",
             "oper",
             "brauchtum",
-            "schauspiel"
-        )
+            "schauspiel",
+        ),
     ),
     TECH(setOf("techmeetup", "technology", "technologie", "chaosevent")),
-    SPORT(setOf("sport", "football", "soccer", "actionsport", "esports"));
+    SPORT(setOf("sport", "football", "soccer", "actionsport", "esports")),
+    ;
 
     companion object {
         fun getForType(type: String?): EventCategory? {

@@ -13,19 +13,18 @@ import java.util.*
 
 @RestController
 @RequestMapping()
-class PublisherController @Autowired constructor(
-    private val entryService: EntryService,
-) : PublisherApi {
+class PublisherController
+    @Autowired
+    constructor(
+        private val entryService: EntryService,
+    ) : PublisherApi {
+        @GetMapping("/entries")
+        @ResponseBody
+        override fun all(): Set<Entry> = entryService.all()
 
-    @GetMapping("/entries")
-    @ResponseBody
-    override fun all(): Set<Entry> {
-        return entryService.all()
+        @GetMapping("/entry/{boudiccaId}")
+        @ResponseBody
+        override fun entry(
+            @PathVariable boudiccaId: UUID,
+        ): Entry? = entryService.get(boudiccaId)
     }
-
-    @GetMapping("/entry/{boudiccaId}")
-    @ResponseBody
-    override fun entry(@PathVariable boudiccaId: UUID): Entry? {
-        return entryService.get(boudiccaId)
-    }
-}

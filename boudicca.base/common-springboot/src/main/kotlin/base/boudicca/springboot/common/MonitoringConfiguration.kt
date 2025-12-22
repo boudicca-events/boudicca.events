@@ -11,9 +11,7 @@ import org.springframework.core.env.getProperty
 @AutoConfiguration
 class MonitoringConfiguration {
     @Bean
-    fun otel(
-        env: Environment
-    ): OpenTelemetry {
+    fun otel(env: Environment): OpenTelemetry {
         val endpoint = env.getProperty<String>("boudicca.monitoring.endpoint")
         val user = env.getProperty<String>("boudicca.monitoring.user")
         val password = env.getProperty<String>("boudicca.monitoring.password")
@@ -22,7 +20,5 @@ class MonitoringConfiguration {
     }
 
     @Bean
-    fun meterRegistry(otel: OpenTelemetry): MeterRegistry {
-        return OpenTelemetryMeterRegistry.builder(otel).build()
-    }
+    fun meterRegistry(otel: OpenTelemetry): MeterRegistry = OpenTelemetryMeterRegistry.builder(otel).build()
 }

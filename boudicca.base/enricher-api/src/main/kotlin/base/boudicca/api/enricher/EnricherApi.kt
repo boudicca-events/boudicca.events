@@ -17,10 +17,10 @@ interface EnricherApi {
             ApiResponse(
                 responseCode = "200",
                 description = "enriches a list of events",
-                useReturnTypeSchema = true
-            )
+                useReturnTypeSchema = true,
+            ),
         ],
-        tags = ["enricher"]
+        tags = ["enricher"],
     )
     @POST
     @Path("enrich")
@@ -33,10 +33,10 @@ interface EnricherApi {
             ApiResponse(
                 responseCode = "200",
                 description = "updates internal caches",
-                useReturnTypeSchema = true
-            )
+                useReturnTypeSchema = true,
+            ),
         ],
-        tags = ["enricher"]
+        tags = ["enricher"],
     )
     @POST
     @Path("forceUpdate")

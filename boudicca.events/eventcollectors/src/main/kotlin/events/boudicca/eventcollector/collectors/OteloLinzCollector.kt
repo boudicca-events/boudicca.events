@@ -17,7 +17,8 @@ class OteloLinzCollector : TwoStepEventCollector<String>("otelolinz") {
 
     override fun getAllUnparsedEvents(): List<String> {
         val document = Jsoup.parse(fetcher.fetchUrl("https://www.otelolinz.at/veranstaltungen/"))
-        return document.select("table.events-table tr a")
+        return document
+            .select("table.events-table tr a")
             .map { it.attr("href") }
     }
 
@@ -38,7 +39,7 @@ class OteloLinzCollector : TwoStepEventCollector<String>("otelolinz") {
             withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, "Otelo Linz")
             withProperty(
                 SemanticKeys.LOCATION_NAME_PROPERTY,
-                eventSite.select("div#em-event-6>p")[1].select("a").text()
+                eventSite.select("div#em-event-6>p")[1].select("a").text(),
             )
             withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(event))
         }

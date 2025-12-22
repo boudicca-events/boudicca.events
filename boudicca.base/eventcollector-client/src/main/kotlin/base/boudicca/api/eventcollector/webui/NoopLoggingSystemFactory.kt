@@ -10,11 +10,10 @@ import org.springframework.core.annotation.Order
  */
 @Order(Ordered.HIGHEST_PRECEDENCE)
 class NoopLoggingSystemFactory : LoggingSystemFactory {
-    override fun getLoggingSystem(classLoader: ClassLoader): LoggingSystem {
-        return object : LoggingSystem() {
+    override fun getLoggingSystem(classLoader: ClassLoader): LoggingSystem =
+        object : LoggingSystem() {
             override fun beforeInitialize() {
-                //nothing
+                // nothing
             }
         }
-    }
 }

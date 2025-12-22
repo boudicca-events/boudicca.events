@@ -13,7 +13,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
-import java.util.Locale
+import java.util.*
 
 class FraeuleinFlorentineCollector : TwoStepEventCollector<Pair<Element, String?>>("fraeuleinflorentine") {
     private val fetcher = FetcherFactory.newFetcher()
@@ -52,15 +52,19 @@ class FraeuleinFlorentineCollector : TwoStepEventCollector<Pair<Element, String?
         }
     }
 
-    private fun parseStartDate(event: Element, nameAndTime: List<String?>): DateParserResult {
+    private fun parseStartDate(
+        event: Element,
+        nameAndTime: List<String?>,
+    ): DateParserResult {
         var startTimeToParse = "00:00"
         val startTimeElementText = event.select(".simcal-event-start-time").text()
         if (startTimeElementText.isNotBlank()) {
             startTimeToParse = startTimeElementText
-            val startTime = LocalTime.parse( // DateParse can't handle am/pm, so convert it manually and continue with its String
-                startTimeToParse.uppercase(), // convert pm to PM, to be recognized by the time pattern 'a'
-                DateTimeFormatter.ofPattern("h:mm a").withLocale(Locale.GERMAN)
-            )
+            val startTime =
+                LocalTime.parse( // DateParse can't handle am/pm, so convert it manually and continue with its String
+                    startTimeToParse.uppercase(), // convert pm to PM, to be recognized by the time pattern 'a'
+                    DateTimeFormatter.ofPattern("h:mm a").withLocale(Locale.GERMAN),
+                )
             startTimeToParse = startTime.toString()
         } else if (nameAndTime.size > 1 && !nameAndTime[1].isNullOrBlank()) {
             startTimeToParse = nameAndTime[1]!!.trim()
@@ -71,14 +75,18 @@ class FraeuleinFlorentineCollector : TwoStepEventCollector<Pair<Element, String?
         return startDate
     }
 
-    private fun parseEndDate(event: Element, startDate: DateParserResult): DateParserResult? {
+    private fun parseEndDate(
+        event: Element,
+        startDate: DateParserResult,
+    ): DateParserResult? {
         var endTime: LocalTime? = null
         val endTimeToParse = event.select(".simcal-event-end-time").text()
         if (endTimeToParse.isNotBlank()) {
-            endTime = LocalTime.parse( // DateParse can't handle am/pm, so convert it manually and continue with its String
-                endTimeToParse.uppercase(), // convert pm to PM, to be recognized by the time pattern 'a'
-                DateTimeFormatter.ofPattern("h:mm a").withLocale(Locale.GERMAN)
-            )
+            endTime =
+                LocalTime.parse( // DateParse can't handle am/pm, so convert it manually and continue with its String
+                    endTimeToParse.uppercase(), // convert pm to PM, to be recognized by the time pattern 'a'
+                    DateTimeFormatter.ofPattern("h:mm a").withLocale(Locale.GERMAN),
+                )
         }
 
         var endDate: DateParserResult? = null
@@ -87,7 +95,14 @@ class FraeuleinFlorentineCollector : TwoStepEventCollector<Pair<Element, String?
             val time = endTime ?: LocalTime.MAX
             endDate = DateParser.parse(endDateToParse, time.toString())
         } else if (endTime != null) { // startDate with endTime
-            endDate = DateParser.parse(startDate.dates[0].startDate.toLocalDate().toString(), endTime.toString())
+            endDate =
+                DateParser.parse(
+                    startDate.dates[0]
+                        .startDate
+                        .toLocalDate()
+                        .toString(),
+                    endTime.toString(),
+                )
         }
 
         return endDate

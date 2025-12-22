@@ -3,7 +3,12 @@ plugins {
 }
 
 jacoco {
-    toolVersion = versionCatalogs.named("libs").findVersion("jacoco").get().requiredVersion
+    toolVersion =
+        versionCatalogs
+            .named("libs")
+            .findVersion("jacoco")
+            .get()
+            .requiredVersion
 }
 
 tasks.withType<Test> {

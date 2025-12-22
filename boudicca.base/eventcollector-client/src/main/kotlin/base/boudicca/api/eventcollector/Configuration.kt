@@ -4,7 +4,6 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import java.io.File
 import java.util.*
 
-
 object Configuration {
     private val properties: Properties = Properties()
     private val logger = KotlinLogging.logger {}
@@ -38,9 +37,8 @@ object Configuration {
         return properties.getProperty(name)
     }
 
-    private fun toEnvName(name: String): String {
-        return name
+    private fun toEnvName(name: String): String =
+        name
             .split('.')
             .joinToString("_") { it.uppercase() }
-    }
 }

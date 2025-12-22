@@ -5,10 +5,14 @@ import com.github.jknack.handlebars.ValueResolver
 import org.springframework.stereotype.Component
 
 @Component
-class TitleValueResolver(private val properties: PublisherHtmlProperties) : ValueResolver {
-
-    override fun resolve(context: Any?, name: String?): Any {
-        return when (name) {
+class TitleValueResolver(
+    private val properties: PublisherHtmlProperties,
+) : ValueResolver {
+    override fun resolve(
+        context: Any?,
+        name: String?,
+    ): Any =
+        when (name) {
             "pageTitle" -> {
                 properties.pageTitle
             }
@@ -21,15 +25,12 @@ class TitleValueResolver(private val properties: PublisherHtmlProperties) : Valu
                 ValueResolver.UNRESOLVED
             }
         }
-    }
 
-    override fun resolve(context: Any?): Any {
-        return ValueResolver.UNRESOLVED
-    }
+    override fun resolve(context: Any?): Any = ValueResolver.UNRESOLVED
 
-    override fun propertySet(context: Any?) = mutableMapOf(
-        "pageTitle" to properties.pageTitle,
-        "headerTitle" to properties.headerTitle
-    ).entries
-
+    override fun propertySet(context: Any?) =
+        mutableMapOf(
+            "pageTitle" to properties.pageTitle,
+            "headerTitle" to properties.headerTitle,
+        ).entries
 }

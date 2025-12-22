@@ -10,7 +10,7 @@ import java.math.BigDecimal
  *
  * all methods may throw exceptions on wrong formatted values
  */
-class NumberFormatAdapter: AbstractFormatAdapter<Number>(VariantConstants.FormatVariantConstants.NUMBER_FORMAT_NAME) {
+class NumberFormatAdapter : AbstractFormatAdapter<Number>(VariantConstants.FormatVariantConstants.NUMBER_FORMAT_NAME) {
     override fun fromString(value: String): Number {
         try {
             return BigDecimal(value)
@@ -19,7 +19,5 @@ class NumberFormatAdapter: AbstractFormatAdapter<Number>(VariantConstants.Format
         }
     }
 
-    override fun convertToString(value: Number): String {
-        return value.toString()
-    }
+    override fun convertToString(value: Number): String = value.toString()
 }

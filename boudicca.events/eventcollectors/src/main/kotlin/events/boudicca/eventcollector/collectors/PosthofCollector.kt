@@ -38,7 +38,12 @@ class PosthofCollector : TwoStepEventCollector<String>("posthof") {
     override fun parseMultipleStructuredEvents(event: String): List<StructuredEvent?>? {
         val eventSite: Element = Jsoup.parse(fetcher.fetchUrl(event))
 
-        var name = eventSite.select("div.tx-posthof-events>:not(ul) h2 a").textNodes().first().text()
+        var name =
+            eventSite
+                .select("div.tx-posthof-events>:not(ul) h2 a")
+                .textNodes()
+                .first()
+                .text()
 
         val subtextSpan = eventSite.select("div.tx-posthof-events>:not(ul) h2 a span")
         if (subtextSpan.isNotEmpty()) {
@@ -59,7 +64,13 @@ class PosthofCollector : TwoStepEventCollector<String>("posthof") {
 
         val imgTag = eventSite.select("div.tx-posthof-events>:not(ul) .cell img")
         val imgUrl = baseUrl + imgTag.attr("src")
-        val pictureCopyright = imgTag.attr("title").split("(c)").last().trim().ifBlank { "Posthof" }
+        val pictureCopyright =
+            imgTag
+                .attr("title")
+                .split("(c)")
+                .last()
+                .trim()
+                .ifBlank { "Posthof" }
 
         return structuredEvent(name, startDate) {
             withProperty(SemanticKeys.TYPE_PROPERTY, dateAndTypeSpans[2].text())

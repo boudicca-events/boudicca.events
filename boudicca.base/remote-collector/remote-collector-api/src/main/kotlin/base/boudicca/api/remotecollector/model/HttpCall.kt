@@ -7,5 +7,5 @@ data class HttpCall(
     val responseCode: Int,
     val startTime: OffsetDateTime,
     val endTime: OffsetDateTime,
-    val postParams: String?
+    val postParams: String?,
 )

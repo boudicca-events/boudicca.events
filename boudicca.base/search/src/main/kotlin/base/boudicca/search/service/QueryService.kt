@@ -24,57 +24,61 @@ import java.util.concurrent.ConcurrentHashMap
 private const val DEFAULT_PAGE_SIZE = 30
 
 @Service
-class QueryService @Autowired constructor(
-    private val boudiccaSearchProperties: BoudiccaSearchProperties, private val openTelemetry: OpenTelemetry
-) {
-
-    companion object {
-        private val logger = KotlinLogging.logger {}
-        private var clock = Clock.system(ZoneId.of("Europe/Vienna")) //TODO make configurable
-    }
-
-    @Volatile
-    private var entries = emptyList<Entry>()
-
-    @Volatile
-    private var evaluator: Evaluator = NoopEvaluator()
-
-    @Throws(QueryException::class)
-    fun query(queryDTO: QueryDTO): ResultDTO {
-        if (queryDTO.query.isNullOrEmpty()) {
-            return ResultDTO(Utils.offset(entries, queryDTO.offset, queryDTO.size), entries.size)
+class QueryService
+    @Autowired
+    constructor(
+        private val boudiccaSearchProperties: BoudiccaSearchProperties,
+        private val openTelemetry: OpenTelemetry,
+    ) {
+        companion object {
+            private val logger = KotlinLogging.logger {}
+            private var clock = Clock.system(ZoneId.of("Europe/Vienna")) // TODO make configurable
         }
-        return evaluateQuery(queryDTO.query!!, Page(queryDTO.offset ?: 0, queryDTO.size ?: DEFAULT_PAGE_SIZE))
-    }
 
-    @EventListener
-    fun onEventsUpdate(event: EntriesUpdatedEvent) {
-        this.entries = Utils.order(event.entries, ConcurrentHashMap())
-        if (boudiccaSearchProperties.devMode) {
-            //for local mode we only want the simple, the optimizing has quite some startup
-            this.evaluator = SimpleEvaluator(event.entries, clock)
-        } else {
-            val optimizingEvaluator = OptimizingEvaluator(event.entries, clock)
-            val fallbackEvaluator = SimpleEvaluator(event.entries, clock)
-            this.evaluator = Evaluator { expression, page ->
-                try {
-                    optimizingEvaluator.evaluate(expression, page)
-                } catch (e: Exception) {
-                    logger.error(e) { "optimizing evaluator threw exception" }
-                    fallbackEvaluator.evaluate(expression, page)
-                }
+        @Volatile
+        private var entries = emptyList<Entry>()
 
+        @Volatile
+        private var evaluator: Evaluator = NoopEvaluator()
+
+        @Throws(QueryException::class)
+        fun query(queryDTO: QueryDTO): ResultDTO {
+            if (queryDTO.query.isNullOrEmpty()) {
+                return ResultDTO(Utils.offset(entries, queryDTO.offset, queryDTO.size), entries.size)
+            }
+            return evaluateQuery(queryDTO.query!!, Page(queryDTO.offset ?: 0, queryDTO.size ?: DEFAULT_PAGE_SIZE))
+        }
+
+        @EventListener
+        fun onEventsUpdate(event: EntriesUpdatedEvent) {
+            this.entries = Utils.order(event.entries, ConcurrentHashMap())
+            if (boudiccaSearchProperties.devMode) {
+                // for local mode we only want the simple, the optimizing has quite some startup
+                this.evaluator = SimpleEvaluator(event.entries, clock)
+            } else {
+                val optimizingEvaluator = OptimizingEvaluator(event.entries, clock)
+                val fallbackEvaluator = SimpleEvaluator(event.entries, clock)
+                this.evaluator =
+                    Evaluator { expression, page ->
+                        try {
+                            optimizingEvaluator.evaluate(expression, page)
+                        } catch (e: Exception) {
+                            logger.error(e) { "optimizing evaluator threw exception" }
+                            fallbackEvaluator.evaluate(expression, page)
+                        }
+                    }
             }
         }
-    }
 
-    private fun evaluateQuery(query: String, page: Page): ResultDTO {
-        return try {
-            val queryResult = BoudiccaQueryRunner.evaluateQuery(query, page, evaluator, openTelemetry)
-            ResultDTO(queryResult.result, queryResult.totalResults, queryResult.error)
-        } catch (e: QueryException) {
-            //TODO this should return a 400 error or something, not a 200 message with an error message...
-            ResultDTO(emptyList(), 0, e.message)
-        }
+        private fun evaluateQuery(
+            query: String,
+            page: Page,
+        ): ResultDTO =
+            try {
+                val queryResult = BoudiccaQueryRunner.evaluateQuery(query, page, evaluator, openTelemetry)
+                ResultDTO(queryResult.result, queryResult.totalResults, queryResult.error)
+            } catch (e: QueryException) {
+                // TODO this should return a 400 error or something, not a 200 message with an error message...
+                ResultDTO(emptyList(), 0, e.message)
+            }
     }
-}

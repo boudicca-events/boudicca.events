@@ -29,7 +29,6 @@ class EventCollectorDebugger(
     val verboseValidation: Boolean = true,
     val startWebUi: Boolean = true,
 ) {
-
     init {
         CollectionsFilter.alsoLog = true
         FetcherFactory.disableRetries = true
@@ -44,34 +43,26 @@ class EventCollectorDebugger(
         return this
     }
 
-    fun enableIngestion(): EventCollectorDebugger {
-        return enableIngestion(RunnerIngestionInterface.createFromConfiguration())
-    }
+    fun enableIngestion(): EventCollectorDebugger = enableIngestion(RunnerIngestionInterface.createFromConfiguration())
 
-    fun enableIngestion(eventDbUrl: String, user: String, password: String): EventCollectorDebugger {
-        return enableIngestion(EventDbIngestClient(eventDbUrl, user, password))
-    }
+    fun enableIngestion(
+        eventDbUrl: String,
+        user: String,
+        password: String,
+    ): EventCollectorDebugger = enableIngestion(EventDbIngestClient(eventDbUrl, user, password))
 
-    fun enableIngestion(ingestClient: EventDbIngestClient): EventCollectorDebugger {
-        return enableIngestion(BoudiccaRunnerIngestionInterface(ingestClient))
-    }
+    fun enableIngestion(ingestClient: EventDbIngestClient): EventCollectorDebugger = enableIngestion(BoudiccaRunnerIngestionInterface(ingestClient))
 
     fun enableIngestion(runnerIngestionInterface: RunnerIngestionInterface): EventCollectorDebugger {
         this.runnerIngestionInterface = runnerIngestionInterface
         return this
     }
 
-    fun enableEnricher(): EventCollectorDebugger {
-        return enableEnricher(RunnerEnricherInterface.createFromConfiguration())
-    }
+    fun enableEnricher(): EventCollectorDebugger = enableEnricher(RunnerEnricherInterface.createFromConfiguration())
 
-    fun enableEnricher(enricherUrl: String): EventCollectorDebugger {
-        return enableEnricher(EnricherClient(enricherUrl))
-    }
+    fun enableEnricher(enricherUrl: String): EventCollectorDebugger = enableEnricher(EnricherClient(enricherUrl))
 
-    fun enableEnricher(enricherClient: EnricherClient): EventCollectorDebugger {
-        return enableEnricher(BoudiccaRunnerEnricherInterface(enricherClient))
-    }
+    fun enableEnricher(enricherClient: EnricherClient): EventCollectorDebugger = enableEnricher(BoudiccaRunnerEnricherInterface(enricherClient))
 
     fun enableEnricher(runnerEnricherInterface: RunnerEnricherInterface): EventCollectorDebugger {
         this.runnerEnricherInterface = runnerEnricherInterface
@@ -85,24 +76,26 @@ class EventCollectorDebugger(
         val configuredWebUiPort = Configuration.getProperty("server.port")?.toInt() ?: DEFAULT_PORT
         var eventCollectorWebUi: EventCollectorWebUi? = null
         if (startWebUi) {
-            eventCollectorWebUi = EventCollectorWebUi(
-                configuredWebUiPort,
-                eventCollectorAsList,
-                OpenTelemetry.noop()
-            )
+            eventCollectorWebUi =
+                EventCollectorWebUi(
+                    configuredWebUiPort,
+                    eventCollectorAsList,
+                    OpenTelemetry.noop(),
+                )
             eventCollectorWebUi.start()
         }
 
-        val runner = EventCollectionRunner(
-            eventCollectorAsList,
-            {
-                collectedEvents.addAll(it)
-                if (runnerIngestionInterface != null) {
-                    runnerIngestionInterface!!.ingestEvents(it)
-                }
-            },
-            runnerEnricherInterface ?: NoopRunnerEnricher
-        )
+        val runner =
+            EventCollectionRunner(
+                eventCollectorAsList,
+                {
+                    collectedEvents.addAll(it)
+                    if (runnerIngestionInterface != null) {
+                        runnerIngestionInterface!!.ingestEvents(it)
+                    }
+                },
+                runnerEnricherInterface ?: NoopRunnerEnricher,
+            )
         runner.run()
 
         if (verboseDebugging) {
@@ -132,15 +125,14 @@ class EventCollectorDebugger(
         return this
     }
 
-    fun validate(
-        validations: List<EventCollectorValidation>
-    ): EventCollectorDebugger {
+    fun validate(validations: List<EventCollectorValidation>): EventCollectorDebugger {
         allEvents.forEach { event ->
             println("=========================================================================")
             println("${event.data[SemanticKeys.COLLECTORNAME]} - ${event.startDate} ${event.name}")
-            val highestSeverity = validations.minOfOrNull { validation ->
-                validation.validate(event, verboseValidation)
-            }
+            val highestSeverity =
+                validations.minOfOrNull { validation ->
+                    validation.validate(event, verboseValidation)
+                }
             if (highestSeverity == ValidationResult.Error) {
                 println("Validation: CHECK FAILED".red())
             } else if (highestSeverity == ValidationResult.Warn) {
@@ -158,5 +150,4 @@ class EventCollectorDebugger(
         allEvents.clear()
         return this
     }
-
 }

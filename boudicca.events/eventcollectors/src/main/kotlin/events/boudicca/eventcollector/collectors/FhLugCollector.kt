@@ -14,26 +14,26 @@ import java.util.*
  * fhLUG: Fachhochschulcampus Hagenberg Linux User Group
  */
 class FhLugCollector : IcalCollector("fhLUG") {
-
     private val fetcher = FetcherFactory.newFetcher()
     private val baseUrl = "https://fhlug.at/"
     private val icsUrl = "${baseUrl}events/events.ics"
 
-    override fun getAllIcalResources(): List<String> {
-        return listOf(fetcher.fetchUrl(icsUrl))
-    }
+    override fun getAllIcalResources(): List<String> = listOf(fetcher.fetchUrl(icsUrl))
 
     override fun postProcess(event: StructuredEvent): StructuredEvent {
-        val builder = event
-            .toBuilder()
-            .withProperty(SemanticKeys.TAGS_PROPERTY, listOf("fhLUG", "Linux", "User Group", "Free Software"))
-            .withProperty(SemanticKeys.TYPE_PROPERTY, "techmeetup") // TODO same as with Technologieplauscherl
-            .withProperty(SemanticKeys.CATEGORY_PROPERTY, EventCategory.TECH)
-            .withProperty(SemanticKeys.REGISTRATION_PROPERTY, Registration.FREE)
-            .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(icsUrl, baseUrl))
+        val builder =
+            event
+                .toBuilder()
+                .withProperty(SemanticKeys.TAGS_PROPERTY, listOf("fhLUG", "Linux", "User Group", "Free Software"))
+                .withProperty(SemanticKeys.TYPE_PROPERTY, "techmeetup") // TODO same as with Technologieplauscherl
+                .withProperty(SemanticKeys.CATEGORY_PROPERTY, EventCategory.TECH)
+                .withProperty(SemanticKeys.REGISTRATION_PROPERTY, Registration.FREE)
+                .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(icsUrl, baseUrl))
 
-        if (event.getProperty(SemanticKeys.URL_PROPERTY)
-                .isEmpty() && event.getProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY).isNotEmpty()
+        if (event
+                .getProperty(SemanticKeys.URL_PROPERTY)
+                .isEmpty() &&
+            event.getProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY).isNotEmpty()
         ) {
             val url = tryGetUrlFromDescription(event.getProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY).first().second)
             if (url.isPresent) {

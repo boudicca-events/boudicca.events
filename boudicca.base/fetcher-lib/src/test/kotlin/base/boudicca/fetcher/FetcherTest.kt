@@ -10,43 +10,40 @@ import java.time.ZoneId
 import java.util.concurrent.Callable
 
 class FetcherTest {
+    private val instantSource =
+        object : InstantSource {
+            var instant = Instant.now()
 
-    private val instantSource = object : InstantSource {
-        var instant = Instant.now()
+            fun setMillis(long: Long) {
+                instant = Instant.ofEpochMilli(long)
+            }
 
-        fun setMillis(long: Long) {
-            instant = Instant.ofEpochMilli(long)
+            fun addMillis(long: Long) {
+                instant = Instant.ofEpochMilli(millis() + long)
+            }
+
+            override fun instant(): Instant = instant
         }
 
-        fun addMillis(long: Long) {
-            instant = Instant.ofEpochMilli(millis() + long)
+    private val httpClientWrapper =
+        object : HttpClientWrapper {
+            var callback: Callable<Pair<Int, String>> = Callable { throw IllegalStateException("not initialized") }
+
+            override fun doGet(url: String): Pair<Int, String> = callback.call()
+
+            override fun doPost(
+                url: String,
+                contentType: String,
+                content: String,
+            ): Pair<Int, String> = callback.call()
         }
 
-        override fun instant(): Instant {
-            return instant
-        }
-
-    }
-
-    private val httpClientWrapper = object : HttpClientWrapper {
-
-        var callback: Callable<Pair<Int, String>> = Callable { throw IllegalStateException("not initialized") }
-
-        override fun doGet(url: String): Pair<Int, String> {
-            return callback.call()
-        }
-
-        override fun doPost(url: String, contentType: String, content: String): Pair<Int, String> {
-            return callback.call()
-        }
-
-    }
-
-    private val fetcher = Fetcher(
-        clock = instantSource.withZone(ZoneId.systemDefault()),
-        sleeper = { instantSource.addMillis(it) },
-        httpClient = httpClientWrapper
-    )
+    private val fetcher =
+        Fetcher(
+            clock = instantSource.withZone(ZoneId.systemDefault()),
+            sleeper = { instantSource.addMillis(it) },
+            httpClient = httpClientWrapper,
+        )
 
     @BeforeEach
     fun setup() {
@@ -79,53 +76,57 @@ class FetcherTest {
 
     @Test
     fun testSimpleWait() {
-        httpClientWrapper.callback = Callable {
-            instantSource.addMillis(100)
-            Pair(200, "OK")
-        }
+        httpClientWrapper.callback =
+            Callable {
+                instantSource.addMillis(100)
+                Pair(200, "OK")
+            }
         fetcher.fetchUrl("url")
         assertEquals(100, instantSource.millis())
         fetcher.fetchUrl("url")
-        //150 waittime + 100 for the call
+        // 150 waittime + 100 for the call
         assertEquals(350, instantSource.millis())
     }
 
     @Test
     fun testMin100MSWait() {
-        httpClientWrapper.callback = Callable {
-            instantSource.addMillis(10) //really fast server
-            Pair(200, "OK")
-        }
+        httpClientWrapper.callback =
+            Callable {
+                instantSource.addMillis(10) // really fast server
+                Pair(200, "OK")
+            }
         fetcher.fetchUrl("url")
         assertEquals(10, instantSource.millis())
         fetcher.fetchUrl("url")
-        //100 waittime + 10 for the call
+        // 100 waittime + 10 for the call
         assertEquals(120, instantSource.millis())
     }
 
     @Test
     fun test150PercentMSWait() {
-        httpClientWrapper.callback = Callable {
-            instantSource.addMillis(1000)
-            Pair(200, "OK")
-        }
+        httpClientWrapper.callback =
+            Callable {
+                instantSource.addMillis(1000)
+                Pair(200, "OK")
+            }
         fetcher.fetchUrl("url")
         assertEquals(1000, instantSource.millis())
         fetcher.fetchUrl("url")
-        //1500 waittime + 1000 for the call
+        // 1500 waittime + 1000 for the call
         assertEquals(3500, instantSource.millis())
     }
 
     @Test
     fun testRetryOnSecond() {
         var count = 0
-        httpClientWrapper.callback = Callable {
-            if (count++ == 0) {
-                Pair(400, "FAILED")
-            } else {
-                Pair(200, "OK")
+        httpClientWrapper.callback =
+            Callable {
+                if (count++ == 0) {
+                    Pair(400, "FAILED")
+                } else {
+                    Pair(200, "OK")
+                }
             }
-        }
         val response = fetcher.fetchUrl("url")
         assertEquals("OK", response)
     }
@@ -133,33 +134,36 @@ class FetcherTest {
     @Test
     fun testRetryTimingsSecond() {
         var count = 0
-        httpClientWrapper.callback = Callable {
-            instantSource.addMillis(150)
-            if (count++ == 1) {
-                Pair(400, "FAILED")
-            } else {
-                Pair(200, "OK")
+        httpClientWrapper.callback =
+            Callable {
+                instantSource.addMillis(150)
+                if (count++ == 1) {
+                    Pair(400, "FAILED")
+                } else {
+                    Pair(200, "OK")
+                }
             }
-        }
         val response = fetcher.fetchUrl("url")
         assertEquals("OK", response)
         val response2 = fetcher.fetchUrl("url")
         assertEquals("OK", response2)
-        //150 first fetch + 225 waittime + 150 second fetch fail + 60000 for retry + 150 second fetch success
+        // 150 first fetch + 225 waittime + 150 second fetch fail + 60000 for retry + 150 second fetch success
         assertEquals(60675, instantSource.millis())
     }
 
     @Test
     fun testManualSetDelay() {
-        val customFetcher = Fetcher(
-            manualSetDelay = 6789,
-            clock = instantSource.withZone(ZoneId.systemDefault()),
-            sleeper = { instantSource.setMillis(instantSource.millis() + it) },
-            httpClient = httpClientWrapper
-        )
-        httpClientWrapper.callback = Callable {
-            Pair(200, "OK")
-        }
+        val customFetcher =
+            Fetcher(
+                manualSetDelay = 6789,
+                clock = instantSource.withZone(ZoneId.systemDefault()),
+                sleeper = { instantSource.setMillis(instantSource.millis() + it) },
+                httpClient = httpClientWrapper,
+            )
+        httpClientWrapper.callback =
+            Callable {
+                Pair(200, "OK")
+            }
         assertEquals(0, instantSource.millis())
         customFetcher.fetchUrl("url")
         assertEquals(6789, instantSource.millis())
@@ -168,10 +172,11 @@ class FetcherTest {
     @Test
     fun testNoCache() {
         var count = 0
-        httpClientWrapper.callback = Callable {
-            count++
-            Pair(200, "OK")
-        }
+        httpClientWrapper.callback =
+            Callable {
+                count++
+                Pair(200, "OK")
+            }
         assertEquals(0, count)
         fetcher.fetchUrl("url")
         assertEquals(1, count)
@@ -182,16 +187,18 @@ class FetcherTest {
     @Test
     fun testCache() {
         var count = 0
-        val fetcher = Fetcher(
-            clock = instantSource.withZone(ZoneId.systemDefault()),
-            sleeper = { instantSource.addMillis(it) },
-            httpClient = httpClientWrapper,
-            fetcherCache = InMemoryFetcherCache()
-        )
-        httpClientWrapper.callback = Callable {
-            count++
-            Pair(200, "OK")
-        }
+        val fetcher =
+            Fetcher(
+                clock = instantSource.withZone(ZoneId.systemDefault()),
+                sleeper = { instantSource.addMillis(it) },
+                httpClient = httpClientWrapper,
+                fetcherCache = InMemoryFetcherCache(),
+            )
+        httpClientWrapper.callback =
+            Callable {
+                count++
+                Pair(200, "OK")
+            }
         assertEquals(0, count)
         fetcher.fetchUrl("url")
         assertEquals(1, count)

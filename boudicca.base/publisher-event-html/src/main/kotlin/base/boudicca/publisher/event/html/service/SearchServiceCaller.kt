@@ -6,6 +6,7 @@ import base.boudicca.api.search.QueryDTO
 import base.boudicca.api.search.SearchResultDTO
 
 interface SearchServiceCaller {
-  fun search(query: QueryDTO): SearchResultDTO
-  fun getFiltersFor(filterQueryDTO: FilterQueryDTO): FilterResultDTO
+    fun search(query: QueryDTO): SearchResultDTO
+
+    fun getFiltersFor(filterQueryDTO: FilterQueryDTO): FilterResultDTO
 }

@@ -17,13 +17,12 @@ class TabakfabrikLinzCollector : TwoStepEventCollector<String>("tabakfabriklinz"
     private val baseUrl = "https://tabakfabrik-linz.at/"
     private val locationName = "Tabakfabrik Linz"
 
-    override fun getAllUnparsedEvents(): List<String> {
-        return Jsoup
+    override fun getAllUnparsedEvents(): List<String> =
+        Jsoup
             .parse(fetcher.fetchUrl(baseUrl + "events"))
             .select(".events-upcoming h1.entry-title a")
             .mapNotNull { it.attr("href") }
             .distinct()
-    }
 
     override fun parseMultipleStructuredEvents(event: String): List<StructuredEvent?>? {
         val document = Jsoup.parse(fetcher.fetchUrl(event))
@@ -62,7 +61,10 @@ class TabakfabrikLinzCollector : TwoStepEventCollector<String>("tabakfabriklinz"
         }
     }
 
-    private fun parseDate(document: Document, propName: String): DateParserResult? {
+    private fun parseDate(
+        document: Document,
+        propName: String,
+    ): DateParserResult? {
         val dateElements = document.select("[itemprop='$propName']")
         if (dateElements.isNotEmpty()) {
             return DateParser.parse(dateElements.first()!!.attr("content"))

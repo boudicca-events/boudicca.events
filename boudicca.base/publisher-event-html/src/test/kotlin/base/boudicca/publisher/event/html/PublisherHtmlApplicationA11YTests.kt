@@ -25,7 +25,6 @@ import java.util.*
 @ExtendWith(SpringExtension::class)
 @Tag("a11ytests")
 class PublisherHtmlApplicationA11YTests : E2ETestFixture() {
-
     @LocalServerPort
     private val port = 0
 
@@ -36,7 +35,7 @@ class PublisherHtmlApplicationA11YTests : E2ETestFixture() {
     @ArgumentsSource(A11YTestData::class)
     fun shouldNotHaveAutomaticallyDetectableAccessibilityIssues(
         events: List<Event>,
-        filters: FilterResultDTO
+        filters: FilterResultDTO,
     ) {
         setupSearchServiceCaller(events, filters)
 
@@ -52,7 +51,7 @@ class PublisherHtmlApplicationA11YTests : E2ETestFixture() {
     @ArgumentsSource(A11YTestData::class)
     fun drawerShouldNotHaveAutomaticallyDetectableAccessibilityViolations(
         events: List<Event>,
-        filters: FilterResultDTO
+        filters: FilterResultDTO,
     ) {
         setupSearchServiceCaller(events, filters)
 
@@ -65,16 +64,20 @@ class PublisherHtmlApplicationA11YTests : E2ETestFixture() {
         // find all the elements your test expects it to scan.
         page.locator("#drawer").waitFor()
 
-        val accessibilityScanResults: AxeResults = AxeBuilder(page)
-            .include(Arrays.asList("#drawer"))
-            .analyze()
+        val accessibilityScanResults: AxeResults =
+            AxeBuilder(page)
+                .include(Arrays.asList("#drawer"))
+                .analyze()
 
         assertThat(accessibilityScanResults.violations)
             .withFailMessage("Found accessibility violations: %s", accessibilityScanResults.violations)
             .isEmpty()
     }
 
-    private fun setupSearchServiceCaller(events: List<Event>, filters: FilterResultDTO) {
+    private fun setupSearchServiceCaller(
+        events: List<Event>,
+        filters: FilterResultDTO,
+    ) {
         every { searchServiceCaller.search(any()) } returns SearchResultDTO(events, 1, null)
         every { searchServiceCaller.getFiltersFor(any()) } returns filters
     }

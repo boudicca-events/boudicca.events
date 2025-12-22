@@ -9,9 +9,8 @@ import java.util.function.Function
 class EventCollectorScheduler(
     private val interval: Duration = Duration.ofDays(1),
     private val eventSink: Consumer<List<Event>>? = null,
-    private val enricherFunction: Function<List<Event>, List<Event>>? = null
+    private val enricherFunction: Function<List<Event>, List<Event>>? = null,
 ) : AutoCloseable {
-
     private val builder = EventCollectorCoordinatorBuilder()
     private var eventCollectorCoordinator: EventCollectorCoordinator? = null
     private var shouldStartWebUi = false
@@ -53,12 +52,9 @@ class EventCollectorScheduler(
         getEventCollectorCoordinator().getEventCollectionRunner().run()
     }
 
-    fun getCollectors(): List<EventCollector> {
-        return getEventCollectorCoordinator().getCollectors()
-    }
+    fun getCollectors(): List<EventCollector> = getEventCollectorCoordinator().getCollectors()
 
     override fun close() {
         getEventCollectorCoordinator().close()
     }
-
 }

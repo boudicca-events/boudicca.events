@@ -1,6 +1,3 @@
-import org.gradle.api.tasks.Exec
-import org.gradle.kotlin.dsl.register
-
 interface DockerPluginExtension {
     val imageName: Property<String>
     val jarCreationTaskName: Property<String>

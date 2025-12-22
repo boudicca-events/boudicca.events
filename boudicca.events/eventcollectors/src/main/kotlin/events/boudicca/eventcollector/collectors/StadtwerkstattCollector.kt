@@ -17,7 +17,8 @@ class StadtwerkstattCollector : TwoStepEventCollector<String>("stadtwerkstatt") 
 
     override fun getAllUnparsedEvents(): List<String> {
         val document = Jsoup.parse(fetcher.fetchUrl(baseUrl))
-        return document.select("div.single-event a")
+        return document
+            .select("div.single-event a")
             .map { it.attr("href") }
     }
 
@@ -35,14 +36,15 @@ class StadtwerkstattCollector : TwoStepEventCollector<String>("stadtwerkstatt") 
 
         val img = eventSite.select("div.event-text img")
         val logo = eventSite.selectFirst(".brand img")
-        val pictureUrl = UrlUtils.parse(img.attr("src"))
-            ?: UrlUtils.parse(logo?.attr("src"))
+        val pictureUrl =
+            UrlUtils.parse(img.attr("src"))
+                ?: UrlUtils.parse(logo?.attr("src"))
 
         if (name.isEmpty()) {
             name = description
         }
 
-        //TODO could parse lineup
+        // TODO could parse lineup
 
         return structuredEvent(name, startDate) {
             withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(event))

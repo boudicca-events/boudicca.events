@@ -7,8 +7,9 @@ import base.boudicca.openapi.ApiClient
 import base.boudicca.openapi.ApiException
 import base.boudicca.remote_collector.openapi.api.RemoteCollectorApi
 
-class RemoteCollectorClient(private val remoteCollectorUrl: String) {
-
+class RemoteCollectorClient(
+    private val remoteCollectorUrl: String,
+) {
     private val remoteCollectorApi: RemoteCollectorApi
 
     init {
@@ -29,29 +30,28 @@ class RemoteCollectorClient(private val remoteCollectorUrl: String) {
         }
     }
 
-    private fun toApi(eventCollection: base.boudicca.remote_collector.openapi.model.EventCollection): EventCollection {
-        return EventCollection(
+    private fun toApi(eventCollection: base.boudicca.remote_collector.openapi.model.EventCollection): EventCollection =
+        EventCollection(
             eventCollection.events?.map { toApi(it) } ?: emptyList(),
             eventCollection.httpCalls?.map { toApi(it) },
             eventCollection.logLines,
             eventCollection.warningCount,
             eventCollection.errorCount,
         )
-    }
 
-    private fun toApi(event: base.boudicca.remote_collector.openapi.model.Event): Event {
-        return Event(event.name!!, event.startDate!!, event.data ?: emptyMap())
-    }
+    private fun toApi(event: base.boudicca.remote_collector.openapi.model.Event): Event = Event(event.name!!, event.startDate!!, event.data ?: emptyMap())
 
-    private fun toApi(httpCall: base.boudicca.remote_collector.openapi.model.HttpCall): HttpCall {
-        return HttpCall(
+    private fun toApi(httpCall: base.boudicca.remote_collector.openapi.model.HttpCall): HttpCall =
+        HttpCall(
             httpCall.url!!,
             httpCall.responseCode!!,
             httpCall.startTime!!,
             httpCall.endTime!!,
-            httpCall.postParams
+            httpCall.postParams,
         )
-    }
 }
 
-class RemoteCollectorException(msg: String, e: ApiException) : RuntimeException(msg, e)
+class RemoteCollectorException(
+    msg: String,
+    e: ApiException,
+) : RuntimeException(msg, e)

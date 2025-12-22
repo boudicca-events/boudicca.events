@@ -12,11 +12,9 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-
 @SpringBootTest
 @AutoConfigureMockMvc
 class EventDBApplicationSmokeTest {
-
     @Autowired
     private lateinit var mockMvc: MockMvc
 
@@ -29,36 +27,45 @@ class EventDBApplicationSmokeTest {
     @Test
     @DirtiesContext
     fun baseWorkflow() {
-        mockMvc.perform(
-            post("/ingest/entry").content("""{"name":"event1"}""")
-                .addDefaultAuth()
-                .addDefaultContentType()
-        ).andExpect(status().isOk())
-        mockMvc.perform(
-            post("/ingest/entries").content("""[{"name":"event2"},{"name":"event3"}]""")
-                .addDefaultAuth()
-                .addDefaultContentType()
-        ).andExpect(status().isOk())
+        mockMvc
+            .perform(
+                post("/ingest/entry")
+                    .content("""{"name":"event1"}""")
+                    .addDefaultAuth()
+                    .addDefaultContentType(),
+            ).andExpect(status().isOk())
+        mockMvc
+            .perform(
+                post("/ingest/entries")
+                    .content("""[{"name":"event2"},{"name":"event3"}]""")
+                    .addDefaultAuth()
+                    .addDefaultContentType(),
+            ).andExpect(status().isOk())
 
-
-        mockMvc.perform(get("/entries")).andExpect(status().isOk())
+        mockMvc
+            .perform(get("/entries"))
+            .andExpect(status().isOk())
             .andExpect(content().json("""[{"name":"event1"},{"name":"event2"},{"name":"event3"}]"""))
     }
 
     @Test
     fun wrongCredentials() {
-        mockMvc.perform(
-            post("/ingest/entry").content("""{"name":"event1"}""")
-                //uses no credentials
-                .addDefaultContentType()
-        ).andExpect(status().isUnauthorized())
+        mockMvc
+            .perform(
+                post("/ingest/entry")
+                    .content("""{"name":"event1"}""")
+                    // uses no credentials
+                    .addDefaultContentType(),
+            ).andExpect(status().isUnauthorized())
 
-        mockMvc.perform(
-            post("/ingest/entry").content("""{"name":"event1"}""")
-                //uses ingest:whatever as wrong auth
-                .header("Authorization", "Basic aW5nZXN0OndoYXRldmVy")
-                .addDefaultContentType()
-        ).andExpect(status().isUnauthorized())
+        mockMvc
+            .perform(
+                post("/ingest/entry")
+                    .content("""{"name":"event1"}""")
+                    // uses ingest:whatever as wrong auth
+                    .header("Authorization", "Basic aW5nZXN0OndoYXRldmVy")
+                    .addDefaultContentType(),
+            ).andExpect(status().isUnauthorized())
     }
 
     /** add default ingest:ingest auth */

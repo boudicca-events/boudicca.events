@@ -17,8 +17,7 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
-class LandestheaterLinzCollector :
-    TwoStepEventCollector<LandestheaterLinzCollector.LandestheaterEventData>("landestheater linz") {
+class LandestheaterLinzCollector : TwoStepEventCollector<LandestheaterLinzCollector.LandestheaterEventData>("landestheater linz") {
     private val baseUrl = "https://www.landestheater-linz.at"
 
     data class LandestheaterEventData(
@@ -32,11 +31,13 @@ class LandestheaterLinzCollector :
         val events = mutableListOf<Triple<Element, String, String>>()
 
         val document = fetchList(fetcher)
-        document.select("section")
+        document
+            .select("section")
             .forEach { section ->
                 // sections
                 val dateText = section.select("div.lth-section-title > div.lth-evitem-date > span.lth-book").text()
-                section.select("div.lth-section-content > div.lth-evitem")
+                section
+                    .select("div.lth-section-content > div.lth-evitem")
                     .forEach { evitem ->
                         val link = evitem.select("div.lth-evitem-title > a")
                         val linkSeason = link.attr("data-lth-season")
@@ -48,24 +49,25 @@ class LandestheaterLinzCollector :
                     }
             }
 
-        val eventUrls = events
-            .map { event ->
-                val link = event.first.select("div.lth-evitem-title > a")
-                val linkSeason = link.attr("data-lth-season")
-                val linkEventSetId = link.attr("data-lth-eventsetid")
-                val linkRef = link.attr("data-lth-ref")
-                "$baseUrl/stuecke/detail?EventSetID=$linkEventSetId&ref=$linkRef&spielzeit=$linkSeason"
-            }
-            .toSet()
+        val eventUrls =
+            events
+                .map { event ->
+                    val link = event.first.select("div.lth-evitem-title > a")
+                    val linkSeason = link.attr("data-lth-season")
+                    val linkEventSetId = link.attr("data-lth-eventsetid")
+                    val linkRef = link.attr("data-lth-ref")
+                    "$baseUrl/stuecke/detail?EventSetID=$linkEventSetId&ref=$linkRef&spielzeit=$linkSeason"
+                }.toSet()
 
-        val resolvedEventUrls = eventUrls
-            .associateWith { Jsoup.parse(fetcher.fetchUrl(it)) }
+        val resolvedEventUrls =
+            eventUrls
+                .associateWith { Jsoup.parse(fetcher.fetchUrl(it)) }
 
         return events.map {
             LandestheaterEventData(
                 it.first,
                 Pair(it.second, resolvedEventUrls[it.second]!!),
-                it.third
+                it.third,
             )
         }
     }
@@ -79,8 +81,8 @@ class LandestheaterLinzCollector :
             fetcher.fetchUrlPost(
                 "$baseUrl/DE/repos/evoscripts/lth/getEvents",
                 "application/x-www-form-urlencoded",
-                "cal=$now&monthTo=$to"
-            )
+                "cal=$now&monthTo=$to",
+            ),
         )
     }
 
@@ -92,48 +94,67 @@ class LandestheaterLinzCollector :
         val dates = parseDates(overview, date)
 
         val locationName =
-            site.second.select("div.lth-layout-ctr > div > div > span > span")[1].text().substring(11).trim()
+            site.second
+                .select("div.lth-layout-ctr > div > div > span > span")[1]
+                .text()
+                .substring(11)
+                .trim()
 
-        val structuredEvent = structuredEvent(name, dates) {
-            withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(site.first))
-            withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(site.first))
-            withProperty(
-                SemanticKeys.DESCRIPTION_TEXT_PROPERTY,
-                site.second.select("div.lth-layout-ctr section > h2").first { it.text() == "Stückinfo" }.parent()!!
-                    .select("div.lth-section-content").text()
-            )
-            withProperty(
-                SemanticKeys.PICTURE_URL_PROPERTY,
-                UrlUtils.parse(baseUrl, site.second.select("div.lth-slide img").attr("src"))
-            )
-            withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, "Landestheater Linz")
-            withProperty(
-                SemanticKeys.TYPE_PROPERTY,
-                overview.select("div.lth-evitem-what > div.lth-evitem-type").text()
-            )
-            withLocationData(locationName)
-        }
+        val structuredEvent =
+            structuredEvent(name, dates) {
+                withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(site.first))
+                withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(site.first))
+                withProperty(
+                    SemanticKeys.DESCRIPTION_TEXT_PROPERTY,
+                    site.second
+                        .select("div.lth-layout-ctr section > h2")
+                        .first { it.text() == "Stückinfo" }
+                        .parent()!!
+                        .select("div.lth-section-content")
+                        .text(),
+                )
+                withProperty(
+                    SemanticKeys.PICTURE_URL_PROPERTY,
+                    UrlUtils.parse(baseUrl, site.second.select("div.lth-slide img").attr("src")),
+                )
+                withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, "Landestheater Linz")
+                withProperty(
+                    SemanticKeys.TYPE_PROPERTY,
+                    overview.select("div.lth-evitem-what > div.lth-evitem-type").text(),
+                )
+                withLocationData(locationName)
+            }
 
         return structuredEvent
     }
 
     private fun StructuredEventBuilder.withLocationData(locationName: String) {
         when {
-            locationName.contains("musiktheater", ignoreCase = true) ->
+            locationName.contains("musiktheater", ignoreCase = true) -> {
                 this.withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Musiktheater Linz")
-            locationName == "Studiobühne" ->
+            }
+
+            locationName == "Studiobühne" -> {
                 // there is no dedicated page for it, but it is in the same building, so....
                 this.withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Studiobühne Linz")
-            locationName == "Schauspielhaus" ->
+            }
+
+            locationName == "Schauspielhaus" -> {
                 this.withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Schauspielhaus Linz")
-            locationName == "Kammerspiele" ->
+            }
+
+            locationName == "Kammerspiele" -> {
                 this.withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Kammerspiele Linz")
-            locationName.isNotBlank() ->
+            }
+
+            locationName.isNotBlank() -> {
                 this.withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, locationName)
+            }
         }
     }
 
-    private fun parseDates(overview: Element, dateText: String): DateParserResult {
-        return DateParser.parse(dateText, overview.select("div.lth-evitem-time").text())
-    }
+    private fun parseDates(
+        overview: Element,
+        dateText: String,
+    ): DateParserResult = DateParser.parse(dateText, overview.select("div.lth-evitem-time").text())
 }

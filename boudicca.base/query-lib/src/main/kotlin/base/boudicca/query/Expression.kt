@@ -13,14 +13,9 @@ abstract class HasOneChild(
     private val name: String,
     private val child: Expression,
 ) : Expression {
+    fun getChild(): Expression = child
 
-    fun getChild(): Expression {
-        return child
-    }
-
-    override fun toString(): String {
-        return "$name($child)"
-    }
+    override fun toString(): String = "$name($child)"
 }
 
 abstract class HasTwoChildren(
@@ -28,18 +23,11 @@ abstract class HasTwoChildren(
     private val leftChild: Expression,
     private val rightChild: Expression,
 ) : Expression {
+    fun getLeftChild(): Expression = leftChild
 
-    fun getLeftChild(): Expression {
-        return leftChild
-    }
+    fun getRightChild(): Expression = rightChild
 
-    fun getRightChild(): Expression {
-        return rightChild
-    }
-
-    override fun toString(): String {
-        return "$name($leftChild,$rightChild)"
-    }
+    override fun toString(): String = "$name($leftChild,$rightChild)"
 }
 
 abstract class FieldAndTextExpression(
@@ -47,20 +35,13 @@ abstract class FieldAndTextExpression(
     keyFilter: String,
     private val text: String,
 ) : Expression {
-
     private val keyFilter = parseKeyFilter(keyFilter)
 
-    fun getKeyFilter(): KeyFilter {
-        return keyFilter
-    }
+    fun getKeyFilter(): KeyFilter = keyFilter
 
-    fun getText(): String {
-        return text
-    }
+    fun getText(): String = text
 
-    override fun toString(): String {
-        return "$name('${keyFilter.toKeyString()}','$text')"
-    }
+    override fun toString(): String = "$name('${keyFilter.toKeyString()}','$text')"
 }
 
 abstract class FieldAndNumberExpression(
@@ -68,36 +49,24 @@ abstract class FieldAndNumberExpression(
     keyFilter: String,
     private val number: Number,
 ) : Expression {
-
     private val keyFilter = parseKeyFilter(keyFilter)
 
-    fun getKeyFilter(): KeyFilter {
-        return keyFilter
-    }
+    fun getKeyFilter(): KeyFilter = keyFilter
 
-    fun getNumber(): Number {
-        return number
-    }
+    fun getNumber(): Number = number
 
-    override fun toString(): String {
-        return "$name('${keyFilter.toKeyString()}',$number)"
-    }
+    override fun toString(): String = "$name('${keyFilter.toKeyString()}',$number)"
 }
 
 abstract class FieldExpression(
     private val name: String,
     keyFilter: String,
 ) : Expression {
-
     private val keyFilter = parseKeyFilter(keyFilter)
 
-    fun getKeyFilter(): KeyFilter {
-        return keyFilter
-    }
+    fun getKeyFilter(): KeyFilter = keyFilter
 
-    override fun toString(): String {
-        return "$name('${keyFilter.toKeyString()}')"
-    }
+    override fun toString(): String = "$name('${keyFilter.toKeyString()}')"
 }
 
 abstract class DateExpression(
@@ -105,7 +74,6 @@ abstract class DateExpression(
     dateKeyFilter: String,
     dateText: String,
 ) : FieldAndTextExpression(name, dateKeyFilter, dateText) {
-
     private val date: LocalDate
 
     init {
@@ -116,13 +84,9 @@ abstract class DateExpression(
         }
     }
 
-    fun getDate(): LocalDate {
-        return date
-    }
+    fun getDate(): LocalDate = date
 
-    override fun toString(): String {
-        return "$name('${getKeyFilter().toKeyString()}','${date.format(DateTimeFormatter.ISO_LOCAL_DATE)}')"
-    }
+    override fun toString(): String = "$name('${getKeyFilter().toKeyString()}','${date.format(DateTimeFormatter.ISO_LOCAL_DATE)}')"
 }
 
 abstract class AbstractDurationExpression(
@@ -131,25 +95,16 @@ abstract class AbstractDurationExpression(
     endDateKeyFilter: String,
     private val duration: Number,
 ) : Expression {
-
     private val startDateKeyFilter = parseKeyFilter(startDateKeyFilter)
     private val endDateKeyFilter = parseKeyFilter(endDateKeyFilter)
 
-    fun getStartDateKeyFilter(): KeyFilter {
-        return startDateKeyFilter
-    }
+    fun getStartDateKeyFilter(): KeyFilter = startDateKeyFilter
 
-    fun getEndDateKeyFilter(): KeyFilter {
-        return endDateKeyFilter
-    }
+    fun getEndDateKeyFilter(): KeyFilter = endDateKeyFilter
 
-    fun getDuration(): Number {
-        return duration
-    }
+    fun getDuration(): Number = duration
 
-    override fun toString(): String {
-        return "$name('${startDateKeyFilter.toKeyString()}','${endDateKeyFilter.toKeyString()}',${duration})"
-    }
+    override fun toString(): String = "$name('${startDateKeyFilter.toKeyString()}','${endDateKeyFilter.toKeyString()}',$duration)"
 }
 
 private fun parseKeyFilter(keyFilter: String): KeyFilter {
@@ -212,10 +167,10 @@ class HasFieldExpression(
 
 class IsInNextSecondsExpression(
     keyFilter: String,
-    number: Number
+    number: Number,
 ) : FieldAndNumberExpression("ISINNEXTSECONDS", keyFilter, number)
 
 class IsInLastSecondsExpression(
     keyFilter: String,
-    number: Number
+    number: Number,
 ) : FieldAndNumberExpression("ISINLASTSECONDS", keyFilter, number)

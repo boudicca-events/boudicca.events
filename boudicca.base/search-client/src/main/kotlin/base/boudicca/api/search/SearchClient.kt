@@ -13,23 +13,22 @@ import base.boudicca.search.openapi.model.FilterQueryDTO as SearchOpenapiFilterQ
 
 class SearchClient(
     private val searchUrl: String,
-    private val otel: OpenTelemetry = GlobalOpenTelemetry.get()
+    private val otel: OpenTelemetry = GlobalOpenTelemetry.get(),
 ) {
-
     private val searchApi: SearchApi
 
     init {
         if (searchUrl.isBlank()) {
             error("you need to pass an searchUrl!")
         }
-        val apiClient = object : ApiClient() {
-            override fun getHttpClient(): HttpClient? {
-                return JavaHttpClientTelemetry
-                    .builder(otel)
-                    .build()
-                    .newHttpClient(super.getHttpClient())
+        val apiClient =
+            object : ApiClient() {
+                override fun getHttpClient(): HttpClient? =
+                    JavaHttpClientTelemetry
+                        .builder(otel)
+                        .build()
+                        .newHttpClient(super.getHttpClient())
             }
-        }
         apiClient.updateBaseUri(searchUrl)
 
         searchApi = SearchApi(apiClient)
@@ -40,7 +39,7 @@ class SearchClient(
         return SearchResultDTO(
             entries.result.mapNotNull { Event.fromEntry(it).getOrNull() },
             entries.totalResults,
-            entries.error
+            entries.error,
         )
     }
 
@@ -60,21 +59,21 @@ class SearchClient(
         }
     }
 
-    private fun mapFilterQueryDTOToApi(filterQueryDTO: FilterQueryDTO): SearchOpenapiFilterQueryDTO {
-        return SearchOpenapiFilterQueryDTO()
+    private fun mapFilterQueryDTOToApi(filterQueryDTO: FilterQueryDTO): SearchOpenapiFilterQueryDTO =
+        SearchOpenapiFilterQueryDTO()
             .entries(filterQueryDTO.entries.map { FilterQueryEntryDTO().name(it.name) })
-    }
 
-    private fun mapResultDto(resultDTO: base.boudicca.search.openapi.model.ResultDTO): ResultDTO {
-        return ResultDTO(resultDTO.result!!, resultDTO.totalResults!!, resultDTO.error)
-    }
+    private fun mapResultDto(resultDTO: base.boudicca.search.openapi.model.ResultDTO): ResultDTO = ResultDTO(resultDTO.result!!, resultDTO.totalResults!!, resultDTO.error)
 
-    private fun mapQueryDto(queryDTO: QueryDTO): base.boudicca.search.openapi.model.QueryDTO {
-        return base.boudicca.search.openapi.model.QueryDTO()
+    private fun mapQueryDto(queryDTO: QueryDTO): base.boudicca.search.openapi.model.QueryDTO =
+        base.boudicca.search.openapi.model
+            .QueryDTO()
             .query(queryDTO.query)
             .offset(queryDTO.offset)
             .size(queryDTO.size)
-    }
 }
 
-class SearchException(msg: String, t: Throwable) : RuntimeException(msg, t)
+class SearchException(
+    msg: String,
+    t: Throwable,
+) : RuntimeException(msg, t)

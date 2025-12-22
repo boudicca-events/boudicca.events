@@ -5,54 +5,63 @@
     font-weight: 300;
     font-style: normal;
 }
+
 @font-face {
     font-family: 'Open Sans';
     src: url("/fonts/opensans/LightItalic/OpenSans-LightItalic.woff2?v=1.1.0") format("woff2"), url("/fonts/opensans/LightItalic/OpenSans-LightItalic.woff?v=1.1.0") format("woff");
     font-weight: 300;
     font-style: italic;
 }
+
 @font-face {
     font-family: 'Open Sans';
     src: url("/fonts/opensans/Regular/OpenSans-Regular.woff2?v=1.1.0") format("woff2"), url("/fonts/opensans/Regular/OpenSans-Regular.woff?v=1.1.0") format("woff");
     font-weight: normal;
     font-style: normal;
 }
+
 @font-face {
     font-family: 'Open Sans';
     src: url("/fonts/opensans/Italic/OpenSans-Italic.woff2?v=1.1.0") format("woff2"), url("/fonts/opensans/Italic/OpenSans-Italic.woff?v=1.1.0") format("woff");
     font-weight: normal;
     font-style: italic;
 }
+
 @font-face {
     font-family: 'Open Sans';
     src: url("/fonts/opensans/Semibold/OpenSans-Semibold.woff2?v=1.1.0") format("woff2"), url("/fonts/opensans/Semibold/OpenSans-Semibold.woff?v=1.1.0") format("woff");
     font-weight: 600;
     font-style: normal;
 }
+
 @font-face {
     font-family: 'Open Sans';
     src: url("/fonts/opensans/SemiboldItalic/OpenSans-SemiboldItalic.woff2?v=1.1.0") format("woff2"), url("/fonts/opensans/SemiboldItalic/OpenSans-SemiboldItalic.woff?v=1.1.0") format("woff");
     font-weight: 600;
     font-style: italic;
 }
+
 @font-face {
     font-family: 'Open Sans';
     src: url("/fonts/opensans/Bold/OpenSans-Bold.woff2?v=1.1.0") format("woff2"), url("/fonts/opensans/Bold/OpenSans-Bold.woff?v=1.1.0") format("woff");
     font-weight: bold;
     font-style: normal;
 }
+
 @font-face {
     font-family: 'Open Sans';
     src: url("/fonts/opensans/BoldItalic/OpenSans-BoldItalic.woff2?v=1.1.0") format("woff2"), url("/fonts/opensans/BoldItalic/OpenSans-BoldItalic.woff?v=1.1.0") format("woff");
     font-weight: bold;
     font-style: italic;
 }
+
 @font-face {
     font-family: 'Open Sans';
     src: url("/fonts/opensans/ExtraBold/OpenSans-ExtraBold.woff2?v=1.1.0") format("woff2"), url("/fonts/opensans/ExtraBold/OpenSans-ExtraBold.woff?v=1.1.0") format("woff");
     font-weight: 800;
     font-style: normal;
 }
+
 @font-face {
     font-family: 'Open Sans';
     src: url("/fonts/opensans/ExtraBoldItalic/OpenSans-ExtraBoldItalic.woff2?v=1.1.0") format("woff2"), url("/fonts/opensans/ExtraBoldItalic/OpenSans-ExtraBoldItalic.woff?v=1.1.0") format("woff");

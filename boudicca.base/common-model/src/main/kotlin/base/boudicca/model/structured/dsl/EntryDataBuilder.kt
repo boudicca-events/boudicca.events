@@ -6,7 +6,8 @@ import base.boudicca.model.structured.Variant
 import base.boudicca.model.structured.VariantConstants
 
 class EntryDataBuilder<T>(
-    private val name: String, private var defaultFormatAdapter: AbstractFormatAdapter<T>? = null
+    private val name: String,
+    private var defaultFormatAdapter: AbstractFormatAdapter<T>? = null,
 ) {
     // all combinations of the form
     // description
@@ -25,7 +26,10 @@ class EntryDataBuilder<T>(
         variant(formatAdapterValue, data = data)
     }
 
-    fun variant(vararg variants: Variant, data: T) {
+    fun variant(
+        vararg variants: Variant,
+        data: T,
+    ) {
         val formatAdapterValue = defaultFormatAdapter
         requireNotNull(formatAdapterValue) {
             "variant without format can only be used when format adapter is set on parent level"
@@ -33,19 +37,22 @@ class EntryDataBuilder<T>(
         variant(formatAdapterValue, variants = variants, data = data)
     }
 
-    fun <U> variant(formatAdapter: AbstractFormatAdapter<U>, vararg variants: Variant, data: U) {
+    fun <U> variant(
+        formatAdapter: AbstractFormatAdapter<U>,
+        vararg variants: Variant,
+        data: U,
+    ) {
         val variantList = variants.toMutableList()
         variantList.addFormatVariant(formatAdapter)
 
         variantCombinations[variantList.toList()] = formatAdapter.convertToString(data)
     }
 
-    fun build(): Map<Key, String> {
-        return variantCombinations.map { entry ->
-            Key(name, entry.key) to entry.value
-        }.toMap()
-    }
-
+    fun build(): Map<Key, String> =
+        variantCombinations
+            .map { entry ->
+                Key(name, entry.key) to entry.value
+            }.toMap()
 }
 
 private fun <U> MutableList<Variant>.addFormatVariant(formatAdapter: AbstractFormatAdapter<U>) {

@@ -16,20 +16,18 @@ import org.springframework.web.bind.annotation.RestController
 class EnricherController(
     private val enricherService: EnricherService,
 ) : EnricherApi {
-
     @PostMapping(
         "enrich",
         consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE],
     )
     @ResponseBody
-    override fun enrich(@RequestBody enrichRequestDTO: EnrichRequestDTO): List<Event> {
-        return enricherService.enrich(enrichRequestDTO)
-    }
+    override fun enrich(
+        @RequestBody enrichRequestDTO: EnrichRequestDTO,
+    ): List<Event> = enricherService.enrich(enrichRequestDTO)
 
     @PostMapping("forceUpdate")
     override fun forceUpdate() {
         enricherService.forceUpdate()
     }
-
 }

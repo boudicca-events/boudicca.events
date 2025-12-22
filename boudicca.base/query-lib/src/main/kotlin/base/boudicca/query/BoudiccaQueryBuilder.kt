@@ -13,73 +13,75 @@ import java.time.format.DateTimeFormatter
  * see the query documentation for more information about the operators
  */
 object BoudiccaQueryBuilder {
+    fun and(subQueries: Iterable<String>): String = booleanMultiQuery(subQueries, "and")
 
-    fun and(subQueries: Iterable<String>): String {
-        return booleanMultiQuery(subQueries, "and")
-    }
+    fun and(vararg subQueries: String): String = booleanMultiQuery(subQueries.toList(), "and")
 
-    fun and(vararg subQueries: String): String {
-        return booleanMultiQuery(subQueries.toList(), "and")
-    }
+    fun or(subQueries: Iterable<String>): String = booleanMultiQuery(subQueries, "or")
 
-    fun or(subQueries: Iterable<String>): String {
-        return booleanMultiQuery(subQueries, "or")
-    }
-
-    fun or(vararg subQueries: String): String {
-        return booleanMultiQuery(subQueries.toList(), "or")
-    }
+    fun or(vararg subQueries: String): String = booleanMultiQuery(subQueries.toList(), "or")
 
     fun not(query: String): String {
         require(query.isNotEmpty()) { "query is not allowed to be empty" }
         return "not ($query)"
     }
 
-    fun after(dateFieldName: String, localDate: LocalDate): String {
-        return escapeText(dateFieldName) + " after " + escapeText(DateTimeFormatter.ISO_LOCAL_DATE.format(localDate))
-    }
+    fun after(
+        dateFieldName: String,
+        localDate: LocalDate,
+    ): String = escapeText(dateFieldName) + " after " + escapeText(DateTimeFormatter.ISO_LOCAL_DATE.format(localDate))
 
-    fun before(dateFieldName: String, localDate: LocalDate): String {
-        return escapeText(dateFieldName) + " before " + escapeText(DateTimeFormatter.ISO_LOCAL_DATE.format(localDate))
-    }
+    fun before(
+        dateFieldName: String,
+        localDate: LocalDate,
+    ): String = escapeText(dateFieldName) + " before " + escapeText(DateTimeFormatter.ISO_LOCAL_DATE.format(localDate))
 
-    fun isInNextSeconds(dateFieldName: String, seconds: Long): String {
-        return escapeText(dateFieldName) + " isInNextSeconds " + seconds
-    }
+    fun isInNextSeconds(
+        dateFieldName: String,
+        seconds: Long,
+    ): String = escapeText(dateFieldName) + " isInNextSeconds " + seconds
 
-    fun isInLastSeconds(dateFieldName: String, seconds: Long): String {
-        return escapeText(dateFieldName) + " isInLastSeconds " + seconds
-    }
+    fun isInLastSeconds(
+        dateFieldName: String,
+        seconds: Long,
+    ): String = escapeText(dateFieldName) + " isInLastSeconds " + seconds
 
     @Suppress("detekt:ExceptionRaisedInUnexpectedLocation")
-    fun equals(field: String, value: String): String {
+    fun equals(
+        field: String,
+        value: String,
+    ): String {
         require(field.isNotEmpty()) { "field is not allowed to be empty" }
         return escapeText(field) + " equals " + escapeText(value)
     }
 
-    fun contains(field: String, value: String): String {
+    fun contains(
+        field: String,
+        value: String,
+    ): String {
         require(field.isNotEmpty()) { "field is not allowed to be empty" }
         return escapeText(field) + " contains " + escapeText(value)
     }
 
-    fun durationLonger(startDateField: String, endDateField: String, hours: Double): String {
-        return "duration ${escapeText(startDateField)} ${escapeText(endDateField)} longer $hours"
-    }
+    fun durationLonger(
+        startDateField: String,
+        endDateField: String,
+        hours: Double,
+    ): String = "duration ${escapeText(startDateField)} ${escapeText(endDateField)} longer $hours"
 
-    fun durationShorter(startDateField: String, endDateField: String, hours: Double): String {
-        return "duration ${escapeText(startDateField)} ${escapeText(endDateField)} shorter $hours"
-    }
+    fun durationShorter(
+        startDateField: String,
+        endDateField: String,
+        hours: Double,
+    ): String = "duration ${escapeText(startDateField)} ${escapeText(endDateField)} shorter $hours"
 
-    fun hasField(field: String): String {
-        return "hasField ${escapeText(field)}"
-    }
+    fun hasField(field: String): String = "hasField ${escapeText(field)}"
 
-    fun escapeText(text: String): String {
-        return "\"" + text.replace("\\", "\\\\").replace("\"", "\\\"") + "\""
-    }
+    fun escapeText(text: String): String = "\"" + text.replace("\\", "\\\\").replace("\"", "\\\"") + "\""
 
     private fun booleanMultiQuery(
-        subQueries: Iterable<String>, operator: String
+        subQueries: Iterable<String>,
+        operator: String,
     ): String {
         require(subQueries.count() > 0) { "you have to pass at least one subquery" }
         require(subQueries.none { it.isEmpty() }) { "subQueries are not allowed to be empty" }

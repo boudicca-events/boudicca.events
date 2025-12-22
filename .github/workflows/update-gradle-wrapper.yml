@@ -1,22 +1,22 @@
 name: Update Gradle Wrapper
 
 on:
-  schedule:
-    - cron: "0 0 * * *"
+    schedule:
+        -   cron: "0 0 * * *"
 
 permissions: # this can be restrictive since there is a granular personal access token that is used to open the MergeRequest
-  contents: read
-  pull-requests: read
+    contents: read
+    pull-requests: read
 
 jobs:
-  update-gradle-wrapper:
-    runs-on: ubuntu-latest
+    update-gradle-wrapper:
+        runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
-      - name: Update Gradle Wrapper
-        uses: gradle-update/update-gradle-wrapper-action@512b1875f3b6270828abfe77b247d5895a2da1e5 # 2.1.0
-        with:
-          repo-token: ${{ secrets.YOLGIE_PAT_UPGRADE_GRADLEW_ACTION }}
-          pr-title-template: 'build(deps): Bump Gradle Wrapper from %sourceVersion% to %targetVersion%'
-          labels: dependencies
+        steps:
+            -   uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+            -   name: Update Gradle Wrapper
+                uses: gradle-update/update-gradle-wrapper-action@512b1875f3b6270828abfe77b247d5895a2da1e5 # 2.1.0
+                with:
+                    repo-token: ${{ secrets.YOLGIE_PAT_UPGRADE_GRADLEW_ACTION }}
+                    pr-title-template: 'build(deps): Bump Gradle Wrapper from %sourceVersion% to %targetVersion%'
+                    labels: dependencies

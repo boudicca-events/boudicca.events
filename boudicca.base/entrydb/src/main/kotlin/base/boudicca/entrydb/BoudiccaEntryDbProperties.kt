@@ -9,13 +9,13 @@ data class BoudiccaEntryDbProperties(
     val store: Store,
     val ingest: Ingest,
     val entryKeyNames: List<String>?,
-    val uuidv5Namespace: String
+    val uuidv5Namespace: String,
 )
 
 data class Store(
-    val path: String?
+    val path: String?,
 )
 
 data class Ingest(
-    val password: String?
+    val password: String?,
 )

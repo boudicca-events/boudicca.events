@@ -16,7 +16,6 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 
 class OehJkuCollector : TwoStepEventCollector<String>("oehjku") {
-
     private val fetcher = FetcherFactory.newFetcher()
     private val baseUrl = "https://oeh.jku.at/"
 
@@ -52,9 +51,11 @@ class OehJkuCollector : TwoStepEventCollector<String>("oehjku") {
         return localDate.atTime(localTime).atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
     }
 
-    private fun findTextByIconHref(eventSite: Element, iconHref: String): String {
-        val icon = eventSite.select("div.teaser div.list-group-item svg use[xlink:href='#${iconHref}']")[0]
-        return icon.parent()?.parent()?.text() ?: error("icon '${iconHref}' not found")
+    private fun findTextByIconHref(
+        eventSite: Element,
+        iconHref: String,
+    ): String {
+        val icon = eventSite.select("div.teaser div.list-group-item svg use[xlink:href='#$iconHref']")[0]
+        return icon.parent()?.parent()?.text() ?: error("icon '$iconHref' not found")
     }
-
 }

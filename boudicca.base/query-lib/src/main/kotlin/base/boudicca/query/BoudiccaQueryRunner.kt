@@ -7,10 +7,8 @@ import base.boudicca.query.parsing.Lexer
 import base.boudicca.query.parsing.Parser
 import io.opentelemetry.api.OpenTelemetry
 import io.opentelemetry.api.trace.StatusCode
-import kotlin.use
 
 object BoudiccaQueryRunner {
-
     /**
      * parse the given query and return an Expression AST
      */
@@ -26,16 +24,17 @@ object BoudiccaQueryRunner {
         query: String,
         page: Page,
         evaluator: Evaluator,
-        openTelemetry: OpenTelemetry = OpenTelemetry.noop()
+        openTelemetry: OpenTelemetry = OpenTelemetry.noop(),
     ): QueryResult {
-        val startSpan = openTelemetry.getTracer("BoudiccaQueryRunner")
-            .spanBuilder("execute query")
-            .setAttribute("query", query.toString())
-            .setAttribute("page", page.toString())
-            .startSpan()
+        val startSpan =
+            openTelemetry
+                .getTracer("BoudiccaQueryRunner")
+                .spanBuilder("execute query")
+                .setAttribute("query", query.toString())
+                .setAttribute("page", page.toString())
+                .startSpan()
         try {
             return startSpan.makeCurrent().use {
-
                 val expression = parseQuery(query)
                 startSpan.addEvent("expression parsed")
 

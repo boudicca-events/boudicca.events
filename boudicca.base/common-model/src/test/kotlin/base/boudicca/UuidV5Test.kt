@@ -1,4 +1,5 @@
 @file:Suppress("SpellCheckingInspection", "VariableNaming")
+
 package base.boudicca
 
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -7,13 +8,12 @@ import org.junit.jupiter.api.Test
 import java.util.*
 
 class UuidV5Test {
-
     // RFC 4122 predefined namespaces
-    private val DNS_NS  = UUID.fromString("6ba7b810-9dad-11d1-80b4-00c04fd430c8")
-    private val URL_NS  = UUID.fromString("6ba7b811-9dad-11d1-80b4-00c04fd430c8")
+    private val dnsNamespace = UUID.fromString("6ba7b810-9dad-11d1-80b4-00c04fd430c8")
+    private val urlNamespace = UUID.fromString("6ba7b811-9dad-11d1-80b4-00c04fd430c8")
 
     // System under test
-    private val v5 = UuidV5(DNS_NS)
+    private val v5 = UuidV5(dnsNamespace)
 
     // -- Core behavior --
 
@@ -28,7 +28,7 @@ class UuidV5Test {
     @Test
     fun `different inputs yield different UUIDs`() {
         val a = v5.from(listOf("Alice", "ProjectX", "Admin"))
-        val b = v5.from(listOf("Bob",   "ProjectX", "Admin"))
+        val b = v5.from(listOf("Bob", "ProjectX", "Admin"))
         assertNotEquals(a, b)
     }
 
@@ -42,8 +42,8 @@ class UuidV5Test {
     @Test
     fun `different namespace changes result`() {
         val keys = listOf("Alice", "ProjectX", "Admin")
-        val withDns = UuidV5(DNS_NS).from(keys)
-        val withUrl = UuidV5(URL_NS).from(keys)
+        val withDns = UuidV5(dnsNamespace).from(keys)
+        val withUrl = UuidV5(urlNamespace).from(keys)
         assertNotEquals(withDns, withUrl)
     }
 
@@ -114,8 +114,8 @@ class UuidV5Test {
     @Test
     fun `version and variant are correct`() {
         val u = v5.from(listOf("Alice", "ProjectX", "Admin"))
-        assertEquals(5, u.version())  // UUIDv5
-        assertEquals(2, u.variant())  // IETF RFC 4122
+        assertEquals(5, u.version()) // UUIDv5
+        assertEquals(2, u.variant()) // IETF RFC 4122
     }
 
     // -- Golden for quick regression detection (algorithm + joining scheme) --

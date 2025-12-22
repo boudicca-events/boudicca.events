@@ -13,10 +13,10 @@ import java.util.*
 
 class EventDbIngestClient(
     private val eventDbUrl: String,
-    user: String, password: String,
-    private val otel: OpenTelemetry = GlobalOpenTelemetry.get()
+    user: String,
+    password: String,
+    private val otel: OpenTelemetry = GlobalOpenTelemetry.get(),
 ) {
-
     private val ingestApi: IngestionApi
 
     init {
@@ -29,22 +29,24 @@ class EventDbIngestClient(
         if (password.isBlank()) {
             error("you need to pass an password!")
         }
-        val apiClient = object : ApiClient() {
-            override fun getHttpClient(): HttpClient? {
-                return JavaHttpClientTelemetry
-                    .builder(otel)
-                    .build()
-                    .newHttpClient(super.getHttpClient())
+        val apiClient =
+            object : ApiClient() {
+                override fun getHttpClient(): HttpClient? =
+                    JavaHttpClientTelemetry
+                        .builder(otel)
+                        .build()
+                        .newHttpClient(super.getHttpClient())
             }
-        }
         apiClient.updateBaseUri(eventDbUrl)
         apiClient.setRequestInterceptor {
             it.header(
                 "Authorization",
-                "Basic " + Base64.getEncoder()
-                    .encodeToString(
-                        ("$user:$password").encodeToByteArray()
-                    )
+                "Basic " +
+                    Base64
+                        .getEncoder()
+                        .encodeToString(
+                            ("$user:$password").encodeToByteArray(),
+                        ),
             )
         }
         ingestApi = IngestionApi(apiClient)
@@ -61,7 +63,9 @@ class EventDbIngestClient(
             throw EventDBException("could not reach eventdb: $eventDbUrl", e)
         }
     }
-
 }
 
-class EventDBException(msg: String, e: ApiException) : RuntimeException(msg, e)
+class EventDBException(
+    msg: String,
+    e: ApiException,
+) : RuntimeException(msg, e)

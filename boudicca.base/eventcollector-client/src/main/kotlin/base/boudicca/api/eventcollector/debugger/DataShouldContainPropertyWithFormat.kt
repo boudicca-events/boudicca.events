@@ -11,18 +11,24 @@ class DataShouldContainPropertyWithFormat(
     private val format: Regex,
     private val severity: ValidationSeverity,
 ) : EventCollectorValidation {
-    override fun validate(event: Event, verbose: Boolean): ValidationResult {
+    override fun validate(
+        event: Event,
+        verbose: Boolean,
+    ): ValidationResult {
         val key = property.getKeyFilter()
         if (event.toStructuredEvent().filterKeys(key).none { it.second.contains(format) }) {
             when (severity) {
-                ValidationSeverity.Info ->
+                ValidationSeverity.Info -> {
                     println("INFO: property $key expected to match format $format".blue())
+                }
 
-                ValidationSeverity.Warn ->
+                ValidationSeverity.Warn -> {
                     println("WARN: property $key expected to match format $format".yellow())
+                }
 
-                ValidationSeverity.Error ->
+                ValidationSeverity.Error -> {
                     println("ERR: property $key expected to match format $format".red())
+                }
             }
             return severity.result
         }

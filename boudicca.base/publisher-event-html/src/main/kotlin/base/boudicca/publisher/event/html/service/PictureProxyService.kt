@@ -16,7 +16,11 @@ import java.net.http.HttpResponse.BodyHandlers
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.*
-import java.util.concurrent.*
+import java.util.concurrent.Callable
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.Executors
+import java.util.concurrent.Future
+import java.util.concurrent.TimeUnit
 import javax.imageio.ImageIO
 import kotlin.math.max
 
@@ -26,8 +30,9 @@ private const val WANTED_HEIGHT = 250
 private const val HOURS_TO_REFRESH = 22L
 
 @Service
-class PictureProxyService(otel: OpenTelemetry) {
-
+class PictureProxyService(
+    otel: OpenTelemetry,
+) {
     private val logger = KotlinLogging.logger {}
 
     private val idToImageCache = ConcurrentHashMap<UUID, Future<CacheEntry>>()
@@ -40,9 +45,10 @@ class PictureProxyService(otel: OpenTelemetry) {
             .builder(otel)
             .build()
             .newHttpClient(
-                HttpClient.newBuilder()
+                HttpClient
+                    .newBuilder()
                     .followRedirects(HttpClient.Redirect.NORMAL)
-                    .build()
+                    .build(),
             )
 
     fun submitPicture(url: String): UUID {
@@ -55,42 +61,50 @@ class PictureProxyService(otel: OpenTelemetry) {
         return triggerRefresh(url, UUID.randomUUID())
     }
 
-    fun getPicture(uuid: UUID): Optional<ByteArray> {
-        return idToImageCache[uuid]?.get()?.optionalPicture ?: Optional.empty()
-    }
+    fun getPicture(uuid: UUID): Optional<ByteArray> = idToImageCache[uuid]?.get()?.optionalPicture ?: Optional.empty()
 
-    private fun triggerRefresh(url: String, uuid: UUID): UUID {
-        idToImageCache[uuid] = executorService.submit(Callable {
-            fetchAndResizeUrl(url)
-        })
+    private fun triggerRefresh(
+        url: String,
+        uuid: UUID,
+    ): UUID {
+        idToImageCache[uuid] =
+            executorService.submit(
+                Callable {
+                    fetchAndResizeUrl(url)
+                },
+            )
         urlToIdCacheEntry[url] = uuid
         return uuid
     }
 
     private fun fetchAndResizeUrl(url: String): CacheEntry {
         try {
-            val request = HttpRequest.newBuilder().GET()
-                .uri(URI.create(url))
-                .build()
+            val request =
+                HttpRequest
+                    .newBuilder()
+                    .GET()
+                    .uri(URI.create(url))
+                    .build()
             val response = httpClient.send(request, BodyHandlers.ofByteArray())
 
-            val optional = if (response.statusCode() != HttpURLConnection.HTTP_OK) {
-                logger.warn { "response code is invalid ${response.statusCode()} for $url" }
-                Optional.empty()
-            } else {
-                val body = response.body()
-                if (body.isEmpty()) {
-                    logger.warn { "empty body for $url" }
+            val optional =
+                if (response.statusCode() != HttpURLConnection.HTTP_OK) {
+                    logger.warn { "response code is invalid ${response.statusCode()} for $url" }
                     Optional.empty()
                 } else {
-                    try {
-                        Optional.of(resize(body))
-                    } catch (e: RuntimeException) {
-                        logger.warn(e) { "error resizing image $url" }
+                    val body = response.body()
+                    if (body.isEmpty()) {
+                        logger.warn { "empty body for $url" }
                         Optional.empty()
+                    } else {
+                        try {
+                            Optional.of(resize(body))
+                        } catch (e: RuntimeException) {
+                            logger.warn(e) { "error resizing image $url" }
+                            Optional.empty()
+                        }
                     }
                 }
-            }
 
             return CacheEntry(optional)
         } catch (e: Exception) {
@@ -99,7 +113,10 @@ class PictureProxyService(otel: OpenTelemetry) {
         }
     }
 
-    private fun checkForRefresh(url: String, uuid: UUID) {
+    private fun checkForRefresh(
+        url: String,
+        uuid: UUID,
+    ) {
         val entry = idToImageCache[uuid]
         if (entry == null || (entry.isDone && shouldRefresh(entry.get().dateAdded))) {
             triggerRefresh(url, uuid)
@@ -125,7 +142,10 @@ class PictureProxyService(otel: OpenTelemetry) {
         return outputStream.toByteArray()
     }
 
-    private fun calcResizedDimensions(width: Int, height: Int): Pair<Int, Int> {
+    private fun calcResizedDimensions(
+        width: Int,
+        height: Int,
+    ): Pair<Int, Int> {
         val widthScaleFactor = WANTED_WIDTH / width.toDouble()
         val heightScaleFactor = WANTED_HEIGHT / height.toDouble()
         val maxScaleFactor = max(widthScaleFactor, heightScaleFactor)
@@ -154,14 +174,9 @@ class PictureProxyService(otel: OpenTelemetry) {
         }
     }
 
-    private fun shouldEvict(dateAdded: Instant): Boolean {
-        return dateAdded.isBefore(Instant.now().minus(1, ChronoUnit.DAYS))
-    }
+    private fun shouldEvict(dateAdded: Instant): Boolean = dateAdded.isBefore(Instant.now().minus(1, ChronoUnit.DAYS))
 
-    private fun shouldRefresh(dateAdded: Instant): Boolean {
-        return dateAdded.isBefore(Instant.now().minus(HOURS_TO_REFRESH, ChronoUnit.HOURS))
-    }
-
+    private fun shouldRefresh(dateAdded: Instant): Boolean = dateAdded.isBefore(Instant.now().minus(HOURS_TO_REFRESH, ChronoUnit.HOURS))
 
     data class CacheEntry(
         val optionalPicture: Optional<ByteArray>,

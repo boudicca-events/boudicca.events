@@ -14,14 +14,12 @@ import io.opentelemetry.context.Context
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicLong
 
-
 class EventCollectionRunner(
     private val eventCollectors: List<EventCollector>,
     private val ingestionInterface: RunnerIngestionInterface,
     private val enricherInterface: RunnerEnricherInterface,
-    otel: OpenTelemetry = OpenTelemetry.noop()
+    otel: OpenTelemetry = OpenTelemetry.noop(),
 ) {
-
     private val logger = KotlinLogging.logger {}
     private val executor = Executors.newVirtualThreadPerTaskExecutor()
     private val tracer = otel.getTracer("EventCollectionRunner")
@@ -37,12 +35,13 @@ class EventCollectionRunner(
                 Collections.startFullCollection()
                 try {
                     val totalEventsCollected = AtomicLong()
-                    eventCollectors.map {
-                        executor.submit {
-                            val eventsCollected = collect(it, span)
-                            totalEventsCollected.updateAndGet { it + eventsCollected }
-                        }
-                    }.forEach { it.get() }
+                    eventCollectors
+                        .map {
+                            executor.submit {
+                                val eventsCollected = collect(it, span)
+                                totalEventsCollected.updateAndGet { it + eventsCollected }
+                            }
+                        }.forEach { it.get() }
                     span.setAttribute("collected_events", totalEventsCollected.get())
                 } finally {
                     Collections.endFullCollection()
@@ -54,12 +53,17 @@ class EventCollectionRunner(
         }
     }
 
-    private fun collect(eventCollector: EventCollector, parentSpan: Span): Long {
-        val span = tracer.spanBuilder("single collection")
-            .setSpanKind(SpanKind.INTERNAL)
-            .setAttribute("collector", eventCollector.getName())
-            .setParent(Context.current().with(parentSpan))
-            .startSpan()
+    private fun collect(
+        eventCollector: EventCollector,
+        parentSpan: Span,
+    ): Long {
+        val span =
+            tracer
+                .spanBuilder("single collection")
+                .setSpanKind(SpanKind.INTERNAL)
+                .setAttribute("collector", eventCollector.getName())
+                .setParent(Context.current().with(parentSpan))
+                .startSpan()
 
         return span.makeCurrent().use {
             Collections.startSingleCollection(eventCollector)
@@ -89,7 +93,10 @@ class EventCollectionRunner(
         }
     }
 
-    private fun validateCollection(eventCollector: EventCollector, events: List<Event>) {
+    private fun validateCollection(
+        eventCollector: EventCollector,
+        events: List<Event>,
+    ) {
         if (events.isEmpty()) {
             logger.warn { "collector collected 0 events!" }
         }
@@ -116,8 +123,8 @@ class EventCollectionRunner(
         }
     }
 
-    private fun enrich(events: List<Event>): List<Event> {
-        return try {
+    private fun enrich(events: List<Event>): List<Event> =
+        try {
             retry(logger) {
                 enricherInterface.enrichEvents(events)
             }
@@ -125,16 +132,18 @@ class EventCollectionRunner(
             logger.error(e) { "enricher threw exception, submitting events un-enriched" }
             events
         }
-    }
 
-    private fun postProcess(event: Event, collectorName: String): Event {
+    private fun postProcess(
+        event: Event,
+        collectorName: String,
+    ): Event {
         if (!event.data.containsKey(SemanticKeys.COLLECTORNAME)) {
             return Event(
                 event.name,
                 event.startDate,
-                event.data.toMutableMap().apply { put(SemanticKeys.COLLECTORNAME, collectorName) })
+                event.data.toMutableMap().apply { put(SemanticKeys.COLLECTORNAME, collectorName) },
+            )
         }
         return event
     }
-
 }

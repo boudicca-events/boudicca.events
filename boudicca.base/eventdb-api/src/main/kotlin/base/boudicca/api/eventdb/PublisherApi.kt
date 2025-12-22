@@ -4,7 +4,7 @@ import base.boudicca.model.Entry
 import io.swagger.v3.oas.annotations.OpenAPIDefinition
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
-import java.util.UUID
+import java.util.*
 import javax.ws.rs.GET
 import javax.ws.rs.Path
 import javax.ws.rs.PathParam
@@ -17,10 +17,10 @@ interface PublisherApi {
             ApiResponse(
                 responseCode = "200",
                 description = "returns all entries from the event db",
-                useReturnTypeSchema = true
-            )
+                useReturnTypeSchema = true,
+            ),
         ],
-        tags = ["publisher"]
+        tags = ["publisher"],
     )
     @GET
     @Path("entries")
@@ -32,17 +32,19 @@ interface PublisherApi {
             ApiResponse(
                 responseCode = "200",
                 description = "returns a single entry by id from the db",
-                useReturnTypeSchema = true
+                useReturnTypeSchema = true,
             ),
             ApiResponse(
                 responseCode = "404",
-                description = "entry not found"
-            )
+                description = "entry not found",
+            ),
         ],
-        tags = ["publisher"]
+        tags = ["publisher"],
     )
     @GET
     @Path("entry/{boudiccaId}")
     @Produces("application/json")
-    fun entry(@PathParam("boudiccaId") boudiccaId: UUID): Entry?
+    fun entry(
+        @PathParam("boudiccaId") boudiccaId: UUID,
+    ): Entry?
 }

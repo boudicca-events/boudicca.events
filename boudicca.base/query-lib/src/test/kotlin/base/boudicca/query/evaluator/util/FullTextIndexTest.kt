@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class FullTextIndexTest {
-
     @Test
     fun emptyCreate() {
         val index = create(listOf(), "name")
@@ -16,24 +15,28 @@ class FullTextIndexTest {
 
     @Test
     fun createWithNonValueField() {
-        val index = create(
-            listOf(
-                mapOf("key" to "value1"),
-                mapOf("key" to "value2"),
-                mapOf("key" to "value3"),
-            ), "name"
-        )
+        val index =
+            create(
+                listOf(
+                    mapOf("key" to "value1"),
+                    mapOf("key" to "value2"),
+                    mapOf("key" to "value3"),
+                ),
+                "name",
+            )
 
         assertEquals(0, index.size())
     }
 
     @Test
     fun createSimple() {
-        val index = create(
-            listOf(
-                mapOf("name" to "value", "description" to "ignored"),
-            ), "name"
-        )
+        val index =
+            create(
+                listOf(
+                    mapOf("name" to "value", "description" to "ignored"),
+                ),
+                "name",
+            )
 
         assertEquals(5, index.size())
         assertEquals(Pair(0, 1), index.get(0))
@@ -45,12 +48,14 @@ class FullTextIndexTest {
 
     @Test
     fun createSimpleWithTwoEntries() {
-        val index = create(
-            listOf(
-                mapOf("name" to "2"),
-                mapOf("name" to "1"),
-            ), "name"
-        )
+        val index =
+            create(
+                listOf(
+                    mapOf("name" to "2"),
+                    mapOf("name" to "1"),
+                ),
+                "name",
+            )
 
         assertEquals(2, index.size())
         assertEquals(Pair(1, 0), index.get(0))
@@ -59,12 +64,14 @@ class FullTextIndexTest {
 
     @Test
     fun createTwoSameValues() {
-        val index = create(
-            listOf(
-                mapOf("name" to "1"),
-                mapOf("name" to "1"),
-            ), "name"
-        )
+        val index =
+            create(
+                listOf(
+                    mapOf("name" to "1"),
+                    mapOf("name" to "1"),
+                ),
+                "name",
+            )
 
         assertEquals(1, index.size())
         assertEquals(0, index.get(0).second)
@@ -73,12 +80,14 @@ class FullTextIndexTest {
 
     @Test
     fun createTwoOneEmptyValues() {
-        val index = create(
-            listOf(
-                mapOf("name" to ""),
-                mapOf("name" to "1"),
-            ), "name"
-        )
+        val index =
+            create(
+                listOf(
+                    mapOf("name" to ""),
+                    mapOf("name" to "1"),
+                ),
+                "name",
+            )
 
         assertEquals(1, index.size())
         assertEquals(Pair(0, 0), index.get(0))
@@ -87,12 +96,14 @@ class FullTextIndexTest {
 
     @Test
     fun caseInsensitiveOrder() {
-        val index = create(
-            listOf(
-                mapOf("name" to "a"),
-                mapOf("name" to "B"),
-            ), "name"
-        )
+        val index =
+            create(
+                listOf(
+                    mapOf("name" to "a"),
+                    mapOf("name" to "B"),
+                ),
+                "name",
+            )
 
         assertEquals(2, index.size())
         assertEquals(Pair(0, 0), index.get(0))
@@ -101,12 +112,14 @@ class FullTextIndexTest {
 
     @Test
     fun simpleContainsSearch() {
-        val index = create(
-            listOf(
-                mapOf("name" to "a"),
-                mapOf("name" to "B"),
-            ), "name"
-        )
+        val index =
+            create(
+                listOf(
+                    mapOf("name" to "a"),
+                    mapOf("name" to "B"),
+                ),
+                "name",
+            )
         val result = index.containsSearch("a")
 
         assertEquals(1, result.cardinality())
@@ -115,13 +128,15 @@ class FullTextIndexTest {
 
     @Test
     fun twoValueBeginningContainsSearch() {
-        val index = create(
-            listOf(
-                mapOf("name" to "this is a name"),
-                mapOf("name" to "this is another name"),
-                mapOf("name" to "whatever"),
-            ), "name"
-        )
+        val index =
+            create(
+                listOf(
+                    mapOf("name" to "this is a name"),
+                    mapOf("name" to "this is another name"),
+                    mapOf("name" to "whatever"),
+                ),
+                "name",
+            )
         val result = index.containsSearch("this is")
 
         assertEquals(2, result.cardinality())
@@ -131,13 +146,15 @@ class FullTextIndexTest {
 
     @Test
     fun twoValueEndContainsSearch() {
-        val index = create(
-            listOf(
-                mapOf("name" to "this is a name"),
-                mapOf("name" to "this is another name"),
-                mapOf("name" to "whatever"),
-            ), "name"
-        )
+        val index =
+            create(
+                listOf(
+                    mapOf("name" to "this is a name"),
+                    mapOf("name" to "this is another name"),
+                    mapOf("name" to "whatever"),
+                ),
+                "name",
+            )
         val result = index.containsSearch("name")
 
         assertEquals(2, result.cardinality())
@@ -147,13 +164,15 @@ class FullTextIndexTest {
 
     @Test
     fun twoValueMiddleContainsSearch() {
-        val index = create(
-            listOf(
-                mapOf("name" to "this is a name"),
-                mapOf("name" to "this is another name"),
-                mapOf("name" to "whatever"),
-            ), "name"
-        )
+        val index =
+            create(
+                listOf(
+                    mapOf("name" to "this is a name"),
+                    mapOf("name" to "this is another name"),
+                    mapOf("name" to "whatever"),
+                ),
+                "name",
+            )
         val result = index.containsSearch("is a")
 
         assertEquals(2, result.cardinality())
@@ -163,13 +182,15 @@ class FullTextIndexTest {
 
     @Test
     fun weirdValuesContainsSearch() {
-        val index = create(
-            listOf(
-                mapOf("name" to ""),
-                mapOf("name" to "TEST"),
-                mapOf("name" to "test 😘"),
-            ), "name"
-        )
+        val index =
+            create(
+                listOf(
+                    mapOf("name" to ""),
+                    mapOf("name" to "TEST"),
+                    mapOf("name" to "test 😘"),
+                ),
+                "name",
+            )
         val result = index.containsSearch("test")
 
         assertEquals(2, result.cardinality())
@@ -179,11 +200,13 @@ class FullTextIndexTest {
 
     @Test
     fun caseInsensitiveContainsSearch() {
-        val index = create(
-            listOf(
-                mapOf("name" to "teST"),
-            ), "name"
-        )
+        val index =
+            create(
+                listOf(
+                    mapOf("name" to "teST"),
+                ),
+                "name",
+            )
         val result = index.containsSearch("TESt")
 
         assertEquals(1, result.cardinality())
@@ -192,18 +215,21 @@ class FullTextIndexTest {
 
     @Test
     fun nothingFoundContainsSearch() {
-        val index = create(
-            listOf(
-                mapOf("name" to "value"),
-                mapOf("name" to "value2"),
-            ), "name"
-        )
+        val index =
+            create(
+                listOf(
+                    mapOf("name" to "value"),
+                    mapOf("name" to "value2"),
+                ),
+                "name",
+            )
         val result = index.containsSearch("other")
 
         assertEquals(0, result.cardinality())
     }
 
-    private fun create(entries: List<Entry>, field: String): FullTextIndex {
-        return FullTextIndex(entries, field)
-    }
+    private fun create(
+        entries: List<Entry>,
+        field: String,
+    ): FullTextIndex = FullTextIndex(entries, field)
 }

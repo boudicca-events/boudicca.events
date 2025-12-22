@@ -12,33 +12,41 @@ import base.boudicca.model.structured.Variant
  * see DATA_MODEL.md docs for more information on key filters
  */
 object KeyFilters {
+    fun filterKeys(
+        keyFilter: KeyFilter,
+        event: StructuredEvent,
+    ): List<Pair<Key, String>> = filterKeys(keyFilter, event.toEntry())
 
-    fun filterKeys(keyFilter: KeyFilter, event: StructuredEvent): List<Pair<Key, String>> {
-        return filterKeys(keyFilter, event.toEntry())
-    }
-
-    fun filterKeys(keyFilter: KeyFilter, data: StructuredEntry): List<Pair<Key, String>> {
-        return data
+    fun filterKeys(
+        keyFilter: KeyFilter,
+        data: StructuredEntry,
+    ): List<Pair<Key, String>> =
+        data
             .filter { doesKeyMatchFilter(it.key, keyFilter) }
             .toList()
             .sortedBy { it.first }
-    }
 
     fun doesKeyMatchFilter(
         key: Key,
-        keyFilter: KeyFilter
-    ): Boolean {
-        return ((isWildcard(keyFilter) || keyFilter.name == key.name) &&
-                keyContainsAllVariants(keyFilter, key))
-    }
+        keyFilter: KeyFilter,
+    ): Boolean =
+        (
+            (isWildcard(keyFilter) || keyFilter.name == key.name) &&
+                keyContainsAllVariants(keyFilter, key)
+        )
 
-    private fun keyContainsAllVariants(keyFilter: KeyFilter, key: Key) =
-        keyFilter.variants.all { variant -> containsVariant(key, variant) }
+    private fun keyContainsAllVariants(
+        keyFilter: KeyFilter,
+        key: Key,
+    ) = keyFilter.variants.all { variant -> containsVariant(key, variant) }
 
     private fun isWildcard(keyFilter: KeyFilter) = keyFilter.name == "*"
 
     @Suppress("ReturnCount")
-    fun containsVariant(key: Key, variant: Variant): Boolean {
+    fun containsVariant(
+        key: Key,
+        variant: Variant,
+    ): Boolean {
         if (variant.variantValue == "*") {
             return doesContainVariantName(key, variant.variantName)
         }
@@ -50,13 +58,15 @@ object KeyFilters {
                 variant.variantValue == selfVariant.variantValue
             ) {
                 return true
-
             }
         }
         return false
     }
 
-    private fun doesContainVariantName(key: Key, variantName: String): Boolean {
+    private fun doesContainVariantName(
+        key: Key,
+        variantName: String,
+    ): Boolean {
         for (variant in key.variants) {
             if (variantName == variant.variantName) {
                 return true
@@ -65,7 +75,11 @@ object KeyFilters {
         return false
     }
 
-    fun doesContainVariantValue(key: Key, variantName: String, variantValues: List<String>): Boolean {
+    fun doesContainVariantValue(
+        key: Key,
+        variantName: String,
+        variantValues: List<String>,
+    ): Boolean {
         for (value in variantValues) {
             if (containsVariant(key, Variant(variantName, value))) {
                 return true

@@ -18,7 +18,6 @@ import java.util.concurrent.ConcurrentHashMap
 
 @Service
 class FiltersService {
-
     @Volatile
     private var entries = emptyList<StructuredEntry>()
     private val cache = ConcurrentHashMap<String, List<String>>()
@@ -51,14 +50,13 @@ class FiltersService {
             entry
                 .filterKeys(KeyFilter.parse(filterQuery.name))
                 .flatMap {
-                    //TODO can we find utils/a generic way to do this check?
+                    // TODO can we find utils/a generic way to do this check?
                     if (isList(it.first)) {
                         ListFormatAdapter().fromString(it.second)
                     } else {
                         listOf(it.second)
                     }
-                }
-                .forEach {
+                }.forEach {
                     result.add(it)
                 }
         }
@@ -66,15 +64,13 @@ class FiltersService {
         return result.toList()
     }
 
-    //TODO find better place to place those utils?
-    private fun isList(key: Key): Boolean {
-        return KeyFilters.containsVariant(
+    // TODO find better place to place those utils?
+    private fun isList(key: Key): Boolean =
+        KeyFilters.containsVariant(
             key,
             Variant(
                 VariantConstants.FORMAT_VARIANT_NAME,
-                VariantConstants.FormatVariantConstants.LIST_FORMAT_NAME
-            )
+                VariantConstants.FormatVariantConstants.LIST_FORMAT_NAME,
+            ),
         )
-    }
-
 }

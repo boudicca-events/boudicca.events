@@ -3,7 +3,6 @@ package base.boudicca.keyfilters
 import base.boudicca.SemanticKeys
 import base.boudicca.model.structured.StructuredEntry
 import base.boudicca.model.structured.VariantConstants
-import base.boudicca.model.structured.key
 import base.boudicca.model.structured.toEvent
 import base.boudicca.model.toStructuredEntry
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -13,10 +12,11 @@ import org.junit.jupiter.api.Test
 class KeySelectorTest {
     @Test
     fun testWithOnlyPropertyName() {
-        val result = KeySelector
-            .builder("description")
-            .build()
-            .selectSingle(testEntry())
+        val result =
+            KeySelector
+                .builder("description")
+                .build()
+                .selectSingle(testEntry())
 
         assertTrue(result.isPresent)
         assertEquals("description", result.get().first.toKeyString())
@@ -24,11 +24,12 @@ class KeySelectorTest {
 
     @Test
     fun testWithOneVariant() {
-        val result = KeySelector
-            .builder("name")
-            .thenVariant("format", listOf("markdown", ""))
-            .build()
-            .selectSingle(testEntry())
+        val result =
+            KeySelector
+                .builder("name")
+                .thenVariant("format", listOf("markdown", ""))
+                .build()
+                .selectSingle(testEntry())
 
         assertTrue(result.isPresent)
         assertEquals("name", result.get().first.toKeyString())
@@ -36,22 +37,24 @@ class KeySelectorTest {
 
     @Test
     fun testWithWrongPropertyName() {
-        val result = KeySelector
-            .builder("notavailable")
-            .build()
-            .selectSingle(testEntry())
+        val result =
+            KeySelector
+                .builder("notavailable")
+                .build()
+                .selectSingle(testEntry())
 
         assertTrue(result.isEmpty)
     }
 
     @Test
     fun testWithMultipleVariants1() {
-        val result = KeySelector
-            .builder("description")
-            .thenVariant("lang", listOf("de", "", "*"))
-            .thenVariant("format", listOf("markdown", ""))
-            .build()
-            .selectSingle(testEntry())
+        val result =
+            KeySelector
+                .builder("description")
+                .thenVariant("lang", listOf("de", "", "*"))
+                .thenVariant("format", listOf("markdown", ""))
+                .build()
+                .selectSingle(testEntry())
 
         assertTrue(result.isPresent)
         assertEquals("description:lang=de", result.get().first.toKeyString())
@@ -59,12 +62,13 @@ class KeySelectorTest {
 
     @Test
     fun testWithMultipleVariants2() {
-        val result = KeySelector
-            .builder("description")
-            .thenVariant("lang", listOf("en", "", "*"))
-            .thenVariant("format", listOf("markdown", ""))
-            .build()
-            .selectSingle(testEntry())
+        val result =
+            KeySelector
+                .builder("description")
+                .thenVariant("lang", listOf("en", "", "*"))
+                .thenVariant("format", listOf("markdown", ""))
+                .build()
+                .selectSingle(testEntry())
 
         assertTrue(result.isPresent)
         assertEquals("description:format=markdown:lang=en", result.get().first.toKeyString())
@@ -72,12 +76,13 @@ class KeySelectorTest {
 
     @Test
     fun testWithMultipleVariants3() {
-        val result = KeySelector
-            .builder("description")
-            .thenVariant("lang", listOf("fr", "", "*"))
-            .thenVariant("format", listOf("markdown", ""))
-            .build()
-            .selectSingle(testEntry())
+        val result =
+            KeySelector
+                .builder("description")
+                .thenVariant("lang", listOf("fr", "", "*"))
+                .thenVariant("format", listOf("markdown", ""))
+                .build()
+                .selectSingle(testEntry())
 
         assertTrue(result.isPresent)
         assertEquals("description", result.get().first.toKeyString())
@@ -85,25 +90,27 @@ class KeySelectorTest {
 
     @Test
     fun testWithMultipleVariantsNoResult() {
-        val result = KeySelector
-            .builder("description")
-            .thenVariant("lang", listOf("fr", "cz"))
-            .thenVariant("format", listOf("markdown", ""))
-            .build()
-            .selectSingle(testEntry())
+        val result =
+            KeySelector
+                .builder("description")
+                .thenVariant("lang", listOf("fr", "cz"))
+                .thenVariant("format", listOf("markdown", ""))
+                .build()
+                .selectSingle(testEntry())
 
         assertTrue(result.isEmpty)
     }
 
     @Test
     fun testWith3Variants() {
-        val result = KeySelector
-            .builder("description")
-            .thenVariant("lang", listOf("de", "en"))
-            .thenVariant("format", listOf("whatever", "markdown"))
-            .thenVariant("anothervariant", listOf("val1", "val2", ""))
-            .build()
-            .selectSingle(testEntry())
+        val result =
+            KeySelector
+                .builder("description")
+                .thenVariant("lang", listOf("de", "en"))
+                .thenVariant("format", listOf("whatever", "markdown"))
+                .thenVariant("anothervariant", listOf("val1", "val2", ""))
+                .build()
+                .selectSingle(testEntry())
 
         assertTrue(result.isPresent)
         assertEquals("description:format=markdown:lang=en", result.get().first.toKeyString())
@@ -111,10 +118,11 @@ class KeySelectorTest {
 
     @Test
     fun testWithEvent() {
-        val result = KeySelector
-            .builder("name")
-            .build()
-            .selectSingle(testEntry().toEvent().get())
+        val result =
+            KeySelector
+                .builder("name")
+                .build()
+                .selectSingle(testEntry().toEvent().get())
 
         assertTrue(result.isPresent)
         assertEquals("name", result.get().first.toKeyString())
@@ -122,17 +130,19 @@ class KeySelectorTest {
 
     @Test
     fun testDsl() {
-        val keySelector = keySelector(SemanticKeys.DESCRIPTION) {
-            thenVariant(
-                VariantConstants.LANGUAGE_VARIANT_NAME,
-                "de", "en"
-            )
-            thenVariant(
-                VariantConstants.FORMAT_VARIANT_NAME,
-                VariantConstants.FormatVariantConstants.MARKDOWN_FORMAT_NAME,
-                VariantConstants.FormatVariantConstants.TEXT_FORMAT_NAME
-            )
-        }
+        val keySelector =
+            keySelector(SemanticKeys.DESCRIPTION) {
+                thenVariant(
+                    VariantConstants.LANGUAGE_VARIANT_NAME,
+                    "de",
+                    "en",
+                )
+                thenVariant(
+                    VariantConstants.FORMAT_VARIANT_NAME,
+                    VariantConstants.FormatVariantConstants.MARKDOWN_FORMAT_NAME,
+                    VariantConstants.FormatVariantConstants.TEXT_FORMAT_NAME,
+                )
+            }
 
         val result = keySelector.selectSingle(testEntry())
 
@@ -140,8 +150,8 @@ class KeySelectorTest {
         assertEquals("description:lang=de", result.get().first.toKeyString())
     }
 
-    private fun testEntry(): StructuredEntry {
-        return mapOf(
+    private fun testEntry(): StructuredEntry =
+        mapOf(
             "name" to "My Event",
             "startDate" to "2024-04-27T23:59:00+02:00",
             "startDate:format=date" to "2024-04-27T23:59:00+02:00",
@@ -149,7 +159,6 @@ class KeySelectorTest {
             "description" to "my default lang description",
             "description:lang=de" to "meine deutsche beschreibung",
             "description:lang=en" to "my english description",
-            "description:format=markdown:lang=en" to "#my english markdown description"
+            "description:format=markdown:lang=en" to "#my english markdown description",
         ).toStructuredEntry()
-    }
 }

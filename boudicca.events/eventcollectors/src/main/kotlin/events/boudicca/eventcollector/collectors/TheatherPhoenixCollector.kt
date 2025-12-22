@@ -16,7 +16,8 @@ class TheatherPhoenixCollector : TwoStepEventCollector<Pair<Element, Element>>("
 
     override fun getAllUnparsedEvents(): List<Pair<Element, Element>> {
         val document = Jsoup.parse(fetcher.fetchUrl("$baseUrl/termine"))
-        return document.select("div.terminecol div.onecolum > div.terminlink")
+        return document
+            .select("div.terminecol div.onecolum > div.terminlink")
             .map {
                 val slug = it.attr("rel").removePrefix("/termine/")
                 val details = document.select("div#termindetail div.termininfo[slug=$slug]").single()
@@ -41,7 +42,7 @@ class TheatherPhoenixCollector : TwoStepEventCollector<Pair<Element, Element>>("
         return structuredEvent(name, date) {
             withProperty(
                 SemanticKeys.URL_PROPERTY,
-                UrlUtils.parse(baseUrl, link.attr("rel"))
+                UrlUtils.parse(baseUrl, link.attr("rel")),
             )
             withProperty(SemanticKeys.TYPE_PROPERTY, "theater")
             withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(pictureUrl))

@@ -5,18 +5,11 @@ class Token(
     private val token: String? = null,
     private val number: Number? = null,
 ) {
+    fun getType(): TokenType = type
 
-    fun getType(): TokenType {
-        return type
-    }
+    fun getToken(): String? = token
 
-    fun getToken(): String? {
-        return token
-    }
-
-    fun getNumber(): Number? {
-        return number
-    }
+    fun getNumber(): Number? = number
 }
 
 enum class TokenType {

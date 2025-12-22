@@ -9,5 +9,5 @@ data class BoudiccaSearchProperties(
 )
 
 data class EventDBProperties(
-    val url: String
+    val url: String,
 )

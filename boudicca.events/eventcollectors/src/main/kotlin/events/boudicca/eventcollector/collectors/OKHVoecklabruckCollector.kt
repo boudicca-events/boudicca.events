@@ -22,8 +22,8 @@ class OKHVoecklabruckCollector : TwoStepEventCollector<Pair<String, String>>("ok
             events.add(
                 Pair(
                     it.select("a.event-inner").attr("href"),
-                    it.select("div.event-art").text()
-                )
+                    it.select("div.event-art").text(),
+                ),
             )
         }
         return events
@@ -46,9 +46,13 @@ class OKHVoecklabruckCollector : TwoStepEventCollector<Pair<String, String>>("ok
         if (!pictureUrl.startsWith("http")) {
             pictureUrl = baseUrl + pictureUrl
         }
-        val pictureCopyright = eventSite.select("div.credit p").text()
-            .ifBlank { "Offenes Kulturhaus Vöcklabruck" }
-            .replace("""(Foto:)|(\(c\))|©""".toRegex(), "").trim()
+        val pictureCopyright =
+            eventSite
+                .select("div.credit p")
+                .text()
+                .ifBlank { "Offenes Kulturhaus Vöcklabruck" }
+                .replace("""(Foto:)|(\(c\))|©""".toRegex(), "")
+                .trim()
 
         return structuredEvent(name, dates) {
             withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(url))

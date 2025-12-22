@@ -28,11 +28,12 @@ class PlanetTTCollector : TwoStepEventCollector<Element>("planettt") {
     override fun getAllUnparsedEvents(): List<Element> {
         val nonces = fetchNonces()
         modalNonce = nonces.second
-        val response = fetcher.fetchUrlPost(
-            "https://planet.tt/wp-admin/admin-ajax.php",
-            "application/x-www-form-urlencoded; charset=UTF-8",
-            "action=pl_events_list&_ajax_nonce=${nonces.first}&start=0&length=200&search=&location=&eventid=-1"
-        )
+        val response =
+            fetcher.fetchUrlPost(
+                "https://planet.tt/wp-admin/admin-ajax.php",
+                "application/x-www-form-urlencoded; charset=UTF-8",
+                "action=pl_events_list&_ajax_nonce=${nonces.first}&start=0&length=200&search=&location=&eventid=-1",
+            )
         val jsonResponse = Parser.default().parse(StringReader(response)) as JsonObject
         val events = Jsoup.parse(jsonResponse.obj("data")!!.string("events")!!)
         return events.select("div.pl-card")
@@ -55,11 +56,12 @@ class PlanetTTCollector : TwoStepEventCollector<Element>("planettt") {
     override fun parseMultipleStructuredEvents(event: Element): List<StructuredEvent?> {
         val eventId = event.attr("data-eventid")
         val postId = event.attr("data-postid")
-        val response = fetcher.fetchUrlPost(
-            "https://planet.tt/wp-admin/admin-ajax.php",
-            "application/x-www-form-urlencoded; charset=UTF-8",
-            "action=pl_events_modal&_ajax_nonce=$modalNonce&eventid=$eventId&postid=$postId"
-        )
+        val response =
+            fetcher.fetchUrlPost(
+                "https://planet.tt/wp-admin/admin-ajax.php",
+                "application/x-www-form-urlencoded; charset=UTF-8",
+                "action=pl_events_modal&_ajax_nonce=$modalNonce&eventid=$eventId&postid=$postId",
+            )
         val jsonResponse = Parser.default().parse(StringReader(response)) as JsonObject
         val fullEvent = Jsoup.parse(jsonResponse.string("data")!!)
 
@@ -81,8 +83,9 @@ class PlanetTTCollector : TwoStepEventCollector<Element>("planettt") {
             withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, "Planet Music")
             withProperty(
                 SemanticKeys.DESCRIPTION_TEXT_PROPERTY,
-                fullEvent.select("div.pl-modal-desc > p")
-                    .text() + "\n" + fullEvent.select("div.pl-modal-desc > div.acts").text()
+                fullEvent
+                    .select("div.pl-modal-desc > p")
+                    .text() + "\n" + fullEvent.select("div.pl-modal-desc > div.acts").text(),
             )
             withProperty(SemanticKeys.TYPE_PROPERTY, "concert")
             withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(url))

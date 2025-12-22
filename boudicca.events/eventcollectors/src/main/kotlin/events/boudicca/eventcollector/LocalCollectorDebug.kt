@@ -17,17 +17,13 @@ fun main() {
         // this debugger caches all fetcher calls locally to avoid spamming the server when developing.
         // if there are problems with old data or something like that just delete the file and restart the debugger
         .setFetcherCache(FileBackedFetcherCache(File("./fetcher.cache")))
-
-        //enable one of the two lines to also use the online or local enricher
+        // enable one of the two lines to also use the online or local enricher
 //        .enableEnricher("https://enricher.boudicca.events")
 //        .enableEnricher("http://localhost:8085")
-
-        //enable this line to ingest the collected events into the local eventdb (this uses the configuration from the application.properties)
+        // enable this line to ingest the collected events into the local eventdb (this uses the configuration from the application.properties)
 //        .enableIngestion()
-
-        //enable to test remote collectors !!DON'T FORGET TO DISABLE THE FETCHER CACHE!! for example: https://github.com/boudicca-events/remote-collector-samples
+        // enable to test remote collectors !!DON'T FORGET TO DISABLE THE FETCHER CACHE!! for example: https://github.com/boudicca-events/remote-collector-samples
 //        .debug(RemoteCollectorCollector("http://localhost:8080"))
-
-        //enable/add any collectors you want to test here
+        // enable/add any collectors you want to test here
         .debug(ZuckerfabrikCollector())
 }

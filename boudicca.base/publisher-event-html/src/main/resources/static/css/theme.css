@@ -1,166 +1,166 @@
 @layer default {
 
-:root {
-    /** colors */
-    --color-white: white;
-    --color-main-grey: #ccc;
-    --color-icon: inherit;
-    --color-button: #eee;
+    :root {
+        /** colors */
+        --color-white: white;
+        --color-main-grey: #ccc;
+        --color-icon: inherit;
+        --color-button: #eee;
 
-    /** Categories **/
-    /** others **/
-    --color-main: #d5f1f9;
-    --color-main-light: rgba(213,241,249,0.6);
-    /** art **/
-    --color-main-yellow: #ffee5b;
-    --color-main-yellow-light: rgba(255,238,91,0.5);
-    --color-main-yellow-focus: #fff6ad;
-    /** music **/
-    --color-main-red: #f78989;
-    --color-main-red-light: rgba(245,108,108,0.2);
-    /** tech **/
-    --color-main-green: #aafbaa;
-    --color-main-green-light: rgba(152,251,152,0.35);
-    /** sport **/
-    --color-main-sand: #dec5ab;
-    --color-main-sand-light: rgba(222,197,171,0.6);
+        /** Categories **/
+        /** others **/
+        --color-main: #d5f1f9;
+        --color-main-light: rgba(213, 241, 249, 0.6);
+        /** art **/
+        --color-main-yellow: #ffee5b;
+        --color-main-yellow-light: rgba(255, 238, 91, 0.5);
+        --color-main-yellow-focus: #fff6ad;
+        /** music **/
+        --color-main-red: #f78989;
+        --color-main-red-light: rgba(245, 108, 108, 0.2);
+        /** tech **/
+        --color-main-green: #aafbaa;
+        --color-main-green-light: rgba(152, 251, 152, 0.35);
+        /** sport **/
+        --color-main-sand: #dec5ab;
+        --color-main-sand-light: rgba(222, 197, 171, 0.6);
 
-    /** font family */
-    --font-family-open-sans: 'Open Sans', Arial, Helvetica, sans-serif;
+        /** font family */
+        --font-family-open-sans: 'Open Sans', Arial, Helvetica, sans-serif;
 
-    /** layout */
-    --max-main-width: 1200px;
+        /** layout */
+        --max-main-width: 1200px;
 
-    /** responsive breakpoints */
-    /** https://bholmes.dev/blog/alternative-to-css-variable-media-queries/ */
-    /** --max-mobile-width: 700px; */
-    /** --max-tablet-width: 970px; */
+        /** responsive breakpoints */
+        /** https://bholmes.dev/blog/alternative-to-css-variable-media-queries/ */
+        /** --max-mobile-width: 700px; */
+        /** --max-tablet-width: 970px; */
 
-    /** font size */
-    --font-size-xxsmall: 0.65em;
-    --font-size-xsmall: 0.75em;
-    --font-size-small: 0.85em;
-    --font-size-medium: 1em;
-    --font-size-large: 1.25em;
-    --font-size-xlarge: 1.4em;
-    --font-size-xxlarge: 1.5em;
+        /** font size */
+        --font-size-xxsmall: 0.65em;
+        --font-size-xsmall: 0.75em;
+        --font-size-small: 0.85em;
+        --font-size-medium: 1em;
+        --font-size-large: 1.25em;
+        --font-size-xlarge: 1.4em;
+        --font-size-xxlarge: 1.5em;
 
-    /** spacing */
-    --space-small: 4px;
-    --space-medium: 8px;
-    --space-large: 16px;
-    --space-xlarge: 24px;
-    --space-xxlarge: 32px;
+        /** spacing */
+        --space-small: 4px;
+        --space-medium: 8px;
+        --space-large: 16px;
+        --space-xlarge: 24px;
+        --space-xxlarge: 32px;
 
-    /** events **/
-    --anchor-to-eventpage-border-color: black;
-    --anchor-to-eventpage-background-color: var(--color-white);
-    --event-card-size: 220px;
+        /** events **/
+        --anchor-to-eventpage-border-color: black;
+        --anchor-to-eventpage-background-color: var(--color-white);
+        --event-card-size: 220px;
 
-    --input-background-color: inherit;
-    --font-color: inherit;
-    --font-color-dark: #444;
-    --font-color-lighter: #333;
+        --input-background-color: inherit;
+        --font-color: inherit;
+        --font-color-dark: #444;
+        --font-color-lighter: #333;
 
-    --color-filterSearchButton: #ccc;
+        --color-filterSearchButton: #ccc;
 
-    --border-radius-small: 4px;
-    --border-radius-medium: 8px;
-}
+        --border-radius-small: 4px;
+        --border-radius-medium: 8px;
+    }
 
-html {
-    font-size: 1.125em
-}
+    html {
+        font-size: 1.125em
+    }
 
-* {
-    font-family: var(--font-family-open-sans);
-    box-sizing: border-box;
-    color: var(--font-color);
-}
+    * {
+        font-family: var(--font-family-open-sans);
+        box-sizing: border-box;
+        color: var(--font-color);
+    }
 
-*:focus-visible {
-    background-color: var(--color-main-yellow-focus);
-}
+    *:focus-visible {
+        background-color: var(--color-main-yellow-focus);
+    }
 
-p {
-    margin: 0;
-}
+    p {
+        margin: 0;
+    }
 
-button {
-    outline: none;
-    border: none;
-    appearance: none;
-    background-color: transparent;
-    cursor: pointer;
-}
+    button {
+        outline: none;
+        border: none;
+        appearance: none;
+        background-color: transparent;
+        cursor: pointer;
+    }
 
-.svgsprite {
-    position: absolute;
-    width: 0;
-}
+    .svgsprite {
+        position: absolute;
+        width: 0;
+    }
 
-svg {
-    color: var(--color-icon);
-    fill: var(--color-icon);
-}
+    svg {
+        color: var(--color-icon);
+        fill: var(--color-icon);
+    }
 
-.visible-hidden {
-    position: absolute;
-    position: absolute !important;
-    width: 1px !important;
-    height: 1px !important;
-    padding: 0 !important;
-    margin: -1px !important;
-    overflow: hidden !important;
-    clip: rect(0,0,0,0) !important;
-    white-space: nowrap !important;
-    border: 0 !important;
-}
+    .visible-hidden {
+        position: absolute;
+        position: absolute !important;
+        width: 1px !important;
+        height: 1px !important;
+        padding: 0 !important;
+        margin: -1px !important;
+        overflow: hidden !important;
+        clip: rect(0, 0, 0, 0) !important;
+        white-space: nowrap !important;
+        border: 0 !important;
+    }
 
-legend {
-    margin: 0;
-    padding: 0;
-}
+    legend {
+        margin: 0;
+        padding: 0;
+    }
 
-input, select {
-    font-size: var(--font-size-small);
-    border: 1px solid;
-    padding: 8px 12px;
-    background-color: var(--input-background-color);
-}
+    input, select {
+        font-size: var(--font-size-small);
+        border: 1px solid;
+        padding: 8px 12px;
+        background-color: var(--input-background-color);
+    }
 
-input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-}
+    input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+    }
 
-input[type="checkbox"]:focus {
-    background-color: var(--color-main-yellow-focus);
-}
+    input[type="checkbox"]:focus {
+        background-color: var(--color-main-yellow-focus);
+    }
 
-select {
-    width: 100%;
-}
+    select {
+        width: 100%;
+    }
 
-input:focus-visible, button:focus-visible, select:focus-visible {
-    outline: 2px solid;
-    outline-offset: 1px;
-}
+    input:focus-visible, button:focus-visible, select:focus-visible {
+        outline: 2px solid;
+        outline-offset: 1px;
+    }
 
-a {
-    color: black;
-}
+    a {
+        color: black;
+    }
 
-h1 {
-    font-size: var(--font-size-xlarge);
-}
+    h1 {
+        font-size: var(--font-size-xlarge);
+    }
 
-h2 {
-    font-size: var(--font-size-large);
-}
+    h2 {
+        font-size: var(--font-size-large);
+    }
 
-h3 {
-    font-size: var(--font-size-medium);
-}
+    h3 {
+        font-size: var(--font-size-medium);
+    }
 
 } /* default layer */

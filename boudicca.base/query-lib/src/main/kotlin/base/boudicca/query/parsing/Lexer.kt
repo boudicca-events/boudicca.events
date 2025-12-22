@@ -3,14 +3,13 @@ package base.boudicca.query.parsing
 import base.boudicca.query.QueryException
 import java.math.BigDecimal
 
-
-class Lexer(private val query: String) {
-
+class Lexer(
+    private val query: String,
+) {
     private var i = 0
     private val tokens = mutableListOf<Token>()
 
     fun lex(): List<Token> {
-
         while (i < query.length) {
             val c = query[i]
             when {

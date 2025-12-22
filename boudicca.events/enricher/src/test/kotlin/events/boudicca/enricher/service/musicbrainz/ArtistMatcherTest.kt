@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test
 import java.nio.ByteBuffer
 
 class ArtistMatcherTest {
-
     @Test
     fun emptyInput() {
         val artistMatcher = testMatcher(emptyList(), ByteArray(0))
@@ -27,14 +26,18 @@ class ArtistMatcherTest {
 
     @Test
     fun testSingleArtistMatch() {
-        val artistMatcher = testMatcher(
-            listOf(
-                Artist("artist", null)
-            ),
-            byteArrayOf(
-                0x00, 0x00, 0x00, 0x00,
+        val artistMatcher =
+            testMatcher(
+                listOf(
+                    Artist("artist", null),
+                ),
+                byteArrayOf(
+                    0x00,
+                    0x00,
+                    0x00,
+                    0x00,
+                ),
             )
-        )
 
         val result = artistMatcher.findArtists("artist")
 
@@ -44,18 +47,28 @@ class ArtistMatcherTest {
 
     @Test
     fun testThreeArtists() {
-        val artistMatcher = testMatcher(
-            listOf(
-                Artist("b", null),
-                Artist("a", null),
-                Artist("c", null),
-            ),
-            byteArrayOf(
-                0x00, 0x00, 0x00, 0x01,
-                0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x02,
+        val artistMatcher =
+            testMatcher(
+                listOf(
+                    Artist("b", null),
+                    Artist("a", null),
+                    Artist("c", null),
+                ),
+                byteArrayOf(
+                    0x00,
+                    0x00,
+                    0x00,
+                    0x01,
+                    0x00,
+                    0x00,
+                    0x00,
+                    0x00,
+                    0x00,
+                    0x00,
+                    0x00,
+                    0x02,
+                ),
             )
-        )
 
         var result = artistMatcher.findArtists("a")
         assertEquals(1, result.size)
@@ -72,18 +85,28 @@ class ArtistMatcherTest {
 
     @Test
     fun testThreeArtistsMatch() {
-        val artistMatcher = testMatcher(
-            listOf(
-                Artist("a", null),
-                Artist("b", null),
-                Artist("c", null),
-            ),
-            byteArrayOf(
-                0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x01,
-                0x00, 0x00, 0x00, 0x02,
+        val artistMatcher =
+            testMatcher(
+                listOf(
+                    Artist("a", null),
+                    Artist("b", null),
+                    Artist("c", null),
+                ),
+                byteArrayOf(
+                    0x00,
+                    0x00,
+                    0x00,
+                    0x00,
+                    0x00,
+                    0x00,
+                    0x00,
+                    0x01,
+                    0x00,
+                    0x00,
+                    0x00,
+                    0x02,
+                ),
             )
-        )
 
         val result = artistMatcher.findArtists("a b c")
         assertEquals(3, result.size)
@@ -94,18 +117,28 @@ class ArtistMatcherTest {
 
     @Test
     fun testLongerArtistMatch() {
-        val artistMatcher = testMatcher(
-            listOf(
-                Artist("artist fancy name", null),
-                Artist("b", null),
-                Artist("c", null),
-            ),
-            byteArrayOf(
-                0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x01,
-                0x00, 0x00, 0x00, 0x02,
+        val artistMatcher =
+            testMatcher(
+                listOf(
+                    Artist("artist fancy name", null),
+                    Artist("b", null),
+                    Artist("c", null),
+                ),
+                byteArrayOf(
+                    0x00,
+                    0x00,
+                    0x00,
+                    0x00,
+                    0x00,
+                    0x00,
+                    0x00,
+                    0x01,
+                    0x00,
+                    0x00,
+                    0x00,
+                    0x02,
+                ),
             )
-        )
 
         val result = artistMatcher.findArtists("this is artist fancy name show")
         assertEquals(1, result.size)
@@ -114,18 +147,28 @@ class ArtistMatcherTest {
 
     @Test
     fun testCaseInsensitive() {
-        val artistMatcher = testMatcher(
-            listOf(
-                Artist("a", null),
-                Artist("b", null),
-                Artist("c", null),
-            ),
-            byteArrayOf(
-                0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x01,
-                0x00, 0x00, 0x00, 0x02,
+        val artistMatcher =
+            testMatcher(
+                listOf(
+                    Artist("a", null),
+                    Artist("b", null),
+                    Artist("c", null),
+                ),
+                byteArrayOf(
+                    0x00,
+                    0x00,
+                    0x00,
+                    0x00,
+                    0x00,
+                    0x00,
+                    0x00,
+                    0x01,
+                    0x00,
+                    0x00,
+                    0x00,
+                    0x02,
+                ),
             )
-        )
 
         val result = artistMatcher.findArtists("A")
         assertEquals(1, result.size)
@@ -134,14 +177,18 @@ class ArtistMatcherTest {
 
     @Test
     fun testNoSubmatch() {
-        val artistMatcher = testMatcher(
-            listOf(
-                Artist("a", null),
-            ),
-            byteArrayOf(
-                0x00, 0x00, 0x00, 0x00,
+        val artistMatcher =
+            testMatcher(
+                listOf(
+                    Artist("a", null),
+                ),
+                byteArrayOf(
+                    0x00,
+                    0x00,
+                    0x00,
+                    0x00,
+                ),
             )
-        )
 
         val result = artistMatcher.findArtists("ab")
         assertEquals(0, result.size)
@@ -149,14 +196,18 @@ class ArtistMatcherTest {
 
     @Test
     fun testSubmatchWithSpecialChar() {
-        val artistMatcher = testMatcher(
-            listOf(
-                Artist("a", null),
-            ),
-            byteArrayOf(
-                0x00, 0x00, 0x00, 0x00,
+        val artistMatcher =
+            testMatcher(
+                listOf(
+                    Artist("a", null),
+                ),
+                byteArrayOf(
+                    0x00,
+                    0x00,
+                    0x00,
+                    0x00,
+                ),
             )
-        )
 
         val result = artistMatcher.findArtists("a&b")
         assertEquals(1, result.size)
@@ -164,16 +215,23 @@ class ArtistMatcherTest {
 
     @Test
     fun testArtistWithSpecialChar() {
-        val artistMatcher = testMatcher(
-            listOf(
-                Artist("a&b", null),
-                Artist("a - b", null),
-            ),
-            byteArrayOf(
-                0x00, 0x00, 0x00, 0x01,
-                0x00, 0x00, 0x00, 0x00,
+        val artistMatcher =
+            testMatcher(
+                listOf(
+                    Artist("a&b", null),
+                    Artist("a - b", null),
+                ),
+                byteArrayOf(
+                    0x00,
+                    0x00,
+                    0x00,
+                    0x01,
+                    0x00,
+                    0x00,
+                    0x00,
+                    0x00,
+                ),
             )
-        )
 
         var result = artistMatcher.findArtists("show of a&b wow")
         assertEquals(1, result.size)
@@ -183,7 +241,8 @@ class ArtistMatcherTest {
         assertEquals("a - b", result[0].name)
     }
 
-    private fun testMatcher(artists: List<Artist>, bytes: ByteArray): ArtistMatcher {
-        return ArtistMatcher(artists, ByteBuffer.wrap(bytes))
-    }
+    private fun testMatcher(
+        artists: List<Artist>,
+        bytes: ByteArray,
+    ): ArtistMatcher = ArtistMatcher(artists, ByteBuffer.wrap(bytes))
 }

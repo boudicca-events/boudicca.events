@@ -42,12 +42,13 @@ class TheaterInDerInnenstadtCollector : TwoStepEventCollector<Pair<Element, Stri
             imgSrc = logoSrc
         }
 
-        val type: String? = when {
-            description.lowercase().contains("theater") -> "theater"
-            description.lowercase().contains("musical") -> "musical"
-            description.lowercase().contains("comedy") -> "comedy"
-            else -> null
-        }
+        val type: String? =
+            when {
+                description.lowercase().contains("theater") -> "theater"
+                description.lowercase().contains("musical") -> "musical"
+                description.lowercase().contains("comedy") -> "comedy"
+                else -> null
+            }
 
         return structuredEvent(name, startDateTime) {
             withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(eventUrl))

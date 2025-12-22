@@ -18,13 +18,12 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 
 class FormatAdapterTest {
-
-    @Suppress("detekt:EnumNaming")
+    @Suppress("detekt:EnumNaming", "ktlint:standard:enum-entry-name-case")
     enum class TestEnum {
         // caPItaLIzAtIOn HeRE iS ON purPOSE, pls do not change
         asdf,
         Bsdf,
-        CSDF_TEST
+        CSDF_TEST,
     }
 
     @Test
@@ -82,14 +81,15 @@ class FormatAdapterTest {
 
     @Test
     fun `MarkdownProperty should be able to convert to data value and back`() {
-        val mdText = """
+        val mdText =
+            """
             # this is a multiline markdown text
-            
+
             the idea of this text is to encode and decode the text
             without a loss.
             since this is a text property under the hood it should be easy
             right? Right? RIGHT?
-        """.trimIndent()
+            """.trimIndent()
 
         val prop = MarkdownProperty("test")
 
@@ -132,6 +132,4 @@ class FormatAdapterTest {
 
         assertThat(strValue).isEqualTo(uriString)
     }
-
-
 }

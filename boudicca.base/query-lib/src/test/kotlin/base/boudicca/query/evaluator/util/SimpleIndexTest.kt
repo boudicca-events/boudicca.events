@@ -38,7 +38,5 @@ class SimpleIndexTest {
         assertEquals(bitsetOf(3), index.search { it?.compareTo("a") ?: -1 })
     }
 
-    private fun createIndex(list: List<String>): SimpleIndex<String> {
-        return SimpleIndex.create(list, Comparator.naturalOrder())
-    }
+    private fun createIndex(list: List<String>): SimpleIndex<String> = SimpleIndex.create(list, Comparator.naturalOrder())
 }

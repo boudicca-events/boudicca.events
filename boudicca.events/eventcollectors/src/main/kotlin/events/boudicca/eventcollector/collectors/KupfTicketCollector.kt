@@ -32,12 +32,13 @@ class KupfTicketCollector : TwoStepEventCollector<String>("kupfticket") {
             eventSlugs.addAll(jsonObject.lookup("props.pageProps.events.edges.node.slug"))
 
             val hasNext = jsonObject.lookup<Boolean>("props.pageProps.events.pageInfo.hasNextPage").first()
-            currentUrl = if (hasNext) {
-                "$baseUrl/cursor/after/" +
-                    jsonObject.lookup<String>("props.pageProps.events.pageInfo.endCursor").first()
-            } else {
-                null
-            }
+            currentUrl =
+                if (hasNext) {
+                    "$baseUrl/cursor/after/" +
+                        jsonObject.lookup<String>("props.pageProps.events.pageInfo.endCursor").first()
+                } else {
+                    null
+                }
         }
 
         return eventSlugs.toList()
@@ -79,18 +80,15 @@ class KupfTicketCollector : TwoStepEventCollector<String>("kupfticket") {
         }
     }
 
-    private fun splitLocation(location: String): Pair<String, String?> {
-        return if (location.count { it == ',' } > 2) { // probably location name + address
+    private fun splitLocation(location: String): Pair<String, String?> =
+        if (location.count { it == ',' } > 2) { // probably location name + address
             val split = location.split(",", limit = 2)
             Pair(split[0].trim(), split[1].trim())
         } else {
             Pair(location, null)
         }
-    }
 
-    private fun parseDate(date: String): OffsetDateTime {
-        return OffsetDateTime.parse(date, DateTimeFormatter.ISO_DATE_TIME)
-    }
+    private fun parseDate(date: String): OffsetDateTime = OffsetDateTime.parse(date, DateTimeFormatter.ISO_DATE_TIME)
 
     private fun htmlToCleanTextWithLineBreaks(html: String): String {
         val doc = Jsoup.parse(html)

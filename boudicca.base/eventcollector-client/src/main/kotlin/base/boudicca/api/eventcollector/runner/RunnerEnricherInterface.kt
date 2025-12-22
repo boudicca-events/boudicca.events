@@ -6,7 +6,6 @@ import base.boudicca.model.Event
 import io.opentelemetry.api.OpenTelemetry
 
 fun interface RunnerEnricherInterface {
-
     companion object {
         fun createFromConfiguration(otel: OpenTelemetry = OpenTelemetry.noop()): RunnerEnricherInterface {
             val enricherUrl = Configuration.getProperty("boudicca.enricher.url")

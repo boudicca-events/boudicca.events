@@ -19,44 +19,37 @@ data class FullCollection(
         Collections.synchronizedList(mutableListOf()),
         Collections.synchronizedList(mutableListOf()),
         0,
-        0
+        0,
     )
 
-    override fun toString(): String {
-        return """
-                FullCollection(
-                    id=$id, 
-                    startTime=$startTime, 
-                    endTime=$endTime, 
-                    singleCollections=$singleCollections, 
-                    logLines=$logLines, 
-                    errorCount=$errorCount, 
-                    warningCount=$warningCount
-                )""".trimIndent()
-    }
+    override fun toString(): String =
+        """
+        FullCollection(
+            id=$id, 
+            startTime=$startTime, 
+            endTime=$endTime, 
+            singleCollections=$singleCollections, 
+            logLines=$logLines, 
+            errorCount=$errorCount, 
+            warningCount=$warningCount
+        )
+        """.trimIndent()
 
     /**
      * gets the error count for this full collection + each single collection
      */
-    fun getTotalErrorCount(): Int {
-        return errorCount + singleCollections.sumOf { it.errorCount }
-    }
+    fun getTotalErrorCount(): Int = errorCount + singleCollections.sumOf { it.errorCount }
 
     /**
      * gets the warning count for this full collection + each single collection
      */
-    fun getTotalWarningCount(): Int {
-        return warningCount + singleCollections.sumOf { it.warningCount }
-    }
+    fun getTotalWarningCount(): Int = warningCount + singleCollections.sumOf { it.warningCount }
 
     /**
      * gets all log lines for this full collection + each single collection. please note that those loglines
      * are not sorted by time but by single-/fullcollection
      */
-    fun getAllLogLines(): List<String> {
-        return logLines + singleCollections.flatMap { it.logLines }
-    }
-
+    fun getAllLogLines(): List<String> = logLines + singleCollections.flatMap { it.logLines }
 }
 
 data class SingleCollection(
@@ -79,23 +72,23 @@ data class SingleCollection(
         mutableListOf(),
         mutableListOf(),
         0,
-        0
+        0,
     )
 
-    override fun toString(): String {
-        return """
-            SingleCollection(
-                id=$id, 
-                collectorName='$collectorName', 
-                startTime=$startTime, 
-                endTime=$endTime, 
-                totalEventsCollected=$totalEventsCollected, 
-                httpCalls=$httpCalls, 
-                logLines=$logLines, 
-                errorCount=$errorCount, 
-                warningCount=$warningCount
-            )""".trimIndent()
-    }
+    override fun toString(): String =
+        """
+        SingleCollection(
+            id=$id, 
+            collectorName='$collectorName', 
+            startTime=$startTime, 
+            endTime=$endTime, 
+            totalEventsCollected=$totalEventsCollected, 
+            httpCalls=$httpCalls, 
+            logLines=$logLines, 
+            errorCount=$errorCount, 
+            warningCount=$warningCount
+        )
+        """.trimIndent()
 }
 
 data class HttpCall(

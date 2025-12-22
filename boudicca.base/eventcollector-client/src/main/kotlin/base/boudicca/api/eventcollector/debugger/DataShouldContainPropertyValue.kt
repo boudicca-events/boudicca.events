@@ -11,18 +11,24 @@ class DataShouldContainPropertyValue<T>(
     private val value: T,
     private val severity: ValidationSeverity,
 ) : EventCollectorValidation {
-    override fun validate(event: Event, verbose: Boolean): ValidationResult {
+    override fun validate(
+        event: Event,
+        verbose: Boolean,
+    ): ValidationResult {
         val key = property.getKey()
         if (event.toStructuredEvent().getProperty(property).none { it == value }) {
             when (severity) {
-                ValidationSeverity.Info ->
+                ValidationSeverity.Info -> {
                     println("INFO: property $key expected to contain $value".blue())
+                }
 
-                ValidationSeverity.Warn ->
+                ValidationSeverity.Warn -> {
                     println("WARN: property $key expected to contain $value".yellow())
+                }
 
-                ValidationSeverity.Error ->
+                ValidationSeverity.Error -> {
                     println("ERR: property $key expected to contain $value".red())
+                }
             }
             return severity.result
         }

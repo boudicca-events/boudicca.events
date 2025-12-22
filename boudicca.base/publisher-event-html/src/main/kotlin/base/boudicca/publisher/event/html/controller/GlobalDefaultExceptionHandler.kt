@@ -12,7 +12,6 @@ import org.springframework.web.servlet.ModelAndView
 import org.springframework.web.servlet.resource.NoResourceFoundException
 import java.util.*
 
-
 @ControllerAdvice
 class GlobalDefaultExceptionHandler {
     companion object {
@@ -21,7 +20,10 @@ class GlobalDefaultExceptionHandler {
 
     @ExceptionHandler(value = [Exception::class])
     @Throws(Exception::class)
-    fun defaultErrorHandler(req: HttpServletRequest, e: Exception): ModelAndView {
+    fun defaultErrorHandler(
+        req: HttpServletRequest,
+        e: Exception,
+    ): ModelAndView {
         if (AnnotationUtils.findAnnotation(e.javaClass, ResponseStatus::class.java) != null) {
             throw e
         }
@@ -41,13 +43,14 @@ class GlobalDefaultExceptionHandler {
 
     private fun handleErrorUnknown(
         req: HttpServletRequest,
-        e: Exception
+        e: Exception,
     ): ModelAndView {
         val errorId = UUID.randomUUID().toString()
 
-        MDC.putCloseable("errorId", errorId)
+        MDC
+            .putCloseable("errorId", errorId)
             .use {
-                logger.error(e) { "errorId '${errorId}' handling url '${req.requestURL}' with queryParams '${req.queryString}'" }
+                logger.error(e) { "errorId '$errorId' handling url '${req.requestURL}' with queryParams '${req.queryString}'" }
             }
 
         val mav = ModelAndView()
@@ -57,6 +60,3 @@ class GlobalDefaultExceptionHandler {
         return mav
     }
 }
-
-
-

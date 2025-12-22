@@ -2,10 +2,8 @@ package base.boudicca.format
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 
 class ListFormatAdapterParseToStringTest {
-
     @Test
     fun testEmptyList() {
         val result = convertToString(listOf())
@@ -62,7 +60,5 @@ class ListFormatAdapterParseToStringTest {
         assertEquals("value,,", result)
     }
 
-    private fun convertToString(value: List<String>): String {
-        return ListFormatAdapter().convertToString(value)
-    }
+    private fun convertToString(value: List<String>): String = ListFormatAdapter().convertToString(value)
 }

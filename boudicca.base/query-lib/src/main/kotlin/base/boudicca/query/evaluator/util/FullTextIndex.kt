@@ -9,34 +9,31 @@ import java.text.BreakIterator
 import java.util.*
 
 @Suppress("detekt:MagicNumber")
-class FullTextIndex(entries: List<Entry>, field: String) {
-
+class FullTextIndex(
+    entries: List<Entry>,
+    field: String,
+) {
     private val words = getWords(entries, field)
     private val index = createIndex()
 
-    fun get(i: Int): Pair<Int, Int> {
-        return Pair(index.getInt(i * 8), index.getInt(i * 8 + 4))
-    }
+    fun get(i: Int): Pair<Int, Int> = Pair(index.getInt(i * 8), index.getInt(i * 8 + 4))
 
-    fun size(): Int {
-        return index.capacity() / 8
-    }
+    fun size(): Int = index.capacity() / 8
 
-    fun getEntriesForWord(i: Int): BitSet {
-        return words[i].second
-    }
+    fun getEntriesForWord(i: Int): BitSet = words[i].second
 
     fun containsSearch(text: String): BitSet {
         val searchWords = breakText(text.lowercase())
-        val subResults = searchWords.map { word ->
-            val (lower, upper) = containsSearchIndices(word)
+        val subResults =
+            searchWords.map { word ->
+                val (lower, upper) = containsSearchIndices(word)
 
-            val result = BitSet()
-            for (i in lower until upper) {
-                result.or(words[get(i).first].second)
+                val result = BitSet()
+                for (i in lower until upper) {
+                    result.or(words[get(i).first].second)
+                }
+                result
             }
-            result
-        }
 
         if (subResults.isEmpty()) {
             return BitSet()
@@ -51,61 +48,68 @@ class FullTextIndex(entries: List<Entry>, field: String) {
     }
 
     private fun containsSearchIndices(lowerText: CharBuffer): Pair<Int, Int> {
-        val lower = binarySearch { i ->
-            val matches = startsWith(i, lowerText)
-            if (matches) {
-                if (i - 1 < 0 || !startsWith(i - 1, lowerText)) {
-                    0
+        val lower =
+            binarySearch { i ->
+                val matches = startsWith(i, lowerText)
+                if (matches) {
+                    if (i - 1 < 0 || !startsWith(i - 1, lowerText)) {
+                        0
+                    } else {
+                        1
+                    }
                 } else {
-                    1
+                    val (vI, sI) = get(i)
+                    val word = words[vI].first
+                    word.subSequence(sI, word.capacity()).compareTo(lowerText)
                 }
-            } else {
-                val (vI, sI) = get(i)
-                val word = words[vI].first
-                word.subSequence(sI, word.capacity()).compareTo(lowerText)
             }
-        }
         if (lower == -1) {
-            //nothing found
+            // nothing found
             return Pair(-1, -1)
         }
-        val upper = binarySearch { i ->
-            val matches = startsWith(i, lowerText)
-            if (matches) {
-                if (i + 1 >= size() || !startsWith(i + 1, lowerText)) {
-                    0
+        val upper =
+            binarySearch { i ->
+                val matches = startsWith(i, lowerText)
+                if (matches) {
+                    if (i + 1 >= size() || !startsWith(i + 1, lowerText)) {
+                        0
+                    } else {
+                        -1
+                    }
                 } else {
-                    -1
+                    val (vI, sI) = get(i)
+                    val word = words[vI].first
+                    word.subSequence(sI, word.capacity()).compareTo(lowerText)
                 }
-            } else {
-                val (vI, sI) = get(i)
-                val word = words[vI].first
-                word.subSequence(sI, word.capacity()).compareTo(lowerText)
             }
-        }
         return Pair(lower, upper + 1)
     }
 
-    private fun startsWith(i: Int, lowerPrefix: CharBuffer): Boolean {
+    private fun startsWith(
+        i: Int,
+        lowerPrefix: CharBuffer,
+    ): Boolean {
         val (vI, sI) = get(i)
-        return words[vI].first.startsWith(lowerPrefix, sI, false) //ignore case already done by lowering everything
+        return words[vI].first.startsWith(lowerPrefix, sI, false) // ignore case already done by lowering everything
     }
 
-    private fun binarySearch(comparator: (Int) -> Int): Int {
-        return EvaluatorUtil.binarySearch(0, size(), comparator)
-    }
+    private fun binarySearch(comparator: (Int) -> Int): Int = EvaluatorUtil.binarySearch(0, size(), comparator)
 
-    private fun getWords(entries: List<Entry>, field: String): List<Pair<CharBuffer, BitSet>> {
+    private fun getWords(
+        entries: List<Entry>,
+        field: String,
+    ): List<Pair<CharBuffer, BitSet>> {
         val key = Key.parse(field)
         val words = mutableMapOf<CharBuffer, BitSet>()
         entries.forEachIndexed { entryIndex, entry ->
             if (!entry[field].isNullOrEmpty()) {
                 val entryValue = entry[field]!!
-                val values = if (EvaluatorUtil.isList(key)) {
-                    ListFormatAdapter().fromString(entryValue)
-                } else {
-                    listOf(entryValue)
-                }
+                val values =
+                    if (EvaluatorUtil.isList(key)) {
+                        ListFormatAdapter().fromString(entryValue)
+                    } else {
+                        listOf(entryValue)
+                    }
                 val newWords = values.flatMap { breakText(it.lowercase()) }
 
                 newWords.forEach { newWord ->
@@ -159,23 +163,25 @@ class FullTextIndex(entries: List<Entry>, field: String) {
 
     private fun sort(index: ByteBuffer): ByteBuffer {
         EvaluatorUtil.sort(
-            0, index.capacity() / 8,
-            SortableByteBuffer(index, words)
+            0,
+            index.capacity() / 8,
+            SortableByteBuffer(index, words),
         )
         return index
     }
 
-    class SortableByteBuffer(private val byteBuffer: ByteBuffer, private val values: List<Pair<CharBuffer, BitSet>>) :
-        EvaluatorUtil.Sortable<ByteBuffer> {
-        override fun get(): ByteBuffer {
-            return byteBuffer
-        }
+    class SortableByteBuffer(
+        private val byteBuffer: ByteBuffer,
+        private val values: List<Pair<CharBuffer, BitSet>>,
+    ) : EvaluatorUtil.Sortable<ByteBuffer> {
+        override fun get(): ByteBuffer = byteBuffer
 
-        override fun copy(): EvaluatorUtil.Sortable<ByteBuffer> {
-            return SortableByteBuffer(ByteBuffer.wrap(byteBuffer.array().copyOf()), values)
-        }
+        override fun copy(): EvaluatorUtil.Sortable<ByteBuffer> = SortableByteBuffer(ByteBuffer.wrap(byteBuffer.array().copyOf()), values)
 
-        override fun compare(i: Int, j: Int): Int {
+        override fun compare(
+            i: Int,
+            j: Int,
+        ): Int {
             val vI1 = byteBuffer.getInt(i * 8)
             val sI1 = byteBuffer.getInt(i * 8 + 4)
             val vI2 = byteBuffer.getInt(j * 8)
@@ -187,7 +193,10 @@ class FullTextIndex(entries: List<Entry>, field: String) {
             return subValue1.compareTo(subValue2)
         }
 
-        override fun swap(i: Int, j: Int) {
+        override fun swap(
+            i: Int,
+            j: Int,
+        ) {
             val vI = byteBuffer.getInt(i * 8)
             val sI = byteBuffer.getInt(i * 8 + 4)
             byteBuffer.putInt(i * 8, byteBuffer.getInt(j * 8))
@@ -196,12 +205,14 @@ class FullTextIndex(entries: List<Entry>, field: String) {
             byteBuffer.putInt(j * 8 + 4, sI)
         }
 
-        override fun setFrom(i: Int, src: EvaluatorUtil.Sortable<ByteBuffer>, j: Int) {
+        override fun setFrom(
+            i: Int,
+            src: EvaluatorUtil.Sortable<ByteBuffer>,
+            j: Int,
+        ) {
             val otherByteBuffer = src.get()
             byteBuffer.putInt(i * 8, otherByteBuffer.getInt(j * 8))
             byteBuffer.putInt(i * 8 + 4, otherByteBuffer.getInt(j * 8 + 4))
         }
-
     }
 }
-

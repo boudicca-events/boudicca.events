@@ -12,7 +12,6 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 
 class KunstuniversitaetLinzCollector : TwoStepEventCollector<String>("kunstunilinz") {
-
     private val fetcher = FetcherFactory.newFetcher()
 
     override fun getAllUnparsedEvents(): List<String> {
@@ -56,11 +55,11 @@ class KunstuniversitaetLinzCollector : TwoStepEventCollector<String>("kunstunili
             withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(imgSrc))
             withProperty(
                 SemanticKeys.LOCATION_NAME_PROPERTY,
-                if (location.isBlank()) "Kunstuniversität Linz" else location
+                if (location.isBlank()) "Kunstuniversität Linz" else location,
             )
             withProperty(
                 SemanticKeys.LOCATION_URL_PROPERTY,
-                UrlUtils.parse(locationUrl.ifBlank { "https://www.kunstuni-linz.at/" })
+                UrlUtils.parse(locationUrl.ifBlank { "https://www.kunstuni-linz.at/" }),
             )
             withProperty(SemanticKeys.LOCATION_ADDRESS_PROPERTY, locationAddress)
             withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, "Kunstuniversität Linz")
@@ -72,5 +71,4 @@ class KunstuniversitaetLinzCollector : TwoStepEventCollector<String>("kunstunili
 
         return DateParser.parse(fullDateTime)
     }
-
 }

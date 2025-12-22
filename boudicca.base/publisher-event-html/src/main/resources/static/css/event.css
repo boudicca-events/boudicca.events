@@ -1,308 +1,309 @@
 @layer default {
 
-.events-grid {
-    gap: var(--space-xlarge);
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(250px, 100%),1fr));
-}
-
-.event {
-    display: flex;
-    flex-direction: column;
-    box-shadow: rgba(0, 0, 0, 0.1) 1px 2px 9px;
-    background-color: white;
-    border-radius: var(--border-radius-medium);
-    cursor: pointer;
-}
-
-.event:hover {
-    box-shadow: rgba(0, 0, 0, 0.3) 1px 2px 9px;
-}
-
-.event-title {
-    font-size: var(--font-size-large);
-    margin-bottom: var(--space-medium);
-    font-weight: 600;
-    /** https://stackoverflow.com/questions/3922739/limit-text-length-to-n-lines-using-css */
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    -webkit-box-orient: vertical;
-}
-
-.event-image {
-    height: 220px;
-    background-color: var(--color-main);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    border-radius: var(--border-radius-medium) var(--border-radius-medium) 0 0;
-}
-
-.event-image img {
-    max-height: 85%;
-    max-width: 85%;
-    object-fit: contain;
-    border-radius: var(--border-radius-medium);
-}
-
-.event-image-modal {
-    height: 300px;
-    width: 500px;
-    max-width: 100%;
-    padding: var(--space-large);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    border-radius: var(--border-radius-medium);
-    background-color: var(--color-main);
-}
-
-.event-image-tech, .event-image-modal-tech {
-    background-color: var(--color-main-green);
-}
-
-.event-image-miscArt, .event-image-modal-miscArt {
-    background-color: var(--color-main-yellow);
-}
-
-.event-image-music, .event-image-modal-music {
-    background-color: var(--color-main-red);
-}
-
-.event-image-sport, .event-image-modal-sport {
-    background-color: var(--color-main-sand);
-}
-
-.event-description {
-    padding: var(--space-large);
-    font-size: var(--font-size-small);
-}
-
-.anchor-to-eventmodal {
-    color: inherit;
-    text-decoration: none;
-    text-align: center;
-    font-size: var(--font-size-xsmall);
-    margin-top: var(--space-large);
-    padding: var(--space-medium) var(--space-xlarge);
-    background-color: var(--anchor-to-eventpage-background-color);
-    font-weight: bold;
-    border-radius: var(--border-radius-small);
-    box-shadow: rgba(0, 0, 0, 0.2) 1px 2px 6px;
-    max-width: 300px;
-}
-
-.event-details {
-    display: grid;
-    grid-template-columns: max-content 1fr;
-    align-items: start;
-    gap: var(--space-medium);
-}
-
-.event-details-wrapper {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-medium);
-}
-
-.modal .event-details-wrapper {
-    height: 100%;
-    justify-content: space-between;
-    margin-top: var(--space-large);
-}
-
-.modal .event-details svg {
-    margin-top: 2px;
-}
-
-.event-image-modal img {
-    max-height: 98%;
-    max-width: 98%;
-    border-radius: var(--border-radius-medium);
-    object-fit: contain;
-}
-
-.modal-row-image {
-    display: flex;
-    flex-direction: row;
-    gap: var(--space-xxlarge);
-}
-
-.event-modal-chips {
-    display: flex;
-    gap: var(--space-medium);
-    flex-wrap: wrap;
-}
-
-.event-modal-chip {
-    padding: var(--space-small) var(--space-medium);
-    border-radius: 20px;
-    background-color: var(--color-main-light);
-}
-
-.modal-close {
-    display: flex;
-    position: absolute;
-    right: 0;
-    padding: var(--space-large);
-    top: 0;
-}
-
-.image-copyright-info {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    padding: var(--space-small);
-    background-color: rgba(255, 255, 255, 0.8);
-    border-radius: var(--border-radius-medium) 0 0 0;
-    font-size: var(--font-size-xxsmall);
-}
-
-.accessibility-details {
-    display: flex;
-    background-color: var(--color-white);
-    position: absolute;
-    left: var(--space-medium);
-    padding: var(--space-medium);
-    box-shadow: rgba(0, 0, 0, 0.1) 1px 2px 2px;
-    top: var(--space-medium);
-    border-radius: var(--border-radius-small);
-}
-
-#loadMoreButton {
-    font-size: var(--font-size-large);
-    margin-top: var(--space-xxlarge);
-    width: 100%;
-}
-
-#endOfResults,
-#resultNotFound {
-    display: flex;
-    font-size: var(--font-size-large);
-    margin-top: var(--space-xxlarge);
-    flex-direction: column;
-    gap: var(--space-medium);
-}
-
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 100;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0,0,0,0.4);
-}
-
-.modal h2 {
-    margin: 0.1em 0 1em 0;
-}
-
-.modal-flex {
-    display: flex;
-    flex-direction: column;
-    padding: var(--space-xxlarge);
-    border-radius: var(--border-radius-medium) var(--border-radius-medium) 0 0;
-}
-
-.modal-tabs {
-    border-radius: 0 0 var(--border-radius-small) var(--border-radius-small);
-    padding: 0 var(--space-xxlarge) var(--space-xlarge) var(--space-xxlarge);
-}
-
-.modal-column {
-    display: flex;
-    gap: var(--space-large);
-    flex-direction: column;
-    width: -webkit-fill-available;
-}
-
-#modal-content {
-    background-color: var(--color-white);
-    margin: 5% auto;
-    width: 80%;
-    max-width: 970px;
-    position: relative;
-    border-radius: var(--border-radius-medium);
-}
-
-.details-box {
-    max-height: 400px;
-    overflow: auto;
-}
-
-.details-box ul {
-    margin: 0;
-    padding-top: var(--space-large);
-    padding-bottom: var(--space-small);
-    overflow: hidden;
-    list-style: none;
-    padding-left: 0;
-}
-
-.details-box li a {
-    text-decoration: none;
-    line-height: 40px;
-    font-weight: bold;
-}
-
-#category-OTHER-chip, #category-OTHER-label {
-    background-color: var(--color-main-light);
-}
-
-.event-details-miscArt, .event-modal-chip-miscArt, #category-ART-chip, #category-ART-label {
-    background-color: var(--color-main-yellow-light);
-}
-
-.event-details-tech, .event-modal-chip-tech, #category-TECH-chip, #category-TECH-label {
-    background-color: var(--color-main-green-light);
-}
-
-.event-details-music, .event-modal-chip-music, #category-MUSIC-chip, #category-MUSIC-label {
-    background-color: var(--color-main-red-light);
-}
-
-.event-details-sport, .event-modal-chip-sport, #category-SPORT-chip, #category-SPORT-label {
-    background-color: var(--color-main-sand-light);
-}
-
-.details-box article {
-    margin-top: var(--space-medium);
-    margin-bottom: var(--space-medium);
-    display: -webkit-box;
-    /* https://stackoverflow.com/questions/15909489/text-overflow-ellipsis-on-two-lines */
-    -webkit-line-clamp: 10;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.details-box article p {
-    white-space: pre-line;
-}
-
-@media only screen and (max-width: 970px) {
-    .event-image-modal {
-        width: -webkit-fill-available;
+    .events-grid {
+        gap: var(--space-xlarge);
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(min(250px, 100%), 1fr));
     }
+
+    .event {
+        display: flex;
+        flex-direction: column;
+        box-shadow: rgba(0, 0, 0, 0.1) 1px 2px 9px;
+        background-color: white;
+        border-radius: var(--border-radius-medium);
+        cursor: pointer;
+    }
+
+    .event:hover {
+        box-shadow: rgba(0, 0, 0, 0.3) 1px 2px 9px;
+    }
+
+    .event-title {
+        font-size: var(--font-size-large);
+        margin-bottom: var(--space-medium);
+        font-weight: 600;
+        /** https://stackoverflow.com/questions/3922739/limit-text-length-to-n-lines-using-css */
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+
+    .event-image {
+        height: 220px;
+        background-color: var(--color-main);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        border-radius: var(--border-radius-medium) var(--border-radius-medium) 0 0;
+    }
+
+    .event-image img {
+        max-height: 85%;
+        max-width: 85%;
+        object-fit: contain;
+        border-radius: var(--border-radius-medium);
+    }
+
+    .event-image-modal {
+        height: 300px;
+        width: 500px;
+        max-width: 100%;
+        padding: var(--space-large);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        border-radius: var(--border-radius-medium);
+        background-color: var(--color-main);
+    }
+
+    .event-image-tech, .event-image-modal-tech {
+        background-color: var(--color-main-green);
+    }
+
+    .event-image-miscArt, .event-image-modal-miscArt {
+        background-color: var(--color-main-yellow);
+    }
+
+    .event-image-music, .event-image-modal-music {
+        background-color: var(--color-main-red);
+    }
+
+    .event-image-sport, .event-image-modal-sport {
+        background-color: var(--color-main-sand);
+    }
+
+    .event-description {
+        padding: var(--space-large);
+        font-size: var(--font-size-small);
+    }
+
+    .anchor-to-eventmodal {
+        color: inherit;
+        text-decoration: none;
+        text-align: center;
+        font-size: var(--font-size-xsmall);
+        margin-top: var(--space-large);
+        padding: var(--space-medium) var(--space-xlarge);
+        background-color: var(--anchor-to-eventpage-background-color);
+        font-weight: bold;
+        border-radius: var(--border-radius-small);
+        box-shadow: rgba(0, 0, 0, 0.2) 1px 2px 6px;
+        max-width: 300px;
+    }
+
+    .event-details {
+        display: grid;
+        grid-template-columns: max-content 1fr;
+        align-items: start;
+        gap: var(--space-medium);
+    }
+
+    .event-details-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-medium);
+    }
+
+    .modal .event-details-wrapper {
+        height: 100%;
+        justify-content: space-between;
+        margin-top: var(--space-large);
+    }
+
+    .modal .event-details svg {
+        margin-top: 2px;
+    }
+
+    .event-image-modal img {
+        max-height: 98%;
+        max-width: 98%;
+        border-radius: var(--border-radius-medium);
+        object-fit: contain;
+    }
+
     .modal-row-image {
+        display: flex;
+        flex-direction: row;
+        gap: var(--space-xxlarge);
+    }
+
+    .event-modal-chips {
+        display: flex;
+        gap: var(--space-medium);
+        flex-wrap: wrap;
+    }
+
+    .event-modal-chip {
+        padding: var(--space-small) var(--space-medium);
+        border-radius: 20px;
+        background-color: var(--color-main-light);
+    }
+
+    .modal-close {
+        display: flex;
+        position: absolute;
+        right: 0;
+        padding: var(--space-large);
+        top: 0;
+    }
+
+    .image-copyright-info {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        padding: var(--space-small);
+        background-color: rgba(255, 255, 255, 0.8);
+        border-radius: var(--border-radius-medium) 0 0 0;
+        font-size: var(--font-size-xxsmall);
+    }
+
+    .accessibility-details {
+        display: flex;
+        background-color: var(--color-white);
+        position: absolute;
+        left: var(--space-medium);
+        padding: var(--space-medium);
+        box-shadow: rgba(0, 0, 0, 0.1) 1px 2px 2px;
+        top: var(--space-medium);
+        border-radius: var(--border-radius-small);
+    }
+
+    #loadMoreButton {
+        font-size: var(--font-size-large);
+        margin-top: var(--space-xxlarge);
+        width: 100%;
+    }
+
+    #endOfResults,
+    #resultNotFound {
+        display: flex;
+        font-size: var(--font-size-large);
+        margin-top: var(--space-xxlarge);
+        flex-direction: column;
+        gap: var(--space-medium);
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 100;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    .modal h2 {
+        margin: 0.1em 0 1em 0;
+    }
+
+    .modal-flex {
+        display: flex;
+        flex-direction: column;
+        padding: var(--space-xxlarge);
+        border-radius: var(--border-radius-medium) var(--border-radius-medium) 0 0;
+    }
+
+    .modal-tabs {
+        border-radius: 0 0 var(--border-radius-small) var(--border-radius-small);
+        padding: 0 var(--space-xxlarge) var(--space-xlarge) var(--space-xxlarge);
+    }
+
+    .modal-column {
+        display: flex;
         gap: var(--space-large);
         flex-direction: column;
+        width: -webkit-fill-available;
     }
-}
 
-@media only screen and (max-width: 700px) {
     #modal-content {
-        margin: 0;
-        width: 100%;
-        border-radius: 0 0 var(--border-radius-medium) var(--border-radius-medium);
+        background-color: var(--color-white);
+        margin: 5% auto;
+        width: 80%;
+        max-width: 970px;
+        position: relative;
+        border-radius: var(--border-radius-medium);
     }
-}
+
+    .details-box {
+        max-height: 400px;
+        overflow: auto;
+    }
+
+    .details-box ul {
+        margin: 0;
+        padding-top: var(--space-large);
+        padding-bottom: var(--space-small);
+        overflow: hidden;
+        list-style: none;
+        padding-left: 0;
+    }
+
+    .details-box li a {
+        text-decoration: none;
+        line-height: 40px;
+        font-weight: bold;
+    }
+
+    #category-OTHER-chip, #category-OTHER-label {
+        background-color: var(--color-main-light);
+    }
+
+    .event-details-miscArt, .event-modal-chip-miscArt, #category-ART-chip, #category-ART-label {
+        background-color: var(--color-main-yellow-light);
+    }
+
+    .event-details-tech, .event-modal-chip-tech, #category-TECH-chip, #category-TECH-label {
+        background-color: var(--color-main-green-light);
+    }
+
+    .event-details-music, .event-modal-chip-music, #category-MUSIC-chip, #category-MUSIC-label {
+        background-color: var(--color-main-red-light);
+    }
+
+    .event-details-sport, .event-modal-chip-sport, #category-SPORT-chip, #category-SPORT-label {
+        background-color: var(--color-main-sand-light);
+    }
+
+    .details-box article {
+        margin-top: var(--space-medium);
+        margin-bottom: var(--space-medium);
+        display: -webkit-box;
+        /* https://stackoverflow.com/questions/15909489/text-overflow-ellipsis-on-two-lines */
+        -webkit-line-clamp: 10;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .details-box article p {
+        white-space: pre-line;
+    }
+
+    @media only screen and (max-width: 970px) {
+        .event-image-modal {
+            width: -webkit-fill-available;
+        }
+
+        .modal-row-image {
+            gap: var(--space-large);
+            flex-direction: column;
+        }
+    }
+
+    @media only screen and (max-width: 700px) {
+        #modal-content {
+            margin: 0;
+            width: 100%;
+            border-radius: 0 0 var(--border-radius-medium) var(--border-radius-medium);
+        }
+    }
 
 } /* default layer */

@@ -16,16 +16,18 @@ import base.boudicca.query.NotExpression
 import base.boudicca.query.OrExpression
 import base.boudicca.query.QueryException
 
-class Parser(private val tokens: List<Token>) {
+class Parser(
+    private val tokens: List<Token>,
+) {
     private var i = 0
 
     fun parse(): Expression {
         val expression = parseExpression()
-        check(null) //check eof
+        check(null) // check eof
         return expression
     }
 
-    //Expression = AndExpression { or AndExpression }
+    // Expression = AndExpression { or AndExpression }
     private fun parseExpression(): Expression {
         var expression = parseAndExpression()
 
@@ -37,7 +39,7 @@ class Parser(private val tokens: List<Token>) {
         return expression
     }
 
-    //AndExpression = NotExpression { and NotExpression }
+    // AndExpression = NotExpression { and NotExpression }
     private fun parseAndExpression(): Expression {
         var expression = parseNotExpression()
 
@@ -49,26 +51,24 @@ class Parser(private val tokens: List<Token>) {
         return expression
     }
 
-    //NotExpression = [ not ] FieldExpression
-    private fun parseNotExpression(): Expression {
-        return if (getCurrentTokenType() == TokenType.NOT) {
+    // NotExpression = [ not ] FieldExpression
+    private fun parseNotExpression(): Expression =
+        if (getCurrentTokenType() == TokenType.NOT) {
             i++
             NotExpression(parseFieldExpression())
         } else {
             parseFieldExpression()
         }
-    }
 
-    //FieldExpression = grouping_open Expression grouping_close |  <all other terminal operators>
-    private fun parseFieldExpression(): Expression {
-        return when (getCurrentTokenType()) {
+    // FieldExpression = grouping_open Expression grouping_close |  <all other terminal operators>
+    private fun parseFieldExpression(): Expression =
+        when (getCurrentTokenType()) {
             TokenType.GROUPING_OPEN -> parseGrouping()
             TokenType.TEXT -> parseTextExpression()
             TokenType.DURATION -> parseDuration()
             TokenType.HAS_FIELD -> parseHasField()
             else -> throw QueryException("invalid token ${getCurrentTokenType()}")
         }
-    }
 
     private fun parseDuration(): AbstractDurationExpression {
         i++
@@ -85,7 +85,9 @@ class Parser(private val tokens: List<Token>) {
                 DurationShorterExpression(startField, endField, checkNumber())
             }
 
-            else -> throw QueryException("invalid duration mode ${getCurrentTokenType()}, expected longer or shorter")
+            else -> {
+                throw QueryException("invalid duration mode ${getCurrentTokenType()}, expected longer or shorter")
+            }
         }
     }
 
@@ -122,7 +124,9 @@ class Parser(private val tokens: List<Token>) {
                 IsInLastSecondsExpression(firstText, checkNumber())
             }
 
-            else -> throw QueryException("invalid token ${getCurrentTokenType()} following after text token")
+            else -> {
+                throw QueryException("invalid token ${getCurrentTokenType()} following after text token")
+            }
         }
     }
 
@@ -138,7 +142,6 @@ class Parser(private val tokens: List<Token>) {
         check(TokenType.GROUPING_CLOSE)
         return expression
     }
-
 
     private fun checkNumber(): Number {
         check(TokenType.NUMBER)
@@ -160,8 +163,10 @@ class Parser(private val tokens: List<Token>) {
         i++
     }
 
-    private fun getCurrentTokenType(): TokenType? {
-        return if (i >= tokens.size) null
-        else tokens[i].getType()
-    }
+    private fun getCurrentTokenType(): TokenType? =
+        if (i >= tokens.size) {
+            null
+        } else {
+            tokens[i].getType()
+        }
 }

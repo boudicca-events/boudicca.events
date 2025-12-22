@@ -8,12 +8,11 @@ import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Service
 
 @Service
-@Order(EnricherOrderConstants.CategoryEnricherOrder)
+@Order(EnricherOrderConstants.CATEGORY_ENRICHER_ORDER)
 class CategoryEnricher : Enricher {
-
     override fun enrich(event: StructuredEvent): StructuredEvent {
         if (event.getProperty(SemanticKeys.CATEGORY_PROPERTY).isNotEmpty()) {
-            //already got category
+            // already got category
             return event
         }
         var foundCategory = EventCategory.OTHER
@@ -26,5 +25,4 @@ class CategoryEnricher : Enricher {
         }
         return event.toBuilder().withProperty(SemanticKeys.CATEGORY_PROPERTY, foundCategory).build()
     }
-
 }

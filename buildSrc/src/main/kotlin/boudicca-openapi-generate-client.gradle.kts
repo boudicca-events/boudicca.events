@@ -1,4 +1,3 @@
-import org.gradle.kotlin.dsl.*
 import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 
 /**

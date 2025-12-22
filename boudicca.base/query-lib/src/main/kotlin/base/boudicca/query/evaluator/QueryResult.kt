@@ -5,5 +5,5 @@ import base.boudicca.model.Entry
 data class QueryResult(
     val result: List<Entry>,
     val totalResults: Int,
-    val error: String? = null
+    val error: String? = null,
 )

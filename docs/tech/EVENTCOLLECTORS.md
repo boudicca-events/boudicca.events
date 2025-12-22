@@ -59,29 +59,30 @@ To do this the workflow is following:
 1. In
    our [eventcollectors project](../../boudicca.events/eventcollectors/src/main/kotlin/events/boudicca/eventcollector/collectors)
    create a new EventCollector subclass which collects some events.
-   1. A good starting point is always to look at existing EventCollectors and copy one of them.
-   2. Take a look at our [Semantic Conventions](../SEMANTIC_CONVENTIONS.md) overview where you can see the existing
-      keys   and their meanings you should adhere to.
-2. Add your new collector   in [LocalCollectorDebug.kt](../../boudicca.events/eventcollectors/src/main/kotlin/events/boudicca/eventcollector/LocalCollectorDebug.kt)
+    1. A good starting point is always to look at existing EventCollectors and copy one of them.
+    2. Take a look at our [Semantic Conventions](../SEMANTIC_CONVENTIONS.md) overview where you can see the existing
+       keys and their meanings you should adhere to.
+2. Add your new collector in [LocalCollectorDebug.kt](../../boudicca.events/eventcollectors/src/main/kotlin/events/boudicca/eventcollector/LocalCollectorDebug.kt)
    and run the `LocalCollectorDebugKt` launch config (or class) to dry-run your test.
-   1. A dry-run means events will be collected but not ingested somewhere. This is to make sure that the data looks
-      sane and the EventCollector does not throw any exceptions before actually sending it to a backend.
-   2. The `LocalCollectorDebugKt` also starts the collectors overview at http://localhost:8083 where you can have an
-      easier look at errors and what happened during your collection.
-   3. You can also test the collection with enrichment by starting your own local enricher or using our hosted one
-      at https://enricher.boudicca.events. For that uncomment one of the `.enableEnricher("...")` lines in
-      the [LocalCollectorDebugKt](../../boudicca.events/eventcollectors/src/main/kotlin/events/boudicca/eventcollector/LocalCollectorDebug.kt)   class
+    1. A dry-run means events will be collected but not ingested somewhere. This is to make sure that the data looks
+       sane and the EventCollector does not throw any exceptions before actually sending it to a backend.
+    2. The `LocalCollectorDebugKt` also starts the collectors overview at http://localhost:8083 where you can have an
+       easier look at errors and what happened during your collection.
+    3. You can also test the collection with enrichment by starting your own local enricher or using our hosted one
+       at https://enricher.boudicca.events. For that uncomment one of the `.enableEnricher("...")` lines in
+       the [LocalCollectorDebugKt](../../boudicca.events/eventcollectors/src/main/kotlin/events/boudicca/eventcollector/LocalCollectorDebug.kt)   class
 3. After your dry-run was successful it is time to test it for real.
-   1. Enable the `.enableIngestion()` line in
-      the [LocalCollectorDebug.kt](../../boudicca.events/eventcollectors/src/main/kotlin/events/boudicca/eventcollector/LocalCollectorDebug.kt).
-      This will ingest the collected data into the local EventDB.
-   2. Then start your local [Full Setup](../DEV.md#full-setup)
-   3. Run the `LocalCollectorDebugKt` launch config and follow the collection progress at http://localhost:8083
-   4. After the collection is done have a look at http://localhost:8080 and see if everything works as designed (names,
-      dates,
-      pictures, links, ...)
+    1. Enable the `.enableIngestion()` line in
+       the [LocalCollectorDebug.kt](../../boudicca.events/eventcollectors/src/main/kotlin/events/boudicca/eventcollector/LocalCollectorDebug.kt).
+       This will ingest the collected data into the local EventDB.
+    2. Then start your local [Full Setup](../DEV.md#full-setup)
+    3. Run the `LocalCollectorDebugKt` launch config and follow the collection progress at http://localhost:8083
+    4. After the collection is done have a look at http://localhost:8080 and see if everything works as designed (names,
+       dates,
+       pictures, links, ...)
 4. Lastly, add your new EventCollector to the
    class [BoudiccaEventCollectors.kt](../../boudicca.events/eventcollectors/src/main/kotlin/events/boudicca/eventcollector/BoudiccaEventCollectors.kt)
    so that it will be used after deployment and create your Pull Request :)
 
-Note: The [LocalCollectorDebugKt](../../boudicca.events/eventcollectors/src/main/kotlin/events/boudicca/eventcollector/LocalCollectorDebug.kt) caches HTTP calls done via the Fetcher in a file called `fetcher.cache` to speed up testing and reduce traffic to external servers. You can just delete the file to clean the cache and re-fetch the website.
+Note: The [LocalCollectorDebugKt](../../boudicca.events/eventcollectors/src/main/kotlin/events/boudicca/eventcollector/LocalCollectorDebug.kt) caches HTTP calls done via the
+Fetcher in a file called `fetcher.cache` to speed up testing and reduce traffic to external servers. You can just delete the file to clean the cache and re-fetch the website.

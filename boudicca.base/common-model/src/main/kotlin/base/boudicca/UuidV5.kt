@@ -1,13 +1,14 @@
 @file:Suppress("MagicNumber")
 
 package base.boudicca
+
 import java.nio.ByteBuffer
 import java.security.MessageDigest
 import java.text.Normalizer
-import java.util.UUID
+import java.util.*
 
-class UuidV5 (
-    private val namespace: UUID
+class UuidV5(
+    private val namespace: UUID,
 ) {
     fun from(keys: List<String>): UUID {
         val normalized = keys.map(::normalize)
@@ -16,8 +17,10 @@ class UuidV5 (
         // RFC 4122: UUIDv5 = SHA1(namespaceUUID + name)
         val nsBytes = uuidToBytes(namespace)
         val nameBytes = joined.toByteArray(Charsets.UTF_8)
-        val digest = MessageDigest.getInstance("SHA-1")
-            .digest(nsBytes + nameBytes)
+        val digest =
+            MessageDigest
+                .getInstance("SHA-1")
+                .digest(nsBytes + nameBytes)
 
         // take the first 16 bytes (128 bits)
         val uuidBytes = digest.copyOfRange(0, 16)

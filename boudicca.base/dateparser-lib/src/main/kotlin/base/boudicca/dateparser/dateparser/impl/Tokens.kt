@@ -1,14 +1,11 @@
 package base.boudicca.dateparser.dateparser.impl
 
+internal data class Tokens(
+    val tokens: List<Token>,
+) {
+    fun isInteresting(): Boolean = tokens.any { it.needSolving }
 
-internal data class Tokens(val tokens: List<Token>) {
-    fun isInteresting(): Boolean {
-        return tokens.any { it.needSolving }
-    }
-
-    fun map(mapper: (token: Token) -> Token): Tokens {
-        return Tokens(tokens.map(mapper))
-    }
+    fun map(mapper: (token: Token) -> Token): Tokens = Tokens(tokens.map(mapper))
 
     override fun toString(): String {
         val sb = StringBuilder()

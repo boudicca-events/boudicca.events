@@ -20,17 +20,16 @@ class SourcesService(
             ?: listOf("no Sources found")
     }
 
-    private fun normalize(value: String): String {
-        return if (value.startsWith("http")) {
-            //treat as url
+    private fun normalize(value: String): String =
+        if (value.startsWith("http")) {
+            // treat as url
             try {
                 URI.create(value).normalize().host ?: value
             } catch (_: IllegalArgumentException) {
-                //hm, no url?
+                // hm, no url?
                 value
             }
         } else {
             value
         }
-    }
 }

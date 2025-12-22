@@ -6,18 +6,22 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import java.io.FileInputStream
-import java.io.ObjectInputStream
 import java.nio.file.Path
 import kotlin.io.path.readBytes
 
 fun main() {
-    val objectMapper = JsonMapper.builder().addModule(JavaTimeModule())
-        .addModule(KotlinModule.Builder().build()).build()
+    val objectMapper =
+        JsonMapper
+            .builder()
+            .addModule(JavaTimeModule())
+            .addModule(KotlinModule.Builder().build())
+            .build()
 
-    val storeRead = objectMapper.readValue(
-        Path.of("testdata.dump").readBytes(),
-        object : TypeReference<List<Entry>>() {})
+    val storeRead =
+        objectMapper.readValue(
+            Path.of("testdata.dump").readBytes(),
+            object : TypeReference<List<Entry>>() {},
+        )
 
     val ingestClient = EventDbIngestClient("http://localhost:8081", "ingest", "ingest")
     ingestClient.ingestEntries(storeRead)

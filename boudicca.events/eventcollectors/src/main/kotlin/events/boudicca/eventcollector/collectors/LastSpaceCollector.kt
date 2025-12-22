@@ -15,28 +15,33 @@ class LastSpaceCollector : TwoStepEventCollector<String>("lastspace") {
     private val baseUrl = "https://last-space.at/"
 
     override fun getAllUnparsedEvents(): List<String> {
-        val pages = Jsoup.parse(fetcher.fetchUrl(baseUrl + "page/event"))
-            .select(".pagination li a")
-            .mapNotNull { it.attr("href") }
-            .filter { it.contains("page") } // to ignore next and previous page buttons
-            .distinct()
+        val pages =
+            Jsoup
+                .parse(fetcher.fetchUrl(baseUrl + "page/event"))
+                .select(".pagination li a")
+                .mapNotNull { it.attr("href") }
+                .filter { it.contains("page") } // to ignore next and previous page buttons
+                .distinct()
 
-        val eventUrls = pages
-            .flatMap { fetchEventUrlsOfSinglePage(it) }
-            .distinct()
+        val eventUrls =
+            pages
+                .flatMap { fetchEventUrlsOfSinglePage(it) }
+                .distinct()
 
         return eventUrls
     }
 
-    private fun fetchEventUrlsOfSinglePage(page: String): List<String> {
-        return Jsoup.parse(fetcher.fetchUrl(baseUrl + page))
+    private fun fetchEventUrlsOfSinglePage(page: String): List<String> =
+        Jsoup
+            .parse(fetcher.fetchUrl(baseUrl + page))
             .select("tr>td>div>div")
             .mapNotNull {
-                baseUrl + it.attr("onClick")
-                    .replace("'", "")
-                    .replace("window.location.href=/", "")
+                baseUrl +
+                    it
+                        .attr("onClick")
+                        .replace("'", "")
+                        .replace("window.location.href=/", "")
             }
-    }
 
     override fun parseMultipleStructuredEvents(event: String): List<StructuredEvent?>? {
         val document = Jsoup.parse(fetcher.fetchUrl(event))
@@ -47,10 +52,12 @@ class LastSpaceCollector : TwoStepEventCollector<String>("lastspace") {
         val startDate = DateParser.parse(eventInfos[0].text(), eventInfos[1].text())
 
         val imgSrc = document.select(".slide-img img").attr("src")
-        val tags = eventInfos[4].text()
-            .split(",")
-            .map { it.replace("#", "").trim() }
-            .filter { it.isNotBlank() }
+        val tags =
+            eventInfos[4]
+                .text()
+                .split(",")
+                .map { it.replace("#", "").trim() }
+                .filter { it.isNotBlank() }
 
         val type = eventInfos[3].text().trim()
         var category = EventCategory.OTHER

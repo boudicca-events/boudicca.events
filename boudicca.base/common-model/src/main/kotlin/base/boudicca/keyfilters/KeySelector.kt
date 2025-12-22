@@ -41,11 +41,9 @@ import java.util.*
  */
 class KeySelector(
     private val propertyName: String,
-    private val variants: List<Pair<String, List<String>>>
+    private val variants: List<Pair<String, List<String>>>,
 ) {
-    fun selectSingle(event: StructuredEvent): Optional<Pair<Key, String>> {
-        return selectSingle(Event.toEntry(event.toFlatEvent()).toStructuredEntry())
-    }
+    fun selectSingle(event: StructuredEvent): Optional<Pair<Key, String>> = selectSingle(Event.toEntry(event.toFlatEvent()).toStructuredEntry())
 
     fun selectSingle(properties: StructuredEntry): Optional<Pair<Key, String>> {
         val variantList = mutableListOf<Variant>()
@@ -54,11 +52,11 @@ class KeySelector(
 
         while (true) {
             if (currentVariant < 0) {
-                //we exhausted all options from all variants
+                // we exhausted all options from all variants
                 return Optional.empty()
             }
             if (currentVariant >= variants.size) {
-                //selectorList is full
+                // selectorList is full
                 val keyFilter = KeyFilter(propertyName, variantList)
                 val keys = KeyFilters.filterKeys(keyFilter, properties)
                 if (keys.isNotEmpty()) {
@@ -72,19 +70,19 @@ class KeySelector(
             } else {
                 val currentVariantPlace = variantIndexes[currentVariant]
                 if (currentVariantPlace >= variants[currentVariant].second.size) {
-                    //we exhausted the current variant, reset and go back up
+                    // we exhausted the current variant, reset and go back up
                     variantIndexes[currentVariant] = 0
                     currentVariant--
                     if (variantList.isNotEmpty()) {
                         variantList.removeLast()
                     }
                 } else {
-                    //try a new value from the current variant
+                    // try a new value from the current variant
                     variantList.add(
                         Variant(
                             variants[currentVariant].first,
-                            variants[currentVariant].second[currentVariantPlace]
-                        )
+                            variants[currentVariant].second[currentVariantPlace],
+                        ),
                     )
                     variantIndexes[currentVariant] = variantIndexes[currentVariant] + 1
                     currentVariant++
@@ -94,9 +92,7 @@ class KeySelector(
     }
 
     companion object {
-        fun builder(propertyName: String): KeySelectorBuilder {
-            return KeySelectorBuilder(propertyName)
-        }
+        fun builder(propertyName: String): KeySelectorBuilder = KeySelectorBuilder(propertyName)
 
         fun builder(key: Key): KeySelectorBuilder {
             val builder = KeySelectorBuilder(key.name)
@@ -110,5 +106,4 @@ class KeySelector(
             return builder
         }
     }
-
 }

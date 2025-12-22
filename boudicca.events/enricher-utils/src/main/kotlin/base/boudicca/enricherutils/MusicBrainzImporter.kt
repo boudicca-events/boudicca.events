@@ -13,31 +13,35 @@ import java.util.zip.GZIPOutputStream
 import kotlin.streams.asSequence
 
 fun main() {
-
     val reader = BufferedReader(FileReader(File("./boudicca.base/enricher-utils/data/artist")))
-    val dataOut = OutputStreamWriter(
+    val dataOut =
+        OutputStreamWriter(
+            GZIPOutputStream(
+                BufferedOutputStream(
+                    FileOutputStream(
+                        "./boudicca.base/enricher-utils/data/artist_parsed.json.gz",
+                        false,
+                    ),
+                ),
+            ),
+        )
+    val indexOut =
         GZIPOutputStream(
             BufferedOutputStream(
                 FileOutputStream(
-                    "./boudicca.base/enricher-utils/data/artist_parsed.json.gz",
-                    false
-                )
-            )
+                    "./boudicca.base/enricher-utils/data/artist.index.gz",
+                    false,
+                ),
+            ),
         )
-    )
-    val indexOut = GZIPOutputStream(
-        BufferedOutputStream(
-            FileOutputStream(
-                "./boudicca.base/enricher-utils/data/artist.index.gz",
-                false
-            )
-        )
-    )
 
-    val artists = reader.lines().asSequence()
+    val artists =
+        reader
+            .lines()
+            .asSequence()
 //        .take(100)
-        .map { mapArtist(it) }
-        .toList()
+            .map { mapArtist(it) }
+            .toList()
 
     val filteredArtists = getFilteredArtists(artists)
 
@@ -49,7 +53,10 @@ fun main() {
 }
 
 @Suppress("detekt:MagicNumber")
-fun writeIndex(indexOut: OutputStream, filteredArtists: List<Artist>) {
+fun writeIndex(
+    indexOut: OutputStream,
+    filteredArtists: List<Artist>,
+) {
     val allNames = filteredArtists.mapIndexed { i, artist -> Pair(i, artist.name.lowercase()) }
     val sortedList = allNames.sortedBy { it.second }
 
@@ -65,7 +72,10 @@ fun writeIndex(indexOut: OutputStream, filteredArtists: List<Artist>) {
 private const val MIN_ARTIST_NAME_LENGTH = 3
 
 private fun getFilteredArtists(artists: List<Artist>): List<Artist> {
-    var filtered = artists.filter { it.name.length >= MIN_ARTIST_NAME_LENGTH /*&& it.aliases.all { it.length >= 3 }*/ }
+    var filtered =
+        artists.filter {
+            it.name.length >= MIN_ARTIST_NAME_LENGTH // && it.aliases.all { it.length >= 3 }
+        }
 
     filtered = filtered.filter { !it.ended }
 
@@ -107,10 +117,14 @@ fun mapGenre(jsonArray: JSONArray): String? {
         val obj = entry as JSONObject
         list.add(Pair(obj.getString("name"), obj.getInt("count")))
     }
-    return list.sortedWith(
-        Comparator.comparing<Pair<String, Int>?, Int?> { it.second }.reversed()
-            .then(Comparator.comparing { it.first })
-    ).firstOrNull()?.first
+    return list
+        .sortedWith(
+            Comparator
+                .comparing<Pair<String, Int>?, Int?> { it.second }
+                .reversed()
+                .then(Comparator.comparing { it.first }),
+        ).firstOrNull()
+        ?.first
 }
 
 data class Artist(

@@ -107,18 +107,21 @@ class KeyFiltersTest {
 
     @Test
     fun `wildcard variant key filter should work`() {
-        val entry1 = mapOf(
-            Key.parse(SemanticKeys.NAME) to "event1",
-        )
-        val entry2 = mapOf(
-            Key.parse(SemanticKeys.NAME) to "event2",
-            Key.parse(SemanticKeys.STARTDATE + ":format=date") to "2024-05-31T00:00:00Z",
-        )
-        val entry3: StructuredEntry = mapOf(
-            Key.parse(SemanticKeys.NAME) to "event3",
-            Key.parse("random:format=date") to "2024-05-31T00:00:00Z",
-            Key.parse("another:format=date") to "2024-05-31T00:31:00Z",
-        )
+        val entry1 =
+            mapOf(
+                Key.parse(SemanticKeys.NAME) to "event1",
+            )
+        val entry2 =
+            mapOf(
+                Key.parse(SemanticKeys.NAME) to "event2",
+                Key.parse(SemanticKeys.STARTDATE + ":format=date") to "2024-05-31T00:00:00Z",
+            )
+        val entry3: StructuredEntry =
+            mapOf(
+                Key.parse(SemanticKeys.NAME) to "event3",
+                Key.parse("random:format=date") to "2024-05-31T00:00:00Z",
+                Key.parse("another:format=date") to "2024-05-31T00:31:00Z",
+            )
 
         val key = KeyFilter.parse("*:format=date")
 
@@ -132,24 +135,30 @@ class KeyFiltersTest {
         assertThat(filtered3).hasSize(2)
     }
 
-    private fun assertEquals(keyString: String, key: Key) {
+    private fun assertEquals(
+        keyString: String,
+        key: Key,
+    ) {
         assertEquals(keyString, key.toKeyString())
     }
 
-    private fun filterKeys(keyFilter: String, event: StructuredEvent): List<Pair<Key, String>> {
-        return KeyFilters.filterKeys(KeyFilter.parse(keyFilter), event)
-    }
+    private fun filterKeys(
+        keyFilter: String,
+        event: StructuredEvent,
+    ): List<Pair<Key, String>> = KeyFilters.filterKeys(KeyFilter.parse(keyFilter), event)
 
-    private fun filterKeys(keyFilter: String, entry: StructuredEntry): List<Pair<Key, String>> {
-        return KeyFilters.filterKeys(KeyFilter.parse(keyFilter), entry)
-    }
+    private fun filterKeys(
+        keyFilter: String,
+        entry: StructuredEntry,
+    ): List<Pair<Key, String>> = KeyFilters.filterKeys(KeyFilter.parse(keyFilter), entry)
 
-    private fun filterKeys(keyFilter: KeyFilter, entry: StructuredEntry): List<Pair<Key, String>> {
-        return KeyFilters.filterKeys(keyFilter, entry)
-    }
+    private fun filterKeys(
+        keyFilter: KeyFilter,
+        entry: StructuredEntry,
+    ): List<Pair<Key, String>> = KeyFilters.filterKeys(keyFilter, entry)
 
-    private fun testEntry(): StructuredEntry {
-        return mapOf(
+    private fun testEntry(): StructuredEntry =
+        mapOf(
             "name" to "My Event",
             "startDate" to "2024-04-27T23:59:00+02:00",
             "startDate:format=date" to "2024-04-27T23:59:00+02:00",
@@ -157,7 +166,6 @@ class KeyFiltersTest {
             "description" to "my default lang description",
             "description:lang=de" to "meine deutsche beschreibung",
             "description:lang=en" to "my english description",
-            "description:format=markdown:lang=en" to "#my english markdown description"
+            "description:format=markdown:lang=en" to "#my english markdown description",
         ).toStructuredEntry()
-    }
 }

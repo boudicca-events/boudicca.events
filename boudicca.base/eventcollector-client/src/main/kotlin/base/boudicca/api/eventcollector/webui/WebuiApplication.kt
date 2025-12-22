@@ -9,15 +9,15 @@ import org.springframework.web.servlet.ViewResolver
 
 @SpringBootApplication(
     exclude = [
-        //is manually setup in EventCollectionCoordinator
-        MonitoringConfiguration::class
-    ]
+        // is manually setup in EventCollectionCoordinator
+        MonitoringConfiguration::class,
+    ],
 )
 class WebuiApplication {
     @Bean
     fun handlebarsViewResolver(): ViewResolver {
         val viewResolver = HandlebarsViewResolver()
-        viewResolver.order = 0 //we have to decrease the order so ours is first (default is Int.MAX_VALUE)
+        viewResolver.order = 0 // we have to decrease the order so ours is first (default is Int.MAX_VALUE)
 
         for (helper in ConditionalHelpers.entries) {
             viewResolver.registerHelper(helper.name, helper)

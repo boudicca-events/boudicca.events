@@ -11,6 +11,6 @@ fun main() {
     EventCollectionRunner(
         listOf(BoudiccaCollector("https://eventdb.boudicca.events")),
         RunnerIngestionInterface.createFromConfiguration(),
-        RunnerEnricherInterface.createFromConfiguration()
+        RunnerEnricherInterface.createFromConfiguration(),
     ).run()
 }

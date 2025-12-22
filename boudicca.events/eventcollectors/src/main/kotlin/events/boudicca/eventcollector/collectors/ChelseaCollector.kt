@@ -15,10 +15,10 @@ class ChelseaCollector : TwoStepEventCollector<Element>("chelsea") {
     private val fetcher = FetcherFactory.newFetcher()
     private val baseUrl = "https://www.chelsea.co.at/"
 
-    override fun getAllUnparsedEvents(): List<Element> {
-        return Jsoup.parse(fetcher.fetchUrl(baseUrl + "concerts.php"))
+    override fun getAllUnparsedEvents(): List<Element> =
+        Jsoup
+            .parse(fetcher.fetchUrl(baseUrl + "concerts.php"))
             .select("table.termindetails")
-    }
 
     override fun parseMultipleStructuredEvents(event: Element): List<StructuredEvent?> {
         val name = event.select("div.band").text()

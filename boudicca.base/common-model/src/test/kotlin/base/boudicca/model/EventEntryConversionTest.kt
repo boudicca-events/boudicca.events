@@ -23,16 +23,17 @@ class EventEntryConversionTest {
 
     @Test
     fun testEntryToEventSuccess() {
-        val entry = mapOf(
-            "name" to "My Event",
-            "startDate" to "2023-04-27T23:59:00+02:00",
-            "startDate:format=date" to "2024-04-27T23:59:00+02:00",
-            "pictureUrl" to "https://i.insider.com/2b37544bfe5eb549a8378b00?width=1024",
-            "description" to "my default lang description",
-            "description:lang=de" to "meine deutsche beschreibung",
-            "description:lang=en" to "my english description",
-            "description:format=markdown:lang=en" to "#my english markdown description"
-        )
+        val entry =
+            mapOf(
+                "name" to "My Event",
+                "startDate" to "2023-04-27T23:59:00+02:00",
+                "startDate:format=date" to "2024-04-27T23:59:00+02:00",
+                "pictureUrl" to "https://i.insider.com/2b37544bfe5eb549a8378b00?width=1024",
+                "description" to "my default lang description",
+                "description:lang=de" to "meine deutsche beschreibung",
+                "description:lang=en" to "my english description",
+                "description:format=markdown:lang=en" to "#my english markdown description",
+            )
 
         val event = Event.fromEntry(entry).get()
 
@@ -40,22 +41,23 @@ class EventEntryConversionTest {
         assertEquals("My Event", event.name)
         assertEquals(
             OffsetDateTime.parse("2024-04-27T23:59:00+02:00", DateTimeFormatter.ISO_DATE_TIME),
-            event.startDate
+            event.startDate,
         )
         assertEquals(event.data["description"], "my default lang description")
     }
 
     @Test
     fun testEntryToEventStartDateFallback() {
-        val entry = mapOf(
-            "name" to "My Event",
-            "startDate" to "2024-04-27T23:59:00+02:00",
-            "pictureUrl" to "https://i.insider.com/2b37544bfe5eb549a8378b00?width=1024",
-            "description" to "my default lang description",
-            "description:lang=de" to "meine deutsche beschreibung",
-            "description:lang=en" to "my english description",
-            "description:format=markdown:lang=en" to "#my english markdown description"
-        )
+        val entry =
+            mapOf(
+                "name" to "My Event",
+                "startDate" to "2024-04-27T23:59:00+02:00",
+                "pictureUrl" to "https://i.insider.com/2b37544bfe5eb549a8378b00?width=1024",
+                "description" to "my default lang description",
+                "description:lang=de" to "meine deutsche beschreibung",
+                "description:lang=en" to "my english description",
+                "description:format=markdown:lang=en" to "#my english markdown description",
+            )
 
         val event = Event.fromEntry(entry).get()
 
@@ -63,17 +65,18 @@ class EventEntryConversionTest {
         assertEquals("My Event", event.name)
         assertEquals(
             OffsetDateTime.parse("2024-04-27T23:59:00+02:00", DateTimeFormatter.ISO_DATE_TIME),
-            event.startDate
+            event.startDate,
         )
         assertEquals(event.data["description"], "my default lang description")
     }
 
     @Test
     fun testEntryToEventNoName() {
-        val entry = mapOf(
-            "startDate" to "2024-04-27T23:59:00+02:00",
-            "description" to "my default lang description",
-        )
+        val entry =
+            mapOf(
+                "startDate" to "2024-04-27T23:59:00+02:00",
+                "description" to "my default lang description",
+            )
 
         val event = Event.fromEntry(entry)
 
@@ -82,10 +85,11 @@ class EventEntryConversionTest {
 
     @Test
     fun testEntryToEventNoStartDate() {
-        val entry = mapOf(
-            "name" to "My Event",
-            "description" to "my default lang description",
-        )
+        val entry =
+            mapOf(
+                "name" to "My Event",
+                "description" to "my default lang description",
+            )
 
         val event = Event.fromEntry(entry)
 
@@ -94,11 +98,12 @@ class EventEntryConversionTest {
 
     @Test
     fun testEntryToEventNameVariant() {
-        val entry = mapOf(
-            "name:lang=en" to "My Event",
-            "startDate" to "2024-04-27T23:59:00+02:00",
-            "description" to "my default lang description",
-        )
+        val entry =
+            mapOf(
+                "name:lang=en" to "My Event",
+                "startDate" to "2024-04-27T23:59:00+02:00",
+                "description" to "my default lang description",
+            )
 
         val event = Event.fromEntry(entry).get()
 

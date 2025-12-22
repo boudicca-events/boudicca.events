@@ -33,28 +33,28 @@ interface Property<T> {
     fun parseFromString(string: String): T
 
     fun getKey(language: String? = null): Key
+
     fun getKeyFilter(language: String? = null): KeyFilter
 }
 
 abstract class AbstractProperty<T>(
-    private val propertyName: String, private val adapter: AbstractFormatAdapter<T>
+    private val propertyName: String,
+    private val adapter: AbstractFormatAdapter<T>,
 ) : Property<T> {
-    override fun getKey(language: String?): Key {
-        return internalGetKey(false, language) {
+    override fun getKey(language: String?): Key =
+        internalGetKey(false, language) {
             Key.builder(it)
         }
-    }
 
-    override fun getKeyFilter(language: String?): KeyFilter {
-        return internalGetKey(true, language) {
+    override fun getKeyFilter(language: String?): KeyFilter =
+        internalGetKey(true, language) {
             KeyFilter.builder(it)
         }
-    }
 
     private fun <T : AbstractKey<T>> internalGetKey(
         alwaysIncludeFormat: Boolean,
         language: String?,
-        builderFunction: (String) -> AbstractKeyBuilder<T>
+        builderFunction: (String) -> AbstractKeyBuilder<T>,
     ): T {
         val builder = builderFunction(propertyName)
         if (!language.isNullOrEmpty()) {
@@ -67,28 +67,48 @@ abstract class AbstractProperty<T>(
     }
 }
 
-open class GenericProperty<T>(propertyName: String, private val adapter: AbstractFormatAdapter<T>) :
-    AbstractProperty<T>(propertyName, adapter) {
+open class GenericProperty<T>(
+    propertyName: String,
+    private val adapter: AbstractFormatAdapter<T>,
+) : AbstractProperty<T>(propertyName, adapter) {
     override fun parseToString(value: T): String? = adapter.convertToString(value)
 
     override fun parseFromString(string: String): T = adapter.fromString(string)
 }
 
-class TextProperty(propertyName: String) : GenericProperty<String>(propertyName, TextFormatAdapter())
+class TextProperty(
+    propertyName: String,
+) : GenericProperty<String>(propertyName, TextFormatAdapter())
 
-class MarkdownProperty(propertyName: String) : GenericProperty<String>(propertyName, MarkdownFormatAdapter())
+class MarkdownProperty(
+    propertyName: String,
+) : GenericProperty<String>(propertyName, MarkdownFormatAdapter())
 
-class UriProperty(propertyName: String) : GenericProperty<URI>(propertyName, UriFormatAdapter())
+class UriProperty(
+    propertyName: String,
+) : GenericProperty<URI>(propertyName, UriFormatAdapter())
 
-class DateProperty(propertyName: String) : GenericProperty<OffsetDateTime>(propertyName, DateFormatAdapter())
+class DateProperty(
+    propertyName: String,
+) : GenericProperty<OffsetDateTime>(propertyName, DateFormatAdapter())
 
-class ListProperty(propertyName: String) : GenericProperty<List<String>>(propertyName, ListFormatAdapter())
+class ListProperty(
+    propertyName: String,
+) : GenericProperty<List<String>>(propertyName, ListFormatAdapter())
 
-class NumberProperty(propertyName: String) : GenericProperty<Number>(propertyName, NumberFormatAdapter())
+class NumberProperty(
+    propertyName: String,
+) : GenericProperty<Number>(propertyName, NumberFormatAdapter())
 
-class EnumProperty<E : Enum<E>>(propertyName: String, enumClass: Class<E>) :
-    GenericProperty<E>(propertyName, EnumFormatAdapter(enumClass))
+class EnumProperty<E : Enum<E>>(
+    propertyName: String,
+    enumClass: Class<E>,
+) : GenericProperty<E>(propertyName, EnumFormatAdapter(enumClass))
 
-class BooleanProperty(propertyName: String) : GenericProperty<Boolean>(propertyName, BooleanFormatAdapter())
+class BooleanProperty(
+    propertyName: String,
+) : GenericProperty<Boolean>(propertyName, BooleanFormatAdapter())
 
-class UuidProperty(propertyName: String) : GenericProperty<UUID>(propertyName, UuidFormatAdapter())
+class UuidProperty(
+    propertyName: String,
+) : GenericProperty<UUID>(propertyName, UuidFormatAdapter())

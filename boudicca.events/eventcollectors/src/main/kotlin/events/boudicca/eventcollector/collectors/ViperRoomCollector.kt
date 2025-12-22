@@ -17,7 +17,8 @@ class ViperRoomCollector : TwoStepEventCollector<String>("viperroom") {
     override fun getAllUnparsedEvents(): List<String> {
         val eventsList = Jsoup.parse(fetcher.fetchUrl("https://www.viper-room.at/veranstaltungen"))
 
-        return eventsList.select("ul.events_list div.event_actions a:nth-child(1)")
+        return eventsList
+            .select("ul.events_list div.event_actions a:nth-child(1)")
             .map { it.attr("href") }
     }
 
@@ -27,17 +28,21 @@ class ViperRoomCollector : TwoStepEventCollector<String>("viperroom") {
         val name = eventSite.select("h1.entry-title").text()
         val startDate = parseDate(eventSite)
 
-        val description = eventSite.select("div#em-event-6").first()!!
-            .children()
-            .toList()
-            .filter {
-                (it.tagName() == "div" &&
-                    !(it.classNames().contains("event_price") || it.classNames().contains("event_actions"))
-                ) || (it.tagName() == "p" && !it.classNames().contains("event_time"))
-            }
-            .map { it.text() }
-            .filter { it.isNotBlank() }
-            .joinToString("\n")
+        val description =
+            eventSite
+                .select("div#em-event-6")
+                .first()!!
+                .children()
+                .toList()
+                .filter {
+                    (
+                        it.tagName() == "div" &&
+                            !(it.classNames().contains("event_price") || it.classNames().contains("event_actions"))
+                    ) ||
+                        (it.tagName() == "p" && !it.classNames().contains("event_time"))
+                }.map { it.text() }
+                .filter { it.isNotBlank() }
+                .joinToString("\n")
 
         val img = eventSite.select("div#em-event-6 p img").first() ?: eventSite.select("a.navbar-brand img").first()
         val pictureUrl = UrlUtils.parse(img?.attr("src"))

@@ -19,7 +19,6 @@ import org.junit.jupiter.api.assertThrows
 import java.time.LocalDate
 
 class BoudiccaQueryBuilderTest {
-
     @Test
     fun testEscapeText() {
         assertEquals("\"text\"", escapeText("text"))
@@ -47,62 +46,68 @@ class BoudiccaQueryBuilderTest {
 
     @Test
     fun simpleAnd() {
-        val query = and(
-            "first",
-            "second"
-        )
+        val query =
+            and(
+                "first",
+                "second",
+            )
 
         assertEquals("(first) and (second)", query)
     }
 
     @Test
     fun singleAnd() {
-        val query = and(
-            "first"
-        )
+        val query =
+            and(
+                "first",
+            )
 
         assertEquals("(first)", query)
     }
 
     @Test
     fun multipleAnd() {
-        val query = and(
-            "first",
-            "second",
-            "third",
-            "fourth"
-        )
+        val query =
+            and(
+                "first",
+                "second",
+                "third",
+                "fourth",
+            )
 
         assertEquals("(first) and (second) and (third) and (fourth)", query)
     }
 
     @Test
     fun simpleOr() {
-        val query = or(
-            "first",
-            "second"
-        )
+        val query =
+            or(
+                "first",
+                "second",
+            )
 
         assertEquals("(first) or (second)", query)
     }
 
     @Test
     fun singleOr() {
-        val query = or(
-            "first"
-        )
+        val query =
+            or(
+                "first",
+            )
 
         assertEquals("(first)", query)
     }
 
     @Test
     fun multipleOr() {
-        val query = or(
-            "first",
-            "second",
-            "third",
-            "fourth"
-        )
+        val query =
+            or(
+                "first",
+                "second",
+                "third",
+                "fourth",
+            )
 
         assertEquals("(first) or (second) or (third) or (fourth)", query)
     }
@@ -116,7 +121,7 @@ class BoudiccaQueryBuilderTest {
 
     @Test
     fun simpleAfter() {
-        val query = after("startDate",LocalDate.of(2023, 10, 6))
+        val query = after("startDate", LocalDate.of(2023, 10, 6))
 
         assertEquals("\"startDate\" after \"2023-10-06\"", query)
     }
@@ -144,19 +149,20 @@ class BoudiccaQueryBuilderTest {
 
     @Test
     fun biggerNestedQuery() {
-        val query = not(
-            and(
-                or(
-                    contains("field", "value"),
-                    contains("field2", "value2")
+        val query =
+            not(
+                and(
+                    or(
+                        contains("field", "value"),
+                        contains("field2", "value2"),
+                    ),
+                    equals("field3", "value3"),
                 ),
-                equals("field3", "value3")
             )
-        )
 
         assertEquals(
             """not ((("field" contains "value") or ("field2" contains "value2")) and ("field3" equals "value3"))""",
-            query
+            query,
         )
     }
 
@@ -196,5 +202,4 @@ class BoudiccaQueryBuilderTest {
         assertThrows<IllegalArgumentException> { and() }
         assertThrows<IllegalArgumentException> { or() }
     }
-
 }

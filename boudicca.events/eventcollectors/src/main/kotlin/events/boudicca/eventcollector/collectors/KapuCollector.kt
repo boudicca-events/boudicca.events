@@ -17,7 +17,8 @@ class KapuCollector : TwoStepEventCollector<String>("kapu") {
 
     override fun getAllUnparsedEvents(): List<String> {
         val document = Jsoup.parse(fetcher.fetchUrl("$baseUrl/events"))
-        return document.select("article.event")
+        return document
+            .select("article.event")
             .map { it.select("a").first()!!.attr("href") }
     }
 
@@ -36,18 +37,19 @@ class KapuCollector : TwoStepEventCollector<String>("kapu") {
         val imgTag = eventSite.select("article.event img.media__element")
         val pictureAltText = imgTag.attr("alt")
         val imgSrc = imgTag.attr("data-src")
-        val pictureUrl = if (imgSrc.isNotBlank()) {
-            baseUrl + imgSrc
-        } else {
-            null
-        }
+        val pictureUrl =
+            if (imgSrc.isNotBlank()) {
+                baseUrl + imgSrc
+            } else {
+                null
+            }
 
         return structuredEvent(name, startDate) {
             withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(url))
             withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(url))
             withProperty(
                 SemanticKeys.TYPE_PROPERTY,
-                eventSite.select("article.event > div.container > div.wot").text()
+                eventSite.select("article.event > div.container > div.wot").text(),
             )
             withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
             withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(pictureUrl))

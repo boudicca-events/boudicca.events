@@ -6,12 +6,9 @@ import base.boudicca.model.structured.StructuredEvent
 interface EventCollector {
     fun getName(): String
 
-    fun collectEvents(): List<Event> {
-        return collectStructuredEvents()
+    fun collectEvents(): List<Event> =
+        collectStructuredEvents()
             .map { it.toFlatEvent() }
-    }
 
-    fun collectStructuredEvents(): List<StructuredEvent> {
-        return emptyList()
-    }
+    fun collectStructuredEvents(): List<StructuredEvent> = emptyList()
 }

@@ -20,9 +20,10 @@ class RoedaCollector : TwoStepEventCollector<JsonObject>("roeda") {
     override fun getAllUnparsedEvents(): List<JsonObject> {
         // uh boy, this is ugly
         val pageSource = fetcher.fetchUrl("https://xn--rda-sna.at")
-        val jsonLine = pageSource
-            .lines()
-            .single { it.startsWith("var EventsSchedule_1 = ") }
+        val jsonLine =
+            pageSource
+                .lines()
+                .single { it.startsWith("var EventsSchedule_1 = ") }
         val jsonString = jsonLine.removePrefix("var EventsSchedule_1 = ").removeSuffix(";")
         val json = Parser.default().parse(StringReader(jsonString)) as JsonObject
         return json.array<JsonObject>("feed")?.toList() ?: emptyList()
@@ -60,11 +61,7 @@ class RoedaCollector : TwoStepEventCollector<JsonObject>("roeda") {
         }
     }
 
-    private fun htmlToText(html: String): String {
-        return Jsoup.parse(html).text()
-    }
+    private fun htmlToText(html: String): String = Jsoup.parse(html).text()
 }
 
-private fun OffsetDateTime.fixTimeZone(): OffsetDateTime {
-    return this.toLocalDateTime().atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
-}
+private fun OffsetDateTime.fixTimeZone(): OffsetDateTime = this.toLocalDateTime().atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()

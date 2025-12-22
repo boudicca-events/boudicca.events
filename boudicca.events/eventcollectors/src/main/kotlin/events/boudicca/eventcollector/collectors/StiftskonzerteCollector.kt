@@ -12,15 +12,16 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 
 class StiftskonzerteCollector : TwoStepEventCollector<String>("stiftskonzerte") {
-
     private val fetcher = FetcherFactory.newFetcher()
 
     override fun getAllUnparsedEvents(): List<String> {
         val document = Jsoup.parse(fetcher.fetchUrl("https://www.stiftskonzerte.at/programm-und-karten/"))
-        return document.select("div.entry-footer-links a").not("a.open-modal")
+        return document
+            .select("div.entry-footer-links a")
+            .not("a.open-modal")
             .map { it.attr("href") }
             .filter {
-                //this is not an event but some ticket information thingy
+                // this is not an event but some ticket information thingy
                 it != "https://www.stiftskonzerte.at/programm-und-karten/mitglieder-vvk-ooe-stiftskonzerte-2024/"
             }
     }
@@ -31,10 +32,12 @@ class StiftskonzerteCollector : TwoStepEventCollector<String>("stiftskonzerte") 
 
         val locationTimeDiv = eventSite.select("div.entry-content div.location")
         locationTimeDiv.select("br").after("\\n")
-        val locationAndTime = locationTimeDiv.text()
-            .split("\\n")
-            .map { it.trim().replace("ü", "ü") }  // fix different ü's in Kremsmünster
-            .filter { it.isNotBlank() }
+        val locationAndTime =
+            locationTimeDiv
+                .text()
+                .split("\\n")
+                .map { it.trim().replace("ü", "ü") } // fix different ü's in Kremsmünster
+                .filter { it.isNotBlank() }
         val startDate = parseDate(eventSite, locationAndTime)
 
         val city = locationAndTime[1].replace("Stift ", "")
@@ -53,9 +56,11 @@ class StiftskonzerteCollector : TwoStepEventCollector<String>("stiftskonzerte") 
         }
     }
 
-    private fun parseDate(element: Element, locationAndTime: List<String>): DateParserResult {
+    private fun parseDate(
+        element: Element,
+        locationAndTime: List<String>,
+    ): DateParserResult {
         val fullDate = element.select("div.entry-content div.date").text()
         return DateParser.parse(fullDate, locationAndTime[0])
     }
-
 }

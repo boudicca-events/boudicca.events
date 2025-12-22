@@ -12,7 +12,6 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 
-
 class BrucknerhausCollector : TwoStepEventCollector<Element>("brucknerhaus") {
     private val baseUrl = "https://www.brucknerhaus.at"
 
@@ -21,10 +20,12 @@ class BrucknerhausCollector : TwoStepEventCollector<Element>("brucknerhaus") {
 
         val fetcher = FetcherFactory.newFetcher()
         val document = Jsoup.parse(fetcher.fetchUrl("$baseUrl/programm/veranstaltungen"))
-        val otherUrls = document.select("ul.pagination>li")
-            .toList()
-            .filter { it.attr("class").isEmpty() }
-            .map { baseUrl + it.children().first()!!.attr("href") }
+        val otherUrls =
+            document
+                .select("ul.pagination>li")
+                .toList()
+                .filter { it.attr("class").isEmpty() }
+                .map { baseUrl + it.children().first()!!.attr("href") }
 
         events.addAll(findUnparsedEvents(document))
 
@@ -35,9 +36,7 @@ class BrucknerhausCollector : TwoStepEventCollector<Element>("brucknerhaus") {
         return events
     }
 
-    private fun findUnparsedEvents(doc: Document): List<Element> {
-        return doc.select("div.event div.event__element")
-    }
+    private fun findUnparsedEvents(doc: Document): List<Element> = doc.select("div.event div.event__element")
 
     override fun parseMultipleStructuredEvents(event: Element): List<StructuredEvent> {
         val startDates = parseDate(event)
@@ -46,7 +45,12 @@ class BrucknerhausCollector : TwoStepEventCollector<Element>("brucknerhaus") {
 
         var description = event.select("div.event__teaser p").text()
         if (description.isBlank()) {
-            description = event.select("div.event__teaser .fr-view").first()?.children()?.first()?.text() ?: ""
+            description = event
+                .select("div.event__teaser .fr-view")
+                .first()
+                ?.children()
+                ?.first()
+                ?.text() ?: ""
         }
 
         val imgTag = event.select("div.event__image img")
@@ -57,12 +61,13 @@ class BrucknerhausCollector : TwoStepEventCollector<Element>("brucknerhaus") {
         }
 
         var location = event.select(".event__location").text()
-        location = if (location.contains("Brucknerhaus")) {
-            "Brucknerhaus Linz"
-        } else {
-            // clean up location that looks like "18:00 Haupteingang Anton Bruckner Privatuniversität Linz"
-            location.substring(5).replace("Haupteingang", "").trim()
-        }
+        location =
+            if (location.contains("Brucknerhaus")) {
+                "Brucknerhaus Linz"
+            } else {
+                // clean up location that looks like "18:00 Haupteingang Anton Bruckner Privatuniversität Linz"
+                location.substring(5).replace("Haupteingang", "").trim()
+            }
 
         return structuredEvent(name, startDates) {
             withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(url))
@@ -71,7 +76,7 @@ class BrucknerhausCollector : TwoStepEventCollector<Element>("brucknerhaus") {
             withProperty(SemanticKeys.PICTURE_ALT_TEXT_PROPERTY, imgAltText)
             withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, imgCopyright)
             withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
-            withProperty(SemanticKeys.TYPE_PROPERTY, "concert") //TODO check
+            withProperty(SemanticKeys.TYPE_PROPERTY, "concert") // TODO check
             withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, location)
             withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse(baseUrl))
             withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Linz")

@@ -9,7 +9,6 @@ import base.boudicca.model.Registration
  */
 @Suppress("unused") // Definitions are maintained for API completeness and may currently be unused
 object SemanticKeys {
-
     // general properties
 
     const val BOUDICCA_ID = "boudicca.id"
@@ -87,7 +86,7 @@ object SemanticKeys {
     const val LOCATION_ADDRESS = "location.address"
     val LOCATION_ADDRESS_PROPERTY = TextProperty(LOCATION_ADDRESS)
 
-    //TODO add those into semantic conventions
+    // TODO add those into semantic conventions
     const val LOCATION_OSM_ID = "location.osmId"
     val LOCATION_OSM_ID_PROPERTY = TextProperty(LOCATION_OSM_ID)
 
@@ -130,6 +129,4 @@ object SemanticKeys {
 
     const val CONCERT_BANDLIST = "concert.bandlist"
     val CONCERT_BANDLIST_PROPERTY = ListProperty(CONCERT_BANDLIST)
-
-
 }

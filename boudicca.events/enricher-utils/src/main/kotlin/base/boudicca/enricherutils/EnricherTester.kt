@@ -9,12 +9,11 @@ private const val EVENTDB_URL = "http://localhost:8081"
 private const val ENRICHER_URL = "http://localhost:8085"
 
 fun main() {
-
     var startTime = System.currentTimeMillis()
     val events = getEvents()
     println("fetch all events took ${System.currentTimeMillis() - startTime}ms")
 
-    val filteredEvents = events//.filter { it.data[SemanticKeys.COLLECTORNAME] == "posthof" }
+    val filteredEvents = events // .filter { it.data[SemanticKeys.COLLECTORNAME] == "posthof" }
 
     startTime = System.currentTimeMillis()
     val enrichedEvents = enrich(filteredEvents)
@@ -23,7 +22,10 @@ fun main() {
     compare(filteredEvents, enrichedEvents)
 }
 
-fun compare(events: List<Event>, enrichedEvents: List<Event>) {
+fun compare(
+    events: List<Event>,
+    enrichedEvents: List<Event>,
+) {
     require(events.size == enrichedEvents.size) { "sizes do not match, wat" }
 
     for (i in events.indices) {
@@ -33,14 +35,17 @@ fun compare(events: List<Event>, enrichedEvents: List<Event>) {
     }
 }
 
-fun printDiff(event: Event, enrichedEvent: Event) {
+fun printDiff(
+    event: Event,
+    enrichedEvent: Event,
+) {
     println()
     printValues("name", event.name, enrichedEvent.name)
     if (event.startDate != enrichedEvent.startDate) {
         printValues(
             "startDate",
             event.startDate.toString(),
-            enrichedEvent.startDate.toString()
+            enrichedEvent.startDate.toString(),
         )
     }
     val oldValues = event.data
@@ -56,14 +61,14 @@ fun printDiff(event: Event, enrichedEvent: Event) {
     }
 }
 
-fun printValues(key: String, oldValue: String?, newValue: String?) {
+fun printValues(
+    key: String,
+    oldValue: String?,
+    newValue: String?,
+) {
     println(String.format(Locale.getDefault(), "%10s: %10s -> %10s", key, oldValue, newValue))
 }
 
-private fun enrich(originalEvents: List<Event>): List<Event> {
-    return EnricherClient(ENRICHER_URL).enrichEvents(originalEvents)
-}
+private fun enrich(originalEvents: List<Event>): List<Event> = EnricherClient(ENRICHER_URL).enrichEvents(originalEvents)
 
-fun getEvents(): List<Event> {
-    return EventDbPublisherClient(EVENTDB_URL).getAllEvents().toList()
-}
+fun getEvents(): List<Event> = EventDbPublisherClient(EVENTDB_URL).getAllEvents().toList()

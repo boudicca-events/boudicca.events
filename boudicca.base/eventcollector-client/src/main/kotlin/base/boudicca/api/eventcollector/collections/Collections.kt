@@ -6,7 +6,6 @@ import java.util.Collections
 import java.util.concurrent.atomic.AtomicReference
 
 object Collections {
-
     private val currentFullCollection = AtomicReference<FullCollection>()
     private val currentSingleCollections = ThreadLocal<SingleCollection>()
     private val currentHttpCalls = ThreadLocal<HttpCall>()
@@ -54,7 +53,10 @@ object Collections {
         currentSingleCollections.set(null)
     }
 
-    fun startHttpCall(url: String, postData: String? = null) {
+    fun startHttpCall(
+        url: String,
+        postData: String? = null,
+    ) {
         if (currentHttpCalls.get() != null) {
             logger.error { "a current http call is already set, this seems like a bug" }
         }
@@ -77,19 +79,11 @@ object Collections {
         currentHttpCalls.set(null)
     }
 
-    fun getAllPastCollections(): List<FullCollection> {
-        return pastFullCollections.toList()
-    }
+    fun getAllPastCollections(): List<FullCollection> = pastFullCollections.toList()
 
-    fun getLastFullCollection(): FullCollection {
-        return pastFullCollections.last()
-    }
+    fun getLastFullCollection(): FullCollection = pastFullCollections.last()
 
-    fun getCurrentFullCollection(): FullCollection? {
-        return currentFullCollection.get()
-    }
+    fun getCurrentFullCollection(): FullCollection? = currentFullCollection.get()
 
-    fun getCurrentSingleCollection(): SingleCollection? {
-        return currentSingleCollections.get()
-    }
+    fun getCurrentSingleCollection(): SingleCollection? = currentSingleCollections.get()
 }

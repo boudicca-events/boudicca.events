@@ -20,8 +20,8 @@ class MuseumArbeitsweltCollector : TwoStepEventCollector<Pair<String, String>>("
             events.add(
                 Pair(
                     it.select("a.act-view-more").attr("href"),
-                    it.select("div.decm-show-detail-center").text()
-                )
+                    it.select("div.decm-show-detail-center").text(),
+                ),
             )
         }
         return events
@@ -51,7 +51,5 @@ class MuseumArbeitsweltCollector : TwoStepEventCollector<Pair<String, String>>("
         }
     }
 
-    private fun parseDate(dateToParse: String): DateParserResult {
-        return DateParser.parse(dateToParse)
-    }
+    private fun parseDate(dateToParse: String): DateParserResult = DateParser.parse(dateToParse)
 }

@@ -14,30 +14,27 @@ import kotlin.jvm.optionals.getOrNull
 
 class EventDbPublisherClient(
     private val eventDbUrl: String,
-    private val otel: OpenTelemetry = GlobalOpenTelemetry.get()
+    private val otel: OpenTelemetry = GlobalOpenTelemetry.get(),
 ) {
-
     private val publisherApi: PublisherApi
 
     init {
         if (eventDbUrl.isBlank()) {
             error("you need to pass an eventDbUrl!")
         }
-        val apiClient = object : ApiClient() {
-            override fun getHttpClient(): HttpClient? {
-                return JavaHttpClientTelemetry
-                    .builder(otel)
-                    .build()
-                    .newHttpClient(super.getHttpClient())
+        val apiClient =
+            object : ApiClient() {
+                override fun getHttpClient(): HttpClient? =
+                    JavaHttpClientTelemetry
+                        .builder(otel)
+                        .build()
+                        .newHttpClient(super.getHttpClient())
             }
-        }
         apiClient.updateBaseUri(eventDbUrl)
         publisherApi = PublisherApi(apiClient)
     }
 
-    fun getAllEvents(): Set<Event> {
-        return getAllEntries().mapNotNull { it.toEvent().getOrNull() }.toSet()
-    }
+    fun getAllEvents(): Set<Event> = getAllEntries().mapNotNull { it.toEvent().getOrNull() }.toSet()
 
     fun getAllEntries(): Set<Entry> {
         try {
@@ -48,4 +45,7 @@ class EventDbPublisherClient(
     }
 }
 
-class EventDBException(msg: String, e: ApiException) : RuntimeException(msg, e)
+class EventDBException(
+    msg: String,
+    e: ApiException,
+) : RuntimeException(msg, e)

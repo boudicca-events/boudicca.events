@@ -10,8 +10,7 @@ import base.boudicca.model.structured.VariantConstants
  *
  * all methods may throw exceptions on wrong formatted values
  */
-class ListFormatAdapter :
-    AbstractFormatAdapter<List<String>>(VariantConstants.FormatVariantConstants.LIST_FORMAT_NAME) {
+class ListFormatAdapter : AbstractFormatAdapter<List<String>>(VariantConstants.FormatVariantConstants.LIST_FORMAT_NAME) {
     fun fromStringOrNull(value: String?): List<String> = value?.let { fromString(it) } ?: emptyList()
 
     override fun fromString(value: String): List<String> {
@@ -33,7 +32,6 @@ class ListFormatAdapter :
                 if (c == ',') {
                     result.add(currentValue.toString())
                     currentValue.clear()
-
                 } else {
                     currentValue.append(c)
                 }

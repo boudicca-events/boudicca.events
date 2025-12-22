@@ -20,22 +20,23 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
 @OpenAPIDefinition(
     servers = [
-        Server(url = "/", description = "Default Server URL")
+        Server(url = "/", description = "Default Server URL"),
     ],
-    info = Info(
-        title = "Boudicca EventDB",
-        version = "0.1",
-        license = License(
-            name = "GPL v3"
-        )
-    ),
+    info =
+        Info(
+            title = "Boudicca EventDB",
+            version = "0.1",
+            license =
+                License(
+                    name = "GPL v3",
+                ),
+        ),
 )
 @AutoConfiguration
 @ComponentScan
 @EnableScheduling
 @EnableConfigurationProperties(BoudiccaEntryDbProperties::class)
 class EntryDBConfiguration : WebMvcConfigurer {
-
     @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
         http.authorizeHttpRequests {
@@ -51,14 +52,16 @@ class EntryDBConfiguration : WebMvcConfigurer {
         registry.addMapping("/**")
     }
 
-    //TODO this really should be done better....
+    // TODO this really should be done better....
     @Bean
     fun users(boudiccaEntryDbProperties: BoudiccaEntryDbProperties): UserDetailsService {
-        val ingestUser = User.builder()
-            .username("ingest")
-            .password("{noop}" + boudiccaEntryDbProperties.ingest.password)
-            .roles("INGEST")
-            .build()
+        val ingestUser =
+            User
+                .builder()
+                .username("ingest")
+                .password("{noop}" + boudiccaEntryDbProperties.ingest.password)
+                .roles("INGEST")
+                .build()
         return InMemoryUserDetailsManager(ingestUser)
     }
 }

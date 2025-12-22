@@ -14,16 +14,15 @@ import javax.ws.rs.Produces
 
 @OpenAPIDefinition
 interface SearchApi {
-
     @Operation(
         responses = [
             ApiResponse(
                 responseCode = "200",
                 description = "get filtervalues for the specified fields to f.E. use in an selectbox",
-                useReturnTypeSchema = true
-            )
+                useReturnTypeSchema = true,
+            ),
         ],
-        tags = ["search"]
+        tags = ["search"],
     )
     @POST
     @Path("filtersFor")
@@ -36,10 +35,10 @@ interface SearchApi {
             ApiResponse(
                 responseCode = "200",
                 description = "query for entries using the Boudicca Query Language",
-                useReturnTypeSchema = true
-            )
+                useReturnTypeSchema = true,
+            ),
         ],
-        tags = ["search"]
+        tags = ["search"],
     )
     @POST
     @Path("queryEntries")

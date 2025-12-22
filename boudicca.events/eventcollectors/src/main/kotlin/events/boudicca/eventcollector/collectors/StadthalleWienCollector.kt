@@ -29,11 +29,12 @@ class StadthalleWienCollector : TwoStepEventCollector<String>("stadthallewien") 
         var srcAttr = imgTag.attr("src")
         if (srcAttr.isBlank()) {
             val bgImgStyle = eventSite.select(".bg-img").attr("style")
-            srcAttr = if (bgImgStyle.contains("url(")) {
-                bgImgStyle.split("url(")[1].split(")")[0]
-            } else {
-                eventSite.select("h1#logo img").attr("src")
-            }
+            srcAttr =
+                if (bgImgStyle.contains("url(")) {
+                    bgImgStyle.split("url(")[1].split(")")[0]
+                } else {
+                    eventSite.select("h1#logo img").attr("src")
+                }
         }
         val pictureUrl = UrlUtils.parse(baseUrl, srcAttr)
 
@@ -59,14 +60,15 @@ class StadthalleWienCollector : TwoStepEventCollector<String>("stadthallewien") 
         }
     }
 
-    private fun parseDates(eventSite: Element): DateParserResult {
-        return try {
-            eventSite.select("ul#datetable li").map {
-                DateParser.parse(it.text())
-            }.reduce()
+    private fun parseDates(eventSite: Element): DateParserResult =
+        try {
+            eventSite
+                .select("ul#datetable li")
+                .map {
+                    DateParser.parse(it.text())
+                }.reduce()
         } catch (_: IllegalArgumentException) {
             // sometimes the timetable is empty, try fallback to header
             DateParser.parse(eventSite.select("div.description h3.date").text())
         }
-    }
 }

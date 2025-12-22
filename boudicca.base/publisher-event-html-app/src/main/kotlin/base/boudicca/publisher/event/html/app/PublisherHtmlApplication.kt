@@ -3,7 +3,6 @@ package base.boudicca.publisher.event.html.app
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
-
 @SpringBootApplication
 class PublisherHtmlApplication
 

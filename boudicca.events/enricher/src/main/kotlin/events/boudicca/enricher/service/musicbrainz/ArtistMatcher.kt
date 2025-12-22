@@ -3,7 +3,10 @@ package events.boudicca.enricher.service.musicbrainz
 import java.nio.ByteBuffer
 
 @Suppress("detekt:MagicNumber")
-class ArtistMatcher(private val artists: List<Artist>, private val index: ByteBuffer) {
+class ArtistMatcher(
+    private val artists: List<Artist>,
+    private val index: ByteBuffer,
+) {
     fun findArtists(string: String): List<Artist> {
         if (string.isEmpty()) {
             return emptyList()
@@ -11,7 +14,7 @@ class ArtistMatcher(private val artists: List<Artist>, private val index: ByteBu
 
         val lowerString = string.lowercase()
 
-        //TODO duplicated artists found?
+        // TODO duplicated artists found?
         val foundArtists = mutableListOf<Artist>()
         foundArtists.addAll(matchArtistsFrom(lowerString, 0))
         for (i in lowerString.indices) {
@@ -23,7 +26,10 @@ class ArtistMatcher(private val artists: List<Artist>, private val index: ByteBu
         return foundArtists
     }
 
-    private fun matchArtistsFrom(string: String, stringIndex: Int): List<Artist> {
+    private fun matchArtistsFrom(
+        string: String,
+        stringIndex: Int,
+    ): List<Artist> {
         val matchedArtists = mutableListOf<Artist>()
 
         var min = 0
@@ -32,7 +38,7 @@ class ArtistMatcher(private val artists: List<Artist>, private val index: ByteBu
             val next = (min + max) / 2
             val compare = compare(string, stringIndex, next)
             if (compare == 0) {
-                //TODO what about multiple matches?
+                // TODO what about multiple matches?
                 matchedArtists.add(artists[index.getInt(next * 4)])
                 break
             } else if (compare < 0) {
@@ -46,7 +52,11 @@ class ArtistMatcher(private val artists: List<Artist>, private val index: ByteBu
     }
 
     @Suppress("ReturnCount")
-    private fun compare(string: String, stringIndex: Int, indexIndex: Int): Int {
+    private fun compare(
+        string: String,
+        stringIndex: Int,
+        indexIndex: Int,
+    ): Int {
         val artistName = artists[index.getInt(indexIndex * 4)].lowercaseName
 
         for (i in artistName.indices) {
@@ -62,7 +72,7 @@ class ArtistMatcher(private val artists: List<Artist>, private val index: ByteBu
             }
         }
 
-        //substrings matches! now look if we are at a word boundary
+        // substrings matches! now look if we are at a word boundary
         if (stringIndex + artistName.length == string.length) {
             return 0
         }

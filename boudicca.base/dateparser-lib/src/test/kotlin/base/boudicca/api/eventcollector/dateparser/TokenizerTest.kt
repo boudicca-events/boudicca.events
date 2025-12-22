@@ -8,7 +8,6 @@ import base.boudicca.dateparser.dateparser.impl.TokenizerType
 import org.junit.jupiter.api.Test
 
 class TokenizerTest {
-
     @Test
     fun testSingleTerms() {
         assertThat(Tokenizer.tokenize("")).isEmpty()
@@ -24,7 +23,7 @@ class TokenizerTest {
                 Pair(TokenizerType.INT, "123"),
                 Pair(TokenizerType.STRING, "asd"),
                 Pair(TokenizerType.SEPARATOR, " +:."),
-            )
+            ),
         )
         assertThat(Tokenizer.tokenize("Freitag, 25.04.1992 um 19:00")).isEqualTo(
             listOf(
@@ -41,7 +40,7 @@ class TokenizerTest {
                 Pair(TokenizerType.INT, "19"),
                 Pair(TokenizerType.SEPARATOR, ":"),
                 Pair(TokenizerType.INT, "00"),
-            )
+            ),
         )
     }
 }

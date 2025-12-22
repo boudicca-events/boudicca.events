@@ -22,18 +22,15 @@ class JkuEventCollector : IcalCollector("jku") {
                 } catch (_: RuntimeException) {
                     mutableListOf<String>() // skip faulty links that result in 404
                 }
-            }
-            .filter { it.endsWith(".ics") }
+            }.filter { it.endsWith(".ics") }
             .map { fetcher.fetchUrl("https://www.jku.at$it") }
             .distinct()
     }
 
-    override fun postProcess(event: StructuredEvent): StructuredEvent {
-        return event
+    override fun postProcess(event: StructuredEvent): StructuredEvent =
+        event
             .toBuilder()
             .withProperty(SemanticKeys.TAGS_PROPERTY, listOf("JKU", "Universität", "Studieren"))
             .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(baseUrl))
             .build()
-    }
-
 }

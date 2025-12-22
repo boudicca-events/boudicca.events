@@ -4,9 +4,7 @@ package base.boudicca.api.eventcollector.debugger.color
  * this code is licensed under apache-2 license from https://github.com/ziggy42/kolor
  * because the package is only published to jcenter https://github.com/ziggy42/kolor/issues/15
  * until it becomes available in mvcentral we have to copy the important parts.
- */
-
-/**
+ *
  * Object to add color information to strings
  * @author Andrea Pivetta
  */
@@ -20,7 +18,10 @@ object TerminalColor {
      * @param color The color to use
      * @return The colored string
      */
-    fun foreground(string: String, color: Color) = color(string, color.foreground)
+    fun foreground(
+        string: String,
+        color: Color,
+    ) = color(string, color.foreground)
 
     /**
      * Create a string that will be printed with the specified color as background
@@ -28,7 +29,13 @@ object TerminalColor {
      * @param color The color to use
      * @return The colored string
      */
-    fun background(string: String, color: Color) = color(string, color.background)
+    fun background(
+        string: String,
+        color: Color,
+    ) = color(string, color.background)
 
-    private fun color(string: String, ansiString: String) = "$ansiString$string$RESET"
+    private fun color(
+        string: String,
+        ansiString: String,
+    ) = "$ansiString$string$RESET"
 }

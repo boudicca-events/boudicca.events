@@ -19,9 +19,11 @@ class LocationEnricherGoogleSheetsUpdater(
     private val httpTransport = GoogleNetHttpTransport.newTrustedTransport()
     private val range = "LocationData!A1:Z"
     private val credentials = createCredentials()
-    private val service = Sheets.Builder(httpTransport, jsonFactory, HttpCredentialsAdapter(credentials))
-        .setApplicationName("Boudicca Location Data Enricher")
-        .build()
+    private val service =
+        Sheets
+            .Builder(httpTransport, jsonFactory, HttpCredentialsAdapter(credentials))
+            .setApplicationName("Boudicca Location Data Enricher")
+            .build()
 
     private fun createCredentials(): GoogleCredentials {
         var credentials: GoogleCredentials =
@@ -32,16 +34,20 @@ class LocationEnricherGoogleSheetsUpdater(
 
     override fun updateData(): List<LocationData> {
         credentials.refreshIfExpired()
-        val response: ValueRange = service.spreadsheets().values()[spreadsheetId, range]
-            .execute()
+        val response: ValueRange =
+            service
+                .spreadsheets()
+                .values()[spreadsheetId, range]
+                .execute()
         val values: List<List<Any?>>? = response.getValues()
         if (values.isNullOrEmpty()) {
             logger.error { "no data found in spreadsheet!" }
             return emptyList()
         }
 
-        val headers = values[0]
-            .mapIndexed { i, value -> Pair(i, value?.toString()?.trim()) }
+        val headers =
+            values[0]
+                .mapIndexed { i, value -> Pair(i, value?.toString()?.trim()) }
 
         val allLocationData = mutableListOf<LocationData>()
         for (row in values.subList(1, values.size)) {
@@ -53,9 +59,11 @@ class LocationEnricherGoogleSheetsUpdater(
                 }
                 val value = row[header.first] as String?
                 if (!value.isNullOrBlank()) {
-                    locationData[header.second!!] = value.split("\n")
-                        .map { it.trim() }
-                        .filter { it.isNotBlank() }
+                    locationData[header.second!!] =
+                        value
+                            .split("\n")
+                            .map { it.trim() }
+                            .filter { it.isNotBlank() }
                 }
             }
             allLocationData.add(locationData)

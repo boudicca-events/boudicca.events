@@ -9,17 +9,23 @@ class DataShouldContainKey(
     private val key: String,
     private val severity: ValidationSeverity,
 ) : EventCollectorValidation {
-    override fun validate(event: Event, verbose: Boolean): ValidationResult {
+    override fun validate(
+        event: Event,
+        verbose: Boolean,
+    ): ValidationResult {
         if (!event.data.containsKey(key)) {
             when (severity) {
-                ValidationSeverity.Info ->
+                ValidationSeverity.Info -> {
                     println("INFO: should have key $key".blue())
+                }
 
-                ValidationSeverity.Warn ->
+                ValidationSeverity.Warn -> {
                     println("WARN: expected key $key".yellow())
+                }
 
-                ValidationSeverity.Error ->
+                ValidationSeverity.Error -> {
                     println("ERR: expected key $key".red())
+                }
             }
             return severity.result
         }

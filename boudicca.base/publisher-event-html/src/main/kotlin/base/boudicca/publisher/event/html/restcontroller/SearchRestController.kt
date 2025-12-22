@@ -13,29 +13,19 @@ import org.springframework.web.servlet.ModelAndView
 
 @RestController
 @RequestMapping("/api")
-class SearchRestController @Autowired constructor(
-    private val eventService: EventService,
-) {
+class SearchRestController
+    @Autowired
+    constructor(
+        private val eventService: EventService,
+    ) {
+        @GetMapping("/search")
+        fun search(searchDTO: SearchDTO): ModelAndView {
+            val data: MutableMap<String, Any> = HashMap()
+            SearchUtils.searchAndAddToModel(eventService, searchDTO, data)
+            return ModelAndView("events/eventsRaw", data)
+        }
 
-    @GetMapping("/search")
-    fun search(
-        searchDTO: SearchDTO
-    ): ModelAndView {
-        val data: MutableMap<String, Any> = HashMap()
-        SearchUtils.searchAndAddToModel(eventService, searchDTO, data)
-        return ModelAndView("events/eventsRaw", data)
+        @GetMapping("/mapSearch", produces = ["application/json"])
+        @ResponseBody
+        fun mapSearch(searchDTO: SearchDTO): MapSearchResultDTO = eventService.mapSearch(searchDTO)
     }
-
-    @GetMapping("/mapSearch", produces = ["application/json"])
-    @ResponseBody
-    fun mapSearch(
-        searchDTO: SearchDTO
-    ): MapSearchResultDTO {
-        return eventService.mapSearch(searchDTO)
-    }
-}
-
-
-
-
-

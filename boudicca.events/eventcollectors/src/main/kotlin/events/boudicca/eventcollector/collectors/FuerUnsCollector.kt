@@ -20,9 +20,11 @@ class FuerUnsCollector : TwoStepEventCollector<String>("fueruns") {
         val events = mutableListOf<Element>()
 
         val document = Jsoup.parse(fetcher.fetchUrl(baseUrl + "aktuelle-veranstaltungen/veranstaltungskalender?page=1"))
-        val otherUrls = document.select("nav.pagination ul li a")
-            .toList()
-            .map { it.attr("href") }
+        val otherUrls =
+            document
+                .select("nav.pagination ul li a")
+                .toList()
+                .map { it.attr("href") }
         parseEventList(document, events)
 
         otherUrls.forEach {
@@ -32,11 +34,15 @@ class FuerUnsCollector : TwoStepEventCollector<String>("fueruns") {
         return events.map { it.attr("href") }
     }
 
-    private fun parseEventList(document: Document, events: MutableList<Element>) {
+    private fun parseEventList(
+        document: Document,
+        events: MutableList<Element>,
+    ) {
         events.addAll(
-            document.select("a.event.event_list_item.event_list_item_link")
+            document
+                .select("a.event.event_list_item.event_list_item_link")
                 .toList()
-                .filter { !it.attr("href").startsWith("http") } // exclude events from others than fuer uns
+                .filter { !it.attr("href").startsWith("http") }, // exclude events from others than fuer uns
         )
     }
 

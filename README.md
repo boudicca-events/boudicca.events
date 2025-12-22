@@ -11,7 +11,7 @@ here: https://boudicca.events/about
 
 ## Data Model
 
-boudicca.events is only concerned about Events, 
+boudicca.events is only concerned about Events,
 but some of the underlying services are more generic and could be used for other information as well, those would be called "Entry".  
 boudicca.events is a database of Events, which are simple Key->Value pairs, but in order to support some use-cases it also
 supports format and language Variants of properties, please see [Data Model](docs/DATA_MODEL.md) for more information.

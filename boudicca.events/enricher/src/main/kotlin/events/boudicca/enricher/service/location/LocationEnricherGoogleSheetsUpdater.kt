@@ -10,10 +10,7 @@ import com.google.auth.oauth2.GoogleCredentials
 import io.github.oshai.kotlinlogging.KotlinLogging
 import java.io.FileInputStream
 
-class LocationEnricherGoogleSheetsUpdater(
-    private val googleCredentialsPath: String,
-    private val spreadsheetId: String,
-) : LocationEnricherUpdater {
+class LocationEnricherGoogleSheetsUpdater(private val googleCredentialsPath: String, private val spreadsheetId: String) : LocationEnricherUpdater {
     private val logger = KotlinLogging.logger {}
     private val jsonFactory = GsonFactory.getDefaultInstance()
     private val httpTransport = GoogleNetHttpTransport.newTrustedTransport()

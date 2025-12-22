@@ -109,7 +109,5 @@ class ListFormatAdapterParseFromStringTest {
         assertEquals(listOf("1", "2,3\\", "4"), result)
     }
 
-    private fun parseFromString(s: String): List<String> {
-        return ListFormatAdapter().fromString(s)
-    }
+    private fun parseFromString(s: String): List<String> = ListFormatAdapter().fromString(s)
 }

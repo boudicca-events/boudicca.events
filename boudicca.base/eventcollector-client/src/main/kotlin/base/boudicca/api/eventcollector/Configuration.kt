@@ -37,9 +37,7 @@ object Configuration {
         return properties.getProperty(name)
     }
 
-    private fun toEnvName(name: String): String {
-        return name
-            .split('.')
-            .joinToString("_") { it.uppercase() }
-    }
+    private fun toEnvName(name: String): String = name
+        .split('.')
+        .joinToString("_") { it.uppercase() }
 }

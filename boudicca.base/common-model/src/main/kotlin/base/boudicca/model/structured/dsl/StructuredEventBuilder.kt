@@ -7,11 +7,8 @@ import base.boudicca.model.structured.Key
 import base.boudicca.model.structured.StructuredEvent
 import java.time.OffsetDateTime
 
-class StructuredEventBuilder(
-    private val name: String,
-    private val startDate: OffsetDateTime,
-    data: Map<Key, String> = emptyMap(),
-) : AbstractStructuredBuilder<StructuredEvent, StructuredEventBuilder>(data.toMutableMap()) {
+class StructuredEventBuilder(private val name: String, private val startDate: OffsetDateTime, data: Map<Key, String> = emptyMap()) :
+    AbstractStructuredBuilder<StructuredEvent, StructuredEventBuilder>(data.toMutableMap()) {
     fun withTextData(name: String, data: String, init: EntryDataBuilder<String>.() -> Unit = {}) {
         val builder = EntryDataBuilder(name, TextFormatAdapter())
         builder.data(data)
@@ -52,11 +49,9 @@ class StructuredEventBuilder(
         this.data.putAll(dataEntries)
     }
 
-    override fun build(): StructuredEvent {
-        return StructuredEvent(
-            name,
-            startDate,
-            data.toMap(),
-        )
-    }
+    override fun build(): StructuredEvent = StructuredEvent(
+        name,
+        startDate,
+        data.toMap(),
+    )
 }

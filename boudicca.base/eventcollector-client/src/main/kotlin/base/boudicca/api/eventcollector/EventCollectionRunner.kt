@@ -115,15 +115,13 @@ class EventCollectionRunner(
         }
     }
 
-    private fun enrich(events: List<Event>): List<Event> {
-        return try {
-            retry(logger) {
-                enricherInterface.enrichEvents(events)
-            }
-        } catch (e: Exception) {
-            logger.error(e) { "enricher threw exception, submitting events un-enriched" }
-            events
+    private fun enrich(events: List<Event>): List<Event> = try {
+        retry(logger) {
+            enricherInterface.enrichEvents(events)
         }
+    } catch (e: Exception) {
+        logger.error(e) { "enricher threw exception, submitting events un-enriched" }
+        events
     }
 
     private fun postProcess(event: Event, collectorName: String): Event {

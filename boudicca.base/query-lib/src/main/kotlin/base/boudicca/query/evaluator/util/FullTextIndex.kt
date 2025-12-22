@@ -13,17 +13,11 @@ class FullTextIndex(entries: List<Entry>, field: String) {
     private val words = getWords(entries, field)
     private val index = createIndex()
 
-    fun get(i: Int): Pair<Int, Int> {
-        return Pair(index.getInt(i * 8), index.getInt(i * 8 + 4))
-    }
+    fun get(i: Int): Pair<Int, Int> = Pair(index.getInt(i * 8), index.getInt(i * 8 + 4))
 
-    fun size(): Int {
-        return index.capacity() / 8
-    }
+    fun size(): Int = index.capacity() / 8
 
-    fun getEntriesForWord(i: Int): BitSet {
-        return words[i].second
-    }
+    fun getEntriesForWord(i: Int): BitSet = words[i].second
 
     fun containsSearch(text: String): BitSet {
         val searchWords = breakText(text.lowercase())
@@ -93,9 +87,7 @@ class FullTextIndex(entries: List<Entry>, field: String) {
         return words[vI].first.startsWith(lowerPrefix, sI, false) // ignore case already done by lowering everything
     }
 
-    private fun binarySearch(comparator: (Int) -> Int): Int {
-        return EvaluatorUtil.binarySearch(0, size(), comparator)
-    }
+    private fun binarySearch(comparator: (Int) -> Int): Int = EvaluatorUtil.binarySearch(0, size(), comparator)
 
     private fun getWords(entries: List<Entry>, field: String): List<Pair<CharBuffer, BitSet>> {
         val key = Key.parse(field)
@@ -169,15 +161,10 @@ class FullTextIndex(entries: List<Entry>, field: String) {
         return index
     }
 
-    class SortableByteBuffer(private val byteBuffer: ByteBuffer, private val values: List<Pair<CharBuffer, BitSet>>) :
-        EvaluatorUtil.Sortable<ByteBuffer> {
-        override fun get(): ByteBuffer {
-            return byteBuffer
-        }
+    class SortableByteBuffer(private val byteBuffer: ByteBuffer, private val values: List<Pair<CharBuffer, BitSet>>) : EvaluatorUtil.Sortable<ByteBuffer> {
+        override fun get(): ByteBuffer = byteBuffer
 
-        override fun copy(): EvaluatorUtil.Sortable<ByteBuffer> {
-            return SortableByteBuffer(ByteBuffer.wrap(byteBuffer.array().copyOf()), values)
-        }
+        override fun copy(): EvaluatorUtil.Sortable<ByteBuffer> = SortableByteBuffer(ByteBuffer.wrap(byteBuffer.array().copyOf()), values)
 
         override fun compare(i: Int, j: Int): Int {
             val vI1 = byteBuffer.getInt(i * 8)

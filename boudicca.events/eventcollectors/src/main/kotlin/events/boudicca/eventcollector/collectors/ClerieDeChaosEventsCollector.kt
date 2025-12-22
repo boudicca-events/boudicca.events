@@ -17,9 +17,7 @@ class ClerieDeChaosEventsCollector : IcalCollector("chaosevents.clerie.de") {
     private val baseUrl = "https://chaosevents.clerie.de/"
     private val icsUrl = "${baseUrl}chaosevents.ics"
 
-    override fun getAllIcalResources(): List<String> {
-        return listOf(fetcher.fetchUrl(icsUrl))
-    }
+    override fun getAllIcalResources(): List<String> = listOf(fetcher.fetchUrl(icsUrl))
 
     override fun postProcess(event: StructuredEvent): StructuredEvent {
         val eventUrl =

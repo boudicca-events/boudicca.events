@@ -14,19 +14,15 @@ class CCCEventsCollector : IcalCollector("events.ccc.de") {
     private val baseUrl = "https://events.ccc.de/"
     private val icsUrl = "${baseUrl}calendar/events.ics"
 
-    override fun getAllIcalResources(): List<String> {
-        return listOf(fetcher.fetchUrl(icsUrl))
-    }
+    override fun getAllIcalResources(): List<String> = listOf(fetcher.fetchUrl(icsUrl))
 
-    override fun postProcess(event: StructuredEvent): StructuredEvent {
-        return event.toBuilder()
-            .withProperty(
-                SemanticKeys.TAGS_PROPERTY,
-                listOf("Chaos", "CCC", "tech", "privacy", "hacking", "making", "programming"),
-            )
-            .withProperty(SemanticKeys.CATEGORY_PROPERTY, EventCategory.TECH)
-            .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(baseUrl, icsUrl))
-            .withProperty(SemanticKeys.TYPE_PROPERTY, "chaosevent")
-            .build()
-    }
+    override fun postProcess(event: StructuredEvent): StructuredEvent = event.toBuilder()
+        .withProperty(
+            SemanticKeys.TAGS_PROPERTY,
+            listOf("Chaos", "CCC", "tech", "privacy", "hacking", "making", "programming"),
+        )
+        .withProperty(SemanticKeys.CATEGORY_PROPERTY, EventCategory.TECH)
+        .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(baseUrl, icsUrl))
+        .withProperty(SemanticKeys.TYPE_PROPERTY, "chaosevent")
+        .build()
 }

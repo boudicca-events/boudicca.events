@@ -76,19 +76,11 @@ object Collections {
         currentHttpCalls.set(null)
     }
 
-    fun getAllPastCollections(): List<FullCollection> {
-        return pastFullCollections.toList()
-    }
+    fun getAllPastCollections(): List<FullCollection> = pastFullCollections.toList()
 
-    fun getLastFullCollection(): FullCollection {
-        return pastFullCollections.last()
-    }
+    fun getLastFullCollection(): FullCollection = pastFullCollections.last()
 
-    fun getCurrentFullCollection(): FullCollection? {
-        return currentFullCollection.get()
-    }
+    fun getCurrentFullCollection(): FullCollection? = currentFullCollection.get()
 
-    fun getCurrentSingleCollection(): SingleCollection? {
-        return currentSingleCollections.get()
-    }
+    fun getCurrentSingleCollection(): SingleCollection? = currentSingleCollections.get()
 }

@@ -41,22 +41,18 @@ class BoudiccaEventsExtension : Extension {
     val urlGithub = "https://github.com/boudicca-events/boudicca.events"
     val urlDiscord = "https://discord.gg/dwtsPZWCVA"
 
-    override fun getHeaders(): List<LinkExtension> {
-        return listOf(
-            LinkExtension("Über uns", "/about"),
-            LinkExtension("Github", urlGithub, "_blank", "github"),
-            LinkExtension("Discord", urlDiscord, "_blank", "discord"),
-        )
-    }
+    override fun getHeaders(): List<LinkExtension> = listOf(
+        LinkExtension("Über uns", "/about"),
+        LinkExtension("Github", urlGithub, "_blank", "github"),
+        LinkExtension("Discord", urlDiscord, "_blank", "discord"),
+    )
 
-    override fun getFooters(): List<LinkExtension> {
-        return listOf(
-            LinkExtension("Über uns", "/about"),
-            LinkExtension("Impressum", "/impressum"),
-            LinkExtension("Data Privacy", "/data-privacy"),
-            LinkExtension("GitHub", urlGithub, "_blank", "github"),
-            LinkExtension("Discord", urlDiscord, "_blank", "discord"),
-            LinkExtension("Erklärung zur Barrierefreiheit", "/erklarung-zur-barrierefreiheit"),
-        )
-    }
+    override fun getFooters(): List<LinkExtension> = listOf(
+        LinkExtension("Über uns", "/about"),
+        LinkExtension("Impressum", "/impressum"),
+        LinkExtension("Data Privacy", "/data-privacy"),
+        LinkExtension("GitHub", urlGithub, "_blank", "github"),
+        LinkExtension("Discord", urlDiscord, "_blank", "discord"),
+        LinkExtension("Erklärung zur Barrierefreiheit", "/erklarung-zur-barrierefreiheit"),
+    )
 }

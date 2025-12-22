@@ -228,7 +228,5 @@ class FullTextIndexTest {
         assertEquals(0, result.cardinality())
     }
 
-    private fun create(entries: List<Entry>, field: String): FullTextIndex {
-        return FullTextIndex(entries, field)
-    }
+    private fun create(entries: List<Entry>, field: String): FullTextIndex = FullTextIndex(entries, field)
 }

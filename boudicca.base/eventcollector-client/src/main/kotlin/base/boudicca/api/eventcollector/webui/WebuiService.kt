@@ -95,58 +95,48 @@ class WebuiService(
         )
     }
 
-    private fun mapSingleCollectionToFrontend(it: SingleCollection): Map<String, *> {
-        return mapSingleCollectionToFrontend(it.collectorName, it)
-    }
+    private fun mapSingleCollectionToFrontend(it: SingleCollection): Map<String, *> = mapSingleCollectionToFrontend(it.collectorName, it)
 
-    private fun mapSingleCollectionToFrontend(name: String, it: SingleCollection?): Map<String, *> {
-        return if (it != null) {
-            mapOf(
-                "id" to it.id.toString(),
-                "name" to HtmlUtils.htmlEscape(it.collectorName),
-                "duration" to formatDuration(it.startTime, it.endTime),
-                "startEndTime" to formatStartEndTime(it.startTime, it.endTime),
-                "errorCount" to it.errorCount.toString(),
-                "warningCount" to it.warningCount.toString(),
-                "hasErrors" to (it.errorCount > 0),
-                "hasWarnings" to (it.warningCount > 0),
-                "totalEventsCollected" to (it.totalEventsCollected).toString(),
-            )
-        } else {
-            mapOf(
-                "id" to null,
-                "name" to name,
-                "duration" to "-",
-                "startEndTime" to "-",
-                "errorCount" to "-",
-                "warningCount" to "-",
-                "hasErrors" to false,
-                "hasWarnings" to false,
-                "totalEventsCollected" to "-",
-            )
-        }
-    }
-
-    private fun mapHttpCallToFrontend(httpCall: HttpCall): Map<String, String> {
-        return mapOf(
-            "url" to httpCall.url!!,
-            "responseCode" to if (httpCall.responseCode == 0) "-" else httpCall.responseCode.toString(),
-            "duration" to formatDuration(httpCall.startTime, httpCall.endTime),
-            "startEndTime" to formatStartEndTime(httpCall.startTime, httpCall.endTime),
-            "postData" to (httpCall.postData ?: ""),
+    private fun mapSingleCollectionToFrontend(name: String, it: SingleCollection?): Map<String, *> = if (it != null) {
+        mapOf(
+            "id" to it.id.toString(),
+            "name" to HtmlUtils.htmlEscape(it.collectorName),
+            "duration" to formatDuration(it.startTime, it.endTime),
+            "startEndTime" to formatStartEndTime(it.startTime, it.endTime),
+            "errorCount" to it.errorCount.toString(),
+            "warningCount" to it.warningCount.toString(),
+            "hasErrors" to (it.errorCount > 0),
+            "hasWarnings" to (it.warningCount > 0),
+            "totalEventsCollected" to (it.totalEventsCollected).toString(),
+        )
+    } else {
+        mapOf(
+            "id" to null,
+            "name" to name,
+            "duration" to "-",
+            "startEndTime" to "-",
+            "errorCount" to "-",
+            "warningCount" to "-",
+            "hasErrors" to false,
+            "hasWarnings" to false,
+            "totalEventsCollected" to "-",
         )
     }
 
-    private fun findSingleCollection(id: UUID): SingleCollection? {
-        return Collections.getAllPastCollections()
-            .union(listOfNotNull(Collections.getCurrentFullCollection()))
-            .flatMap { it.singleCollections }
-            .find { it.id == id }
-    }
+    private fun mapHttpCallToFrontend(httpCall: HttpCall): Map<String, String> = mapOf(
+        "url" to httpCall.url!!,
+        "responseCode" to if (httpCall.responseCode == 0) "-" else httpCall.responseCode.toString(),
+        "duration" to formatDuration(httpCall.startTime, httpCall.endTime),
+        "startEndTime" to formatStartEndTime(httpCall.startTime, httpCall.endTime),
+        "postData" to (httpCall.postData ?: ""),
+    )
 
-    private fun findFullCollection(id: UUID): FullCollection? {
-        return Collections.getAllPastCollections().find { it.id == id }
-    }
+    private fun findSingleCollection(id: UUID): SingleCollection? = Collections.getAllPastCollections()
+        .union(listOfNotNull(Collections.getCurrentFullCollection()))
+        .flatMap { it.singleCollections }
+        .find { it.id == id }
+
+    private fun findFullCollection(id: UUID): FullCollection? = Collections.getAllPastCollections().find { it.id == id }
 
     private fun formatStartEndTime(startTimeInMillis: Long, endTimeInMillis: Long): String {
         val startTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(startTimeInMillis), zoneId)

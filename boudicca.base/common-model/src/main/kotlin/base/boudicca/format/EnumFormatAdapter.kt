@@ -3,11 +3,8 @@ package base.boudicca.format
 import base.boudicca.model.structured.VariantConstants
 import java.lang.reflect.InvocationTargetException
 
-class EnumFormatAdapter<E : Enum<E>>(private val enumClass: Class<E>) :
-    AbstractFormatAdapter<E>(VariantConstants.FormatVariantConstants.ENUM_FORMAT_NAME) {
-    override fun convertToString(value: E): String {
-        return value.name
-    }
+class EnumFormatAdapter<E : Enum<E>>(private val enumClass: Class<E>) : AbstractFormatAdapter<E>(VariantConstants.FormatVariantConstants.ENUM_FORMAT_NAME) {
+    override fun convertToString(value: E): String = value.name
 
     override fun fromString(value: String): E {
         try {

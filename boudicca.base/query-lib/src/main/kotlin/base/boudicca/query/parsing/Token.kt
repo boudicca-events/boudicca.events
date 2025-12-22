@@ -1,21 +1,11 @@
 package base.boudicca.query.parsing
 
-class Token(
-    private val type: TokenType,
-    private val token: String? = null,
-    private val number: Number? = null,
-) {
-    fun getType(): TokenType {
-        return type
-    }
+class Token(private val type: TokenType, private val token: String? = null, private val number: Number? = null) {
+    fun getType(): TokenType = type
 
-    fun getToken(): String? {
-        return token
-    }
+    fun getToken(): String? = token
 
-    fun getNumber(): Number? {
-        return number
-    }
+    fun getNumber(): Number? = number
 }
 
 enum class TokenType {

@@ -99,9 +99,7 @@ class KeyUtilsTest {
         }
     }
 
-    private fun toStructuredKeyValuePairs(map: Map<String, String>): Map<Key, String> {
-        return KeyUtils.toStructuredKeyValuePairs(map)
-    }
+    private fun toStructuredKeyValuePairs(map: Map<String, String>): Map<Key, String> = KeyUtils.toStructuredKeyValuePairs(map)
 
     @Test
     fun testToFlatEmpty() {
@@ -172,7 +170,5 @@ class KeyUtilsTest {
         assertThrows<IllegalArgumentException> { KeyUtils.parseKeyFilter("key:asd") }
     }
 
-    private fun toFlat(data: Map<Key, String>): Map<String, String> {
-        return KeyUtils.toFlatKeyValuePairs(data)
-    }
+    private fun toFlat(data: Map<Key, String>): Map<String, String> = KeyUtils.toFlatKeyValuePairs(data)
 }

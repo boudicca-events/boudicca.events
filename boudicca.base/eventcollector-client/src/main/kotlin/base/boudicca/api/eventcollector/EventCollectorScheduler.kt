@@ -52,9 +52,7 @@ class EventCollectorScheduler(
         getEventCollectorCoordinator().getEventCollectionRunner().run()
     }
 
-    fun getCollectors(): List<EventCollector> {
-        return getEventCollectorCoordinator().getCollectors()
-    }
+    fun getCollectors(): List<EventCollector> = getEventCollectorCoordinator().getCollectors()
 
     override fun close() {
         getEventCollectorCoordinator().close()

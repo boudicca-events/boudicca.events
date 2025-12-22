@@ -1,14 +1,13 @@
 @file:Suppress("MagicNumber")
 
 package base.boudicca
+
 import java.nio.ByteBuffer
 import java.security.MessageDigest
 import java.text.Normalizer
-import java.util.UUID
+import java.util.*
 
-class UuidV5(
-    private val namespace: UUID,
-) {
+class UuidV5(private val namespace: UUID) {
     fun from(keys: List<String>): UUID {
         val normalized = keys.map(::normalize)
         val joined = normalized.joinToString(separator = "|") { "${it.length}:$it" }

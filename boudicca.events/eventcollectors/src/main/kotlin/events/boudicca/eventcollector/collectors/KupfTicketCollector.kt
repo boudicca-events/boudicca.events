@@ -80,18 +80,14 @@ class KupfTicketCollector : TwoStepEventCollector<String>("kupfticket") {
         }
     }
 
-    private fun splitLocation(location: String): Pair<String, String?> {
-        return if (location.count { it == ',' } > 2) { // probably location name + address
-            val split = location.split(",", limit = 2)
-            Pair(split[0].trim(), split[1].trim())
-        } else {
-            Pair(location, null)
-        }
+    private fun splitLocation(location: String): Pair<String, String?> = if (location.count { it == ',' } > 2) { // probably location name + address
+        val split = location.split(",", limit = 2)
+        Pair(split[0].trim(), split[1].trim())
+    } else {
+        Pair(location, null)
     }
 
-    private fun parseDate(date: String): OffsetDateTime {
-        return OffsetDateTime.parse(date, DateTimeFormatter.ISO_DATE_TIME)
-    }
+    private fun parseDate(date: String): OffsetDateTime = OffsetDateTime.parse(date, DateTimeFormatter.ISO_DATE_TIME)
 
     private fun htmlToCleanTextWithLineBreaks(html: String): String {
         val doc = Jsoup.parse(html)

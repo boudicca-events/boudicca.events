@@ -60,14 +60,12 @@ class StadthalleWienCollector : TwoStepEventCollector<String>("stadthallewien") 
         }
     }
 
-    private fun parseDates(eventSite: Element): DateParserResult {
-        return try {
-            eventSite.select("ul#datetable li").map {
-                DateParser.parse(it.text())
-            }.reduce()
-        } catch (_: IllegalArgumentException) {
-            // sometimes the timetable is empty, try fallback to header
-            DateParser.parse(eventSite.select("div.description h3.date").text())
-        }
+    private fun parseDates(eventSite: Element): DateParserResult = try {
+        eventSite.select("ul#datetable li").map {
+            DateParser.parse(it.text())
+        }.reduce()
+    } catch (_: IllegalArgumentException) {
+        // sometimes the timetable is empty, try fallback to header
+        DateParser.parse(eventSite.select("div.description h3.date").text())
     }
 }

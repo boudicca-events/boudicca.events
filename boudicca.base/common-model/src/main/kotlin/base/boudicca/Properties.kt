@@ -37,20 +37,13 @@ interface Property<T> {
     fun getKeyFilter(language: String? = null): KeyFilter
 }
 
-abstract class AbstractProperty<T>(
-    private val propertyName: String,
-    private val adapter: AbstractFormatAdapter<T>,
-) : Property<T> {
-    override fun getKey(language: String?): Key {
-        return internalGetKey(false, language) {
-            Key.builder(it)
-        }
+abstract class AbstractProperty<T>(private val propertyName: String, private val adapter: AbstractFormatAdapter<T>) : Property<T> {
+    override fun getKey(language: String?): Key = internalGetKey(false, language) {
+        Key.builder(it)
     }
 
-    override fun getKeyFilter(language: String?): KeyFilter {
-        return internalGetKey(true, language) {
-            KeyFilter.builder(it)
-        }
+    override fun getKeyFilter(language: String?): KeyFilter = internalGetKey(true, language) {
+        KeyFilter.builder(it)
     }
 
     private fun <T : AbstractKey<T>> internalGetKey(alwaysIncludeFormat: Boolean, language: String?, builderFunction: (String) -> AbstractKeyBuilder<T>): T {
@@ -65,8 +58,7 @@ abstract class AbstractProperty<T>(
     }
 }
 
-open class GenericProperty<T>(propertyName: String, private val adapter: AbstractFormatAdapter<T>) :
-    AbstractProperty<T>(propertyName, adapter) {
+open class GenericProperty<T>(propertyName: String, private val adapter: AbstractFormatAdapter<T>) : AbstractProperty<T>(propertyName, adapter) {
     override fun parseToString(value: T): String? = adapter.convertToString(value)
 
     override fun parseFromString(string: String): T = adapter.fromString(string)
@@ -84,8 +76,7 @@ class ListProperty(propertyName: String) : GenericProperty<List<String>>(propert
 
 class NumberProperty(propertyName: String) : GenericProperty<Number>(propertyName, NumberFormatAdapter())
 
-class EnumProperty<E : Enum<E>>(propertyName: String, enumClass: Class<E>) :
-    GenericProperty<E>(propertyName, EnumFormatAdapter(enumClass))
+class EnumProperty<E : Enum<E>>(propertyName: String, enumClass: Class<E>) : GenericProperty<E>(propertyName, EnumFormatAdapter(enumClass))
 
 class BooleanProperty(propertyName: String) : GenericProperty<Boolean>(propertyName, BooleanFormatAdapter())
 

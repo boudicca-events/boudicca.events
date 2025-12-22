@@ -36,7 +36,5 @@ class RecurrenceTypeEnricherTest {
         assertEquals("RARELY", enriched[6].data[SemanticKeys.RECURRENCE_TYPE])
     }
 
-    private fun callEnrich(events: List<Event>): List<Event> {
-        return RecurrenceEnricher().enrich(events.map { it.toStructuredEvent() }).map { it.toFlatEvent() }
-    }
+    private fun callEnrich(events: List<Event>): List<Event> = RecurrenceEnricher().enrich(events.map { it.toStructuredEvent() }).map { it.toFlatEvent() }
 }

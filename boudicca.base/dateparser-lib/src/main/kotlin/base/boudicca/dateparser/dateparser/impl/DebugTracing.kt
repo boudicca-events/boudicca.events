@@ -1,15 +1,9 @@
 package base.boudicca.dateparser.dateparser.impl
 
-internal data class DebugTracing(
-    private val operations: MutableList<Operation> = mutableListOf(),
-) {
-    fun startOperation(description: String, tokens: Tokens) {
-        return startOperation(description, listOf(tokens))
-    }
+internal data class DebugTracing(private val operations: MutableList<Operation> = mutableListOf()) {
+    fun startOperation(description: String, tokens: Tokens) = startOperation(description, listOf(tokens))
 
-    fun startOperationWithChild(description: String, tokens: Tokens): DebugTracing {
-        return startOperationWithChild(description, listOf(tokens))
-    }
+    fun startOperationWithChild(description: String, tokens: Tokens): DebugTracing = startOperationWithChild(description, listOf(tokens))
 
     fun startOperation(description: String, tokens: List<Tokens>) {
         operations.add(Operation(description, tokens, null, null))
@@ -64,9 +58,4 @@ internal data class DebugTracing(
     }
 }
 
-internal data class Operation(
-    val description: String,
-    val newTokens: List<Tokens>,
-    var result: Any?,
-    val childOperations: DebugTracing?,
-)
+internal data class Operation(val description: String, val newTokens: List<Tokens>, var result: Any?, val childOperations: DebugTracing?)

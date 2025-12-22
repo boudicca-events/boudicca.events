@@ -18,9 +18,7 @@ object KeyUtils {
         return result
     }
 
-    fun toFlatKeyValuePairs(data: Map<Key, String>): Map<String, String> {
-        return data.mapKeys { it.key.toKeyString() }
-    }
+    fun toFlatKeyValuePairs(data: Map<Key, String>): Map<String, String> = data.mapKeys { it.key.toKeyString() }
 
     fun parseKey(key: String): Key {
         val resultPair = parseKeyNameAndVariants(key)

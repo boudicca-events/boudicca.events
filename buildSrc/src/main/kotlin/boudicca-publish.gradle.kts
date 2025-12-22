@@ -19,7 +19,7 @@ java {
 
 publishing {
     repositories {
-        maven{
+        maven {
             name = "releaseRepo"
             url = uri(rootProject.layout.buildDirectory.dir("release_repo"))
         }

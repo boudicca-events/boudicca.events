@@ -11,22 +11,17 @@ import io.opentelemetry.instrumentation.javahttpclient.JavaHttpClientTelemetry
 import java.net.http.HttpClient
 import base.boudicca.enricher.openapi.model.Event as EnricherOpenApiEvent
 
-class EnricherClient(
-    private val enricherUrl: String,
-    private val otel: OpenTelemetry = GlobalOpenTelemetry.get(),
-) {
+class EnricherClient(private val enricherUrl: String, private val otel: OpenTelemetry = GlobalOpenTelemetry.get()) {
     private val enricherApi: EnricherApi
 
     init {
         check(enricherUrl.isNotBlank()) { "you need to pass an enricherUrl!" }
         val apiClient =
             object : ApiClient() {
-                override fun getHttpClient(): HttpClient? {
-                    return JavaHttpClientTelemetry
-                        .builder(otel)
-                        .build()
-                        .newHttpClient(super.getHttpClient())
-                }
+                override fun getHttpClient(): HttpClient? = JavaHttpClientTelemetry
+                    .builder(otel)
+                    .build()
+                    .newHttpClient(super.getHttpClient())
             }
         apiClient.updateBaseUri(enricherUrl)
 
@@ -42,16 +37,12 @@ class EnricherClient(
         }
     }
 
-    private fun toEvent(enricherEvent: EnricherOpenApiEvent): Event {
-        return Event(enricherEvent.name!!, enricherEvent.startDate!!, enricherEvent.data ?: mapOf())
-    }
+    private fun toEvent(enricherEvent: EnricherOpenApiEvent): Event = Event(enricherEvent.name!!, enricherEvent.startDate!!, enricherEvent.data ?: mapOf())
 
-    private fun mapToEnricherEvent(event: Event): EnricherOpenApiEvent {
-        return EnricherOpenApiEvent()
-            .name(event.name)
-            .startDate(event.startDate)
-            .data(event.data)
-    }
+    private fun mapToEnricherEvent(event: Event): EnricherOpenApiEvent = EnricherOpenApiEvent()
+        .name(event.name)
+        .startDate(event.startDate)
+        .data(event.data)
 }
 
 class EnricherException(msg: String, e: ApiException) : RuntimeException(msg, e)

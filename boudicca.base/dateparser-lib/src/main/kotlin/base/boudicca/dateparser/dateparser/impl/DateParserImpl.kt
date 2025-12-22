@@ -7,11 +7,7 @@ import io.opentelemetry.api.OpenTelemetry
 import io.opentelemetry.api.trace.SpanKind
 import io.opentelemetry.api.trace.StatusCode
 
-internal class DateParserImpl(
-    private val dateParserConfig: DateParserConfig,
-    private val inputTokens: List<String>,
-    private val otel: OpenTelemetry,
-) {
+internal class DateParserImpl(private val dateParserConfig: DateParserConfig, private val inputTokens: List<String>, private val otel: OpenTelemetry) {
     fun parse(): DateParserResult {
         val span =
             otel.getTracer("DateParser")
@@ -59,35 +55,33 @@ internal class DateParserImpl(
     }
 
     @Suppress("CyclomaticComplexMethod", "MagicNumber", "ComplexCondition")
-    private fun mapAndValidateTokens(tokens: List<Pair<TokenizerType, String>>): List<Token> {
-        return tokens.map {
-            val possibleTypes = mutableSetOf<ResultTypes>()
-            if (it.first == TokenizerType.STRING) {
-                if (MonthMappings.mapMonthToInt(it.second) != null) {
+    private fun mapAndValidateTokens(tokens: List<Pair<TokenizerType, String>>): List<Token> = tokens.map {
+        val possibleTypes = mutableSetOf<ResultTypes>()
+        if (it.first == TokenizerType.STRING) {
+            if (MonthMappings.mapMonthToInt(it.second) != null) {
+                possibleTypes.add(ResultTypes.MONTH)
+            }
+        } else if (it.first == TokenizerType.INT) {
+            val num = it.second.toIntOrNull()
+            if (num != null) {
+                if (0 <= num && num <= 99 || 1900 <= num && num <= 3000) { // shortform 0-99 + longform 1900-3000
+                    possibleTypes.add(ResultTypes.YEAR)
+                }
+                if (1 <= num && num <= 12) {
                     possibleTypes.add(ResultTypes.MONTH)
                 }
-            } else if (it.first == TokenizerType.INT) {
-                val num = it.second.toIntOrNull()
-                if (num != null) {
-                    if (0 <= num && num <= 99 || 1900 <= num && num <= 3000) { // shortform 0-99 + longform 1900-3000
-                        possibleTypes.add(ResultTypes.YEAR)
-                    }
-                    if (1 <= num && num <= 12) {
-                        possibleTypes.add(ResultTypes.MONTH)
-                    }
-                    if (1 <= num && num <= 31) {
-                        possibleTypes.add(ResultTypes.DAY)
-                    }
-                    if (0 <= num && num <= 24) {
-                        possibleTypes.add(ResultTypes.HOURS)
-                    }
-                    if (0 <= num && num <= 59) {
-                        possibleTypes.add(ResultTypes.MINUTES)
-                        possibleTypes.add(ResultTypes.SECONDS)
-                    }
+                if (1 <= num && num <= 31) {
+                    possibleTypes.add(ResultTypes.DAY)
+                }
+                if (0 <= num && num <= 24) {
+                    possibleTypes.add(ResultTypes.HOURS)
+                }
+                if (0 <= num && num <= 59) {
+                    possibleTypes.add(ResultTypes.MINUTES)
+                    possibleTypes.add(ResultTypes.SECONDS)
                 }
             }
-            Token.create(it.second, possibleTypes)
         }
+        Token.create(it.second, possibleTypes)
     }
 }

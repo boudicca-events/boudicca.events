@@ -205,7 +205,5 @@ class ArtistMatcherTest {
         assertEquals("a - b", result[0].name)
     }
 
-    private fun testMatcher(artists: List<Artist>, bytes: ByteArray): ArtistMatcher {
-        return ArtistMatcher(artists, ByteBuffer.wrap(bytes))
-    }
+    private fun testMatcher(artists: List<Artist>, bytes: ByteArray): ArtistMatcher = ArtistMatcher(artists, ByteBuffer.wrap(bytes))
 }

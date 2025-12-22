@@ -110,10 +110,5 @@ object TestDataGenerator {
         )
     }
 
-    data class Metadata(
-        val percentage: Float,
-        val words: List<String>,
-        val min: Int,
-        val median: Int,
-    ) : Serializable
+    data class Metadata(val percentage: Float, val words: List<String>, val min: Int, val median: Int) : Serializable
 }

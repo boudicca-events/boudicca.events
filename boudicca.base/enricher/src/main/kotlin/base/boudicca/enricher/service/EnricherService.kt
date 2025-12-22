@@ -6,10 +6,7 @@ import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 
 @Service
-class EnricherService(
-    private val enrichers: List<Enricher>,
-    private val eventPublisher: ApplicationEventPublisher,
-) {
+class EnricherService(private val enrichers: List<Enricher>, private val eventPublisher: ApplicationEventPublisher) {
     fun enrich(enrichRequestDTO: EnrichRequestDTO): List<Event> {
         var enrichedEvents = enrichRequestDTO.events?.map { it.toStructuredEvent() } ?: emptyList()
         for (enricher in enrichers) {

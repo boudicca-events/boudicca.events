@@ -17,15 +17,10 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
-class LandestheaterLinzCollector :
-    TwoStepEventCollector<LandestheaterLinzCollector.LandestheaterEventData>("landestheater linz") {
+class LandestheaterLinzCollector : TwoStepEventCollector<LandestheaterLinzCollector.LandestheaterEventData>("landestheater linz") {
     private val baseUrl = "https://www.landestheater-linz.at"
 
-    data class LandestheaterEventData(
-        val eventItem: Element,
-        val document: Pair<String, Document>,
-        val dateText: String,
-    )
+    data class LandestheaterEventData(val eventItem: Element, val document: Pair<String, Document>, val dateText: String)
 
     override fun getAllUnparsedEvents(): List<LandestheaterEventData> {
         val fetcher = FetcherFactory.newFetcher()
@@ -124,19 +119,21 @@ class LandestheaterLinzCollector :
         when {
             locationName.contains("musiktheater", ignoreCase = true) ->
                 this.withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Musiktheater Linz")
+
             locationName == "Studiobühne" ->
                 // there is no dedicated page for it, but it is in the same building, so....
                 this.withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Studiobühne Linz")
+
             locationName == "Schauspielhaus" ->
                 this.withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Schauspielhaus Linz")
+
             locationName == "Kammerspiele" ->
                 this.withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Kammerspiele Linz")
+
             locationName.isNotBlank() ->
                 this.withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, locationName)
         }
     }
 
-    private fun parseDates(overview: Element, dateText: String): DateParserResult {
-        return DateParser.parse(dateText, overview.select("div.lth-evitem-time").text())
-    }
+    private fun parseDates(overview: Element, dateText: String): DateParserResult = DateParser.parse(dateText, overview.select("div.lth-evitem-time").text())
 }

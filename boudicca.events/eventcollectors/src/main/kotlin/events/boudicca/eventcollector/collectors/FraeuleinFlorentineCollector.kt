@@ -13,7 +13,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
-import java.util.Locale
+import java.util.*
 
 class FraeuleinFlorentineCollector : TwoStepEventCollector<Pair<Element, String?>>("fraeuleinflorentine") {
     private val fetcher = FetcherFactory.newFetcher()
@@ -58,7 +58,8 @@ class FraeuleinFlorentineCollector : TwoStepEventCollector<Pair<Element, String?
         if (startTimeElementText.isNotBlank()) {
             startTimeToParse = startTimeElementText
             val startTime =
-                LocalTime.parse( // DateParse can't handle am/pm, so convert it manually and continue with its String
+                LocalTime.parse(
+                    // DateParse can't handle am/pm, so convert it manually and continue with its String
                     startTimeToParse.uppercase(), // convert pm to PM, to be recognized by the time pattern 'a'
                     DateTimeFormatter.ofPattern("h:mm a").withLocale(Locale.GERMAN),
                 )
@@ -77,7 +78,8 @@ class FraeuleinFlorentineCollector : TwoStepEventCollector<Pair<Element, String?
         val endTimeToParse = event.select(".simcal-event-end-time").text()
         if (endTimeToParse.isNotBlank()) {
             endTime =
-                LocalTime.parse( // DateParse can't handle am/pm, so convert it manually and continue with its String
+                LocalTime.parse(
+                    // DateParse can't handle am/pm, so convert it manually and continue with its String
                     endTimeToParse.uppercase(), // convert pm to PM, to be recognized by the time pattern 'a'
                     DateTimeFormatter.ofPattern("h:mm a").withLocale(Locale.GERMAN),
                 )

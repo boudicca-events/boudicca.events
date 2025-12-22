@@ -7,9 +7,7 @@ import base.boudicca.model.structured.Variant
 class KeySelectorBuilder(private val propertyName: String) {
     private val variants = mutableListOf<Pair<String, List<String>>>()
 
-    fun thenVariant(variantName: String, vararg variantValues: String): KeySelectorBuilder {
-        return thenVariant(variantName, variantValues.toList())
-    }
+    fun thenVariant(variantName: String, vararg variantValues: String): KeySelectorBuilder = thenVariant(variantName, variantValues.toList())
 
     fun thenVariant(variantName: String, variantValues: List<String>): KeySelectorBuilder {
         variants.add(Pair(variantName, variantValues))
@@ -21,9 +19,7 @@ class KeySelectorBuilder(private val propertyName: String) {
         return this
     }
 
-    fun build(): KeySelector {
-        return KeySelector(propertyName, variants.toList())
-    }
+    fun build(): KeySelector = KeySelector(propertyName, variants.toList())
 }
 
 fun keySelector(propertyName: String, init: KeySelectorBuilder.() -> Unit = {}): KeySelector {

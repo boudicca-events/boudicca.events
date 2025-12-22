@@ -50,24 +50,20 @@ class Parser(private val tokens: List<Token>) {
     }
 
     // NotExpression = [ not ] FieldExpression
-    private fun parseNotExpression(): Expression {
-        return if (getCurrentTokenType() == TokenType.NOT) {
-            i++
-            NotExpression(parseFieldExpression())
-        } else {
-            parseFieldExpression()
-        }
+    private fun parseNotExpression(): Expression = if (getCurrentTokenType() == TokenType.NOT) {
+        i++
+        NotExpression(parseFieldExpression())
+    } else {
+        parseFieldExpression()
     }
 
     // FieldExpression = grouping_open Expression grouping_close |  <all other terminal operators>
-    private fun parseFieldExpression(): Expression {
-        return when (getCurrentTokenType()) {
-            TokenType.GROUPING_OPEN -> parseGrouping()
-            TokenType.TEXT -> parseTextExpression()
-            TokenType.DURATION -> parseDuration()
-            TokenType.HAS_FIELD -> parseHasField()
-            else -> throw QueryException("invalid token ${getCurrentTokenType()}")
-        }
+    private fun parseFieldExpression(): Expression = when (getCurrentTokenType()) {
+        TokenType.GROUPING_OPEN -> parseGrouping()
+        TokenType.TEXT -> parseTextExpression()
+        TokenType.DURATION -> parseDuration()
+        TokenType.HAS_FIELD -> parseHasField()
+        else -> throw QueryException("invalid token ${getCurrentTokenType()}")
     }
 
     private fun parseDuration(): AbstractDurationExpression {
@@ -159,11 +155,9 @@ class Parser(private val tokens: List<Token>) {
         i++
     }
 
-    private fun getCurrentTokenType(): TokenType? {
-        return if (i >= tokens.size) {
-            null
-        } else {
-            tokens[i].getType()
-        }
+    private fun getCurrentTokenType(): TokenType? = if (i >= tokens.size) {
+        null
+    } else {
+        tokens[i].getType()
     }
 }

@@ -14,9 +14,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 class TechnologiePlauscherlCollector : EventCollector {
-    override fun getName(): String {
-        return "technologieplauscherl"
-    }
+    override fun getName(): String = "technologieplauscherl"
 
     override fun collectStructuredEvents(): List<StructuredEvent> {
         val url = "https://technologieplauscherl.at/feed"

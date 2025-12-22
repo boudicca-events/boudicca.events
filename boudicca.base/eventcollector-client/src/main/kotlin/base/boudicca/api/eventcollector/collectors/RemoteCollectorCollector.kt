@@ -12,9 +12,7 @@ import java.net.HttpURLConnection
  * see the RemoteCollectorApi interface for a http interface description
  */
 class RemoteCollectorCollector(private val url: String, private val name: String? = null) : EventCollector {
-    override fun getName(): String {
-        return name ?: "remote collector: $url"
-    }
+    override fun getName(): String = name ?: "remote collector: $url"
 
     override fun collectEvents(): List<Event> {
         Collections.startHttpCall(url)
@@ -41,13 +39,11 @@ class RemoteCollectorCollector(private val url: String, private val name: String
         return eventCollection.events
     }
 
-    private fun toCollectionsHttpCall(httpCall: HttpCall): base.boudicca.api.eventcollector.collections.HttpCall {
-        return base.boudicca.api.eventcollector.collections.HttpCall(
-            httpCall.startTime.toInstant().toEpochMilli(),
-            httpCall.endTime.toInstant().toEpochMilli(),
-            httpCall.url,
-            httpCall.postParams,
-            httpCall.responseCode,
-        )
-    }
+    private fun toCollectionsHttpCall(httpCall: HttpCall): base.boudicca.api.eventcollector.collections.HttpCall = base.boudicca.api.eventcollector.collections.HttpCall(
+        httpCall.startTime.toInstant().toEpochMilli(),
+        httpCall.endTime.toInstant().toEpochMilli(),
+        httpCall.url,
+        httpCall.postParams,
+        httpCall.responseCode,
+    )
 }

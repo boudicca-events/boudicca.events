@@ -28,11 +28,9 @@ class JkuEventCollector : IcalCollector("jku") {
             .distinct()
     }
 
-    override fun postProcess(event: StructuredEvent): StructuredEvent {
-        return event
-            .toBuilder()
-            .withProperty(SemanticKeys.TAGS_PROPERTY, listOf("JKU", "Universität", "Studieren"))
-            .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(baseUrl))
-            .build()
-    }
+    override fun postProcess(event: StructuredEvent): StructuredEvent = event
+        .toBuilder()
+        .withProperty(SemanticKeys.TAGS_PROPERTY, listOf("JKU", "Universität", "Studieren"))
+        .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(baseUrl))
+        .build()
 }

@@ -22,22 +22,16 @@ class FetcherTest {
                 instant = Instant.ofEpochMilli(millis() + long)
             }
 
-            override fun instant(): Instant {
-                return instant
-            }
+            override fun instant(): Instant = instant
         }
 
     private val httpClientWrapper =
         object : HttpClientWrapper {
             var callback: Callable<Pair<Int, String>> = Callable { throw IllegalStateException("not initialized") }
 
-            override fun doGet(url: String): Pair<Int, String> {
-                return callback.call()
-            }
+            override fun doGet(url: String): Pair<Int, String> = callback.call()
 
-            override fun doPost(url: String, contentType: String, content: String): Pair<Int, String> {
-                return callback.call()
-            }
+            override fun doPost(url: String, contentType: String, content: String): Pair<Int, String> = callback.call()
         }
 
     private val fetcher =

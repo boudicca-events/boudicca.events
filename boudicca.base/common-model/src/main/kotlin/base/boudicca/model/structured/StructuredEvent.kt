@@ -19,49 +19,35 @@ data class StructuredEvent(val name: String, val startDate: OffsetDateTime, val 
 
     constructor(event: Event) : this(event.name, event.startDate, KeyUtils.toStructuredKeyValuePairs(event.data))
 
-    fun toFlatEvent(): Event {
-        return Event(name, startDate, KeyUtils.toFlatKeyValuePairs(data))
-    }
+    fun toFlatEvent(): Event = Event(name, startDate, KeyUtils.toFlatKeyValuePairs(data))
 
-    fun toEntry(): StructuredEntry {
-        return Companion.toEntry(this)
-    }
+    fun toEntry(): StructuredEntry = Companion.toEntry(this)
 
-    fun toBuilder(): StructuredEventBuilder {
-        return StructuredEventBuilder(this.name, this.startDate, this.data)
-    }
+    fun toBuilder(): StructuredEventBuilder = StructuredEventBuilder(this.name, this.startDate, this.data)
 
     /**
      * get property values from this entry. please note that if a property value cannot be parsed it will silently ignore this value
      */
-    fun <T> getProperty(property: Property<T>): List<Pair<Key, T>> {
-        return getProperty(property, null)
-    }
+    fun <T> getProperty(property: Property<T>): List<Pair<Key, T>> = getProperty(property, null)
 
     /**
      * get property values with a specific language from this entry. please note that if a property value cannot be parsed it will silently ignore this value
      */
-    fun <T> getProperty(property: Property<T>, language: String?): List<Pair<Key, T>> {
-        return KeyFilters
-            .filterKeys(property.getKeyFilter(language), this)
-            .mapNotNull {
-                try {
-                    val parsedValue = property.parseFromString(it.second)
-                    Pair(it.first, parsedValue)
-                } catch (e: IllegalArgumentException) {
-                    logger.warn(e) { "error parsing value for key '${it.first}': ${it.second}" }
-                    null
-                }
+    fun <T> getProperty(property: Property<T>, language: String?): List<Pair<Key, T>> = KeyFilters
+        .filterKeys(property.getKeyFilter(language), this)
+        .mapNotNull {
+            try {
+                val parsedValue = property.parseFromString(it.second)
+                Pair(it.first, parsedValue)
+            } catch (e: IllegalArgumentException) {
+                logger.warn(e) { "error parsing value for key '${it.first}': ${it.second}" }
+                null
             }
-    }
+        }
 
-    fun filterKeys(keyFilter: KeyFilter): List<Pair<Key, String>> {
-        return KeyFilters.filterKeys(keyFilter, this)
-    }
+    fun filterKeys(keyFilter: KeyFilter): List<Pair<Key, String>> = KeyFilters.filterKeys(keyFilter, this)
 
-    fun selectKey(keySelector: KeySelector): Optional<Pair<Key, String>> {
-        return keySelector.selectSingle(this)
-    }
+    fun selectKey(keySelector: KeySelector): Optional<Pair<Key, String>> = keySelector.selectSingle(this)
 
     companion object {
         fun toEntry(event: StructuredEvent): StructuredEntry {

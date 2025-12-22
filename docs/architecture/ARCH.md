@@ -1,8 +1,9 @@
 # Architecture
 
 This repo contains two codebases
- - boudicca.base - contains all services which can be used independently to create a new service based upon boudicca platform
- - boudicca.events - this is the code which is specific to the [boudicca.events](https://boudicca.events) page
+
+- boudicca.base - contains all services which can be used independently to create a new service based upon boudicca platform
+- boudicca.events - this is the code which is specific to the [boudicca.events](https://boudicca.events) page
 
 ## boudicca.base
 
@@ -30,9 +31,9 @@ Our core boudicca system currently consists of two services:
 #### EventDB
 
 The EventDB which job it is to accept new event data from collectors, persist them and provide them for other
-services to consume. 
+services to consume.
 
-#### Search Service 
+#### Search Service
 
 The Search service is a service which provides search functionality on the EventDB data and is mostly used by the publishers.
 

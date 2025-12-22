@@ -40,16 +40,12 @@ class Fetcher(
     private var lastRequestEnd = 0L
     private var lastRequestDuration = 0L
 
-    fun fetchUrl(url: String): String {
-        return fetch("GET", url, url, null) {
-            httpClient.doGet(url)
-        }
+    fun fetchUrl(url: String): String = fetch("GET", url, url, null) {
+        httpClient.doGet(url)
     }
 
-    fun fetchUrlPost(url: String, contentType: String, content: String): String {
-        return fetch("POST", "$url|$contentType|$content", url, content) {
-            httpClient.doPost(url, contentType, content)
-        }
+    fun fetchUrlPost(url: String, contentType: String, content: String): String = fetch("POST", "$url|$contentType|$content", url, content) {
+        httpClient.doPost(url, contentType, content)
     }
 
     private fun fetch(httpMethod: String, cacheKey: String, url: String, content: String?, executeRequestAction: () -> Pair<Int, String>): String {
@@ -110,12 +106,10 @@ class Fetcher(
         return response.second
     }
 
-    private fun <T> retry(function: () -> T): T {
-        return if (disableRetries) {
-            function()
-        } else {
-            retry(logger, sleeper, function)
-        }
+    private fun <T> retry(function: () -> T): T = if (disableRetries) {
+        function()
+    } else {
+        retry(logger, sleeper, function)
     }
 
     private fun doSleep(span: Span) {

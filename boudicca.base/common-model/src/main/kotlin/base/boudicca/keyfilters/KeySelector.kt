@@ -39,13 +39,8 @@ import java.util.*
  *
  * Note that the KeySelector currently does not handle the format variant, you have to convert the value manually.
  */
-class KeySelector(
-    private val propertyName: String,
-    private val variants: List<Pair<String, List<String>>>,
-) {
-    fun selectSingle(event: StructuredEvent): Optional<Pair<Key, String>> {
-        return selectSingle(Event.toEntry(event.toFlatEvent()).toStructuredEntry())
-    }
+class KeySelector(private val propertyName: String, private val variants: List<Pair<String, List<String>>>) {
+    fun selectSingle(event: StructuredEvent): Optional<Pair<Key, String>> = selectSingle(Event.toEntry(event.toFlatEvent()).toStructuredEntry())
 
     fun selectSingle(properties: StructuredEntry): Optional<Pair<Key, String>> {
         val variantList = mutableListOf<Variant>()
@@ -94,9 +89,7 @@ class KeySelector(
     }
 
     companion object {
-        fun builder(propertyName: String): KeySelectorBuilder {
-            return KeySelectorBuilder(propertyName)
-        }
+        fun builder(propertyName: String): KeySelectorBuilder = KeySelectorBuilder(propertyName)
 
         fun builder(key: Key): KeySelectorBuilder {
             val builder = KeySelectorBuilder(key.name)

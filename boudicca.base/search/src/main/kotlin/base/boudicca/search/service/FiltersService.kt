@@ -66,13 +66,11 @@ class FiltersService {
     }
 
     // TODO find better place to place those utils?
-    private fun isList(key: Key): Boolean {
-        return KeyFilters.containsVariant(
-            key,
-            Variant(
-                VariantConstants.FORMAT_VARIANT_NAME,
-                VariantConstants.FormatVariantConstants.LIST_FORMAT_NAME,
-            ),
-        )
-    }
+    private fun isList(key: Key): Boolean = KeyFilters.containsVariant(
+        key,
+        Variant(
+            VariantConstants.FORMAT_VARIANT_NAME,
+            VariantConstants.FormatVariantConstants.LIST_FORMAT_NAME,
+        ),
+    )
 }

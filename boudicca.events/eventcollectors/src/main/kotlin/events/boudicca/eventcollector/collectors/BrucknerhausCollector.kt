@@ -35,9 +35,7 @@ class BrucknerhausCollector : TwoStepEventCollector<Element>("brucknerhaus") {
         return events
     }
 
-    private fun findUnparsedEvents(doc: Document): List<Element> {
-        return doc.select("div.event div.event__element")
-    }
+    private fun findUnparsedEvents(doc: Document): List<Element> = doc.select("div.event div.event__element")
 
     override fun parseMultipleStructuredEvents(event: Element): List<StructuredEvent> {
         val startDates = parseDate(event)

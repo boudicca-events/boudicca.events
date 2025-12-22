@@ -5,10 +5,7 @@ import base.boudicca.model.structured.Key
 import base.boudicca.model.structured.Variant
 import base.boudicca.model.structured.VariantConstants
 
-class EntryDataBuilder<T>(
-    private val name: String,
-    private var defaultFormatAdapter: AbstractFormatAdapter<T>? = null,
-) {
+class EntryDataBuilder<T>(private val name: String, private var defaultFormatAdapter: AbstractFormatAdapter<T>? = null) {
     // all combinations of the form
     // description
     // description:lang=de
@@ -41,11 +38,9 @@ class EntryDataBuilder<T>(
         variantCombinations[variantList.toList()] = formatAdapter.convertToString(data)
     }
 
-    fun build(): Map<Key, String> {
-        return variantCombinations.map { entry ->
-            Key(name, entry.key) to entry.value
-        }.toMap()
-    }
+    fun build(): Map<Key, String> = variantCombinations.map { entry ->
+        Key(name, entry.key) to entry.value
+    }.toMap()
 }
 
 private fun <U> MutableList<Variant>.addFormatVariant(formatAdapter: AbstractFormatAdapter<U>) {

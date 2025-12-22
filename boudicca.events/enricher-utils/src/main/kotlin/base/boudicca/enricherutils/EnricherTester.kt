@@ -59,10 +59,6 @@ fun printValues(key: String, oldValue: String?, newValue: String?) {
     println(String.format(Locale.getDefault(), "%10s: %10s -> %10s", key, oldValue, newValue))
 }
 
-private fun enrich(originalEvents: List<Event>): List<Event> {
-    return EnricherClient(ENRICHER_URL).enrichEvents(originalEvents)
-}
+private fun enrich(originalEvents: List<Event>): List<Event> = EnricherClient(ENRICHER_URL).enrichEvents(originalEvents)
 
-fun getEvents(): List<Event> {
-    return EventDbPublisherClient(EVENTDB_URL).getAllEvents().toList()
-}
+fun getEvents(): List<Event> = EventDbPublisherClient(EVENTDB_URL).getAllEvents().toList()

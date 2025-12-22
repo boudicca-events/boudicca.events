@@ -12,23 +12,17 @@ import base.boudicca.model.structured.Variant
  * see DATA_MODEL.md docs for more information on key filters
  */
 object KeyFilters {
-    fun filterKeys(keyFilter: KeyFilter, event: StructuredEvent): List<Pair<Key, String>> {
-        return filterKeys(keyFilter, event.toEntry())
-    }
+    fun filterKeys(keyFilter: KeyFilter, event: StructuredEvent): List<Pair<Key, String>> = filterKeys(keyFilter, event.toEntry())
 
-    fun filterKeys(keyFilter: KeyFilter, data: StructuredEntry): List<Pair<Key, String>> {
-        return data
-            .filter { doesKeyMatchFilter(it.key, keyFilter) }
-            .toList()
-            .sortedBy { it.first }
-    }
+    fun filterKeys(keyFilter: KeyFilter, data: StructuredEntry): List<Pair<Key, String>> = data
+        .filter { doesKeyMatchFilter(it.key, keyFilter) }
+        .toList()
+        .sortedBy { it.first }
 
-    fun doesKeyMatchFilter(key: Key, keyFilter: KeyFilter): Boolean {
-        return (
-            (isWildcard(keyFilter) || keyFilter.name == key.name) &&
-                keyContainsAllVariants(keyFilter, key)
-            )
-    }
+    fun doesKeyMatchFilter(key: Key, keyFilter: KeyFilter): Boolean = (
+        (isWildcard(keyFilter) || keyFilter.name == key.name) &&
+            keyContainsAllVariants(keyFilter, key)
+        )
 
     private fun keyContainsAllVariants(keyFilter: KeyFilter, key: Key) = keyFilter.variants.all { variant -> containsVariant(key, variant) }
 

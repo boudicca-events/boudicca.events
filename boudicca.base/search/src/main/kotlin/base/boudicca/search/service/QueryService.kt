@@ -26,10 +26,7 @@ private const val DEFAULT_PAGE_SIZE = 30
 @Service
 class QueryService
 @Autowired
-constructor(
-    private val boudiccaSearchProperties: BoudiccaSearchProperties,
-    private val openTelemetry: OpenTelemetry,
-) {
+constructor(private val boudiccaSearchProperties: BoudiccaSearchProperties, private val openTelemetry: OpenTelemetry) {
     companion object {
         private val logger = KotlinLogging.logger {}
         private var clock = Clock.system(ZoneId.of("Europe/Vienna")) // TODO make configurable
@@ -70,13 +67,11 @@ constructor(
         }
     }
 
-    private fun evaluateQuery(query: String, page: Page): ResultDTO {
-        return try {
-            val queryResult = BoudiccaQueryRunner.evaluateQuery(query, page, evaluator, openTelemetry)
-            ResultDTO(queryResult.result, queryResult.totalResults, queryResult.error)
-        } catch (e: QueryException) {
-            // TODO this should return a 400 error or something, not a 200 message with an error message...
-            ResultDTO(emptyList(), 0, e.message)
-        }
+    private fun evaluateQuery(query: String, page: Page): ResultDTO = try {
+        val queryResult = BoudiccaQueryRunner.evaluateQuery(query, page, evaluator, openTelemetry)
+        ResultDTO(queryResult.result, queryResult.totalResults, queryResult.error)
+    } catch (e: QueryException) {
+        // TODO this should return a 400 error or something, not a 200 message with an error message...
+        ResultDTO(emptyList(), 0, e.message)
     }
 }

@@ -7,19 +7,12 @@ import io.opentelemetry.api.OpenTelemetry
 import org.springframework.stereotype.Service
 
 @Service
-class EventDBEventFetcher(
-    private val boudiccaSearchProperties: BoudiccaSearchProperties,
-    private val otel: OpenTelemetry,
-) : EventFetcher {
+class EventDBEventFetcher(private val boudiccaSearchProperties: BoudiccaSearchProperties, private val otel: OpenTelemetry) : EventFetcher {
     private val publisherApi: EventDbPublisherClient = createEventPublisherApi()
 
-    override fun fetchAllEvents(): Set<Entry> {
-        return publisherApi.getAllEntries()
-    }
+    override fun fetchAllEvents(): Set<Entry> = publisherApi.getAllEntries()
 
-    private fun createEventPublisherApi(): EventDbPublisherClient {
-        return EventDbPublisherClient(boudiccaSearchProperties.eventDB.url, otel)
-    }
+    private fun createEventPublisherApi(): EventDbPublisherClient = EventDbPublisherClient(boudiccaSearchProperties.eventDB.url, otel)
 }
 
 fun interface EventFetcher {

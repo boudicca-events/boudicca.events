@@ -15,9 +15,7 @@ import org.springframework.web.servlet.ModelAndView
 @RequestMapping("/api")
 class SearchRestController
 @Autowired
-constructor(
-    private val eventService: EventService,
-) {
+constructor(private val eventService: EventService) {
     @GetMapping("/search")
     fun search(searchDTO: SearchDTO): ModelAndView {
         val data: MutableMap<String, Any> = HashMap()
@@ -27,7 +25,5 @@ constructor(
 
     @GetMapping("/mapSearch", produces = ["application/json"])
     @ResponseBody
-    fun mapSearch(searchDTO: SearchDTO): MapSearchResultDTO {
-        return eventService.mapSearch(searchDTO)
-    }
+    fun mapSearch(searchDTO: SearchDTO): MapSearchResultDTO = eventService.mapSearch(searchDTO)
 }

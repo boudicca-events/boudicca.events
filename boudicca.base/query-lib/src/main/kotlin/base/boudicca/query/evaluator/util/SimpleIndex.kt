@@ -48,8 +48,6 @@ class SimpleIndex<T>(values: List<Pair<Int, T>>, comparator: Comparator<T>) {
     }
 
     companion object {
-        fun <T> create(values: List<T>, comparator: Comparator<T>): SimpleIndex<T> {
-            return SimpleIndex(values.mapIndexed { i, value -> Pair(i, value) }, comparator)
-        }
+        fun <T> create(values: List<T>, comparator: Comparator<T>): SimpleIndex<T> = SimpleIndex(values.mapIndexed { i, value -> Pair(i, value) }, comparator)
     }
 }

@@ -27,13 +27,11 @@ object UrlUtils {
     }
 
     // invalid urls everywhere -.-
-    private fun tryFixUrl(url: String): String {
-        return url
-            .replace("[", "%5B")
-            .replace("]", "%5D")
-            .replace(" ", "%20")
-            .replace("|", "%7C")
-    }
+    private fun tryFixUrl(url: String): String = url
+        .replace("[", "%5B")
+        .replace("]", "%5D")
+        .replace(" ", "%20")
+        .replace("|", "%7C")
 
     fun String.encodeURL(): String = java.net.URLEncoder.encode(this, "UTF-8")
 }

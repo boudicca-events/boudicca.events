@@ -30,16 +30,14 @@ class LastSpaceCollector : TwoStepEventCollector<String>("lastspace") {
         return eventUrls
     }
 
-    private fun fetchEventUrlsOfSinglePage(page: String): List<String> {
-        return Jsoup.parse(fetcher.fetchUrl(baseUrl + page))
-            .select("tr>td>div>div")
-            .mapNotNull {
-                baseUrl +
-                    it.attr("onClick")
-                        .replace("'", "")
-                        .replace("window.location.href=/", "")
-            }
-    }
+    private fun fetchEventUrlsOfSinglePage(page: String): List<String> = Jsoup.parse(fetcher.fetchUrl(baseUrl + page))
+        .select("tr>td>div>div")
+        .mapNotNull {
+            baseUrl +
+                it.attr("onClick")
+                    .replace("'", "")
+                    .replace("window.location.href=/", "")
+        }
 
     override fun parseMultipleStructuredEvents(event: String): List<StructuredEvent?>? {
         val document = Jsoup.parse(fetcher.fetchUrl(event))

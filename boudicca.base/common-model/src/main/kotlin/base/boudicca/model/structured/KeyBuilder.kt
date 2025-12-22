@@ -1,9 +1,7 @@
 package base.boudicca.model.structured
 
 class KeyBuilder(name: String) : AbstractKeyBuilder<Key>(name) {
-    override fun build(name: String, variants: List<Variant>): Key {
-        return Key(name, variants)
-    }
+    override fun build(name: String, variants: List<Variant>): Key = Key(name, variants)
 }
 
 fun key(name: String, init: KeyBuilder.() -> Unit = {}): Key {

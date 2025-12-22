@@ -61,11 +61,7 @@ class RoedaCollector : TwoStepEventCollector<JsonObject>("roeda") {
         }
     }
 
-    private fun htmlToText(html: String): String {
-        return Jsoup.parse(html).text()
-    }
+    private fun htmlToText(html: String): String = Jsoup.parse(html).text()
 }
 
-private fun OffsetDateTime.fixTimeZone(): OffsetDateTime {
-    return this.toLocalDateTime().atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
-}
+private fun OffsetDateTime.fixTimeZone(): OffsetDateTime = this.toLocalDateTime().atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()

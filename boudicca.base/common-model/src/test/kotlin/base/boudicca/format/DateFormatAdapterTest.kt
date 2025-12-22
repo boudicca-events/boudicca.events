@@ -24,9 +24,7 @@ class DateFormatAdapterTest {
         )
     }
 
-    private fun parseFromString(s: String): OffsetDateTime {
-        return DateFormatAdapter().fromString(s)
-    }
+    private fun parseFromString(s: String): OffsetDateTime = DateFormatAdapter().fromString(s)
 
     @Test
     fun testParseToStringValidValues() {
@@ -38,7 +36,5 @@ class DateFormatAdapterTest {
         )
     }
 
-    private fun parseToString(date: OffsetDateTime): String {
-        return DateFormatAdapter().convertToString(date)
-    }
+    private fun parseToString(date: OffsetDateTime): String = DateFormatAdapter().convertToString(date)
 }

@@ -1,4 +1,3 @@
-import org.gradle.kotlin.dsl.*
 import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 
 /**
@@ -115,7 +114,6 @@ tasks.withType<Javadoc>().configureEach {
     }
 }
 
-fun getInputSpecProvider(): Provider<String> =
-    provider {
-        openapi.files.firstOrNull()?.path
-    }
+fun getInputSpecProvider(): Provider<String> = provider {
+    openapi.files.firstOrNull()?.path
+}

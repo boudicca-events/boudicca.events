@@ -216,22 +216,14 @@ internal object Patterns {
         )
     val EXHAUSTIVE_TIME_PATTERNS = listOf(TIME_HMS, TIME_HM, TIME_H)
 
-    fun type(resultTypes: ResultTypes): Matcher {
-        return TypeMatcher(resultTypes)
-    }
+    fun type(resultTypes: ResultTypes): Matcher = TypeMatcher(resultTypes)
 
-    fun noise(minMatches: Int, maxMatches: Int): Matcher {
-        return NoiseMatcher(minMatches, maxMatches)
-    }
+    fun noise(minMatches: Int, maxMatches: Int): Matcher = NoiseMatcher(minMatches, maxMatches)
 
-    fun separator(separator: String, minMatches: Int = 1, maxMatches: Int = 1): Matcher {
-        return SeparatorMatcher(minMatches, maxMatches, separator)
-    }
+    fun separator(separator: String, minMatches: Int = 1, maxMatches: Int = 1): Matcher = SeparatorMatcher(minMatches, maxMatches, separator)
 
     internal class Pattern(val matchers: List<Matcher>) {
-        override fun toString(): String {
-            return "Pattern(matchers=$matchers)"
-        }
+        override fun toString(): String = "Pattern(matchers=$matchers)"
     }
 
     internal sealed class Matcher {
@@ -239,33 +231,18 @@ internal object Patterns {
         abstract val maxMatches: Int
     }
 
-    internal data class NoiseMatcher(
-        override val minMatches: Int,
-        override val maxMatches: Int,
-    ) : Matcher()
+    internal data class NoiseMatcher(override val minMatches: Int, override val maxMatches: Int) : Matcher()
 
     @ConsistentCopyVisibility
-    internal data class TypeMatcher private constructor(
-        override val minMatches: Int,
-        override val maxMatches: Int,
-        val resultTypes: ResultTypes,
-    ) : Matcher() {
+    internal data class TypeMatcher private constructor(override val minMatches: Int, override val maxMatches: Int, val resultTypes: ResultTypes) : Matcher() {
         constructor(resultTypes: ResultTypes) : this(1, 1, resultTypes)
     }
 
-    internal data class SeparatorMatcher(
-        override val minMatches: Int,
-        override val maxMatches: Int,
-        val separator: String,
-    ) : Matcher()
+    internal data class SeparatorMatcher(override val minMatches: Int, override val maxMatches: Int, val separator: String) : Matcher()
 
-    fun applyGoodGuesses(tokens: List<Token>): List<Token> {
-        return applyPatternsAndMergeResult(PATTERNS_GOOD_GUESSES, tokens)
-    }
+    fun applyGoodGuesses(tokens: List<Token>): List<Token> = applyPatternsAndMergeResult(PATTERNS_GOOD_GUESSES, tokens)
 
-    fun applyWeakGuesses(tokens: List<Token>): List<Token> {
-        return applyGuessesAndIntersect(tokens, PATTERNS_WEAK_GUESSES)
-    }
+    fun applyWeakGuesses(tokens: List<Token>): List<Token> = applyGuessesAndIntersect(tokens, PATTERNS_WEAK_GUESSES)
 
     fun applyExhaustivePatterns(inputTokens: List<Token>): List<Token> {
         val patterns = EXHAUSTIVE_TIME_PATTERNS + EXHAUSTIVE_DATE_PATTERNS
@@ -475,9 +452,7 @@ internal object Patterns {
         )
     }
 
-    private fun whiteout(tokens: List<Token>): List<Token> {
-        return tokens.map { it.withTypes(emptySet()) }
-    }
+    private fun whiteout(tokens: List<Token>): List<Token> = tokens.map { it.withTypes(emptySet()) }
 
     private fun tryMatchMatcherAtPosition(inputGuesses: List<Token>, matcher: Matcher, i: Int): Pair<Set<Int>, List<Token>>? {
         val result = mutableListOf<Token>()
@@ -504,12 +479,10 @@ internal object Patterns {
         return null
     }
 
-    private fun matches(matcher: Matcher, guess: Token): Boolean {
-        return when (matcher) {
-            is TypeMatcher -> guess.possibleTypes.contains(matcher.resultTypes)
-            is NoiseMatcher -> guess.possibleTypes.isEmpty()
-            is SeparatorMatcher -> guess.possibleTypes.isEmpty() && guess.value.trim() == matcher.separator
-        }
+    private fun matches(matcher: Matcher, guess: Token): Boolean = when (matcher) {
+        is TypeMatcher -> guess.possibleTypes.contains(matcher.resultTypes)
+        is NoiseMatcher -> guess.possibleTypes.isEmpty()
+        is SeparatorMatcher -> guess.possibleTypes.isEmpty() && guess.value.trim() == matcher.separator
     }
 
     private fun replacement(pattern: Pattern, capturedComponents: List<List<Token>>): List<Token> {
@@ -517,14 +490,12 @@ internal object Patterns {
         return pattern.matchers.zip(capturedComponents).map { replacement(it.first, it.second) }.flatten()
     }
 
-    private fun replacement(matcher: Matcher, components: List<Token>): List<Token> {
-        return when (matcher) {
-            is TypeMatcher ->
-                components.map {
-                    it.withTypes(setOf(matcher.resultTypes))
-                }
+    private fun replacement(matcher: Matcher, components: List<Token>): List<Token> = when (matcher) {
+        is TypeMatcher ->
+            components.map {
+                it.withTypes(setOf(matcher.resultTypes))
+            }
 
-            else -> components
-        }
+        else -> components
     }
 }

@@ -22,8 +22,7 @@ data class FullCollection(
         0,
     )
 
-    override fun toString(): String {
-        return """
+    override fun toString(): String = """
             FullCollection(
                 id=$id,
                 startTime=$startTime,
@@ -33,30 +32,23 @@ data class FullCollection(
                 errorCount=$errorCount,
                 warningCount=$warningCount
             )
-        """.trimIndent()
-    }
+    """.trimIndent()
 
     /**
      * gets the error count for this full collection + each single collection
      */
-    fun getTotalErrorCount(): Int {
-        return errorCount + singleCollections.sumOf { it.errorCount }
-    }
+    fun getTotalErrorCount(): Int = errorCount + singleCollections.sumOf { it.errorCount }
 
     /**
      * gets the warning count for this full collection + each single collection
      */
-    fun getTotalWarningCount(): Int {
-        return warningCount + singleCollections.sumOf { it.warningCount }
-    }
+    fun getTotalWarningCount(): Int = warningCount + singleCollections.sumOf { it.warningCount }
 
     /**
      * gets all log lines for this full collection + each single collection. please note that those loglines
      * are not sorted by time but by single-/fullcollection
      */
-    fun getAllLogLines(): List<String> {
-        return logLines + singleCollections.flatMap { it.logLines }
-    }
+    fun getAllLogLines(): List<String> = logLines + singleCollections.flatMap { it.logLines }
 }
 
 data class SingleCollection(
@@ -82,8 +74,7 @@ data class SingleCollection(
         0,
     )
 
-    override fun toString(): String {
-        return """
+    override fun toString(): String = """
             SingleCollection(
                 id=$id,
                 collectorName='$collectorName',
@@ -95,16 +86,9 @@ data class SingleCollection(
                 errorCount=$errorCount,
                 warningCount=$warningCount
             )
-        """.trimIndent()
-    }
+    """.trimIndent()
 }
 
-data class HttpCall(
-    var startTime: Long,
-    var endTime: Long,
-    var url: String?,
-    var postData: String?,
-    var responseCode: Int,
-) {
+data class HttpCall(var startTime: Long, var endTime: Long, var url: String?, var postData: String?, var responseCode: Int) {
     constructor() : this(0, 0, null, null, 0)
 }

@@ -6,13 +6,9 @@ package base.boudicca.model.structured
  */
 class KeyFilter(name: String, variants: List<Variant> = emptyList()) : AbstractKey<KeyFilter>(name, variants) {
     companion object {
-        fun parse(keyFilter: String): KeyFilter {
-            return KeyUtils.parseKeyFilter(keyFilter)
-        }
+        fun parse(keyFilter: String): KeyFilter = KeyUtils.parseKeyFilter(keyFilter)
 
-        fun builder(propertyName: String): KeyFilterBuilder {
-            return KeyFilterBuilder(propertyName)
-        }
+        fun builder(propertyName: String): KeyFilterBuilder = KeyFilterBuilder(propertyName)
     }
 
     override fun toBuilder() = KeyFilterBuilder(name).withVariants(variants)

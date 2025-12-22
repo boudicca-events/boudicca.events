@@ -5,8 +5,7 @@ import kotlin.math.min
 /**
  * represents a parsed Key of a Key-Value pair which consists of the name and all the variants (which are sorted canonically)
  */
-abstract class AbstractKey<T : AbstractKey<T>>(val name: String, variants: List<Variant> = emptyList()) :
-    Comparable<T> {
+abstract class AbstractKey<T : AbstractKey<T>>(val name: String, variants: List<Variant> = emptyList()) : Comparable<T> {
     val variants = variants.sorted()
 
     init {
@@ -36,9 +35,7 @@ abstract class AbstractKey<T : AbstractKey<T>>(val name: String, variants: List<
             }
     }
 
-    override fun compareTo(other: T): Int {
-        return COMPARATOR.compare(this, other)
-    }
+    override fun compareTo(other: T): Int = COMPARATOR.compare(this, other)
 
     abstract fun toBuilder(): AbstractKeyBuilder<T>
 

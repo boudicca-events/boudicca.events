@@ -8,7 +8,7 @@ import base.boudicca.model.EventCategory
 import base.boudicca.model.Registration
 import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
-import java.util.Optional
+import java.util.*
 
 /**
  * fhLUG: Fachhochschulcampus Hagenberg Linux User Group

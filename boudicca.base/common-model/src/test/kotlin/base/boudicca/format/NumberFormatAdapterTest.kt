@@ -20,9 +20,7 @@ class NumberFormatAdapterTest {
         assertEquals(BigDecimal.valueOf(1.3), parseFromString("1.3"))
     }
 
-    private fun parseFromString(s: String): Number {
-        return NumberFormatAdapter().fromString(s)
-    }
+    private fun parseFromString(s: String): Number = NumberFormatAdapter().fromString(s)
 
     @Test
     fun testParseToStringValidValues() {
@@ -31,7 +29,5 @@ class NumberFormatAdapterTest {
         assertEquals("1.23", parseToString(BigDecimal.valueOf(1.23)))
     }
 
-    private fun parseToString(date: Number): String {
-        return NumberFormatAdapter().convertToString(date)
-    }
+    private fun parseToString(date: Number): String = NumberFormatAdapter().convertToString(date)
 }

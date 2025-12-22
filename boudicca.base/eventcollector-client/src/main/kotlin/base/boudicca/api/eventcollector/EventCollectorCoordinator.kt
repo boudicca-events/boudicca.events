@@ -40,13 +40,9 @@ class EventCollectorCoordinator(
         }
     }
 
-    fun getCollectors(): List<EventCollector> {
-        return eventCollectors
-    }
+    fun getCollectors(): List<EventCollector> = eventCollectors
 
-    fun getEventCollectionRunner(): EventCollectionRunner {
-        return eventCollectionRunner
-    }
+    fun getEventCollectionRunner(): EventCollectionRunner = eventCollectionRunner
 
     override fun close() {
         synchronized(this) {

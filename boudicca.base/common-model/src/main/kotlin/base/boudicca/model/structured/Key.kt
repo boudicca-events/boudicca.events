@@ -13,18 +13,12 @@ class Key(name: String, variants: List<Variant> = emptyList()) : AbstractKey<Key
     }
 
     companion object {
-        fun parse(keyFilter: String): Key {
-            return KeyUtils.parseKey(keyFilter)
-        }
+        fun parse(keyFilter: String): Key = KeyUtils.parseKey(keyFilter)
 
-        fun builder(propertyName: String): KeyBuilder {
-            return KeyBuilder(propertyName)
-        }
+        fun builder(propertyName: String): KeyBuilder = KeyBuilder(propertyName)
     }
 
-    fun asKeyFilter(): KeyFilter {
-        return KeyFilter(name, variants)
-    }
+    fun asKeyFilter(): KeyFilter = KeyFilter(name, variants)
 
     override fun toBuilder() = KeyBuilder(name).withVariants(variants)
 }

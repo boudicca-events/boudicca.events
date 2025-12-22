@@ -21,20 +21,16 @@ object Utils {
 
     private const val DEFAULT_SIZE = 30
 
-    fun offset(events: List<Entry>, offset: Int?, size: Int?): List<Entry> {
-        return events.drop(offset ?: 0).take(size ?: DEFAULT_SIZE)
-    }
+    fun offset(events: List<Entry>, offset: Int?, size: Int?): List<Entry> = events.drop(offset ?: 0).take(size ?: DEFAULT_SIZE)
 
-    fun order(entries: Collection<Entry>, dateCache: ConcurrentHashMap<String, OffsetDateTime>): List<Entry> {
-        return entries.toList()
-            .map { Pair(it, getStartDate(it, dateCache)) }
-            .sortedWith(
-                Comparator
-                    .comparing<Pair<Entry, OffsetDateTime>, OffsetDateTime> { it.second }
-                    .thenComparing(Function { it.first[SemanticKeys.NAME] ?: "" }),
-            )
-            .map { it.first }
-    }
+    fun order(entries: Collection<Entry>, dateCache: ConcurrentHashMap<String, OffsetDateTime>): List<Entry> = entries.toList()
+        .map { Pair(it, getStartDate(it, dateCache)) }
+        .sortedWith(
+            Comparator
+                .comparing<Pair<Entry, OffsetDateTime>, OffsetDateTime> { it.second }
+                .thenComparing(Function { it.first[SemanticKeys.NAME] ?: "" }),
+        )
+        .map { it.first }
 
     private fun getStartDate(entry: Entry, startDateCache: ConcurrentHashMap<String, OffsetDateTime>): OffsetDateTime {
         val optionalDateText =

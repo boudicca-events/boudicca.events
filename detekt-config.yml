@@ -1,34 +1,34 @@
 config:
-  warningsAsErrors: true
+    warningsAsErrors: true
 style:
-  MaxLineLength:
-    # NOTE: Also configured in .editorconfig (detekt doesn't read .editorconfig yet)
-    # See: https://github.com/detekt/detekt/issues/8815
-    maxLineLength: 180
-  ForbiddenComment:
-    active: false # todo and stuff, this could be hardened by allowing todo's that reference a ticket instead of allowing all
-  ReturnCount:
-    max: 3 # let's try to not raise this any higher
-  MagicNumber:
-    excludes:
-      - '**/eventcollector/collectors/**' # eventcollectors have many magic numbers due to parsing logic which do not get better with constants
-      # the others are the default excludes
-      - '**/test/**'
-      - '**/androidTest/**'
-      - '**/commonTest/**'
-      - '**/jvmTest/**'
-      - '**/androidUnitTest/**'
-      - '**/androidInstrumentedTest/**'
-      - '**/jsTest/**'
-      - '**/iosTest/**'
-      - '**/*.kts'
+    MaxLineLength:
+        # NOTE: Also configured in .editorconfig (detekt doesn't read .editorconfig yet)
+        # See: https://github.com/detekt/detekt/issues/8815
+        maxLineLength: 180
+    ForbiddenComment:
+        active: false # todo and stuff, this could be hardened by allowing todo's that reference a ticket instead of allowing all
+    ReturnCount:
+        max: 3 # let's try to not raise this any higher
+    MagicNumber:
+        excludes:
+            - '**/eventcollector/collectors/**' # eventcollectors have many magic numbers due to parsing logic which do not get better with constants
+            # the others are the default excludes
+            - '**/test/**'
+            - '**/androidTest/**'
+            - '**/commonTest/**'
+            - '**/jvmTest/**'
+            - '**/androidUnitTest/**'
+            - '**/androidInstrumentedTest/**'
+            - '**/jsTest/**'
+            - '**/iosTest/**'
+            - '**/*.kts'
 complexity:
-  TooManyFunctions:
-    allowedFunctionsPerFile: 20
-    allowedFunctionsPerClass: 20
-    allowedFunctionsPerInterface: 20
-    allowedFunctionsPerObject: 20
-    allowedFunctionsPerEnum: 20
+    TooManyFunctions:
+        allowedFunctionsPerFile: 20
+        allowedFunctionsPerClass: 20
+        allowedFunctionsPerInterface: 20
+        allowedFunctionsPerObject: 20
+        allowedFunctionsPerEnum: 20
 exceptions:
-  TooGenericExceptionCaught:
-    active: false
+    TooGenericExceptionCaught:
+        active: false

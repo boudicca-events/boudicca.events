@@ -33,7 +33,6 @@ dependencies {
     implementation(versionCatalog.findBundle("openapi-generate-spec").get())
 }
 
-
 val generateSpecExtension = project.extensions.create<GenerateSpecExtension>("generateSpec")
 
 val createTemplateTask = tasks.register<CreateTemplateTask>("myTestTask") {

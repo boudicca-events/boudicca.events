@@ -1,106 +1,106 @@
 services:
 
-  memcached:
-    image: memcached:1.6.38
-    restart: always
-    environment:
-      - MEMCACHED_MAX_MEMORY=64m
-      - MEMCACHED_THREADS=4
-    networks:
-      - monitoring
+    memcached:
+        image: memcached:1.6.38
+        restart: always
+        environment:
+            - MEMCACHED_MAX_MEMORY=64m
+            - MEMCACHED_THREADS=4
+        networks:
+            - monitoring
 
-  tempo:
-    image: grafana/tempo:2.8.1
-    restart: always
-    command: ["-config.file=/etc/tempo.yaml"]
-    volumes:
-      - ./tempo.yaml:/etc/tempo.yaml
-      - tempo-data:/var/tempo
-    depends_on:
-      - memcached
-    networks:
-      - monitoring
-      
-  mimir:
-    image: grafana/mimir:2.16.1
-    restart: always
-    command: ["--config.file=/etc/mimir.yaml"]
-    volumes:
-      - ./mimir.yaml:/etc/mimir.yaml
-      - mimir-data:/var/mimir
-    networks:
-      - monitoring
-      
-  loki:
-    image: grafana/loki:3.5.2
-    restart: always
-    volumes:
-      - ./loki.yaml:/etc/loki.yaml
-      - loki-data:/var/loki
-    command: 
-     - -config.file=/etc/loki.yaml
-     - -target=all
-    networks:
-      - monitoring
+    tempo:
+        image: grafana/tempo:2.8.1
+        restart: always
+        command: [ "-config.file=/etc/tempo.yaml" ]
+        volumes:
+            - ./tempo.yaml:/etc/tempo.yaml
+            - tempo-data:/var/tempo
+        depends_on:
+            - memcached
+        networks:
+            - monitoring
 
-  alloy:
-    image: grafana/alloy:v1.10.0
-    restart: always
-    volumes:
-      - ./config.alloy:/etc/alloy/config.alloy
-      - ./otlppassword.txt:/etc/alloy/otlppassword.txt
-    command:
-      - run
-      - /etc/alloy/config.alloy
-      - --storage.path=/var/lib/alloy/data
-      - --server.http.listen-addr=0.0.0.0:8080
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.alloy.rule=Host(`otlp.monitoring.boudicca.events`)"
-      - "traefik.http.routers.alloy.entrypoints=websecure"
-      - "traefik.http.routers.alloy.tls.certresolver=myresolver"
-      - "traefik.http.services.alloy.loadbalancer.server.port=4318"
-#expose ports for local testing setup
-#    ports:
-#      - "4318:4318"
-    networks:
-      - monitoring
-    depends_on:
-      - tempo
-      - loki
-      - mimir
+    mimir:
+        image: grafana/mimir:2.16.1
+        restart: always
+        command: [ "--config.file=/etc/mimir.yaml" ]
+        volumes:
+            - ./mimir.yaml:/etc/mimir.yaml
+            - mimir-data:/var/mimir
+        networks:
+            - monitoring
 
-  grafana:
-    image: grafana/grafana:12.0.2
-    restart: always
-    volumes:
-      - ./grafana-datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
-      - ./grafana-dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml
-      - ./grafana-dashboards:/etc/dashboards
-    environment:
-      - GF_AUTH_ANONYMOUS_ENABLED=true
-      - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
-      - GF_SECURITY_DISABLE_INITIAL_ADMIN_CREATION=true
-      - GF_USERS_VIEWERS_CAN_EDIT=true
-      - GF_AUTH_DISABLE_LOGIN_FORM=true
-      - GF_PROFILE_ENABLED=false
-      - GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH=/etc/dashboards/springboot.json
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.grafana.rule=Host(`grafana.monitoring.boudicca.events`)"
-      - "traefik.http.routers.grafana.entrypoints=websecure"
-      - "traefik.http.routers.grafana.tls.certresolver=myresolver"
-#expose ports for local testing setup
-#    ports:
-#      - "3000:3000"
-    networks:
-      - monitoring
+    loki:
+        image: grafana/loki:3.5.2
+        restart: always
+        volumes:
+            - ./loki.yaml:/etc/loki.yaml
+            - loki-data:/var/loki
+        command:
+            - -config.file=/etc/loki.yaml
+            - -target=all
+        networks:
+            - monitoring
+
+    alloy:
+        image: grafana/alloy:v1.10.0
+        restart: always
+        volumes:
+            - ./config.alloy:/etc/alloy/config.alloy
+            - ./otlppassword.txt:/etc/alloy/otlppassword.txt
+        command:
+            - run
+            - /etc/alloy/config.alloy
+            - --storage.path=/var/lib/alloy/data
+            - --server.http.listen-addr=0.0.0.0:8080
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.alloy.rule=Host(`otlp.monitoring.boudicca.events`)"
+            - "traefik.http.routers.alloy.entrypoints=websecure"
+            - "traefik.http.routers.alloy.tls.certresolver=myresolver"
+            - "traefik.http.services.alloy.loadbalancer.server.port=4318"
+        #expose ports for local testing setup
+        #    ports:
+        #      - "4318:4318"
+        networks:
+            - monitoring
+        depends_on:
+            - tempo
+            - loki
+            - mimir
+
+    grafana:
+        image: grafana/grafana:12.0.2
+        restart: always
+        volumes:
+            - ./grafana-datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
+            - ./grafana-dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml
+            - ./grafana-dashboards:/etc/dashboards
+        environment:
+            - GF_AUTH_ANONYMOUS_ENABLED=true
+            - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
+            - GF_SECURITY_DISABLE_INITIAL_ADMIN_CREATION=true
+            - GF_USERS_VIEWERS_CAN_EDIT=true
+            - GF_AUTH_DISABLE_LOGIN_FORM=true
+            - GF_PROFILE_ENABLED=false
+            - GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH=/etc/dashboards/springboot.json
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.grafana.rule=Host(`grafana.monitoring.boudicca.events`)"
+            - "traefik.http.routers.grafana.entrypoints=websecure"
+            - "traefik.http.routers.grafana.tls.certresolver=myresolver"
+        #expose ports for local testing setup
+        #    ports:
+        #      - "3000:3000"
+        networks:
+            - monitoring
 
 volumes:
-  tempo-data:
-  mimir-data:
-  loki-data:
+    tempo-data:
+    mimir-data:
+    loki-data:
 networks:
-  monitoring:
-    name: monitoring
-    external: true
+    monitoring:
+        name: monitoring
+        external: true

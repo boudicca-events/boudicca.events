@@ -263,7 +263,5 @@ class LexerTest {
         assertEquals(TokenType.HAS_FIELD, tokens[0].getType())
     }
 
-    private fun callLexer(query: String): List<Token> {
-        return Lexer(query).lex()
-    }
+    private fun callLexer(query: String): List<Token> = Lexer(query).lex()
 }

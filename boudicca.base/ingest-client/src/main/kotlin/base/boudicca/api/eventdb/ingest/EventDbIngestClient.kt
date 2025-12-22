@@ -11,12 +11,7 @@ import io.opentelemetry.instrumentation.javahttpclient.JavaHttpClientTelemetry
 import java.net.http.HttpClient
 import java.util.*
 
-class EventDbIngestClient(
-    private val eventDbUrl: String,
-    user: String,
-    password: String,
-    private val otel: OpenTelemetry = GlobalOpenTelemetry.get(),
-) {
+class EventDbIngestClient(private val eventDbUrl: String, user: String, password: String, private val otel: OpenTelemetry = GlobalOpenTelemetry.get()) {
     private val ingestApi: IngestionApi
 
     init {
@@ -31,12 +26,10 @@ class EventDbIngestClient(
         }
         val apiClient =
             object : ApiClient() {
-                override fun getHttpClient(): HttpClient? {
-                    return JavaHttpClientTelemetry
-                        .builder(otel)
-                        .build()
-                        .newHttpClient(super.getHttpClient())
-                }
+                override fun getHttpClient(): HttpClient? = JavaHttpClientTelemetry
+                    .builder(otel)
+                    .build()
+                    .newHttpClient(super.getHttpClient())
             }
         apiClient.updateBaseUri(eventDbUrl)
         apiClient.setRequestInterceptor {

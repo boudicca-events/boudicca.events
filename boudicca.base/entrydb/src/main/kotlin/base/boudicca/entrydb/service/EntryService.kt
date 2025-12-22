@@ -45,9 +45,7 @@ private val MAX_AGE = Duration.ofDays(MAX_AGE_IN_DAYS).toMillis()
 @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON) // even if this is the default, we REALLY have to make sure there is only one
 class EntryService
 @Autowired
-constructor(
-    private val boudiccaEntryDbProperties: BoudiccaEntryDbProperties,
-) {
+constructor(private val boudiccaEntryDbProperties: BoudiccaEntryDbProperties) {
     private val logger = KotlinLogging.logger {}
     private val entries = ConcurrentHashMap<UUID, Pair<Entry, InternalEventProperties>>()
     private val lastSeenCollectors = ConcurrentHashMap<String, Long>()

@@ -94,12 +94,10 @@ class EvaluatorUtilDurationTest {
         )
     }
 
-    private fun getDuration(startDateField: String, endDateField: String, entry: Entry): Double {
-        return EvaluatorUtil.getDuration(
-            KeyFilter.parse(startDateField),
-            KeyFilter.parse(endDateField),
-            entry.toStructuredEntry(),
-            ConcurrentHashMap(),
-        )
-    }
+    private fun getDuration(startDateField: String, endDateField: String, entry: Entry): Double = EvaluatorUtil.getDuration(
+        KeyFilter.parse(startDateField),
+        KeyFilter.parse(endDateField),
+        entry.toStructuredEntry(),
+        ConcurrentHashMap(),
+    )
 }

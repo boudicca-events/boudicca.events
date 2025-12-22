@@ -85,21 +85,19 @@ class WissensturmCollector : TwoStepEventCollector<Pair<String, Document>>("wiss
             }
     }
 
-    private fun parseDatesAndLocations(event: Document): List<Triple<OffsetDateTime, OffsetDateTime, String>?> {
-        return event.select("table tbody tr")
-            .toList()
-            .map {
-                val fullDateText = it.child(0).text()
-                if (fullDateText.contains("ausfall", true) || fullDateText.contains("zusatz", true)) {
-                    null
-                } else {
-                    val result = DateParser.parse(fullDateText)
-                    Triple(
-                        result.single().startDate,
-                        result.single().endDate!!,
-                        it.child(it.childrenSize() - 1).text(),
-                    )
-                }
+    private fun parseDatesAndLocations(event: Document): List<Triple<OffsetDateTime, OffsetDateTime, String>?> = event.select("table tbody tr")
+        .toList()
+        .map {
+            val fullDateText = it.child(0).text()
+            if (fullDateText.contains("ausfall", true) || fullDateText.contains("zusatz", true)) {
+                null
+            } else {
+                val result = DateParser.parse(fullDateText)
+                Triple(
+                    result.single().startDate,
+                    result.single().endDate!!,
+                    it.child(it.childrenSize() - 1).text(),
+                )
             }
-    }
+        }
 }

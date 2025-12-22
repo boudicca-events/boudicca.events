@@ -13,21 +13,12 @@ import org.springframework.stereotype.Service
 @Service
 class SearchServiceCallerImpl
 @Autowired
-constructor(
-    @Value("\${boudicca.search.url}") private val searchUrl: String,
-    otel: OpenTelemetry,
-) : SearchServiceCaller {
+constructor(@Value("\${boudicca.search.url}") private val searchUrl: String, otel: OpenTelemetry) : SearchServiceCaller {
     private val client: SearchClient = createSearchClient(searchUrl, otel)
 
-    override fun search(queryDTO: QueryDTO): SearchResultDTO {
-        return client.queryEvents(queryDTO)
-    }
+    override fun search(queryDTO: QueryDTO): SearchResultDTO = client.queryEvents(queryDTO)
 
-    override fun getFiltersFor(filterQueryDTO: FilterQueryDTO): FilterResultDTO {
-        return client.getFiltersFor(filterQueryDTO)
-    }
+    override fun getFiltersFor(filterQueryDTO: FilterQueryDTO): FilterResultDTO = client.getFiltersFor(filterQueryDTO)
 
-    fun createSearchClient(searchUrl: String, otel: OpenTelemetry): SearchClient {
-        return SearchClient(searchUrl, otel)
-    }
+    fun createSearchClient(searchUrl: String, otel: OpenTelemetry): SearchClient = SearchClient(searchUrl, otel)
 }

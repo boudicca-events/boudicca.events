@@ -467,45 +467,31 @@ abstract class AbstractEvaluatorTest {
         assertEquals("event2", events[0]["name"])
     }
 
-    private fun callEvaluator(expression: Expression): Collection<Entry> {
-        return callEvaluator(expression, testData())
-    }
+    private fun callEvaluator(expression: Expression): Collection<Entry> = callEvaluator(expression, testData())
 
-    private fun callEvaluator(expression: Expression, entries: Collection<Entry>, clock: Clock = Clock.systemDefaultZone()): List<Entry> {
-        return createEvaluator(entries, clock)
-            .evaluate(expression, PAGE_ALL)
-            .result
-    }
+    private fun callEvaluator(expression: Expression, entries: Collection<Entry>, clock: Clock = Clock.systemDefaultZone()): List<Entry> = createEvaluator(entries, clock)
+        .evaluate(expression, PAGE_ALL)
+        .result
 
     abstract fun createEvaluator(entries: Collection<Map<String, String>>, clock: Clock = Clock.systemDefaultZone()): Evaluator
 
-    private fun testData(): Collection<Entry> {
-        return listOf(
-            entry("name" to "event1", "field" to "value1"),
-            entry("name" to "event2", "field" to "value2"),
-            entry("name" to "somethingelse", "field" to "wuuut"),
-            entry("name" to "somethingelse2", "field" to "wuuut"),
-            entry("name" to "listyEvent1", "list:format=list" to "val1,val2"),
-            entry("name" to "listyEvent2", "list:format=list" to "val3,val4"),
-        )
-    }
+    private fun testData(): Collection<Entry> = listOf(
+        entry("name" to "event1", "field" to "value1"),
+        entry("name" to "event2", "field" to "value2"),
+        entry("name" to "somethingelse", "field" to "wuuut"),
+        entry("name" to "somethingelse2", "field" to "wuuut"),
+        entry("name" to "listyEvent1", "list:format=list" to "val1,val2"),
+        entry("name" to "listyEvent2", "list:format=list" to "val3,val4"),
+    )
 
-    private fun entryWithNewFormat(name: String, startDate: String): Entry {
-        return entry(
-            "name" to name,
-            "startDate:format=date" to DateTimeFormatter.ISO_DATE_TIME.format(parseLocalDate(startDate)),
-        )
-    }
+    private fun entryWithNewFormat(name: String, startDate: String): Entry = entry(
+        "name" to name,
+        "startDate:format=date" to DateTimeFormatter.ISO_DATE_TIME.format(parseLocalDate(startDate)),
+    )
 
-    private fun entry(name: String, startDate: String): Entry {
-        return entry("name" to name, "startDate" to DateTimeFormatter.ISO_DATE_TIME.format(parseLocalDate(startDate)))
-    }
+    private fun entry(name: String, startDate: String): Entry = entry("name" to name, "startDate" to DateTimeFormatter.ISO_DATE_TIME.format(parseLocalDate(startDate)))
 
-    private fun entry(vararg data: Pair<String, String>): Entry {
-        return data.toMap()
-    }
+    private fun entry(vararg data: Pair<String, String>): Entry = data.toMap()
 
-    private fun parseLocalDate(startDateAsString: String): OffsetDateTime {
-        return OffsetDateTime.parse(startDateAsString)
-    }
+    private fun parseLocalDate(startDateAsString: String): OffsetDateTime = OffsetDateTime.parse(startDateAsString)
 }

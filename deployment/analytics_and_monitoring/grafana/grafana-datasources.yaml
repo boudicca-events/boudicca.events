@@ -1,34 +1,34 @@
 apiVersion: 1
 
 datasources:
-  - name: Loki
-    type: loki
-    uid: lokidatasource
-    access: proxy
-    url: http://loki:3100
-  - name: mimir
-    type: prometheus
-    uid: mimirdatasource
-    access: proxy
-    url: http://mimir:9009/prometheus
-  - name: Tempo
-    type: tempo
-    uid: tempodatasource
-    url: http://tempo:3200
-    access: proxy
-    basicAuth: false
-    jsonData:
-      tracesToLogsV2:
-        datasourceUid: 'lokidatasource'
-        filterByTraceID: true
-        filterBySpanID: false
-      tracesToMetrics:
-        datasourceUid: 'mimirdatasource'
-        spanStartTimeShift: '-1h'
-        spanEndTimeShift: '1h'
-      nodeGraph:
-        enabled: true
-      streamingEnabled:
-        search: true
-      serviceMap:
-        datasourceUid: 'mimirdatasource'
+    -   name: Loki
+        type: loki
+        uid: lokidatasource
+        access: proxy
+        url: http://loki:3100
+    -   name: mimir
+        type: prometheus
+        uid: mimirdatasource
+        access: proxy
+        url: http://mimir:9009/prometheus
+    -   name: Tempo
+        type: tempo
+        uid: tempodatasource
+        url: http://tempo:3200
+        access: proxy
+        basicAuth: false
+        jsonData:
+            tracesToLogsV2:
+                datasourceUid: 'lokidatasource'
+                filterByTraceID: true
+                filterBySpanID: false
+            tracesToMetrics:
+                datasourceUid: 'mimirdatasource'
+                spanStartTimeShift: '-1h'
+                spanEndTimeShift: '1h'
+            nodeGraph:
+                enabled: true
+            streamingEnabled:
+                search: true
+            serviceMap:
+                datasourceUid: 'mimirdatasource'

@@ -59,38 +59,24 @@ class ArenaWienCollector : TwoStepEventCollector<ArenaWienCollector.HalfEvent>("
             ?: UrlUtils.parse(baseUrl, logo.attr("src"))
     }
 
-    private fun parseDate(dateText: String): OffsetDateTime {
-        return LocalDateTime.parse(dateText, DateTimeFormatter.ISO_DATE_TIME)
-            .atZone(ZoneId.of("Europe/Vienna"))
-            .toOffsetDateTime()
+    private fun parseDate(dateText: String): OffsetDateTime = LocalDateTime.parse(dateText, DateTimeFormatter.ISO_DATE_TIME)
+        .atZone(ZoneId.of("Europe/Vienna"))
+        .toOffsetDateTime()
+
+    private fun getProgramList(i: Int): JsonObject = jsonParser.parse(StringReader(fetcher.fetchUrl(getAjaxUrl(i)))) as JsonObject
+
+    private fun getAllUrls(jsonObject: JsonObject): Collection<HalfEvent> = jsonObject.array<JsonObject>("concerts")!!.map {
+        HalfEvent(
+            it.string("DetailUrl")!!,
+            it.string("DateBegin"),
+            it.string("DateEnd"),
+            it.string("Location"),
+            it.string("Title"),
+        )
     }
 
-    private fun getProgramList(i: Int): JsonObject {
-        return jsonParser.parse(StringReader(fetcher.fetchUrl(getAjaxUrl(i)))) as JsonObject
-    }
+    private fun getAjaxUrl(page: Int): String = "$baseUrl/DesktopModules/WebAPI/API/Event/Search?searchTerm=&day=1&month=-1&year=-1&" +
+        "page=$page&pageSize=20&eventCategory=-1&abonnement=-1&cultureCode=de-AT&locationId=0"
 
-    private fun getAllUrls(jsonObject: JsonObject): Collection<HalfEvent> {
-        return jsonObject.array<JsonObject>("concerts")!!.map {
-            HalfEvent(
-                it.string("DetailUrl")!!,
-                it.string("DateBegin"),
-                it.string("DateEnd"),
-                it.string("Location"),
-                it.string("Title"),
-            )
-        }
-    }
-
-    private fun getAjaxUrl(page: Int): String {
-        return "$baseUrl/DesktopModules/WebAPI/API/Event/Search?searchTerm=&day=1&month=-1&year=-1&" +
-            "page=$page&pageSize=20&eventCategory=-1&abonnement=-1&cultureCode=de-AT&locationId=0"
-    }
-
-    data class HalfEvent(
-        val url: String,
-        val dateBegin: String?,
-        val dateEnd: String?,
-        val location: String?,
-        val title: String?,
-    )
+    data class HalfEvent(val url: String, val dateBegin: String?, val dateEnd: String?, val location: String?, val title: String?)
 }

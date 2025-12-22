@@ -14,8 +14,7 @@ import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
-import java.util.Date
-import java.util.Optional
+import java.util.*
 
 class IcalParserTest {
     @Test
@@ -137,17 +136,11 @@ class IcalParserTest {
         assertEquals(2, events.size)
     }
 
-    private fun mapVEventToEvent(vEvent: VEvent): Event {
-        return IcalParser.mapVEventToEvent(vEvent).get().toFlatEvent()
-    }
+    private fun mapVEventToEvent(vEvent: VEvent): Event = IcalParser.mapVEventToEvent(vEvent).get().toFlatEvent()
 
-    private fun tryMapVEventToEvent(vEvent: VEvent): Optional<Event> {
-        return IcalParser.mapVEventToEvent(vEvent).map { it.toFlatEvent() }
-    }
+    private fun tryMapVEventToEvent(vEvent: VEvent): Optional<Event> = IcalParser.mapVEventToEvent(vEvent).map { it.toFlatEvent() }
 
-    private fun loadAndParseAndMapEvents(testFile: String): List<Event> {
-        return IcalParser.parseAndMapToEvents(loadTestData(testFile)).map { it.toFlatEvent() }
-    }
+    private fun loadAndParseAndMapEvents(testFile: String): List<Event> = IcalParser.parseAndMapToEvents(loadTestData(testFile)).map { it.toFlatEvent() }
 
     private fun loadTestData(testFile: String) = String(this.javaClass.getResourceAsStream("/ical/$testFile").readAllBytes())
 }

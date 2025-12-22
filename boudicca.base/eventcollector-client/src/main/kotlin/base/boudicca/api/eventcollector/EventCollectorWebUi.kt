@@ -6,11 +6,7 @@ import io.opentelemetry.api.OpenTelemetry
 import org.springframework.boot.runApplication
 import org.springframework.context.ConfigurableApplicationContext
 
-class EventCollectorWebUi(
-    private val port: Int,
-    private val eventCollectors: List<EventCollector>,
-    private val otel: OpenTelemetry,
-) {
+class EventCollectorWebUi(private val port: Int, private val eventCollectors: List<EventCollector>, private val otel: OpenTelemetry) {
     private val logger = KotlinLogging.logger {}
     private var webuiApplication: ConfigurableApplicationContext? = null
 
@@ -18,10 +14,12 @@ class EventCollectorWebUi(
         logger.info { "webui starting and listening on $port" }
         webuiApplication =
             runApplication<WebuiApplication>("server.port=$port") {
-                this.addInitializers({
-                    it.beanFactory.registerSingleton("eventCollectors", eventCollectors)
-                    it.beanFactory.registerSingleton("otel", otel)
-                })
+                this.addInitializers(
+                    {
+                        it.beanFactory.registerSingleton("eventCollectors", eventCollectors)
+                        it.beanFactory.registerSingleton("otel", otel)
+                    },
+                )
             }
     }
 

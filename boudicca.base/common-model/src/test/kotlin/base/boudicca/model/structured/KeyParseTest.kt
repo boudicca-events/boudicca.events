@@ -56,7 +56,5 @@ class KeyParseTest {
         assertThrows<IllegalArgumentException> { callParser("description:=de") }
     }
 
-    private fun callParser(propertyKey: String): Key {
-        return Key.parse(propertyKey)
-    }
+    private fun callParser(propertyKey: String): Key = Key.parse(propertyKey)
 }

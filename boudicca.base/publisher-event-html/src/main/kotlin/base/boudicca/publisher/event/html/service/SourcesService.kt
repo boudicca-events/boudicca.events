@@ -7,9 +7,7 @@ import org.springframework.stereotype.Service
 import java.net.URI
 
 @Service
-class SourcesService(
-    private val caller: SearchServiceCaller,
-) {
+class SourcesService(private val caller: SearchServiceCaller) {
     fun getSources(): List<String> {
         val allSources =
             caller.getFiltersFor(FilterQueryDTO(listOf(FilterQueryEntryDTO(SemanticKeys.SOURCES))))
@@ -20,17 +18,15 @@ class SourcesService(
             ?: listOf("no Sources found")
     }
 
-    private fun normalize(value: String): String {
-        return if (value.startsWith("http")) {
-            // treat as url
-            try {
-                URI.create(value).normalize().host ?: value
-            } catch (_: IllegalArgumentException) {
-                // hm, no url?
-                value
-            }
-        } else {
+    private fun normalize(value: String): String = if (value.startsWith("http")) {
+        // treat as url
+        try {
+            URI.create(value).normalize().host ?: value
+        } catch (_: IllegalArgumentException) {
+            // hm, no url?
             value
         }
+    } else {
+        value
     }
 }

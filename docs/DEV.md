@@ -50,7 +50,9 @@ We use a dual linting setup with ktlint and detekt as quality gates:
 ```bash
 ./gradlew build -x check
 ```
+
 or
+
 ```bash
 ./gradlew assemble
 ```
@@ -58,10 +60,10 @@ or
 ### Configuration Files
 
 - **`.editorconfig`**: Defines code style rules (line length, indentation, naming, etc.)
-  - Used by: IntelliJ IDEA, ktlint, and other EditorConfig-compatible tools
-  - ktlint-specific rules are prefixed with `ktlint_` (e.g., `ktlint_code_style = intellij_idea`)
+    - Used by: IntelliJ IDEA, ktlint, and other EditorConfig-compatible tools
+    - ktlint-specific rules are prefixed with `ktlint_` (e.g., `ktlint_code_style = intellij_idea`)
 - **`detekt-config.yml`**: Configures detekt static analysis rules
-  - Note: detekt does NOT read `.editorconfig` yet, so some settings (like `maxLineLength`) must be duplicated
+    - Note: detekt does NOT read `.editorconfig` yet, so some settings (like `maxLineLength`) must be duplicated
 
 ### detekt (Static Analysis)
 

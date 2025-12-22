@@ -5,10 +5,7 @@ import base.boudicca.api.eventcollector.debugger.color.red
 import base.boudicca.api.eventcollector.debugger.color.yellow
 import base.boudicca.model.Event
 
-class DataShouldContainKey(
-    private val key: String,
-    private val severity: ValidationSeverity,
-) : EventCollectorValidation {
+class DataShouldContainKey(private val key: String, private val severity: ValidationSeverity) : EventCollectorValidation {
     override fun validate(event: Event, verbose: Boolean): ValidationResult {
         if (!event.data.containsKey(key)) {
             when (severity) {

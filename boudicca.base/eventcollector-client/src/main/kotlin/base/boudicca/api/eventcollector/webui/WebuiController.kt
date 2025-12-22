@@ -11,17 +11,11 @@ import java.util.*
 @RequestMapping("/")
 class WebuiController(private val webuiService: WebuiService) {
     @GetMapping("/")
-    fun getIndex(): ModelAndView {
-        return ModelAndView("index", webuiService.getIndexData())
-    }
+    fun getIndex(): ModelAndView = ModelAndView("index", webuiService.getIndexData())
 
     @GetMapping("/singleCollection")
-    fun singleCollection(@RequestParam("id") uuid: UUID): ModelAndView {
-        return ModelAndView("singleCollection", webuiService.getSingleCollectionData(uuid))
-    }
+    fun singleCollection(@RequestParam("id") uuid: UUID): ModelAndView = ModelAndView("singleCollection", webuiService.getSingleCollectionData(uuid))
 
     @GetMapping("/fullCollection")
-    fun fullCollection(@RequestParam("id") uuid: UUID): ModelAndView {
-        return ModelAndView("fullCollection", webuiService.getFullCollectionData(uuid))
-    }
+    fun fullCollection(@RequestParam("id") uuid: UUID): ModelAndView = ModelAndView("fullCollection", webuiService.getFullCollectionData(uuid))
 }

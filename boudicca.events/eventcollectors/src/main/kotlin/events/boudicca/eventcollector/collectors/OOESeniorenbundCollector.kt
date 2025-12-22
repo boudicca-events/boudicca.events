@@ -60,12 +60,8 @@ class OOESeniorenbundCollector : TwoStepEventCollector<Pair<Document, String>>("
         }
     }
 
-    private fun getDates(event: Document): List<DateParserResult> {
-        return event.select("div.date>p").toList()
-            .map { getSingleDates(it.text()) }
-    }
+    private fun getDates(event: Document): List<DateParserResult> = event.select("div.date>p").toList()
+        .map { getSingleDates(it.text()) }
 
-    private fun getSingleDates(dateString: String): DateParserResult {
-        return DateParser.parse(dateString)
-    }
+    private fun getSingleDates(dateString: String): DateParserResult = DateParser.parse(dateString)
 }

@@ -183,33 +183,31 @@ constructor(
         }
     }
 
-    private fun mapEvent(event: StructuredEvent): Map<String, Any?> {
-        return mapOf(
-            "name" to event.name,
-            "startDate" to formatDate(event.startDate, formatter),
-            "startDateISO" to event.startDate.toString(),
-            "startDateWithoutTime" to formatDate(event.startDate, formatterDateWithoutTime),
-            "startTime" to formatDate(event.startDate, formatterTime),
-            "endDate" to formatDate(getDateProperty(event, SemanticKeys.ENDDATE), formatter),
-            "endDateISO" to getDateProperty(event, SemanticKeys.ENDDATE).toString(),
-            "endDateWithoutTime" to formatDate(getDateProperty(event, SemanticKeys.ENDDATE), formatterDateWithoutTime),
-            "endTime" to formatDate(getDateProperty(event, SemanticKeys.ENDDATE), formatterTime),
-            "description" to getRichTextProperty(event, SemanticKeys.DESCRIPTION),
-            "url" to getTextProperty(event, SemanticKeys.URL),
-            "locationName" to getTextProperty(event, SemanticKeys.LOCATION_NAME),
-            "locationAddress" to getTextProperty(event, SemanticKeys.LOCATION_ADDRESS),
-            "city" to getTextProperty(event, SemanticKeys.LOCATION_CITY),
-            "tags" to getListProperty(event, SemanticKeys.TAGS),
-            "types" to getListProperty(event, SemanticKeys.TYPE),
-            "category" to mapCategory(getTextProperty(event, SemanticKeys.CATEGORY)),
-            "pictureUuid" to getPictureUuid(event),
-            "pictureAltText" to getTextProperty(event, SemanticKeys.PICTURE_ALT_TEXT),
-            "accessibilityProperties" to getAllAccessibilityValues(event),
-            "pictureCopyright" to getTextProperty(event, SemanticKeys.PICTURE_COPYRIGHT),
-            "bandNames" to getListProperty(event, SemanticKeys.CONCERT_BANDLIST),
-            "concertGenres" to getListProperty(event, SemanticKeys.CONCERT_GENRE),
-        )
-    }
+    private fun mapEvent(event: StructuredEvent): Map<String, Any?> = mapOf(
+        "name" to event.name,
+        "startDate" to formatDate(event.startDate, formatter),
+        "startDateISO" to event.startDate.toString(),
+        "startDateWithoutTime" to formatDate(event.startDate, formatterDateWithoutTime),
+        "startTime" to formatDate(event.startDate, formatterTime),
+        "endDate" to formatDate(getDateProperty(event, SemanticKeys.ENDDATE), formatter),
+        "endDateISO" to getDateProperty(event, SemanticKeys.ENDDATE).toString(),
+        "endDateWithoutTime" to formatDate(getDateProperty(event, SemanticKeys.ENDDATE), formatterDateWithoutTime),
+        "endTime" to formatDate(getDateProperty(event, SemanticKeys.ENDDATE), formatterTime),
+        "description" to getRichTextProperty(event, SemanticKeys.DESCRIPTION),
+        "url" to getTextProperty(event, SemanticKeys.URL),
+        "locationName" to getTextProperty(event, SemanticKeys.LOCATION_NAME),
+        "locationAddress" to getTextProperty(event, SemanticKeys.LOCATION_ADDRESS),
+        "city" to getTextProperty(event, SemanticKeys.LOCATION_CITY),
+        "tags" to getListProperty(event, SemanticKeys.TAGS),
+        "types" to getListProperty(event, SemanticKeys.TYPE),
+        "category" to mapCategory(getTextProperty(event, SemanticKeys.CATEGORY)),
+        "pictureUuid" to getPictureUuid(event),
+        "pictureAltText" to getTextProperty(event, SemanticKeys.PICTURE_ALT_TEXT),
+        "accessibilityProperties" to getAllAccessibilityValues(event),
+        "pictureCopyright" to getTextProperty(event, SemanticKeys.PICTURE_COPYRIGHT),
+        "bandNames" to getListProperty(event, SemanticKeys.CONCERT_BANDLIST),
+        "concertGenres" to getListProperty(event, SemanticKeys.CONCERT_GENRE),
+    )
 
     private fun getPictureUuid(event: StructuredEvent): String? {
         val pictureUrl = getTextProperty(event, SemanticKeys.PICTURE_URL)
@@ -220,67 +218,57 @@ constructor(
         }
     }
 
-    private fun getTextProperty(event: StructuredEvent, propertyName: String): String? {
-        return getPropertyForFormats(event, propertyName, listOf(FormatVariantConstants.TEXT_FORMAT_NAME))
-            .map { it.second }
-            .getOrNull()
-    }
+    private fun getTextProperty(event: StructuredEvent, propertyName: String): String? = getPropertyForFormats(event, propertyName, listOf(FormatVariantConstants.TEXT_FORMAT_NAME))
+        .map { it.second }
+        .getOrNull()
 
-    private fun getNumberProperty(event: StructuredEvent, propertyName: String): Number? {
-        return getPropertyForFormats(event, propertyName, listOf(FormatVariantConstants.NUMBER_FORMAT_NAME))
+    private fun getNumberProperty(event: StructuredEvent, propertyName: String): Number? =
+        getPropertyForFormats(event, propertyName, listOf(FormatVariantConstants.NUMBER_FORMAT_NAME))
             .map { it.second }
             .map { NumberFormatAdapter().fromString(it) }
             .getOrNull()
-    }
 
-    private fun getRichTextProperty(event: StructuredEvent, propertyName: String): RichText? {
-        return getPropertyForFormats(
-            event,
-            propertyName,
-            listOf(FormatVariantConstants.MARKDOWN_FORMAT_NAME, FormatVariantConstants.TEXT_FORMAT_NAME),
-        )
-            .map { RichText(getIsMarkdownFromFormat(it.first), it.second) }
-            .getOrNull()
-    }
+    private fun getRichTextProperty(event: StructuredEvent, propertyName: String): RichText? = getPropertyForFormats(
+        event,
+        propertyName,
+        listOf(FormatVariantConstants.MARKDOWN_FORMAT_NAME, FormatVariantConstants.TEXT_FORMAT_NAME),
+    )
+        .map { RichText(getIsMarkdownFromFormat(it.first), it.second) }
+        .getOrNull()
 
-    private fun getListProperty(event: StructuredEvent, propertyName: String): List<String>? {
-        return getPropertyForFormats(
-            event,
-            propertyName,
-            listOf(FormatVariantConstants.LIST_FORMAT_NAME, FormatVariantConstants.TEXT_FORMAT_NAME),
-        ) // use text as a wonky fallback for now
-            .map {
-                try {
-                    ListFormatAdapter().fromString(it.second)
-                } catch (e: IllegalArgumentException) {
-                    logger.warn(e) { "could not parse value for key '${it.first}' to 'list' format: ${it.second}" }
-                    null
-                }
+    private fun getListProperty(event: StructuredEvent, propertyName: String): List<String>? = getPropertyForFormats(
+        event,
+        propertyName,
+        listOf(FormatVariantConstants.LIST_FORMAT_NAME, FormatVariantConstants.TEXT_FORMAT_NAME),
+    ) // use text as a wonky fallback for now
+        .map {
+            try {
+                ListFormatAdapter().fromString(it.second)
+            } catch (e: IllegalArgumentException) {
+                logger.warn(e) { "could not parse value for key '${it.first}' to 'list' format: ${it.second}" }
+                null
             }
-            .orElseGet { null }
-    }
+        }
+        .orElseGet { null }
 
-    private fun getDateProperty(event: StructuredEvent, propertyName: String): OffsetDateTime? {
-        return getPropertyForFormats(event, propertyName, listOf(FormatVariantConstants.DATE_FORMAT_NAME))
+    private fun getDateProperty(event: StructuredEvent, propertyName: String): OffsetDateTime? =
+        getPropertyForFormats(event, propertyName, listOf(FormatVariantConstants.DATE_FORMAT_NAME))
             .map { it.second }
             .map { DateFormatAdapter().fromString(it) }
             .getOrNull()
-    }
 
-    private fun getPropertyForFormats(event: StructuredEvent, propertyName: String, formatVariants: List<String>): Optional<Pair<Key, String>> {
-        return KeySelector.builder(propertyName)
-            .thenVariant(
-                VariantConstants.LANGUAGE_VARIANT_NAME,
-                listOf(
-                    getPreferredLanguage(),
-                    VariantConstants.LanguageVariantConstants.DEFAULT_LANGUAGE_NAME,
-                    VariantConstants.ANY_VARIANT_SELECTOR,
-                ),
-            )
-            .thenVariant(VariantConstants.FORMAT_VARIANT_NAME, formatVariants)
-            .build()
-            .selectSingle(event)
-    }
+    private fun getPropertyForFormats(event: StructuredEvent, propertyName: String, formatVariants: List<String>): Optional<Pair<Key, String>> = KeySelector.builder(propertyName)
+        .thenVariant(
+            VariantConstants.LANGUAGE_VARIANT_NAME,
+            listOf(
+                getPreferredLanguage(),
+                VariantConstants.LanguageVariantConstants.DEFAULT_LANGUAGE_NAME,
+                VariantConstants.ANY_VARIANT_SELECTOR,
+            ),
+        )
+        .thenVariant(VariantConstants.FORMAT_VARIANT_NAME, formatVariants)
+        .build()
+        .selectSingle(event)
 
     private fun getIsMarkdownFromFormat(key: Key): Boolean {
         val format = key.variants.firstOrNull { it.variantName == VariantConstants.FORMAT_VARIANT_NAME }
@@ -346,19 +334,15 @@ constructor(
         return dateFormatter.format(startDate.atZoneSameInstant(ZoneId.of("Europe/Vienna")))
     }
 
-    private fun frontEndName(category: EventCategory): String {
-        return when (category) {
-            EventCategory.MUSIC -> "Musik"
-            EventCategory.ART -> "Kunst"
-            EventCategory.TECH -> "Technologie"
-            EventCategory.SPORT -> "Sport"
-            EventCategory.OTHER -> "Andere"
-        }
+    private fun frontEndName(category: EventCategory): String = when (category) {
+        EventCategory.MUSIC -> "Musik"
+        EventCategory.ART -> "Kunst"
+        EventCategory.TECH -> "Technologie"
+        EventCategory.SPORT -> "Sport"
+        EventCategory.OTHER -> "Andere"
     }
 
-    private fun frontEndId(name: String): String {
-        return name.trim().replace(Regex("\\s"), "-")
-    }
+    private fun frontEndId(name: String): String = name.trim().replace(Regex("\\s"), "-")
 
     private fun setDefaults(searchDTO: SearchDTO) {
         if (searchDTO.fromDate.isNullOrBlank()) {
@@ -369,46 +353,42 @@ constructor(
         }
     }
 
-    private fun mapMapSearch(result: SearchResultDTO): MapSearchResultDTO {
-        return if (!result.error.isNullOrEmpty()) {
-            MapSearchResultDTO(result.error, emptyList())
-        } else {
-            val events = result.result.map { it.toStructuredEvent() }
+    private fun mapMapSearch(result: SearchResultDTO): MapSearchResultDTO = if (!result.error.isNullOrEmpty()) {
+        MapSearchResultDTO(result.error, emptyList())
+    } else {
+        val events = result.result.map { it.toStructuredEvent() }
 
-            val byLocationName = events.groupBy { getTextProperty(it, SemanticKeys.LOCATION_NAME) ?: "" }
+        val byLocationName = events.groupBy { getTextProperty(it, SemanticKeys.LOCATION_NAME) ?: "" }
 
-            fun <T> findFirst(events: List<StructuredEvent>, lookup: (StructuredEvent) -> T?): T? {
-                return events.firstNotNullOfOrNull(lookup)
-            }
+        fun <T> findFirst(events: List<StructuredEvent>, lookup: (StructuredEvent) -> T?): T? = events.firstNotNullOfOrNull(lookup)
 
-            MapSearchResultDTO(
-                null,
-                byLocationName.mapNotNull {
-                    val locationName = it.key
-                    val locationUrl = findFirst(it.value) { event -> getTextProperty(event, SemanticKeys.LOCATION_URL) }
-                    val locationLat =
-                        findFirst(it.value) { event -> getNumberProperty(event, SemanticKeys.LOCATION_COORDINATES_LAT) }
-                    val locationLon =
-                        findFirst(it.value) { event -> getNumberProperty(event, SemanticKeys.LOCATION_COORDINATES_LON) }
-                    if (locationLat == null || locationLon == null) {
-                        null
-                    } else {
-                        Location(
-                            locationName,
-                            locationUrl,
-                            locationLat.toDouble(),
-                            locationLon.toDouble(),
-                            it.value.sortedBy { event -> event.startDate }.map { event ->
-                                LocationEvent(
-                                    getTextProperty(event, SemanticKeys.NAME) ?: "",
-                                    getTextProperty(event, SemanticKeys.URL),
-                                )
-                            },
-                        )
-                    }
-                },
-            )
-        }
+        MapSearchResultDTO(
+            null,
+            byLocationName.mapNotNull {
+                val locationName = it.key
+                val locationUrl = findFirst(it.value) { event -> getTextProperty(event, SemanticKeys.LOCATION_URL) }
+                val locationLat =
+                    findFirst(it.value) { event -> getNumberProperty(event, SemanticKeys.LOCATION_COORDINATES_LAT) }
+                val locationLon =
+                    findFirst(it.value) { event -> getNumberProperty(event, SemanticKeys.LOCATION_COORDINATES_LON) }
+                if (locationLat == null || locationLon == null) {
+                    null
+                } else {
+                    Location(
+                        locationName,
+                        locationUrl,
+                        locationLat.toDouble(),
+                        locationLon.toDouble(),
+                        it.value.sortedBy { event -> event.startDate }.map { event ->
+                            LocationEvent(
+                                getTextProperty(event, SemanticKeys.NAME) ?: "",
+                                getTextProperty(event, SemanticKeys.URL),
+                            )
+                        },
+                    )
+                }
+            },
+        )
     }
 
     private fun addSubqueryOfFieldConnectedByOr(queryParts: MutableList<String>, semanticKeyField: String, searchInput: List<String?>?) {

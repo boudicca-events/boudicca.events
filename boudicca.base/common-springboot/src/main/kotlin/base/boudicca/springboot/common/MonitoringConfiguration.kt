@@ -20,7 +20,5 @@ class MonitoringConfiguration {
     }
 
     @Bean
-    fun meterRegistry(otel: OpenTelemetry): MeterRegistry {
-        return OpenTelemetryMeterRegistry.builder(otel).build()
-    }
+    fun meterRegistry(otel: OpenTelemetry): MeterRegistry = OpenTelemetryMeterRegistry.builder(otel).build()
 }

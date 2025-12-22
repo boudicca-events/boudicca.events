@@ -35,40 +35,34 @@ object EvaluatorUtil {
         }
     }
 
-    private fun selectDateValue(entry: StructuredEntry, keyFilter: KeyFilter): String? {
-        return KeySelector.builder(keyFilter)
-            .thenVariant(
-                VariantConstants.FORMAT_VARIANT_NAME,
-                listOf(
-                    VariantConstants.FormatVariantConstants.DATE_FORMAT_NAME,
-                    VariantConstants.FormatVariantConstants.TEXT_FORMAT_NAME,
-                ),
-            ).build()
-            .selectSingle(entry)
-            .map { it.second }
-            .getOrNull()
-    }
+    private fun selectDateValue(entry: StructuredEntry, keyFilter: KeyFilter): String? = KeySelector.builder(keyFilter)
+        .thenVariant(
+            VariantConstants.FORMAT_VARIANT_NAME,
+            listOf(
+                VariantConstants.FormatVariantConstants.DATE_FORMAT_NAME,
+                VariantConstants.FormatVariantConstants.TEXT_FORMAT_NAME,
+            ),
+        ).build()
+        .selectSingle(entry)
+        .map { it.second }
+        .getOrNull()
 
-    fun getDateValues(entry: StructuredEntry, dateKeyFilter: KeyFilter): List<String> {
-        return entry
-            .filterKeys(dateKeyFilter)
-            .filter { isDate(it.first) }
-            .map { it.second }
-    }
+    fun getDateValues(entry: StructuredEntry, dateKeyFilter: KeyFilter): List<String> = entry
+        .filterKeys(dateKeyFilter)
+        .filter { isDate(it.first) }
+        .map { it.second }
 
-    fun parseDate(dateText: String, dataCache: ConcurrentHashMap<String, OffsetDateTime>): OffsetDateTime {
-        return if (dataCache.containsKey(dateText)) {
-            dataCache[dateText]!!
-        } else {
+    fun parseDate(dateText: String, dataCache: ConcurrentHashMap<String, OffsetDateTime>): OffsetDateTime = if (dataCache.containsKey(dateText)) {
+        dataCache[dateText]!!
+    } else {
 //            try {
-            val parsedDate = DateFormatAdapter().fromString(dateText)
-            dataCache[dateText] = parsedDate
-            parsedDate
+        val parsedDate = DateFormatAdapter().fromString(dateText)
+        dataCache[dateText] = parsedDate
+        parsedDate
 //            } catch (e: DateTimeParseException) {
 //                dataCache[dateText] = null //TODO make nullable cache
 //                null
 //            }
-        }
     }
 
     fun binarySearch(start: Int, length: Int, comparator: (Int) -> Int): Int {
@@ -157,36 +151,30 @@ object EvaluatorUtil {
         }
     }
 
-    fun isTextMarkdownOrList(key: Key): Boolean {
-        return KeyFilters.doesContainVariantValue(
-            key,
-            VariantConstants.FORMAT_VARIANT_NAME,
-            listOf(
-                VariantConstants.FormatVariantConstants.TEXT_FORMAT_NAME,
-                VariantConstants.FormatVariantConstants.MARKDOWN_FORMAT_NAME,
-                VariantConstants.FormatVariantConstants.LIST_FORMAT_NAME,
-            ),
-        )
-    }
+    fun isTextMarkdownOrList(key: Key): Boolean = KeyFilters.doesContainVariantValue(
+        key,
+        VariantConstants.FORMAT_VARIANT_NAME,
+        listOf(
+            VariantConstants.FormatVariantConstants.TEXT_FORMAT_NAME,
+            VariantConstants.FormatVariantConstants.MARKDOWN_FORMAT_NAME,
+            VariantConstants.FormatVariantConstants.LIST_FORMAT_NAME,
+        ),
+    )
 
-    fun isList(key: Key): Boolean {
-        return KeyFilters.doesContainVariantValue(
-            key,
-            VariantConstants.FORMAT_VARIANT_NAME,
-            listOf(
-                VariantConstants.FormatVariantConstants.LIST_FORMAT_NAME,
-            ),
-        )
-    }
+    fun isList(key: Key): Boolean = KeyFilters.doesContainVariantValue(
+        key,
+        VariantConstants.FORMAT_VARIANT_NAME,
+        listOf(
+            VariantConstants.FormatVariantConstants.LIST_FORMAT_NAME,
+        ),
+    )
 
-    fun isDate(key: Key): Boolean {
-        return KeyFilters.doesContainVariantValue(
-            key,
-            VariantConstants.FORMAT_VARIANT_NAME,
-            listOf(
-                VariantConstants.FormatVariantConstants.DATE_FORMAT_NAME,
-                VariantConstants.FormatVariantConstants.TEXT_FORMAT_NAME, // fallback for now...
-            ),
-        )
-    }
+    fun isDate(key: Key): Boolean = KeyFilters.doesContainVariantValue(
+        key,
+        VariantConstants.FORMAT_VARIANT_NAME,
+        listOf(
+            VariantConstants.FormatVariantConstants.DATE_FORMAT_NAME,
+            VariantConstants.FormatVariantConstants.TEXT_FORMAT_NAME, // fallback for now...
+        ),
+    )
 }

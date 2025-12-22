@@ -6,11 +6,7 @@ import base.boudicca.api.eventcollector.debugger.color.red
 import base.boudicca.api.eventcollector.debugger.color.yellow
 import base.boudicca.model.Event
 
-class DataShouldContainPropertyWithFormat(
-    private val property: Property<*>,
-    private val format: Regex,
-    private val severity: ValidationSeverity,
-) : EventCollectorValidation {
+class DataShouldContainPropertyWithFormat(private val property: Property<*>, private val format: Regex, private val severity: ValidationSeverity) : EventCollectorValidation {
     override fun validate(event: Event, verbose: Boolean): ValidationResult {
         val key = property.getKeyFilter()
         if (event.toStructuredEvent().filterKeys(key).none { it.second.contains(format) }) {

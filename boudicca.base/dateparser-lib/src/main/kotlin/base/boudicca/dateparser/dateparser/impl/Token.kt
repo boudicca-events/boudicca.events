@@ -1,27 +1,15 @@
 package base.boudicca.dateparser.dateparser.impl
 
 @ConsistentCopyVisibility
-internal data class Token private constructor(
-    val value: String,
-    val needSolving: Boolean,
-    val possibleTypes: Set<ResultTypes>,
-) {
-    fun isSolved(): Boolean {
-        return !needSolving || possibleTypes.size == 1
-    }
+internal data class Token private constructor(val value: String, val needSolving: Boolean, val possibleTypes: Set<ResultTypes>) {
+    fun isSolved(): Boolean = !needSolving || possibleTypes.size == 1
 
-    fun withTypes(newTypes: Set<ResultTypes>): Token {
-        return Token(value, needSolving, newTypes)
-    }
+    fun withTypes(newTypes: Set<ResultTypes>): Token = Token(value, needSolving, newTypes)
 
-    fun minusType(type: ResultTypes): Token {
-        return Token(value, needSolving, possibleTypes.minus(type))
-    }
+    fun minusType(type: ResultTypes): Token = Token(value, needSolving, possibleTypes.minus(type))
 
     companion object {
-        fun create(value: String, possibleTypes: Set<ResultTypes>): Token {
-            return Token(value, possibleTypes.isNotEmpty(), possibleTypes)
-        }
+        fun create(value: String, possibleTypes: Set<ResultTypes>): Token = Token(value, possibleTypes.isNotEmpty(), possibleTypes)
     }
 
     override fun toString(): String {

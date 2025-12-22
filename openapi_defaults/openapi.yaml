@@ -1,11 +1,11 @@
 openapi: 3.0.1
 info:
-  title: '%TITLE%'
-  description: '%DESCRIPTION%'
-  version: '%VERSION%'
-  termsOfService: http://swagger.io/terms/
-  contact:
-    email: team@boudicca.events
-  license:
-    name: GPL v3.0
-    url: https://www.gnu.org/licenses/gpl-3.0.en.html
+    title: '%TITLE%'
+    description: '%DESCRIPTION%'
+    version: '%VERSION%'
+    termsOfService: http://swagger.io/terms/
+    contact:
+        email: team@boudicca.events
+    license:
+        name: GPL v3.0
+        url: https://www.gnu.org/licenses/gpl-3.0.en.html

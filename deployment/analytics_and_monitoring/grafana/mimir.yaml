@@ -1,42 +1,42 @@
 multitenancy_enabled: false
 
 blocks_storage:
-  backend: filesystem
-  bucket_store:
-    sync_dir: /var/mimir/tsdb-sync
-  filesystem:
-    dir: /var/mimir/data/tsdb
-  tsdb:
-    dir: /var/mimir/tsdb
+    backend: filesystem
+    bucket_store:
+        sync_dir: /var/mimir/tsdb-sync
+    filesystem:
+        dir: /var/mimir/data/tsdb
+    tsdb:
+        dir: /var/mimir/tsdb
 
 compactor:
-  data_dir: /var/mimir/compactor
-  sharding_ring:
-    kvstore:
-      store: memberlist
+    data_dir: /var/mimir/compactor
+    sharding_ring:
+        kvstore:
+            store: memberlist
 
 distributor:
-  ring:
-    instance_addr: 127.0.0.1
-    kvstore:
-      store: memberlist
+    ring:
+        instance_addr: 127.0.0.1
+        kvstore:
+            store: memberlist
 
 ingester:
-  ring:
-    instance_addr: 127.0.0.1
-    kvstore:
-      store: memberlist
-    replication_factor: 1
+    ring:
+        instance_addr: 127.0.0.1
+        kvstore:
+            store: memberlist
+        replication_factor: 1
 
 ruler_storage:
-  backend: filesystem
-  filesystem:
-    dir: /var/mimir/rules
+    backend: filesystem
+    filesystem:
+        dir: /var/mimir/rules
 
 server:
-  http_listen_port: 9009
-  log_level: error
+    http_listen_port: 9009
+    log_level: error
 
 store_gateway:
-  sharding_ring:
-    replication_factor: 1
+    sharding_ring:
+        replication_factor: 1

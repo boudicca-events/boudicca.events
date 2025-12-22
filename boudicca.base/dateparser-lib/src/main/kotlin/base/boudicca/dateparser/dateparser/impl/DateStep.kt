@@ -3,12 +3,7 @@ package base.boudicca.dateparser.dateparser.impl
 import base.boudicca.dateparser.dateparser.DateParserConfig
 
 @Suppress("MagicNumber", "NestedBlockDepth", "ReturnCount") // todo refactor this
-internal class DateStep(
-    private val config: DateParserConfig,
-    private val debugTracing: DebugTracing,
-    private val tokens: Tokens,
-    private val canGetMoreData: Boolean,
-) {
+internal class DateStep(private val config: DateParserConfig, private val debugTracing: DebugTracing, private val tokens: Tokens, private val canGetMoreData: Boolean) {
     fun solve(): DateSolution? {
         if (tokens.tokens.count { it.needSolving } > 6) {
             debugTracing.startOperation("too many tokens to solve", tokens)
@@ -86,29 +81,24 @@ internal class DateStep(
         return result
     }
 
-    private fun calculateSeparatorWeight(value: String): Int {
-        return value.map {
-            when (it) {
-                '.', '-', '/', ':' -> 1
-                ' ' -> 2
-                '\n' -> 100
-                else -> 3
-            }
-        }.sum()
-    }
+    private fun calculateSeparatorWeight(value: String): Int = value.map {
+        when (it) {
+            '.', '-', '/', ':' -> 1
+            ' ' -> 2
+            '\n' -> 100
+            else -> 3
+        }
+    }.sum()
 
-    private fun collectSeparatorValues(components: List<Token>): List<Int> {
-        return components.asSequence()
-            .filter { !it.needSolving }
-            .map { calculateSeparatorWeight(it.value) }
-            .distinct()
-            .sortedDescending()
-            .toList()
-    }
+    private fun collectSeparatorValues(components: List<Token>): List<Int> = components.asSequence()
+        .filter { !it.needSolving }
+        .map { calculateSeparatorWeight(it.value) }
+        .distinct()
+        .sortedDescending()
+        .toList()
 
-    private fun trySolve(tokenGroups: List<Tokens>, debugTracing: DebugTracing): DateSolution? {
-        return trySolve(tokenGroups, debugTracing, null) ?: trySolve(tokenGroups, debugTracing, config.dayMonthOrder)
-    }
+    private fun trySolve(tokenGroups: List<Tokens>, debugTracing: DebugTracing): DateSolution? =
+        trySolve(tokenGroups, debugTracing, null) ?: trySolve(tokenGroups, debugTracing, config.dayMonthOrder)
 
     private fun trySolve(tokenGroups: List<Tokens>, debugTracing: DebugTracing, dayMonthOrder: DateParserConfig.DayMonthOrder?): DateSolution? {
         var solvedTokens = tokenGroups
@@ -191,15 +181,13 @@ internal class DateStep(
         return result
     }
 
-    private fun removeSingleElement(tokenGroups: List<Tokens>, singleElement: ResultTypes): List<Tokens> {
-        return tokenGroups.map {
-            it.map { token ->
-                if (token.possibleTypes.size == 1) {
-                    // TODO this is a workaround to avoid deleting our own single element... not sure if there is a better way to do this?
-                    token
-                } else {
-                    token.minusType(singleElement)
-                }
+    private fun removeSingleElement(tokenGroups: List<Tokens>, singleElement: ResultTypes): List<Tokens> = tokenGroups.map {
+        it.map { token ->
+            if (token.possibleTypes.size == 1) {
+                // TODO this is a workaround to avoid deleting our own single element... not sure if there is a better way to do this?
+                token
+            } else {
+                token.minusType(singleElement)
             }
         }
     }

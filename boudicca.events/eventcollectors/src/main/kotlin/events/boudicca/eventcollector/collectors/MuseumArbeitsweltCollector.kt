@@ -51,7 +51,5 @@ class MuseumArbeitsweltCollector : TwoStepEventCollector<Pair<String, String>>("
         }
     }
 
-    private fun parseDate(dateToParse: String): DateParserResult {
-        return DateParser.parse(dateToParse)
-    }
+    private fun parseDate(dateToParse: String): DateParserResult = DateParser.parse(dateToParse)
 }

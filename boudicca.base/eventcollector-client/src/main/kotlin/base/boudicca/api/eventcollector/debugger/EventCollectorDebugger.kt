@@ -24,11 +24,7 @@ import io.opentelemetry.api.OpenTelemetry
 
 private const val DEFAULT_PORT = 8083
 
-class EventCollectorDebugger(
-    val verboseDebugging: Boolean = true,
-    val verboseValidation: Boolean = true,
-    val startWebUi: Boolean = true,
-) {
+class EventCollectorDebugger(val verboseDebugging: Boolean = true, val verboseValidation: Boolean = true, val startWebUi: Boolean = true) {
     init {
         CollectionsFilter.alsoLog = true
         FetcherFactory.disableRetries = true
@@ -43,34 +39,22 @@ class EventCollectorDebugger(
         return this
     }
 
-    fun enableIngestion(): EventCollectorDebugger {
-        return enableIngestion(RunnerIngestionInterface.createFromConfiguration())
-    }
+    fun enableIngestion(): EventCollectorDebugger = enableIngestion(RunnerIngestionInterface.createFromConfiguration())
 
-    fun enableIngestion(eventDbUrl: String, user: String, password: String): EventCollectorDebugger {
-        return enableIngestion(EventDbIngestClient(eventDbUrl, user, password))
-    }
+    fun enableIngestion(eventDbUrl: String, user: String, password: String): EventCollectorDebugger = enableIngestion(EventDbIngestClient(eventDbUrl, user, password))
 
-    fun enableIngestion(ingestClient: EventDbIngestClient): EventCollectorDebugger {
-        return enableIngestion(BoudiccaRunnerIngestionInterface(ingestClient))
-    }
+    fun enableIngestion(ingestClient: EventDbIngestClient): EventCollectorDebugger = enableIngestion(BoudiccaRunnerIngestionInterface(ingestClient))
 
     fun enableIngestion(runnerIngestionInterface: RunnerIngestionInterface): EventCollectorDebugger {
         this.runnerIngestionInterface = runnerIngestionInterface
         return this
     }
 
-    fun enableEnricher(): EventCollectorDebugger {
-        return enableEnricher(RunnerEnricherInterface.createFromConfiguration())
-    }
+    fun enableEnricher(): EventCollectorDebugger = enableEnricher(RunnerEnricherInterface.createFromConfiguration())
 
-    fun enableEnricher(enricherUrl: String): EventCollectorDebugger {
-        return enableEnricher(EnricherClient(enricherUrl))
-    }
+    fun enableEnricher(enricherUrl: String): EventCollectorDebugger = enableEnricher(EnricherClient(enricherUrl))
 
-    fun enableEnricher(enricherClient: EnricherClient): EventCollectorDebugger {
-        return enableEnricher(BoudiccaRunnerEnricherInterface(enricherClient))
-    }
+    fun enableEnricher(enricherClient: EnricherClient): EventCollectorDebugger = enableEnricher(BoudiccaRunnerEnricherInterface(enricherClient))
 
     fun enableEnricher(runnerEnricherInterface: RunnerEnricherInterface): EventCollectorDebugger {
         this.runnerEnricherInterface = runnerEnricherInterface

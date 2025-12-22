@@ -150,16 +150,14 @@ class KeySelectorTest {
         assertEquals("description:lang=de", result.get().first.toKeyString())
     }
 
-    private fun testEntry(): StructuredEntry {
-        return mapOf(
-            "name" to "My Event",
-            "startDate" to "2024-04-27T23:59:00+02:00",
-            "startDate:format=date" to "2024-04-27T23:59:00+02:00",
-            "pictureUrl" to "https://i.insider.com/2b37544bfe5eb549a8378b00?width=1024",
-            "description" to "my default lang description",
-            "description:lang=de" to "meine deutsche beschreibung",
-            "description:lang=en" to "my english description",
-            "description:format=markdown:lang=en" to "#my english markdown description",
-        ).toStructuredEntry()
-    }
+    private fun testEntry(): StructuredEntry = mapOf(
+        "name" to "My Event",
+        "startDate" to "2024-04-27T23:59:00+02:00",
+        "startDate:format=date" to "2024-04-27T23:59:00+02:00",
+        "pictureUrl" to "https://i.insider.com/2b37544bfe5eb549a8378b00?width=1024",
+        "description" to "my default lang description",
+        "description:lang=de" to "meine deutsche beschreibung",
+        "description:lang=en" to "my english description",
+        "description:format=markdown:lang=en" to "#my english markdown description",
+    ).toStructuredEntry()
 }

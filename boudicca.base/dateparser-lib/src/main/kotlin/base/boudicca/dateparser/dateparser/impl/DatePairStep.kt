@@ -2,12 +2,7 @@ package base.boudicca.dateparser.dateparser.impl
 
 import base.boudicca.dateparser.dateparser.DateParserConfig
 
-internal class DatePairStep(
-    private val config: DateParserConfig,
-    private val debugTracing: DebugTracing,
-    private val tokens: Tokens,
-    private val canGetMoreData: Boolean,
-) {
+internal class DatePairStep(private val config: DateParserConfig, private val debugTracing: DebugTracing, private val tokens: Tokens, private val canGetMoreData: Boolean) {
     fun solve(): DatePairSolution? {
         val untilIndexes = findAllUntilIndexes(tokens)
         for (untilIndex in untilIndexes) {
@@ -39,11 +34,9 @@ internal class DatePairStep(
         return result
     }
 
-    private fun findAllUntilIndexes(tokens: Tokens): List<Int> {
-        return tokens.tokens.mapIndexed { i, component -> Pair(i, component) }
-            .filter { (_, component) -> isUntil(component) }
-            .map { it.first }
-    }
+    private fun findAllUntilIndexes(tokens: Tokens): List<Int> = tokens.tokens.mapIndexed { i, component -> Pair(i, component) }
+        .filter { (_, component) -> isUntil(component) }
+        .map { it.first }
 
     private fun isUntil(component: Token): Boolean {
         val value = component.value.trim()
@@ -70,7 +63,10 @@ internal class DatePairStep(
         val rightDateSolution = DateStep(config, debugTracing, rightGroup, true).solve()
         val leftDateSolution =
             DateStep(config, debugTracing, leftGroup, true).solve() ?: DateStep(
-                config, debugTracing, Utils.tryTypeStealing(groups, 0), true,
+                config,
+                debugTracing,
+                Utils.tryTypeStealing(groups, 0),
+                true,
             ).solve()
 
         // the "hasNothingInCommonWith" check is true if we should have parsed this without until handling

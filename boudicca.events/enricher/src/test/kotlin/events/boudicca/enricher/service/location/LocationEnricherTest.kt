@@ -91,9 +91,7 @@ class LocationEnricherTest {
         assertEquals("data", enrichedEvent.data["test.data"])
     }
 
-    private fun callEnrich(locationEnricher: LocationEnricher, event: Event): Event {
-        return locationEnricher.enrich(event.toStructuredEvent()).toFlatEvent()
-    }
+    private fun callEnrich(locationEnricher: LocationEnricher, event: Event): Event = locationEnricher.enrich(event.toStructuredEvent()).toFlatEvent()
 
     private fun createTestEnricher(testData: List<LocationData>): LocationEnricher {
         val locationEnricher = LocationEnricher { testData }
@@ -107,14 +105,12 @@ class LocationEnricherTest {
         return locationEnricher
     }
 
-    private fun createTestEvent(): Event {
-        return Event(
-            "test",
-            OffsetDateTime.now(),
-            mapOf(
-                SemanticKeys.LOCATION_NAME to "location",
-                SemanticKeys.LOCATION_ADDRESS to "address",
-            ),
-        )
-    }
+    private fun createTestEvent(): Event = Event(
+        "test",
+        OffsetDateTime.now(),
+        mapOf(
+            SemanticKeys.LOCATION_NAME to "location",
+            SemanticKeys.LOCATION_ADDRESS to "address",
+        ),
+    )
 }

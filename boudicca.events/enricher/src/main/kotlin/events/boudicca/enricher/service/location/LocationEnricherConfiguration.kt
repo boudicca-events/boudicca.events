@@ -16,13 +16,9 @@ class LocationEnricherConfiguration {
     fun googleUpdater(
         @Value("\${boudicca.enricher.location.googleCredentialsPath:}") googleCredentialsPath: String,
         @Value("\${boudicca.enricher.location.spreadsheetId:}") spreadsheetId: String,
-    ): LocationEnricherUpdater {
-        return LocationEnricherGoogleSheetsUpdater(googleCredentialsPath, spreadsheetId)
-    }
+    ): LocationEnricherUpdater = LocationEnricherGoogleSheetsUpdater(googleCredentialsPath, spreadsheetId)
 
     @Bean
     @ConditionalOnMissingBean(LocationEnricherUpdater::class)
-    fun noopUpdater(): LocationEnricherUpdater {
-        return LocationEnricherNoopUpdater()
-    }
+    fun noopUpdater(): LocationEnricherUpdater = LocationEnricherNoopUpdater()
 }

@@ -331,75 +331,39 @@ class ParserTest {
         )
     }
 
-    private fun before(): Token {
-        return Token(TokenType.BEFORE, null)
-    }
+    private fun before(): Token = Token(TokenType.BEFORE, null)
 
-    private fun after(): Token {
-        return Token(TokenType.AFTER, null)
-    }
+    private fun after(): Token = Token(TokenType.AFTER, null)
 
-    private fun grOpen(): Token {
-        return Token(TokenType.GROUPING_OPEN, null)
-    }
+    private fun grOpen(): Token = Token(TokenType.GROUPING_OPEN, null)
 
-    private fun grClose(): Token {
-        return Token(TokenType.GROUPING_CLOSE, null)
-    }
+    private fun grClose(): Token = Token(TokenType.GROUPING_CLOSE, null)
 
-    private fun not(): Token {
-        return Token(TokenType.NOT, null)
-    }
+    private fun not(): Token = Token(TokenType.NOT, null)
 
-    private fun or(): Token {
-        return Token(TokenType.OR, null)
-    }
+    private fun or(): Token = Token(TokenType.OR, null)
 
-    private fun and(): Token {
-        return Token(TokenType.AND, null)
-    }
+    private fun and(): Token = Token(TokenType.AND, null)
 
-    private fun equals(): Token {
-        return Token(TokenType.EQUALS, null)
-    }
+    private fun equals(): Token = Token(TokenType.EQUALS, null)
 
-    private fun contains(): Token {
-        return Token(TokenType.CONTAINS, null)
-    }
+    private fun contains(): Token = Token(TokenType.CONTAINS, null)
 
-    private fun text(s: String): Token {
-        return Token(TokenType.TEXT, s)
-    }
+    private fun text(s: String): Token = Token(TokenType.TEXT, s)
 
-    private fun number(number: String): Token {
-        return Token(TokenType.NUMBER, null, BigDecimal(number))
-    }
+    private fun number(number: String): Token = Token(TokenType.NUMBER, null, BigDecimal(number))
 
-    private fun duration(): Token {
-        return Token(TokenType.DURATION, null)
-    }
+    private fun duration(): Token = Token(TokenType.DURATION, null)
 
-    private fun shorter(): Token {
-        return Token(TokenType.SHORTER, null)
-    }
+    private fun shorter(): Token = Token(TokenType.SHORTER, null)
 
-    private fun longer(): Token {
-        return Token(TokenType.LONGER, null)
-    }
+    private fun longer(): Token = Token(TokenType.LONGER, null)
 
-    private fun hasField(): Token {
-        return Token(TokenType.HAS_FIELD, null)
-    }
+    private fun hasField(): Token = Token(TokenType.HAS_FIELD, null)
 
-    private fun isInNextSeconds(): Token {
-        return Token(TokenType.IS_IN_NEXT_SECONDS, null)
-    }
+    private fun isInNextSeconds(): Token = Token(TokenType.IS_IN_NEXT_SECONDS, null)
 
-    private fun isInLastSeconds(): Token {
-        return Token(TokenType.IS_IN_LAST_SECONDS, null)
-    }
+    private fun isInLastSeconds(): Token = Token(TokenType.IS_IN_LAST_SECONDS, null)
 
-    private fun callParser(vararg tokens: Token): String {
-        return Parser(tokens.toList()).parse().toString()
-    }
+    private fun callParser(vararg tokens: Token): String = Parser(tokens.toList()).parse().toString()
 }

@@ -11,9 +11,7 @@ import java.net.HttpURLConnection
  * useful for federation purposes or for local development to get the data from an online Boudicca instance.
  */
 class BoudiccaCollector(private val url: String, private val name: String? = null) : EventCollector {
-    override fun getName(): String {
-        return name ?: "boudicca: $url"
-    }
+    override fun getName(): String = name ?: "boudicca: $url"
 
     override fun collectEvents(): List<Event> {
         Collections.startHttpCall(url)

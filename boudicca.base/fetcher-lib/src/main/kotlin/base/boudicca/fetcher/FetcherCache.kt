@@ -22,9 +22,7 @@ interface FetcherCache {
 }
 
 object NoopFetcherCache : FetcherCache {
-    override fun containsEntry(key: String): Boolean {
-        return false
-    }
+    override fun containsEntry(key: String): Boolean = false
 
     override fun getEntry(key: String): String {
         error { "noop implementation does not contain $key" }
@@ -38,13 +36,9 @@ object NoopFetcherCache : FetcherCache {
 class InMemoryFetcherCache : FetcherCache {
     private val cache = ConcurrentHashMap<String, String>()
 
-    override fun containsEntry(key: String): Boolean {
-        return cache.containsKey(key)
-    }
+    override fun containsEntry(key: String): Boolean = cache.containsKey(key)
 
-    override fun getEntry(key: String): String {
-        return cache[key] ?: throw IllegalArgumentException("cache does not contain key $key")
-    }
+    override fun getEntry(key: String): String = cache[key] ?: throw IllegalArgumentException("cache does not contain key $key")
 
     override fun putEntry(key: String, entry: String) {
         cache[key] = entry
@@ -85,13 +79,9 @@ class FileBackedFetcherCache(private val file: File) : FetcherCache {
         }
     }
 
-    override fun containsEntry(key: String): Boolean {
-        return cache.containsKey(key)
-    }
+    override fun containsEntry(key: String): Boolean = cache.containsKey(key)
 
-    override fun getEntry(key: String): String {
-        return cache[key] ?: throw IllegalArgumentException("cache does not contain key $key")
-    }
+    override fun getEntry(key: String): String = cache[key] ?: throw IllegalArgumentException("cache does not contain key $key")
 
     override fun putEntry(key: String, entry: String) {
         cache[key] = entry

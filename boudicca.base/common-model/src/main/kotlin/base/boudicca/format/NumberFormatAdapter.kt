@@ -19,7 +19,5 @@ class NumberFormatAdapter : AbstractFormatAdapter<Number>(VariantConstants.Forma
         }
     }
 
-    override fun convertToString(value: Number): String {
-        return value.toString()
-    }
+    override fun convertToString(value: Number): String = value.toString()
 }

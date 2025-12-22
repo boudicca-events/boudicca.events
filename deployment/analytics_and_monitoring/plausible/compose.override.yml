@@ -1,19 +1,19 @@
 services:
-  plausible:
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.boudicca-plausible.rule=Host(`plausible.monitoring.boudicca.events`)"
-      - "traefik.http.routers.boudicca-plausible.entrypoints=websecure"
-      - "traefik.http.routers.boudicca-plausible.tls.certresolver=myresolver"
-    networks:
-      - monitoring
-  plausible_db:
-    networks:
-      - monitoring
-  plausible_events_db:
-    networks:
-      - monitoring
+    plausible:
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.boudicca-plausible.rule=Host(`plausible.monitoring.boudicca.events`)"
+            - "traefik.http.routers.boudicca-plausible.entrypoints=websecure"
+            - "traefik.http.routers.boudicca-plausible.tls.certresolver=myresolver"
+        networks:
+            - monitoring
+    plausible_db:
+        networks:
+            - monitoring
+    plausible_events_db:
+        networks:
+            - monitoring
 networks:
-  monitoring:
-    name: monitoring
-    external: true
+    monitoring:
+        name: monitoring
+        external: true

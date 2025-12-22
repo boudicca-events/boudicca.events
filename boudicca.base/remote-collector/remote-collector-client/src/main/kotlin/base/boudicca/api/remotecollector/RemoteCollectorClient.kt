@@ -28,29 +28,23 @@ class RemoteCollectorClient(private val remoteCollectorUrl: String) {
         }
     }
 
-    private fun toApi(eventCollection: base.boudicca.remote_collector.openapi.model.EventCollection): EventCollection {
-        return EventCollection(
-            eventCollection.events?.map { toApi(it) } ?: emptyList(),
-            eventCollection.httpCalls?.map { toApi(it) },
-            eventCollection.logLines,
-            eventCollection.warningCount,
-            eventCollection.errorCount,
-        )
-    }
+    private fun toApi(eventCollection: base.boudicca.remote_collector.openapi.model.EventCollection): EventCollection = EventCollection(
+        eventCollection.events?.map { toApi(it) } ?: emptyList(),
+        eventCollection.httpCalls?.map { toApi(it) },
+        eventCollection.logLines,
+        eventCollection.warningCount,
+        eventCollection.errorCount,
+    )
 
-    private fun toApi(event: base.boudicca.remote_collector.openapi.model.Event): Event {
-        return Event(event.name!!, event.startDate!!, event.data ?: emptyMap())
-    }
+    private fun toApi(event: base.boudicca.remote_collector.openapi.model.Event): Event = Event(event.name!!, event.startDate!!, event.data ?: emptyMap())
 
-    private fun toApi(httpCall: base.boudicca.remote_collector.openapi.model.HttpCall): HttpCall {
-        return HttpCall(
-            httpCall.url!!,
-            httpCall.responseCode!!,
-            httpCall.startTime!!,
-            httpCall.endTime!!,
-            httpCall.postParams,
-        )
-    }
+    private fun toApi(httpCall: base.boudicca.remote_collector.openapi.model.HttpCall): HttpCall = HttpCall(
+        httpCall.url!!,
+        httpCall.responseCode!!,
+        httpCall.startTime!!,
+        httpCall.endTime!!,
+        httpCall.postParams,
+    )
 }
 
 class RemoteCollectorException(msg: String, e: ApiException) : RuntimeException(msg, e)

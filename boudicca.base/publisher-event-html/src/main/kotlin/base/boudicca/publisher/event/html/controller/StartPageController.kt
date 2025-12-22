@@ -13,14 +13,9 @@ import org.springframework.web.servlet.view.RedirectView
 
 @Controller
 @RequestMapping("/")
-class StartPageController(
-    private val eventService: EventService,
-    private val sourcesService: SourcesService,
-) {
+class StartPageController(private val eventService: EventService, private val sourcesService: SourcesService) {
     @GetMapping("/")
-    fun getIndex(): RedirectView {
-        return RedirectView("/search")
-    }
+    fun getIndex(): RedirectView = RedirectView("/search")
 
     @GetMapping("/search")
     fun search(searchDTO: SearchDTO): ModelAndView {
@@ -32,9 +27,7 @@ class StartPageController(
 
     @GetMapping("/generate", produces = ["text/plain"])
     @ResponseBody
-    fun generateQuery(searchDTO: SearchDTO): String {
-        return eventService.generateQuery(searchDTO)
-    }
+    fun generateQuery(searchDTO: SearchDTO): String = eventService.generateQuery(searchDTO)
 
     @GetMapping("/sources")
     fun sources(): ModelAndView {

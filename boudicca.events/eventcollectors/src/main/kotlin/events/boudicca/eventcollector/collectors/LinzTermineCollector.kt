@@ -27,9 +27,7 @@ class LinzTermineCollector : EventCollector {
     private val eventsBaseUrl = "https://www.linztermine.at/schnittstelle/downloads/events_xml.php"
     private val locationBaseUrl = "https://www.linztermine.at/schnittstelle/downloads/locations_xml.php"
 
-    override fun getName(): String {
-        return "linz termine"
-    }
+    override fun getName(): String = "linz termine"
 
     override fun collectStructuredEvents(): List<StructuredEvent> {
         val locations = parseLocations()
@@ -213,24 +211,15 @@ class LinzTermineCollector : EventCollector {
         }.associateBy { it.id }
     }
 
-    private fun mapEventType(eventType: Pair<Int, String>?): String {
-        return when {
-            eventType == null -> ""
-            eventType.first == 401 || eventType.first == 402 -> "sport"
-            else -> eventType.second
-        }
+    private fun mapEventType(eventType: Pair<Int, String>?): String = when {
+        eventType == null -> ""
+        eventType.first == 401 || eventType.first == 402 -> "sport"
+        else -> eventType.second
     }
 
-    private fun loadXml(s: String): Document {
-        return Jsoup.parse(fetcher.fetchUrl(s), Parser.xmlParser())
-    }
+    private fun loadXml(s: String): Document = Jsoup.parse(fetcher.fetchUrl(s), Parser.xmlParser())
 
-    data class Location(
-        val id: Int,
-        val name: String,
-        val city: String?,
-        val subOf: Int?,
-    )
+    data class Location(val id: Int, val name: String, val city: String?, val subOf: Int?)
 
     data class LinzTermineEvent(
         val id: Int,

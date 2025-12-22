@@ -3,9 +3,7 @@ package base.boudicca.model.structured
 abstract class AbstractKeyBuilder<T>(private val name: String) {
     private val variants = mutableListOf<Variant>()
 
-    fun withVariant(variantName: String, variantValue: String): AbstractKeyBuilder<T> {
-        return withVariant(Variant(variantName, variantValue))
-    }
+    fun withVariant(variantName: String, variantValue: String): AbstractKeyBuilder<T> = withVariant(Variant(variantName, variantValue))
 
     fun withVariant(variant: Variant): AbstractKeyBuilder<T> {
         variants.add(variant)
@@ -17,9 +15,7 @@ abstract class AbstractKeyBuilder<T>(private val name: String) {
         return this
     }
 
-    fun build(): T {
-        return build(name, variants)
-    }
+    fun build(): T = build(name, variants)
 
     abstract fun build(name: String, variants: List<Variant>): T
 }

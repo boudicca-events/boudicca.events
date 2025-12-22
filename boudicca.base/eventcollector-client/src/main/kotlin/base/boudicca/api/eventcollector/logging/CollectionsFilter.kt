@@ -38,19 +38,13 @@ class CollectionsFilter(private val encoder: Encoder<ILoggingEvent>) : Filter<IL
         return FilterReply.NEUTRAL
     }
 
-    private fun isWarnLevel(event: ILoggingEvent): Boolean {
-        return !isErrorLevel(event) && event.level.isGreaterOrEqual(Level.WARN)
-    }
+    private fun isWarnLevel(event: ILoggingEvent): Boolean = !isErrorLevel(event) && event.level.isGreaterOrEqual(Level.WARN)
 
-    private fun isErrorLevel(event: ILoggingEvent): Boolean {
-        return event.level.isGreaterOrEqual(Level.ERROR)
-    }
+    private fun isErrorLevel(event: ILoggingEvent): Boolean = event.level.isGreaterOrEqual(Level.ERROR)
 
-    private fun getFilterReply(): FilterReply {
-        return if (alsoLog) {
-            FilterReply.NEUTRAL
-        } else {
-            FilterReply.DENY
-        }
+    private fun getFilterReply(): FilterReply = if (alsoLog) {
+        FilterReply.NEUTRAL
+    } else {
+        FilterReply.DENY
     }
 }

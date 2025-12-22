@@ -2,11 +2,7 @@ package base.boudicca.dateparser.dateparser.impl
 
 import base.boudicca.dateparser.dateparser.DateParserConfig
 
-internal class ListOfDatePairStep(
-    private val config: DateParserConfig,
-    private val debugTracing: DebugTracing,
-    private val tokens: Tokens,
-) {
+internal class ListOfDatePairStep(private val config: DateParserConfig, private val debugTracing: DebugTracing, private val tokens: Tokens) {
     @Suppress("ReturnCount")
     fun solve(): ListOfDatePairSolution? {
         // TODO think if this could result in wrong results when we have the no list handling as first
@@ -41,11 +37,9 @@ internal class ListOfDatePairStep(
         return result
     }
 
-    private fun findAllListIndexes(tokens: Tokens): List<Int> {
-        return tokens.tokens.mapIndexed { i, component -> Pair(i, component) }
-            .filter { (_, component) -> isList(component) }
-            .map { it.first }
-    }
+    private fun findAllListIndexes(tokens: Tokens): List<Int> = tokens.tokens.mapIndexed { i, component -> Pair(i, component) }
+        .filter { (_, component) -> isList(component) }
+        .map { it.first }
 
     private fun isList(component: Token): Boolean {
         val value = component.value.trim()
@@ -75,13 +69,11 @@ internal class ListOfDatePairStep(
         return ListOfDatePairSolution(results)
     }
 
-    private fun dataShareBetweenResults(results: List<DatePairSolution>): List<DatePairSolution> {
-        return results.map {
-            var withShared = it
-            for (pair in results) {
-                withShared = withShared.plusDataFrom(pair)
-            }
-            withShared
+    private fun dataShareBetweenResults(results: List<DatePairSolution>): List<DatePairSolution> = results.map {
+        var withShared = it
+        for (pair in results) {
+            withShared = withShared.plusDataFrom(pair)
         }
+        withShared
     }
 }

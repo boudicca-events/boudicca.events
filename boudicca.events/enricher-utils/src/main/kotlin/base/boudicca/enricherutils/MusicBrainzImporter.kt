@@ -118,9 +118,4 @@ fun mapGenre(jsonArray: JSONArray): String? {
     ).firstOrNull()?.first
 }
 
-data class Artist(
-    val name: String,
-    val genre: String?,
-    val aliases: List<String>,
-    val ended: Boolean,
-)
+data class Artist(val name: String, val genre: String?, val aliases: List<String>, val ended: Boolean)

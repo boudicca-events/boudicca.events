@@ -43,17 +43,11 @@ class EvaluatorUtilSortTest {
     }
 
     class SortableList(private val list: MutableList<Int>) : EvaluatorUtil.Sortable<MutableList<Int>> {
-        override fun get(): MutableList<Int> {
-            return list
-        }
+        override fun get(): MutableList<Int> = list
 
-        override fun copy(): EvaluatorUtil.Sortable<MutableList<Int>> {
-            return SortableList(list.toMutableList())
-        }
+        override fun copy(): EvaluatorUtil.Sortable<MutableList<Int>> = SortableList(list.toMutableList())
 
-        override fun compare(i: Int, j: Int): Int {
-            return list[i].compareTo(list[j])
-        }
+        override fun compare(i: Int, j: Int): Int = list[i].compareTo(list[j])
 
         override fun swap(i: Int, j: Int) {
             val v1 = list[i]

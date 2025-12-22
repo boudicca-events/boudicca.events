@@ -27,10 +27,7 @@ import java.util.*
 @Service
 class CalendarService
 @Autowired
-constructor(
-    @Value("\${boudicca.search.url}") private val searchUrl: String,
-    otel: OpenTelemetry,
-) {
+constructor(@Value("\${boudicca.search.url}") private val searchUrl: String, otel: OpenTelemetry) {
     private val searchClient = SearchClient(searchUrl, otel)
 
     fun createCalendar(events: List<Event>): ByteArray {

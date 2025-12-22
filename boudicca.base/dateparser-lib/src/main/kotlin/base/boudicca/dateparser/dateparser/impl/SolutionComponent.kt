@@ -8,104 +8,67 @@ import java.time.LocalTime
 import java.time.OffsetDateTime
 import java.time.ZoneId
 
-internal data class ListOfDatePairSolution(
-    val datePairs: List<DatePairSolution>,
-) {
-    fun isSolved(): Boolean {
-        return datePairs.isNotEmpty() && datePairs.all { it.isSolved() }
-    }
+internal data class ListOfDatePairSolution(val datePairs: List<DatePairSolution>) {
+    fun isSolved(): Boolean = datePairs.isNotEmpty() && datePairs.all { it.isSolved() }
 
-    fun toDateParserResult(timezone: ZoneId, clock: Clock): DateParserResult {
-        return DateParserResult(datePairs.map { it.toDatePair(timezone, clock) })
-    }
+    fun toDateParserResult(timezone: ZoneId, clock: Clock): DateParserResult = DateParserResult(datePairs.map { it.toDatePair(timezone, clock) })
 }
 
-internal data class DatePairSolution(
-    val startDate: DateSolution?,
-    val endDate: DateSolution?,
-) {
-    fun toDatePair(timezone: ZoneId, clock: Clock): DatePair {
-        return DatePair(
-            startDate!!.toOffsetDateTime(timezone, clock),
-            endDate?.toOffsetDateTime(timezone, clock),
-        )
-    }
+internal data class DatePairSolution(val startDate: DateSolution?, val endDate: DateSolution?) {
+    fun toDatePair(timezone: ZoneId, clock: Clock): DatePair = DatePair(
+        startDate!!.toOffsetDateTime(timezone, clock),
+        endDate?.toOffsetDateTime(timezone, clock),
+    )
 
-    fun plusDataFrom(other: DatePairSolution): DatePairSolution {
-        return DatePairSolution(
-            startDate?.plusDateAndTimeFrom(other.startDate),
-            if (other.endDate != null) {
-                (endDate ?: startDate)?.plusDateAndTimeFrom(other.endDate)
-            } else {
-                endDate
-            },
-        )
-    }
+    fun plusDataFrom(other: DatePairSolution): DatePairSolution = DatePairSolution(
+        startDate?.plusDateAndTimeFrom(other.startDate),
+        if (other.endDate != null) {
+            (endDate ?: startDate)?.plusDateAndTimeFrom(other.endDate)
+        } else {
+            endDate
+        },
+    )
 
-    fun isSolved(): Boolean {
-        return startDate != null && startDate.isSolved() && (endDate == null || endDate.isSolved())
-    }
+    fun isSolved(): Boolean = startDate != null && startDate.isSolved() && (endDate == null || endDate.isSolved())
 }
 
-internal data class DateSolution(
-    val day: Int?,
-    val month: Int?,
-    val year: Int?,
-    val hours: Int?,
-    val minutes: Int?,
-    val seconds: Int?,
-    val originalTokens: List<Tokens>,
-) {
-    fun isSolved(): Boolean {
-        return day != null && month != null
-    }
+internal data class DateSolution(val day: Int?, val month: Int?, val year: Int?, val hours: Int?, val minutes: Int?, val seconds: Int?, val originalTokens: List<Tokens>) {
+    fun isSolved(): Boolean = day != null && month != null
 
-    fun toOffsetDateTime(timezone: ZoneId, clock: Clock): OffsetDateTime {
-        return toLocalDate(clock).atTime(toLocalTime()).atZone(timezone).toOffsetDateTime()
-    }
+    fun toOffsetDateTime(timezone: ZoneId, clock: Clock): OffsetDateTime = toLocalDate(clock).atTime(toLocalTime()).atZone(timezone).toOffsetDateTime()
 
-    private fun toLocalDate(clock: Clock): LocalDate {
-        return LocalDate.of(year ?: tryGuessYear(clock, day!!, month!!).toInt(), month!!, day!!)
-    }
+    private fun toLocalDate(clock: Clock): LocalDate = LocalDate.of(year ?: tryGuessYear(clock, day!!, month!!).toInt(), month!!, day!!)
 
-    private fun toLocalTime(): LocalTime {
-        return LocalTime.of(hours ?: 0, minutes ?: 0, seconds ?: 0)
-    }
+    private fun toLocalTime(): LocalTime = LocalTime.of(hours ?: 0, minutes ?: 0, seconds ?: 0)
 
-    fun plusDateFrom(otherSolution: DateSolution?): DateSolution {
-        return DateSolution(
-            day ?: otherSolution?.day,
-            month ?: otherSolution?.month,
-            year ?: otherSolution?.year,
-            hours,
-            minutes,
-            seconds,
-            originalTokens,
+    fun plusDateFrom(otherSolution: DateSolution?): DateSolution = DateSolution(
+        day ?: otherSolution?.day,
+        month ?: otherSolution?.month,
+        year ?: otherSolution?.year,
+        hours,
+        minutes,
+        seconds,
+        originalTokens,
+    )
+
+    fun plusDateAndTimeFrom(otherSolution: DateSolution?): DateSolution = DateSolution(
+        day ?: otherSolution?.day,
+        month ?: otherSolution?.month,
+        year ?: otherSolution?.year,
+        hours ?: otherSolution?.hours,
+        minutes ?: otherSolution?.minutes,
+        seconds ?: otherSolution?.seconds,
+        originalTokens,
+    )
+
+    fun hasNothingInCommonWith(other: DateSolution): Boolean = !(
+        this.day != null && other.day != null ||
+            this.month != null && other.month != null ||
+            this.year != null && other.year != null ||
+            this.hours != null && other.hours != null ||
+            this.minutes != null && other.minutes != null ||
+            this.seconds != null && other.seconds != null
         )
-    }
-
-    fun plusDateAndTimeFrom(otherSolution: DateSolution?): DateSolution {
-        return DateSolution(
-            day ?: otherSolution?.day,
-            month ?: otherSolution?.month,
-            year ?: otherSolution?.year,
-            hours ?: otherSolution?.hours,
-            minutes ?: otherSolution?.minutes,
-            seconds ?: otherSolution?.seconds,
-            originalTokens,
-        )
-    }
-
-    fun hasNothingInCommonWith(other: DateSolution): Boolean {
-        return !(
-            this.day != null && other.day != null ||
-                this.month != null && other.month != null ||
-                this.year != null && other.year != null ||
-                this.hours != null && other.hours != null ||
-                this.minutes != null && other.minutes != null ||
-                this.seconds != null && other.seconds != null
-            )
-    }
 
     @Suppress("LongParameterList")
     companion object {
@@ -143,14 +106,12 @@ internal data class DateSolution(
         }
 
         @Suppress("MagicNumber")
-        private fun fixYear(year: Int): Int {
-            return if (year < 70) { // we get some problems in the year 2070 with this...
-                2000 + year
-            } else if (year < 100) {
-                1900 + year
-            } else {
-                year
-            }
+        private fun fixYear(year: Int): Int = if (year < 70) { // we get some problems in the year 2070 with this...
+            2000 + year
+        } else if (year < 100) {
+            1900 + year
+        } else {
+            year
         }
     }
 }

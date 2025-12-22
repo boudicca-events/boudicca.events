@@ -29,14 +29,12 @@ object FetcherFactory {
             }
         }
 
-    fun newFetcher(manualSetDelay: Long? = null, userAgent: String = Constants.USER_AGENT): Fetcher {
-        return Fetcher(
-            manualSetDelay = manualSetDelay,
-            userAgent = userAgent,
-            eventListeners = listOf(collectionFetcherEventListener),
-            fetcherCache = defaultFetcherCache,
-            disableRetries = disableRetries,
-            otel = otel,
-        )
-    }
+    fun newFetcher(manualSetDelay: Long? = null, userAgent: String = Constants.USER_AGENT): Fetcher = Fetcher(
+        manualSetDelay = manualSetDelay,
+        userAgent = userAgent,
+        eventListeners = listOf(collectionFetcherEventListener),
+        fetcherCache = defaultFetcherCache,
+        disableRetries = disableRetries,
+        otel = otel,
+    )
 }

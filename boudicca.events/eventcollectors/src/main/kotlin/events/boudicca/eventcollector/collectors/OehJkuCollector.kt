@@ -13,7 +13,7 @@ import java.time.LocalTime
 import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.util.Locale
+import java.util.*
 
 class OehJkuCollector : TwoStepEventCollector<String>("oehjku") {
     private val fetcher = FetcherFactory.newFetcher()

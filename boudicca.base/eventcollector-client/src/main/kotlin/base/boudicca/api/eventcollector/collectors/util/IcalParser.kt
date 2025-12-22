@@ -45,12 +45,10 @@ object IcalParser {
     /**
      * maps a collection of vEvents to Events
      */
-    fun mapVEventsToEvents(vEvents: List<VEvent>): List<StructuredEvent> {
-        return vEvents
-            .map { mapVEventToEvent(it) } // map to optional events
-            .filter { it.isPresent } // filter only successful ones
-            .map { it.get() }
-    }
+    fun mapVEventsToEvents(vEvents: List<VEvent>): List<StructuredEvent> = vEvents
+        .map { mapVEventToEvent(it) } // map to optional events
+        .filter { it.isPresent } // filter only successful ones
+        .map { it.get() }
 
     /**
      * maps a single vEvent to an Event. returns an optional which is empty when the vEvent does not include the required data for creating an Event
@@ -86,15 +84,9 @@ object IcalParser {
         return Optional.of(event)
     }
 
-    private fun getEndDate(dateEnd: DateEnd): OffsetDateTime {
-        return getDate(dateEnd.value)
-    }
+    private fun getEndDate(dateEnd: DateEnd): OffsetDateTime = getDate(dateEnd.value)
 
-    private fun getStartDate(dateStart: DateStart): OffsetDateTime {
-        return getDate(dateStart.value)
-    }
+    private fun getStartDate(dateStart: DateStart): OffsetDateTime = getDate(dateStart.value)
 
-    private fun getDate(iCalDate: ICalDate): OffsetDateTime {
-        return iCalDate.toInstant().atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
-    }
+    private fun getDate(iCalDate: ICalDate): OffsetDateTime = iCalDate.toInstant().atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()
 }

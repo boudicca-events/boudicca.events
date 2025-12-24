@@ -23,7 +23,7 @@ class FullTextIndex(
     fun getEntriesForWord(i: Int): BitSet = words[i].second
 
     fun containsSearch(text: String): BitSet {
-        val searchWords = breakText(text.lowercase())
+        val searchWords = breakText(text.lowercase()).toList()
         val subResults =
             searchWords.map { word ->
                 val (lower, upper) = containsSearchIndices(word)
@@ -100,28 +100,27 @@ class FullTextIndex(
         field: String,
     ): List<Pair<CharBuffer, BitSet>> {
         val key = Key.parse(field)
+        val listFormatAdapter = ListFormatAdapter()
         val words = mutableMapOf<CharBuffer, BitSet>()
-        entries.forEachIndexed { entryIndex, entry ->
-            if (!entry[field].isNullOrEmpty()) {
-                val entryValue = entry[field]!!
-                val values =
-                    if (EvaluatorUtil.isList(key)) {
-                        ListFormatAdapter().fromString(entryValue)
-                    } else {
-                        listOf(entryValue)
-                    }
-                val newWords = values.flatMap { breakText(it.lowercase()) }
 
-                newWords.forEach { newWord ->
-                    if (words.containsKey(newWord)) {
-                        words[newWord]!!.set(entryIndex)
-                    } else {
-                        val bitset = BitSet()
-                        bitset.set(entryIndex)
-                        words[newWord] = bitset
-                    }
+        entries.forEachIndexed { entryIndex, entry ->
+            val entryValue = entry[field]?.takeIf { it.isNotEmpty() } ?: return@forEachIndexed
+
+            val values =
+                if (EvaluatorUtil.isList(key)) {
+                    listFormatAdapter.fromString(entryValue)
+                } else {
+                    listOf(entryValue)
                 }
-            }
+
+            values
+                .asSequence()
+                .flatMap { value -> breakText(value.lowercase()).asSequence() }
+                .forEach { newWord ->
+                    words
+                        .getOrPut(newWord) { BitSet() }
+                        .set(entryIndex)
+                }
         }
 
         return words.toList()

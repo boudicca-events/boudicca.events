@@ -12,6 +12,7 @@ import io.opentelemetry.api.trace.Span
 import io.opentelemetry.api.trace.SpanKind
 import io.opentelemetry.context.Context
 import java.util.concurrent.Executors
+import java.util.concurrent.Future
 import java.util.concurrent.atomic.AtomicLong
 
 class EventCollectionRunner(
@@ -41,7 +42,7 @@ class EventCollectionRunner(
                                 val eventsCollected = collect(it, span)
                                 totalEventsCollected.updateAndGet { it + eventsCollected }
                             }
-                        }.forEach { it.get() }
+                        }.forEach(Future<*>::get)
                     span.setAttribute("collected_events", totalEventsCollected.get())
                 } finally {
                     Collections.endFullCollection()

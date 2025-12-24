@@ -35,7 +35,7 @@ object IcalParser {
      * @param icalResource the ics file to parse and map
      */
     fun parseToVEvents(icalResource: String): List<VEvent> {
-        val allCalendars = Biweekly.parse(icalResource).all()
+        val allCalendars = Biweekly.parse(icalResource).all().toList()
         val vEvents =
             allCalendars
                 .flatMap { it.events }

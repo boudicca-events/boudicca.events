@@ -13,11 +13,11 @@ import java.time.format.DateTimeFormatter
  * see the query documentation for more information about the operators
  */
 object BoudiccaQueryBuilder {
-    fun and(subQueries: Iterable<String>): String = booleanMultiQuery(subQueries, "and")
+    fun and(subQueries: Collection<String>): String = booleanMultiQuery(subQueries, "and")
 
     fun and(vararg subQueries: String): String = booleanMultiQuery(subQueries.toList(), "and")
 
-    fun or(subQueries: Iterable<String>): String = booleanMultiQuery(subQueries, "or")
+    fun or(subQueries: Collection<String>): String = booleanMultiQuery(subQueries, "or")
 
     fun or(vararg subQueries: String): String = booleanMultiQuery(subQueries.toList(), "or")
 
@@ -80,10 +80,10 @@ object BoudiccaQueryBuilder {
     fun escapeText(text: String): String = "\"" + text.replace("\\", "\\\\").replace("\"", "\\\"") + "\""
 
     private fun booleanMultiQuery(
-        subQueries: Iterable<String>,
+        subQueries: Collection<String>,
         operator: String,
     ): String {
-        require(subQueries.count() > 0) { "you have to pass at least one subquery" }
+        require(subQueries.isNotEmpty()) { "you have to pass at least one subquery" }
         require(subQueries.none { it.isEmpty() }) { "subQueries are not allowed to be empty" }
         return subQueries.joinToString(" $operator ") { "($it)" }
     }

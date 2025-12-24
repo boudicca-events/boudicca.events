@@ -32,9 +32,19 @@ class ParlamentCollector : TwoStepEventCollector<JsonObject>("parlament") {
                 "application/json",
                 "{'DATERANGE':['$dateFrom','$dateTo']}",
             )
-        val jsonResponse = Parser.default().parse(StringReader(response)) as JsonObject
 
-        return extractEventsFromJson(jsonResponse["rows"] as List<JsonArray<List<String>>>)
+        val jsonResponse =
+            Parser
+                .default()
+                .parse(StringReader(response)) as? JsonObject
+                ?: error("Expected JSON object")
+
+        val rows =
+            jsonResponse["rows"] as? List<*>
+                ?: error("Expected 'rows' to be a list")
+
+        @Suppress("UNCHECKED_CAST")
+        return extractEventsFromJson(rows as List<JsonArray<List<String>>>)
     }
 
     private fun extractEventsFromJson(eventArrays: List<JsonArray<List<String>>>): List<JsonObject> {

@@ -9,13 +9,16 @@ import org.springframework.stereotype.Service
 @Service
 class RecurrenceEnricher : Enricher {
     override fun enrich(events: List<StructuredEvent>): List<StructuredEvent> {
-        val nameGroups = events.groupBy { it.name }
+        val recurringNames =
+            events
+                .groupBy { it.name }
+                .filterValues { groupIsRecurring(it) }
+                .keys
 
-        return events.map {
-            if (groupIsRecurring(nameGroups[it.name]!!)) {
-                addRecurrence(it)
-            } else {
-                it
+        return events.map { event ->
+            when (event.name) {
+                in recurringNames -> addRecurrence(event)
+                else -> event
             }
         }
     }

@@ -74,7 +74,7 @@ abstract class DateExpression(
     dateKeyFilter: String,
     dateText: String,
 ) : FieldAndTextExpression(name, dateKeyFilter, dateText) {
-    private val date: LocalDate
+    val date: LocalDate
 
     init {
         try {
@@ -83,8 +83,6 @@ abstract class DateExpression(
             throw QueryException("date in wrong format $dateText")
         }
     }
-
-    fun getDate(): LocalDate = date
 
     override fun toString(): String = "$name('${getKeyFilter().toKeyString()}','${date.format(DateTimeFormatter.ISO_LOCAL_DATE)}')"
 }

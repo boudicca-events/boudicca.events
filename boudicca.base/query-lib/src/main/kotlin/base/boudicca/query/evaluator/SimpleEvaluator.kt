@@ -110,7 +110,7 @@ class SimpleEvaluator(
                         dateTexts
                             .any {
                                 val startDate = getLocalStartDate(it)
-                                startDate.isEqual(expression.getDate()) || startDate.isBefore(expression.getDate())
+                                startDate.isEqual(expression.date) || startDate.isBefore(expression.date)
                             }
                     } catch (_: DateTimeParseException) {
                         false
@@ -128,7 +128,7 @@ class SimpleEvaluator(
                         return dateTexts
                             .any {
                                 val startDate = getLocalStartDate(it)
-                                startDate.isEqual(expression.getDate()) || startDate.isAfter(expression.getDate())
+                                startDate.isEqual(expression.date) || startDate.isAfter(expression.date)
                             }
                     } catch (_: DateTimeParseException) {
                         return false

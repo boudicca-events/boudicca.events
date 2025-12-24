@@ -159,12 +159,12 @@ class OptimizingEvaluator(
 
     private fun beforeExpression(expression: BeforeExpression): BitSet {
         val expressionStartDate = Instant.MIN
-        val expressionEndDate = toInstant(expression.getDate().plusDays(1))
+        val expressionEndDate = toInstant(expression.date.plusDays(1))
         return isInDateRangeQuery(expression.getKeyFilter(), expressionStartDate, expressionEndDate)
     }
 
     private fun afterExpression(expression: AfterExpression): BitSet {
-        val expressionStartDate = toInstant(expression.getDate())
+        val expressionStartDate = toInstant(expression.date)
         val expressionEndDate = Instant.MAX
         return isInDateRangeQuery(expression.getKeyFilter(), expressionStartDate, expressionEndDate)
     }

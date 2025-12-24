@@ -66,7 +66,7 @@ class LandestheaterLinzCollector : TwoStepEventCollector<LandestheaterLinzCollec
         return events.map {
             LandestheaterEventData(
                 it.first,
-                Pair(it.second, resolvedEventUrls[it.second]!!),
+                it.second to resolvedEventUrls.getValue(it.second),
                 it.third,
             )
         }

@@ -163,12 +163,12 @@ class EntryService
                 entries.entries
                     .filter {
                         val entry = it.value.first
-                        if (entry.containsKey(SemanticKeys.COLLECTORNAME)) {
-                            val collectorName = entry[SemanticKeys.COLLECTORNAME]!!
-                            it.value.second.timeAdded + MAX_AGE < (lastSeenCollectors[collectorName] ?: Long.MIN_VALUE)
-                        } else {
-                            false
-                        }
+                        val collectorName =
+                            entry[SemanticKeys.COLLECTORNAME]
+                                ?: return@filter false
+
+                        val lastSeen = lastSeenCollectors[collectorName] ?: Long.MIN_VALUE
+                        it.value.second.timeAdded + MAX_AGE < lastSeen
                     }
 
             toRemoveEvents.forEach {

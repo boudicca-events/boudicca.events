@@ -2,6 +2,7 @@ package base.boudicca.fetcher
 
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
+import java.io.ByteArrayOutputStream
 import java.io.DataInputStream
 import java.io.DataOutputStream
 import java.io.EOFException
@@ -9,6 +10,7 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.util.concurrent.ConcurrentHashMap
+import java.util.zip.GZIPOutputStream
 
 /**
  * implementations have to be thread-safe!
@@ -100,13 +102,44 @@ class FileBackedFetcherCache(
     ) {
         cache[key] = entry
         synchronized(this) {
-            val keyArray = key.toByteArray()
-            outputStream.writeInt(keyArray.size)
-            outputStream.write(keyArray)
-            val entryArray = entry.toByteArray()
-            outputStream.writeInt(entryArray.size)
-            outputStream.write(entryArray)
-            outputStream.flush()
+            writeEntry(outputStream, key, entry)
         }
+    }
+}
+
+fun writeEntry(
+    outputStream: DataOutputStream,
+    key: String,
+    entry: String,
+) {
+    val keyArray = key.toByteArray()
+    outputStream.writeInt(keyArray.size)
+    outputStream.write(keyArray)
+    val entryArray = entry.toByteArray()
+    outputStream.writeInt(entryArray.size)
+    outputStream.write(entryArray)
+    outputStream.flush()
+}
+
+class CapturingFetcherCache : FetcherCache {
+    val bytesOut = ByteArrayOutputStream()
+    val out = DataOutputStream(GZIPOutputStream(bytesOut))
+
+    override fun containsEntry(key: String): Boolean = false
+
+    override fun getEntry(key: String): String = throw IllegalArgumentException("cache does not contain key $key")
+
+    override fun putEntry(
+        key: String,
+        entry: String,
+    ) {
+        synchronized(this) {
+            writeEntry(out, key, entry)
+        }
+    }
+
+    fun closeAndGet(): ByteArray {
+        out.close()
+        return bytesOut.toByteArray()
     }
 }

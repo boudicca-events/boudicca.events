@@ -75,15 +75,6 @@ class EventCollectorDebugger(
 
         val configuredWebUiPort = Configuration.getProperty("server.port")?.toInt() ?: DEFAULT_PORT
         var eventCollectorWebUi: EventCollectorWebUi? = null
-        if (startWebUi) {
-            eventCollectorWebUi =
-                EventCollectorWebUi(
-                    configuredWebUiPort,
-                    eventCollectorAsList,
-                    OpenTelemetry.noop(),
-                )
-            eventCollectorWebUi.start()
-        }
 
         val runner =
             EventCollectionRunner(
@@ -96,6 +87,17 @@ class EventCollectorDebugger(
                 },
                 runnerEnricherInterface ?: NoopRunnerEnricher,
             )
+
+        if (startWebUi) {
+            eventCollectorWebUi =
+                EventCollectorWebUi(
+                    configuredWebUiPort,
+                    runner,
+                    OpenTelemetry.noop(),
+                )
+            eventCollectorWebUi.start()
+        }
+
         runner.run()
 
         if (verboseDebugging) {

@@ -1,6 +1,6 @@
 package base.boudicca.api.eventcollector.webui
 
-import base.boudicca.api.eventcollector.EventCollector
+import base.boudicca.api.eventcollector.EventCollectionRunner
 import base.boudicca.api.eventcollector.collections.Collections
 import base.boudicca.api.eventcollector.collections.FullCollection
 import base.boudicca.api.eventcollector.collections.HttpCall
@@ -21,7 +21,7 @@ private const val CUTOFF_TO_HIGHER_UNIT = 5L
 @Suppress("SpringJavaInjectionPointsAutowiringInspection") // this bean is added dynamically
 @Service
 class WebuiService(
-    @Qualifier("eventCollectors") private val eventCollectors: List<EventCollector>,
+    @Qualifier("runner") private val runner: EventCollectionRunner,
     @Value("\${boudicca.collector.webui.timeZoneId:Europe/Vienna}") timeZoneId: String,
 ) {
     private val zoneId = ZoneId.of(timeZoneId)
@@ -86,7 +86,8 @@ class WebuiService(
             "hasWarnings" to (fullCollection.getTotalWarningCount() > 0),
             "totalEventsCollected" to fullCollection.singleCollections.sumOf { it.totalEventsCollected },
             "singleCollections" to
-                eventCollectors
+                runner
+                    .getEventCollectors()
                     .map { it.getName() }
                     .sorted()
                     .map {
@@ -186,4 +187,6 @@ class WebuiService(
     }
 
     private fun formatLogLines(logLines: List<String>): String = HtmlUtils.htmlEscape(logLines.joinToString("\n"))
+
+    fun getLastCapturedCalls(): ByteArray = runner.getLastCapturedCalls()
 }

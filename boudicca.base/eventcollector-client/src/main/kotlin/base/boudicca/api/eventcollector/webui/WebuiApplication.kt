@@ -18,6 +18,7 @@ class WebuiApplication {
     fun handlebarsViewResolver(): ViewResolver {
         val viewResolver = HandlebarsViewResolver()
         viewResolver.order = 0 // we have to decrease the order so ours is first (default is Int.MAX_VALUE)
+        viewResolver.setFailOnMissingFile(false)
 
         for (helper in ConditionalHelpers.entries) {
             viewResolver.registerHelper(helper.name, helper)

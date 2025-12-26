@@ -7,6 +7,8 @@ import base.boudicca.fetcher.FetcherCache
 import base.boudicca.fetcher.FetcherEventListener
 import base.boudicca.fetcher.NoopFetcherCache
 import io.opentelemetry.api.OpenTelemetry
+import io.opentelemetry.api.trace.TracerProvider
+import io.opentelemetry.context.propagation.ContextPropagators
 
 object FetcherFactory {
     @Volatile
@@ -32,6 +34,25 @@ object FetcherFactory {
             }
         }
 
+    private val delegatingOpenTelemetry =
+        object : OpenTelemetry {
+            override fun getTracerProvider(): TracerProvider? = otel.tracerProvider
+
+            override fun getPropagators(): ContextPropagators? = otel.propagators
+        }
+
+    private val delegatingFetcherCache =
+        object : FetcherCache {
+            override fun containsEntry(key: String): Boolean = defaultFetcherCache.containsEntry(key)
+
+            override fun getEntry(key: String): String = defaultFetcherCache.getEntry(key)
+
+            override fun putEntry(
+                key: String,
+                entry: String,
+            ) = defaultFetcherCache.putEntry(key, entry)
+        }
+
     fun newFetcher(
         manualSetDelay: Long? = null,
         userAgent: String = Constants.USER_AGENT,
@@ -40,8 +61,8 @@ object FetcherFactory {
             manualSetDelay = manualSetDelay,
             userAgent = userAgent,
             eventListeners = listOf(collectionFetcherEventListener),
-            fetcherCache = defaultFetcherCache,
+            fetcherCache = delegatingFetcherCache,
             disableRetries = disableRetries,
-            otel = otel,
+            otel = delegatingOpenTelemetry,
         )
 }

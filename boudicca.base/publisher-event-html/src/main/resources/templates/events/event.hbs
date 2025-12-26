@@ -214,7 +214,8 @@
                     </ul>
                     <div class="panels">
                         <article class="active-panel {{#if event.category}}event-modal-{{event.category}}{{/if}}">
-                            <p>{{> events/renderProperty property=event.description }}</p>
+                            <!--TODO description can be too big, we should add some sort of scrolling-->
+                            {{> events/renderProperty property=event.description }}
                         </article>
                     </div>
                 </section>

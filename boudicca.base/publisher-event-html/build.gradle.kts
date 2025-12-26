@@ -9,6 +9,7 @@ dependencies {
     api(libs.handlebars.springmvc)
     implementation(libs.bundles.twelvemonkeys)
     implementation(libs.otel.java.httpclient)
+    implementation(libs.commonmark)
     testImplementation(libs.microsoft.playwright)
     testImplementation(libs.axe.core.playwright)
 }

@@ -8,7 +8,7 @@ import org.springframework.context.ConfigurableApplicationContext
 
 class EventCollectorWebUi(
     private val port: Int,
-    private val eventCollectors: List<EventCollector>,
+    private val runner: EventCollectionRunner,
     private val otel: OpenTelemetry,
 ) {
     private val logger = KotlinLogging.logger {}
@@ -20,7 +20,7 @@ class EventCollectorWebUi(
             runApplication<WebuiApplication>("server.port=$port") {
                 this.addInitializers(
                     {
-                        it.beanFactory.registerSingleton("eventCollectors", eventCollectors)
+                        it.beanFactory.registerSingleton("runner", runner)
                         it.beanFactory.registerSingleton("otel", otel)
                     },
                 )

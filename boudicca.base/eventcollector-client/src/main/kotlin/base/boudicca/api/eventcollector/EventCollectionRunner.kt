@@ -4,6 +4,9 @@ import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.collections.Collections
 import base.boudicca.api.eventcollector.runner.RunnerEnricherInterface
 import base.boudicca.api.eventcollector.runner.RunnerIngestionInterface
+import base.boudicca.api.eventcollector.util.FetcherFactory
+import base.boudicca.fetcher.CapturingFetcherCache
+import base.boudicca.fetcher.NoopFetcherCache
 import base.boudicca.fetcher.retry
 import base.boudicca.model.Event
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -20,15 +23,21 @@ class EventCollectionRunner(
     private val ingestionInterface: RunnerIngestionInterface,
     private val enricherInterface: RunnerEnricherInterface,
     otel: OpenTelemetry = OpenTelemetry.noop(),
+    private val captureHttpCalls: Boolean = false,
 ) {
     private val logger = KotlinLogging.logger {}
     private val executor = Executors.newVirtualThreadPerTaskExecutor()
     private val tracer = otel.getTracer("EventCollectionRunner")
+    private var capturingFetcherCache: CapturingFetcherCache? = null
+    private var lastCapturedCalls = ByteArray(0)
 
     /**
      * executes a full collection for all configured eventcollectors
      */
     fun run() {
+        if (captureHttpCalls) {
+            setupHttpCallCapture()
+        }
         val span = tracer.spanBuilder("full collection").setSpanKind(SpanKind.INTERNAL).startSpan()
         try {
             span.makeCurrent().use {
@@ -51,6 +60,7 @@ class EventCollectionRunner(
             }
         } finally {
             span.end()
+            cleanupHttpCallCapture()
         }
     }
 
@@ -147,4 +157,20 @@ class EventCollectionRunner(
         }
         return event
     }
+
+    private fun setupHttpCallCapture() {
+        val newCache = CapturingFetcherCache()
+        capturingFetcherCache = newCache
+        FetcherFactory.defaultFetcherCache = newCache
+    }
+
+    private fun cleanupHttpCallCapture() {
+        lastCapturedCalls = capturingFetcherCache?.closeAndGet() ?: ByteArray(0)
+        capturingFetcherCache = null
+        FetcherFactory.defaultFetcherCache = NoopFetcherCache
+    }
+
+    fun getLastCapturedCalls(): ByteArray = lastCapturedCalls
+
+    fun getEventCollectors(): List<EventCollector> = eventCollectors
 }

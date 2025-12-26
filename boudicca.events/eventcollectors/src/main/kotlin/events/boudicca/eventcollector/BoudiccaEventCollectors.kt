@@ -64,6 +64,7 @@ fun main() {
 
     val eventCollectorCoordinator =
         EventCollectorCoordinatorBuilder(otel)
+            .captureHttpCalls()
             .addEventCollector(LinzTermineCollector())
             .addEventCollector(PosthofCollector())
             .addEventCollector(JkuEventCollector())

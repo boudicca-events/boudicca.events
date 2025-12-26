@@ -18,6 +18,7 @@ class EventCollectorCoordinatorBuilder(
     private var interval: Duration = Duration.ofDays(1)
     private var runnerIngestionInterface: RunnerIngestionInterface? = null
     private var runnerEnricherInterface: RunnerEnricherInterface? = null
+    private var captureHttpCalls: Boolean = false
 
     fun addEventCollector(eventCollector: EventCollector): EventCollectorCoordinatorBuilder {
         eventCollectors.add(eventCollector)
@@ -44,6 +45,11 @@ class EventCollectorCoordinatorBuilder(
         return this
     }
 
+    fun captureHttpCalls(): EventCollectorCoordinatorBuilder {
+        this.captureHttpCalls = true
+        return this
+    }
+
     fun build(): EventCollectorCoordinator {
         val finalEventCollectors = eventCollectors.toList() // make a copy to make it basically immutable
         return EventCollectorCoordinator(
@@ -54,6 +60,7 @@ class EventCollectorCoordinatorBuilder(
                 runnerIngestionInterface ?: RunnerIngestionInterface.createFromConfiguration(otel),
                 runnerEnricherInterface ?: RunnerEnricherInterface.createFromConfiguration(otel),
                 otel,
+                captureHttpCalls,
             ),
             otel,
         )

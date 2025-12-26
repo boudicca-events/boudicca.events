@@ -9,6 +9,7 @@ dependencies {
     implementation(libs.jsoup)
     implementation(libs.rometools)
     implementation(libs.klaxon)
+    implementation(libs.flexmark.html2md)
 }
 
 springBoot {

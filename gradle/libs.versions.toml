@@ -29,6 +29,7 @@ kotlin-logging = "7.0.13"
 otel = "1.57.0"
 otel-instrumentation = "2.23.0-alpha"
 twelvemonkeys = "3.13.0"
+flexmark = "0.64.8"
 
 [libraries]
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
@@ -122,6 +123,7 @@ twelvemonkeys-hdr = { module = "com.twelvemonkeys.imageio:imageio-hdr", version.
 twelvemonkeys-dds = { module = "com.twelvemonkeys.imageio:imageio-dds", version.ref = "twelvemonkeys" }
 twelvemonkeys-bmp = { module = "com.twelvemonkeys.imageio:imageio-bmp", version.ref = "twelvemonkeys" }
 
+flexmark-html2md = { module = "com.vladsch.flexmark:flexmark-html2md-converter", version.ref = "flexmark" }
 [plugins]
 jmh = { id = "me.champeau.jmh", version = "0.7.3" }
 sonarqube = { id = "org.sonarqube", version = "7.2.2.6593" }

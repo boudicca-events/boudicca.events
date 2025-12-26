@@ -8,7 +8,8 @@ import base.boudicca.dateparser.dateparser.DateParser
 import base.boudicca.dateparser.dateparser.DateParserResult
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
-import org.jsoup.Jsoup
+import events.boudicca.eventcollector.util.fetchUrlAndParse
+import events.boudicca.eventcollector.util.withDescription
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 
@@ -16,12 +17,12 @@ class ZuckerfabrikCollector : TwoStepEventCollector<String>("zuckerfabrik") {
     private val fetcher = FetcherFactory.newFetcher()
 
     override fun getAllUnparsedEvents(): List<String> {
-        val document = Jsoup.parse(fetcher.fetchUrl("https://www.zuckerfabrik.at/termine-tickets/"))
+        val document = fetcher.fetchUrlAndParse("https://www.zuckerfabrik.at/termine-tickets/")
         return document.select("div#storycontent > a.bookmarklink").map { it.attr("href") }
     }
 
     override fun parseMultipleStructuredEvents(event: String): List<StructuredEvent?> {
-        val eventSite = Jsoup.parse(fetcher.fetchUrl(event))
+        val eventSite = fetcher.fetchUrlAndParse(event)
 
         var name = eventSite.select("div#storycontent>h2").text()
 
@@ -31,7 +32,6 @@ class ZuckerfabrikCollector : TwoStepEventCollector<String>("zuckerfabrik") {
         }
         val dateIndex = findDateIndex(storycontent)
         val (dates, type) = parseTypeAndDate(storycontent[dateIndex])
-        val description = ((dateIndex + 1) until storycontent.size).joinToString("\n") { storycontent[it].text() }
 
         val figure = eventSite.select("div#storycontent figure")
         var pictureCopyright = figure.selectFirst("figcaption")?.text() ?: "Zuckerfabrik"
@@ -42,15 +42,15 @@ class ZuckerfabrikCollector : TwoStepEventCollector<String>("zuckerfabrik") {
         }
 
         return structuredEvent(name, dates) {
-            withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(event))
+            withDescription(storycontent.subList(dateIndex + 1, storycontent.size), false)
+            withProperty(SemanticKeys.URL_PROPERTY, event)
             withProperty(SemanticKeys.TYPE_PROPERTY, type)
-            withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(pictureUrl))
+            withProperty(SemanticKeys.PICTURE_URL_PROPERTY, pictureUrl)
             withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, pictureCopyright)
-            withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
             withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Zuckerfabrik")
-            withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse("https://www.zuckerfabrik.at"))
+            withProperty(SemanticKeys.LOCATION_URL_PROPERTY, "https://www.zuckerfabrik.at")
             withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Enns")
-            withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(event))
+            withProperty(SemanticKeys.SOURCES_PROPERTY, event)
         }
     }
 

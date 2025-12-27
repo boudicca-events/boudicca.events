@@ -2,6 +2,7 @@ package base.boudicca.publisher.event.html.controller
 
 import base.boudicca.publisher.event.html.service.PictureProxyService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.CacheControl
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseBody
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 @Controller
 @RequestMapping("/")
@@ -25,5 +27,9 @@ class PictureProxyController
         @ResponseBody
         fun getAbout(
             @RequestParam("uuid") uuid: UUID,
-        ): ResponseEntity<ByteArray> = ResponseEntity.of(pictureProxyService.getPicture(uuid))
+        ): ResponseEntity<ByteArray> =
+            pictureProxyService
+                .getPicture(uuid)
+                .map { ResponseEntity.ok().cacheControl(CacheControl.maxAge(1, TimeUnit.DAYS).immutable()).body(it) }
+                .orElseGet { ResponseEntity.notFound().build() }
     }

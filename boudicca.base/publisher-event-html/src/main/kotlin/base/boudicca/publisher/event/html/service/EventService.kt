@@ -53,6 +53,7 @@ class EventService
         private val pictureProxyService: PictureProxyService,
         private val caller: SearchServiceCaller,
         @Value("\${boudicca.search.additionalFilter:}") private val additionalFilter: String,
+        private val markdownService: MarkdownService,
     ) {
         companion object {
             private val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy 'um' HH:mm 'Uhr'", Locale.GERMAN)
@@ -252,8 +253,10 @@ class EventService
                 event,
                 propertyName,
                 listOf(FormatVariantConstants.MARKDOWN_FORMAT_NAME, FormatVariantConstants.TEXT_FORMAT_NAME),
-            ).map { RichText(getIsMarkdownFromFormat(it.first), it.second) }
-                .getOrNull()
+            ).map {
+                val isMarkdown = getIsMarkdownFromFormat(it.first)
+                RichText(isMarkdown, if (isMarkdown) markdownService.renderMarkdown(it.second) else it.second.trim())
+            }.getOrNull()
 
         private fun getListProperty(
             event: StructuredEvent,

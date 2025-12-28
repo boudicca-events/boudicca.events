@@ -15,7 +15,9 @@ import java.io.File
 fun main() {
     EventCollectorDebugger(startWebUi = false)
         // this debugger caches all fetcher calls locally to avoid spamming the server when developing.
-        // if there are problems with old data or something like that just delete the file and restart the debugger
+        // if there are problems with old data or something like that just delete the file and restart the debugger.
+        // you can fetch a cache pre-populated with the last run collection of our live system at boudicca.events
+        // with the launch config LocalFetchFetcherCacheFromOnlineBoudiccaKt
         .setFetcherCache(FileBackedFetcherCache(File("./fetcher.cache")))
         // enable one of the two lines to also use the online or local enricher
 //        .enableEnricher("https://enricher.boudicca.events")

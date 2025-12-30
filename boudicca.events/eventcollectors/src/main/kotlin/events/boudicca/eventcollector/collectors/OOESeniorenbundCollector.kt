@@ -10,11 +10,15 @@ import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.stereotype.Component
 import java.util.regex.Pattern
 
 /**
  * the actual eventlist on https://ooesb.at/veranstaltungen is an iframe pointing to https://servicebroker.media-data.at/overview.html?key=QVKSBOOE so we parse that
  */
+@Component
+@ConditionalOnProperty(prefix = "boudicca.collector.enabled-collectors", name = ["ooesb"])
 class OOESeniorenbundCollector : TwoStepEventCollector<Pair<Document, String>>("ooesb") {
     override fun getAllUnparsedEvents(): List<Pair<Document, String>> {
         val fetcher = FetcherFactory.newFetcher()

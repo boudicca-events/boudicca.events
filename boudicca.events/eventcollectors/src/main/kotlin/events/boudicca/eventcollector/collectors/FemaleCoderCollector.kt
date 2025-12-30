@@ -8,12 +8,16 @@ import base.boudicca.model.Registration
 import base.boudicca.model.structured.StructuredEvent
 import base.boudicca.model.structured.dsl.structuredEvent
 import org.jsoup.Jsoup
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.stereotype.Component
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
 
+@Component
+@ConditionalOnProperty(prefix = "boudicca.collector.enabled-collectors", name = ["femalecoder"])
 class FemaleCoderCollector : TwoStepEventCollector<String>("femalecoder") {
     private val fetcher = FetcherFactory.newFetcher()
     private val baseUrl = "https://female-coders.at/"

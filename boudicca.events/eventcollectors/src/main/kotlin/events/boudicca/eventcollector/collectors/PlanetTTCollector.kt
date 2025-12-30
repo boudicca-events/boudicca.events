@@ -15,11 +15,15 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.stereotype.Component
 import java.io.StringReader
 import java.net.URI
 import java.net.URLDecoder
 import java.util.regex.Pattern
 
+@Component
+@ConditionalOnProperty(prefix = "boudicca.collector.enabled-collectors", name = ["planettt"])
 class PlanetTTCollector : TwoStepEventCollector<Element>("planettt") {
     private val logger = KotlinLogging.logger {}
     private val fetcher = FetcherFactory.newFetcher()

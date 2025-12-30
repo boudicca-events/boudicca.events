@@ -81,7 +81,7 @@ To do this the workflow is following:
        dates,
        pictures, links, ...)
 4. Lastly, add your new EventCollector to the
-   class [BoudiccaEventCollectors.kt](../../boudicca.events/eventcollectors/src/main/kotlin/events/boudicca/eventcollector/BoudiccaEventCollectors.kt)
+   class [BoudiccaEventCollectorsApp.kt](../../boudicca.events/eventcollectors/src/main/kotlin/events/boudicca/eventcollector/BoudiccaEventCollectorsApp.kt)
    so that it will be used after deployment and create your Pull Request :)
 
 Note: The [LocalCollectorDebugKt](../../boudicca.events/eventcollectors/src/main/kotlin/events/boudicca/eventcollector/LocalCollectorDebug.kt) caches HTTP calls done via the

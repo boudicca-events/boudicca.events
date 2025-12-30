@@ -1,0 +1,70 @@
+server:
+    port: 8083
+
+boudicca:
+    collector:
+        collection-interval: PT24H
+        webui:
+            timeZoneId: Europe/Vienna
+        enabled-collectors:
+            ZeroxA:
+            alpenverein:
+            antonbrucknerunilinz:
+            arenawien:
+            brucknerhaus:
+            burgclam:
+            cafetraxlmayr:
+            chaosevents_clerie_de:
+            chelsea:
+            ennsevents:
+            events_ccc_de:
+            familienkarte:
+            femalecoder:
+            fhLUG:
+            flohmarkt:
+            fraeuleinflorentine:
+            fueruns:
+            jku:
+            kapu:
+            kunstunilinz:
+            kupfticket:
+            landestheaterlinz:
+            lastspace:
+            linztermine:
+            metalcorner:
+            museumArbeitswelt:
+            oehjku:
+            okhvoecklabruck:
+            ooesb:
+            otelolinz:
+            parlament:
+            planettt:
+            posthof:
+            roeda:
+            schlachthof:
+            spinnerei:
+            stadthallewien:
+            stadtwerkstatt:
+            stiftskonzerte:
+            tabakfabriklinz:
+            technologieplauscherl:
+            theaterinderinnenstadt:
+            theaterphoenix:
+            valug:
+            viperroom:
+            wissensturm:
+            zuckerfabrik:
+    monitoring:
+        #for local testing uncomment line
+        #endpoint: http://localhost:4318/v1/
+        user: otlp
+        password: otlp
+spring:
+    application:
+        name: eventcollectors
+
+
+management:
+    tracing:
+        sampling:
+            probability: 1

@@ -6,7 +6,11 @@ import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.model.EventCategory
 import base.boudicca.model.Registration
 import base.boudicca.model.structured.StructuredEvent
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.stereotype.Component
 
+@Component
+@ConditionalOnProperty(prefix = "boudicca.collector.enabled-collectors", name = ["ZeroxA"])
 class ZeroxACollector : IcalCollector("ZeroxA") {
     private val fetcher = FetcherFactory.newFetcher()
     private val baseUrl = "https://0xa.at/"

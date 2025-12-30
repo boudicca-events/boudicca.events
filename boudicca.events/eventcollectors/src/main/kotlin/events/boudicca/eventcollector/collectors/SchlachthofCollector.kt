@@ -9,7 +9,11 @@ import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.stereotype.Component
 
+@Component
+@ConditionalOnProperty(prefix = "boudicca.collector.enabled-collectors", name = ["schlachthof"])
 class SchlachthofCollector : TwoStepEventCollector<Element>("schlachthof") {
     private val baseUrl = "https://www.schlachthofwels.at"
 

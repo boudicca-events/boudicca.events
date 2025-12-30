@@ -1,1 +1,1 @@
-base.boudicca.springboot.common.MonitoringConfiguration
+base.boudicca.springboot.common.MonitoringAutoConfiguration

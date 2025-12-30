@@ -10,7 +10,11 @@ import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.stereotype.Component
 
+@Component
+@ConditionalOnProperty(prefix = "boudicca.collector.enabled-collectors", name = ["stiftskonzerte"])
 class StiftskonzerteCollector : TwoStepEventCollector<String>("stiftskonzerte") {
     private val fetcher = FetcherFactory.newFetcher()
 

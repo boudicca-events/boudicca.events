@@ -9,7 +9,11 @@ import base.boudicca.dateparser.dateparser.DateParserResult
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.stereotype.Component
 
+@Component
+@ConditionalOnProperty(prefix = "boudicca.collector.enabled-collectors", name = ["spinnerei"])
 class SpinnereiCollector : TwoStepEventCollector<String>("spinnerei") {
     private val baseUrl = "https://spinnerei.kulturpark.at"
     val fetcher = FetcherFactory.newFetcher()

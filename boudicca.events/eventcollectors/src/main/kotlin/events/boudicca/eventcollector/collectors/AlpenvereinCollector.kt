@@ -12,9 +12,13 @@ import base.boudicca.model.EventCategory
 import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.stereotype.Component
 import java.net.URI
 import java.util.concurrent.TimeUnit
 
+@Component
+@ConditionalOnProperty(prefix = "boudicca.collector.enabled-collectors", name = ["alpenverein"])
 class AlpenvereinCollector : TwoStepEventCollector<String>("alpenverein") {
     private val delay: Long = TimeUnit.SECONDS.toMillis(12) // they request a crawl-delay of 12 seconds
     private val fetcher = FetcherFactory.newFetcher(manualSetDelay = delay)

@@ -9,10 +9,14 @@ import base.boudicca.model.structured.StructuredEvent
 import base.boudicca.model.structured.dsl.structuredEvent
 import com.rometools.rome.io.SyndFeedInput
 import com.rometools.rome.io.XmlReader
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
+@Component
+@ConditionalOnProperty(prefix = "boudicca.collector.enabled-collectors", name = ["technologieplauscherl"])
 class TechnologiePlauscherlCollector : EventCollector {
     override fun getName(): String = "technologieplauscherl"
 

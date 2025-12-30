@@ -9,7 +9,11 @@ import base.boudicca.dateparser.dateparser.DateParserResult
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.stereotype.Component
 
+@Component
+@ConditionalOnProperty(prefix = "boudicca.collector.enabled-collectors", name = ["museumArbeitswelt"])
 class MuseumArbeitsweltCollector : TwoStepEventCollector<Pair<String, String>>("museumArbeitswelt") {
     private val fetcher = FetcherFactory.newFetcher()
 

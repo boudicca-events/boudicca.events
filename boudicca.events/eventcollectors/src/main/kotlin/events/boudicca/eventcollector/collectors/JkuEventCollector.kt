@@ -5,7 +5,11 @@ import base.boudicca.api.eventcollector.collectors.IcalCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.stereotype.Component
 
+@Component
+@ConditionalOnProperty(prefix = "boudicca.collector.enabled-collectors", name = ["jku"])
 class JkuEventCollector : IcalCollector("jku") {
     private val baseUrl = "https://www.jku.at/studium/studieninteressierte/messen-events/"
 

@@ -1,19 +1,13 @@
-package base.boudicca.api.eventcollector.webui
+package base.boudicca.api.eventcollector.configuration
 
-import base.boudicca.springboot.common.MonitoringConfiguration
 import com.github.jknack.handlebars.helper.ConditionalHelpers
 import com.github.jknack.handlebars.springmvc.HandlebarsViewResolver
-import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
 import org.springframework.web.servlet.ViewResolver
 
-@SpringBootApplication(
-    exclude = [
-        // is manually setup in EventCollectionCoordinator
-        MonitoringConfiguration::class,
-    ],
-)
-class WebuiApplication {
+@Configuration
+class EventCollectorConfiguration {
     @Bean
     fun handlebarsViewResolver(): ViewResolver {
         val viewResolver = HandlebarsViewResolver()

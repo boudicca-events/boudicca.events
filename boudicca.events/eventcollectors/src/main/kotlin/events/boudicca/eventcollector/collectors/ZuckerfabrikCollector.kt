@@ -11,7 +11,11 @@ import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.stereotype.Component
 
+@Component
+@ConditionalOnProperty(prefix = "boudicca.collector.enabled-collectors", name = ["zuckerfabrik"])
 class ZuckerfabrikCollector : TwoStepEventCollector<String>("zuckerfabrik") {
     private val fetcher = FetcherFactory.newFetcher()
 

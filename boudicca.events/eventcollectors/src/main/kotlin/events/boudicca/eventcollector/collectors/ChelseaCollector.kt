@@ -10,7 +10,11 @@ import base.boudicca.model.EventCategory
 import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.stereotype.Component
 
+@Component
+@ConditionalOnProperty(prefix = "boudicca.collector.enabled-collectors", name = ["chelsea"])
 class ChelseaCollector : TwoStepEventCollector<Element>("chelsea") {
     private val fetcher = FetcherFactory.newFetcher()
     private val baseUrl = "https://www.chelsea.co.at/"

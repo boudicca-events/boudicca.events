@@ -11,7 +11,11 @@ import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.stereotype.Component
 
+@Component
+@ConditionalOnProperty(prefix = "boudicca.collector.enabled-collectors", name = ["tabakfabriklinz"])
 class TabakfabrikLinzCollector : TwoStepEventCollector<String>("tabakfabriklinz") {
     private val fetcher = FetcherFactory.newFetcher()
     private val baseUrl = "https://tabakfabrik-linz.at/"

@@ -9,7 +9,11 @@ import base.boudicca.format.UrlUtils
 import base.boudicca.model.EventCategory
 import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.stereotype.Component
 
+@Component
+@ConditionalOnProperty(prefix = "boudicca.collector.enabled-collectors", name = ["lastspace"])
 class LastSpaceCollector : TwoStepEventCollector<String>("lastspace") {
     private val fetcher = FetcherFactory.newFetcher()
     private val baseUrl = "https://last-space.at/"

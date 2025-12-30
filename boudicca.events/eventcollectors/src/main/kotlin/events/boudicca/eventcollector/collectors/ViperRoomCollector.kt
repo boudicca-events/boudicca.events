@@ -10,7 +10,11 @@ import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.stereotype.Component
 
+@Component
+@ConditionalOnProperty(prefix = "boudicca.collector.enabled-collectors", name = ["viperroom"])
 class ViperRoomCollector : TwoStepEventCollector<String>("viperroom") {
     private val fetcher = FetcherFactory.newFetcher()
 

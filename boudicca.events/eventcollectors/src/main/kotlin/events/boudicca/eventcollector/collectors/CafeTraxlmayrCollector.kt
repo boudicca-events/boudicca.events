@@ -12,7 +12,11 @@ import base.boudicca.model.structured.dsl.StructuredEventBuilder
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.stereotype.Component
 
+@Component
+@ConditionalOnProperty(prefix = "boudicca.collector.enabled-collectors", name = ["cafetraxlmayr"])
 class CafeTraxlmayrCollector : TwoStepEventCollector<Element>("cafetraxlmayr") {
     private val logger = KotlinLogging.logger {}
     private val baseUrl = "https://www.cafe-traxlmayr.at/konzerte/"

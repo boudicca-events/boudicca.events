@@ -11,10 +11,14 @@ import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.stereotype.Component
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
+@Component
+@ConditionalOnProperty(prefix = "boudicca.collector.enabled-collectors", name = ["fraeuleinflorentine"])
 class FraeuleinFlorentineCollector : TwoStepEventCollector<Pair<Element, String?>>("fraeuleinflorentine") {
     private val fetcher = FetcherFactory.newFetcher()
     private val baseUrl = "https://frl-florentine.at/eventkalender/"

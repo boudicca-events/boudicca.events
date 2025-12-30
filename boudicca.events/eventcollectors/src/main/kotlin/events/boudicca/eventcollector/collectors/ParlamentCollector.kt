@@ -13,10 +13,14 @@ import base.boudicca.model.structured.StructuredEvent
 import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.stereotype.Component
 import java.io.StringReader
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
+@Component
+@ConditionalOnProperty(prefix = "boudicca.collector.enabled-collectors", name = ["parlament"])
 class ParlamentCollector : TwoStepEventCollector<JsonObject>("parlament") {
     private val fetcher = FetcherFactory.newFetcher()
     private val baseUrl = "https://www.parlament.gv.at/"

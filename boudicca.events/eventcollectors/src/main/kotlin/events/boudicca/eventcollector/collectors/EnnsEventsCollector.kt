@@ -11,8 +11,12 @@ import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.stereotype.Component
 import java.io.StringReader
 
+@Component
+@ConditionalOnProperty(prefix = "boudicca.collector.enabled-collectors", name = ["ennsevents"])
 class EnnsEventsCollector : TwoStepEventCollector<JsonObject>("ennsevents") {
     private val baseUrl = "https://erlebe.enns.at/"
 

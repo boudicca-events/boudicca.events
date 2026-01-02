@@ -5,5 +5,5 @@ boudicca:
         #enricher-url=https://enricher.boudicca.events
         ingest-auth: ingest:ingest
         webui:
-            enabled: true
+            enabled: false
             port: ${server.port}

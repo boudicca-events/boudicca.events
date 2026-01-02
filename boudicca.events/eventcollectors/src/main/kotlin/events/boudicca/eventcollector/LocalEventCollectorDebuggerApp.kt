@@ -11,12 +11,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.builder.SpringApplicationBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Profile
-import org.springframework.scheduling.annotation.EnableScheduling
 import java.io.File
 
 @Profile("debug")
 @SpringBootApplication
-@EnableScheduling
 class LocalEventCollectorDebuggerApp(
     val configuration: EventCollectorsConfigurationProperties,
 ) : CommandLineRunner {
@@ -50,7 +48,7 @@ class LocalEventCollectorDebuggerApp(
 fun main(args: Array<String>) {
     val app =
         SpringApplicationBuilder(LocalEventCollectorDebuggerApp::class.java)
-            .web(WebApplicationType.SERVLET) // Enable embedded Tomcat
+            .web(WebApplicationType.SERVLET)
             .build()
     app.run(*args)
 }

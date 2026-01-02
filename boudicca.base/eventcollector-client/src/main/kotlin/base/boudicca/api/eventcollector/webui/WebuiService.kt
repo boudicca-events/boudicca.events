@@ -17,7 +17,6 @@ import java.util.*
 
 private const val CUTOFF_TO_HIGHER_UNIT = 5L
 
-@Suppress("SpringJavaInjectionPointsAutowiringInspection") // this bean is added dynamically
 @Service
 class WebuiService(
     private val runner: EventCollectionRunner,

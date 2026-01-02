@@ -1,11 +1,7 @@
-server:
-    port: 8083
-
 boudicca:
     collector:
         collection-interval: PT24H
         webui:
-            timeZoneId: Europe/Vienna
             enabled: false
         enabled-collectors:
             ZeroxA:

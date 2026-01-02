@@ -2,6 +2,7 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.api.eventcollector.annotations.BoudiccaEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.api.eventcollector.util.structuredEvent
 import base.boudicca.dateparser.dateparser.DateParser
@@ -12,11 +13,8 @@ import base.boudicca.model.structured.dsl.StructuredEventBuilder
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
-import org.springframework.stereotype.Component
 
-@Component
-@ConditionalOnProperty(prefix = "boudicca.collector.enabled-collectors", name = ["cafetraxlmayr"])
+@BoudiccaEventCollector("cafetraxlmayr")
 class CafeTraxlmayrCollector : TwoStepEventCollector<Element>("cafetraxlmayr") {
     private val logger = KotlinLogging.logger {}
     private val baseUrl = "https://www.cafe-traxlmayr.at/konzerte/"

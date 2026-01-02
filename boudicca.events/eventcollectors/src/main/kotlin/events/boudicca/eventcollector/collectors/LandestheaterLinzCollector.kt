@@ -2,6 +2,7 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.api.eventcollector.annotations.BoudiccaEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.api.eventcollector.util.structuredEvent
 import base.boudicca.dateparser.dateparser.DateParser
@@ -13,14 +14,11 @@ import base.boudicca.model.structured.dsl.StructuredEventBuilder
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
-import org.springframework.stereotype.Component
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
-@Component
-@ConditionalOnProperty(prefix = "boudicca.collector.enabled-collectors", name = ["landestheaterlinz"])
+@BoudiccaEventCollector("landestheaterlinz")
 class LandestheaterLinzCollector : TwoStepEventCollector<LandestheaterLinzCollector.LandestheaterEventData>("landestheater linz") {
     private val baseUrl = "https://www.landestheater-linz.at"
 

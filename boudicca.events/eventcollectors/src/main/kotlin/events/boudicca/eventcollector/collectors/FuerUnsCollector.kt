@@ -2,6 +2,7 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.api.eventcollector.annotations.BoudiccaEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.api.eventcollector.util.structuredEvent
 import base.boudicca.dateparser.dateparser.DateParser
@@ -11,11 +12,8 @@ import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
-import org.springframework.stereotype.Component
 
-@Component
-@ConditionalOnProperty(prefix = "boudicca.collector.enabled-collectors", name = ["fueruns"])
+@BoudiccaEventCollector("fueruns")
 class FuerUnsCollector : TwoStepEventCollector<String>("fueruns") {
     private val fetcher = FetcherFactory.newFetcher()
     private val baseUrl = "https://www.fuer-uns.at/"

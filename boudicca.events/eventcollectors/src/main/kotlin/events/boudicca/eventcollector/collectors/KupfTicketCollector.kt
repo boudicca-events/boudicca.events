@@ -2,6 +2,7 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.api.eventcollector.annotations.BoudiccaEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
@@ -12,14 +13,11 @@ import com.beust.klaxon.lookup
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.safety.Safelist
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
-import org.springframework.stereotype.Component
 import java.io.StringReader
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
-@Component
-@ConditionalOnProperty(prefix = "boudicca.collector.enabled-collectors", name = ["kupfticket"])
+@BoudiccaEventCollector("kupfticket")
 class KupfTicketCollector : TwoStepEventCollector<String>("kupfticket") {
     private val baseUrl = "https://kupfticket.com/events"
     private val fetcher = FetcherFactory.newFetcher()

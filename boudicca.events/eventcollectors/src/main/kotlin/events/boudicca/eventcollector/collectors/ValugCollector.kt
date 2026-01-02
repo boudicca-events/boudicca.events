@@ -1,19 +1,17 @@
 package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
+import base.boudicca.api.eventcollector.annotations.BoudiccaEventCollector
 import base.boudicca.api.eventcollector.collectors.IcalCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.model.EventCategory
 import base.boudicca.model.Registration
 import base.boudicca.model.structured.StructuredEvent
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
-import org.springframework.stereotype.Component
 
 /**
  * VorAlpen Linux User Group
  */
-@Component
-@ConditionalOnProperty(prefix = "boudicca.collector.enabled-collectors", name = ["valug"])
+@BoudiccaEventCollector("valug")
 class ValugCollector : IcalCollector("valug") {
     private val fetcher = FetcherFactory.newFetcher()
     private val baseUrl = "https://valug.at/"

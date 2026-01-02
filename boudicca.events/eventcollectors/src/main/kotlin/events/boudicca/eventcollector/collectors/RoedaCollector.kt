@@ -2,6 +2,7 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.api.eventcollector.annotations.BoudiccaEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
@@ -9,14 +10,11 @@ import base.boudicca.model.structured.dsl.structuredEvent
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
 import org.jsoup.Jsoup
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
-import org.springframework.stereotype.Component
 import java.io.StringReader
 import java.time.OffsetDateTime
 import java.time.ZoneId
 
-@Component
-@ConditionalOnProperty(prefix = "boudicca.collector.enabled-collectors", name = ["roeda"])
+@BoudiccaEventCollector("roeda")
 class RoedaCollector : TwoStepEventCollector<JsonObject>("roeda") {
     private val baseUrl = "https://röda.at/"
     private val fetcher = FetcherFactory.newFetcher()

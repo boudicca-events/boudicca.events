@@ -2,6 +2,7 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.api.eventcollector.annotations.BoudiccaEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.api.eventcollector.util.structuredEvent
 import base.boudicca.dateparser.dateparser.DatePair
@@ -13,14 +14,11 @@ import base.boudicca.model.structured.StructuredEvent
 import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
-import org.springframework.stereotype.Component
 import java.io.StringReader
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-@Component
-@ConditionalOnProperty(prefix = "boudicca.collector.enabled-collectors", name = ["parlament"])
+@BoudiccaEventCollector("parlament")
 class ParlamentCollector : TwoStepEventCollector<JsonObject>("parlament") {
     private val fetcher = FetcherFactory.newFetcher()
     private val baseUrl = "https://www.parlament.gv.at/"

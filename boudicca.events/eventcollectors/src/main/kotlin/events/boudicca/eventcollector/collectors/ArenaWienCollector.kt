@@ -2,6 +2,7 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.api.eventcollector.annotations.BoudiccaEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
@@ -10,8 +11,6 @@ import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
-import org.springframework.stereotype.Component
 import java.io.StringReader
 import java.net.URI
 import java.time.LocalDateTime
@@ -19,8 +18,7 @@ import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
-@Component
-@ConditionalOnProperty(prefix = "boudicca.collector.enabled-collectors", name = ["arenawien"])
+@BoudiccaEventCollector("arenawien")
 class ArenaWienCollector : TwoStepEventCollector<ArenaWienCollector.HalfEvent>("arenawien") {
     private val baseUrl = "https://arena.wien"
     private val fetcher = FetcherFactory.newFetcher()

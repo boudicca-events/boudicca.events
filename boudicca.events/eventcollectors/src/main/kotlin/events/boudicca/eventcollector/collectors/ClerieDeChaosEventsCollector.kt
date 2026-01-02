@@ -1,21 +1,19 @@
 package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
+import base.boudicca.api.eventcollector.annotations.BoudiccaEventCollector
 import base.boudicca.api.eventcollector.collectors.IcalCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.api.eventcollector.util.splitAtNewline
 import base.boudicca.api.eventcollector.util.tryParseToUriOrNull
 import base.boudicca.model.EventCategory
 import base.boudicca.model.structured.StructuredEvent
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
-import org.springframework.stereotype.Component
 import java.net.URI
 
 /**
  * Händisch zusammengesuchte Chaosnahe Events
  */
-@Component
-@ConditionalOnProperty(prefix = "boudicca.collector.enabled-collectors", name = ["chaosevents_clerie_de"])
+@BoudiccaEventCollector("chaosevents_clerie_de")
 class ClerieDeChaosEventsCollector : IcalCollector("chaosevents.clerie.de") {
     private val fetcher = FetcherFactory.newFetcher()
     private val baseUrl = "https://chaosevents.clerie.de/"

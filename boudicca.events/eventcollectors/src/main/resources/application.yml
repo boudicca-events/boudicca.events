@@ -6,6 +6,7 @@ boudicca:
         collection-interval: PT24H
         webui:
             timeZoneId: Europe/Vienna
+            enabled: false
         enabled-collectors:
             ZeroxA:
             alpenverein:
@@ -62,7 +63,8 @@ boudicca:
 spring:
     application:
         name: eventcollectors
-
+    main:
+        web-application-type: none
 
 management:
     tracing:

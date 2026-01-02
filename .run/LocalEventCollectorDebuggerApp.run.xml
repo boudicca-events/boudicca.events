@@ -14,4 +14,13 @@
       <option name="Make" enabled="true" />
     </method>
   </configuration>
+  <configuration default="false" name="LocalEventCollectorDebuggerApp" type="JetRunConfigurationType">
+    <option name="MAIN_CLASS_NAME" value="events.boudicca.eventcollector.LocalEventCollectorDebuggerAppKt" />
+    <module name="boudicca.boudicca.events.eventcollectors.main" />
+    <shortenClasspath name="NONE" />
+    <option name="VM_PARAMETERS" value="-Dspring.profiles.active=debug,webui" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
 </component>

@@ -2,6 +2,7 @@
   <configuration default="false" name="LocalFetchFromOnlineBoudiccaAppKt" type="JetRunConfigurationType" nameIsGenerated="true">
     <option name="MAIN_CLASS_NAME" value="events.boudicca.eventcollector.LocalFetchFromOnlineBoudiccaAppKt" />
     <module name="boudicca.boudicca.events.eventcollectors.main" />
+    <option name="PROGRAM_PARAMETERS" value="-Dspring.profiles.active=local" />
     <shortenClasspath name="NONE" />
     <extension name="net.ashald.envfile">
       <option name="IS_ENABLED" value="false" />

@@ -1,0 +1,4 @@
+base.boudicca.api.eventcollector.configuration.EventCollectorConfiguration
+base.boudicca.api.eventcollector.configuration.EventCollectorsConfigurationProperties
+base.boudicca.api.eventcollector.webui.WebuiController
+base.boudicca.api.eventcollector.webui.WebuiService

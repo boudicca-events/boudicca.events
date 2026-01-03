@@ -3,6 +3,7 @@ package events.boudicca.eventcollector.collectors
 import base.boudicca.SemanticKeys
 import base.boudicca.TextProperty
 import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.api.eventcollector.annotations.BoudiccaEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.api.eventcollector.util.structuredEvent
 import base.boudicca.dateparser.dateparser.DateParser
@@ -15,6 +16,7 @@ import org.jsoup.nodes.Document
 import java.net.URI
 import java.util.concurrent.TimeUnit
 
+@BoudiccaEventCollector("alpenverein")
 class AlpenvereinCollector : TwoStepEventCollector<String>("alpenverein") {
     private val delay: Long = TimeUnit.SECONDS.toMillis(12) // they request a crawl-delay of 12 seconds
     private val fetcher = FetcherFactory.newFetcher(manualSetDelay = delay)

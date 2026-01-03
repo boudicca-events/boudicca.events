@@ -1,0 +1,17 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="BoudiccaEventCollectorsApp" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+    <option name="ACTIVE_PROFILES" value="local" />
+    <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+    <module name="boudicca.boudicca.events.eventcollectors.main" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="events.boudicca.eventcollector.BoudiccaEventCollectorsApp" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="events.boudicca.eventcollector.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

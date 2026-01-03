@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="LocalBoudiccaEventCollectorsApp" type="JetRunConfigurationType">
+    <option name="MAIN_CLASS_NAME" value="events.boudicca.eventcollector.BoudiccaEventCollectorsAppKt" />
+    <module name="boudicca.boudicca.events.eventcollectors.main" />
+    <shortenClasspath name="NONE" />
+    <option name="VM_PARAMETERS" value="-Dspring.profiles.active=local,webui" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

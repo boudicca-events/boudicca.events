@@ -1,0 +1,6 @@
+boudicca:
+    collector:
+        #eventdb-url: http://localhost:8081
+        #enricher-url=http://localhost:8085
+        #enricher-url=https://enricher.boudicca.events
+        ingest-auth: ingest:ingest

@@ -2,6 +2,7 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.api.eventcollector.annotations.BoudiccaEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.Registration
@@ -14,6 +15,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
 
+@BoudiccaEventCollector("femalecoder")
 class FemaleCoderCollector : TwoStepEventCollector<String>("femalecoder") {
     private val fetcher = FetcherFactory.newFetcher()
     private val baseUrl = "https://female-coders.at/"

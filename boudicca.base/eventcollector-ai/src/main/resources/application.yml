@@ -1,0 +1,10 @@
+spring:
+    ai:
+        mistralai:
+            api-key: ${MISTRALAI_API_KEY}
+            chat:
+                options:
+                    temperature: 0.1 # make the output very deterministic
+                    model: mistral-large-latest
+                    max-completion-tokens: 8192
+                    responseFormat: { "type": "json_object" }

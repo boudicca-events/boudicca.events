@@ -37,3 +37,5 @@ include("boudicca.events:enricher")
 include("boudicca.events:enricher-utils")
 
 rootProject.name = "boudicca"
+
+include("boudicca.base:eventcollector-ai")

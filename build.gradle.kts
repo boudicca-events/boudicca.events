@@ -40,3 +40,9 @@ sonar {
         )
     }
 }
+
+subprojects {
+    configurations.matching { it.name == "implementation" }.all {
+        project.dependencies.constraints.add(name, "org.apache.commons:commons-lang3:3.18.0")
+    }
+}

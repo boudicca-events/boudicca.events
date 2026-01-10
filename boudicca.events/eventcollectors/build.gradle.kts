@@ -1,5 +1,5 @@
 plugins {
-    id("boudicca-springboot-app-nodevtools") // devtools fuck up a lot in here... one example is log capturing and the whole Collections api...
+    id("boudicca-springboot-app")
 }
 
 group = "events.boudicca"

@@ -2,6 +2,7 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.api.eventcollector.annotations.BoudiccaEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.api.eventcollector.util.structuredEvent
 import base.boudicca.dateparser.dateparser.DatePair
@@ -12,6 +13,7 @@ import base.boudicca.model.EventCategory
 import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
 
+@BoudiccaEventCollector("flohmarkt")
 class FlohmarktCollector : TwoStepEventCollector<String>("flohmarkt") {
     private val fetcher = FetcherFactory.newFetcher()
     private val baseUrl = "https://www.flohmarkt.at/"

@@ -2,6 +2,7 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.EventCollector
+import base.boudicca.api.eventcollector.annotations.BoudiccaEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.dateparser.dateparser.DateParser
 import base.boudicca.format.UrlUtils
@@ -21,6 +22,7 @@ import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
+@BoudiccaEventCollector("linztermine")
 class LinzTermineCollector : EventCollector {
     private val fetcher = FetcherFactory.newFetcher()
     private val logger = KotlinLogging.logger {}

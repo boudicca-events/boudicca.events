@@ -2,6 +2,7 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.api.eventcollector.annotations.BoudiccaEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.api.eventcollector.util.structuredEvent
 import base.boudicca.dateparser.dateparser.DateParser
@@ -20,6 +21,7 @@ import java.net.URI
 import java.net.URLDecoder
 import java.util.regex.Pattern
 
+@BoudiccaEventCollector("planettt")
 class PlanetTTCollector : TwoStepEventCollector<Element>("planettt") {
     private val logger = KotlinLogging.logger {}
     private val fetcher = FetcherFactory.newFetcher()

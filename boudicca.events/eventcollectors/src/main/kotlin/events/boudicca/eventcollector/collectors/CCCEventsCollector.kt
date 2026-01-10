@@ -1,6 +1,7 @@
 package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
+import base.boudicca.api.eventcollector.annotations.BoudiccaEventCollector
 import base.boudicca.api.eventcollector.collectors.IcalCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.model.EventCategory
@@ -9,6 +10,7 @@ import base.boudicca.model.structured.StructuredEvent
 /**
  * Events from the CCC Event Blog
  */
+@BoudiccaEventCollector("events_ccc_de")
 class CCCEventsCollector : IcalCollector("events.ccc.de") {
     private val fetcher = FetcherFactory.newFetcher()
     private val baseUrl = "https://events.ccc.de/"

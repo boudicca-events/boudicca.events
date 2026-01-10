@@ -1,6 +1,7 @@
 package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
+import base.boudicca.api.eventcollector.annotations.BoudiccaEventCollector
 import base.boudicca.api.eventcollector.collectors.IcalCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
@@ -13,6 +14,7 @@ import java.util.*
 /**
  * fhLUG: Fachhochschulcampus Hagenberg Linux User Group
  */
+@BoudiccaEventCollector("fhLUG")
 class FhLugCollector : IcalCollector("fhLUG") {
     private val fetcher = FetcherFactory.newFetcher()
     private val baseUrl = "https://fhlug.at/"

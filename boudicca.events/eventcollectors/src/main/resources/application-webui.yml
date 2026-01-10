@@ -1,0 +1,9 @@
+spring:
+    main:
+        web-application-type: servlet
+        
+boudicca:
+    collector:
+        webui:
+            enabled: true
+            port: ${server.port}

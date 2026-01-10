@@ -2,6 +2,7 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.api.eventcollector.annotations.BoudiccaEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.dateparser.dateparser.DateParser
 import base.boudicca.format.UrlUtils
@@ -13,6 +14,7 @@ import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.ZoneId
 
+@BoudiccaEventCollector("wissensturm")
 class WissensturmCollector : TwoStepEventCollector<Pair<String, Document>>("wissensturm") {
     override fun getAllUnparsedEvents(): List<Pair<String, Document>> {
         val fetcher = FetcherFactory.newFetcher()

@@ -5,7 +5,6 @@ import base.boudicca.api.eventcollector.collections.Collections
 import base.boudicca.api.eventcollector.collections.FullCollection
 import base.boudicca.api.eventcollector.collections.HttpCall
 import base.boudicca.api.eventcollector.collections.SingleCollection
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.web.util.HtmlUtils
@@ -18,10 +17,9 @@ import java.util.*
 
 private const val CUTOFF_TO_HIGHER_UNIT = 5L
 
-@Suppress("SpringJavaInjectionPointsAutowiringInspection") // this bean is added dynamically
 @Service
 class WebuiService(
-    @Qualifier("runner") private val runner: EventCollectionRunner,
+    private val runner: EventCollectionRunner,
     @Value("\${boudicca.collector.webui.timeZoneId:Europe/Vienna}") timeZoneId: String,
 ) {
     private val zoneId = ZoneId.of(timeZoneId)
@@ -86,13 +84,7 @@ class WebuiService(
             "hasWarnings" to (fullCollection.getTotalWarningCount() > 0),
             "totalEventsCollected" to fullCollection.singleCollections.sumOf { it.totalEventsCollected },
             "singleCollections" to
-                runner
-                    .getEventCollectors()
-                    .map { it.getName() }
-                    .sorted()
-                    .map {
-                        mapSingleCollectionToFrontend(it, singleCollections[it])
-                    },
+                fullCollection.singleCollections.map { mapSingleCollectionToFrontend(it.collectorName, it) },
         )
     }
 

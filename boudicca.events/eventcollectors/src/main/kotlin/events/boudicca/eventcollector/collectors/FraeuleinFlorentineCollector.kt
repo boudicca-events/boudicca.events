@@ -2,6 +2,7 @@ package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.api.eventcollector.annotations.BoudiccaEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.api.eventcollector.util.structuredEvent
 import base.boudicca.dateparser.dateparser.DatePair
@@ -15,6 +16,7 @@ import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
+@BoudiccaEventCollector("fraeuleinflorentine")
 class FraeuleinFlorentineCollector : TwoStepEventCollector<Pair<Element, String?>>("fraeuleinflorentine") {
     private val fetcher = FetcherFactory.newFetcher()
     private val baseUrl = "https://frl-florentine.at/eventkalender/"
@@ -61,7 +63,8 @@ class FraeuleinFlorentineCollector : TwoStepEventCollector<Pair<Element, String?
         if (startTimeElementText.isNotBlank()) {
             startTimeToParse = startTimeElementText
             val startTime =
-                LocalTime.parse( // DateParse can't handle am/pm, so convert it manually and continue with its String
+                LocalTime.parse(
+                    // DateParse can't handle am/pm, so convert it manually and continue with its String
                     startTimeToParse.uppercase(), // convert pm to PM, to be recognized by the time pattern 'a'
                     DateTimeFormatter.ofPattern("h:mm a").withLocale(Locale.GERMAN),
                 )
@@ -83,7 +86,8 @@ class FraeuleinFlorentineCollector : TwoStepEventCollector<Pair<Element, String?
         val endTimeToParse = event.select(".simcal-event-end-time").text()
         if (endTimeToParse.isNotBlank()) {
             endTime =
-                LocalTime.parse( // DateParse can't handle am/pm, so convert it manually and continue with its String
+                LocalTime.parse(
+                    // DateParse can't handle am/pm, so convert it manually and continue with its String
                     endTimeToParse.uppercase(), // convert pm to PM, to be recognized by the time pattern 'a'
                     DateTimeFormatter.ofPattern("h:mm a").withLocale(Locale.GERMAN),
                 )

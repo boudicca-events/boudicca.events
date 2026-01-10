@@ -19,9 +19,6 @@ import java.util.concurrent.Future
 import java.util.concurrent.atomic.AtomicLong
 
 class EventCollectionRunner(
-    private val eventCollectors: List<EventCollector>,
-    private val ingestionInterface: RunnerIngestionInterface,
-    private val enricherInterface: RunnerEnricherInterface,
     otel: OpenTelemetry = OpenTelemetry.noop(),
     private val captureHttpCalls: Boolean = false,
 ) {
@@ -34,21 +31,25 @@ class EventCollectionRunner(
     /**
      * executes a full collection for all configured eventcollectors
      */
-    fun run() {
+    fun run(
+        eventCollectors: List<EventCollector>,
+        ingestionInterface: RunnerIngestionInterface,
+        enricherInterface: RunnerEnricherInterface,
+    ) {
         if (captureHttpCalls) {
             setupHttpCallCapture()
         }
         val span = tracer.spanBuilder("full collection").setSpanKind(SpanKind.INTERNAL).startSpan()
         try {
             span.makeCurrent().use {
-                logger.info { "starting new full collection" }
+                logger.info { "starting new full collection, having ${eventCollectors.size} event collectors enabled" }
                 Collections.startFullCollection()
                 try {
                     val totalEventsCollected = AtomicLong()
                     eventCollectors
                         .map {
                             executor.submit {
-                                val eventsCollected = collect(it, span)
+                                val eventsCollected = collect(ingestionInterface, enricherInterface, it, span)
                                 totalEventsCollected.updateAndGet { it + eventsCollected }
                             }
                         }.forEach(Future<*>::get)
@@ -65,6 +66,8 @@ class EventCollectionRunner(
     }
 
     private fun collect(
+        ingestionInterface: RunnerIngestionInterface,
+        enricherInterface: RunnerEnricherInterface,
         eventCollector: EventCollector,
         parentSpan: Span,
     ): Long {
@@ -73,8 +76,11 @@ class EventCollectionRunner(
                 .spanBuilder("single collection")
                 .setSpanKind(SpanKind.INTERNAL)
                 .setAttribute("collector", eventCollector.getName())
-                .setParent(Context.current().with(parentSpan))
-                .startSpan()
+                .setParent(
+                    Context
+                        .current()
+                        .with(parentSpan),
+                ).startSpan()
 
         return span.makeCurrent().use {
             Collections.startSingleCollection(eventCollector)
@@ -84,7 +90,7 @@ class EventCollectionRunner(
                 validateCollection(eventCollector, events)
                 try {
                     val postProcessedEvents = events.map { postProcess(it, eventCollector.getName()) }
-                    val enrichedEvents = enrich(postProcessedEvents)
+                    val enrichedEvents = enrich(enricherInterface, postProcessedEvents)
                     retry(logger) {
                         ingestionInterface.ingestEvents(enrichedEvents)
                     }
@@ -129,12 +135,15 @@ class EventCollectionRunner(
         }
         for (field in allFields.minus(nonBlankFields)) {
             logger.warn {
-                "eventcollector ${eventCollector.getName()} " + "has blank values for all events for field $field"
+                "eventcollector ${eventCollector.getName()} has blank values for all events for field $field"
             }
         }
     }
 
-    private fun enrich(events: List<Event>): List<Event> =
+    private fun enrich(
+        enricherInterface: RunnerEnricherInterface,
+        events: List<Event>,
+    ): List<Event> =
         try {
             retry(logger) {
                 enricherInterface.enrichEvents(events)
@@ -171,6 +180,4 @@ class EventCollectionRunner(
     }
 
     fun getLastCapturedCalls(): ByteArray = lastCapturedCalls
-
-    fun getEventCollectors(): List<EventCollector> = eventCollectors
 }

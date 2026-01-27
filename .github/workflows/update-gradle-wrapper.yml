@@ -1,8 +1,6 @@
 name: Update Gradle Wrapper
 
-on:
-    schedule:
-        -   cron: "0 0 * * *"
+on: workflow_dispatch # currently only on demand as maybe dependabot can update gradle wrapper now     
 
 permissions: # this can be restrictive since there is a granular personal access token that is used to open the MergeRequest
     contents: read

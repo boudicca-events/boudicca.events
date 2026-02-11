@@ -1,5 +1,6 @@
 package events.boudicca.eventcollector
 
+import base.boudicca.api.eventcollector.config.EventCollectorBaseConfig
 import base.boudicca.api.eventcollector.configuration.EventCollectorsConfigurationProperties
 import base.boudicca.api.eventcollector.debugger.EventCollectorDebugger
 import base.boudicca.api.eventcollector.runner.buildRunnerFor
@@ -18,12 +19,19 @@ import java.io.File
 class LocalEventCollectorDebuggerApp(
     val configuration: EventCollectorsConfigurationProperties,
 ) : CommandLineRunner {
-    private val debugRunner =
-        buildRunnerFor(
-            listOf(
-                ZuckerfabrikCollector(),
-            ),
-        ).withFetcherCache(FileBackedFetcherCache(File("./fetcher.cache"))).buildDebugRunner()
+    private val debugRunner = buildRunnerFor(
+        listOf(
+            // add or remove eventcollectors for debugging here
+            ZuckerfabrikCollector().withDebugConfig(EventCollectorBaseConfig("Zuckerfabrik")),
+            // LinzTermineCollector().withDebugConfig(
+            //     LinzTermineCollectorConfig(
+            //         name = "LinzTermine",
+            //         eventsBaseUrl = "https://www.linztermine.at/schnittstelle/downloads/events_xml.php",
+            //         locationBaseUrl = "https://www.linztermine.at/schnittstelle/downloads/locations_xml.php",
+            //     ),
+            // ),
+        ),
+    ).withFetcherCache(FileBackedFetcherCache(File("./fetcher.cache"))).buildDebugRunner()
 
     @Bean
     fun eventCollectionRunner() = debugRunner.runner
@@ -34,6 +42,10 @@ class LocalEventCollectorDebuggerApp(
             configuration,
             verboseDebugging = true,
             verboseValidation = true,
+        ).validate(
+            listOf(
+                // add your validators here
+            ),
         ).runDebug()
     }
 }
@@ -46,9 +58,6 @@ class LocalEventCollectorDebuggerApp(
  * 4) Also allows you to ingest the data into your local eventdb
  */
 fun main(args: Array<String>) {
-    val app =
-        SpringApplicationBuilder(LocalEventCollectorDebuggerApp::class.java)
-            .web(WebApplicationType.SERVLET)
-            .build()
+    val app = SpringApplicationBuilder(LocalEventCollectorDebuggerApp::class.java).web(WebApplicationType.SERVLET).build()
     app.run(*args)
 }

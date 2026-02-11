@@ -32,7 +32,7 @@ class EventCollectionRunner(
      * executes a full collection for all configured eventcollectors
      */
     fun run(
-        eventCollectors: List<EventCollector>,
+        eventCollectors: List<EventCollector<*>>,
         ingestionInterface: RunnerIngestionInterface,
         enricherInterface: RunnerEnricherInterface,
     ) {
@@ -68,7 +68,7 @@ class EventCollectionRunner(
     private fun collect(
         ingestionInterface: RunnerIngestionInterface,
         enricherInterface: RunnerEnricherInterface,
-        eventCollector: EventCollector,
+        eventCollector: EventCollector<*>,
         parentSpan: Span,
     ): Long {
         val span =
@@ -111,7 +111,7 @@ class EventCollectionRunner(
     }
 
     private fun validateCollection(
-        eventCollector: EventCollector,
+        eventCollector: EventCollector<*>,
         events: List<Event>,
     ) {
         if (events.isEmpty()) {

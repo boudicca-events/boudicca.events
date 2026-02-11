@@ -33,7 +33,7 @@ object Collections {
         pastFullCollections.add(fullCollection)
     }
 
-    fun startSingleCollection(collector: EventCollector) {
+    fun startSingleCollection(collector: EventCollector<*>) {
         if (currentSingleCollections.get() != null) {
             logger.error { "a current single collection is already set, this seems like a bug" }
         }

@@ -1,12 +1,13 @@
 package base.boudicca.api.eventcollector
 
+import base.boudicca.api.eventcollector.config.EventCollectorBaseConfig
 import base.boudicca.model.Event
 import base.boudicca.model.structured.StructuredEvent
 import io.github.oshai.kotlinlogging.KotlinLogging
 
 abstract class TwoStepEventCollector<T>(
-    private val name: String,
-) : EventCollector {
+    private var name: String,
+) : EventCollector<EventCollectorBaseConfig>(EventCollectorBaseConfig::class) {
     private val logger = KotlinLogging.logger {}
 
     override fun getName(): String = name

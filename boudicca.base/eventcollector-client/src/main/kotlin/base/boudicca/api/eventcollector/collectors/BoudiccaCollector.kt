@@ -2,6 +2,7 @@ package base.boudicca.api.eventcollector.collectors
 
 import base.boudicca.api.eventcollector.EventCollector
 import base.boudicca.api.eventcollector.collections.Collections
+import base.boudicca.api.eventcollector.config.EventCollectorBaseConfig
 import base.boudicca.api.eventdb.publisher.EventDbPublisherClient
 import base.boudicca.model.Event
 import java.net.HttpURLConnection
@@ -13,7 +14,7 @@ import java.net.HttpURLConnection
 class BoudiccaCollector(
     private val url: String,
     private val name: String? = null,
-) : EventCollector {
+) : EventCollector<EventCollectorBaseConfig>(EventCollectorBaseConfig::class) {
     override fun getName(): String = name ?: "boudicca: $url"
 
     override fun collectEvents(): List<Event> {

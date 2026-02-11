@@ -3,6 +3,7 @@ package events.boudicca.eventcollector.collectors
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.EventCollector
 import base.boudicca.api.eventcollector.annotations.BoudiccaEventCollector
+import base.boudicca.api.eventcollector.config.EventCollectorBaseConfig
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.Registration
@@ -15,7 +16,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 @BoudiccaEventCollector("technologieplauscherl")
-class TechnologiePlauscherlCollector : EventCollector {
+class TechnologiePlauscherlCollector : EventCollector<EventCollectorBaseConfig>(EventCollectorBaseConfig::class) {
     override fun getName(): String = "technologieplauscherl"
 
     override fun collectStructuredEvents(): List<StructuredEvent> {

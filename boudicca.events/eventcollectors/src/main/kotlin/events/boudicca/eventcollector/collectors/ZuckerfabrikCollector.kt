@@ -3,6 +3,7 @@ package events.boudicca.eventcollector.collectors
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
 import base.boudicca.api.eventcollector.annotations.BoudiccaEventCollector
+import base.boudicca.api.eventcollector.config.EventCollectorBaseConfig
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.api.eventcollector.util.structuredEvent
 import base.boudicca.dateparser.dateparser.DateParser
@@ -17,13 +18,20 @@ import org.jsoup.select.Elements
 class ZuckerfabrikCollector : TwoStepEventCollector<String>("zuckerfabrik") {
     private val fetcher = FetcherFactory.newFetcher()
 
+    class Config : EventCollectorBaseConfig("") {
+        var baseUrl: String = "https://www.zuckerfabrik.at"
+    }
+
     override fun getAllUnparsedEvents(): List<String> {
-        val document = Jsoup.parse(fetcher.fetchUrl("https://www.zuckerfabrik.at/termine-tickets/"))
+        val baseUrl = (config as? Config)?.baseUrl ?: "https://www.zuckerfabrik.at"
+        val document = Jsoup.parse(fetcher.fetchUrl("$baseUrl/termine-tickets/"))
         return document.select("div#storycontent > a.bookmarklink").map { it.attr("href") }
     }
 
     override fun parseMultipleStructuredEvents(event: String): List<StructuredEvent?> {
-        val eventSite = Jsoup.parse(fetcher.fetchUrl(event))
+        val baseUrl = (config as? Config)?.baseUrl ?: "https://www.zuckerfabrik.at"
+        val eventUrl = if (event.startsWith("http")) event else "$baseUrl$event"
+        val eventSite = Jsoup.parse(fetcher.fetchUrl(eventUrl))
 
         var name = eventSite.select("div#storycontent>h2").text()
 
@@ -44,15 +52,16 @@ class ZuckerfabrikCollector : TwoStepEventCollector<String>("zuckerfabrik") {
         }
 
         return structuredEvent(name, dates) {
-            withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(event))
+            withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(eventUrl))
             withProperty(SemanticKeys.TYPE_PROPERTY, type)
             withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(pictureUrl))
             withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, pictureCopyright)
             withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
             withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Zuckerfabrik")
-            withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse("https://www.zuckerfabrik.at"))
+            val baseUrl = (config as? Config)?.baseUrl ?: "https://www.zuckerfabrik.at"
+            withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse(baseUrl))
             withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Enns")
-            withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(event))
+            withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(eventUrl))
         }
     }
 

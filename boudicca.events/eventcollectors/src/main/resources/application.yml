@@ -1,56 +1,54 @@
 boudicca:
     collector:
         collection-interval: PT24H
-        webui:
-            enabled: false
-        enabled-collectors:
-            ZeroxA:
-            alpenverein:
-            antonbrucknerunilinz:
-            arenawien:
-            brucknerhaus:
-            burgclam:
-            cafetraxlmayr:
-            chaosevents_clerie_de:
-            chelsea:
-            ennsevents:
-            events_ccc_de:
-            familienkarte:
-            femalecoder:
-            fhLUG:
-            flohmarkt:
-            fraeuleinflorentine:
-            fueruns:
-            jku:
-            kapu:
-            kunstunilinz:
-            kupfticket:
-            landestheaterlinz:
-            lastspace:
-            linztermine:
-            metalcorner:
-            museumArbeitswelt:
-            oehjku:
-            okhvoecklabruck:
-            ooesb:
-            otelolinz:
-            parlament:
-            planettt:
-            posthof:
-            roeda:
-            schlachthof:
-            spinnerei:
-            stadthallewien:
-            stadtwerkstatt:
-            stiftskonzerte:
-            tabakfabriklinz:
-            technologieplauscherl:
-            theaterinderinnenstadt:
-            theaterphoenix:
-            valug:
-            viperroom:
-            wissensturm:
-            zuckerfabrik:
+        collectors:
+            -   type: ZeroxA
+            -   type: alpenverein
+            -   type: antonbrucknerunilinz
+            -   type: arenawien
+            -   type: brucknerhaus
+            -   type: burgclam
+            -   type: cafetraxlmayr
+            -   type: chaosevents_clerie_de
+            -   type: chelsea
+            -   type: ennsevents
+            -   type: events_ccc_de
+            -   type: familienkarte
+            -   type: femalecoder
+            -   type: fhLUG
+            -   type: flohmarkt
+            -   type: fraeuleinflorentine
+            -   type: fueruns
+            -   type: jku
+            -   type: kapu
+            -   type: kunstunilinz
+            -   type: kupfticket
+            -   type: landestheaterlinz
+            -   type: lastspace
+            -   type: linztermine
+            -   type: metalcorner
+            -   type: museumArbeitswelt
+            -   type: oehjku
+            -   type: okhvoecklabruck
+            -   type: ooesb
+            -   type: otelolinz
+            -   type: parlament
+            -   type: planettt
+            -   type: posthof
+            -   type: roeda
+            -   type: schlachthof
+            -   type: spinnerei
+            -   type: stadthallewien
+            -   type: stadtwerkstatt
+            -   type: stiftskonzerte
+            -   type: tabakfabriklinz
+            -   type: technologieplauscherl
+            -   type: theaterinderinnenstadt
+            -   type: theaterphoenix
+            -   type: valug
+            -   type: viperroom
+            -   type: wissensturm
+            -   type: zuckerfabrik
     monitoring:
         #for local testing uncomment line
         #endpoint: http://localhost:4318/v1/
@@ -60,7 +58,7 @@ spring:
     application:
         name: eventcollectors
     main:
-        web-application-type: none
+        web-application-type: servlet
 
 management:
     tracing:

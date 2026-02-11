@@ -2,6 +2,7 @@ package base.boudicca.api.eventcollector.collectors
 
 import base.boudicca.api.eventcollector.EventCollector
 import base.boudicca.api.eventcollector.collectors.util.IcalParser
+import base.boudicca.api.eventcollector.config.EventCollectorBaseConfig
 import base.boudicca.model.structured.StructuredEvent
 import biweekly.component.VEvent
 import java.util.*
@@ -14,7 +15,7 @@ import java.util.*
  */
 abstract class IcalCollector(
     private val name: String,
-) : EventCollector {
+) : EventCollector<EventCollectorBaseConfig>(EventCollectorBaseConfig::class) {
     override fun getName(): String = name
 
     override fun collectStructuredEvents(): List<StructuredEvent> {

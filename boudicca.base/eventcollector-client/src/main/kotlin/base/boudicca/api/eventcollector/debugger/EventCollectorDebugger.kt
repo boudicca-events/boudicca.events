@@ -45,10 +45,8 @@ class EventCollectorDebugger(
             println("found $warningCount warnings!")
         }
 
-        if (configuration.webui.enabled) {
-            println("webui is running on http://localhost:${configuration.webui.port} and is blocking until you press enter in this console")
-            readlnOrNull()
-        }
+        println("webui is running on http://localhost:${configuration.webui.port} and is blocking until you press enter in this console")
+        readlnOrNull()
 
         return this
     }

@@ -4,6 +4,7 @@
     <module name="boudicca.boudicca.events.eventcollectors.main" />
     <option name="PROGRAM_PARAMETERS" value="-Dspring.profiles.active=local" />
     <shortenClasspath name="NONE" />
+    <option name="VM_PARAMETERS" value="-Dspring.profiles.active=localFetch" />
     <extension name="net.ashald.envfile">
       <option name="IS_ENABLED" value="false" />
       <option name="IS_SUBST" value="false" />

@@ -9,10 +9,10 @@ import base.boudicca.fetcher.FetcherCache
 import base.boudicca.model.Event
 import io.opentelemetry.api.OpenTelemetry
 
-fun buildRunnerFor(eventCollectors: List<EventCollector>) = RunnerBuilderDsl(eventCollectors)
+fun buildRunnerFor(eventCollectors: List<EventCollector<*>>) = RunnerBuilderDsl(eventCollectors)
 
 class RunnerBuilderDsl(
-    private val eventCollectors: List<EventCollector>,
+    private val eventCollectors: List<EventCollector<*>>,
 ) {
     private var runnerIngestionInterface: RunnerIngestionInterface? = null
     private var runnerEnricherInterface: RunnerEnricherInterface? = null
@@ -81,7 +81,7 @@ class RunnerBuilderDsl(
 
 class DebugRunner(
     val runner: EventCollectionRunner,
-    val eventCollectors: List<EventCollector>,
+    val eventCollectors: List<EventCollector<*>>,
     val runnerIngestionInterface: RunnerIngestionInterface?,
     val runnerEnricherInterface: RunnerEnricherInterface?,
 ) {

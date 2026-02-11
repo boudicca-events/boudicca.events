@@ -28,7 +28,7 @@ and `LocalHtmlPublisher` (aka the frontend) all at once.
 
 Then you can fill up the database with one of two options:
 
-- (recommended) Run `LocalFetchFromOnlineBoudiccaKt` to fetch the events from the online boudicca.events website.
+- (recommended) Run `LocalFetchFromOnlineBoudiccaAppKt` to fetch the events from the online boudicca.events website.
 - Run some EventCollector locally, for example for testing a newly created EventCollector, for more information
   see [Developing your own Collector](#developing-your-own-collector)
 

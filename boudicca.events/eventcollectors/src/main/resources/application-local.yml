@@ -4,3 +4,55 @@ boudicca:
         #enricher-url=http://localhost:8085
         #enricher-url=https://enricher.boudicca.events
         ingest-auth: ingest:ingest
+        collectors:
+            -   type: ZeroxA
+            -   type: alpenverein
+            -   type: antonbrucknerunilinz
+            -   type: arenawien
+            -   type: brucknerhaus
+            -   type: burgclam
+            -   type: cafetraxlmayr
+            -   type: chaosevents_clerie_de
+            -   type: chelsea
+            -   type: ennsevents
+            -   type: events_ccc_de
+            -   type: familienkarte
+            -   type: femalecoder
+            -   type: fhLUG
+            -   type: flohmarkt
+            -   type: fraeuleinflorentine
+            -   type: fueruns
+            -   type: jku
+            -   type: kapu
+            -   type: kunstunilinz
+            -   type: kupfticket
+            -   type: landestheaterlinz
+            -   type: lastspace
+            -   type: linztermine
+                name: LinzTermine (custom name)
+                properties:
+                    -   eventsBaseUrl: https://www.linztermine.at/schnittstelle/downloads/events_xml.php
+                    -   locationBaseUrl: https://www.linztermine.at/schnittstelle/downloads/locations_xml.php
+            -   type: metalcorner
+            -   type: museumArbeitswelt
+            -   type: oehjku
+            -   type: okhvoecklabruck
+            -   type: ooesb
+            -   type: otelolinz
+            -   type: parlament
+            -   type: planettt
+            -   type: posthof
+            -   type: roeda
+            -   type: schlachthof
+            -   type: spinnerei
+            -   type: stadthallewien
+            -   type: stadtwerkstatt
+            -   type: stiftskonzerte
+            -   type: tabakfabriklinz
+            -   type: technologieplauscherl
+            -   type: theaterinderinnenstadt
+            -   type: theaterphoenix
+            -   type: valug
+            -   type: viperroom
+            -   type: wissensturm
+            -   type: zuckerfabrik

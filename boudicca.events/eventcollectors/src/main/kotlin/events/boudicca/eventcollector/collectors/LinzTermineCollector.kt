@@ -3,6 +3,7 @@ package events.boudicca.eventcollector.collectors
 import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.EventCollector
 import base.boudicca.api.eventcollector.annotations.BoudiccaEventCollector
+import base.boudicca.api.eventcollector.config.EventCollectorBaseConfig
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.dateparser.dateparser.DateParser
 import base.boudicca.format.UrlUtils
@@ -22,12 +23,16 @@ import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
+data class LinzTermineCollectorConfig(
+    override val name: String,
+    val eventsBaseUrl: String = "https://www.linztermine.at/schnittstelle/downloads/events_xml.php",
+    val locationBaseUrl: String = "https://www.linztermine.at/schnittstelle/downloads/locations_xml.php",
+) : EventCollectorBaseConfig(name)
+
 @BoudiccaEventCollector("linztermine")
-class LinzTermineCollector : EventCollector {
+class LinzTermineCollector : EventCollector<LinzTermineCollectorConfig>(LinzTermineCollectorConfig::class) {
     private val fetcher = FetcherFactory.newFetcher()
     private val logger = KotlinLogging.logger {}
-    private val eventsBaseUrl = "https://www.linztermine.at/schnittstelle/downloads/events_xml.php"
-    private val locationBaseUrl = "https://www.linztermine.at/schnittstelle/downloads/locations_xml.php"
 
     override fun getName(): String = "linz termine"
 
@@ -118,7 +123,7 @@ class LinzTermineCollector : EventCollector {
             SemanticKeys.LOCATION_CITY_PROPERTY,
             (location?.city),
         )
-        withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(event.url, eventsBaseUrl, locationBaseUrl))
+        withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(event.url, config.eventsBaseUrl, config.locationBaseUrl))
         withAdditionalProperties(event)
     }
 
@@ -139,7 +144,7 @@ class LinzTermineCollector : EventCollector {
         val links = mutableListOf<String>()
         for (ignored in 1..(4 * 6)) {
             links.add(
-                "$eventsBaseUrl?lt_datefrom=" +
+                "${config.eventsBaseUrl}?lt_datefrom=" +
                     URLEncoder.encode(
                         date.format(urlFormatter),
                         Charsets.UTF_8,
@@ -213,7 +218,7 @@ class LinzTermineCollector : EventCollector {
     }
 
     private fun parseLocations(): Map<Int, Location> {
-        val xml = loadXml(locationBaseUrl)
+        val xml = loadXml(config.locationBaseUrl)
         return xml
             .child(0)
             .children()

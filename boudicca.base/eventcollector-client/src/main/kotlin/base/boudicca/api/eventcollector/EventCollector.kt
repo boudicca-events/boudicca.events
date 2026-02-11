@@ -26,7 +26,10 @@ abstract class EventCollector<T : EventCollectorBaseConfig>(
      *
      * In case of type mismatch the initialization process should fail here.
      */
-    fun configure(name: String? = null, properties: Map<String, String> = emptyMap()) {
+    fun configure(
+        name: String? = null,
+        properties: Map<String, String> = emptyMap(),
+    ) {
         // the name is a special case, so it can be overridden in the config without having to declare an array for each eventcollector
         val mutableProps = properties.toMutableMap()
         val nameOverride = name ?: getName()
@@ -47,9 +50,7 @@ abstract class EventCollector<T : EventCollectorBaseConfig>(
         return this
     }
 
-    open fun collectEvents(): List<Event> =
-        collectStructuredEvents()
-            .map { it.toFlatEvent() }
+    open fun collectEvents(): List<Event> = collectStructuredEvents().map { it.toFlatEvent() }
 
     open fun collectStructuredEvents(): List<StructuredEvent> = emptyList()
 }

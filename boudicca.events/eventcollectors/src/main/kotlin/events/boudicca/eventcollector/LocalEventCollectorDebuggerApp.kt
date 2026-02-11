@@ -19,19 +19,20 @@ import java.io.File
 class LocalEventCollectorDebuggerApp(
     val configuration: EventCollectorsConfigurationProperties,
 ) : CommandLineRunner {
-    private val debugRunner = buildRunnerFor(
-        listOf(
-            // add or remove eventcollectors for debugging here
-            ZuckerfabrikCollector().withDebugConfig(EventCollectorBaseConfig("Zuckerfabrik")),
-            // LinzTermineCollector().withDebugConfig(
-            //     LinzTermineCollectorConfig(
-            //         name = "LinzTermine",
-            //         eventsBaseUrl = "https://www.linztermine.at/schnittstelle/downloads/events_xml.php",
-            //         locationBaseUrl = "https://www.linztermine.at/schnittstelle/downloads/locations_xml.php",
-            //     ),
-            // ),
-        ),
-    ).withFetcherCache(FileBackedFetcherCache(File("./fetcher.cache"))).buildDebugRunner()
+    private val debugRunner =
+        buildRunnerFor(
+            listOf(
+                // add or remove eventcollectors for debugging here
+                ZuckerfabrikCollector().withDebugConfig(EventCollectorBaseConfig("Zuckerfabrik")),
+                // LinzTermineCollector().withDebugConfig(
+                //     LinzTermineCollectorConfig(
+                //         name = "LinzTermine",
+                //         eventsBaseUrl = "https://www.linztermine.at/schnittstelle/downloads/events_xml.php",
+                //         locationBaseUrl = "https://www.linztermine.at/schnittstelle/downloads/locations_xml.php",
+                //     ),
+                // ),
+            ),
+        ).withFetcherCache(FileBackedFetcherCache(File("./fetcher.cache"))).buildDebugRunner()
 
     @Bean
     fun eventCollectionRunner() = debugRunner.runner

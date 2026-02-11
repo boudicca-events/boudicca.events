@@ -49,15 +49,16 @@ class BoudiccaEventCollectorsApp(
     private val enabledCollectors: List<EventCollector<*>> = initCollectors()
 
     private fun initCollectors(): List<EventCollector<*>> {
-
         // This is a bit of spring black magic, but it allows us to configure eventcollectors at runtime
         // and run multiple collectors of the same type at once.
         // First we find all registered collector beans.
-        val typeToBeanName = applicationContext.getBeanNamesForAnnotation<BoudiccaEventCollector>()
-            .associateBy { beanName ->
-                applicationContext.findAnnotationOnBean<BoudiccaEventCollector>(beanName)?.value
-                    ?: beanName
-            }
+        val typeToBeanName =
+            applicationContext
+                .getBeanNamesForAnnotation<BoudiccaEventCollector>()
+                .associateBy { beanName ->
+                    applicationContext.findAnnotationOnBean<BoudiccaEventCollector>(beanName)?.value
+                        ?: beanName
+                }
 
         // now we iterate over all the configurations
         return eventCollectorsConfigurationProperties.collectors

@@ -1,6 +1,5 @@
 package events.boudicca.eventcollector
 
-import base.boudicca.api.eventcollector.config.EventCollectorBaseConfig
 import base.boudicca.api.eventcollector.configuration.EventCollectorsConfigurationProperties
 import base.boudicca.api.eventcollector.debugger.EventCollectorDebugger
 import base.boudicca.api.eventcollector.runner.buildRunnerFor
@@ -23,7 +22,7 @@ class LocalEventCollectorDebuggerApp(
         buildRunnerFor(
             listOf(
                 // add or remove eventcollectors for debugging here
-                ZuckerfabrikCollector().withDebugConfig(EventCollectorBaseConfig("Zuckerfabrik")),
+                ZuckerfabrikCollector().withDebugConfig(ZuckerfabrikCollector.ZuckerfabrikCollectorConfig("Zuckerfabrik")),
                 // LinzTermineCollector().withDebugConfig(
                 //     LinzTermineCollectorConfig(
                 //         name = "LinzTermine",

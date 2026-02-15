@@ -1,7 +1,7 @@
 package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
-import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.api.eventcollector.SimpleTwoStepEventCollector
 import base.boudicca.api.eventcollector.annotations.BoudiccaEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.api.eventcollector.util.structuredEvent
@@ -12,8 +12,8 @@ import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 
-@BoudiccaEventCollector("kapu")
-class KapuCollector : TwoStepEventCollector<String>("kapu") {
+@BoudiccaEventCollector(collectorTypeName = "kapu")
+class KapuCollector : SimpleTwoStepEventCollector<String>() {
     private val baseUrl = "https://www.kapu.or.at"
     private val fetcher = FetcherFactory.newFetcher()
 

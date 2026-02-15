@@ -10,7 +10,7 @@ import base.boudicca.model.structured.StructuredEvent
 /**
  * Events from the CCC Event Blog
  */
-@BoudiccaEventCollector("events_ccc_de")
+@BoudiccaEventCollector(collectorTypeName = "events_ccc_de")
 class CCCEventsCollector : IcalCollector("events.ccc.de") {
     private val fetcher = FetcherFactory.newFetcher()
     private val baseUrl = "https://events.ccc.de/"

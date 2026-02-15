@@ -56,7 +56,7 @@ class BoudiccaEventCollectorsApp(
             applicationContext
                 .getBeanNamesForAnnotation<BoudiccaEventCollector>()
                 .associateBy { beanName ->
-                    applicationContext.findAnnotationOnBean<BoudiccaEventCollector>(beanName)?.value
+                    applicationContext.findAnnotationOnBean<BoudiccaEventCollector>(beanName)?.collectorTypeName
                         ?: beanName
                 }
 

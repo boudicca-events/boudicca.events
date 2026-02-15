@@ -7,7 +7,7 @@ import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
 
-@BoudiccaEventCollector("jku")
+@BoudiccaEventCollector(collectorTypeName = "jku")
 class JkuEventCollector : IcalCollector("jku") {
     private val baseUrl = "https://www.jku.at/studium/studieninteressierte/messen-events/"
 

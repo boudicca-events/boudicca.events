@@ -1,7 +1,7 @@
 package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
-import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.api.eventcollector.SimpleTwoStepEventCollector
 import base.boudicca.api.eventcollector.annotations.BoudiccaEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.api.eventcollector.util.structuredEvent
@@ -13,8 +13,8 @@ import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 
-@BoudiccaEventCollector("tabakfabriklinz")
-class TabakfabrikLinzCollector : TwoStepEventCollector<String>("tabakfabriklinz") {
+@BoudiccaEventCollector(collectorTypeName = "tabakfabriklinz")
+class TabakfabrikLinzCollector : SimpleTwoStepEventCollector<String>() {
     private val fetcher = FetcherFactory.newFetcher()
     private val baseUrl = "https://tabakfabrik-linz.at/"
     private val locationName = "Tabakfabrik Linz"

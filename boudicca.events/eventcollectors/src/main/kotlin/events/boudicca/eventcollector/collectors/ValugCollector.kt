@@ -11,7 +11,7 @@ import base.boudicca.model.structured.StructuredEvent
 /**
  * VorAlpen Linux User Group
  */
-@BoudiccaEventCollector("valug")
+@BoudiccaEventCollector(collectorTypeName = "valug")
 class ValugCollector : IcalCollector("valug") {
     private val fetcher = FetcherFactory.newFetcher()
     private val baseUrl = "https://valug.at/"

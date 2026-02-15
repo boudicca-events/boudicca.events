@@ -13,7 +13,7 @@ import java.net.URI
 /**
  * Händisch zusammengesuchte Chaosnahe Events
  */
-@BoudiccaEventCollector("chaosevents_clerie_de")
+@BoudiccaEventCollector(collectorTypeName = "chaosevents_clerie_de")
 class ClerieDeChaosEventsCollector : IcalCollector("chaosevents.clerie.de") {
     private val fetcher = FetcherFactory.newFetcher()
     private val baseUrl = "https://chaosevents.clerie.de/"

@@ -1,7 +1,7 @@
 package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
-import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.api.eventcollector.SimpleTwoStepEventCollector
 import base.boudicca.api.eventcollector.annotations.BoudiccaEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.api.eventcollector.util.structuredEvent
@@ -16,8 +16,8 @@ import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-@BoudiccaEventCollector("fraeuleinflorentine")
-class FraeuleinFlorentineCollector : TwoStepEventCollector<Pair<Element, String?>>("fraeuleinflorentine") {
+@BoudiccaEventCollector(collectorTypeName = "fraeuleinflorentine")
+class FraeuleinFlorentineCollector : SimpleTwoStepEventCollector<Pair<Element, String?>>() {
     private val fetcher = FetcherFactory.newFetcher()
     private val baseUrl = "https://frl-florentine.at/eventkalender/"
 

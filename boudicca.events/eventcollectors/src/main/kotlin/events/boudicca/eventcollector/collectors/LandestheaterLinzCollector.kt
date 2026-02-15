@@ -1,7 +1,7 @@
 package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
-import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.api.eventcollector.SimpleTwoStepEventCollector
 import base.boudicca.api.eventcollector.annotations.BoudiccaEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.api.eventcollector.util.structuredEvent
@@ -18,8 +18,8 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
-@BoudiccaEventCollector("landestheaterlinz")
-class LandestheaterLinzCollector : TwoStepEventCollector<LandestheaterLinzCollector.LandestheaterEventData>("landestheater linz") {
+@BoudiccaEventCollector(collectorTypeName = "landestheaterlinz")
+class LandestheaterLinzCollector : SimpleTwoStepEventCollector<LandestheaterLinzCollector.LandestheaterEventData>() {
     private val baseUrl = "https://www.landestheater-linz.at"
 
     data class LandestheaterEventData(

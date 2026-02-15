@@ -1,5 +1,6 @@
 package base.boudicca.api.eventcollector
 
+import base.boudicca.api.eventcollector.annotations.BoudiccaEventCollector
 import base.boudicca.api.eventcollector.config.EventCollectorBaseConfig
 import base.boudicca.model.Event
 import base.boudicca.model.structured.StructuredEvent
@@ -7,6 +8,7 @@ import org.springframework.boot.context.properties.bind.Bindable
 import org.springframework.boot.context.properties.bind.Binder
 import org.springframework.boot.context.properties.source.MapConfigurationPropertySource
 import kotlin.reflect.KClass
+import kotlin.reflect.full.findAnnotation
 
 /**
  * Base interface of EventCollectors
@@ -14,11 +16,15 @@ import kotlin.reflect.KClass
  */
 abstract class EventCollector<T : EventCollectorBaseConfig>(
     // unfortunately this KClass is needed as parameter, because otherwise the type information is lost at runtime
-    val configClass: KClass<T>,
+    open val configClass: KClass<T>,
 ) {
     lateinit var config: T
 
-    abstract fun getName(): String
+    open fun getName(): String {
+        val annotation = this::class.findAnnotation<BoudiccaEventCollector>()
+        requireNotNull(annotation) { "Every EventCollector must be annotated with @BoudiccaEventCollector" }
+        return annotation.collectorTypeName
+    }
 
     /**
      * Will take a name and generic properties and instantiate an instance of the config class for the eventcollector

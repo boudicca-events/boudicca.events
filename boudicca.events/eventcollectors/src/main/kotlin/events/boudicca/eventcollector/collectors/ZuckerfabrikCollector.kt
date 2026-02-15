@@ -14,22 +14,23 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 
-@BoudiccaEventCollector("zuckerfabrik")
-class ZuckerfabrikCollector : TwoStepEventCollector<String>("zuckerfabrik") {
+@BoudiccaEventCollector(collectorTypeName = "zuckerfabrik")
+class ZuckerfabrikCollector : TwoStepEventCollector<String, ZuckerfabrikCollector.ZuckerfabrikCollectorConfig>(ZuckerfabrikCollectorConfig::class) {
     private val fetcher = FetcherFactory.newFetcher()
 
-    class Config : EventCollectorBaseConfig("") {
-        var baseUrl: String = "https://www.zuckerfabrik.at"
-    }
+    data class ZuckerfabrikCollectorConfig(
+        override val name: String,
+        var baseUrl: String = "https://www.zuckerfabrik.at",
+    ) : EventCollectorBaseConfig(name)
 
     override fun getAllUnparsedEvents(): List<String> {
-        val baseUrl = (config as? Config)?.baseUrl ?: "https://www.zuckerfabrik.at"
+        val baseUrl = config.baseUrl
         val document = Jsoup.parse(fetcher.fetchUrl("$baseUrl/termine-tickets/"))
         return document.select("div#storycontent > a.bookmarklink").map { it.attr("href") }
     }
 
     override fun parseMultipleStructuredEvents(event: String): List<StructuredEvent?> {
-        val baseUrl = (config as? Config)?.baseUrl ?: "https://www.zuckerfabrik.at"
+        val baseUrl = config.baseUrl
         val eventUrl = if (event.startsWith("http")) event else "$baseUrl$event"
         val eventSite = Jsoup.parse(fetcher.fetchUrl(eventUrl))
 
@@ -58,7 +59,7 @@ class ZuckerfabrikCollector : TwoStepEventCollector<String>("zuckerfabrik") {
             withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, pictureCopyright)
             withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
             withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Zuckerfabrik")
-            val baseUrl = (config as? Config)?.baseUrl ?: "https://www.zuckerfabrik.at"
+            val baseUrl = (config as? ZuckerfabrikCollectorConfig)?.baseUrl ?: "https://www.zuckerfabrik.at"
             withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse(baseUrl))
             withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Enns")
             withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(eventUrl))

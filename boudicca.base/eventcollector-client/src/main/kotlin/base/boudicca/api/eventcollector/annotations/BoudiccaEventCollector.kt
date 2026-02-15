@@ -6,5 +6,5 @@ import org.springframework.stereotype.Component
 @Retention(AnnotationRetention.RUNTIME)
 @Component
 annotation class BoudiccaEventCollector(
-    val value: String,
+    val collectorTypeName: String,
 )

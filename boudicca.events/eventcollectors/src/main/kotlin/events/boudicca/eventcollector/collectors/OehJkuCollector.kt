@@ -1,7 +1,7 @@
 package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
-import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.api.eventcollector.SimpleTwoStepEventCollector
 import base.boudicca.api.eventcollector.annotations.BoudiccaEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
@@ -16,8 +16,8 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-@BoudiccaEventCollector("oehjku")
-class OehJkuCollector : TwoStepEventCollector<String>("oehjku") {
+@BoudiccaEventCollector(collectorTypeName = "oehjku")
+class OehJkuCollector : SimpleTwoStepEventCollector<String>() {
     private val fetcher = FetcherFactory.newFetcher()
     private val baseUrl = "https://oeh.jku.at/"
 

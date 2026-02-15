@@ -1,7 +1,7 @@
 package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
-import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.api.eventcollector.SimpleTwoStepEventCollector
 import base.boudicca.api.eventcollector.annotations.BoudiccaEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
@@ -18,8 +18,8 @@ import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
-@BoudiccaEventCollector("arenawien")
-class ArenaWienCollector : TwoStepEventCollector<ArenaWienCollector.HalfEvent>("arenawien") {
+@BoudiccaEventCollector(collectorTypeName = "arenawien")
+class ArenaWienCollector : SimpleTwoStepEventCollector<ArenaWienCollector.HalfEvent>() {
     private val baseUrl = "https://arena.wien"
     private val fetcher = FetcherFactory.newFetcher()
     private val jsonParser = Parser.default()

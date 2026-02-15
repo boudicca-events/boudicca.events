@@ -14,7 +14,7 @@ import java.util.*
 /**
  * fhLUG: Fachhochschulcampus Hagenberg Linux User Group
  */
-@BoudiccaEventCollector("fhLUG")
+@BoudiccaEventCollector(collectorTypeName = "fhLUG")
 class FhLugCollector : IcalCollector("fhLUG") {
     private val fetcher = FetcherFactory.newFetcher()
     private val baseUrl = "https://fhlug.at/"

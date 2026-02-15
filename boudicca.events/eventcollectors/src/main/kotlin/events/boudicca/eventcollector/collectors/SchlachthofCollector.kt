@@ -1,7 +1,7 @@
 package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
-import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.api.eventcollector.SimpleTwoStepEventCollector
 import base.boudicca.api.eventcollector.annotations.BoudiccaEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.api.eventcollector.util.structuredEvent
@@ -11,8 +11,8 @@ import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 
-@BoudiccaEventCollector("schlachthof")
-class SchlachthofCollector : TwoStepEventCollector<Element>("schlachthof") {
+@BoudiccaEventCollector(collectorTypeName = "schlachthof")
+class SchlachthofCollector : SimpleTwoStepEventCollector<Element>() {
     private val baseUrl = "https://www.schlachthofwels.at"
 
     override fun getAllUnparsedEvents(): List<Element> {

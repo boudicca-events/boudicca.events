@@ -10,6 +10,7 @@ dependencies {
     api(libs.spring.boot.starter.web)
     api(libs.handlebars)
     api(libs.handlebars.springmvc)
+    implementation(kotlin("reflect"))
     implementation(libs.otel.logback)
     implementation(project(":boudicca.base:publisher-client"))
     implementation(project(":boudicca.base:ingest-client"))

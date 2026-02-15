@@ -1,7 +1,7 @@
 package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
-import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.api.eventcollector.SimpleTwoStepEventCollector
 import base.boudicca.api.eventcollector.annotations.BoudiccaEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.api.eventcollector.util.structuredEvent
@@ -14,8 +14,8 @@ import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
 import java.io.StringReader
 
-@BoudiccaEventCollector("ennsevents")
-class EnnsEventsCollector : TwoStepEventCollector<JsonObject>("ennsevents") {
+@BoudiccaEventCollector(collectorTypeName = "ennsevents")
+class EnnsEventsCollector : SimpleTwoStepEventCollector<JsonObject>() {
     private val baseUrl = "https://erlebe.enns.at/"
 
     override fun getAllUnparsedEvents(): List<JsonObject> {

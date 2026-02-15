@@ -4,13 +4,13 @@ import base.boudicca.api.eventcollector.config.EventCollectorBaseConfig
 import base.boudicca.model.Event
 import base.boudicca.model.structured.StructuredEvent
 import io.github.oshai.kotlinlogging.KotlinLogging
+import kotlin.reflect.KClass
 
-abstract class TwoStepEventCollector<T>(
-    private var name: String,
-) : EventCollector<EventCollectorBaseConfig>(EventCollectorBaseConfig::class) {
+abstract class TwoStepEventCollector<T, U : EventCollectorBaseConfig>(
+    // unfortunately this KClass is needed as parameter, because otherwise the type information is lost at runtime
+    override val configClass: KClass<U>,
+) : EventCollector<U>(configClass) {
     private val logger = KotlinLogging.logger {}
-
-    override fun getName(): String = name
 
     override fun collectEvents(): List<Event> {
         try {

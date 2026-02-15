@@ -1,7 +1,7 @@
 package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
-import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.api.eventcollector.SimpleTwoStepEventCollector
 import base.boudicca.api.eventcollector.annotations.BoudiccaEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
@@ -17,8 +17,8 @@ import java.io.StringReader
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
-@BoudiccaEventCollector("kupfticket")
-class KupfTicketCollector : TwoStepEventCollector<String>("kupfticket") {
+@BoudiccaEventCollector(collectorTypeName = "kupfticket")
+class KupfTicketCollector : SimpleTwoStepEventCollector<String>() {
     private val baseUrl = "https://kupfticket.com/events"
     private val fetcher = FetcherFactory.newFetcher()
 

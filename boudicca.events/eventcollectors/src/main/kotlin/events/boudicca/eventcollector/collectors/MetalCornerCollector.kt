@@ -1,7 +1,7 @@
 package events.boudicca.eventcollector.collectors
 
 import base.boudicca.SemanticKeys
-import base.boudicca.api.eventcollector.TwoStepEventCollector
+import base.boudicca.api.eventcollector.SimpleTwoStepEventCollector
 import base.boudicca.api.eventcollector.annotations.BoudiccaEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.api.eventcollector.util.structuredEvent
@@ -12,8 +12,8 @@ import base.boudicca.model.Registration
 import base.boudicca.model.structured.StructuredEvent
 import org.jsoup.Jsoup
 
-@BoudiccaEventCollector("metalcorner")
-class MetalCornerCollector : TwoStepEventCollector<Pair<String, String>>("metalcorner") {
+@BoudiccaEventCollector(collectorTypeName = "metalcorner")
+class MetalCornerCollector : SimpleTwoStepEventCollector<Pair<String, String>>() {
     private val fetcher = FetcherFactory.newFetcher()
     private val baseUrl = "https://www.escape-metalcorner.at/"
 

@@ -15,7 +15,7 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
-@BoudiccaEventCollector("technologieplauscherl")
+@BoudiccaEventCollector(collectorTypeName = "technologieplauscherl")
 class TechnologiePlauscherlCollector : EventCollector<EventCollectorBaseConfig>(EventCollectorBaseConfig::class) {
     override fun getName(): String = "technologieplauscherl"
 

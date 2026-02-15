@@ -56,3 +56,6 @@ boudicca:
             -   type: viperroom
             -   type: wissensturm
             -   type: zuckerfabrik
+                name: zuckerfabrik1
+            -   type: zuckerfabrik
+                name: zuckerfabrik2

@@ -75,7 +75,7 @@ class EventCollectionRunner(
             tracer
                 .spanBuilder("single collection")
                 .setSpanKind(SpanKind.INTERNAL)
-                .setAttribute("collector", eventCollector.getName())
+                .setAttribute("collector", eventCollector.displayName())
                 .setParent(
                     Context
                         .current()
@@ -89,7 +89,7 @@ class EventCollectionRunner(
                 Collections.getCurrentSingleCollection()!!.totalEventsCollected = events.size
                 validateCollection(eventCollector, events)
                 try {
-                    val postProcessedEvents = events.map { postProcess(it, eventCollector.getName()) }
+                    val postProcessedEvents = events.map { postProcess(it, eventCollector.displayName()) }
                     val enrichedEvents = enrich(enricherInterface, postProcessedEvents)
                     retry(logger) {
                         ingestionInterface.ingestEvents(enrichedEvents)
@@ -135,7 +135,7 @@ class EventCollectionRunner(
         }
         for (field in allFields.minus(nonBlankFields)) {
             logger.warn {
-                "eventcollector ${eventCollector.getName()} has blank values for all events for field $field"
+                "eventcollector ${eventCollector.displayName()} has blank values for all events for field $field"
             }
         }
     }

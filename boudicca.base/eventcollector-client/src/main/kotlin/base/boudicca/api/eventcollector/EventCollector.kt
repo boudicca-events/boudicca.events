@@ -4,6 +4,7 @@ import base.boudicca.api.eventcollector.annotations.BoudiccaEventCollector
 import base.boudicca.api.eventcollector.config.EventCollectorBaseConfig
 import base.boudicca.model.Event
 import base.boudicca.model.structured.StructuredEvent
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.boot.context.properties.bind.Bindable
 import org.springframework.boot.context.properties.bind.Binder
 import org.springframework.boot.context.properties.source.MapConfigurationPropertySource
@@ -18,9 +19,16 @@ abstract class EventCollector<T : EventCollectorBaseConfig>(
     // unfortunately this KClass is needed as parameter, because otherwise the type information is lost at runtime
     open val configClass: KClass<T>,
 ) {
+    companion object {
+        private val logger = KotlinLogging.logger {}
+    }
+
+
     lateinit var config: T
 
-    open fun getName(): String {
+    open fun displayName() = config.name
+
+    open fun defaultDisplayName(): String {
         val annotation = this::class.findAnnotation<BoudiccaEventCollector>()
         requireNotNull(annotation) { "Every EventCollector must be annotated with @BoudiccaEventCollector" }
         return annotation.collectorTypeName
@@ -38,7 +46,7 @@ abstract class EventCollector<T : EventCollectorBaseConfig>(
     ) {
         // the name is a special case, so it can be overridden in the config without having to declare an array for each eventcollector
         val mutableProps = properties.toMutableMap()
-        val nameOverride = name ?: getName()
+        val nameOverride = name ?: defaultDisplayName()
         mutableProps["name"] = nameOverride
 
         // ✨✨ magic ✨✨

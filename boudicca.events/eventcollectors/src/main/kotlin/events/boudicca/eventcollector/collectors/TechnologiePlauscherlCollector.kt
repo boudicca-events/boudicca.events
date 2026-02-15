@@ -17,7 +17,7 @@ import java.time.format.DateTimeFormatter
 
 @BoudiccaEventCollector(collectorTypeName = "technologieplauscherl")
 class TechnologiePlauscherlCollector : EventCollector<EventCollectorBaseConfig>(EventCollectorBaseConfig::class) {
-    override fun getName(): String = "technologieplauscherl"
+    override fun defaultDisplayName(): String = "technologieplauscherl"
 
     override fun collectStructuredEvents(): List<StructuredEvent> {
         val url = "https://technologieplauscherl.at/feed"

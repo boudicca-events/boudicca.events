@@ -52,12 +52,17 @@ class BoudiccaEventCollectorsApp(
         // This is a bit of spring black magic, but it allows us to configure eventcollectors at runtime
         // and run multiple collectors of the same type at once.
         // First we find all registered collector beans.
-        val typeToBeanName =
+        val typeToBeanClass =
             applicationContext
                 .getBeanNamesForAnnotation<BoudiccaEventCollector>()
-                .associateBy { beanName ->
-                    applicationContext.findAnnotationOnBean<BoudiccaEventCollector>(beanName)?.collectorTypeName
-                        ?: beanName
+                .associate { beanName ->
+                    val type =
+                        applicationContext.findAnnotationOnBean<BoudiccaEventCollector>(beanName)?.collectorTypeName
+                            ?: beanName
+                    val clazz =
+                        applicationContext.getType(beanName)
+                            ?: error("Could not get type for bean $beanName")
+                    type to clazz
                 }
 
         // now we iterate over all the configurations
@@ -65,13 +70,13 @@ class BoudiccaEventCollectorsApp(
             .filter { it.enabled }
             .mapNotNull { config ->
                 // get the correct bean for the type
-                val beanName = typeToBeanName[config.type]
-                if (beanName == null) {
+                val beanClass = typeToBeanClass[config.type]
+                if (beanClass == null) {
                     logger.warn { "Collector of type ${config.type} not found" }
                     null
                 } else {
                     // create a new instance of the collector with the given configuration
-                    val collector = applicationContext.getBean(beanName) as EventCollector<*>
+                    val collector = applicationContext.autowireCapableBeanFactory.createBean(beanClass) as EventCollector<*>
                     collector.configure(config.name, config.properties)
                     collector
                 }

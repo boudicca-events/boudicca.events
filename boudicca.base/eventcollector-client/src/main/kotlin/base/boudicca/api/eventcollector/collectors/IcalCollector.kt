@@ -16,7 +16,7 @@ import java.util.*
 abstract class IcalCollector(
     private val name: String,
 ) : EventCollector<EventCollectorBaseConfig>(EventCollectorBaseConfig::class) {
-    override fun getName(): String = name
+    override fun defaultDisplayName(): String = name
 
     override fun collectStructuredEvents(): List<StructuredEvent> {
         val icalResources = getAllIcalResources()

@@ -29,12 +29,10 @@ data class LinzTermineCollectorConfig(
     val locationBaseUrl: String = "https://www.linztermine.at/schnittstelle/downloads/locations_xml.php",
 ) : EventCollectorBaseConfig(name)
 
-@BoudiccaEventCollector(collectorTypeName = "linztermine")
+@BoudiccaEventCollector("linztermine")
 class LinzTermineCollector : EventCollector<LinzTermineCollectorConfig>(LinzTermineCollectorConfig::class) {
     private val fetcher = FetcherFactory.newFetcher()
     private val logger = KotlinLogging.logger {}
-
-    override fun getName(): String = "linz termine"
 
     override fun collectStructuredEvents(): List<StructuredEvent> {
         val locations = parseLocations()

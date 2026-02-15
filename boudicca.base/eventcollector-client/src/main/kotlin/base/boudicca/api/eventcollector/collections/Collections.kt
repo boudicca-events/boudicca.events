@@ -37,7 +37,7 @@ object Collections {
         if (currentSingleCollections.get() != null) {
             logger.error { "a current single collection is already set, this seems like a bug" }
         }
-        val singleCollection = SingleCollection(collector.getName())
+        val singleCollection = SingleCollection(collector.displayName())
         singleCollection.startTime = System.currentTimeMillis()
         currentFullCollection.get()?.singleCollections?.add(singleCollection)
         currentSingleCollections.set(singleCollection)

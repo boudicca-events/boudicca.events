@@ -18,7 +18,7 @@ abstract class TwoStepEventCollector<T, U : EventCollectorBaseConfig>(
             try {
                 allEvents = getAllUnparsedEvents()
             } catch (e: Exception) {
-                logger.error(e) { "collector ${getName()} throw exception while getting all unparsed events" }
+                logger.error(e) { "collector ${displayName()} throw exception while getting all unparsed events" }
                 return emptyList()
             }
 
@@ -29,12 +29,12 @@ abstract class TwoStepEventCollector<T, U : EventCollectorBaseConfig>(
                         try {
                             val parsedEvents = parseMultipleEvents(it)
                             if (parsedEvents == null) {
-                                logger.error { "collector ${getName()} returned null while parsing event: $it" }
+                                logger.error { "collector ${displayName()} returned null while parsing event: $it" }
                             } else {
                                 events = parsedEvents
                             }
                         } catch (e: Exception) {
-                            logger.error(e) { "collector ${getName()} throw exception while parsing event: $it" }
+                            logger.error(e) { "collector ${displayName()} throw exception while parsing event: $it" }
                         }
                         events.filterNotNull()
                     }

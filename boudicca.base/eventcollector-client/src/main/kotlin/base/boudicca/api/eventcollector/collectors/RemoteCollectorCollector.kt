@@ -16,7 +16,7 @@ class RemoteCollectorCollector(
     private val url: String,
     private val name: String? = null,
 ) : EventCollector<EventCollectorBaseConfig>(EventCollectorBaseConfig::class) {
-    override fun getName(): String = name ?: "remote collector: $url"
+    override fun defaultDisplayName(): String = name ?: "remote collector: $url"
 
     override fun collectEvents(): List<Event> {
         Collections.startHttpCall(url)

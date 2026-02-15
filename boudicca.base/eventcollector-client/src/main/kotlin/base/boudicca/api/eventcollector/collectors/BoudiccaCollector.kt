@@ -15,7 +15,7 @@ class BoudiccaCollector(
     private val url: String,
     private val name: String? = null,
 ) : EventCollector<EventCollectorBaseConfig>(EventCollectorBaseConfig::class) {
-    override fun getName(): String = name ?: "boudicca: $url"
+    override fun defaultDisplayName(): String = name ?: "boudicca: $url"
 
     override fun collectEvents(): List<Event> {
         Collections.startHttpCall(url)

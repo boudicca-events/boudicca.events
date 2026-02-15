@@ -23,7 +23,6 @@ abstract class EventCollector<T : EventCollectorBaseConfig>(
         private val logger = KotlinLogging.logger {}
     }
 
-
     lateinit var config: T
 
     open fun displayName() = config.name

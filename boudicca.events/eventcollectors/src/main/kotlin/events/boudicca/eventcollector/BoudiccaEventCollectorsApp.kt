@@ -84,7 +84,12 @@ class BoudiccaEventCollectorsApp(
     }
 
     fun initRunner(): EventCollectionRunner {
-        GlobalOpenTelemetry.set(otel)
+        try {
+            GlobalOpenTelemetry.set(otel)
+        } catch (e: IllegalStateException) {
+            logger.warn(e) { "GlobalOpenTelemetry already set" }
+        }
+        base.boudicca.api.eventcollector.util.FetcherFactory.otel = otel
         return EventCollectionRunner(otel)
     }
 

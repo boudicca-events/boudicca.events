@@ -59,7 +59,7 @@ class ZuckerfabrikCollector : TwoStepEventCollector<String, ZuckerfabrikCollecto
             withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, pictureCopyright)
             withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
             withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Zuckerfabrik")
-            val baseUrl = (config as? ZuckerfabrikCollectorConfig)?.baseUrl ?: "https://www.zuckerfabrik.at"
+            val baseUrl = config.baseUrl
             withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse(baseUrl))
             withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Enns")
             withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(eventUrl))

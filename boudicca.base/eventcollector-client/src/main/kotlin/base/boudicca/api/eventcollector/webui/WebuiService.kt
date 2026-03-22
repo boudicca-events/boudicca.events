@@ -71,10 +71,8 @@ class WebuiService(
         return data
     }
 
-    private fun mapFullCollectionToFrontEnd(fullCollection: FullCollection): Map<String, *> {
-        val singleCollections = fullCollection.singleCollections.associateBy { it.collectorName }
-
-        return mapOf(
+    private fun mapFullCollectionToFrontEnd(fullCollection: FullCollection): Map<String, *> =
+        mapOf(
             "id" to fullCollection.id.toString(),
             "duration" to formatDuration(fullCollection.startTime, fullCollection.endTime),
             "startEndTime" to formatStartEndTime(fullCollection.startTime, fullCollection.endTime),
@@ -86,7 +84,6 @@ class WebuiService(
             "singleCollections" to
                 fullCollection.singleCollections.map { mapSingleCollectionToFrontend(it.collectorName, it) },
         )
-    }
 
     private fun mapSingleCollectionToFrontend(it: SingleCollection): Map<String, *> = mapSingleCollectionToFrontend(it.collectorName, it)
 

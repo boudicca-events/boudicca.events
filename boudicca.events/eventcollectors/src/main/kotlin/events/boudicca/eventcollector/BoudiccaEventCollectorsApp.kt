@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Profile
 import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.scheduling.annotation.Scheduled
 
-@Profile("!debug")
+@Profile("!debug & !localFetch")
 @SpringBootApplication
 @EnableScheduling
 class BoudiccaEventCollectorsApp(

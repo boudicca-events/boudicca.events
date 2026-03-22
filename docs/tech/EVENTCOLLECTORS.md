@@ -56,7 +56,7 @@ TODO
 
 ### Collectors
 
-Each collector has at least a type, a name and a generic "properties" array.
+Each collector has at least a type, a name and a generic `properties` map (key/value strings).
 
 To configure collectors in application.yml:
 
@@ -72,8 +72,8 @@ boudicca:
             -   type: linztermine
                 name: LinzTermine (custom name)
                 properties:
-                    -   eventsBaseUrl: https://www.linztermine.at/schnittstelle/downloads/events_xml.php
-                    -   locationBaseUrl: https://www.linztermine.at/schnittstelle/downloads/locations_xml.php
+                    eventsBaseUrl: https://www.linztermine.at/schnittstelle/downloads/events_xml.php
+                    locationBaseUrl: https://www.linztermine.at/schnittstelle/downloads/locations_xml.php
             -   type: metalcorner
             - ...
 ```

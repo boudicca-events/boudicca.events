@@ -12,7 +12,7 @@ dependencies {
 }
 
 springBoot {
-    mainClass.set("events.boudicca.eventcollector.BoudiccaEventCollectorsKt")
+    mainClass.set("events.boudicca.eventcollector.BoudiccaEventCollectorsAppKt")
 }
 
 docker {

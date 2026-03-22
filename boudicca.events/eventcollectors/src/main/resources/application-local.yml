@@ -31,8 +31,8 @@ boudicca:
             -   type: linztermine
                 name: LinzTermine (custom name)
                 properties:
-                    -   eventsBaseUrl: https://www.linztermine.at/schnittstelle/downloads/events_xml.php
-                    -   locationBaseUrl: https://www.linztermine.at/schnittstelle/downloads/locations_xml.php
+                    eventsBaseUrl: https://www.linztermine.at/schnittstelle/downloads/events_xml.php
+                    locationBaseUrl: https://www.linztermine.at/schnittstelle/downloads/locations_xml.php
             -   type: metalcorner
             -   type: museumArbeitswelt
             -   type: oehjku

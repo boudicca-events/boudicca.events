@@ -24,7 +24,6 @@ import org.springframework.test.context.ActiveProfiles
 )
 @ActiveProfiles("debug")
 class BoudiccaEventCollectorsAppOtelTest {
-
     @Autowired
     private lateinit var otel: OpenTelemetry
 
@@ -34,11 +33,7 @@ class BoudiccaEventCollectorsAppOtelTest {
         // to verify that the environment (MonitoringAutoConfiguration) provides a working otel instance
         // and that our assignment to FetcherFactory works.
 
-        try {
-            GlobalOpenTelemetry.set(otel)
-        } catch (e: IllegalStateException) {
-            // ignore if already set
-        }
+        GlobalOpenTelemetry.set(otel)
         FetcherFactory.otel = otel
 
         // Ensure otel is not Noop

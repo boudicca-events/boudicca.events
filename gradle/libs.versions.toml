@@ -1,6 +1,6 @@
 [versions]
 kotlin = "2.3.21"
-detekt = "2.0.0-alpha.1"
+detekt = "2.0.0-alpha.3"
 ktlint = "14.0.1"
 jacoco = "0.8.14"
 jackson = "2.19.2"

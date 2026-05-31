@@ -2,7 +2,7 @@ package base.boudicca.api.eventcollector.collectors
 
 import base.boudicca.api.eventcollector.EventCollector
 import base.boudicca.api.eventcollector.collections.Collections
-import base.boudicca.api.eventdb.publisher.EventDbPublisherClient
+import base.boudicca.api.eventdb.publisher.DefaultEventDbPublisherClient
 import base.boudicca.model.Event
 import java.net.HttpURLConnection
 
@@ -19,7 +19,7 @@ class BoudiccaCollector(
     override fun collectEvents(): List<Event> {
         Collections.startHttpCall(url)
         try {
-            val events = EventDbPublisherClient(url).getAllEvents().toList()
+            val events = DefaultEventDbPublisherClient(url).getAllEvents().toList()
             Collections.endHttpCall(HttpURLConnection.HTTP_OK)
             return events
         } catch (e: Exception) {

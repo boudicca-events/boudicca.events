@@ -5,6 +5,16 @@ plugins {
 }
 
 version = file("version.txt").readText()
+
+dependencyLocking {
+    lockAllConfigurations()
+}
+
+tasks.register("writeLocks") {
+    description = "Regenerates the dependency lock file for this project (run with --write-locks)"
+    group = "build setup"
+    dependsOn("dependencies")
+}
 ext["jvmVersion"] = 21 // be careful to keep this in sync with the buildSrc/build.gradle.kts
 
 repositories {

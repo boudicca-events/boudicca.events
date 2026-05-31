@@ -4,6 +4,7 @@ import base.boudicca.model.Entry
 import io.swagger.v3.oas.annotations.OpenAPIDefinition
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
+import java.util.UUID
 import javax.ws.rs.Consumes
 import javax.ws.rs.POST
 import javax.ws.rs.Path
@@ -40,4 +41,19 @@ interface IngestionApi {
     @Path("entries")
     @Consumes("application/json")
     fun addEntries(entries: List<Entry>)
+
+    @Operation(
+        responses = [
+            ApiResponse(
+                responseCode = "200",
+                description = "marks the given boudicca.ids as duplicates of each other",
+                useReturnTypeSchema = true,
+            ),
+        ],
+        tags = ["duplicates"],
+    )
+    @POST
+    @Path("duplicates")
+    @Consumes("application/json")
+    fun markDuplicates(duplicateIds: List<UUID>)
 }

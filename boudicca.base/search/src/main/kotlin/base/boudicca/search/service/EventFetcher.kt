@@ -1,5 +1,6 @@
 package base.boudicca.search.service
 
+import base.boudicca.api.eventdb.publisher.DefaultEventDbPublisherClient
 import base.boudicca.api.eventdb.publisher.EventDbPublisherClient
 import base.boudicca.model.Entry
 import base.boudicca.search.BoudiccaSearchProperties
@@ -15,7 +16,7 @@ class EventDBEventFetcher(
 
     override fun fetchAllEvents(): Set<Entry> = publisherApi.getAllEntries()
 
-    private fun createEventPublisherApi(): EventDbPublisherClient = EventDbPublisherClient(boudiccaSearchProperties.eventDB.url, otel)
+    private fun createEventPublisherApi(): DefaultEventDbPublisherClient = DefaultEventDbPublisherClient(boudiccaSearchProperties.eventDB.url, otel)
 }
 
 fun interface EventFetcher {

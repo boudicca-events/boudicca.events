@@ -60,7 +60,7 @@ class KupfTicketCollector : TwoStepEventCollector<String>("kupfticket") {
         val pictureUrl = eventJson.lookup<String>("image.src").first()
         val pictureAlt = eventJson.lookup<String>("image.description").first().trim()
         var pictureCopyright = eventJson.lookup<String>("image.credits").first().ifBlank { "KupfTicket" }
-        pictureCopyright = pictureCopyright.replace(Regex("""^\s?c\s|\(c\)|©|@|:"""), "").trim()
+        pictureCopyright = pictureCopyright.replace(Regex("""(?:^\s?c\s|\(c\)|©|@|:)"""), "").trim()
 
         val (locationName, locationAddress) = splitLocation(location)
         val cityRegex = """.*,\s\d{4,5}\s(?<city>\D*),""".toRegex()

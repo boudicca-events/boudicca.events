@@ -48,7 +48,7 @@
     
     $ cat .env
     BASE_URL=https://plausible.example.com
-    SECRET_KEY_BASE=As0fZsJlUpuFYSthRjT5Yflg/NlxkFKPRro72xMLXF8yInZ60s6xGGXYVqml+XN1
+    SECRET_KEY_BASE=<generated-random-password>
     ```
 
     Make sure `$BASE_URL` is set to the actual domain where you plan to host the service. The domain must have a DNS entry pointing to your server for proper resolution and automatic Let's Encrypt TLS certificate issuance. More on that in the next step.

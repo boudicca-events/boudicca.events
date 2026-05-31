@@ -78,7 +78,7 @@ class LinzTermineCollector : EventCollector {
                 }
                 val description = website.select("span.content-description").text()
                 val pictureUrl =
-                    if (!website.select("div.letterbox > img").isEmpty()) {
+                    if (website.select("div.letterbox > img").isNotEmpty()) {
                         "https://www.linztermine.at" + website.select("div.letterbox > img").attr("src")
                     } else {
                         ""

@@ -2,7 +2,7 @@ package base.boudicca.api.eventcollector.collectors
 
 import base.boudicca.api.eventcollector.EventCollector
 import base.boudicca.api.eventcollector.collections.Collections
-import base.boudicca.api.remotecollector.RemoteCollectorClient
+import base.boudicca.api.remotecollector.DefaultRemoteCollectorClient
 import base.boudicca.api.remotecollector.model.HttpCall
 import base.boudicca.model.Event
 import java.net.HttpURLConnection
@@ -21,7 +21,7 @@ class RemoteCollectorCollector(
         Collections.startHttpCall(url)
         val eventCollection =
             try {
-                val eventCollection = RemoteCollectorClient(url).collectEvents()
+                val eventCollection = DefaultRemoteCollectorClient(url).collectEvents()
                 Collections.endHttpCall(HttpURLConnection.HTTP_OK)
                 eventCollection
             } catch (e: Exception) {

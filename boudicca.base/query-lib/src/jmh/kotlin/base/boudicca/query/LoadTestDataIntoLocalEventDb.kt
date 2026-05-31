@@ -1,6 +1,6 @@
 package base.boudicca.query
 
-import base.boudicca.api.eventdb.ingest.EventDbIngestClient
+import base.boudicca.api.eventdb.ingest.DefaultEventDbIngestClient
 import base.boudicca.model.Entry
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.json.JsonMapper
@@ -23,6 +23,6 @@ fun main() {
             object : TypeReference<List<Entry>>() {},
         )
 
-    val ingestClient = EventDbIngestClient("http://localhost:8081", "ingest", "ingest")
+    val ingestClient = DefaultEventDbIngestClient("http://localhost:8081", "ingest", "ingest")
     ingestClient.ingestEntries(storeRead)
 }

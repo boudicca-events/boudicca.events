@@ -1,7 +1,7 @@
 package base.boudicca.query
 
 import base.boudicca.SemanticKeys
-import base.boudicca.api.eventdb.publisher.EventDbPublisherClient
+import base.boudicca.api.eventdb.publisher.DefaultEventDbPublisherClient
 import base.boudicca.model.Entry
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
@@ -40,7 +40,7 @@ private fun writeTestData(testData: Pair<List<Map<String, String>>, Map<String, 
 
 object TestDataGenerator {
     fun getTestData(): Pair<List<Map<String, String>>, Map<String, Metadata>> {
-        val publisherClient = EventDbPublisherClient("https://eventdb.boudicca.events")
+        val publisherClient = DefaultEventDbPublisherClient("https://eventdb.boudicca.events")
 
         val originalEvents = publisherClient.getAllEntries()
 

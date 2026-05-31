@@ -1,6 +1,6 @@
 package base.boudicca.api.eventcollector.runner
 
-import base.boudicca.api.enricher.EnricherClient
+import base.boudicca.api.enricher.DefaultEnricherClient
 import base.boudicca.api.eventcollector.Configuration
 import base.boudicca.model.Event
 import io.opentelemetry.api.OpenTelemetry
@@ -12,7 +12,7 @@ fun interface RunnerEnricherInterface {
             if (enricherUrl.isNullOrBlank()) {
                 return NoopRunnerEnricher
             }
-            val enricher = EnricherClient(enricherUrl, otel)
+            val enricher = DefaultEnricherClient(enricherUrl, otel)
             return BoudiccaRunnerEnricherInterface(enricher)
         }
     }

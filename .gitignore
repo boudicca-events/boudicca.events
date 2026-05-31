@@ -38,4 +38,11 @@ testdata.dump
 /boudicca.store
 /fetcher.cache
 
+# Claude/AI Stuff
+.claude/
+claude/
+.claude-volumes
+CLAUDE.md
+AGENTS.md
+
 out/

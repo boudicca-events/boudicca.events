@@ -33,7 +33,7 @@ class EventDbDuplicatesClient(
                     JavaHttpClientTelemetry
                         .builder(otel)
                         .build()
-                        .newHttpClient(super.getHttpClient())
+                        .wrap(super.getHttpClient())
             }
         apiClient.updateBaseUri(eventDbUrl)
         apiClient.setRequestInterceptor {

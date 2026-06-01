@@ -28,7 +28,7 @@ class EventDbPublisherClient(
                     JavaHttpClientTelemetry
                         .builder(otel)
                         .build()
-                        .newHttpClient(super.getHttpClient())
+                        .wrap(super.getHttpClient())
             }
         apiClient.updateBaseUri(eventDbUrl)
         publisherApi = PublisherApi(apiClient)

@@ -44,7 +44,7 @@ class PictureProxyServiceImpl(
         JavaHttpClientTelemetry
             .builder(otel)
             .build()
-            .newHttpClient(
+            .wrap(
                 HttpClient
                     .newBuilder()
                     .followRedirects(HttpClient.Redirect.NORMAL)

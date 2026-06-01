@@ -24,15 +24,16 @@ fun main() {
                 HttpResponse.BodyHandlers.ofInputStream(),
             )
         if (response.statusCode() == HTTP_OK) {
-            unzipAndSafe(response.body())
+            unzipAndSave(response.body(), Path.of("./fetcher.cache"))
         } else {
-            throw IllegalStateException("invalid response code: ${response.statusCode()}")
+            error("invalid response code: ${response.statusCode()}")
         }
     }
 }
 
-fun unzipAndSafe(body: InputStream) {
-    val inStream = GZIPInputStream(body)
-    Files.copy(inStream, Path.of("./fetcher.cache"), StandardCopyOption.REPLACE_EXISTING)
-    inStream.close()
+internal fun unzipAndSave(
+    body: InputStream,
+    target: Path,
+) {
+    GZIPInputStream(body).use { Files.copy(it, target, StandardCopyOption.REPLACE_EXISTING) }
 }

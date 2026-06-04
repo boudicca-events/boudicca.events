@@ -29,7 +29,7 @@ kotlin-logging = "7.0.14"
 otel = "1.62.0"
 otel-instrumentation = "2.24.0-alpha"
 twelvemonkeys = "3.13.0"
-commonmark = "0.27.1"
+commonmark = "0.28.0"
 
 [libraries]
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }

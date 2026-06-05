@@ -1,6 +1,7 @@
 package base.boudicca.api.eventcollector.debugger
 
 import base.boudicca.SemanticKeys
+import base.boudicca.api.enricher.DefaultEnricherClient
 import base.boudicca.api.enricher.EnricherClient
 import base.boudicca.api.eventcollector.Configuration
 import base.boudicca.api.eventcollector.EventCollectionRunner
@@ -17,6 +18,7 @@ import base.boudicca.api.eventcollector.runner.NoopRunnerEnricher
 import base.boudicca.api.eventcollector.runner.RunnerEnricherInterface
 import base.boudicca.api.eventcollector.runner.RunnerIngestionInterface
 import base.boudicca.api.eventcollector.util.FetcherFactory
+import base.boudicca.api.eventdb.ingest.DefaultEventDbIngestClient
 import base.boudicca.api.eventdb.ingest.EventDbIngestClient
 import base.boudicca.fetcher.FetcherCache
 import base.boudicca.model.Event
@@ -49,7 +51,7 @@ class EventCollectorDebugger(
         eventDbUrl: String,
         user: String,
         password: String,
-    ): EventCollectorDebugger = enableIngestion(EventDbIngestClient(eventDbUrl, user, password))
+    ): EventCollectorDebugger = enableIngestion(DefaultEventDbIngestClient(eventDbUrl, user, password))
 
     fun enableIngestion(ingestClient: EventDbIngestClient): EventCollectorDebugger = enableIngestion(BoudiccaRunnerIngestionInterface(ingestClient))
 
@@ -60,7 +62,7 @@ class EventCollectorDebugger(
 
     fun enableEnricher(): EventCollectorDebugger = enableEnricher(RunnerEnricherInterface.createFromConfiguration())
 
-    fun enableEnricher(enricherUrl: String): EventCollectorDebugger = enableEnricher(EnricherClient(enricherUrl))
+    fun enableEnricher(enricherUrl: String): EventCollectorDebugger = enableEnricher(DefaultEnricherClient(enricherUrl))
 
     fun enableEnricher(enricherClient: EnricherClient): EventCollectorDebugger = enableEnricher(BoudiccaRunnerEnricherInterface(enricherClient))
 

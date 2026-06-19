@@ -27,7 +27,7 @@ class DefaultSearchClient(
                     JavaHttpClientTelemetry
                         .builder(otel)
                         .build()
-                        .newHttpClient(super.getHttpClient())
+                        .wrap(super.getHttpClient())
             }
         apiClient.updateBaseUri(searchUrl)
 

@@ -5,9 +5,9 @@ import base.boudicca.api.eventcollector.TwoStepEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.api.eventcollector.util.structuredEvent
 import base.boudicca.dateparser.dateparser.DateParser
-import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
-import org.jsoup.Jsoup
+import events.boudicca.eventcollector.util.fetchUrlAndParse
+import events.boudicca.eventcollector.util.withDescription
 
 class AntonBrucknerUniversitaetLinzCollector : TwoStepEventCollector<String>("antonbrucknerunilinz") {
     private val baseUrl = "https://www.bruckneruni.ac.at"
@@ -17,7 +17,7 @@ class AntonBrucknerUniversitaetLinzCollector : TwoStepEventCollector<String>("an
         val eventUrls = mutableListOf<String>()
 
         var wantedPage = 2
-        var page = Jsoup.parse(fetcher.fetchUrl("$baseUrl/de/events"))
+        var page = fetcher.fetchUrlAndParse("$baseUrl/de/events")
         while (true) {
             eventUrls.addAll(page.select("div.event-list > div > a").map { it.attr("href") })
 
@@ -31,7 +31,7 @@ class AntonBrucknerUniversitaetLinzCollector : TwoStepEventCollector<String>("an
             }
             val nextPageUrl = nextPageLink.first().attr("href")
             wantedPage++
-            page = Jsoup.parse(fetcher.fetchUrl("$baseUrl$nextPageUrl"))
+            page = fetcher.fetchUrlAndParse("$baseUrl$nextPageUrl")
         }
 
         return eventUrls
@@ -39,21 +39,12 @@ class AntonBrucknerUniversitaetLinzCollector : TwoStepEventCollector<String>("an
 
     override fun parseMultipleStructuredEvents(event: String): List<StructuredEvent?> {
         val url = "$baseUrl$event"
-        val eventSite = Jsoup.parse(fetcher.fetchUrl(url))
+        val eventSite = fetcher.fetchUrlAndParse(url)
 
         val name = eventSite.select("h1.event-title").text()
 
         val content = eventSite.select("div#person-detail-intro > div > div > *")
-        var description = ""
-        for (child in content) {
-            if (child.tagName() == "div") {
-                break
-            }
-            if (child.tagName() == "p") {
-                description += "\n" + child.text()
-            }
-        }
-        description = description.trim()
+        val descriptionElements = content.takeWhile { it.tagName() != "div" }
 
         val tags =
             eventSite
@@ -65,7 +56,7 @@ class AntonBrucknerUniversitaetLinzCollector : TwoStepEventCollector<String>("an
                 .map { it.trim() }
         val type = tags.firstOrNull()
 
-        val imgSrc = eventSite.select("div#person-detail-intro figure img").attr("src")
+        val imgSrc = eventSite.select("div#person-detail-intro figure img").attr("abs:src")
 
         val dateAndLocation =
             eventSite
@@ -79,15 +70,15 @@ class AntonBrucknerUniversitaetLinzCollector : TwoStepEventCollector<String>("an
         val (city, locationUrl) = location?.run { getCityAndUrlOfLocation(location) } ?: Pair(null, null)
 
         return structuredEvent(name, startDate) {
-            withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(url))
-            withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(url))
+            withDescription(descriptionElements)
+            withProperty(SemanticKeys.URL_PROPERTY, url)
+            withProperty(SemanticKeys.SOURCES_PROPERTY, url)
             withProperty(SemanticKeys.TYPE_PROPERTY, type)
             withProperty(SemanticKeys.TAGS_PROPERTY, tags)
-            withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
-            withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(baseUrl, imgSrc))
+            withProperty(SemanticKeys.PICTURE_URL_PROPERTY, imgSrc)
             withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, "Anton Bruckner Privatuniversität Linz")
             withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, city)
-            withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse(locationUrl))
+            withProperty(SemanticKeys.LOCATION_URL_PROPERTY, locationUrl)
             withProperty(
                 SemanticKeys.LOCATION_NAME_PROPERTY,
                 location?.ifBlank { "Anton Bruckner Privatuniversität Linz" },

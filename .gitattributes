@@ -1,6 +1,7 @@
-# Normalize line endings on checkin; default to LF on checkout.
-* text=auto eol=lf
-
 # Windows scripts must keep CRLF.
 *.bat text eol=crlf
 *.cmd text eol=crlf
+
+# Normalize line endings on checkin; default to LF on checkout.
+* text=auto eol=lf
+

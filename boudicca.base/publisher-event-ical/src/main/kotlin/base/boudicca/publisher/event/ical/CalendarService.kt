@@ -1,8 +1,8 @@
 package base.boudicca.publisher.event.ical
 
 import base.boudicca.SemanticKeys
+import base.boudicca.api.search.DefaultSearchClient
 import base.boudicca.api.search.QueryDTO
-import base.boudicca.api.search.SearchClient
 import base.boudicca.model.Event
 import base.boudicca.model.structured.Key
 import base.boudicca.model.structured.StructuredEvent
@@ -31,7 +31,7 @@ class CalendarService
         @Value("\${boudicca.search.url}") private val searchUrl: String,
         otel: OpenTelemetry,
     ) {
-        private val searchClient = SearchClient(searchUrl, otel)
+        private val searchClient = DefaultSearchClient(searchUrl, otel)
 
         fun createCalendar(events: List<Event>): ByteArray {
             // create the calendar

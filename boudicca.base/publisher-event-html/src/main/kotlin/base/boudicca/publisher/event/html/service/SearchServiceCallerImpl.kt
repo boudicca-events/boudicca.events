@@ -1,5 +1,6 @@
 package base.boudicca.publisher.event.html.service
 
+import base.boudicca.api.search.DefaultSearchClient
 import base.boudicca.api.search.FilterQueryDTO
 import base.boudicca.api.search.FilterResultDTO
 import base.boudicca.api.search.QueryDTO
@@ -26,5 +27,5 @@ class SearchServiceCallerImpl
         fun createSearchClient(
             searchUrl: String,
             otel: OpenTelemetry,
-        ): SearchClient = SearchClient(searchUrl, otel)
+        ): SearchClient = DefaultSearchClient(searchUrl, otel)
     }

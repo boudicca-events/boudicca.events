@@ -115,6 +115,26 @@ Optional:
 - Go to `File` → `Settings` → `Tools` → `Actions on Save`
 - Enable `Optimize imports`
 
+## Dependency Locking
+
+We use Gradle's dependency locking to ensure reproducible builds. Every subproject has a `gradle.lockfile` that pins the exact resolved versions of all dependencies. These files are committed to source control and should be kept up to date.
+
+**When to update lockfiles:** After changing any dependency version in `libs.versions.toml`, adding a new dependency, or removing one.
+
+**Update lockfiles for all modules at once:**
+
+```bash
+./gradlew writeLocks --write-locks
+```
+
+For `buildSrc` (the convention plugins' own dependencies), run separately:
+
+```bash
+cd buildSrc && ../gradlew dependencies --write-locks
+```
+
+If a build fails with a message like `Resolved 'some:artifact:x.y.z' which is not part of the dependency lock state`, the lockfiles are out of date and need to be regenerated with the commands above.
+
 ## SonarCloud Analysis
 
 We use SonarCloud for continuous code quality and security analysis. SonarCloud defines and manages all quality rules independently.

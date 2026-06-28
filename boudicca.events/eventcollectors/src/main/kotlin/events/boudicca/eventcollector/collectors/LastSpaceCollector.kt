@@ -9,6 +9,7 @@ import base.boudicca.format.UrlUtils
 import base.boudicca.model.EventCategory
 import base.boudicca.model.structured.StructuredEvent
 import events.boudicca.eventcollector.util.fetchUrlAndParse
+import events.boudicca.eventcollector.util.withDescription
 
 class LastSpaceCollector : TwoStepEventCollector<String>("lastspace") {
     private val fetcher = FetcherFactory.newFetcher()
@@ -46,7 +47,7 @@ class LastSpaceCollector : TwoStepEventCollector<String>("lastspace") {
     override fun parseMultipleStructuredEvents(event: String): List<StructuredEvent?>? {
         val document = fetcher.fetchUrlAndParse(event)
         val name = document.select("h1").text()
-        val description = document.select("div.event-description").text()
+        val description = document.select("div.event-description")
 
         val eventInfos = document.select("div.event-infos").textNodes()
         val startDate = DateParser.parse(eventInfos[0].text(), eventInfos[1].text())
@@ -68,7 +69,7 @@ class LastSpaceCollector : TwoStepEventCollector<String>("lastspace") {
         return structuredEvent(name, startDate) {
             withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(event))
             withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(baseUrl))
-            withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
+            withDescription(description)
             withProperty(SemanticKeys.CATEGORY_PROPERTY, category)
             withProperty(SemanticKeys.TYPE_PROPERTY, type)
             withProperty(SemanticKeys.TAGS_PROPERTY, tags)

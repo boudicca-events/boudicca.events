@@ -9,6 +9,7 @@ import base.boudicca.dateparser.dateparser.DateParserResult
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
 import events.boudicca.eventcollector.util.fetchUrlAndParse
+import events.boudicca.eventcollector.util.withDescription
 import org.jsoup.nodes.Element
 
 class StadtwerkstattCollector : TwoStepEventCollector<String>("stadtwerkstatt") {
@@ -32,7 +33,7 @@ class StadtwerkstattCollector : TwoStepEventCollector<String>("stadtwerkstatt") 
         val startDate = parseDate(eventSite)
 
         val type = eventSite.select("div.genre").text()
-        val description = eventSite.select("div.event-text").text()
+        val description = eventSite.select("div.event-text")
 
         val img = eventSite.select("div.event-text img")
         val logo = eventSite.selectFirst(".brand img")
@@ -41,7 +42,7 @@ class StadtwerkstattCollector : TwoStepEventCollector<String>("stadtwerkstatt") 
                 ?: UrlUtils.parse(logo?.attr("src"))
 
         if (name.isEmpty()) {
-            name = description
+            name = description.text()
         }
 
         // TODO could parse lineup
@@ -49,7 +50,7 @@ class StadtwerkstattCollector : TwoStepEventCollector<String>("stadtwerkstatt") 
         return structuredEvent(name, startDate) {
             withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(event))
             withProperty(SemanticKeys.TYPE_PROPERTY, type)
-            withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
+            withDescription(description)
             withProperty(SemanticKeys.PICTURE_URL_PROPERTY, pictureUrl)
             withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, "Stadtwerkstatt")
             withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Stadtwerkstatt")

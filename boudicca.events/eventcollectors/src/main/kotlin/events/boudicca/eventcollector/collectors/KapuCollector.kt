@@ -9,6 +9,7 @@ import base.boudicca.dateparser.dateparser.DateParserResult
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
 import events.boudicca.eventcollector.util.fetchUrlAndParse
+import events.boudicca.eventcollector.util.withDescription
 import org.jsoup.nodes.Element
 
 class KapuCollector : TwoStepEventCollector<String>("kapu") {
@@ -29,9 +30,9 @@ class KapuCollector : TwoStepEventCollector<String>("kapu") {
         val name = eventSite.select("h1").text()
         val startDate = parseDate(eventSite)
 
-        var description = eventSite.select("div.textbereich__field-text").text()
-        if (description.isBlank()) {
-            description = eventSite.select("div.text-bild__field-image-text").text()
+        var description = eventSite.select("div.textbereich__field-text")
+        if (description.text().isBlank()) {
+            description = eventSite.select("div.text-bild__field-image-text")
         }
 
         val imgTag = eventSite.select("article.event img.media__element")
@@ -51,7 +52,7 @@ class KapuCollector : TwoStepEventCollector<String>("kapu") {
                 SemanticKeys.TYPE_PROPERTY,
                 eventSite.select("article.event > div.container > div.wot").text(),
             )
-            withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
+            withDescription(description)
             withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(pictureUrl))
             withProperty(SemanticKeys.PICTURE_ALT_TEXT_PROPERTY, pictureAltText)
             withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, "Kapu")

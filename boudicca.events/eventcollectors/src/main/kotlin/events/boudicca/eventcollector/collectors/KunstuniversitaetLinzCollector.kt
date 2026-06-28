@@ -9,6 +9,7 @@ import base.boudicca.dateparser.dateparser.DateParserResult
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
 import events.boudicca.eventcollector.util.fetchUrlAndParse
+import events.boudicca.eventcollector.util.withDescription
 import org.jsoup.nodes.Element
 
 class KunstuniversitaetLinzCollector : TwoStepEventCollector<String>("kunstunilinz") {
@@ -36,7 +37,7 @@ class KunstuniversitaetLinzCollector : TwoStepEventCollector<String>("kunstunili
         val name = eventSite.select("h1.tribe-events-single-event-title").text()
         val startDate = parseDate(eventSite)
 
-        val description = eventSite.select("div.tribe-events-single-event-description").text()
+        val description = eventSite.select("div.tribe-events-single-event-description")
 
         val imgSrc = eventSite.select("div.tribe-events-event-image img").attr("src")
 
@@ -51,7 +52,7 @@ class KunstuniversitaetLinzCollector : TwoStepEventCollector<String>("kunstunili
             withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(url))
             withProperty(SemanticKeys.TYPE_PROPERTY, type)
             withProperty(SemanticKeys.TAGS_PROPERTY, tags)
-            withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
+            withDescription(description)
             withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(imgSrc))
             withProperty(
                 SemanticKeys.LOCATION_NAME_PROPERTY,

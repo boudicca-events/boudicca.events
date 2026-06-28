@@ -8,6 +8,7 @@ import base.boudicca.model.structured.StructuredEvent
 import base.boudicca.model.structured.dsl.structuredEvent
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
+import events.boudicca.eventcollector.util.withDescription
 import org.jsoup.Jsoup
 import java.io.StringReader
 import java.time.OffsetDateTime
@@ -32,7 +33,7 @@ class RoedaCollector : TwoStepEventCollector<JsonObject>("roeda") {
     override fun parseStructuredEvent(event: JsonObject): StructuredEvent {
         val name = event.string("title")!!
 
-        val description = htmlToText(event.string("excerpt")!!)
+        val description = Jsoup.parse(event.string("excerpt")!!)
 
         // they manage to have a timestamp with timezone offset, but the offset is always wrong and 0 -.-
         val start = OffsetDateTime.parse(event.string("start")!!).fixTimeZone()
@@ -53,15 +54,13 @@ class RoedaCollector : TwoStepEventCollector<JsonObject>("roeda") {
             withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(baseUrl))
             withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(pictureUrl))
             withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, copyright)
-            withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
+            withDescription(description)
             withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "kulturverein röda")
             withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse(baseUrl))
             withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Steyr")
             withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(baseUrl))
         }
     }
-
-    private fun htmlToText(html: String): String = Jsoup.parse(html).text()
 }
 
 private fun OffsetDateTime.fixTimeZone(): OffsetDateTime = this.toLocalDateTime().atZone(ZoneId.of("Europe/Vienna")).toOffsetDateTime()

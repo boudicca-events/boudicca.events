@@ -9,6 +9,7 @@ import base.boudicca.dateparser.dateparser.DateParserResult
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
 import events.boudicca.eventcollector.util.fetchUrlAndParse
+import events.boudicca.eventcollector.util.withDescription
 import org.jsoup.nodes.Document
 import java.util.regex.Pattern
 
@@ -33,7 +34,7 @@ class OOESeniorenbundCollector : TwoStepEventCollector<Pair<Document, String>>("
         val url = cleanupUrl(rawUrl)
         val name = eventDoc.select("div.title>p").text()
         val dates = getDates(eventDoc)
-        val description = eventDoc.select("div.subtitle>p").text()
+        val description = eventDoc.select("div.subtitle>p")
 
         return dates
             .map {
@@ -43,7 +44,7 @@ class OOESeniorenbundCollector : TwoStepEventCollector<Pair<Document, String>>("
                         SemanticKeys.LOCATION_NAME_PROPERTY,
                         eventDoc.select("div.venue").text(),
                     ) // TODO location name and city here are not seperated at all -.-
-                    withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
+                    withDescription(description)
                     withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(url))
                 }
             }.flatten()

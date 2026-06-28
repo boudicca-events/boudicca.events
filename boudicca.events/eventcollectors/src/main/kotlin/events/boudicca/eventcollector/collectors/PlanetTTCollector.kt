@@ -12,6 +12,7 @@ import base.boudicca.model.structured.dsl.StructuredEventBuilder
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
 import events.boudicca.eventcollector.util.fetchUrlAndParse
+import events.boudicca.eventcollector.util.withDescription
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -81,11 +82,9 @@ class PlanetTTCollector : TwoStepEventCollector<Element>("planettt") {
             withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(pictureUrl))
             withProperty(SemanticKeys.PICTURE_ALT_TEXT_PROPERTY, pictureAltText)
             withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, "Planet Music")
-            withProperty(
-                SemanticKeys.DESCRIPTION_TEXT_PROPERTY,
-                fullEvent
-                    .select("div.pl-modal-desc > p")
-                    .text() + "\n" + fullEvent.select("div.pl-modal-desc > div.acts").text(),
+            withDescription(
+                fullEvent.select("div.pl-modal-desc > p"),
+                fullEvent.select("div.pl-modal-desc > div.acts"),
             )
             withProperty(SemanticKeys.TYPE_PROPERTY, "concert")
             withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(url))

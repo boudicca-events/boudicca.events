@@ -10,6 +10,7 @@ import base.boudicca.model.EventCategory
 import base.boudicca.model.Registration
 import base.boudicca.model.structured.StructuredEvent
 import events.boudicca.eventcollector.util.fetchUrlAndParse
+import events.boudicca.eventcollector.util.withDescription
 
 class MetalCornerCollector : TwoStepEventCollector<Pair<String, String>>("metalcorner") {
     private val fetcher = FetcherFactory.newFetcher()
@@ -43,7 +44,7 @@ class MetalCornerCollector : TwoStepEventCollector<Pair<String, String>>("metalc
         val eventStartDate = DateParser.parse(document.select("div#content h2").text())
 
         return structuredEvent(name, eventStartDate) {
-            withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, document.select("div#content p").text())
+            withDescription(document.select("div#content p"))
             withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(baseUrl, url))
             withProperty(SemanticKeys.TYPE_PROPERTY, eventType)
             withProperty(

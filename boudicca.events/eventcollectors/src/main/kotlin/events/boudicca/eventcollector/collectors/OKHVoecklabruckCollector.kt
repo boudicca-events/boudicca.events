@@ -8,7 +8,7 @@ import base.boudicca.dateparser.dateparser.DateParser
 import base.boudicca.dateparser.dateparser.DateParserResult
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
-import org.jsoup.Jsoup
+import events.boudicca.eventcollector.util.fetchUrlAndParse
 import org.jsoup.nodes.Element
 
 class OKHVoecklabruckCollector : TwoStepEventCollector<Pair<String, String>>("okhvoecklabruck") {
@@ -17,7 +17,7 @@ class OKHVoecklabruckCollector : TwoStepEventCollector<Pair<String, String>>("ok
 
     override fun getAllUnparsedEvents(): List<Pair<String, String>> {
         val events = mutableListOf<Pair<String, String>>()
-        val document = Jsoup.parse(fetcher.fetchUrl(baseUrl + "programm"))
+        val document = fetcher.fetchUrlAndParse(baseUrl + "programm")
         document.select("div.event_box").forEach {
             events.add(
                 Pair(
@@ -32,7 +32,7 @@ class OKHVoecklabruckCollector : TwoStepEventCollector<Pair<String, String>>("ok
     override fun parseMultipleStructuredEvents(event: Pair<String, String>): List<StructuredEvent?>? {
         val (eventUrl, eventType) = event
         val url = baseUrl + eventUrl
-        val eventSite = Jsoup.parse(fetcher.fetchUrl(url))
+        val eventSite = fetcher.fetchUrlAndParse(url)
 
         val name = eventSite.select("h1").text()
         val dates = parseDates(eventSite)

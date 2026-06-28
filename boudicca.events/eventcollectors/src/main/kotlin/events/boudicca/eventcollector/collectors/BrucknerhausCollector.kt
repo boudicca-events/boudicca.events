@@ -8,7 +8,7 @@ import base.boudicca.dateparser.dateparser.DateParser
 import base.boudicca.dateparser.dateparser.DateParserResult
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
-import org.jsoup.Jsoup
+import events.boudicca.eventcollector.util.fetchUrlAndParse
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 
@@ -19,7 +19,7 @@ class BrucknerhausCollector : TwoStepEventCollector<Element>("brucknerhaus") {
         val events = mutableListOf<Element>()
 
         val fetcher = FetcherFactory.newFetcher()
-        val document = Jsoup.parse(fetcher.fetchUrl("$baseUrl/programm/veranstaltungen"))
+        val document = fetcher.fetchUrlAndParse("$baseUrl/programm/veranstaltungen")
         val otherUrls =
             document
                 .select("ul.pagination>li")
@@ -30,7 +30,7 @@ class BrucknerhausCollector : TwoStepEventCollector<Element>("brucknerhaus") {
         events.addAll(findUnparsedEvents(document))
 
         otherUrls.forEach {
-            events.addAll(findUnparsedEvents(Jsoup.parse(fetcher.fetchUrl(it))))
+            events.addAll(findUnparsedEvents(fetcher.fetchUrlAndParse(it)))
         }
 
         return events

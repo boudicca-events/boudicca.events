@@ -8,7 +8,7 @@ import base.boudicca.dateparser.dateparser.DateParser
 import base.boudicca.dateparser.dateparser.DateParserResult
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
-import org.jsoup.Jsoup
+import events.boudicca.eventcollector.util.fetchUrlAndParse
 import org.jsoup.nodes.Document
 import java.util.regex.Pattern
 
@@ -18,13 +18,13 @@ import java.util.regex.Pattern
 class OOESeniorenbundCollector : TwoStepEventCollector<Pair<Document, String>>("ooesb") {
     override fun getAllUnparsedEvents(): List<Pair<Document, String>> {
         val fetcher = FetcherFactory.newFetcher()
-        val document = Jsoup.parse(fetcher.fetchUrl("https://servicebroker.media-data.at/overview.html?key=QVKSBOOE"))
+        val document = fetcher.fetchUrlAndParse("https://servicebroker.media-data.at/overview.html?key=QVKSBOOE")
 
         return document
             .select("a.link-detail")
             .toList()
             .map { "https://servicebroker.media-data.at/" + it.attr("href") }
-            .map { Pair(Jsoup.parse(fetcher.fetchUrl(it)), it) }
+            .map { Pair(fetcher.fetchUrlAndParse(it), it) }
     }
 
     override fun parseMultipleStructuredEvents(event: Pair<Document, String>): List<StructuredEvent> {

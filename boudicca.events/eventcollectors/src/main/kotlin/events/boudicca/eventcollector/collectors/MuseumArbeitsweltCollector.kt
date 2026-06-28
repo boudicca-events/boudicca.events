@@ -8,14 +8,14 @@ import base.boudicca.dateparser.dateparser.DateParser
 import base.boudicca.dateparser.dateparser.DateParserResult
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
-import org.jsoup.Jsoup
+import events.boudicca.eventcollector.util.fetchUrlAndParse
 
 class MuseumArbeitsweltCollector : TwoStepEventCollector<Pair<String, String>>("museumArbeitswelt") {
     private val fetcher = FetcherFactory.newFetcher()
 
     override fun getAllUnparsedEvents(): List<Pair<String, String>> {
         val events = mutableListOf<Pair<String, String>>()
-        val document = Jsoup.parse(fetcher.fetchUrl("https://museumarbeitswelt.at/kalender/"))
+        val document = fetcher.fetchUrlAndParse("https://museumarbeitswelt.at/kalender/")
         document.select("div.ecs-event").forEach {
             events.add(
                 Pair(
@@ -29,7 +29,7 @@ class MuseumArbeitsweltCollector : TwoStepEventCollector<Pair<String, String>>("
 
     override fun parseMultipleStructuredEvents(event: Pair<String, String>): List<StructuredEvent?>? {
         val (eventUrl, dateToParse) = event
-        val eventSite = Jsoup.parse(fetcher.fetchUrl(eventUrl))
+        val eventSite = fetcher.fetchUrlAndParse(eventUrl)
 
         val name = eventSite.select("h1.entry-title").text()
         val startDate = parseDate(dateToParse)

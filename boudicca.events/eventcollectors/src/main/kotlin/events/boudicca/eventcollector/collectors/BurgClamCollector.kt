@@ -7,20 +7,20 @@ import base.boudicca.api.eventcollector.util.structuredEvent
 import base.boudicca.dateparser.dateparser.DateParser
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
-import org.jsoup.Jsoup
+import events.boudicca.eventcollector.util.fetchUrlAndParse
 
 class BurgClamCollector : TwoStepEventCollector<String>("burgclam") {
     private val fetcher = FetcherFactory.newFetcher()
 
     override fun getAllUnparsedEvents(): List<String> {
-        val document = Jsoup.parse(fetcher.fetchUrl("https://clamlive.at/shows/#/"))
+        val document = fetcher.fetchUrlAndParse("https://clamlive.at/shows/#/")
         return document
             .select("section.eventCollection a")
             .map { it.attr("href") }
     }
 
     override fun parseMultipleStructuredEvents(event: String): List<StructuredEvent?> {
-        val eventSite = Jsoup.parse(fetcher.fetchUrl(event))
+        val eventSite = fetcher.fetchUrlAndParse(event)
 
         val name = eventSite.select("h1.eventTitle").text()
         val dateText = eventSite.select("div.eventDate").text()

@@ -9,7 +9,7 @@ import base.boudicca.format.UrlUtils
 import base.boudicca.model.EventCategory
 import base.boudicca.model.Registration
 import base.boudicca.model.structured.StructuredEvent
-import org.jsoup.Jsoup
+import events.boudicca.eventcollector.util.fetchUrlAndParse
 
 class MetalCornerCollector : TwoStepEventCollector<Pair<String, String>>("metalcorner") {
     private val fetcher = FetcherFactory.newFetcher()
@@ -18,7 +18,7 @@ class MetalCornerCollector : TwoStepEventCollector<Pair<String, String>>("metalc
     override fun getAllUnparsedEvents(): List<Pair<String, String>> {
         val eventUrls = mutableListOf<Pair<String, String>>()
 
-        val document = Jsoup.parse(fetcher.fetchUrl(baseUrl + "de/events"))
+        val document = fetcher.fetchUrlAndParse(baseUrl + "de/events")
         document
             .select("div#content > div#events .event")
             .forEach {
@@ -36,7 +36,7 @@ class MetalCornerCollector : TwoStepEventCollector<Pair<String, String>>("metalc
     override fun parseMultipleStructuredEvents(event: Pair<String, String>): List<StructuredEvent?>? {
         val (eventType, url) = event
 
-        val document = Jsoup.parse(fetcher.fetchUrl(baseUrl + url))
+        val document = fetcher.fetchUrlAndParse(baseUrl + url)
 
         val name = document.select("div#content h1").text()
 

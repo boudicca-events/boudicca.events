@@ -8,7 +8,7 @@ import base.boudicca.model.structured.StructuredEvent
 import base.boudicca.model.structured.dsl.structuredEvent
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
-import org.jsoup.Jsoup
+import events.boudicca.eventcollector.util.fetchUrlAndParse
 import org.jsoup.nodes.Document
 import java.io.StringReader
 import java.net.URI
@@ -35,7 +35,7 @@ class ArenaWienCollector : TwoStepEventCollector<ArenaWienCollector.HalfEvent>("
     }
 
     override fun parseStructuredEvent(event: HalfEvent): StructuredEvent {
-        val eventSite = Jsoup.parse(fetcher.fetchUrl(event.url))
+        val eventSite = fetcher.fetchUrlAndParse(event.url)
 
         return structuredEvent(event.title!!, parseDate(event.dateBegin!!)) {
             withProperty(

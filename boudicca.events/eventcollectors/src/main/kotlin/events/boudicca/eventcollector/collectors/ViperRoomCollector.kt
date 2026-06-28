@@ -8,14 +8,14 @@ import base.boudicca.dateparser.dateparser.DateParser
 import base.boudicca.dateparser.dateparser.DateParserResult
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
-import org.jsoup.Jsoup
+import events.boudicca.eventcollector.util.fetchUrlAndParse
 import org.jsoup.nodes.Element
 
 class ViperRoomCollector : TwoStepEventCollector<String>("viperroom") {
     private val fetcher = FetcherFactory.newFetcher()
 
     override fun getAllUnparsedEvents(): List<String> {
-        val eventsList = Jsoup.parse(fetcher.fetchUrl("https://www.viper-room.at/veranstaltungen"))
+        val eventsList = fetcher.fetchUrlAndParse("https://www.viper-room.at/veranstaltungen")
 
         return eventsList
             .select("ul.events_list div.event_actions a:nth-child(1)")
@@ -23,7 +23,7 @@ class ViperRoomCollector : TwoStepEventCollector<String>("viperroom") {
     }
 
     override fun parseMultipleStructuredEvents(event: String): List<StructuredEvent?>? {
-        val eventSite = Jsoup.parse(fetcher.fetchUrl(event))
+        val eventSite = fetcher.fetchUrlAndParse(event)
 
         val name = eventSite.select("h1.entry-title").text()
         val startDate = parseDate(eventSite)

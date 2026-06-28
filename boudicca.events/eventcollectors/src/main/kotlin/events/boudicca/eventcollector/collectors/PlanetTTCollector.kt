@@ -11,6 +11,7 @@ import base.boudicca.model.structured.StructuredEvent
 import base.boudicca.model.structured.dsl.StructuredEventBuilder
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
+import events.boudicca.eventcollector.util.fetchUrlAndParse
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -40,8 +41,7 @@ class PlanetTTCollector : TwoStepEventCollector<Element>("planettt") {
     }
 
     private fun fetchNonces(): Pair<String, String> {
-        val mainSite = fetcher.fetchUrl("https://planet.tt/")
-        val javascript = Jsoup.parse(mainSite).select("script#em-events-script-js-extra").html()
+        val javascript = fetcher.fetchUrlAndParse("https://planet.tt/").select("script#em-events-script-js-extra").html()
         val listPattern = Pattern.compile(".*\"list_nonce\":\"(\\w+)\".*")
         val listMatcher = listPattern.matcher(javascript)
         val modalPattern = Pattern.compile(".*\"modal_nonce\":\"(\\w+)\".*")

@@ -10,9 +10,8 @@ import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
 import com.beust.klaxon.lookup
 import events.boudicca.eventcollector.util.fetchUrlAndParse
+import events.boudicca.eventcollector.util.withDescription
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
-import org.jsoup.safety.Safelist
 import java.io.StringReader
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
@@ -52,7 +51,7 @@ class KupfTicketCollector : TwoStepEventCollector<String>("kupfticket") {
         val eventJson = jsonObject.lookup<JsonObject>("props.pageProps.event").first()
 
         val name = eventJson["title"] as String
-        val description = htmlToCleanTextWithLineBreaks(eventJson["description"].toString())
+        val description = Jsoup.parse(eventJson["description"].toString())
         val url = "$baseUrl/" + (eventJson["slug"] as String)
         val location = eventJson.lookup<String>("location.title").first()
         val startDate = parseDate(eventJson.lookup<String>("date.start").first())
@@ -68,7 +67,7 @@ class KupfTicketCollector : TwoStepEventCollector<String>("kupfticket") {
         val locationCity = cityRegex.find(location)?.groupValues?.last()
 
         return structuredEvent(name, startDate) {
-            withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
+            withDescription(description)
             withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(url))
             withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, locationName)
             withProperty(SemanticKeys.LOCATION_ADDRESS_PROPERTY, locationAddress)
@@ -90,11 +89,4 @@ class KupfTicketCollector : TwoStepEventCollector<String>("kupfticket") {
         }
 
     private fun parseDate(date: String): OffsetDateTime = OffsetDateTime.parse(date, DateTimeFormatter.ISO_DATE_TIME)
-
-    private fun htmlToCleanTextWithLineBreaks(html: String): String {
-        val doc = Jsoup.parse(html)
-        doc.select("br, p, div, li, tr, h1, h2, h3, h4, h5, h6").append("\\n")
-        val cleaned = Jsoup.clean(doc.html(), "", Safelist.none(), Document.OutputSettings().prettyPrint(false))
-        return cleaned.replace("\\n", "\n").replace("\\s+".toRegex()) { it.value[0].toString() }.trim()
-    }
 }

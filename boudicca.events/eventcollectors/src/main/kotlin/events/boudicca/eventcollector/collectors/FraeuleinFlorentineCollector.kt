@@ -10,6 +10,7 @@ import base.boudicca.dateparser.dateparser.DateParserResult
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
 import events.boudicca.eventcollector.util.fetchUrlAndParse
+import events.boudicca.eventcollector.util.withDescription
 import org.jsoup.nodes.Element
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -33,7 +34,7 @@ class FraeuleinFlorentineCollector : TwoStepEventCollector<Pair<Element, String?
         val (eventSite, logoSrc) = event
         val nameAndTime = eventSite.select(".simcal-event-title").text().split("|")
         val name = nameAndTime.first().trim()
-        val description = eventSite.select(".simcal-event-description").text()
+        val description = eventSite.select(".simcal-event-description")
         var startDate = parseStartDate(eventSite, nameAndTime)
         val endDate = parseEndDate(eventSite, startDate)
         if (endDate != null) {
@@ -43,7 +44,7 @@ class FraeuleinFlorentineCollector : TwoStepEventCollector<Pair<Element, String?
         return structuredEvent(name, startDate) {
             withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(baseUrl))
             withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(baseUrl))
-            withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
+            withDescription(description)
             withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Salonschiff Fräulein Florentine")
             withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse("https://frl-florentine.at"))
             withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Linz")

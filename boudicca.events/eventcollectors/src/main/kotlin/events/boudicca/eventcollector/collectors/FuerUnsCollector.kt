@@ -9,6 +9,7 @@ import base.boudicca.dateparser.dateparser.DateParserResult
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
 import events.boudicca.eventcollector.util.fetchUrlAndParse
+import events.boudicca.eventcollector.util.withDescription
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 
@@ -62,7 +63,7 @@ class FuerUnsCollector : TwoStepEventCollector<String>("fueruns") {
 
         return structuredEvent(name, startDate) {
             withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(fullEventLink))
-            withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, eventSite.select("div.field-text").text())
+            withDescription(eventSite.select("div.field-text"))
             withProperty(SemanticKeys.PICTURE_URL_PROPERTY, pictureUrl)
             withProperty(SemanticKeys.PICTURE_ALT_TEXT_PROPERTY, pictureAltText)
             withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, "füruns - Zentrum für Zivilgesellschaft ")

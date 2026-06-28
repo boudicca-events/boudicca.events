@@ -8,6 +8,7 @@ import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
 import base.boudicca.model.structured.dsl.structuredEvent
 import events.boudicca.eventcollector.util.fetchUrlAndParse
+import events.boudicca.eventcollector.util.withDescription
 import org.jsoup.nodes.Document
 import java.time.LocalDate
 import java.time.OffsetDateTime
@@ -42,7 +43,7 @@ class WissensturmCollector : TwoStepEventCollector<Pair<String, Document>>("wiss
         val name = eventDoc.select("div.kw-kurdetails h1").text()
         val datesAndLocations = parseDatesAndLocations(eventDoc)
 
-        val description = eventDoc.select("div.kw-kurdetails div.content-txt:nth-child(2)").text()
+        val description = eventDoc.select("div.kw-kurdetails div.content-txt:nth-child(2)")
 
         val img = eventDoc.select("div.kw-kurdetails div.content-txt:nth-child(2) img")
         val pictureUrl = UrlUtils.parse(img.attr("src"))
@@ -61,7 +62,7 @@ class WissensturmCollector : TwoStepEventCollector<Pair<String, Document>>("wiss
                     withProperty(SemanticKeys.PICTURE_URL_PROPERTY, pictureUrl)
                     withProperty(SemanticKeys.PICTURE_ALT_TEXT_PROPERTY, pictureAltText)
                     withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, pictureCopyright)
-                    withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
+                    withDescription(description)
                     withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(url))
                     withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(url))
                     withProperty(SemanticKeys.ENDDATE_PROPERTY, it.second)

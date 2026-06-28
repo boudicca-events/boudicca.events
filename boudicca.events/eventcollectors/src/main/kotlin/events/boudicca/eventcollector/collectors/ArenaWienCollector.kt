@@ -9,6 +9,7 @@ import base.boudicca.model.structured.dsl.structuredEvent
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
 import events.boudicca.eventcollector.util.fetchUrlAndParse
+import events.boudicca.eventcollector.util.withDescription
 import org.jsoup.nodes.Document
 import java.io.StringReader
 import java.net.URI
@@ -44,7 +45,7 @@ class ArenaWienCollector : TwoStepEventCollector<ArenaWienCollector.HalfEvent>("
             )
             withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(event.url))
             withProperty(SemanticKeys.TYPE_PROPERTY, "concert")
-            withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, eventSite.select("div.suite_VAdescr").text())
+            withDescription(eventSite.select("div.suite_VAdescr"))
             withProperty(SemanticKeys.PICTURE_URL_PROPERTY, getPictureUrl(eventSite))
             withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, "Arena Wien")
             withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Arena Wien")

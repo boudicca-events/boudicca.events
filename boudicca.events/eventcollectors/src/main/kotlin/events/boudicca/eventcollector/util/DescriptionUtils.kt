@@ -15,6 +15,13 @@ import org.jsoup.select.Nodes
 private val breakElements = setOf("br", "p", "div", "li", "tr", "h1", "h2", "h3", "h4", "h5", "h6")
 
 fun StructuredEventBuilder.withDescription(
+    vararg elements: Elements,
+    includeImage: Boolean = true,
+) {
+    withDescription(elements.flatMap { it }, includeImage)
+}
+
+fun StructuredEventBuilder.withDescription(
     vararg nodes: Node,
     includeImage: Boolean = true,
 ) {

@@ -6,6 +6,7 @@ import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.model.structured.StructuredEvent
 import base.boudicca.model.structured.dsl.structuredEvent
 import events.boudicca.eventcollector.util.fetchUrlAndParse
+import events.boudicca.eventcollector.util.withDescription
 import org.jsoup.nodes.Element
 import java.net.URI
 import java.time.LocalDate
@@ -51,7 +52,7 @@ class FamilienkarteEventCollector : TwoStepEventCollector<String>("familienkarte
             withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(eventUrl))
             withProperty(SemanticKeys.TYPE_PROPERTY, "theater")
             withProperty(SemanticKeys.ENDDATE_PROPERTY, endDate)
-            withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, eventSite.select("div.eventDetailDescr").text())
+            withDescription(eventSite.select("div.eventDetailDescr"))
             withProperty(SemanticKeys.PICTURE_URL_PROPERTY, pictureUrl)
             withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, eventSite.select("div.eventDetailLocation").text())
         }

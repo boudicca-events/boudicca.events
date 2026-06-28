@@ -10,6 +10,7 @@ import base.boudicca.dateparser.dateparser.DateParserResult
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
 import events.boudicca.eventcollector.util.fetchUrlAndParse
+import events.boudicca.eventcollector.util.withDescription
 import org.jsoup.nodes.Document
 
 class TabakfabrikLinzCollector : TwoStepEventCollector<String>("tabakfabriklinz") {
@@ -27,7 +28,7 @@ class TabakfabrikLinzCollector : TwoStepEventCollector<String>("tabakfabriklinz"
     override fun parseMultipleStructuredEvents(event: String): List<StructuredEvent?>? {
         val document = fetcher.fetchUrlAndParse(event)
         val name = document.select("h1.entry-title").text()
-        val description = document.select("div.entry-content").text()
+        val description = document.select("div.entry-content")
 
         var startDate = parseDate(document, "startDate")!!
         val endDate = parseDate(document, "endDate")
@@ -51,7 +52,7 @@ class TabakfabrikLinzCollector : TwoStepEventCollector<String>("tabakfabriklinz"
         return structuredEvent(name, startDate) {
             withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(event))
             withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(baseUrl))
-            withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
+            withDescription(description)
             withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(imgSrc))
             withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse(baseUrl))
             withProperty(SemanticKeys.LOCATION_ADDRESS_PROPERTY, location)

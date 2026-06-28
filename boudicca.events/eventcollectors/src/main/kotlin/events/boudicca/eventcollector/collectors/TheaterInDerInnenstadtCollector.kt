@@ -10,6 +10,7 @@ import base.boudicca.model.EventCategory
 import base.boudicca.model.Registration
 import base.boudicca.model.structured.StructuredEvent
 import events.boudicca.eventcollector.util.fetchUrlAndParse
+import events.boudicca.eventcollector.util.withDescription
 import org.jsoup.nodes.Element
 
 class TheaterInDerInnenstadtCollector : TwoStepEventCollector<Pair<Element, String?>>("theaterinderinnenstadt") {
@@ -27,7 +28,7 @@ class TheaterInDerInnenstadtCollector : TwoStepEventCollector<Pair<Element, Stri
     override fun parseMultipleStructuredEvents(event: Pair<Element, String?>): List<StructuredEvent?> {
         val (eventSite, logoSrc) = event
         val name = eventSite.select("span.evcal_event_title").text()
-        val description = eventSite.select("[itemprop=description]").text()
+        val description = eventSite.select("[itemprop=description]")
 
         val dateInfos = eventSite.select("span.evoet_dayblock")
         val date = dateInfos.select(".date").text()
@@ -44,16 +45,16 @@ class TheaterInDerInnenstadtCollector : TwoStepEventCollector<Pair<Element, Stri
 
         val type: String? =
             when {
-                description.lowercase().contains("theater") -> "theater"
-                description.lowercase().contains("musical") -> "musical"
-                description.lowercase().contains("comedy") -> "comedy"
+                description.text().lowercase().contains("theater") -> "theater"
+                description.text().lowercase().contains("musical") -> "musical"
+                description.text().lowercase().contains("comedy") -> "comedy"
                 else -> null
             }
 
         return structuredEvent(name, startDateTime) {
             withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(eventUrl))
             withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(baseUrl))
-            withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
+            withDescription(description)
             withProperty(SemanticKeys.CATEGORY_PROPERTY, EventCategory.ART)
             withProperty(SemanticKeys.TYPE_PROPERTY, type)
             withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(imgSrc))

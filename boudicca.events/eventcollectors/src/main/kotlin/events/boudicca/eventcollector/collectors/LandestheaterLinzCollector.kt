@@ -12,6 +12,7 @@ import base.boudicca.model.structured.StructuredEvent
 import base.boudicca.model.structured.dsl.StructuredEventBuilder
 import events.boudicca.eventcollector.util.fetchUrlAndParse
 import events.boudicca.eventcollector.util.fetchUrlPostAndParse
+import events.boudicca.eventcollector.util.withDescription
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import java.time.LocalDate
@@ -99,19 +100,18 @@ class LandestheaterLinzCollector : TwoStepEventCollector<LandestheaterLinzCollec
                 .substring(11)
                 .trim()
 
+        val description =
+            site.second
+                .select("div.lth-layout-ctr section > h2")
+                .first { it.text() == "Stückinfo" }
+                .parent()!!
+                .select("div.lth-section-content")
+
         val structuredEvent =
             structuredEvent(name, dates) {
                 withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(site.first))
                 withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(site.first))
-                withProperty(
-                    SemanticKeys.DESCRIPTION_TEXT_PROPERTY,
-                    site.second
-                        .select("div.lth-layout-ctr section > h2")
-                        .first { it.text() == "Stückinfo" }
-                        .parent()!!
-                        .select("div.lth-section-content")
-                        .text(),
-                )
+                withDescription(description)
                 withProperty(
                     SemanticKeys.PICTURE_URL_PROPERTY,
                     UrlUtils.parse(baseUrl, site.second.select("div.lth-slide img").attr("src")),

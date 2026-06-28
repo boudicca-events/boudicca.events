@@ -10,6 +10,7 @@ import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
 import base.boudicca.model.structured.dsl.structuredEvent
 import events.boudicca.eventcollector.util.fetchUrlAndParse
+import events.boudicca.eventcollector.util.withDescription
 import org.jsoup.nodes.Element
 
 class StadthalleWienCollector : TwoStepEventCollector<String>("stadthallewien") {
@@ -52,7 +53,7 @@ class StadthalleWienCollector : TwoStepEventCollector<String>("stadthallewien") 
                 withProperty(SemanticKeys.PICTURE_URL_PROPERTY, pictureUrl)
                 withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, copyright)
                 withProperty(SemanticKeys.PICTURE_ALT_TEXT_PROPERTY, altText)
-                withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, eventSite.select("div.readmore-txt").text())
+                withDescription(eventSite.select("div.readmore-txt"))
                 withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Stadthalle Wien")
                 withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(event))
                 withProperty(SemanticKeys.ENDDATE_PROPERTY, date.endDate)

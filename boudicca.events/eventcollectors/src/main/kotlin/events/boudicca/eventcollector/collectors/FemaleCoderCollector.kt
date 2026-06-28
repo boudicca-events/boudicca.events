@@ -7,7 +7,7 @@ import base.boudicca.format.UrlUtils
 import base.boudicca.model.Registration
 import base.boudicca.model.structured.StructuredEvent
 import base.boudicca.model.structured.dsl.structuredEvent
-import org.jsoup.Jsoup
+import events.boudicca.eventcollector.util.fetchUrlAndParse
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZoneId
@@ -19,7 +19,7 @@ class FemaleCoderCollector : TwoStepEventCollector<String>("femalecoder") {
     private val baseUrl = "https://female-coders.at/"
 
     override fun getAllUnparsedEvents(): List<String> {
-        val document = Jsoup.parse(fetcher.fetchUrl(baseUrl))
+        val document = fetcher.fetchUrlAndParse(baseUrl)
 
         val eventsUrls =
             document
@@ -34,7 +34,7 @@ class FemaleCoderCollector : TwoStepEventCollector<String>("femalecoder") {
     override fun parseStructuredEvent(event: String): StructuredEvent {
         val url = event
 
-        val document = Jsoup.parse(fetcher.fetchUrl(event))
+        val document = fetcher.fetchUrlAndParse(event)
 
         val name = document.select("div.organizer p").text()
 

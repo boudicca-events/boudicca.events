@@ -8,7 +8,8 @@ import base.boudicca.dateparser.dateparser.DateParser
 import base.boudicca.dateparser.dateparser.DateParserResult
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
-import org.jsoup.Jsoup
+import events.boudicca.eventcollector.util.fetchUrlAndParse
+import events.boudicca.eventcollector.util.withDescription
 import org.jsoup.nodes.Element
 
 class OKHVoecklabruckCollector : TwoStepEventCollector<Pair<String, String>>("okhvoecklabruck") {
@@ -17,7 +18,7 @@ class OKHVoecklabruckCollector : TwoStepEventCollector<Pair<String, String>>("ok
 
     override fun getAllUnparsedEvents(): List<Pair<String, String>> {
         val events = mutableListOf<Pair<String, String>>()
-        val document = Jsoup.parse(fetcher.fetchUrl(baseUrl + "programm"))
+        val document = fetcher.fetchUrlAndParse(baseUrl + "programm")
         document.select("div.event_box").forEach {
             events.add(
                 Pair(
@@ -32,7 +33,7 @@ class OKHVoecklabruckCollector : TwoStepEventCollector<Pair<String, String>>("ok
     override fun parseMultipleStructuredEvents(event: Pair<String, String>): List<StructuredEvent?>? {
         val (eventUrl, eventType) = event
         val url = baseUrl + eventUrl
-        val eventSite = Jsoup.parse(fetcher.fetchUrl(url))
+        val eventSite = fetcher.fetchUrlAndParse(url)
 
         val name = eventSite.select("h1").text()
         val dates = parseDates(eventSite)
@@ -58,7 +59,7 @@ class OKHVoecklabruckCollector : TwoStepEventCollector<Pair<String, String>>("ok
             withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(url))
             withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(url))
             withProperty(SemanticKeys.TYPE_PROPERTY, eventType)
-            withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, eventSite.select("div.box_3").text())
+            withDescription(eventSite.select("div.box_3"))
             withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(pictureUrl))
             withProperty(SemanticKeys.PICTURE_ALT_TEXT_PROPERTY, pictureAltText)
             withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, pictureCopyright)

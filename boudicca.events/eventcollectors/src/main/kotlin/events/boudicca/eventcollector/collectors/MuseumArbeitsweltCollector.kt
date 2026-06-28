@@ -8,14 +8,15 @@ import base.boudicca.dateparser.dateparser.DateParser
 import base.boudicca.dateparser.dateparser.DateParserResult
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
-import org.jsoup.Jsoup
+import events.boudicca.eventcollector.util.fetchUrlAndParse
+import events.boudicca.eventcollector.util.withDescription
 
 class MuseumArbeitsweltCollector : TwoStepEventCollector<Pair<String, String>>("museumArbeitswelt") {
     private val fetcher = FetcherFactory.newFetcher()
 
     override fun getAllUnparsedEvents(): List<Pair<String, String>> {
         val events = mutableListOf<Pair<String, String>>()
-        val document = Jsoup.parse(fetcher.fetchUrl("https://museumarbeitswelt.at/kalender/"))
+        val document = fetcher.fetchUrlAndParse("https://museumarbeitswelt.at/kalender/")
         document.select("div.ecs-event").forEach {
             events.add(
                 Pair(
@@ -29,12 +30,12 @@ class MuseumArbeitsweltCollector : TwoStepEventCollector<Pair<String, String>>("
 
     override fun parseMultipleStructuredEvents(event: Pair<String, String>): List<StructuredEvent?>? {
         val (eventUrl, dateToParse) = event
-        val eventSite = Jsoup.parse(fetcher.fetchUrl(eventUrl))
+        val eventSite = fetcher.fetchUrlAndParse(eventUrl)
 
         val name = eventSite.select("h1.entry-title").text()
         val startDate = parseDate(dateToParse)
 
-        val description = eventSite.select("div.et_pb_post_content").text()
+        val description = eventSite.select("div.et_pb_post_content")
 
         val img = eventSite.select("div.et_pb_title_featured_container span.et_pb_image_wrap img")
         val pictureUrl = img.last()?.attr("src")
@@ -42,7 +43,7 @@ class MuseumArbeitsweltCollector : TwoStepEventCollector<Pair<String, String>>("
         return structuredEvent(name, startDate) {
             withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(eventUrl))
             withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(eventUrl))
-            withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
+            withDescription(description)
             withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(pictureUrl))
             withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, "Museum Arbeitswelt")
             withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Museum Arbeitswelt")

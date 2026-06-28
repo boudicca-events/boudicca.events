@@ -8,9 +8,11 @@ import base.boudicca.dateparser.dateparser.DateParser
 import base.boudicca.dateparser.dateparser.DateParserResult
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
-import org.jsoup.Jsoup
+import events.boudicca.eventcollector.util.fetchUrlAndParse
+import events.boudicca.eventcollector.util.withDescription
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
+import org.jsoup.select.Elements
 
 class BrucknerhausCollector : TwoStepEventCollector<Element>("brucknerhaus") {
     private val baseUrl = "https://www.brucknerhaus.at"
@@ -19,7 +21,7 @@ class BrucknerhausCollector : TwoStepEventCollector<Element>("brucknerhaus") {
         val events = mutableListOf<Element>()
 
         val fetcher = FetcherFactory.newFetcher()
-        val document = Jsoup.parse(fetcher.fetchUrl("$baseUrl/programm/veranstaltungen"))
+        val document = fetcher.fetchUrlAndParse("$baseUrl/programm/veranstaltungen")
         val otherUrls =
             document
                 .select("ul.pagination>li")
@@ -30,7 +32,7 @@ class BrucknerhausCollector : TwoStepEventCollector<Element>("brucknerhaus") {
         events.addAll(findUnparsedEvents(document))
 
         otherUrls.forEach {
-            events.addAll(findUnparsedEvents(Jsoup.parse(fetcher.fetchUrl(it))))
+            events.addAll(findUnparsedEvents(fetcher.fetchUrlAndParse(it)))
         }
 
         return events
@@ -43,14 +45,20 @@ class BrucknerhausCollector : TwoStepEventCollector<Element>("brucknerhaus") {
         val name = event.select("div.event__name").text()
         val url = baseUrl + event.select("a.headline_link").attr("href")
 
-        var description = event.select("div.event__teaser p").text()
-        if (description.isBlank()) {
-            description = event
-                .select("div.event__teaser .fr-view")
-                .first()
-                ?.children()
-                ?.first()
-                ?.text() ?: ""
+        var description = event.select("div.event__teaser p")
+        if (description.text().isBlank()) {
+            val alternativeDescription =
+                event
+                    .select("div.event__teaser .fr-view")
+                    .first()
+                    ?.children()
+                    ?.first()
+            if (alternativeDescription != null) {
+                description =
+                    Elements(
+                        alternativeDescription,
+                    )
+            }
         }
 
         val imgTag = event.select("div.event__image img")
@@ -75,7 +83,7 @@ class BrucknerhausCollector : TwoStepEventCollector<Element>("brucknerhaus") {
             withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(imgTag.attr("src")))
             withProperty(SemanticKeys.PICTURE_ALT_TEXT_PROPERTY, imgAltText)
             withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, imgCopyright)
-            withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
+            withDescription(description)
             withProperty(SemanticKeys.TYPE_PROPERTY, "concert") // TODO check
             withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, location)
             withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse(baseUrl))

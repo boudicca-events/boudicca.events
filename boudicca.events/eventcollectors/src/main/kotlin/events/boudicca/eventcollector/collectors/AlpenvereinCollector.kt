@@ -10,7 +10,8 @@ import base.boudicca.dateparser.dateparser.DateParserResult
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.EventCategory
 import base.boudicca.model.structured.StructuredEvent
-import org.jsoup.Jsoup
+import events.boudicca.eventcollector.util.fetchUrlAndParse
+import events.boudicca.eventcollector.util.withDescription
 import org.jsoup.nodes.Document
 import java.net.URI
 import java.util.concurrent.TimeUnit
@@ -20,7 +21,7 @@ class AlpenvereinCollector : TwoStepEventCollector<String>("alpenverein") {
     private val fetcher = FetcherFactory.newFetcher(manualSetDelay = delay)
 
     override fun getAllUnparsedEvents(): List<String> {
-        val mainSearchPage = Jsoup.parse(fetcher.fetchUrl("https://www.alpenverein.at/portal/termine/suche.php"))
+        val mainSearchPage = fetcher.fetchUrlAndParse("https://www.alpenverein.at/portal/termine/suche.php")
 
         val allSearchPages =
             mainSearchPage
@@ -28,7 +29,7 @@ class AlpenvereinCollector : TwoStepEventCollector<String>("alpenverein") {
                 .map { normalizeUrl(it.attr("href")) }
                 .distinct()
                 .filter { !it.endsWith("=1") }
-                .map { Jsoup.parse(fetcher.fetchUrl(it)) }
+                .map { fetcher.fetchUrlAndParse(it) }
                 .plus(mainSearchPage)
 
         val allLinks =
@@ -48,7 +49,7 @@ class AlpenvereinCollector : TwoStepEventCollector<String>("alpenverein") {
             return emptyList()
         }
 
-        val eventSite = Jsoup.parse(fetcher.fetchUrl(event))
+        val eventSite = fetcher.fetchUrlAndParse(event)
 
         if (eventSite
                 .select("div.blockContentInner")
@@ -67,10 +68,7 @@ class AlpenvereinCollector : TwoStepEventCollector<String>("alpenverein") {
             withProperty(SemanticKeys.CATEGORY_PROPERTY, EventCategory.SPORT)
             withProperty(SemanticKeys.TYPE_PROPERTY, "sport")
             withProperty(TextProperty("sport.participation"), "active")
-            withProperty(
-                SemanticKeys.DESCRIPTION_TEXT_PROPERTY,
-                eventSite.select("div.elementBoxSheet div.elementText").text(),
-            )
+            withDescription(eventSite.select("div.elementBoxSheet div.elementText"))
             withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, getLocationCity(eventSite))
             withProperty(SemanticKeys.PICTURE_URL_PROPERTY, imgUrl)
             withProperty(SemanticKeys.PICTURE_ALT_TEXT_PROPERTY, imgAltText)

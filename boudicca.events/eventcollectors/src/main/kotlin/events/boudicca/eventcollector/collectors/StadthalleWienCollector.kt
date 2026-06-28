@@ -9,7 +9,8 @@ import base.boudicca.dateparser.dateparser.reduce
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
 import base.boudicca.model.structured.dsl.structuredEvent
-import org.jsoup.Jsoup
+import events.boudicca.eventcollector.util.fetchUrlAndParse
+import events.boudicca.eventcollector.util.withDescription
 import org.jsoup.nodes.Element
 
 class StadthalleWienCollector : TwoStepEventCollector<String>("stadthallewien") {
@@ -17,12 +18,12 @@ class StadthalleWienCollector : TwoStepEventCollector<String>("stadthallewien") 
     private val baseUrl = "https://www.stadthalle.com"
 
     override fun getAllUnparsedEvents(): List<String> {
-        val document = Jsoup.parse(fetcher.fetchUrl("https://www.stadthalle.com/de/events/alle-events"))
+        val document = fetcher.fetchUrlAndParse("https://www.stadthalle.com/de/events/alle-events")
         return document.select("div.event-item-inner a.front-side").map { baseUrl + it.attr("href") }
     }
 
     override fun parseMultipleStructuredEvents(event: String): List<StructuredEvent?>? {
-        val eventSite = Jsoup.parse(fetcher.fetchUrl(event))
+        val eventSite = fetcher.fetchUrlAndParse(event)
         val name = eventSite.select("h1.title").text()
 
         val imgTag = eventSite.select("div.img-ad img")
@@ -52,7 +53,7 @@ class StadthalleWienCollector : TwoStepEventCollector<String>("stadthallewien") 
                 withProperty(SemanticKeys.PICTURE_URL_PROPERTY, pictureUrl)
                 withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, copyright)
                 withProperty(SemanticKeys.PICTURE_ALT_TEXT_PROPERTY, altText)
-                withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, eventSite.select("div.readmore-txt").text())
+                withDescription(eventSite.select("div.readmore-txt"))
                 withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Stadthalle Wien")
                 withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(event))
                 withProperty(SemanticKeys.ENDDATE_PROPERTY, date.endDate)

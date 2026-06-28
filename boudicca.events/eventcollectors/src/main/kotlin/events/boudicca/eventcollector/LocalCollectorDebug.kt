@@ -24,7 +24,7 @@ fun main() {
 //        .enableEnricher("http://localhost:8085")
         // enable this line to ingest the collected events into the local eventdb (this uses the configuration from the application.properties)
 //        .enableIngestion()
-        // enable to test remote collectors !!DON'T FORGET TO DISABLE THE FETCHER CACHE!! for example: https://github.com/boudicca-events/remote-collector-samples
+        // enable to test remote collectors. for example: https://github.com/boudicca-events/remote-collector-samples
 //        .debug(RemoteCollectorCollector("http://localhost:8080"))
         // enable/add any collectors you want to test here
         .debug(ZuckerfabrikCollector())

@@ -8,7 +8,8 @@ import base.boudicca.dateparser.dateparser.DateParser
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.EventCategory
 import base.boudicca.model.structured.StructuredEvent
-import org.jsoup.Jsoup
+import events.boudicca.eventcollector.util.fetchUrlAndParse
+import events.boudicca.eventcollector.util.withDescription
 import org.jsoup.nodes.Element
 
 class ChelseaCollector : TwoStepEventCollector<Element>("chelsea") {
@@ -16,22 +17,22 @@ class ChelseaCollector : TwoStepEventCollector<Element>("chelsea") {
     private val baseUrl = "https://www.chelsea.co.at/"
 
     override fun getAllUnparsedEvents(): List<Element> =
-        Jsoup
-            .parse(fetcher.fetchUrl(baseUrl + "concerts.php"))
+        fetcher
+            .fetchUrlAndParse(baseUrl + "concerts.php")
             .select("table.termindetails")
 
     override fun parseMultipleStructuredEvents(event: Element): List<StructuredEvent?> {
         val name = event.select("div.band").text()
         val bandNames = name.split("/").map { it.trim() }
         val startDate = DateParser.parse(event.select("div.date").text())
-        val description = event.select("div.text").text()
+        val description = event.select("div.text")
         val imageSource = event.select("img").first()?.attr("src")
 
         return structuredEvent(name, startDate) {
             withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(baseUrl))
             withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(baseUrl))
             withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse(baseUrl))
-            withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
+            withDescription(description)
             withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(baseUrl, imageSource))
             withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, "Chelsea")
             withProperty(SemanticKeys.CONCERT_BANDLIST_PROPERTY, bandNames)

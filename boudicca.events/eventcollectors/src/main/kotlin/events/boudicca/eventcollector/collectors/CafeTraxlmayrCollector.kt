@@ -9,8 +9,8 @@ import base.boudicca.dateparser.dateparser.DateParserResult
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
 import base.boudicca.model.structured.dsl.StructuredEventBuilder
+import events.boudicca.eventcollector.util.fetchUrlAndParse
 import io.github.oshai.kotlinlogging.KotlinLogging
-import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 
 class CafeTraxlmayrCollector : TwoStepEventCollector<Element>("cafetraxlmayr") {
@@ -20,7 +20,7 @@ class CafeTraxlmayrCollector : TwoStepEventCollector<Element>("cafetraxlmayr") {
     override fun getAllUnparsedEvents(): List<Element> {
         val fetcher = FetcherFactory.newFetcher()
 
-        val document = Jsoup.parse(fetcher.fetchUrl(baseUrl))
+        val document = fetcher.fetchUrlAndParse(baseUrl)
         return document
             .select("div.fusion-text a.fusion-modal-text-link")
             .map { it.attr("data-target") }

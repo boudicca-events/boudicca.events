@@ -9,7 +9,8 @@ import base.boudicca.dateparser.dateparser.DateParser
 import base.boudicca.dateparser.dateparser.DateParserResult
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
-import org.jsoup.Jsoup
+import events.boudicca.eventcollector.util.fetchUrlAndParse
+import events.boudicca.eventcollector.util.withDescription
 import org.jsoup.nodes.Element
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -20,7 +21,7 @@ class FraeuleinFlorentineCollector : TwoStepEventCollector<Pair<Element, String?
     private val baseUrl = "https://frl-florentine.at/eventkalender/"
 
     override fun getAllUnparsedEvents(): List<Pair<Element, String?>> {
-        val eventSite = Jsoup.parse(fetcher.fetchUrl(baseUrl))
+        val eventSite = fetcher.fetchUrlAndParse(baseUrl)
         val logoSrc = eventSite.selectFirst(".page-content img")?.attr("src")
 
         return eventSite
@@ -33,7 +34,7 @@ class FraeuleinFlorentineCollector : TwoStepEventCollector<Pair<Element, String?
         val (eventSite, logoSrc) = event
         val nameAndTime = eventSite.select(".simcal-event-title").text().split("|")
         val name = nameAndTime.first().trim()
-        val description = eventSite.select(".simcal-event-description").text()
+        val description = eventSite.select(".simcal-event-description")
         var startDate = parseStartDate(eventSite, nameAndTime)
         val endDate = parseEndDate(eventSite, startDate)
         if (endDate != null) {
@@ -43,7 +44,7 @@ class FraeuleinFlorentineCollector : TwoStepEventCollector<Pair<Element, String?
         return structuredEvent(name, startDate) {
             withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(baseUrl))
             withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(baseUrl))
-            withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
+            withDescription(description)
             withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Salonschiff Fräulein Florentine")
             withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse("https://frl-florentine.at"))
             withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Linz")
@@ -61,7 +62,8 @@ class FraeuleinFlorentineCollector : TwoStepEventCollector<Pair<Element, String?
         if (startTimeElementText.isNotBlank()) {
             startTimeToParse = startTimeElementText
             val startTime =
-                LocalTime.parse( // DateParse can't handle am/pm, so convert it manually and continue with its String
+                LocalTime.parse(
+                    // DateParse can't handle am/pm, so convert it manually and continue with its String
                     startTimeToParse.uppercase(), // convert pm to PM, to be recognized by the time pattern 'a'
                     DateTimeFormatter.ofPattern("h:mm a").withLocale(Locale.GERMAN),
                 )
@@ -83,7 +85,8 @@ class FraeuleinFlorentineCollector : TwoStepEventCollector<Pair<Element, String?
         val endTimeToParse = event.select(".simcal-event-end-time").text()
         if (endTimeToParse.isNotBlank()) {
             endTime =
-                LocalTime.parse( // DateParse can't handle am/pm, so convert it manually and continue with its String
+                LocalTime.parse(
+                    // DateParse can't handle am/pm, so convert it manually and continue with its String
                     endTimeToParse.uppercase(), // convert pm to PM, to be recognized by the time pattern 'a'
                     DateTimeFormatter.ofPattern("h:mm a").withLocale(Locale.GERMAN),
                 )

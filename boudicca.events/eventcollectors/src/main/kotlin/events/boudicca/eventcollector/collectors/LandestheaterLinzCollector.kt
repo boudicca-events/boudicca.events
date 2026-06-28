@@ -10,7 +10,9 @@ import base.boudicca.fetcher.Fetcher
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
 import base.boudicca.model.structured.dsl.StructuredEventBuilder
-import org.jsoup.Jsoup
+import events.boudicca.eventcollector.util.fetchUrlAndParse
+import events.boudicca.eventcollector.util.fetchUrlPostAndParse
+import events.boudicca.eventcollector.util.withDescription
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import java.time.LocalDate
@@ -61,7 +63,7 @@ class LandestheaterLinzCollector : TwoStepEventCollector<LandestheaterLinzCollec
 
         val resolvedEventUrls =
             eventUrls
-                .associateWith { Jsoup.parse(fetcher.fetchUrl(it)) }
+                .associateWith { fetcher.fetchUrlAndParse(it) }
 
         return events.map {
             LandestheaterEventData(
@@ -77,12 +79,10 @@ class LandestheaterLinzCollector : TwoStepEventCollector<LandestheaterLinzCollec
         val toDate = nowDate.plusMonths(6)
         val now = nowDate.format(DateTimeFormatter.ofPattern("dd.MM.uuuu"))
         val to = toDate.format(DateTimeFormatter.ofPattern("dd.MM.uuuu"))
-        return Jsoup.parse(
-            fetcher.fetchUrlPost(
-                "$baseUrl/DE/repos/evoscripts/lth/getEvents",
-                "application/x-www-form-urlencoded",
-                "cal=$now&monthTo=$to",
-            ),
+        return fetcher.fetchUrlPostAndParse(
+            "$baseUrl/DE/repos/evoscripts/lth/getEvents",
+            "application/x-www-form-urlencoded",
+            "cal=$now&monthTo=$to",
         )
     }
 
@@ -100,19 +100,18 @@ class LandestheaterLinzCollector : TwoStepEventCollector<LandestheaterLinzCollec
                 .substring(11)
                 .trim()
 
+        val description =
+            site.second
+                .select("div.lth-layout-ctr section > h2")
+                .first { it.text() == "Stückinfo" }
+                .parent()!!
+                .select("div.lth-section-content")
+
         val structuredEvent =
             structuredEvent(name, dates) {
                 withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(site.first))
                 withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(site.first))
-                withProperty(
-                    SemanticKeys.DESCRIPTION_TEXT_PROPERTY,
-                    site.second
-                        .select("div.lth-layout-ctr section > h2")
-                        .first { it.text() == "Stückinfo" }
-                        .parent()!!
-                        .select("div.lth-section-content")
-                        .text(),
-                )
+                withDescription(description)
                 withProperty(
                     SemanticKeys.PICTURE_URL_PROPERTY,
                     UrlUtils.parse(baseUrl, site.second.select("div.lth-slide img").attr("src")),

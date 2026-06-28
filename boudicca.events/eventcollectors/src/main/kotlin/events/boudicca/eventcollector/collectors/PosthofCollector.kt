@@ -7,7 +7,7 @@ import base.boudicca.api.eventcollector.util.structuredEvent
 import base.boudicca.dateparser.dateparser.DateParser
 import base.boudicca.model.Registration
 import base.boudicca.model.structured.StructuredEvent
-import org.jsoup.Jsoup
+import events.boudicca.eventcollector.util.fetchUrlAndParse
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 import java.net.URI
@@ -21,7 +21,7 @@ class PosthofCollector : TwoStepEventCollector<String>("posthof") {
 
         var nextUrl: String = baseUrl
         while (true) {
-            val currentDoc = Jsoup.parse(fetcher.fetchUrl(nextUrl))
+            val currentDoc = fetcher.fetchUrlAndParse(nextUrl)
             eventUrls.addAll(currentDoc.select("ul.programmlist li h2 a").map { baseUrl + it.attr("href") })
 
             val nextButton = currentDoc.select("ul.programmlist li.loadnext button")
@@ -36,7 +36,7 @@ class PosthofCollector : TwoStepEventCollector<String>("posthof") {
     }
 
     override fun parseMultipleStructuredEvents(event: String): List<StructuredEvent?>? {
-        val eventSite: Element = Jsoup.parse(fetcher.fetchUrl(event))
+        val eventSite: Element = fetcher.fetchUrlAndParse(event)
 
         var name =
             eventSite

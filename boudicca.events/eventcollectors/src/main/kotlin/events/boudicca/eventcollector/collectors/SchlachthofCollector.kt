@@ -7,7 +7,8 @@ import base.boudicca.api.eventcollector.util.structuredEvent
 import base.boudicca.dateparser.dateparser.DateParser
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
-import org.jsoup.Jsoup
+import events.boudicca.eventcollector.util.fetchUrlAndParse
+import events.boudicca.eventcollector.util.withDescription
 import org.jsoup.nodes.Element
 
 class SchlachthofCollector : TwoStepEventCollector<Element>("schlachthof") {
@@ -16,7 +17,7 @@ class SchlachthofCollector : TwoStepEventCollector<Element>("schlachthof") {
     override fun getAllUnparsedEvents(): List<Element> {
         val fetcher = FetcherFactory.newFetcher()
 
-        val document = Jsoup.parse(fetcher.fetchUrl("$baseUrl/programm"))
+        val document = fetcher.fetchUrlAndParse("$baseUrl/programm")
 
         return document.select("div.eventitem:not(.pasteventitem)")
     }
@@ -35,7 +36,7 @@ class SchlachthofCollector : TwoStepEventCollector<Element>("schlachthof") {
 
         return structuredEvent(name, startDate) {
             withProperty(SemanticKeys.TYPE_PROPERTY, event.select("h3:nth-child(1)").text())
-            withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, event.select("div.event_list_previewtext").text())
+            withDescription(event.select("div.event_list_previewtext"))
             withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(pictureUrl))
             withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, pictureCopyright)
             withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(url))

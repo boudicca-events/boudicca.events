@@ -8,7 +8,8 @@ import base.boudicca.dateparser.dateparser.DateParser
 import base.boudicca.dateparser.dateparser.DateParserResult
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
-import org.jsoup.Jsoup
+import events.boudicca.eventcollector.util.fetchUrlAndParse
+import events.boudicca.eventcollector.util.withDescription
 import org.jsoup.nodes.Document
 import java.util.regex.Pattern
 
@@ -18,13 +19,13 @@ import java.util.regex.Pattern
 class OOESeniorenbundCollector : TwoStepEventCollector<Pair<Document, String>>("ooesb") {
     override fun getAllUnparsedEvents(): List<Pair<Document, String>> {
         val fetcher = FetcherFactory.newFetcher()
-        val document = Jsoup.parse(fetcher.fetchUrl("https://servicebroker.media-data.at/overview.html?key=QVKSBOOE"))
+        val document = fetcher.fetchUrlAndParse("https://servicebroker.media-data.at/overview.html?key=QVKSBOOE")
 
         return document
             .select("a.link-detail")
             .toList()
             .map { "https://servicebroker.media-data.at/" + it.attr("href") }
-            .map { Pair(Jsoup.parse(fetcher.fetchUrl(it)), it) }
+            .map { Pair(fetcher.fetchUrlAndParse(it), it) }
     }
 
     override fun parseMultipleStructuredEvents(event: Pair<Document, String>): List<StructuredEvent> {
@@ -33,7 +34,7 @@ class OOESeniorenbundCollector : TwoStepEventCollector<Pair<Document, String>>("
         val url = cleanupUrl(rawUrl)
         val name = eventDoc.select("div.title>p").text()
         val dates = getDates(eventDoc)
-        val description = eventDoc.select("div.subtitle>p").text()
+        val description = eventDoc.select("div.subtitle>p")
 
         return dates
             .map {
@@ -43,7 +44,7 @@ class OOESeniorenbundCollector : TwoStepEventCollector<Pair<Document, String>>("
                         SemanticKeys.LOCATION_NAME_PROPERTY,
                         eventDoc.select("div.venue").text(),
                     ) // TODO location name and city here are not seperated at all -.-
-                    withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
+                    withDescription(description)
                     withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(url))
                 }
             }.flatten()

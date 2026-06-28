@@ -7,7 +7,8 @@ import base.boudicca.api.eventcollector.util.structuredEvent
 import base.boudicca.dateparser.dateparser.DateParser
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
-import org.jsoup.Jsoup
+import events.boudicca.eventcollector.util.fetchUrlAndParse
+import events.boudicca.eventcollector.util.withDescription
 import org.jsoup.nodes.Element
 
 class TheatherPhoenixCollector : TwoStepEventCollector<Pair<Element, Element>>("theaterphoenix") {
@@ -15,7 +16,7 @@ class TheatherPhoenixCollector : TwoStepEventCollector<Pair<Element, Element>>("
     private val fetcher = FetcherFactory.newFetcher()
 
     override fun getAllUnparsedEvents(): List<Pair<Element, Element>> {
-        val document = Jsoup.parse(fetcher.fetchUrl("$baseUrl/termine"))
+        val document = fetcher.fetchUrlAndParse("$baseUrl/termine")
         return document
             .select("div.terminecol div.onecolum > div.terminlink")
             .map {
@@ -30,7 +31,7 @@ class TheatherPhoenixCollector : TwoStepEventCollector<Pair<Element, Element>>("
 
         val name = link.select("div.terminetitel").text()
 
-        val description = details.select("div.termindetailbeschreibung p").text()
+        val description = details.select("div.termindetailbeschreibung p")
 
         val date = DateParser.parse(details.select("div.termindetaildatumzeit").text())
 
@@ -48,7 +49,7 @@ class TheatherPhoenixCollector : TwoStepEventCollector<Pair<Element, Element>>("
             withProperty(SemanticKeys.PICTURE_URL_PROPERTY, UrlUtils.parse(pictureUrl))
             withProperty(SemanticKeys.PICTURE_ALT_TEXT_PROPERTY, pictureAlt)
             withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, pictureCopyright)
-            withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, description)
+            withDescription(description)
             withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, "Theater Phönix")
             withProperty(SemanticKeys.LOCATION_URL_PROPERTY, UrlUtils.parse(baseUrl))
             withProperty(SemanticKeys.LOCATION_CITY_PROPERTY, "Linz")

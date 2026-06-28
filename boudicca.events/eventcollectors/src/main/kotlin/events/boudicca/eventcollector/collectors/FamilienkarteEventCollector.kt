@@ -5,7 +5,8 @@ import base.boudicca.api.eventcollector.TwoStepEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.model.structured.StructuredEvent
 import base.boudicca.model.structured.dsl.structuredEvent
-import org.jsoup.Jsoup
+import events.boudicca.eventcollector.util.fetchUrlAndParse
+import events.boudicca.eventcollector.util.withDescription
 import org.jsoup.nodes.Element
 import java.net.URI
 import java.time.LocalDate
@@ -29,13 +30,13 @@ class FamilienkarteEventCollector : TwoStepEventCollector<String>("familienkarte
         @Suppress("MaxLineLength") // this is an url that would not gain readability by linebreaking
         val eventsUrl =
             "$baseUrl/de/freizeit/veranstaltungen/veranstaltungskalender.html?events_cat_key=8&date_from=$dateFrom&date_to=$dateTo"
-        val document = Jsoup.parse(fetcher.fetchUrl(eventsUrl))
+        val document = fetcher.fetchUrlAndParse(eventsUrl)
         return document.select("div.detailButton a").map { it.attr("href") }
     }
 
     override fun parseStructuredEvent(event: String): StructuredEvent {
         val eventUrl = baseUrl + event
-        val eventSite = Jsoup.parse(fetcher.fetchUrl(eventUrl))
+        val eventSite = fetcher.fetchUrlAndParse(eventUrl)
 
         val name = eventSite.select("div.eventDetailWrapper h1").text()
         val (startDate, endDate) = parseStartAndEndDateTime(eventSite)
@@ -51,7 +52,7 @@ class FamilienkarteEventCollector : TwoStepEventCollector<String>("familienkarte
             withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(eventUrl))
             withProperty(SemanticKeys.TYPE_PROPERTY, "theater")
             withProperty(SemanticKeys.ENDDATE_PROPERTY, endDate)
-            withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, eventSite.select("div.eventDetailDescr").text())
+            withDescription(eventSite.select("div.eventDetailDescr"))
             withProperty(SemanticKeys.PICTURE_URL_PROPERTY, pictureUrl)
             withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, eventSite.select("div.eventDetailLocation").text())
         }

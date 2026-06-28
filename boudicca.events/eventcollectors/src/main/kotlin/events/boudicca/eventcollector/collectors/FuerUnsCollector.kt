@@ -8,7 +8,8 @@ import base.boudicca.dateparser.dateparser.DateParser
 import base.boudicca.dateparser.dateparser.DateParserResult
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
-import org.jsoup.Jsoup
+import events.boudicca.eventcollector.util.fetchUrlAndParse
+import events.boudicca.eventcollector.util.withDescription
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 
@@ -19,7 +20,7 @@ class FuerUnsCollector : TwoStepEventCollector<String>("fueruns") {
     override fun getAllUnparsedEvents(): List<String> {
         val events = mutableListOf<Element>()
 
-        val document = Jsoup.parse(fetcher.fetchUrl(baseUrl + "aktuelle-veranstaltungen/veranstaltungskalender?page=1"))
+        val document = fetcher.fetchUrlAndParse(baseUrl + "aktuelle-veranstaltungen/veranstaltungskalender?page=1")
         val otherUrls =
             document
                 .select("nav.pagination ul li a")
@@ -28,7 +29,7 @@ class FuerUnsCollector : TwoStepEventCollector<String>("fueruns") {
         parseEventList(document, events)
 
         otherUrls.forEach {
-            parseEventList(Jsoup.parse(fetcher.fetchUrl(baseUrl + it)), events)
+            parseEventList(fetcher.fetchUrlAndParse(baseUrl + it), events)
         }
 
         return events.map { it.attr("href") }
@@ -48,7 +49,7 @@ class FuerUnsCollector : TwoStepEventCollector<String>("fueruns") {
 
     override fun parseMultipleStructuredEvents(event: String): List<StructuredEvent?>? {
         val fullEventLink = baseUrl + event
-        val eventSite = Jsoup.parse(fetcher.fetchUrl(fullEventLink))
+        val eventSite = fetcher.fetchUrlAndParse(fullEventLink)
 
         val name = eventSite.select("h1").text()
 
@@ -62,7 +63,7 @@ class FuerUnsCollector : TwoStepEventCollector<String>("fueruns") {
 
         return structuredEvent(name, startDate) {
             withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(fullEventLink))
-            withProperty(SemanticKeys.DESCRIPTION_TEXT_PROPERTY, eventSite.select("div.field-text").text())
+            withDescription(eventSite.select("div.field-text"))
             withProperty(SemanticKeys.PICTURE_URL_PROPERTY, pictureUrl)
             withProperty(SemanticKeys.PICTURE_ALT_TEXT_PROPERTY, pictureAltText)
             withProperty(SemanticKeys.PICTURE_COPYRIGHT_PROPERTY, "füruns - Zentrum für Zivilgesellschaft ")

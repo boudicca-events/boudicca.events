@@ -1,7 +1,7 @@
 package base.boudicca.enricherutils
 
-import base.boudicca.api.enricher.EnricherClient
-import base.boudicca.api.eventdb.publisher.EventDbPublisherClient
+import base.boudicca.api.enricher.DefaultEnricherClient
+import base.boudicca.api.eventdb.publisher.DefaultEventDbPublisherClient
 import base.boudicca.model.Event
 import java.util.*
 
@@ -69,6 +69,6 @@ fun printValues(
     println(String.format(Locale.getDefault(), "%10s: %10s -> %10s", key, oldValue, newValue))
 }
 
-private fun enrich(originalEvents: List<Event>): List<Event> = EnricherClient(ENRICHER_URL).enrichEvents(originalEvents)
+private fun enrich(originalEvents: List<Event>): List<Event> = DefaultEnricherClient(ENRICHER_URL).enrichEvents(originalEvents)
 
-fun getEvents(): List<Event> = EventDbPublisherClient(EVENTDB_URL).getAllEvents().toList()
+fun getEvents(): List<Event> = DefaultEventDbPublisherClient(EVENTDB_URL).getAllEvents().toList()

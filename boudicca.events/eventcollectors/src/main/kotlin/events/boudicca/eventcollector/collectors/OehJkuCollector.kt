@@ -6,7 +6,7 @@ import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
 import base.boudicca.model.structured.dsl.structuredEvent
-import org.jsoup.Jsoup
+import events.boudicca.eventcollector.util.fetchUrlAndParse
 import org.jsoup.nodes.Element
 import java.time.LocalDate
 import java.time.LocalTime
@@ -20,12 +20,12 @@ class OehJkuCollector : TwoStepEventCollector<String>("oehjku") {
     private val baseUrl = "https://oeh.jku.at/"
 
     override fun getAllUnparsedEvents(): List<String> {
-        val document = Jsoup.parse(fetcher.fetchUrl(baseUrl + "oeh-services/veranstaltungen"))
+        val document = fetcher.fetchUrlAndParse(baseUrl + "oeh-services/veranstaltungen")
         return document.select("article.card a").map { it.attr("href") }
     }
 
     override fun parseStructuredEvent(event: String): StructuredEvent {
-        val eventSite = Jsoup.parse(fetcher.fetchUrl(baseUrl + event))
+        val eventSite = fetcher.fetchUrlAndParse(baseUrl + event)
 
         val name = eventSite.select("section div.container h1").text()
         val startDate = parseDate(eventSite)

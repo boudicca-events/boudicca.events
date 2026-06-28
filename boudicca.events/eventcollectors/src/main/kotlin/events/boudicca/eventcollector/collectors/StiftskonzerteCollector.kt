@@ -8,14 +8,14 @@ import base.boudicca.dateparser.dateparser.DateParser
 import base.boudicca.dateparser.dateparser.DateParserResult
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
-import org.jsoup.Jsoup
+import events.boudicca.eventcollector.util.fetchUrlAndParse
 import org.jsoup.nodes.Element
 
 class StiftskonzerteCollector : TwoStepEventCollector<String>("stiftskonzerte") {
     private val fetcher = FetcherFactory.newFetcher()
 
     override fun getAllUnparsedEvents(): List<String> {
-        val document = Jsoup.parse(fetcher.fetchUrl("https://www.stiftskonzerte.at/programm-und-karten/"))
+        val document = fetcher.fetchUrlAndParse("https://www.stiftskonzerte.at/programm-und-karten/")
         return document
             .select("div.entry-footer-links a")
             .not("a.open-modal")
@@ -27,7 +27,7 @@ class StiftskonzerteCollector : TwoStepEventCollector<String>("stiftskonzerte") 
     }
 
     override fun parseMultipleStructuredEvents(event: String): List<StructuredEvent?>? {
-        val eventSite = Jsoup.parse(fetcher.fetchUrl(event))
+        val eventSite = fetcher.fetchUrlAndParse(event)
         val name = eventSite.select("header.entry-header h1").text()
 
         val locationTimeDiv = eventSite.select("div.entry-content div.location")

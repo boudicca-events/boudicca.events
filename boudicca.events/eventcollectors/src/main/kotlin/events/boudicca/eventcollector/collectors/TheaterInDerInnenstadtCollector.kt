@@ -9,7 +9,7 @@ import base.boudicca.format.UrlUtils
 import base.boudicca.model.EventCategory
 import base.boudicca.model.Registration
 import base.boudicca.model.structured.StructuredEvent
-import org.jsoup.Jsoup
+import events.boudicca.eventcollector.util.fetchUrlAndParse
 import org.jsoup.nodes.Element
 
 class TheaterInDerInnenstadtCollector : TwoStepEventCollector<Pair<Element, String?>>("theaterinderinnenstadt") {
@@ -18,7 +18,7 @@ class TheaterInDerInnenstadtCollector : TwoStepEventCollector<Pair<Element, Stri
     private val eventUrl = baseUrl + "spielplan/"
 
     override fun getAllUnparsedEvents(): List<Pair<Element, String?>> {
-        val document = Jsoup.parse(fetcher.fetchUrl(eventUrl))
+        val document = fetcher.fetchUrlAndParse(eventUrl)
         val events = document.select("div.event")
         val logoSrc = document.selectFirst("a.tm-logo img")?.attr("src")
         return events.map { Pair(it, logoSrc) }

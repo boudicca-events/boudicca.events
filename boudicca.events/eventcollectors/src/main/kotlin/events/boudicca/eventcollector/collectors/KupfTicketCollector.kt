@@ -9,6 +9,7 @@ import base.boudicca.model.structured.dsl.structuredEvent
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
 import com.beust.klaxon.lookup
+import events.boudicca.eventcollector.util.fetchUrlAndParse
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.safety.Safelist
@@ -25,7 +26,7 @@ class KupfTicketCollector : TwoStepEventCollector<String>("kupfticket") {
         var currentUrl: String? = baseUrl
 
         while (currentUrl != null) {
-            val document = Jsoup.parse(fetcher.fetchUrl(currentUrl))
+            val document = fetcher.fetchUrlAndParse(currentUrl)
             val nextData = document.select("body script#__NEXT_DATA__").first()!!.data()
             val jsonObject = Parser.default().parse(StringReader(nextData)) as JsonObject
 
@@ -45,7 +46,7 @@ class KupfTicketCollector : TwoStepEventCollector<String>("kupfticket") {
     }
 
     override fun parseStructuredEvent(event: String): StructuredEvent {
-        val eventSite = Jsoup.parse(fetcher.fetchUrl("$baseUrl/$event"))
+        val eventSite = fetcher.fetchUrlAndParse("$baseUrl/$event")
         val nextData = eventSite.select("body script#__NEXT_DATA__").first()!!.data()
         val jsonObject = Parser.default().parse(StringReader(nextData)) as JsonObject
         val eventJson = jsonObject.lookup<JsonObject>("props.pageProps.event").first()

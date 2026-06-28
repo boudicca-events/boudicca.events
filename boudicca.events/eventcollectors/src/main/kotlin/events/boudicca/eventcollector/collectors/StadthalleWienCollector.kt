@@ -9,7 +9,7 @@ import base.boudicca.dateparser.dateparser.reduce
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
 import base.boudicca.model.structured.dsl.structuredEvent
-import org.jsoup.Jsoup
+import events.boudicca.eventcollector.util.fetchUrlAndParse
 import org.jsoup.nodes.Element
 
 class StadthalleWienCollector : TwoStepEventCollector<String>("stadthallewien") {
@@ -17,12 +17,12 @@ class StadthalleWienCollector : TwoStepEventCollector<String>("stadthallewien") 
     private val baseUrl = "https://www.stadthalle.com"
 
     override fun getAllUnparsedEvents(): List<String> {
-        val document = Jsoup.parse(fetcher.fetchUrl("https://www.stadthalle.com/de/events/alle-events"))
+        val document = fetcher.fetchUrlAndParse("https://www.stadthalle.com/de/events/alle-events")
         return document.select("div.event-item-inner a.front-side").map { baseUrl + it.attr("href") }
     }
 
     override fun parseMultipleStructuredEvents(event: String): List<StructuredEvent?>? {
-        val eventSite = Jsoup.parse(fetcher.fetchUrl(event))
+        val eventSite = fetcher.fetchUrlAndParse(event)
         val name = eventSite.select("h1.title").text()
 
         val imgTag = eventSite.select("div.img-ad img")

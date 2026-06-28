@@ -7,7 +7,7 @@ import base.boudicca.dateparser.dateparser.DateParser
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
 import base.boudicca.model.structured.dsl.structuredEvent
-import org.jsoup.Jsoup
+import events.boudicca.eventcollector.util.fetchUrlAndParse
 import org.jsoup.nodes.Document
 import java.time.LocalDate
 import java.time.OffsetDateTime
@@ -23,11 +23,9 @@ class WissensturmCollector : TwoStepEventCollector<Pair<String, Document>>("wiss
         // only collect 6 months for now
         for (ignored in 1..6) {
             val monthlyOverview =
-                Jsoup.parse(
-                    fetcher.fetchUrl(
-                        "https://vhskurs.linz.at/index.php?kathaupt=109&blkeep=1" +
-                            "&month=${date.monthValue}&year=${date.year}",
-                    ),
+                fetcher.fetchUrlAndParse(
+                    "https://vhskurs.linz.at/index.php?kathaupt=109&blkeep=1" +
+                        "&month=${date.monthValue}&year=${date.year}",
                 )
             eventUrls.addAll(monthlyOverview.select("div.kurse_demn article a").eachAttr("href"))
             date = date.plusMonths(1)
@@ -35,7 +33,7 @@ class WissensturmCollector : TwoStepEventCollector<Pair<String, Document>>("wiss
 
         return eventUrls
             .map { "https://vhskurs.linz.at/$it" }
-            .map { Pair(it, Jsoup.parse(fetcher.fetchUrl(it))) }
+            .map { Pair(it, fetcher.fetchUrlAndParse(it)) }
     }
 
     override fun parseMultipleStructuredEvents(event: Pair<String, Document>): List<StructuredEvent> {

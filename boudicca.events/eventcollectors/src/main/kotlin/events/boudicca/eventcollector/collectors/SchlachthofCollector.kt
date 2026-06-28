@@ -7,7 +7,7 @@ import base.boudicca.api.eventcollector.util.structuredEvent
 import base.boudicca.dateparser.dateparser.DateParser
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
-import org.jsoup.Jsoup
+import events.boudicca.eventcollector.util.fetchUrlAndParse
 import org.jsoup.nodes.Element
 
 class SchlachthofCollector : TwoStepEventCollector<Element>("schlachthof") {
@@ -16,7 +16,7 @@ class SchlachthofCollector : TwoStepEventCollector<Element>("schlachthof") {
     override fun getAllUnparsedEvents(): List<Element> {
         val fetcher = FetcherFactory.newFetcher()
 
-        val document = Jsoup.parse(fetcher.fetchUrl("$baseUrl/programm"))
+        val document = fetcher.fetchUrlAndParse("$baseUrl/programm")
 
         return document.select("div.eventitem:not(.pasteventitem)")
     }

@@ -8,7 +8,7 @@ import base.boudicca.dateparser.dateparser.DateParser
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.EventCategory
 import base.boudicca.model.structured.StructuredEvent
-import org.jsoup.Jsoup
+import events.boudicca.eventcollector.util.fetchUrlAndParse
 
 class LastSpaceCollector : TwoStepEventCollector<String>("lastspace") {
     private val fetcher = FetcherFactory.newFetcher()
@@ -16,8 +16,8 @@ class LastSpaceCollector : TwoStepEventCollector<String>("lastspace") {
 
     override fun getAllUnparsedEvents(): List<String> {
         val pages =
-            Jsoup
-                .parse(fetcher.fetchUrl(baseUrl + "page/event"))
+            fetcher
+                .fetchUrlAndParse(baseUrl + "page/event")
                 .select(".pagination li a")
                 .mapNotNull { it.attr("href") }
                 .filter { it.contains("page") } // to ignore next and previous page buttons
@@ -32,8 +32,8 @@ class LastSpaceCollector : TwoStepEventCollector<String>("lastspace") {
     }
 
     private fun fetchEventUrlsOfSinglePage(page: String): List<String> =
-        Jsoup
-            .parse(fetcher.fetchUrl(baseUrl + page))
+        fetcher
+            .fetchUrlAndParse(baseUrl + page)
             .select("tr>td>div>div")
             .mapNotNull {
                 baseUrl +
@@ -44,7 +44,7 @@ class LastSpaceCollector : TwoStepEventCollector<String>("lastspace") {
             }
 
     override fun parseMultipleStructuredEvents(event: String): List<StructuredEvent?>? {
-        val document = Jsoup.parse(fetcher.fetchUrl(event))
+        val document = fetcher.fetchUrlAndParse(event)
         val name = document.select("h1").text()
         val description = document.select("div.event-description").text()
 

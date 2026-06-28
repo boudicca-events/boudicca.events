@@ -8,7 +8,7 @@ import base.boudicca.dateparser.dateparser.DateParser
 import base.boudicca.dateparser.dateparser.DateParserResult
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
-import org.jsoup.Jsoup
+import events.boudicca.eventcollector.util.fetchUrlAndParse
 
 class SpinnereiCollector : TwoStepEventCollector<String>("spinnerei") {
     private val baseUrl = "https://spinnerei.kulturpark.at"
@@ -18,7 +18,7 @@ class SpinnereiCollector : TwoStepEventCollector<String>("spinnerei") {
         val events = mutableListOf<String>()
         val eventUrls = mutableSetOf<String>()
 
-        val document = Jsoup.parse(fetcher.fetchUrl("$baseUrl/programm/"))
+        val document = fetcher.fetchUrlAndParse("$baseUrl/programm/")
         document
             .select("div.container-programm-uebersicht > a")
             .forEach { eventUrls.add(it.attr("href")) }
@@ -31,7 +31,7 @@ class SpinnereiCollector : TwoStepEventCollector<String>("spinnerei") {
     }
 
     override fun parseMultipleStructuredEvents(event: String): List<StructuredEvent> {
-        val doc = Jsoup.parse(fetcher.fetchUrl(event))
+        val doc = fetcher.fetchUrlAndParse(event)
 
         var name = doc.select("div.vng-details div.vng-detail-content-titel").text()
         name += " " + doc.select("div.vng-details div.vng-detail-content-untertitel").text()

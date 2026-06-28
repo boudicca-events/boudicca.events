@@ -7,7 +7,7 @@ import base.boudicca.api.eventcollector.util.structuredEvent
 import base.boudicca.dateparser.dateparser.DateParser
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
-import org.jsoup.Jsoup
+import events.boudicca.eventcollector.util.fetchUrlAndParse
 import org.jsoup.nodes.Element
 
 class TheatherPhoenixCollector : TwoStepEventCollector<Pair<Element, Element>>("theaterphoenix") {
@@ -15,7 +15,7 @@ class TheatherPhoenixCollector : TwoStepEventCollector<Pair<Element, Element>>("
     private val fetcher = FetcherFactory.newFetcher()
 
     override fun getAllUnparsedEvents(): List<Pair<Element, Element>> {
-        val document = Jsoup.parse(fetcher.fetchUrl("$baseUrl/termine"))
+        val document = fetcher.fetchUrlAndParse("$baseUrl/termine")
         return document
             .select("div.terminecol div.onecolum > div.terminlink")
             .map {

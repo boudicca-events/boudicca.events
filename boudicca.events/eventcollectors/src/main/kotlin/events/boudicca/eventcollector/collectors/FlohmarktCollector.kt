@@ -10,7 +10,7 @@ import base.boudicca.dateparser.dateparser.DateParserResult
 import base.boudicca.format.UrlUtils
 import base.boudicca.model.EventCategory
 import base.boudicca.model.structured.StructuredEvent
-import org.jsoup.Jsoup
+import events.boudicca.eventcollector.util.fetchUrlAndParse
 
 class FlohmarktCollector : TwoStepEventCollector<String>("flohmarkt") {
     private val fetcher = FetcherFactory.newFetcher()
@@ -18,8 +18,8 @@ class FlohmarktCollector : TwoStepEventCollector<String>("flohmarkt") {
 
     override fun getAllUnparsedEvents(): List<String> {
         val stateUrls =
-            Jsoup
-                .parse(fetcher.fetchUrl(baseUrl + "termine/"))
+            fetcher
+                .fetchUrlAndParse(baseUrl + "termine/")
                 .select(".navInhalt:nth-child(2) li:not(.navsub) a")
                 .mapNotNull { it.select("a").first()?.attr("href") }
 
@@ -34,8 +34,8 @@ class FlohmarktCollector : TwoStepEventCollector<String>("flohmarkt") {
     fun getEventUrlsOfEachState(stateUrl: String): List<String> {
         val eventUrls = mutableListOf<String>()
         val pageUrls =
-            Jsoup
-                .parse(fetcher.fetchUrl(baseUrl + stateUrl.replace("../", "")))
+            fetcher
+                .fetchUrlAndParse(baseUrl + stateUrl.replace("../", ""))
                 .select("div.weiterblaettern a")
                 .mapNotNull { it.attr("href") }
         pageUrls.forEach { eventUrls.addAll(getEventUrlsOfEachPage(it)) }
@@ -43,15 +43,15 @@ class FlohmarktCollector : TwoStepEventCollector<String>("flohmarkt") {
     }
 
     fun getEventUrlsOfEachPage(statePageUrl: String): List<String> {
-        return Jsoup
-            .parse(fetcher.fetchUrl(statePageUrl))
+        return fetcher
+            .fetchUrlAndParse(statePageUrl)
             .select("div.terminTitel a")
             .mapNotNull { it.attr("href") }
             .filter { !it.contains("ß") } // exclude urls with ß, as they result in 404 error
     }
 
     override fun parseMultipleStructuredEvents(event: String): List<StructuredEvent?>? {
-        val document = Jsoup.parse(fetcher.fetchUrl(event))
+        val document = fetcher.fetchUrlAndParse(event)
         val name = document.select("div.terminTitel").text()
 
         val detailNodes =

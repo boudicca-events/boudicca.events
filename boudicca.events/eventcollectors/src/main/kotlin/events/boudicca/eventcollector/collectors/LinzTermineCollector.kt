@@ -10,6 +10,7 @@ import base.boudicca.model.structured.Key
 import base.boudicca.model.structured.StructuredEvent
 import base.boudicca.model.structured.dsl.StructuredEventBuilder
 import base.boudicca.model.structured.dsl.structuredEvent
+import events.boudicca.eventcollector.util.fetchUrlAndParse
 import events.boudicca.eventcollector.util.withDescription
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.jsoup.Jsoup
@@ -53,7 +54,7 @@ class LinzTermineCollector : EventCollector {
             }.toSet() // filter duplicates
             .mapNotNull {
                 try {
-                    Pair(it, Jsoup.parse(fetcher.fetchUrl(it.replace("http://", "https://"))))
+                    Pair(it, fetcher.fetchUrlAndParse(it.replace("http://", "https://")))
                 } catch (_: RuntimeException) {
                     // some linztermine.at links just 404 and go nowhere... not sure what this is supposed to mean
                     null
@@ -235,7 +236,7 @@ class LinzTermineCollector : EventCollector {
             else -> eventType.second
         }
 
-    private fun loadXml(s: String): Document = Jsoup.parse(fetcher.fetchUrl(s), Parser.xmlParser())
+    private fun loadXml(s: String): Document = Jsoup.parse(fetcher.fetchUrl(s), s, Parser.xmlParser())
 
     data class Location(
         val id: Int,

@@ -22,12 +22,12 @@ rometools = "2.1.0"
 klaxon = "5.6"
 logback = "1.5.33"
 slf4j = "2.0.18"
-handlebars = "4.5.1"
+handlebars = "4.5.2"
 microsoft-playwright = "1.60.0"
 axe-core-playwright = "4.11.3"
-kotlin-logging = "7.0.14"
-otel = "1.62.0"
-otel-instrumentation = "2.28.1-alpha"
+kotlin-logging = "8.0.4"
+otel = "1.63.0"
+otel-instrumentation = "2.29.0-alpha"
 twelvemonkeys = "3.13.1"
 commonmark = "0.28.0"
 
@@ -101,7 +101,7 @@ micrometer-otel-bridge = { module = "io.micrometer:micrometer-tracing-bridge-ote
 otel-api = { module = "io.opentelemetry:opentelemetry-api", version.ref = "otel" }
 otel-sdk = { module = "io.opentelemetry:opentelemetry-sdk", version.ref = "otel" }
 otel-exporter = { module = "io.opentelemetry:opentelemetry-exporter-otlp", version.ref = "otel" }
-otel-semconv = { module = "io.opentelemetry.semconv:opentelemetry-semconv", version = "1.37.0" }
+otel-semconv = { module = "io.opentelemetry.semconv:opentelemetry-semconv", version = "1.42.0" }
 otel-java-httpclient = { module = "io.opentelemetry.instrumentation:opentelemetry-java-http-client", version.ref = "otel-instrumentation" }
 otel-micrometer = { module = "io.opentelemetry.instrumentation:opentelemetry-micrometer-1.5", version.ref = "otel-instrumentation" }
 otel-logback = { module = "io.opentelemetry.instrumentation:opentelemetry-logback-appender-1.0", version.ref = "otel-instrumentation" }

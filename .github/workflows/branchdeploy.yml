@@ -26,7 +26,7 @@ jobs:
                     body: "Working on the branchdeploy... "
             -   name: fetch pullrequest
                 id: pr
-                uses: fjogeleit/http-request-action@551353b829c3646756b2ec2b3694f819d7957495 # v2.0.0
+                uses: fjogeleit/http-request-action@f98bb26551cd1af7d3eb2674578a80754ece88db # v2.0.1
                 with:
                     url: ${{ github.event.issue.pull_request.url }}
                     method: GET
@@ -54,7 +54,7 @@ jobs:
                 run: ./deploy_branch.sh ${{ fromJson(steps.pr.outputs.response).head.ref }}
             -   name: triggering deploy publisher
                 id: triggerbranch_search
-                uses: fjogeleit/http-request-action@551353b829c3646756b2ec2b3694f819d7957495 # v2.0.0
+                uses: fjogeleit/http-request-action@f98bb26551cd1af7d3eb2674578a80754ece88db # v2.0.1
                 with:
                     url: 'https://branchdeployer.boudicca.events/deploy'
                     method: 'POST'
@@ -65,7 +65,7 @@ jobs:
                     timeout: 600000
             -   name: triggering deploy
                 id: triggerbranch_publisher
-                uses: fjogeleit/http-request-action@551353b829c3646756b2ec2b3694f819d7957495 # v2.0.0
+                uses: fjogeleit/http-request-action@f98bb26551cd1af7d3eb2674578a80754ece88db # v2.0.1
                 with:
                     url: 'https://branchdeployer.boudicca.events/deploy'
                     method: 'POST'

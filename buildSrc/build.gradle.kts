@@ -7,6 +7,10 @@ repositories {
     gradlePluginPortal()
 }
 
+dependencyLocking {
+    lockAllConfigurations()
+}
+
 dependencies {
     implementation(libs.bundles.boudicca.plugins)
 }

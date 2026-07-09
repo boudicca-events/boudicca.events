@@ -1,0 +1,25 @@
+# This is a Gradle generated file for dependency locking.
+# Manual edits can break the build and are not advised.
+# This file is expected to be part of source control.
+com.fasterxml.jackson.core:jackson-annotations:2.20=compileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+com.fasterxml.jackson.core:jackson-core:2.20.0=compileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+com.fasterxml.jackson.core:jackson-databind:2.20.0=compileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.20.0=compileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+com.fasterxml.jackson:jackson-bom:2.20.0=compileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+io.github.oshai:kotlin-logging-jvm:7.0.14=runtimeClasspath,testRuntimeClasspath
+io.opentelemetry:opentelemetry-api:1.62.0=runtimeClasspath,testRuntimeClasspath
+io.opentelemetry:opentelemetry-common:1.62.0=runtimeClasspath,testRuntimeClasspath
+io.opentelemetry:opentelemetry-context:1.62.0=runtimeClasspath,testRuntimeClasspath
+jakarta.annotation:jakarta.annotation-api:3.0.0=compileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+org.jacoco:org.jacoco.agent:0.8.14=jacocoAgent,jacocoAnt
+org.jacoco:org.jacoco.ant:0.8.14=jacocoAnt
+org.jacoco:org.jacoco.core:0.8.14=jacocoAnt
+org.jacoco:org.jacoco.report:0.8.14=jacocoAnt
+org.jetbrains.kotlin:kotlin-stdlib:2.3.21=compileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+org.jetbrains:annotations:13.0=compileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+org.openapitools:jackson-databind-nullable:0.2.8=compileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+org.ow2.asm:asm-commons:9.9=jacocoAnt
+org.ow2.asm:asm-tree:9.9=jacocoAnt
+org.ow2.asm:asm:9.9=jacocoAnt
+org.slf4j:slf4j-api:2.0.17=runtimeClasspath,testRuntimeClasspath
+empty=annotationProcessor,openapi,testAnnotationProcessor

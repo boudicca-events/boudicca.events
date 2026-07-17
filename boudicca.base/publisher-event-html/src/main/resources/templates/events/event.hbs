@@ -1,7 +1,8 @@
 <div class="event" tabindex="0">
     <div class="event-image {{#if event.category}}event-image-{{event.category}}{{/if}}">
         {{#if event.pictureUuid}}
-            <img src="/picture?uuid={{event.pictureUuid}}" alt="{{#if event.pictureAltText}}{{event.pictureAltText}}{{else}}Event Bild{{/if}}" aria-label="Event Bild" aria-labelledby="image" />
+            <img src="/picture?uuid={{event.pictureUuid}}" alt="{{#if event.pictureAltText}}{{event.pictureAltText}}{{else}}
+            Event Bild{{/if}}" aria-label="Event Bild" aria-labelledby="image" />
         {{else}}
             <svg title="Event Bild" viewBox="0 0 512 512" height="100px" aria-label="Standard Event Bild">
                 <use xlink:href="#{{#if event.category}}{{event.category}}{{else}}image{{/if}}"></use>
@@ -27,13 +28,15 @@
                 <svg height="24px" width="24px" title="Datum Logo" viewBox="0 0 512 512" aria-label="Startzeit des Events">
                     <use xlink:href="#time"></use>
                 </svg>
-                <p><time datetime="{{event.startDateISO}}">
-                    {{#eq event.startTime "00:00"}}
-                        {{event.startDateWithoutTime}}
-                    {{else}}
-                        {{event.startDate}}
-                    {{/eq}}
-                </time></p>
+                <p>
+                    <time datetime="{{event.startDateISO}}">
+                        {{#eq event.startTime "00:00"}}
+                            {{event.startDateWithoutTime}}
+                        {{else}}
+                            {{event.startDate}}
+                        {{/eq}}
+                    </time>
+                </p>
             </div>
             {{#if event.locationName}}
                 <div class="event-details">
@@ -91,20 +94,24 @@
                                     <use xlink:href="#time"></use>
                                 </svg>
                                 <div>
-                                    <p><time datetime="{{event.startDateISO}}">
-                                        {{#eq event.startTime "00:00"}}
-                                            {{event.startDateWithoutTime}}
-                                        {{else}}
-                                            {{event.startDate}}
-                                        {{/eq}}
-                                    </time></p>
-                                    {{#if event.endDate}}
-                                        <p><time datetime="{{event.endDateISO}}">bis
-                                            {{#eq event.endTime "00:00"}}
-                                                {{event.endDateWithoutTime}}
+                                    <p>
+                                        <time datetime="{{event.startDateISO}}">
+                                            {{#eq event.startTime "00:00"}}
+                                                {{event.startDateWithoutTime}}
                                             {{else}}
-                                                {{event.endDate}}
-                                            {{/eq}}</time></p>
+                                                {{event.startDate}}
+                                            {{/eq}}
+                                        </time>
+                                    </p>
+                                    {{#if event.endDate}}
+                                        <p>
+                                            <time datetime="{{event.endDateISO}}">bis
+                                                {{#eq event.endTime "00:00"}}
+                                                    {{event.endDateWithoutTime}}
+                                                {{else}}
+                                                    {{event.endDate}}
+                                                {{/eq}}</time>
+                                        </p>
                                     {{/if}}
                                 </div>
                             </div>
@@ -197,7 +204,8 @@
                         {{/if}}
 
                         {{#if event.url}}
-                            <a class="anchor-to-eventmodal" href="{{event.url}}" target="_blank" data-modal-last-focusable-element aria-label="Zur Eventseite von {{event.name}} (neues Fenster wird geöffnet)">
+                            <a class="anchor-to-eventmodal" href="{{event.url}}" target="_blank" data-modal-last-focusable-element
+                               aria-label="Zur Eventseite von {{event.name}} (neues Fenster wird geöffnet)">
                                 Zur Eventseite
                             </a>
                         {{/if}}
@@ -209,9 +217,6 @@
         {{#if event.description}}
             <div class="modal-tabs">
                 <section class="details-box">
-                    <ul>
-                        <li><a href="#" class="active-tab {{#if event.category}}event-modal-{{event.category}}{{/if}}">Beschreibung</a></li>
-                    </ul>
                     <div class="panels">
                         <article class="active-panel {{#if event.category}}event-modal-{{event.category}}{{/if}}">
                             {{> events/renderProperty property=event.description }}

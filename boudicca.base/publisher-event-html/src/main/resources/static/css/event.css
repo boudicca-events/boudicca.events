@@ -233,7 +233,6 @@
     }
 
     .details-box {
-        max-height: 400px;
         overflow: auto;
     }
 
@@ -275,12 +274,6 @@
     .details-box article {
         margin-top: var(--space-medium);
         margin-bottom: var(--space-medium);
-        display: -webkit-box;
-        /* https://stackoverflow.com/questions/15909489/text-overflow-ellipsis-on-two-lines */
-        -webkit-line-clamp: 10;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        text-overflow: ellipsis;
     }
 
     .details-box article p {

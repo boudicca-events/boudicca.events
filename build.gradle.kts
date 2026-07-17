@@ -4,7 +4,7 @@ plugins {
     alias(libs.plugins.sonarqube)
 }
 
-version = file("version.txt").readText()
+version = file("version.txt").readText().trim()
 ext["jvmVersion"] = 21 // be careful to keep this in sync with the buildSrc/build.gradle.kts
 
 repositories {

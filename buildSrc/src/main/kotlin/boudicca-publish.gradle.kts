@@ -63,7 +63,7 @@ signing {
 
 tasks.withType<Sign>().configureEach {
     onlyIf("needs signing") {
-        project.findProperty("doSign") == "true" || System.getProperty("doSign") == "true"
+        System.getProperty("doSign") == "true"
     }
     doFirst { println("signing!") }
 }

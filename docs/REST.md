@@ -15,7 +15,7 @@ To use them just add a dependency like
 
 ```
 Gradle:
-implementation("events.boudicca:search-client:0.5.0")
+implementation("events.boudicca:search-client:0.7.0")
 ```
 
 or
@@ -25,14 +25,14 @@ Maven:
 <dependency>
     <groupId>events.boudicca</groupId>
     <artifactId>search-client</artifactId>
-    <version>0.5.0</version>
+    <version>0.7.0</version>
 </dependency>
 ```
 
 and instantiate and use a Client like this:
 
 ```
-SearchClient("https://search.boudicca.events")
+DefaultSearchClient("https://search.boudicca.events")
     .queryEvents(QueryDTO(""" "location.name" equals "posthof" """, 0, 30))
     .result.forEach { println(it) }
 ```
@@ -62,7 +62,7 @@ Or you can use them as a dependency with classifier `openapi` and (file-)type `j
 
 ```
 Gradle 
-openapiSpec("events.boudicca:search-api:0.5.0:openapi@json")
+openapiSpec("events.boudicca:search-api:0.7.0:openapi@json")
 ```
 
 For a full example how to generate your own client with gradle and those dependencies please have a look at our sample: https://github.com/boudicca-events/openapi-generate-sample

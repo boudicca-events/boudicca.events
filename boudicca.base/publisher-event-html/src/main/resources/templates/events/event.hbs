@@ -225,5 +225,22 @@
                 </section>
             </div>
         {{/if}}
+
+
+        {{#if event.additionalProperties}}
+            <div class="modal-tabs">
+                <h2>Zusätzliche Infos</h2>
+                <section class="details-box">
+                    <div class="panels">
+                        <article class="additional-properties active-panel {{#if event.category}}event-modal-{{event.category}}{{/if}}">
+                            {{#each event.additionalProperties}}
+                                <div class="key">{{this.key}}</div>
+                                <div class="value">{{> events/renderProperty property=this }}</div>
+                            {{/each}}
+                        </article>
+                    </div>
+                </section>
+            </div>
+        {{/if}}
     </div>
 </div>

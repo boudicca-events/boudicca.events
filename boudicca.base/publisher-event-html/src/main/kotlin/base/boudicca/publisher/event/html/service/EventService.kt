@@ -12,6 +12,7 @@ import base.boudicca.keyfilters.KeySelector
 import base.boudicca.model.EventCategory
 import base.boudicca.model.structured.Key
 import base.boudicca.model.structured.StructuredEvent
+import base.boudicca.model.structured.Variant
 import base.boudicca.model.structured.VariantConstants
 import base.boudicca.model.structured.VariantConstants.FormatVariantConstants
 import base.boudicca.publisher.event.html.model.Location
@@ -217,7 +218,18 @@ class EventService
                 "pictureCopyright" to getTextProperty(event, SemanticKeys.PICTURE_COPYRIGHT),
                 "bandNames" to getListProperty(event, SemanticKeys.CONCERT_BANDLIST),
                 "concertGenres" to getListProperty(event, SemanticKeys.CONCERT_GENRE),
+                "additionalProperties" to getAdditionalProperties(event), // TODO filter some?
             )
+
+        private fun getAdditionalProperties(event: StructuredEvent): List<GenericRenderingProperty> =
+            event.data.entries.sortedBy { it.key }.map {
+                when (getFormatFromKey(it.key)?.variantValue) {
+                    "markdown" -> markdownProperty(it.key.toKeyString(), it.value)
+                    "list" -> listProperty(it.key.toKeyString(), ListFormatAdapter().fromString(it.value))
+                    "date" -> textProperty(it.key.toKeyString(), formatDate(DateFormatAdapter().fromString(it.value), formatter) ?: "")
+                    else -> textProperty(it.key.toKeyString(), it.value)
+                }
+            }
 
         private fun getPictureUuid(event: StructuredEvent): String? {
             val pictureUrl = getTextProperty(event, SemanticKeys.PICTURE_URL)
@@ -248,14 +260,18 @@ class EventService
         private fun getRichTextProperty(
             event: StructuredEvent,
             propertyName: String,
-        ): RichText? =
+        ): GenericRenderingProperty? =
             getPropertyForFormats(
                 event,
                 propertyName,
                 listOf(FormatVariantConstants.MARKDOWN_FORMAT_NAME, FormatVariantConstants.TEXT_FORMAT_NAME),
             ).map {
                 val isMarkdown = getIsMarkdownFromFormat(it.first)
-                RichText(isMarkdown, if (isMarkdown) markdownService.renderMarkdown(it.second) else it.second.trim())
+                if (isMarkdown) {
+                    markdownProperty(it.first.toKeyString(), it.second)
+                } else {
+                    textProperty(it.first.toKeyString(), it.second)
+                }
             }.getOrNull()
 
         private fun getListProperty(
@@ -304,11 +320,13 @@ class EventService
                 .selectSingle(event)
 
         private fun getIsMarkdownFromFormat(key: Key): Boolean {
-            val format = key.variants.firstOrNull { it.variantName == VariantConstants.FORMAT_VARIANT_NAME }
-            if (format == null) {
-                return false
-            }
+            val format = getFormatFromKey(key) ?: return false
             return format.variantValue == FormatVariantConstants.MARKDOWN_FORMAT_NAME
+        }
+
+        private fun getFormatFromKey(key: Key): Variant? {
+            val format = key.variants.firstOrNull { it.variantName == VariantConstants.FORMAT_VARIANT_NAME }
+            return format
         }
 
         @Suppress("FunctionOnlyReturningConstant") // remove this when fixing the todo
@@ -456,8 +474,30 @@ class EventService
             val concertGenres: List<Triple<String, String, String>>,
         )
 
-        data class RichText(
-            val isMarkdown: Boolean,
-            val value: String,
+        /**
+         * used for rendering generic properties for "zusätzliche infos".
+         * type is a string since handlebars does not support enums in eq
+         * types can be "text", "markdown", "list". everything should be preformatted as it is only rendered as is
+         */
+        data class GenericRenderingProperty(
+            val key: String,
+            val type: String,
+            val text: String? = null,
+            val list: List<String>? = null,
         )
+
+        private fun markdownProperty(
+            key: String,
+            text: String,
+        ): GenericRenderingProperty = GenericRenderingProperty(key = key, type = "markdown", text = markdownService.renderMarkdown(text))
+
+        private fun textProperty(
+            key: String,
+            text: String,
+        ): GenericRenderingProperty = GenericRenderingProperty(key = key, type = "text", text = text.trim())
+
+        private fun listProperty(
+            key: String,
+            list: List<String>,
+        ): GenericRenderingProperty = GenericRenderingProperty(key = key, type = "list", list = list)
     }

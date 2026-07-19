@@ -1,7 +1,15 @@
 {{#if property}}
-    {{#if property.isMarkdown}}
-        {{{property.value}}}
-    {{else}}
-        <p>{{property.value}}</p>
-    {{/if}}
+    {{#eq property.type "text"}}
+        <p>{{property.text}}</p>
+    {{/eq}}
+    {{#eq property.type "markdown"}}
+        {{{property.text}}}
+    {{/eq}}
+    {{#eq property.type "list"}}
+        <ul>
+            {{#each property.list}}
+                <li>{{this}}</li>
+            {{/each}}
+        </ul>
+    {{/eq}}
 {{/if}}

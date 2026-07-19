@@ -234,21 +234,20 @@
 
     .details-box {
         overflow: auto;
-    }
 
-    .details-box ul {
-        margin: 0;
-        padding-top: var(--space-large);
-        padding-bottom: var(--space-small);
-        overflow: hidden;
-        list-style: none;
-        padding-left: 0;
-    }
+        .additional-properties {
+            ul {
+                margin: 0;
+            }
 
-    .details-box li a {
-        text-decoration: none;
-        line-height: 40px;
-        font-weight: bold;
+            .key {
+                font-weight: bold;
+            }
+
+            .value {
+                margin-left: 40px;
+            }
+        }
     }
 
     #category-OTHER-chip, #category-OTHER-label {

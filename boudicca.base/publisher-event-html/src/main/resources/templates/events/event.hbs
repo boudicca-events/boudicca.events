@@ -57,190 +57,191 @@
     </div>
 
     <div class="modal-content" style="display: none" aria-modal="true">
-        <div class="modal-flex {{#if event.category}}event-modal-{{event.category}}{{/if}}">
-            <div class="modal-column">
-                <h2 tabindex="0">{{event.name}}</h2>
-            </div>
-            <button class="modal-close">
-                <svg height="32px" width="32px" viewBox="0 0 512 512" aria-label="Schließe Eventdetails">
-                    <use xlink:href="#close"></use>
-                </svg>
-            </button>
-
-            <div class="modal-row-image">
+        <div class="prettyEvent">
+            <div class="modal-flex {{#if event.category}}event-modal-{{event.category}}{{/if}}">
                 <div class="modal-column">
-                    <div class="event-image-modal {{#if event.category}}event-image-modal-{{event.category}}{{/if}}">
-                        {{#if event.pictureUuid}}
-                            <img src="/picture?uuid={{event.pictureUuid}}"
-                            alt="{{#if event.pictureAltText}}{{event.pictureAltText}}{{else}}Event Bild{{/if}}"
-                            aria-label="Event Bild"
-                            aria-labelledby="image"
-                            />
-                            {{#if event.pictureCopyright}}
-                                <span class="image-copyright-info">&#169; {{event.pictureCopyright}}</span>
-                            {{/if}}
-                        {{else}}
-                            <svg title="Event Bild" viewBox="0 0 512 512" height="100px" aria-label="Event Bild">
-                                <use xlink:href="#{{#if event.category}}{{event.category}}{{else}}image{{/if}}"></use>
-                            </svg>
-                        {{/if}}
-                    </div>
+                    <h2 tabindex="0">{{event.name}}</h2>
                 </div>
-                <div class="modal-column">
-                    <div class="event-details-wrapper">
-                        <div class="modal-column">
-                            <div class="event-details">
-                                <svg height="24px" width="24px" title="Datum Logo" viewBox="0 0 512 512" aria-label="Zeit und Datum des Events">
-                                    <use xlink:href="#time"></use>
+
+                <div class="modal-row-image">
+                    <div class="modal-column">
+                        <div class="event-image-modal {{#if event.category}}event-image-modal-{{event.category}}{{/if}}">
+                            {{#if event.pictureUuid}}
+                                <img src="/picture?uuid={{event.pictureUuid}}"
+                                alt="{{#if event.pictureAltText}}{{event.pictureAltText}}{{else}}Event Bild{{/if}}"
+                                aria-label="Event Bild"
+                                aria-labelledby="image"
+                                />
+                                {{#if event.pictureCopyright}}
+                                    <span class="image-copyright-info">&#169; {{event.pictureCopyright}}</span>
+                                {{/if}}
+                            {{else}}
+                                <svg title="Event Bild" viewBox="0 0 512 512" height="100px" aria-label="Event Bild">
+                                    <use xlink:href="#{{#if event.category}}{{event.category}}{{else}}image{{/if}}"></use>
                                 </svg>
-                                <div>
-                                    <p>
-                                        <time datetime="{{event.startDateISO}}">
-                                            {{#eq event.startTime "00:00"}}
-                                                {{event.startDateWithoutTime}}
-                                            {{else}}
-                                                {{event.startDate}}
-                                            {{/eq}}
-                                        </time>
-                                    </p>
-                                    {{#if event.endDate}}
-                                        <p>
-                                            <time datetime="{{event.endDateISO}}">bis
-                                                {{#eq event.endTime "00:00"}}
-                                                    {{event.endDateWithoutTime}}
-                                                {{else}}
-                                                    {{event.endDate}}
-                                                {{/eq}}</time>
-                                        </p>
-                                    {{/if}}
-                                </div>
-                            </div>
-                            {{#or event.locationName event.locationAddress event.city}}
-                                <div class="event-details">
-                                    <svg height="24px" width="24px" title="Ort Logo" viewBox="0 0 512 512" aria-label="Ort des Events">
-                                        <use xlink:href="#location"></use>
-                                    </svg>
-                                    <div>
-                                        {{#if event.locationName}}
-                                            <p>{{event.locationName}}</p>
-                                        {{/if}}
-                                        {{#if event.locationAddress}}
-                                            <p>{{event.locationAddress}}</p>
-                                        {{else if event.city}}
-                                            <p>{{event.city}}</p>
-                                        {{/if}}
-                                    </div>
-                                </div>
-                            {{/or}}
-
-                            {{#or event.category event.types}}
-                                <div class="event-details">
-                                    <svg height="24px" width="24px" title="Kategorie Logo" viewBox="0 0 512 512" aria-label="Kategorie des Events">
-                                        <use xlink:href="#category"></use>
-                                    </svg>
-                                    <!--TODO we need to have two properties here, one for logos, one for displaying-->
-                                    <div class="event-modal-chips">
-                                        {{#if event.category}}
-                                            <span class="event-modal-chip event-modal-chip-{{event.category}}">{{event.category}}</span>
-                                        {{/if}}
-                                        {{#each event.types}}
-                                            <span class="event-modal-chip event-modal-chip-{{event.category}}">{{this}}</span>
-                                        {{/each}}
-                                    </div>
-                                </div>
-                            {{/or}}
-
-                            {{#if event.accessibilityProperties}}
-                                <div class="event-details">
-                                    <svg height="24px" width="24px" title="Barrierefreiheit Logo" viewBox="0 0 512 512" aria-label="Details zur Barrierefreiheit des Events">
-                                        <use xlink:href="#accessibility"></use>
-                                    </svg>
-                                    <div class="event-modal-chips">
-                                        {{#each event.accessibilityProperties}}
-                                            <span class="event-modal-chip event-modal-chip-{{event.category}}">{{this}}</span>
-                                        {{/each}}
-                                    </div>
-                                </div>
-                            {{/if}}
-
-                            {{#if event.tags}}
-                                <div class="event-details">
-                                    <svg height="24px" width="24px" title="Tags Logo" viewBox="0 0 512 512" aria-label="Schlagwörter zum Event">
-                                        <use xlink:href="#tags"></use>
-                                    </svg>
-                                    <div class="event-modal-chips">
-                                        {{#each event.tags}}
-                                            <span class="event-modal-chip event-modal-chip-{{event.category}}">{{this}}</span>
-                                        {{/each}}
-                                    </div>
-                                </div>
                             {{/if}}
                         </div>
-
-                        {{#if event.concertGenres}}
-                            <div class="event-details">
-                                <svg height="24px" width="24px" title="Event-Typ Logo" viewBox="0 0 512 512" aria-label="Kategorie des Events">
-                                    <use xlink:href="#music"></use>
-                                </svg>
-                                <div class="event-modal-chips">
-                                    {{#each event.concertGenres}}
-                                        <span class="event-modal-chip event-modal-chip-{{event.category}}">{{this}}</span>
-                                    {{/each}}
+                    </div>
+                    <div class="modal-column">
+                        <div class="event-details-wrapper">
+                            <div class="modal-column">
+                                <div class="event-details">
+                                    <svg height="24px" width="24px" title="Datum Logo" viewBox="0 0 512 512" aria-label="Zeit und Datum des Events">
+                                        <use xlink:href="#time"></use>
+                                    </svg>
+                                    <div>
+                                        <p>
+                                            <time datetime="{{event.startDateISO}}">
+                                                {{#eq event.startTime "00:00"}}
+                                                    {{event.startDateWithoutTime}}
+                                                {{else}}
+                                                    {{event.startDate}}
+                                                {{/eq}}
+                                            </time>
+                                        </p>
+                                        {{#if event.endDate}}
+                                            <p>
+                                                <time datetime="{{event.endDateISO}}">bis
+                                                    {{#eq event.endTime "00:00"}}
+                                                        {{event.endDateWithoutTime}}
+                                                    {{else}}
+                                                        {{event.endDate}}
+                                                    {{/eq}}</time>
+                                            </p>
+                                        {{/if}}
+                                    </div>
                                 </div>
-                            </div>
-                        {{/if}}
+                                {{#or event.locationName event.locationAddress event.city}}
+                                    <div class="event-details">
+                                        <svg height="24px" width="24px" title="Ort Logo" viewBox="0 0 512 512" aria-label="Ort des Events">
+                                            <use xlink:href="#location"></use>
+                                        </svg>
+                                        <div>
+                                            {{#if event.locationName}}
+                                                <p>{{event.locationName}}</p>
+                                            {{/if}}
+                                            {{#if event.locationAddress}}
+                                                <p>{{event.locationAddress}}</p>
+                                            {{else if event.city}}
+                                                <p>{{event.city}}</p>
+                                            {{/if}}
+                                        </div>
+                                    </div>
+                                {{/or}}
 
-                        {{#if event.bandNames}}
-                            <div class="event-details">
-                                <svg height="24px" width="24px" title="Event-Typ Logo" viewBox="0 0 512 512" aria-label="Kategorie des Events">
-                                    <use xlink:href="#music"></use>
-                                </svg>
-                                <div class="event-modal-chips">
-                                    {{#each event.bandNames}}
-                                        <span class="event-modal-chip event-modal-chip-{{event.category}}">{{this}}</span>
-                                    {{/each}}
+                                {{#or event.category event.types}}
+                                    <div class="event-details">
+                                        <svg height="24px" width="24px" title="Kategorie Logo" viewBox="0 0 512 512" aria-label="Kategorie des Events">
+                                            <use xlink:href="#category"></use>
+                                        </svg>
+                                        <!--TODO we need to have two properties here, one for logos, one for displaying-->
+                                        <div class="event-modal-chips">
+                                            {{#if event.category}}
+                                                <span class="event-modal-chip event-modal-chip-{{event.category}}">{{event.category}}</span>
+                                            {{/if}}
+                                            {{#each event.types}}
+                                                <span class="event-modal-chip event-modal-chip-{{event.category}}">{{this}}</span>
+                                            {{/each}}
+                                        </div>
+                                    </div>
+                                {{/or}}
+
+                                {{#if event.accessibilityProperties}}
+                                    <div class="event-details">
+                                        <svg height="24px" width="24px" title="Barrierefreiheit Logo" viewBox="0 0 512 512" aria-label="Details zur Barrierefreiheit des Events">
+                                            <use xlink:href="#accessibility"></use>
+                                        </svg>
+                                        <div class="event-modal-chips">
+                                            {{#each event.accessibilityProperties}}
+                                                <span class="event-modal-chip event-modal-chip-{{event.category}}">{{this}}</span>
+                                            {{/each}}
+                                        </div>
+                                    </div>
+                                {{/if}}
+
+                                {{#if event.tags}}
+                                    <div class="event-details">
+                                        <svg height="24px" width="24px" title="Tags Logo" viewBox="0 0 512 512" aria-label="Schlagwörter zum Event">
+                                            <use xlink:href="#tags"></use>
+                                        </svg>
+                                        <div class="event-modal-chips">
+                                            {{#each event.tags}}
+                                                <span class="event-modal-chip event-modal-chip-{{event.category}}">{{this}}</span>
+                                            {{/each}}
+                                        </div>
+                                    </div>
+                                {{/if}}
+                            </div>
+
+                            {{#if event.concertGenres}}
+                                <div class="event-details">
+                                    <svg height="24px" width="24px" title="Event-Typ Logo" viewBox="0 0 512 512" aria-label="Kategorie des Events">
+                                        <use xlink:href="#music"></use>
+                                    </svg>
+                                    <div class="event-modal-chips">
+                                        {{#each event.concertGenres}}
+                                            <span class="event-modal-chip event-modal-chip-{{event.category}}">{{this}}</span>
+                                        {{/each}}
+                                    </div>
                                 </div>
-                            </div>
-                        {{/if}}
+                            {{/if}}
 
-                        {{#if event.url}}
-                            <a class="anchor-to-eventmodal" href="{{event.url}}" target="_blank" data-modal-last-focusable-element
-                               aria-label="Zur Eventseite von {{event.name}} (neues Fenster wird geöffnet)">
-                                Zur Eventseite
-                            </a>
-                        {{/if}}
+                            {{#if event.bandNames}}
+                                <div class="event-details">
+                                    <svg height="24px" width="24px" title="Event-Typ Logo" viewBox="0 0 512 512" aria-label="Kategorie des Events">
+                                        <use xlink:href="#music"></use>
+                                    </svg>
+                                    <div class="event-modal-chips">
+                                        {{#each event.bandNames}}
+                                            <span class="event-modal-chip event-modal-chip-{{event.category}}">{{this}}</span>
+                                        {{/each}}
+                                    </div>
+                                </div>
+                            {{/if}}
+
+                            {{#if event.url}}
+                                <a class="anchor-to-eventmodal" href="{{event.url}}" target="_blank" data-modal-last-focusable-element
+                                   aria-label="Zur Eventseite von {{event.name}} (neues Fenster wird geöffnet)">
+                                    Zur Eventseite
+                                </a>
+                            {{/if}}
+                        </div>
                     </div>
                 </div>
             </div>
+
+            {{#if event.description}}
+                <div class="modal-tabs">
+                    <section class="details-box">
+                        <div class="panels">
+                            <article class="active-panel {{#if event.category}}event-modal-{{event.category}}{{/if}}">
+                                {{> events/renderProperty property=event.description }}
+                            </article>
+                        </div>
+                    </section>
+                </div>
+            {{/if}}
         </div>
 
-        {{#if event.description}}
-            <div class="modal-tabs">
-                <section class="details-box">
-                    <div class="panels">
-                        <article class="active-panel {{#if event.category}}event-modal-{{event.category}}{{/if}}">
-                            {{> events/renderProperty property=event.description }}
-                        </article>
+        <div class="allProperties hidden">
+            {{#if event.allProperties}}
+                <div class="modal-flex {{#if event.category}}event-modal-{{event.category}}{{/if}}">
+                    <div class="modal-column">
+                        <h2 tabindex="0">Alle Informationen</h2>
                     </div>
-                </section>
-            </div>
-        {{/if}}
+                    <section class="details-box">
+                        <div class="panels">
+                            <article class="all-properties active-panel {{#if event.category}}event-modal-{{event.category}}{{/if}}">
+                                {{#each event.allProperties}}
+                                    <h4>{{this.key}}</h4>
+                                    <div>{{> events/renderProperty property=this }}</div>
+                                {{/each}}
+                            </article>
+                        </div>
+                    </section>
+                </div>
+            {{/if}}
+        </div>
 
-
-        {{#if event.allProperties}}
-            <div class="modal-tabs">
-                <h2>Alle Informationen</h2>
-                <section class="details-box">
-                    <div class="panels">
-                        <article class="all-properties active-panel {{#if event.category}}event-modal-{{event.category}}{{/if}}">
-                            {{#each event.allProperties}}
-                                <h4>{{this.key}}</h4>
-                                <div>{{> events/renderProperty property=this }}</div>
-                            {{/each}}
-                        </article>
-                    </div>
-                </section>
-            </div>
-        {{/if}}
     </div>
 </div>

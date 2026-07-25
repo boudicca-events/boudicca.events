@@ -227,15 +227,15 @@
         {{/if}}
 
 
-        {{#if event.additionalProperties}}
+        {{#if event.allProperties}}
             <div class="modal-tabs">
-                <h2>Zusätzliche Infos</h2>
+                <h2>Alle Informationen</h2>
                 <section class="details-box">
                     <div class="panels">
-                        <article class="additional-properties active-panel {{#if event.category}}event-modal-{{event.category}}{{/if}}">
-                            {{#each event.additionalProperties}}
-                                <div class="key">{{this.key}}</div>
-                                <div class="value">{{> events/renderProperty property=this }}</div>
+                        <article class="all-properties active-panel {{#if event.category}}event-modal-{{event.category}}{{/if}}">
+                            {{#each event.allProperties}}
+                                <h4>{{this.key}}</h4>
+                                <div>{{> events/renderProperty property=this }}</div>
                             {{/each}}
                         </article>
                     </div>

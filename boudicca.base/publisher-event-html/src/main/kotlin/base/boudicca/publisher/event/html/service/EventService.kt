@@ -218,16 +218,17 @@ class EventService
                 "pictureCopyright" to getTextProperty(event, SemanticKeys.PICTURE_COPYRIGHT),
                 "bandNames" to getListProperty(event, SemanticKeys.CONCERT_BANDLIST),
                 "concertGenres" to getListProperty(event, SemanticKeys.CONCERT_GENRE),
-                "additionalProperties" to getAdditionalProperties(event), // TODO filter some?
+                "allProperties" to getAllProperties(event),
             )
 
-        private fun getAdditionalProperties(event: StructuredEvent): List<GenericRenderingProperty> =
-            event.data.entries.sortedBy { it.key }.map {
+        private fun getAllProperties(event: StructuredEvent): List<GenericRenderingProperty> =
+            // to entry so we have name and startDate also
+            event.toEntry().entries.sortedBy { it.key }.map {
                 when (getFormatFromKey(it.key)?.variantValue) {
-                    "markdown" -> markdownProperty(it.key.toKeyString(), it.value)
-                    "list" -> listProperty(it.key.toKeyString(), ListFormatAdapter().fromString(it.value))
-                    "date" -> textProperty(it.key.toKeyString(), formatDate(DateFormatAdapter().fromString(it.value), formatter) ?: "")
-                    else -> textProperty(it.key.toKeyString(), it.value)
+                    "markdown" -> markdownProperty(it.key, it.value)
+                    "list" -> listProperty(it.key, ListFormatAdapter().fromString(it.value))
+                    "date" -> textProperty(it.key, formatDate(DateFormatAdapter().fromString(it.value), formatter) ?: "")
+                    else -> textProperty(it.key, it.value)
                 }
             }
 
@@ -268,9 +269,9 @@ class EventService
             ).map {
                 val isMarkdown = getIsMarkdownFromFormat(it.first)
                 if (isMarkdown) {
-                    markdownProperty(it.first.toKeyString(), it.second)
+                    markdownProperty(it.first, it.second)
                 } else {
-                    textProperty(it.first.toKeyString(), it.second)
+                    textProperty(it.first, it.second)
                 }
             }.getOrNull()
 
@@ -487,17 +488,55 @@ class EventService
         )
 
         private fun markdownProperty(
-            key: String,
+            key: Key,
             text: String,
-        ): GenericRenderingProperty = GenericRenderingProperty(key = key, type = "markdown", text = markdownService.renderMarkdown(text))
+        ): GenericRenderingProperty = GenericRenderingProperty(key = formatNiceKey(key), type = "markdown", text = markdownService.renderMarkdown(text))
 
         private fun textProperty(
-            key: String,
+            key: Key,
             text: String,
-        ): GenericRenderingProperty = GenericRenderingProperty(key = key, type = "text", text = text.trim())
+        ): GenericRenderingProperty = GenericRenderingProperty(key = formatNiceKey(key), type = "text", text = text.trim())
 
         private fun listProperty(
-            key: String,
+            key: Key,
             list: List<String>,
-        ): GenericRenderingProperty = GenericRenderingProperty(key = key, type = "list", list = list)
+        ): GenericRenderingProperty = GenericRenderingProperty(key = formatNiceKey(key), type = "list", list = list)
+
+        private fun formatNiceKey(key: Key): String {
+            if (key.variants.isEmpty()) {
+                return toWholeWords(key.name)
+            }
+            return toWholeWords(key.name) + " [" +
+                key.variants.joinToString(", ") {
+                    toWholeWords(it.variantName) + "=" + it.variantValue
+                } + "]"
+        }
+
+        private fun toWholeWords(name: String): String {
+            if (name.isEmpty()) {
+                return name
+            }
+
+            val sb = StringBuilder()
+
+            sb.append(name[0].uppercaseChar())
+            var i = 1
+            while (i < name.length) {
+                if (name[i].isUpperCase()) {
+                    sb.append(" ")
+                    sb.append(name[i])
+                } else if (name[i] == '.') {
+                    sb.append(" ")
+                    i++
+                    if (i < name.length) {
+                        sb.append(name[i].uppercaseChar())
+                    }
+                } else {
+                    sb.append(name[i])
+                }
+                i++
+            }
+
+            return sb.toString()
+        }
     }

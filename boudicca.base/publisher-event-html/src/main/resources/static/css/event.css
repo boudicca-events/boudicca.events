@@ -235,17 +235,9 @@
     .details-box {
         overflow: auto;
 
-        .additional-properties {
+        .all-properties {
             ul {
                 margin: 0;
-            }
-
-            .key {
-                font-weight: bold;
-            }
-
-            .value {
-                margin-left: 40px;
             }
         }
     }

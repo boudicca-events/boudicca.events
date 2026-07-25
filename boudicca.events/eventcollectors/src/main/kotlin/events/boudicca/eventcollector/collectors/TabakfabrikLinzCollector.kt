@@ -4,7 +4,6 @@ import base.boudicca.SemanticKeys
 import base.boudicca.api.eventcollector.TwoStepEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.api.eventcollector.util.structuredEvent
-import base.boudicca.dateparser.dateparser.DatePair
 import base.boudicca.dateparser.dateparser.DateParser
 import base.boudicca.dateparser.dateparser.DateParserResult
 import base.boudicca.format.UrlUtils
@@ -21,35 +20,42 @@ class TabakfabrikLinzCollector : TwoStepEventCollector<String>("tabakfabriklinz"
     override fun getAllUnparsedEvents(): List<String> =
         fetcher
             .fetchUrlAndParse(baseUrl + "events")
-            .select(".events-upcoming h1.entry-title a")
+            .select("#event-posts-wrapper a.event-link-overlay")
             .mapNotNull { it.attr("href") }
             .distinct()
 
     override fun parseMultipleStructuredEvents(event: String): List<StructuredEvent?>? {
         val document = fetcher.fetchUrlAndParse(event)
-        val name = document.select("h1.entry-title").text()
-        val description = document.select("div.entry-content")
+        val name = document.select("h1.wp-block-heading").text()
+        val description = document.select("article.event > div")
 
-        var startDate = parseDate(document, "startDate")!!
-        val endDate = parseDate(document, "endDate")
-        if (endDate != null) {
-            startDate = DateParserResult(listOf(DatePair(startDate.dates[0].startDate, endDate.dates[0].startDate)))
-        }
+        val date =
+            DateParser.parse(
+                document.select("article.event section.post-type-event p.event-date-from .date-inner").text(),
+                document.select("article.event section.post-type-event p.location-time-wrapper .time").text(),
+            )
 
-        var location = document.select("[itemprop='location']").text()
+        var location = document.select("article.event section.post-type-event p.location-time-wrapper .location").text()
         if (location.isBlank()) {
             location = locationName
         } else if (!location.startsWith("Tabakfabrik")) {
             location = "$locationName: $location" // room names make more sense with the prefix
         }
 
-        val headerStyle = document.select("header.entry-header").first()!!.attr("style")
-        var imgSrc = ""
-        if (headerStyle.contains("background-image:url")) {
-            imgSrc = headerStyle.split("background-image:url(")[1].split(")")[0]
-        }
+        val imageDiv = document.select("article.event section.post-type-event div.page-header-img-container")
+        val imgSrc =
+            if (imageDiv.hasAttr("data-bg")) {
+                imageDiv.attr("data-bg")
+            } else {
+                val headerStyle = imageDiv.attr("style")
+                if (headerStyle.contains("background-image: url")) {
+                    headerStyle.split("background-image: url(")[1].split(")")[0]
+                } else {
+                    ""
+                }
+            }.removePrefix("\"").removeSuffix("\"")
 
-        return structuredEvent(name, startDate) {
+        return structuredEvent(name, date) {
             withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(event))
             withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(baseUrl))
             withDescription(description)

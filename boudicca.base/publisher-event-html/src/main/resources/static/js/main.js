@@ -10,6 +10,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const searchInput = document.querySelector("input.search-input");
     const modal = document.getElementById("modal");
     const modalContent = modal.querySelector("#modal-content");
+    const modalContainer = modal.querySelector("#modal-container");
+    const closeModalButton = modalContainer.querySelector(".modal-close");
+    const toggleModalButton = modalContainer.querySelector(".modal-toggle");
     const mobileMenu = document.getElementById("mobile-menu");
     const openMenuButton = document.getElementById("openMenuButton");
     const closeMenuButton = document.getElementById("closeMenuButton");
@@ -19,17 +22,19 @@ document.addEventListener("DOMContentLoaded", () => {
     const multiselectFilterInputs = ["locationCities", "locationNames", "bandNames", "tags", "types", "concertGenres"];
     let lastFocusedEventCard = null;
 
+    closeModalButton.addEventListener("click", () => {
+        closeModal();
+    })
+    toggleModalButton.addEventListener("click", () => {
+        toggleModal();
+    })
 
     const openModal = (eventCard) => {
         modalContent.innerHTML = eventCard.querySelector(".modal-content").innerHTML;
         modal.style.display = "block";
         document.body.style.overflow = "hidden";
-        const closeButton = modalContent.querySelector(".modal-close");
         lastFocusedEventCard = eventCard;
         modalContent.querySelector("h2").focus();
-        closeButton.addEventListener("click", () => {
-            closeModal();
-        })
     };
 
     const closeModal = () => {
@@ -40,17 +45,25 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
+    const toggleModal = () => {
+        let prettyEvent = modalContent.querySelector(".prettyEvent");
+        let allProperties = modalContent.querySelector(".allProperties");
+        if (prettyEvent.classList.contains("hidden")) {
+            prettyEvent.classList.remove("hidden");
+            allProperties.classList.add("hidden");
+        } else {
+            prettyEvent.classList.add("hidden");
+            allProperties.classList.remove("hidden");
+        }
+    };
+
     modal.addEventListener('click', (event) => {
-        if (!modalContent.contains(event.target)) {
+        if (!modalContainer.contains(event.target)) {
             closeModal();
         }
     });
 
-    modalContent.addEventListener('click', (event) => {
-        event.stopPropagation();
-    });
-
-    modalContent.addEventListener('click', (event) => {
+    modalContainer.addEventListener('click', (event) => {
         event.stopPropagation();
     });
 

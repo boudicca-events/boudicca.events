@@ -14,9 +14,13 @@ class BurgClamCollector : TwoStepEventCollector<String>("burgclam") {
 
     override fun getAllUnparsedEvents(): List<String> {
         val document = fetcher.fetchUrlAndParse("https://clamlive.at/shows/#/")
+        val documentKulturImMeierhof = fetcher.fetchUrlAndParse("https://clamlive.at/kultur-im-meierhof/")
         return document
-            .select("section.eventCollection a")
-            .map { it.attr("href") }
+            .select("div.eventCard a")
+            .map { it.attr("href") } +
+            documentKulturImMeierhof
+                .select("li.eventCard a")
+                .map { it.attr("href") }
     }
 
     override fun parseMultipleStructuredEvents(event: String): List<StructuredEvent?> {

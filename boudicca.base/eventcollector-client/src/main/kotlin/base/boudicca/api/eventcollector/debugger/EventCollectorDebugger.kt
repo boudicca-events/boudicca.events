@@ -23,6 +23,7 @@ import base.boudicca.api.eventdb.ingest.EventDbIngestClient
 import base.boudicca.fetcher.FetcherCache
 import base.boudicca.model.Event
 import io.opentelemetry.api.OpenTelemetry
+import tools.jackson.databind.ObjectMapper
 
 private const val DEFAULT_PORT = 8083
 
@@ -103,8 +104,10 @@ class EventCollectorDebugger(
         runner.run()
 
         if (verboseDebugging) {
+            println("all collected events:")
+            val objectMapper = ObjectMapper()
             collectedEvents.forEach {
-                println(it)
+                println(objectMapper.writeValueAsString(it))
             }
         }
         allEvents.addAll(collectedEvents)

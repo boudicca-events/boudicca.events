@@ -13,14 +13,15 @@ import events.boudicca.eventcollector.util.withDescription
 import org.jsoup.nodes.Element
 
 class KunstuniversitaetLinzCollector : TwoStepEventCollector<String>("kunstunilinz") {
-    private val fetcher = FetcherFactory.newFetcher()
+    // boooh, they fucked up their certs
+    private val fetcher = FetcherFactory.newFetcher(ignoreCerts = true)
 
     override fun getAllUnparsedEvents(): List<String> {
         var document = fetcher.fetchUrlAndParse("https://events.kunstuni-linz.at/")
 
         val eventLinks = mutableListOf<String>()
         while (true) {
-            eventLinks.addAll(document.select("h3.tribe-events-calendar-list__event-title a").map { it.attr("href") })
+            eventLinks.addAll(document.select("h4.tribe-events-calendar-list__event-title a").map { it.attr("href") })
             val nextPageButtons = document.select("a.tribe-events-c-nav__next").map { it.attr("href") }
             if (nextPageButtons.isEmpty()) {
                 break

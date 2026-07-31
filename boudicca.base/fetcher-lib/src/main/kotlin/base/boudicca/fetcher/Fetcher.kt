@@ -9,14 +9,21 @@ import io.opentelemetry.api.trace.StatusCode
 import io.opentelemetry.instrumentation.javahttpclient.JavaHttpClientTelemetry
 import java.io.ByteArrayInputStream
 import java.net.HttpURLConnection
+import java.net.Socket
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpRequest.BodyPublishers
 import java.net.http.HttpResponse
+import java.security.SecureRandom
+import java.security.cert.X509Certificate
 import java.time.Clock
 import java.util.concurrent.Callable
 import java.util.zip.GZIPInputStream
+import javax.net.ssl.SSLContext
+import javax.net.ssl.SSLEngine
+import javax.net.ssl.TrustManager
+import javax.net.ssl.X509ExtendedTrustManager
 import kotlin.jvm.optionals.getOrNull
 
 private const val WAIT_TIME_FACTOR = 1.5F
@@ -27,13 +34,14 @@ private const val MIN_WAIT_TIME = 100L
  */
 @Suppress("detekt:LongParameterList")
 class Fetcher(
-    //TODO refactor this mess into a fetcherconfig object or something like that
+    // TODO refactor this mess into a fetcherconfig object or something like that
     private val manualSetDelay: Long? = null,
     private val userAgent: String = Constants.USER_AGENT,
     private val clock: Clock = Clock.systemDefaultZone(),
     private val sleeper: Sleeper = Sleeper { ms -> Thread.sleep(ms) },
     private val otel: OpenTelemetry = GlobalOpenTelemetry.get(),
-    private val httpClient: HttpClientWrapper = createDefaultHttpClientWrapper(userAgent, otel),
+    private val ignoreCerts: Boolean = false,
+    private val httpClient: HttpClientWrapper = createDefaultHttpClientWrapper(userAgent, ignoreCerts, otel),
     private val eventListeners: List<FetcherEventListener> = emptyList(),
     private val fetcherCache: FetcherCache = NoopFetcherCache,
     private val disableRetries: Boolean = false,
@@ -166,18 +174,22 @@ class FetcherException(
 
 private fun createDefaultHttpClientWrapper(
     userAgent: String,
+    ignoreCerts: Boolean,
     otel: OpenTelemetry,
 ): HttpClientWrapper {
+    val httpClientBuilder =
+        HttpClient
+            .newBuilder()
+            .followRedirects(HttpClient.Redirect.NORMAL)
+    if (ignoreCerts) {
+        httpClientBuilder.sslContext(getMockSSLContext())
+    }
+
     val httpClient =
         JavaHttpClientTelemetry
             .builder(otel)
             .build()
-            .wrap(
-                HttpClient
-                    .newBuilder()
-                    .followRedirects(HttpClient.Redirect.NORMAL)
-                    .build(),
-            )
+            .wrap(httpClientBuilder.build())
 
     return object : HttpClientWrapper {
         override fun doGet(url: String): Pair<Int, String> {
@@ -208,18 +220,75 @@ private fun createDefaultHttpClientWrapper(
 
         private fun doRequest(request: HttpRequest): Pair<Int, String> {
             val response = httpClient.send(request, HttpResponse.BodyHandlers.ofByteArray())
-            val stringBody = if (isGzippedCompressed(response)) {
-                val gzipInputStream = GZIPInputStream(ByteArrayInputStream(response.body()))
-                val unzippedBytes = gzipInputStream.readAllBytes()
-                String(unzippedBytes)
-            } else {
-                String(response.body())
-            }
+            val stringBody =
+                if (isGzippedCompressed(response)) {
+                    val gzipInputStream = GZIPInputStream(ByteArrayInputStream(response.body()))
+                    val unzippedBytes = gzipInputStream.readAllBytes()
+                    String(unzippedBytes)
+                } else {
+                    String(response.body())
+                }
             return Pair(response.statusCode(), stringBody)
         }
 
         private fun isGzippedCompressed(response: HttpResponse<ByteArray>): Boolean =
-            response.headers().firstValue("content-encoding").getOrNull() == "gzip"
-                || response.headers().firstValue("Content-Encoding").getOrNull() == "gzip"
+            response.headers().firstValue("content-encoding").getOrNull() == "gzip" ||
+                response.headers().firstValue("Content-Encoding").getOrNull() == "gzip"
+    }
+}
+
+private fun getMockSSLContext(): SSLContext? {
+    val sslContext = SSLContext.getInstance("TLS")
+    sslContext.init(null, arrayOf<TrustManager?>(DummyTrustManager), SecureRandom())
+    return sslContext
+}
+
+object DummyTrustManager : X509ExtendedTrustManager() {
+    override fun checkClientTrusted(
+        chain: Array<out X509Certificate?>?,
+        authType: String?,
+    ) {
+        // do nothing
+    }
+
+    override fun checkServerTrusted(
+        chain: Array<out X509Certificate?>?,
+        authType: String?,
+    ) {
+        // do nothing
+    }
+
+    override fun getAcceptedIssuers(): Array<X509Certificate> = Array(0) { throw IllegalStateException("will not be called, kotlin is weird?") }
+
+    override fun checkClientTrusted(
+        chain: Array<out X509Certificate?>?,
+        authType: String?,
+        socket: Socket?,
+    ) {
+        // do nothing
+    }
+
+    override fun checkServerTrusted(
+        chain: Array<out X509Certificate?>?,
+        authType: String?,
+        socket: Socket?,
+    ) {
+        // do nothing
+    }
+
+    override fun checkClientTrusted(
+        chain: Array<out X509Certificate?>?,
+        authType: String?,
+        engine: SSLEngine?,
+    ) {
+        // do nothing
+    }
+
+    override fun checkServerTrusted(
+        chain: Array<out X509Certificate?>?,
+        authType: String?,
+        engine: SSLEngine?,
+    ) {
+        // do nothing
     }
 }

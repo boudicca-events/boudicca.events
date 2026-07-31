@@ -56,10 +56,12 @@ object FetcherFactory {
     fun newFetcher(
         manualSetDelay: Long? = null,
         userAgent: String = Constants.USER_AGENT,
+        ignoreCerts: Boolean = false,
     ): Fetcher =
         Fetcher(
             manualSetDelay = manualSetDelay,
             userAgent = userAgent,
+            ignoreCerts = ignoreCerts,
             eventListeners = listOf(collectionFetcherEventListener),
             fetcherCache = delegatingFetcherCache,
             disableRetries = disableRetries,

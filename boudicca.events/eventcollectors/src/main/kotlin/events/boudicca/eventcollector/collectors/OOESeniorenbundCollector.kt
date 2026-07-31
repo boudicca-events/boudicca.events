@@ -5,69 +5,46 @@ import base.boudicca.api.eventcollector.TwoStepEventCollector
 import base.boudicca.api.eventcollector.util.FetcherFactory
 import base.boudicca.api.eventcollector.util.structuredEvent
 import base.boudicca.dateparser.dateparser.DateParser
-import base.boudicca.dateparser.dateparser.DateParserResult
-import base.boudicca.format.UrlUtils
 import base.boudicca.model.structured.StructuredEvent
 import events.boudicca.eventcollector.util.fetchUrlAndParse
 import events.boudicca.eventcollector.util.withDescription
-import org.jsoup.nodes.Document
-import java.util.regex.Pattern
 
-/**
- * the actual eventlist on https://ooesb.at/veranstaltungen is an iframe pointing to https://servicebroker.media-data.at/overview.html?key=QVKSBOOE so we parse that
- */
-class OOESeniorenbundCollector : TwoStepEventCollector<Pair<Document, String>>("ooesb") {
-    override fun getAllUnparsedEvents(): List<Pair<Document, String>> {
-        val fetcher = FetcherFactory.newFetcher()
-        val document = fetcher.fetchUrlAndParse("https://servicebroker.media-data.at/overview.html?key=QVKSBOOE")
+class OOESeniorenbundCollector : TwoStepEventCollector<String>("ooesb") {
+    private val fetcher = FetcherFactory.newFetcher()
+    private val baseUrl = "https://ooesb.at/veranstaltungen/"
+
+    override fun getAllUnparsedEvents(): List<String> {
+        val document = fetcher.fetchUrlAndParse(baseUrl)
+
+        println(document)
 
         return document
-            .select("a.link-detail")
-            .toList()
-            .map { "https://servicebroker.media-data.at/" + it.attr("href") }
-            .map { Pair(fetcher.fetchUrlAndParse(it), it) }
-    }
-
-    override fun parseMultipleStructuredEvents(event: Pair<Document, String>): List<StructuredEvent> {
-        val (eventDoc, rawUrl) = event
-
-        val url = cleanupUrl(rawUrl)
-        val name = eventDoc.select("div.title>p").text()
-        val dates = getDates(eventDoc)
-        val description = eventDoc.select("div.subtitle>p")
-
-        return dates
+            .select("div.eventmain div.eventimage-container a")
             .map {
-                structuredEvent(name, it) {
-                    withProperty(SemanticKeys.URL_PROPERTY, UrlUtils.parse(url))
-                    withProperty(
-                        SemanticKeys.LOCATION_NAME_PROPERTY,
-                        eventDoc.select("div.venue").text(),
-                    ) // TODO location name and city here are not seperated at all -.-
-                    withDescription(description)
-                    withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(url))
-                }
-            }.flatten()
+                println("WTF MAN: " + it)
+                it.attr("abs:href")
+            }
     }
 
-    private fun cleanupUrl(url: String): String {
-        // https://servicebroker.media-data.at/detail.html;jsessionid=B20D66D14ABACD0C9357ECC77CA10E48?evkey=11774&resize=true&key=QVKSBOOE
+    override fun parseMultipleStructuredEvents(event: String): List<StructuredEvent> {
+        val eventDoc = fetcher.fetchUrlAndParse(event)
 
-        val sessionIdPattern = Pattern.compile(";jsessionid=\\w+\\?")
-        val matcher = sessionIdPattern.matcher(url)
+        val name = eventDoc.select("div.eventmain h2").first()!!.text()
+        val dates = DateParser.parse(eventDoc.select("div.eventmain table tr td").first()!!.text())
+        // TODO location name and city here are not seperated at all -.-
+        val location = eventDoc.select("div.eventmain table tr td").last()!!.text()
+        val description =
+            eventDoc
+                .select("div.eventmain>div>div")
+                .dropWhile { it.tagName() != "table" }
+                .drop(1)
+                .takeWhile { it.tagName() != "a" }
 
-        return if (matcher.find()) {
-            url.replace(matcher.group(0), "?")
-        } else {
-            url
+        return structuredEvent(name, dates) {
+            withProperty(SemanticKeys.URL_PROPERTY, event)
+            withProperty(SemanticKeys.LOCATION_NAME_PROPERTY, location)
+            withDescription(description)
+            withProperty(SemanticKeys.SOURCES_PROPERTY, event)
         }
     }
-
-    private fun getDates(event: Document): List<DateParserResult> =
-        event
-            .select("div.date>p")
-            .toList()
-            .map { getSingleDates(it.text()) }
-
-    private fun getSingleDates(dateString: String): DateParserResult = DateParser.parse(dateString)
 }

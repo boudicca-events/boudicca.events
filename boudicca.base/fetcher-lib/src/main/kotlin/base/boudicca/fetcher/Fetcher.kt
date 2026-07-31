@@ -7,14 +7,17 @@ import io.opentelemetry.api.trace.Span
 import io.opentelemetry.api.trace.SpanKind
 import io.opentelemetry.api.trace.StatusCode
 import io.opentelemetry.instrumentation.javahttpclient.JavaHttpClientTelemetry
+import java.io.ByteArrayInputStream
 import java.net.HttpURLConnection
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpRequest.BodyPublishers
-import java.net.http.HttpResponse.BodyHandlers
+import java.net.http.HttpResponse
 import java.time.Clock
 import java.util.concurrent.Callable
+import java.util.zip.GZIPInputStream
+import kotlin.jvm.optionals.getOrNull
 
 private const val WAIT_TIME_FACTOR = 1.5F
 private const val MIN_WAIT_TIME = 100L
@@ -24,6 +27,7 @@ private const val MIN_WAIT_TIME = 100L
  */
 @Suppress("detekt:LongParameterList")
 class Fetcher(
+    //TODO refactor this mess into a fetcherconfig object or something like that
     private val manualSetDelay: Long? = null,
     private val userAgent: String = Constants.USER_AGENT,
     private val clock: Clock = Clock.systemDefaultZone(),
@@ -203,8 +207,19 @@ private fun createDefaultHttpClientWrapper(
         }
 
         private fun doRequest(request: HttpRequest): Pair<Int, String> {
-            val response = httpClient.send(request, BodyHandlers.ofString())
-            return Pair(response.statusCode(), response.body())
+            val response = httpClient.send(request, HttpResponse.BodyHandlers.ofByteArray())
+            val stringBody = if (isGzippedCompressed(response)) {
+                val gzipInputStream = GZIPInputStream(ByteArrayInputStream(response.body()))
+                val unzippedBytes = gzipInputStream.readAllBytes()
+                String(unzippedBytes)
+            } else {
+                String(response.body())
+            }
+            return Pair(response.statusCode(), stringBody)
         }
+
+        private fun isGzippedCompressed(response: HttpResponse<ByteArray>): Boolean =
+            response.headers().firstValue("content-encoding").getOrNull() == "gzip"
+                || response.headers().firstValue("Content-Encoding").getOrNull() == "gzip"
     }
 }

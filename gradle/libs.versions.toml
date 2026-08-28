@@ -17,10 +17,10 @@ assertk = "0.28.1"
 mockk = "1.14.9"
 spring-mockk = "5.0.1"
 biweekly = "0.6.8"
-jsoup = "1.22.1"
+jsoup = "1.23.1"
 rometools = "2.1.0"
 klaxon = "5.6"
-logback = "1.5.33"
+logback = "1.5.38"
 slf4j = "2.0.18"
 handlebars = "4.5.2"
 microsoft-playwright = "1.60.0"
@@ -29,7 +29,7 @@ kotlin-logging = "8.0.4"
 otel = "1.63.0"
 otel-instrumentation = "2.29.0-alpha"
 twelvemonkeys = "3.13.1"
-commonmark = "0.28.0"
+commonmark = "0.29.0"
 flexmark = "0.64.8"
 
 [libraries]
@@ -92,12 +92,12 @@ axe-core-playwright = { module = "com.deque.html.axe-core:playwright", version.r
 json = { module = "org.json:json", version = "20251224" }
 
 google-api-client = { module = "com.google.api-client:google-api-client", version = "2.9.0" }
-google-auth-library-oauth2-http = { module = "com.google.auth:google-auth-library-oauth2-http", version = "1.47.0" }
+google-auth-library-oauth2-http = { module = "com.google.auth:google-auth-library-oauth2-http", version = "1.49.0" }
 google-api-services-sheets = { module = "com.google.apis:google-api-services-sheets", version = "v4-rev20251110-2.0.0" }
 
 kotlin-logging = { module = "io.github.oshai:kotlin-logging-jvm", version.ref = "kotlin-logging" }
 
-micrometer-core = { module = "io.micrometer:micrometer-core", version = "1.16.2" }
+micrometer-core = { module = "io.micrometer:micrometer-core", version = "1.16.6" }
 micrometer-otel-bridge = { module = "io.micrometer:micrometer-tracing-bridge-otel", version = "1.6.5" }
 otel-api = { module = "io.opentelemetry:opentelemetry-api", version.ref = "otel" }
 otel-sdk = { module = "io.opentelemetry:opentelemetry-sdk", version.ref = "otel" }

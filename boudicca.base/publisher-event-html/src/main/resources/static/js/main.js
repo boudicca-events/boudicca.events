@@ -29,8 +29,9 @@ document.addEventListener("DOMContentLoaded", () => {
         toggleModal();
     })
 
-    const openModal = (eventCard) => {
-        modalContent.innerHTML = eventCard.querySelector(".modal-content").innerHTML;
+    const openModal = async (eventCard) => {
+        let content = await fetch("api/event?id=" + eventCard.dataset.id);
+        modalContent.innerHTML = await content.text()
         modal.style.display = "block";
         document.body.style.overflow = "hidden";
         lastFocusedEventCard = eventCard;

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.servlet.ModelAndView
+import java.util.*
 
 @RestController
 @RequestMapping("/api")
@@ -18,7 +19,7 @@ class SearchRestController
     constructor(
         private val eventService: EventService,
     ) {
-        @GetMapping("/search")
+        @GetMapping("/search", produces = ["text/html"])
         fun search(searchDTO: SearchDTO): ModelAndView {
             val data: MutableMap<String, Any> = HashMap()
             SearchUtils.searchAndAddToModel(eventService, searchDTO, data)
@@ -28,4 +29,11 @@ class SearchRestController
         @GetMapping("/mapSearch", produces = ["application/json"])
         @ResponseBody
         fun mapSearch(searchDTO: SearchDTO): MapSearchResultDTO = eventService.mapSearch(searchDTO)
+
+        @GetMapping("/event", produces = ["text/html"])
+        @ResponseBody
+        fun event(id: UUID): ModelAndView {
+            val data = eventService.eventDetails(id)
+            return ModelAndView("events/eventdetails", data)
+        }
     }

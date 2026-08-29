@@ -36,4 +36,12 @@ class SearchRestController
             val data = eventService.eventDetails(id)
             return ModelAndView("events/eventdetails", data)
         }
+
+        @GetMapping("/drawer", produces = ["text/html"])
+        @ResponseBody
+        fun drawer(): ModelAndView {
+            val data: MutableMap<String, Any> = HashMap()
+            data["filters"] = eventService.filters()
+            return ModelAndView("layout/drawer", data)
+        }
     }

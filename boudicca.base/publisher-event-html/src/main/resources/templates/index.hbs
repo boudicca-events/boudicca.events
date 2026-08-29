@@ -1,21 +1,22 @@
 <!DOCTYPE html>
 <html lang="de-AT">
-    {{#> layout/head }}
-    {{/layout/head}}
-    <body>
-        <div id="content-anchor" class="content">
-            <a id="accessibility-main-skip-link" href="#main-content">Zum Hauptinhalt überspringen</a>
+{{#> layout/head }}
+{{/layout/head}}
+<body>
+<div id="content-anchor" class="content">
+    <a id="accessibility-main-skip-link" href="#main-content">Zum Hauptinhalt überspringen</a>
 
-            {{#> layout/header showSearchbar=true}}{{/layout/header}}
+    {{#> layout/header showSearchbar=true}}{{/layout/header}}
 
-            {{> layout/drawer}}
+    <section id="drawer-container">
+    </section>
 
-            {{> layout/main events}}
-            {{> layout/footer}}
-            {{> layout/modal}}
-        </div>
+    {{> layout/main events}}
+    {{> layout/footer}}
+    {{> layout/modal}}
+</div>
 
-        <script src="js/main.js"></script>
-        <script src="js/menu.js"></script>
-    </body>
+<script src="js/main.js"></script>
+<script src="js/menu.js"></script>
+</body>
 </html>

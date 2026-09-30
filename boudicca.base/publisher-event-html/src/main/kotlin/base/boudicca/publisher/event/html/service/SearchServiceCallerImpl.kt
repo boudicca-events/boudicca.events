@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
+// TODO we can remove this and use the searchclient directly as a bean now
 @Service
 class SearchServiceCallerImpl
     @Autowired

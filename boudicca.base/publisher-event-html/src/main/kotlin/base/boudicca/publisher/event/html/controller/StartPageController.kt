@@ -24,7 +24,6 @@ class StartPageController(
     fun search(searchDTO: SearchDTO): ModelAndView {
         val data: MutableMap<String, Any> = HashMap()
         SearchUtils.searchAndAddToModel(eventService, searchDTO, data)
-        data["filters"] = eventService.filters()
         return ModelAndView("index", data)
     }
 

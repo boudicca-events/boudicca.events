@@ -16,6 +16,7 @@ import events.boudicca.eventcollector.collectors.EnnsEventsCollector
 import events.boudicca.eventcollector.collectors.FemaleCoderCollector
 import events.boudicca.eventcollector.collectors.FhLugCollector
 import events.boudicca.eventcollector.collectors.FlohmarktCollector
+import events.boudicca.eventcollector.collectors.FokusMenschCollector
 import events.boudicca.eventcollector.collectors.FraeuleinFlorentineCollector
 import events.boudicca.eventcollector.collectors.FuerUnsCollector
 import events.boudicca.eventcollector.collectors.JkuEventCollector
@@ -112,6 +113,7 @@ fun main() {
             .addEventCollector(LastSpaceCollector())
             .addEventCollector(TheaterInDerInnenstadtCollector())
             .addEventCollector(TabakfabrikLinzCollector())
+            .addEventCollector(FokusMenschCollector())
             .build()
 
     eventCollectorCoordinator.startWebUi()

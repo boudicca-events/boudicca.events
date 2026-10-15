@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
     <configuration default="false" name="LocalFetchFromOnlineBoudiccaKt" type="JetRunConfigurationType" nameIsGenerated="true">
         <option name="MAIN_CLASS_NAME" value="events.boudicca.eventcollector.LocalFetchFromOnlineBoudiccaKt"/>
-        <module name="boudicca.boudicca.events.eventcollectors.main"/>
+        <module name="boudicca.boudicca_events.eventcollectors.main"/>
         <shortenClasspath name="NONE"/>
         <extension name="net.ashald.envfile">
             <option name="IS_ENABLED" value="false"/>

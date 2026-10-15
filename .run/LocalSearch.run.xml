@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
     <configuration default="false" name="LocalSearch" type="JetRunConfigurationType">
         <option name="MAIN_CLASS_NAME" value="base.boudicca.search.SearchApplicationKt"/>
-        <module name="boudicca.boudicca.base.search.main"/>
+        <module name="boudicca.boudicca_base.search.main"/>
         <shortenClasspath name="NONE"/>
         <option name="VM_PARAMETERS" value="-Dboudicca.devMode=true"/>
         <extension name="net.ashald.envfile">

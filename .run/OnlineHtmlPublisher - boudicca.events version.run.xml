@@ -5,7 +5,7 @@
             <env name="BOUDICCA_DEVMODE" value="false"/>
         </envs>
         <option name="MAIN_CLASS_NAME" value="events.boudicca.publisher.event.html.PublisherHtmlApplicationKt"/>
-        <module name="boudicca.boudicca.events.publisher-event-html.main"/>
+        <module name="boudicca.boudicca_events.publisher-event-html.main"/>
         <method v="2">
             <option name="Make" enabled="true"/>
         </method>

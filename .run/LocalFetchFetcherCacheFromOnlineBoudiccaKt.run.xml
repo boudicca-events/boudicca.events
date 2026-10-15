@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="LocalFetchFetcherCacheFromOnlineBoudiccaKt" type="JetRunConfigurationType" nameIsGenerated="true">
     <option name="MAIN_CLASS_NAME" value="events.boudicca.eventcollector.LocalFetchFetcherCacheFromOnlineBoudiccaKt" />
-    <module name="boudicca.boudicca.events.eventcollectors.main" />
+    <module name="boudicca.boudicca_events.eventcollectors.main" />
     <shortenClasspath name="NONE" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
     <method v="2">

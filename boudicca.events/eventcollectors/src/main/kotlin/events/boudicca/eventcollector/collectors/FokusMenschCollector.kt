@@ -17,6 +17,7 @@ class FokusMenschCollector : IcalCollector("fokusmensch") {
             event
                 .toBuilder()
                 .withProperty(SemanticKeys.SOURCES_PROPERTY, listOf(icsUrl, baseUrl))
+                .withProperty(SemanticKeys.PICTURE_URL_PROPERTY, "https://fokusmensch.info/files/fm-theme/layout/OOEZIV_Logo_FokusMensch_72dpi.png")
 
         return builder.build()
     }

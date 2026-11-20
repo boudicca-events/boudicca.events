@@ -84,6 +84,16 @@ class EventService
             return mapMapSearch(searchResultDTO)
         }
 
+        @Throws(EventServiceException::class)
+        fun eventDetails(id: UUID): Map<String, Any?> {
+            val result = caller.search(QueryDTO(equals(SemanticKeys.BOUDICCA_ID, id.toString()), 0, 1))
+            checkResult(result)
+            if (result.result.isEmpty()) {
+                throw EventServiceException("could not find event with uuid: $id")
+            }
+            return mapEvent(result.result.first().toStructuredEvent())
+        }
+
         fun generateQuery(
             searchDTO: SearchDTO,
             additionalQueryParts: List<String> = emptyList(),
@@ -195,6 +205,7 @@ class EventService
 
         private fun mapEvent(event: StructuredEvent): Map<String, Any?> =
             mapOf(
+                "id" to getUuidProperty(event, SemanticKeys.BOUDICCA_ID),
                 "name" to event.name,
                 "startDate" to formatDate(event.startDate, formatter),
                 "startDateISO" to event.startDate.toString(),
@@ -240,6 +251,14 @@ class EventService
                 pictureProxyService.submitPicture(pictureUrl).toString()
             }
         }
+
+        private fun getUuidProperty(
+            event: StructuredEvent,
+            propertyName: String,
+        ): String? =
+            getPropertyForFormats(event, propertyName, listOf(FormatVariantConstants.UUID_FORMAT_NAME))
+                .map { it.second }
+                .getOrNull()
 
         private fun getTextProperty(
             event: StructuredEvent,

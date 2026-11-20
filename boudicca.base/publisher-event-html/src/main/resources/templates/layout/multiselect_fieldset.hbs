@@ -1,13 +1,12 @@
-
 {{#if data-category}}
     <fieldset id="fieldset-{{identifier}}" data-category-wanted="{{data-category}}" class="hidden">
 {{else}}
     <fieldset id="fieldset-{{identifier}}">
 {{/if}}
 
-    {{#if legend}}
+{{#if legend}}
         <legend><strong>{{legend}}</strong></legend>
-    {{/if}}
+{{/if}}
     <div class="multiselect-wrapper">
 
         {{#if name}}
@@ -22,7 +21,7 @@
         <div class="multiselect-chips">
             {{#each entries as |entry|}}
                 <input type="checkbox" name={{identifier}} value="{{entry.first}}" id="{{identifier}}-{{entry.third}}"
-                       aria-checked="false" aria-labelledby="{{identifier}}-{{entry.third}}-chip {{identifier}}-{{entry.third}}-label">
+                       aria-labelledby="{{identifier}}-{{entry.third}}-chip {{identifier}}-{{entry.third}}-label">
                 <label for="{{identifier}}-{{entry.third}}" id="{{identifier}}-{{entry.third}}-chip" class="chips toggleFilterLabels" style="position:absolute;">
                     {{entry.second}}
                 </label>

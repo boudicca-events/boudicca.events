@@ -21,7 +21,6 @@ class OOESeniorenbundCollector : TwoStepEventCollector<String>("ooesb") {
         return document
             .select("div.eventmain div.eventimage-container a")
             .map {
-                println("WTF MAN: " + it)
                 it.attr("abs:href")
             }
     }

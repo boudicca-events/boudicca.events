@@ -8,8 +8,8 @@ jackson-databind-nullable = "0.2.10"
 jakarta-annotation = "3.0.0"
 javax-jaxrs = "2.1.1"
 spring-openapi-starter = "3.0.1"
-spring = "7.0.5"
-spring-boot = "4.1.0"
+spring = "7.1.0"
+spring-boot = "4.2.0"
 swagger-core-version = "2.2.20"
 org-openapi-generator-gradle-plugin = "7.2.0"
 junit-jupiter = "6.0.2"
@@ -17,19 +17,19 @@ assertk = "0.28.1"
 mockk = "1.14.9"
 spring-mockk = "5.0.1"
 biweekly = "0.6.8"
-jsoup = "1.23.1"
+jsoup = "1.23.2"
 rometools = "2.1.0"
 klaxon = "5.6"
-logback = "1.5.38"
+logback = "1.6.3"
 slf4j = "2.0.18"
-handlebars = "4.5.2"
-microsoft-playwright = "1.60.0"
+handlebars = "4.5.4"
+microsoft-playwright = "1.65.1"
 axe-core-playwright = "4.11.3"
 kotlin-logging = "8.0.4"
-otel = "1.63.0"
-otel-instrumentation = "2.29.0-alpha"
+otel = "1.68.0"
+otel-instrumentation = "2.34.0-alpha"
 twelvemonkeys = "3.13.1"
-commonmark = "0.29.0"
+commonmark = "0.30.0"
 flexmark = "0.64.8"
 
 [libraries]
@@ -89,7 +89,7 @@ handlebars-springmvc = { module = "com.github.jknack:handlebars-springmvc", vers
 microsoft-playwright = { module = "com.microsoft.playwright:playwright", version.ref = "microsoft-playwright" }
 axe-core-playwright = { module = "com.deque.html.axe-core:playwright", version.ref = "axe-core-playwright" }
 
-json = { module = "org.json:json", version = "20251224" }
+json = { module = "org.json:json", version = "20260719" }
 
 google-api-client = { module = "com.google.api-client:google-api-client", version = "2.9.0" }
 google-auth-library-oauth2-http = { module = "com.google.auth:google-auth-library-oauth2-http", version = "1.49.0" }

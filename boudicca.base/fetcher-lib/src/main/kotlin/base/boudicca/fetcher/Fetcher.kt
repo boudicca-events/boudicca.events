@@ -18,6 +18,7 @@ import java.net.http.HttpResponse
 import java.security.SecureRandom
 import java.security.cert.X509Certificate
 import java.time.Clock
+import java.time.Duration
 import java.util.concurrent.Callable
 import java.util.zip.GZIPInputStream
 import javax.net.ssl.SSLContext
@@ -197,6 +198,7 @@ private fun createDefaultHttpClientWrapper(
                 HttpRequest
                     .newBuilder(URI.create(url))
                     .GET()
+                    .timeout(Duration.ofMinutes(5))
                     .header("User-Agent", userAgent)
                     .build()
             return doRequest(request)
@@ -211,6 +213,7 @@ private fun createDefaultHttpClientWrapper(
                 HttpRequest
                     .newBuilder(URI.create(url))
                     .POST(BodyPublishers.ofString(content))
+                    .timeout(Duration.ofMinutes(5))
                     .header("User-Agent", userAgent)
                     .header("Content-Type", contentType)
                     .build()

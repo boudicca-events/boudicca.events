@@ -1,5 +1,5 @@
 [versions]
-kotlin = "2.3.21"
+kotlin = "2.4.0"
 detekt = "2.0.0-alpha.3"
 ktlint = "14.0.1"
 jacoco = "0.8.14"
